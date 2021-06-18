@@ -36,8 +36,8 @@
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
                     <div fxFlex="15" fxLayout fxLayoutAlign="center center" class="step-time pr-8">
-                        <small fxFlex="80" class="text-right">
-                            {{ s.InteractionDate | date: 'd/M/yy, hh:mm:ss a' }}
+                        <small class="text-right">
+                            {{ s.InteractionDate | date: 'dd/MM/yyyy, hh:mm:ss a' }}
                         </small>
                     </div>
                     <div fxFlex="85" fxLayout fxLayoutAlign="space-between center" class="step-details px-16">
@@ -86,9 +86,8 @@
             <!-- maximised view start - Table -->
             <div
                 *ngIf="maximized"
-                fxLayout="column"
-                class="table custom-scroll-adjust"
-                [ngClass]="(customFuse.anchor?.content || customFuse.widget?.content) + (mode ? ' h-35-p' : ' h-100-p')"
+                class="table twd-overflow-y-auto twd-h-full twd-flex-col"
+                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 [formGroup]="searchForm"
             >
                 <ng-container *ngIf="customerJourneyTable.tableData.source.data.length">
@@ -100,59 +99,35 @@
                         }"
                     ></ng-container>
                     <div class="twd-flex twd-justify-between">
-                        <div class="twd-w-5/12">
-                            <button (click)="advancedSearchModal.open()" mat-button color="primary">
+                        <div class="twd-w-5/12 twd-flex twd-items-center">
+                            <button mat-button color="primary" class="border-radius-20" (click)="advancedSearchModal.open()">
                                 Search
                                 <mat-icon>search</mat-icon>
                             </button>
+                            <button
+                                mat-button
+                                color="warn"
+                                class="border-radius-20 twd-ml-2"
+                                (click)="searchForm.reset(); doAdvancedSearch()"
+                                [disabled]="!customerJourneyTable.tableData.source.filter"
+                            >
+                                Clear Search
+                                <mat-icon>close</mat-icon>
+                            </button>
                             <ng-template #advancedSearchFormRef>
-                                <div class="mat-elevation-z1 twd-rounded-2xl twd-p-5" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                <div class="mat-elevation-z1 twd-rounded-2xl twd-p-3" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
                                     <form
-                                        fxLayout="row wrap"
-                                        fxLayoutAlign="space-between"
-                                        fxLayoutGap="20px"
-                                        [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' twd-p-5 twd-rounded-2xl'"
+                                        class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-gap-5 twd-p-4 border-radius-20"
+                                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                         [formGroup]="searchForm"
                                         (ngSubmit)="doAdvancedSearch(); advancedSearchModal.close()"
                                         novalidate
                                     >
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>SessionID</mat-label>
-                                            <input matInput type="text" formControlName="SessionID" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>PhoneNumber</mat-label>
-                                            <input matInput type="text" formControlName="PhoneNumber" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Channel</mat-label>
-                                            <input matInput type="text" formControlName="Channel" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Agent</mat-label>
-                                            <input matInput type="text" formControlName="Agent" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Intent</mat-label>
-                                            <input matInput type="text" formControlName="Intent" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>CIF</mat-label>
-                                            <input matInput type="text" formControlName="CIF" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>NRIC</mat-label>
-                                            <input matInput type="text" formControlName="NRIC" />
-                                        </mat-form-field>
-
-                                        <mat-form-field fxFlex="45">
-                                            <mat-label>Interaction Date</mat-label>
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('InteractionDate')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Received At</mat-label>
                                             <mat-date-range-input #dateRangePicker [rangePicker]="interactionDatePicker">
                                                 <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
                                                 <input matEndDate placeholder="End date" formControlName="InteractionDateEnd" />
@@ -161,14 +136,89 @@
                                             <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
                                         </mat-form-field>
 
-                                        <mat-form-field fxFlex="45">
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('Channel')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Channel</mat-label>
+                                            <input matInput type="text" formControlName="Channel" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('Direction')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Direction</mat-label>
+                                            <input matInput type="text" formControlName="Direction" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('InteractionText')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Interaction Text</mat-label>
+                                            <input matInput type="text" formControlName="InteractionText" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('Intent')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Intent</mat-label>
+                                            <input matInput type="text" formControlName="Intent" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('AgentName')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Agent</mat-label>
+                                            <input matInput type="text" formControlName="AgentName" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('CIF')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>CIF</mat-label>
+                                            <input matInput type="text" formControlName="CIF" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('NRIC')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>NRIC</mat-label>
+                                            <input matInput type="text" formControlName="NRIC" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('PhoneNumber')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Phone Number</mat-label>
+                                            <input matInput type="text" formControlName="PhoneNumber" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('EmailID')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
+                                            <mat-label>Email</mat-label>
+                                            <input matInput type="text" formControlName="EmailID" />
+                                        </mat-form-field>
+
+                                        <mat-form-field
+                                            *ngIf="customerJourneyTable.tableData.columns.includes('OverallSentiment')"
+                                            class="twd-flex-full twd-max-w-5/12"
+                                        >
                                             <mat-label>Overall Sentiment</mat-label>
                                             <input matInput type="text" formControlName="OverallSentiment" />
                                         </mat-form-field>
 
-                                        <div fxFlex="100" class="mt-12">
-                                            <div class="mx-auto w-40-p">
-                                                <button mat-raised-button class="w-100-p" color="primary">Search</button>
+                                        <div fxFlex="100" class="twd-mt-3 twd-flex-full twd-max-w-full">
+                                            <div class="twd-mx-auto w-40-p">
+                                                <button mat-raised-button class="twd-w-full border-radius-20" color="primary">Search</button>
                                             </div>
                                         </div>
                                     </form>
@@ -188,284 +238,6 @@
                 <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center twd-mt-40 twd-text-3xl">No Data Available</p>
             </div>
 
-            <div
-                *ngIf="maximized && mode"
-                class="spread animate__animated animate__slideInUp animate__faster"
-                [ngClass]="(customFuse.anchor?.content || customFuse.widget?.content) + (mode ? ' h-65-p' : '')"
-            >
-                <div class="px-20 pt-12 twd-text-xl twd-font-bold" fxLayout fxLayoutAlign="space-between">
-                    <span>
-                        {{ mode }}
-                    </span>
-                    <button mat-icon-button color="accent" (click)="closeActionWindow()">
-                        <mat-icon> close </mat-icon>
-                    </button>
-                </div>
-                <ng-container *ngIf="mode === 'Comments'">
-                    <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
-                        <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
-                            <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No Comments Available</p>
-                            <div
-                                class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20 font-size-16 font-weight-600"
-                                *ngFor="let note of iNotes"
-                                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                                [innerHTML]="note"
-                            ></div>
-                        </div>
-                    </ng-container>
-                    <p class="text-center mat-headline mt-20" *ngIf="interactionNotesReq.loading">Loading...</p>
-                    <p class="text-center mat-headline mt-20" *ngIf="interactionNotesReq.error">Some Error Occured</p>
-                </ng-container>
-
-                <ng-container *ngIf="mode === 'Actions'">
-                    <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!sessionActions.error && !sessionActions.loading">
-                        <div *ngIf="!sessionActions.data?.length" class="text-center mt-40 mat-headline">No data available</div>
-
-                        <div
-                            *ngFor="let action of sessionActions.data"
-                            fxLayout="row-wrap"
-                            class="step mb-4 p-4 mat-elevation-z1 font-size-16 font-weight-600"
-                            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                        >
-                            <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
-                                {{ action.ActionTime | date: 'MM/dd/yyyy, hh:mm a' }}
-                            </div>
-                            <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16 p-8">
-                                {{ action.Action }}
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="sessionActions.loading" fxLayout fxLayoutAlign="center">
-                        <p class="mt-20">
-                            <mat-spinner></mat-spinner>
-                        </p>
-                    </div>
-                    <div *ngIf="sessionActions.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
-                        <p>
-                            {{ sessionActions.msg }}
-                        </p>
-                        <!-- <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button> -->
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="mode === 'Session History'">
-                    <iframe
-                        *ngIf="!!customerJourneyTable.iframeUrl"
-                        [src]="customerJourneyTable.iframeUrl"
-                        class="w-100-p h-100-p"
-                        frameborder="0"
-                        seamless="seamless"
-                    ></iframe>
-                </ng-container>
-
-                <ng-container *ngIf="mode === 'Transcripts'">
-                    <ng-container *ngIf="interactionTranscripts && customerJourneyTable.tableData.selection?.selected[0] as selected">
-                        <ng-container *ngIf="interactionTranscripts[selected.GroupID] as chatTranscripts">
-                            <div
-                                *ngIf="chatTranscripts.length"
-                                fxLayout="row"
-                                fxLayoutAlign=" none"
-                                class="w-100-p pb-16 chat-container custom-scroll-adjust"
-                            >
-                                <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
-                                    <!-- CHAT CONTENT -->
-                                    <div class="chat-transcripts" fxFlex="1 1 auto">
-                                        <!-- CHAT MESSAGES -->
-                                        <div class="chat-messages px-12">
-                                            <!-- MESSAGE -->
-                                            <ng-container *ngFor="let item of chatTranscripts; let i = index">
-                                                <div
-                                                    *ngIf="item.message"
-                                                    class="message-row"
-                                                    [ngClass]="{
-                                                        me: item?.who !== defaultCustomerName,
-                                                        contact: item?.who === defaultCustomerName
-                                                    }"
-                                                >
-                                                    <div
-                                                        fxLayout="column"
-                                                        fxLayoutAlign="start start"
-                                                        class="bubble"
-                                                        [ngClass]="item.isAgent ? 'right' : 'left'"
-                                                    >
-                                                        <div
-                                                            *ngIf="chatTranscripts[i - 1]?.who !== item.who"
-                                                            class="user-label font-size-16 text-bold mb-4"
-                                                        >
-                                                            {{ item.who }}
-                                                        </div>
-
-                                                        <div class="message">
-                                                            <div *ngIf="item.message.type === 'attachment'">
-                                                                <img
-                                                                    [src]="
-                                                                        ((fileUploadUrl$ | async) || 'TmacProxy') +
-                                                                        '/' +
-                                                                        selected.SessionID +
-                                                                        '/' +
-                                                                        item.message.attachment.name
-                                                                    "
-                                                                    class="w-100-p"
-                                                                    [alt]="item.message.attachment.name"
-                                                                />
-
-                                                                <!-- <img
-                                                                    [src]="item.message.attachment.src"
-                                                                    class="w-100-p"
-                                                                    [alt]="item.message.attachment.name"
-                                                                /> -->
-
-                                                                <span [innerHTML]="item.message.message"></span>
-                                                            </div>
-
-                                                            <span *ngIf="item.message.type === 'text'" [innerHTML]="item.message.message"></span>
-                                                        </div>
-                                                        <div class="time">
-                                                            {{ item.time }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </ng-container>
-                                            <!-- / MESSAGE -->
-                                        </div>
-                                        <!-- CHAT MESSAGES -->
-                                    </div>
-                                    <!-- / CHAT CONTENT -->
-                                </div>
-                            </div>
-                            <div *ngIf="!chatTranscripts.length" class="w-100-p">
-                                <div class="w-25-p mx-auto mb-20">
-                                    <img src="assets/images/vectors/no-data-1.svg" class="box-shadow-3d" />
-                                </div>
-                                <p class="text-center mat-title m-0">No Transcripts Available</p>
-                            </div>
-                        </ng-container>
-                    </ng-container>
-                </ng-container>
-
-                <ng-container *ngIf="mode === 'Email Preview'">
-                    <div *ngIf="emailThreadReq.data as emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
-                        <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
-                            <div class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
-                                <div id="subject" class="twd-text-xl twd-mb-2 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
-                                <div fxLayout fxLayoutAlign="space-between">
-                                    <div fxFlex="80" class="twd-flex">
-                                        <div class="twd-flex-1">
-                                            <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
-                                            <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
-                                            <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
-                                            <p matTooltip="Intent">
-                                                <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
-                                            </p>
-                                            <p class="my-4 text-bold">
-                                                Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                                            </p>
-                                            <ng-container *ngIf="emailInfo.AddedTime">
-                                                <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
-                                                <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
-                                            </ng-container>
-                                        </div>
-
-                                        <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
-                                            <p class="my-4 text-bold">Status: {{ emailInfo.CurrentStatus || 'NA' }}</p>
-                                            <p class="my-4 text-bold">Prirority: {{ emailInfo.Priority || 'NA' }}</p>
-                                            <p class="my-4 text-bold">Agent: {{ emailInfo.AgentName || 'NA' }}</p>
-                                            <p class="my-4 text-bold">
-                                                Closed Status: {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div
-                                    *ngIf="{
-                                        lesstItems: emailInfo.Attachments?.slice(0, 3),
-                                        moreItems: emailInfo.Attachments?.slice(3, -1)
-                                    } as attachList"
-                                >
-                                    <button
-                                        *ngFor="let file of attachList.lesstItems"
-                                        mat-stroked-button
-                                        class="border-radius-20 m-4"
-                                        [matTooltip]="file.Ext | uppercase"
-                                        (click)="openFile(file.URL)"
-                                    >
-                                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                        <span>{{ file.Name }}</span>
-                                    </button>
-
-                                    <ng-container *ngIf="showMoreAttachments">
-                                        <button
-                                            *ngFor="let file of attachList.moreItems"
-                                            mat-stroked-button
-                                            class="border-radius-20 m-4"
-                                            [matTooltip]="file.Ext | uppercase"
-                                            (click)="openFile(file.URL)"
-                                        >
-                                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                            <span>{{ file.Name }}</span>
-                                        </button>
-                                    </ng-container>
-
-                                    <button
-                                        mat-stroked-button
-                                        class="border-radius-20 m-4"
-                                        *ngIf="!showMoreAttachments && attachList.moreItems?.length"
-                                        (click)="showMoreAttachments = !showMoreAttachments"
-                                    >
-                                        <mat-icon> expand_more </mat-icon>
-                                        View {{ attachList.moreItems.length }} more
-                                    </button>
-
-                                    <button
-                                        mat-stroked-button
-                                        class="border-radius-20 m-4"
-                                        *ngIf="showMoreAttachments"
-                                        (click)="showMoreAttachments = false"
-                                    >
-                                        <mat-icon>expand_less</mat-icon>
-                                        Show less
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="twd-relative twd-flex-1 twd-overflow-auto">
-                                <div
-                                    *ngIf="!emailThreadReq.data.loading && !emailThreadReq.data.error"
-                                    class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1 twd-p-2"
-                                >
-                                    <div [innerHtml]="emailInfo.Body"></div>
-                                </div>
-
-                                <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
-                                    <ng-container *ngIf="emailThreadReq.data.loading">
-                                        <mat-spinner></mat-spinner>
-                                    </ng-container>
-                                    <div *ngIf="emailThreadReq.data.error" class="twd-text-center">
-                                        <p>Unable to fetch the email details</p>
-                                        <button mat-raised-button class="twd-mx-auto" color="primary" (click)="showEmailThread()">Retry</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-                <ng-container *ngIf="mode === 'Grouped View'">
-                    <ng-container *ngIf="customerJourneyTable.tableData.selection?.selected[0] as selected">
-                        <div class="twd-h-full twd-overflow-y-auto">
-                            <ng-container
-                                *ngTemplateOutlet="
-                                    table;
-                                    context: {
-                                        dataSource: selected.Children,
-                                        sortDisabled: false
-                                    }
-                                "
-                            ></ng-container>
-                        </div>
-                    </ng-container>
-                </ng-container>
-            </div>
             <!-- maximised view end - Table -->
         </div>
         <div *ngIf="customerJourneyTable.loading" class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="center center">
@@ -479,17 +251,21 @@
         <!-- NA Note that these columns can be defined in any order.
 The actual rendered columns are set as a property on the row definition" -->
         <ng-container matColumnDef="InteractionDate">
-            <mat-header-cell fxFlex="15" *matHeaderCellDef class="d-flex w-100-p">
-                <span mat-sort-header> Received At </span>
-            </mat-header-cell>
-            <mat-cell fxFlex="15" *matCellDef="let element">{{ (element.InteractionDate | date: 'd/M/yy, hh:mm:ss a') || 'NA' }} </mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full" style="max-width: 125px"> Received At </mat-header-cell>
+            <mat-cell *matCellDef="let element" class="twd-flex-full" style="max-width: 125px">
+                {{ (element.InteractionDate | date: 'd/M/yy, hh:mm:ss a') || 'NA' }}
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="Channel">
-            <mat-header-cell *matHeaderCellDef fxFlex="10">
-                <span mat-sort-header> Channel </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" fxFlex="10" [ngSwitch]="element.Channel | lowercase" [matTooltip]="element.Channel">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Channel </mat-header-cell>
+            <mat-cell
+                *matCellDef="let element"
+                [ngSwitch]="element.Channel | lowercase"
+                [matTooltip]="element.Channel"
+                class="twd-flex-full"
+                style="max-width: 100px"
+            >
                 <ng-container *ngSwitchCase="'textchat'">
                     <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                 </ng-container>
@@ -511,10 +287,8 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="Direction">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Direction </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Direction </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.Direction" class="twd-flex-full max-col">
                 {{ element.Direction | uppercase }}
                 <mat-icon class="channel-icon" color="accent">
                     {{ element.Direction === 'In' ? 'south' : 'north' }}
@@ -523,59 +297,69 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="InteractionText">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Interaction Text </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.InteractionText || 'NA' }}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="CIF">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> CIF </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.CIF || 'NA' }}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="AgentName">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Agent </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.AgentName || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full max-col"> Interaction Text </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.InteractionText" class="twd-flex-full max-col">
+                {{ element.InteractionText || 'NA' }}
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="Intent">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Intent </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.Intent || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Intent </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.Intent" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.Intent || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="EmailID">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Email </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.EmailID || 'NA' }}</mat-cell>
+        <ng-container matColumnDef="AgentName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Agent </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.AgentName" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.AgentName || 'NA' }}
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="CIF">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> CIF </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.CIF" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.CIF || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="NRIC">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> NRIC </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.NRIC || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> NRIC </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.NRIC" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.NRIC || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="PhoneNumber">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Phone </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.PhoneNumber || 'NA' }}</mat-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Phone </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.PhoneNumber" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.PhoneNumber || 'NA' }}
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="EmailID">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Email </mat-header-cell>
+            <mat-cell *matCellDef="let element" [matTooltip]="element.EmailID" class="twd-flex-full max-col">
+                <div class="text-truncate">
+                    {{ element.EmailID || 'NA' }}
+                </div>
+            </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="OverallSentiment">
-            <mat-header-cell *matHeaderCellDef>
-                <span mat-sort-header> Sentiment </span>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full max-col"> Sentiment </mat-header-cell>
+            <mat-cell *matCellDef="let element" class="twd-flex-full max-col">
                 <img
                     *ngIf="element.OverallSentiment === 'Positive'"
                     class="w-24"
@@ -605,72 +389,362 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="Actions">
-            <mat-header-cell *matHeaderCellDef fxFlex="15"> Actions </mat-header-cell>
-            <mat-cell *matCellDef="let element; let i = index" fxFlex="15" (click)="$event.stopPropagation()">
-                <div fxLayout fxLayoutAlign="start center" class="h-100-p w-100-p">
-                    <button class="w-32" mat-icon-button matTooltip="Session History" (click)="switchMaximizedViewMode('Session History', element)">
-                        <mat-icon> history </mat-icon>
-                    </button>
-                    <button class="w-32" mat-icon-button matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
-                        <mat-icon> list_alt </mat-icon>
-                    </button>
-                    <button class="w-32" mat-icon-button matTooltip="Comments" (click)="switchMaximizedViewMode('Comments', element)">
-                        <mat-icon> notes </mat-icon>
-                    </button>
-                    <button
-                        class="w-32"
-                        *ngIf="(element.Channel || '' | lowercase).includes('chat')"
-                        mat-icon-button
-                        matTooltip="Transcripts"
-                        (click)="switchMaximizedViewMode('Transcripts', element)"
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full"></mat-header-cell>
+            <mat-cell *matCellDef="let element" class="twd-flex-full twd-justify-start" (click)="$event.stopPropagation()">
+                <button mat-icon-button class="w-32 h-32 twd-leading-none" matTooltip="Actions" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                    <mat-menu class="custom" #menu="matMenu">
+                        <button
+                            *ngIf="data.Data.IframeBaseUrl"
+                            mat-menu-item
+                            matTooltip="Session History"
+                            (click)="switchMaximizedViewMode('Session History', element)"
+                        >
+                            <mat-icon> history </mat-icon>
+                            <span> Session History </span>
+                        </button>
+                        <button mat-menu-item matTooltip="Actions" (click)="switchMaximizedViewMode('Actions', element)">
+                            <mat-icon> list_alt </mat-icon>
+                            <span> Actions </span>
+                        </button>
+                        <button mat-menu-item matTooltip="Comments" (click)="switchMaximizedViewMode('Comments', element)">
+                            <mat-icon> notes </mat-icon>
+                            <span> Comments </span>
+                        </button>
+                        <button
+                            mat-menu-item
+                            *ngIf="(element.Channel || '' | lowercase).includes('chat')"
+                            matTooltip="Transcripts"
+                            (click)="switchMaximizedViewMode('Transcripts', element)"
+                        >
+                            <mat-icon> chat </mat-icon>
+                            <span> Transcripts </span>
+                        </button>
+                        <button
+                            mat-menu-item
+                            *ngIf="(element.Channel || '' | lowercase).includes('email')"
+                            matTooltip="Show Email"
+                            (click)="switchMaximizedViewMode('Email Preview', element)"
+                        >
+                            <mat-icon> email </mat-icon>
+                            <span> Show Email </span>
+                        </button>
+                    </mat-menu>
+                </button>
+                <!-- <button
+                    mat-icon-button
+                    class="w-32 h-32 twd-leading-none"
+                    matTooltip="Show Group"
+                    *ngIf="element.Children && element.Children.length"
+                    (click)="switchMaximizedViewMode('Session Emails', element)"
+                >
+                    <mat-icon>
+                        {{ element.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+                    </mat-icon>
+                </button> -->
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetails">
+            <mat-cell [attr.colspan]="customerJourneyTable.tableData.columns.length" class="twd-h-full twd-px-0 twd-py-1" *matCellDef="let selectedRow">
+                <div
+                    *ngIf="maximized && mode && selectedRow.expanded"
+                    class="spread animate__animated animate__slideInUp animate__faster twd-h-full twd-overflow-y-auto"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                >
+                    <div
+                        *ngIf="(selectedRow.Channel | lowercase) !== 'email'"
+                        class="px-20 pt-12 twd-text-xl twd-font-bold twd-sticky twd-top-0 twd-left-0"
+                        fxLayout
+                        fxLayoutAlign="space-between"
                     >
-                        <mat-icon> chat </mat-icon>
-                    </button>
-                    <button
-                        class="w-32"
-                        *ngIf="(element.Channel || '' | lowercase).includes('email')"
-                        mat-icon-button
-                        matTooltip="Show Email"
-                        (click)="switchMaximizedViewMode('Email Preview', element)"
-                    >
-                        <mat-icon> email </mat-icon>
-                    </button>
-                    <button
-                        class="w-32"
-                        mat-icon-button
-                        matTooltip="Show Group"
-                        *ngIf="element.Children && element.Children.length"
-                        (click)="element.expanded = !element.expanded"
-                    >
-                        <mat-icon> history </mat-icon>
-                    </button>
+                        <span>
+                            {{ mode }}
+                        </span>
+                        <button mat-icon-button color="accent" (click)="mode = null; selectedRow.expanded = false">
+                            <mat-icon> close </mat-icon>
+                        </button>
+                    </div>
+                    <ng-container *ngIf="mode === 'Comments'">
+                        <ng-container *ngIf="interactionNotesReq.data | async as iNotes">
+                            <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!interactionNotesReq.error && !interactionNotesReq.loading">
+                                <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No Comments Available</p>
+                                <div
+                                    class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20 font-size-16 font-weight-600"
+                                    *ngFor="let note of iNotes"
+                                    [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                                    [innerHTML]="note"
+                                ></div>
+                            </div>
+                        </ng-container>
+                        <p class="text-center mat-headline mt-20" *ngIf="interactionNotesReq.loading">Loading...</p>
+                        <p class="text-center mat-headline mt-20" *ngIf="interactionNotesReq.error">Some Error Occured</p>
+                    </ng-container>
+
+                    <ng-container *ngIf="mode === 'Actions'">
+                        <div class="custom-scroll-adjust px-12 pb-12" *ngIf="!sessionActions.error && !sessionActions.loading">
+                            <div *ngIf="!sessionActions.data?.length" class="text-center mt-40 mat-headline">No data available</div>
+
+                            <div
+                                *ngFor="let action of sessionActions.data"
+                                fxLayout="row-wrap"
+                                class="step mb-4 p-4 mat-elevation-z1 font-size-16 font-weight-600"
+                                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                            >
+                                <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
+                                    {{ action.ActionTime | date: 'dd/MM/yyyy, hh:mm:ss a' }}
+                                </div>
+                                <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16 p-8">
+                                    {{ action.Action }}
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="sessionActions.loading" fxLayout fxLayoutAlign="center">
+                            <p class="mt-20">
+                                <mat-spinner></mat-spinner>
+                            </p>
+                        </div>
+                        <div *ngIf="sessionActions.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
+                            <p>
+                                {{ sessionActions.msg }}
+                            </p>
+                            <!-- <button mat-button color="primary" (click)="getSessionActions(element.SessionID)">Retry</button> -->
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="mode === 'Session History'">
+                        <iframe
+                            *ngIf="!!customerJourneyTable.iframeUrl"
+                            [src]="customerJourneyTable.iframeUrl"
+                            class="w-100-p h-100-p"
+                            frameborder="0"
+                            seamless="seamless"
+                        ></iframe>
+                    </ng-container>
+
+                    <ng-container *ngIf="mode === 'Transcripts'">
+                        <ng-container *ngIf="interactionTranscripts">
+                            <ng-container *ngIf="interactionTranscripts[selectedRow.GroupID] as chatTranscripts">
+                                <div
+                                    *ngIf="chatTranscripts.length"
+                                    fxLayout="row"
+                                    fxLayoutAlign=" none"
+                                    class="w-100-p pb-16 chat-container custom-scroll-adjust"
+                                >
+                                    <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
+                                        <!-- CHAT CONTENT -->
+                                        <div class="chat-transcripts" fxFlex="1 1 auto">
+                                            <!-- CHAT MESSAGES -->
+                                            <div class="chat-messages px-12">
+                                                <!-- MESSAGE -->
+                                                <ng-container *ngFor="let item of chatTranscripts; let i = index">
+                                                    <div
+                                                        *ngIf="item.message"
+                                                        class="message-row"
+                                                        [ngClass]="{
+                                                            me: item?.who !== defaultCustomerName,
+                                                            contact: item?.who === defaultCustomerName
+                                                        }"
+                                                    >
+                                                        <div
+                                                            fxLayout="column"
+                                                            fxLayoutAlign="start start"
+                                                            class="bubble"
+                                                            [ngClass]="item.isAgent ? 'right' : 'left'"
+                                                        >
+                                                            <div
+                                                                *ngIf="chatTranscripts[i - 1]?.who !== item.who"
+                                                                class="user-label font-size-16 text-bold mb-4"
+                                                            >
+                                                                {{ item.who }}
+                                                            </div>
+
+                                                            <div class="message">
+                                                                <div *ngIf="item.message.type === 'attachment'">
+                                                                    <img
+                                                                        [src]="
+                                                                            ((fileUploadUrl$ | async) || 'TmacProxy') +
+                                                                            '/' +
+                                                                            selectedRow.SessionID +
+                                                                            '/' +
+                                                                            item.message.attachment.name
+                                                                        "
+                                                                        class="w-100-p"
+                                                                        [alt]="item.message.attachment.name"
+                                                                    />
+
+                                                                    <!-- <img
+                                                                    [src]="item.message.attachment.src"
+                                                                    class="w-100-p"
+                                                                    [alt]="item.message.attachment.name"
+                                                                /> -->
+
+                                                                    <span [innerHTML]="item.message.message"></span>
+                                                                </div>
+
+                                                                <span *ngIf="item.message.type === 'text'" [innerHTML]="item.message.message"></span>
+                                                            </div>
+                                                            <div class="time">
+                                                                {{ item.time }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <!-- / MESSAGE -->
+                                            </div>
+                                            <!-- CHAT MESSAGES -->
+                                        </div>
+                                        <!-- / CHAT CONTENT -->
+                                    </div>
+                                </div>
+                                <div *ngIf="!chatTranscripts.length" class="w-100-p">
+                                    <div class="w-25-p mx-auto mb-20">
+                                        <img src="assets/images/vectors/no-data-1.svg" class="box-shadow-3d" />
+                                    </div>
+                                    <p class="text-center mat-title m-0">No Transcripts Available</p>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf="mode === 'Email Preview'">
+                        <div *ngIf="emailThreadReq.data as emailInfo" id="emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
+                            <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
+                                <div class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4">
+                                    <div class="twd-flex twd-justify-between">
+                                        <div id="subject" class="twd-flex-1 twd-text-xl twd-mb-2 twd-truncate" [innerHtml]="emailInfo.Subject"></div>
+                                        <button
+                                            mat-icon-button
+                                            (click)="emailInfoRef?.classList.toggle('twd-h-0'); emailAttachmentRef?.classList.toggle('twd-h-0')"
+                                        >
+                                            <mat-icon>expand_more</mat-icon>
+                                        </button>
+                                    </div>
+                                    <div #emailInfoRef class="twd-flex twd-justify-between twd-overflow-hidden twd-h-0">
+                                        <div fxFlex="80" class="twd-flex">
+                                            <div class="twd-flex-1">
+                                                <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
+                                                <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
+                                                <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
+                                                <p matTooltip="Intent">
+                                                    <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
+                                                </p>
+                                                <p class="my-4 text-bold">
+                                                    Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                                </p>
+                                                <ng-container *ngIf="emailInfo.AddedTime">
+                                                    <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
+                                                    <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
+                                                </ng-container>
+                                            </div>
+
+                                            <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
+                                                <p class="my-4 text-bold">Status: {{ emailInfo.CurrentStatus || 'NA' }}</p>
+                                                <p class="my-4 text-bold">Prirority: {{ emailInfo.Priority || 'NA' }}</p>
+                                                <p class="my-4 text-bold">Agent: {{ emailInfo.AgentName || 'NA' }}</p>
+                                                <p class="my-4 text-bold">
+                                                    Closed Status: {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        #emailAttachmentRef
+                                        *ngIf="{
+                                            lesstItems: emailInfo.Attachments?.slice(0, 3),
+                                            moreItems: emailInfo.Attachments?.slice(3, -1)
+                                        } as attachList"
+                                        class="twd-overflow-hidden twd-h-0"
+                                    >
+                                        <button
+                                            *ngFor="let file of attachList.lesstItems"
+                                            mat-stroked-button
+                                            class="border-radius-20 m-4"
+                                            [matTooltip]="file.Ext | uppercase"
+                                            (click)="openFile(file.URL)"
+                                        >
+                                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                            <span>{{ file.Name }}</span>
+                                        </button>
+
+                                        <ng-container *ngIf="showMoreAttachments">
+                                            <button
+                                                *ngFor="let file of attachList.moreItems"
+                                                mat-stroked-button
+                                                class="border-radius-20 m-4"
+                                                [matTooltip]="file.Ext | uppercase"
+                                                (click)="openFile(file.URL)"
+                                            >
+                                                <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                                <span>{{ file.Name }}</span>
+                                            </button>
+                                        </ng-container>
+
+                                        <button
+                                            mat-stroked-button
+                                            class="border-radius-20 m-4"
+                                            *ngIf="!showMoreAttachments && attachList.moreItems?.length"
+                                            (click)="showMoreAttachments = !showMoreAttachments"
+                                        >
+                                            <mat-icon> expand_more </mat-icon>
+                                            View {{ attachList.moreItems.length }} more
+                                        </button>
+
+                                        <button
+                                            mat-stroked-button
+                                            class="border-radius-20 m-4"
+                                            *ngIf="showMoreAttachments"
+                                            (click)="showMoreAttachments = false"
+                                        >
+                                            <mat-icon>expand_less</mat-icon>
+                                            Show less
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="twd-relative twd-flex-1 twd-overflow-auto">
+                                    <div
+                                        *ngIf="!emailThreadReq.data.loading && !emailThreadReq.data.error"
+                                        class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1 twd-p-2"
+                                    >
+                                        <div [innerHtml]="emailInfo.Body"></div>
+                                    </div>
+
+                                    <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+                                        <ng-container *ngIf="emailThreadReq.data.loading">
+                                            <mat-spinner></mat-spinner>
+                                        </ng-container>
+                                        <div *ngIf="emailThreadReq.data.error" class="twd-text-center">
+                                            <p>Unable to fetch the email details</p>
+                                            <button mat-raised-button class="twd-mx-auto" color="primary" (click)="showEmailThread()">Retry</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="mode === 'Session Emails'">
+                        <ng-container
+                            [ngTemplateOutlet]="table"
+                            [ngTemplateOutletContext]="{
+                                dataSource: element.Children,
+                                sortDisabled: true
+                            }"
+                        ></ng-container>
+                    </ng-container>
                 </div>
             </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="sessions">
-            <mat-cell [attr.colspan]="customerJourneyTable.tableData.columns.length" *matCellDef="let element">
-                <ng-container
-                    [ngTemplateOutlet]="table"
-                    [ngTemplateOutletContext]="{
-                        dataSource: element.Children,
-                        sortDisabled: true
-                    }"
-                ></ng-container>
-            </mat-cell>
-        </ng-container>
-
         <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
-        <mat-row
-            class="selectable"
-            *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
-            [ngClass]="{ selected: isRowSelected(row) }"
-        >
+        <mat-row class="selectable" *matRowDef="let row; columns: customerJourneyTable.tableData.columns" [ngClass]="{ selected: row.expanded }">
         </mat-row>
         <mat-row
-            class="selectable group-header twd-overflow-hidden"
-            *matRowDef="let row; columns: ['sessions']"
-            [ngClass]="{ 'twd-hidden': !row.expanded }"
+            class="selectable group-header twd-transform twd-max-h-0 twd-min-h-0"
+            *matRowDef="let row; columns: ['expandedDetails']"
+            [ngClass]="{ expanded: row.expanded }"
         >
         </mat-row>
     </mat-table>

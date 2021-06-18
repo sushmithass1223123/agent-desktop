@@ -62,10 +62,12 @@ module.exports = {
                 accent: generateMaterialColors('twd-accent'),
                 warn: generateMaterialColors('twd-warn')
             },
-            minHeight: generateGrids(),
-            maxHeight: generateGrids(),
+            width: generateGrids(),
             minWidth: generateGrids(),
             maxWidth: generateGrids(),
+            height: generateGrids(),
+            minHeight: generateGrids(),
+            maxHeight: generateGrids(),
             lineHeight: {
                 3: '12px',
                 4: '16px',
@@ -75,6 +77,9 @@ module.exports = {
                 8: '32px',
                 9: '36px',
                 10: '40px'
+            },
+            flex: {
+                full: '1 1 100%'
             }
         }
     },

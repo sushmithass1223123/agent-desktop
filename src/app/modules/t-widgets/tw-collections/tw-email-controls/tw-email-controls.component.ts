@@ -703,7 +703,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
         try {
             const { InSessionId, OutSessionId } = this.currentInteraction;
-            const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.email;
+            const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.getEmail();
 
             let confirmSend = true;
             if (!Subject) {
@@ -842,7 +842,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const { InSessionId, OutSessionId } = this.currentInteraction;
-        const email = this.createEmailRef?.email;
+        const email = this.createEmailRef?.getEmail();
         if (email) {
             // @TODO Files not sent as draft arg
             const { BCC, CC, To, Subject, Body, Files } = email;

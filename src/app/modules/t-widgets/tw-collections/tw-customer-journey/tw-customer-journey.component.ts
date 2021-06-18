@@ -27,10 +27,10 @@ import { maticonByExtension } from 'app/utils';
 import { format, parse } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
-import { from, Observable, of, Subscription } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
 
-type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | null;
+type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
 /**
  * Customer journey component
@@ -66,16 +66,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Search for record in table
      */
     searchForm = new FormGroup({
-        SessionID: new FormControl(''),
-        PhoneNumber: new FormControl(''),
-        Channel: new FormControl(''),
         InteractionDateStart: new FormControl(),
         InteractionDateEnd: new FormControl(),
+        Channel: new FormControl(''),
+        Direction: new FormControl(''),
+        InteractionText: new FormControl(''),
+        Intent: new FormControl(''),
+        AgentName: new FormControl(''),
         CIF: new FormControl(''),
         NRIC: new FormControl(''),
-        OverallSentiment: new FormControl(''),
-        Agent: new FormControl(''),
-        Intent: new FormControl('')
+        PhoneNumber: new FormControl(''),
+        EmailID: new FormControl(''),
+        OverallSentiment: new FormControl('')
     });
 
     /**
@@ -247,7 +249,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         open: () => {
             if (this.advancedSearchModal.ref) {
                 this.advancedSearchModal.openedRef = this.matDialog.open(this.advancedSearchModal.ref, {
-                    width: '50%',
+                    width: '40%',
                     panelClass: 'customer-journey-advanced-form'
                 });
             }
@@ -305,13 +307,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 columns: [
                     'InteractionDate',
                     'Channel',
-                    'InteractionText',
                     'Direction',
+                    'InteractionText',
                     'Intent',
                     'AgentName',
                     'CIF',
                     'NRIC',
                     'PhoneNumber',
+                    'EmailID',
                     'OverallSentiment',
                     'Actions'
                 ],
@@ -342,6 +345,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (this.data.Data.Columns && this.data.Data.Columns.length) {
             this.customerJourneyTable.tableData.columns = this.data.Data.Columns;
         }
+
         this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
 
         this.historyParams = {
@@ -496,6 +500,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         const tableData = {};
         let transcripts: Record<string, ChatTranscripts[]> = {};
         let sortedTabledata = [];
+        // try {
+        //     console.log(this.groupTable(historyData, 'GroupID', 'InteractionDate', 'SessionID', 'InteractionDate'));
+        // } catch (e) {
+        //     console.error(e);
+        // }
         if (update) {
             sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(historyData), 'ItemID').reverse();
         } else {
@@ -512,6 +521,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     Intent: data.Intent,
                     AgentName: data.AgentName,
                     CIF: data.CIF,
+                    EmailID: data.EmailID,
                     NRIC: data.NRIC,
                     PhoneNumber: data.PhoneNumber,
                     OverallSentiment: data.OverallSentiment,
@@ -522,6 +532,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     ID: data.ID,
                     GroupID: data.GroupID,
                     LastID: data.LastID,
+                    InteractionText: data.InteractionText,
                     Children: [],
                     expanded: false
                 };
@@ -535,6 +546,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     Intent: data.Intent,
                     AgentName: data.AgentName,
                     CIF: data.CIF,
+                    EmailID: data.EmailID,
                     NRIC: data.NRIC,
                     PhoneNumber: data.PhoneNumber,
                     OverallSentiment: data.OverallSentiment,
@@ -545,7 +557,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     ID: data.ID,
                     GroupID: data.GroupID,
                     LastID: data.LastID,
-                    Children
+                    InteractionText: data.InteractionText,
+                    Children,
+                    expanded: false
                 };
             }
             let message: any;
@@ -592,7 +606,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         } else if (pageOffset === 0) {
             this.getInteractionHistory('1');
         }
-        console.log(newRecords.filter((x: any) => x.Children));
     }
 
     /**
@@ -713,14 +726,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
-        let groupingSub$: Subscription;
         if (max) {
-            groupingSub$ = this.initGroupingService();
             setTimeout(() => {
                 this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
             }, 0);
-        } else if (groupingSub$) {
-            groupingSub$.unsubscribe();
         }
     }
 
@@ -844,16 +853,21 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * @param {Mode} mode
      */
     switchMaximizedViewMode(mode: Mode, row: InteractionHistory): void {
-        this.mode = mode;
         if (!this.maximized) {
             this.maximized = true;
             this.wrapperComponent.maximize();
         }
-        if (this.customerJourneyTable.tableData.selection?.selected[0]?.ID !== row.ID) {
-            setTimeout(() => {
-                this.customerJourneyTable.tableData.selection.toggle(row);
-            }, 0);
+        const selectedRow = this.customerJourneyTable.tableData.source.data.find((x: any) => x.expanded);
+        if (selectedRow?.ID === row.ID && mode === this.mode) {
+            return;
         }
+        if (selectedRow?.ID !== row.ID) {
+            if (selectedRow) {
+                (selectedRow as any).expanded = false;
+            }
+            (row as any).expanded = true;
+        }
+        this.mode = mode;
         switch (mode) {
             case 'Session History': {
                 this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -879,26 +893,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.showEmailThread(row);
                 break;
             }
+            case 'Session Emails': {
+                break;
+            }
         }
-    }
-
-    /**
-     * Closes the bottom action window
-     */
-    closeActionWindow(): void {
-        this.mode = null;
-        this.customerJourneyTable.tableData.selection.clear();
-        // this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);
-    }
-
-    /**
-     * Is row selected
-     * @param row
-     * @returns
-     */
-    isRowSelected(row: any): boolean {
-        const selected = this.customerJourneyTable.tableData.selection.isSelected(row);
-        return selected;
     }
 
     /**
@@ -910,78 +908,50 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * This method returns a boolean value for when directive in group header row
+     * Groups table data
+     * @param tableData
+     * @param row
+     * @param groupId
      */
-    isGroup = (idx: any): boolean => {
-        const record = this.customerJourneyTable.tableData.source.data[idx];
-        if (record) {
-            return (record as any).isGroup;
-        }
-        return false;
-    };
-
-    /**
-     * This method groups the material table records
-     */
-    initGroupingService(): Subscription {
-        return this.groupCtrl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((val) => {
-            const data = this.customerJourneyTable.tableData.source.data.filter((x: any) => !x.isGroup);
-            if (val) {
-                this.customerJourneyTable.tableData.source.sort.sort({ id: null, start: 'desc', disableClear: true });
-                this.customerJourneyTable.tableData.sortDisabled = true;
-                const groupedRecords = groupBy(data, val);
-                this.customerJourneyTable.tableData.source.data = Object.entries(groupedRecords).reduce((acc, curr) => {
-                    const [key, records] = curr;
-                    acc.push(
-                        {
-                            isGroup: true,
-                            groupName: `${val} : ${key}`,
-                            expanded: true,
-                            value: key
-                        },
-                        ...records
-                    );
-                    return acc;
-                }, []);
-            } else {
-                this.customerJourneyTable.tableData.sortDisabled = false;
-                this.processHistoryData(data);
-                this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
-            }
-        });
-    }
-
-    /**
-     * Toggles grouped node
-     * @param {any} row
-     * @param {number} idx
-     */
-    toggleGroupExpand(row: any, idx: number): void {
-        const record: any = this.customerJourneyTable.tableData.source.data[idx];
-        if (row.expanded) {
-            const { reduced, newRecords } = this.customerJourneyTable.tableData.source.data.reduce(
-                (acc, curr) => {
-                    if (row.groupName === (curr as any).groupName) {
-                        acc.newRecords.push({ ...curr, expanded: false });
-                    } else {
-                        if (curr[this.groupCtrl.value] === row.value) {
-                            acc.reduced.push(curr);
-                        } else {
-                            acc.newRecords.push(curr);
-                        }
-                    }
-                    return acc;
-                },
-                { reduced: [], newRecords: [] }
-            );
-            this.customerJourneyTable.tableData.source.data = newRecords;
-            this.reducedRecords[row.groupName] = reduced;
-        } else {
-            const data = this.customerJourneyTable.tableData.source.data;
-            data.splice(idx, 1, { ...record, expanded: true }, ...this.reducedRecords[row.groupName]);
-            this.customerJourneyTable.tableData.source.data = data;
-            this.reducedRecords[row.groupName] = [];
-        }
+    groupTable(response: any[], groupId: string, sortId: string, groupChildrenBy?: string, sortChildrenBy?: string): any[] {
+        const records = response.map((data) => ({
+            InteractionDate: data.InteractionDate,
+            Channel: data.Channel,
+            Intent: data.Intent,
+            AgentName: data.AgentName,
+            CIF: data.CIF,
+            EmailID: data.EmailID,
+            NRIC: data.NRIC,
+            PhoneNumber: data.PhoneNumber,
+            OverallSentiment: data.OverallSentiment,
+            ItemID: data.ItemID,
+            SubType: data.SubType,
+            SessionID: data.SessionID,
+            Direction: data.Direction,
+            ID: data.ID,
+            GroupID: data.GroupID,
+            LastID: data.LastID,
+            InteractionText: data.InteractionText,
+            Children: [],
+            expanded: false
+        }));
+        const groupedRecordsById = groupBy(records, groupId);
+        return sortBy(
+            Object.entries(groupedRecordsById).reduce((firstRow, curr) => {
+                let [, val] = curr;
+                const tableRow = val.shift();
+                if (groupChildrenBy) {
+                    val = this.groupTable(val, groupChildrenBy, sortChildrenBy, '', 'messageId');
+                }
+                if (sortChildrenBy) {
+                    val = sortBy(val, sortChildrenBy);
+                }
+                (tableRow as any).Children = val;
+                firstRow.push(tableRow);
+                return firstRow;
+            }, []),
+            sortId
+        );
     }
 }
 

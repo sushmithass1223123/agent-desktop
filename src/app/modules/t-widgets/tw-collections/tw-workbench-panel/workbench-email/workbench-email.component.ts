@@ -13,7 +13,7 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SDKClient, TUtils } from '@tmac/sdk';
+import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
 import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailOutput, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -24,6 +24,8 @@ import { firstValueFrom, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import tinymce from 'tinymce';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
+
+type OutboxInboxRes = (EmailOutboxModel | EmailInboxModel) & { InSessionId?: string; OutSessionId?: string };
 
 type ComponentActions =
     | 'emails/loading'
@@ -245,17 +247,15 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Id for editor component
      */
-    editorState = {
-        id: TUtils.Generic.uuid(),
-        loading: false
-    };
+    // editorState = {
+    //     id: TUtils.Generic.uuid(),
+    //     loading: false
+    // };
 
     /**
-     * Selected email form control
+     * All selected emails flag
      */
-    // myForm = new FormGroup({
-    selectedEmailsControl = new FormArray([]);
-    // });
+    allEmailsSelected = false;
 
     /**
      * Constructor
@@ -303,11 +303,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
             this.availableMailboxes = res;
         });
-        this.selectedEmailsControl.valueChanges.subscribe({
-            next: console.log,
-            error: console.error,
-            complete: console.log
-        });
         this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
     }
 
@@ -339,11 +334,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        tinymce.editors.forEach((e) => {
-            if (e.id === `textarea#${this.editorState.id}`) {
-                e.destroy();
-            }
-        });
+        // tinymce.editors.forEach((e) => {
+        //     if (e.id === `textarea#${this.editorState.id}`) {
+        //         e.destroy();
+        //     }
+        // });
         // tinymce.activeEditor?.destroy();
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -1047,6 +1042,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             this.selectedMails = this.selectedMails.filter((x) => x.uiId !== node.uiId);
             this.selectedMailIds = this.selectedMails.map((x) => x.uiId) || [];
         }
+        const allEmails = this.getAllEmailNodes()?.length || 0;
+        if (this.selectedMailIds.length === allEmails && !this.allEmailsSelected) {
+            this.allEmailsSelected = true;
+        }
+        if (this.selectedMailIds.length !== allEmails && this.allEmailsSelected) {
+            this.allEmailsSelected = false;
+        }
     }
 
     /**
@@ -1069,8 +1071,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
             const requestedSession = fetchFromOutbox ? email.OutSessionId : email.InSessionId;
             if (!this.emailBodies[requestedSession]) {
-                const res = (await (fetchFromOutbox ? SDKClient.getOutboxEmail(requestedSession) : SDKClient.getInboxEmail(requestedSession)))
-                    .response;
+                let res: OutboxInboxRes;
+                if (fetchFromOutbox) {
+                    res = (await SDKClient.getOutboxEmail(requestedSession)).response;
+                    res.InSessionId = res.InSessionID;
+                    res.OutSessionId = res.SessionID;
+                } else {
+                    res = (await SDKClient.getInboxEmail(requestedSession)).response;
+                    res.InSessionId = res.SessionID;
+                    res.OutSessionId = '';
+                }
+
                 // check the response
                 if (!res) {
                     this.setComponentState('emails/failure/custom-message', { msg: 'Something went wrong, Error in email preview', snackbar: true });
@@ -1083,7 +1094,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         // get the file name from URL
                         let name = item.URL.split('/').pop();
                         const sessionKey = this.getCurrentSessionKey();
-                        name = name.replace(item[sessionKey], '');
+                        name = name.replace(res[sessionKey], '');
                         item.Name = name;
                         item.Ext = name.split('.').pop();
                         item.Icon = maticonByExtension(item.Ext);
@@ -1118,6 +1129,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     switchTab(tab: AvailableTabs): void {
         this.currentTab = tab;
         this.removeEmailsfromView('all');
+        this.allEmailsSelected = false;
         this.emailBodies = {};
         this.doAdvancedSearch();
     }
@@ -1215,7 +1227,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     replyToSelectedEmails(emails: any[]): void {
         try {
             const widget = new TwWidgetModel('Reply All', 'tw-panel');
-            this.editorState.id = TUtils.Generic.uuid();
+            // this.editorState.id = TUtils.Generic.uuid();
             widget.Config.Anchor = true;
             widget.Config.Position.W = 800;
             widget.Config.Position.H = 500;
@@ -1267,44 +1279,44 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             //     return true;
             // };
             this._aotWidgetService.addWidget(widget);
-            this.editorState.loading = true;
-            setTimeout(() => {
-                tinymce
-                    .init({
-                        selector: `textarea#${this.editorState.id}`,
-                        min_height: 200,
-                        height: '100%',
-                        menubar: false,
-                        fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
-                        forced_root_block: false,
-                        branding: false,
-                        base_url: `${this.baseHref}assets/tinymce/`,
-                        content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                        plugins: [
-                            'advlist autolink lists link image charmap print preview anchor',
-                            'searchreplace visualblocks code fullscreen',
-                            'insertdatetime media table paste code wordcount'
-                        ],
-                        toolbar:
-                            'undo redo | formatselect | ' +
-                            'bold italic backcolor | alignleft aligncenter ' +
-                            'alignright alignjustify | bullist numlist outdent indent | ' +
-                            'removeformat | help',
-                        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                        setup: (editor) => {
-                            editor.on('init', () => {
-                                this.editorState.loading = false;
-                            });
-                        }
-                    })
-                    .then(() => {
-                        console.log('Email editor loaded succesfully');
-                    })
-                    .catch((err) => {
-                        console.error('Unable to load editor');
-                        console.error(err);
-                    });
-            }, 0);
+            // this.editorState.loading = true;
+            // setTimeout(() => {
+            //     tinymce
+            //         .init({
+            //             selector: `textarea#${this.editorState.id}`,
+            //             min_height: 200,
+            //             height: '100%',
+            //             menubar: false,
+            //             fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
+            //             forced_root_block: false,
+            //             branding: false,
+            //             base_url: `${this.baseHref}assets/tinymce/`,
+            //             content_css: `${this.baseHref}assets/tinymce/editor.css`,
+            //             plugins: [
+            //                 'advlist autolink lists link image charmap print preview anchor',
+            //                 'searchreplace visualblocks code fullscreen',
+            //                 'insertdatetime media table paste code wordcount'
+            //             ],
+            //             toolbar:
+            //                 'undo redo | formatselect | ' +
+            //                 'bold italic backcolor | alignleft aligncenter ' +
+            //                 'alignright alignjustify | bullist numlist outdent indent | ' +
+            //                 'removeformat | help',
+            //             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+            //             setup: (editor) => {
+            //                 editor.on('init', () => {
+            //                     this.editorState.loading = false;
+            //                 });
+            //             }
+            //         })
+            //         .then(() => {
+            //             console.log('Email editor loaded succesfully');
+            //         })
+            //         .catch((err) => {
+            //             console.error('Unable to load editor');
+            //             console.error(err);
+            //         });
+            // }, 0);
         } catch (e) {
             console.error(e);
             this.setComponentState('email/reply/failure');
