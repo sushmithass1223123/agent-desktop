@@ -81,7 +81,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To check agent features for One Way Video
+     * To check agent features
      */
     private checkAgentFeatures(): void {
         // check the agent features to enable/disable

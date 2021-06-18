@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
@@ -124,7 +125,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _tmacEventService: TMACEventService,
         private _dashboardService: DashboardService,
         private _fuseSidebarService: FuseSidebarService,
-        private _instantMessagingService: InstantMessagingService
+        private _instantMessagingService: InstantMessagingService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super();
 
@@ -144,10 +146,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        const checkFeature = SDKClient.getAgentData().featuresList.filter(
-            (f) => f.Feature === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
-        )?.[0];
-        this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
+
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
 
@@ -164,6 +163,16 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
             }
         });
+
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
+
+        // check agent features
+        this.checkAgentFeatures();
     }
 
     /**
@@ -172,6 +181,18 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
+
+    /**
+     * To check agent features for IsSetBroadcastEnabled
+     */
+    private checkAgentFeatures(): void {
+        try {
+            const checkFeature = SDKClient.getAgentData().featuresList.filter(
+                (f) => f.Feature === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
+            )?.[0];
+            this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
+        } catch (error) {}
     }
 
     /**
