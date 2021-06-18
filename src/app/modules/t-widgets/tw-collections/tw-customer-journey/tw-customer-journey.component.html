@@ -258,7 +258,7 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="Channel">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full max-col"> Channel </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full" style="max-width: 100px"> Channel </mat-header-cell>
             <mat-cell
                 *matCellDef="let element"
                 [ngSwitch]="element.Channel | lowercase"
@@ -299,7 +299,9 @@ The actual rendered columns are set as a property on the row definition" -->
         <ng-container matColumnDef="InteractionText">
             <mat-header-cell *matHeaderCellDef class="twd-flex-full max-col"> Interaction Text </mat-header-cell>
             <mat-cell *matCellDef="let element" [matTooltip]="element.InteractionText" class="twd-flex-full max-col">
-                {{ element.InteractionText || 'NA' }}
+                <div class="text-truncate">
+                    {{ element.InteractionText || 'NA' }}
+                </div>
             </mat-cell>
         </ng-container>
 
@@ -389,8 +391,8 @@ The actual rendered columns are set as a property on the row definition" -->
         </ng-container>
 
         <ng-container matColumnDef="Actions">
-            <mat-header-cell *matHeaderCellDef class="twd-flex-full"></mat-header-cell>
-            <mat-cell *matCellDef="let element" class="twd-flex-full twd-justify-start" (click)="$event.stopPropagation()">
+            <mat-header-cell *matHeaderCellDef class="twd-flex-full" style="max-width: 40px"></mat-header-cell>
+            <mat-cell *matCellDef="let element" class="twd-flex-full twd-justify-start" style="max-width: 40px" (click)="$event.stopPropagation()">
                 <button mat-icon-button class="w-32 h-32 twd-leading-none" matTooltip="Actions" [matMenuTriggerFor]="menu">
                     <mat-icon>more_vert</mat-icon>
                     <mat-menu class="custom" #menu="matMenu">
