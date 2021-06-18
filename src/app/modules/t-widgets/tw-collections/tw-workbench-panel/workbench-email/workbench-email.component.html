@@ -456,20 +456,20 @@
                         class="twd-flex twd-items-center twd-px-2 twd-pt-2"
                         [ngClass]="classes.hostClass"
                         *ngIf="
-                            dataSource.data?.length
+                            dataSource.data?.length && ['queue', 'draft'].includes(currentTab)
                                 ? { hostClass: 'twd-justify-between', selectClass: '' }
                                 : { hostClass: 'twd-justify-end', selectClass: 'twd-hidden' } as classes
                         "
                     >
                         <div [ngClass]="classes.selectClass">
-                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)"> Select All </mat-checkbox>
+                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)"  [(ngModel)]="allEmailsSelected" > Select All </mat-checkbox>
                         </div>
                         <div class="twd-flex twd-items-center">
                             <div class="twd-font-bold twd-text-sm">
                                 <mat-form-field class="custom with-border" appearance="outline">
                                     <mat-select [formControl]="sortControls.sortBy">
                                         <mat-option value="default">Default</mat-option>
-                                        <mat-option value="Subject">Sort By Name</mat-option>
+                                        <mat-option value="Subject">Sort By Subject</mat-option>
                                         <mat-option value="addedTime">Sort By Time</mat-option>
                                     </mat-select>
                                 </mat-form-field>
@@ -656,12 +656,14 @@
                                     <p class="text-bold my-4" *ngIf="selectedEmail.ccList">Cc : {{ selectedEmail.ccList }}</p>
                                     <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
                                     <p class="my-4 text-bold">Status: {{ selectedEmail.currentStatus || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Prirority: {{ selectedEmail.priority || 'NA' }}</p>
+                                    <p *ngIf="['inbox', 'queue'].includes(currentTab)" class="my-4 text-bold">
+                                        Prirority: {{ selectedEmail.priority || 'NA' }}
+                                    </p>
                                     <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
-                                    <p class="my-4 text-bold">
+                                    <p *ngIf="['inbox', 'queue'].includes(currentTab)" class="my-4 text-bold">
                                         Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                     </p>
-                                    <p class="my-4 text-bold">
+                                    <p *ngIf="['inbox', 'queue'].includes(currentTab)" class="my-4 text-bold">
                                         Closed Status: {{ selectedEmail.closedBy ? 'Closed by ' + selectedEmail.closedBy : 'Open' }}
                                     </p>
                                     <p class="my-4 text-bold">Intent: {{ selectedEmail.intent || 'NA' }}</p>
@@ -745,13 +747,13 @@
     </div>
 
     <ng-template #replyDialog>
-        <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative">
-            <div
+        <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative twd-p-2">
+            <!-- <div
                 *ngIf="editorState.loading"
                 class="twd-absolute twd-bg-white twd-bg-opacity-25 twd-w-full twd-h-full twd-z-10 twd-flex twd-items-center twd-justify-center"
             >
                 <p class="twd-text-lg twd-font-bold twd-text-center">Loading editor ...</p>
-            </div>
+            </div> -->
             <create-email
                 [emailInfo]="replyInfo"
                 (sendEmail)="replyEditorModal.sendEmail($event)"
