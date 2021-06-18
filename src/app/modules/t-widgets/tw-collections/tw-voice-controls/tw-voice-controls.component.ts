@@ -305,6 +305,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     @ViewChild('makeCallDialog')
     MakeCallDialog: TemplateRef<any>;
 
+    /**
+     * Make call dialog ref
+     */
+    makeCallDialogRef: MatDialogRef<any>;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -1791,13 +1796,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      *
      */
     makeCall(): void {
-        this.dialogRef = this._matDialog.open(this.MakeCallDialog, {
+        this.makeCallDialogRef = this._matDialog.open(this.MakeCallDialog, {
             panelClass: 'make-call-dialog',
             maxWidth: '450px',
             disableClose: true
         });
 
-        this.dialogRef.afterClosed().subscribe((res: boolean) => {
+        this.makeCallDialogRef.afterClosed().subscribe((res: boolean) => {
             if (res) {
                 // make call to the provided number and complete the reminder
                 SDKClient.makeCall({

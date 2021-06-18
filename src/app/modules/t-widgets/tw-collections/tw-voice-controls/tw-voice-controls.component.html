@@ -373,7 +373,7 @@
     <ng-template #makeCallDialog>
         <shared-wrapper icon="call" title="Make Call" [loading]="false">
             <div [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                <form (ngSubmit)="makeCallDialogRef.close(true)" class="twd-flex twd-items-center twd-gap-2">
+                <form (ngSubmit)="makeCallDialogRef?.close(true)" class="twd-flex twd-items-center twd-gap-2">
                     <mat-form-field class="form-field custom with-border pb-0" appearance="outline">
                         <input
                             class="login-input"

@@ -380,7 +380,7 @@
     <ng-template #rejectEmailDialog>
         <div class="p-28" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
             <p class="mat-title">Reject Email</p>
-            <form (ngSubmit)="rejectEmailDialogRef.close()" novalidate fxLayout="row wrap" fxLayoutAlign="end" fxLayoutGap="20px">
+            <form (ngSubmit)="rejectEmailDialogRef?.close()" novalidate fxLayout="row wrap" fxLayoutAlign="end" fxLayoutGap="20px">
                 <mat-form-field fxFlex="100" class="form-field custom with-bg" appearance="outline">
                     <mat-select
                         [placeholder]="rejectReason.allReasons?.length ? 'Select Reject Reason' : 'No Reject Reasons available'"

@@ -21,6 +21,7 @@ import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import tinymce, { Editor } from 'tinymce';
 import tinyMCE from 'tinymce';
 
 /**
@@ -136,7 +137,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.replyTag = this.emailInfo.Replying ? (this.emailInfo.Subject ? (this.emailInfo.Subject.startsWith('RE:') ? '' : 'RE:') : '') : '';
+        this.replyTag = this.emailInfo?.Replying ? (this.emailInfo.Subject ? (this.emailInfo.Subject.startsWith('RE:') ? '' : 'RE:') : '') : '';
         if (this.emailInfo?.To) {
             this.email.To = this.emailInfo?.To.split(',').filter((x) => !!x);
         }
@@ -209,7 +210,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.editorState.loading = false;
                             editor.setContent(this.email.Body || '');
                             fromEvent(editor, 'blur')
-                                .pipe(takeUntil(this.unsubscribeAll$), debounceTime(2000))
+                                .pipe(takeUntil(this.unsubscribeAll$))
                                 .subscribe({
                                     next: () => {
                                         this.email.Body = editor.getContent();
@@ -235,7 +236,10 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      * Lifecycle hook
      */
     ngOnDestroy(): void {
-        tinyMCE.activeEditor.off('blur');
+        const e = this.getCurrentEditor();
+        e.off('blur');
+        e.destroy();
+        // tinyMCE.activeEditor.off('blur');
         // tinyMCE.activeEditor.destroy();
     }
 
@@ -344,7 +348,9 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     selectTemplate(html: string): void {
         this.email.Body = `${html} ${this.email.Body}`;
-        tinyMCE.activeEditor.setContent(this.email.Body);
+        const e = this.getCurrentEditor();
+        e.setContent(this.email.Body);
+        // tinyMCE.activeEditor.setContent(this.email.Body);
     }
     /**
      * Focuses the editor
@@ -369,5 +375,21 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     openFile(fileUrl: string): void {
         window.open(fileUrl);
+    }
+
+    /**
+     * Gets email from the editor
+     */
+    getEmail(): CreateEmailOutput {
+        const e = this.getCurrentEditor();
+        this.email.Body = e.getContent();
+        return this.email;
+    }
+
+    /**
+     * gets the current editor
+     */
+    getCurrentEditor(): Editor {
+        return tinymce.editors.find((e) => e.id === this.editorState.id);
     }
 }
