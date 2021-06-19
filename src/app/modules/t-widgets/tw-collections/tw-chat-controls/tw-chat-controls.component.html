@@ -5,34 +5,52 @@
         config: (customFuse.config$ | async)
     } as customFuse"
 >
-    <ng-template #messageRef let-message="message" let-showName="showName" let-replyAble="replyAble">
+    <ng-template #messageRef let-message="message" let-showName="showName" let-replyAble="replyAble" let-replied="replied">
         <ng-container *ngIf="message">
             <div
                 *ngIf="showName"
-                class="user-label font-size-16 text-bold mb-4"
+                class="user-label font-size-14 text-bold"
                 [ngClass]="{
-                    agent: !message.isAgent && message.who !== customerName
+                    agent: !message.isAgent && message.who !== customerName,
+                    'mb-4': !message.repliedToMessage
                 }"
             >
                 {{ message.who }}
             </div>
-            <div class="message">
-                <div *ngIf="message.repliedToMessage" class="p-8 my-4 border-radius-16 border-left" [ngClass]="customFuse.anchor?.body || ''">
-                    <ng-container *ngTemplateOutlet="messageRef; context: { message: message.repliedToMessage, showName: true }"> </ng-container>
+            <div class="message" [ngClass]="{ 'm-0': replied }">
+                <div *ngIf="message.repliedToMessage" class="p-4 mt-4 mb-8 border-radius-8 border-left-lg-secondary replied">
+                    <ng-container
+                        *ngTemplateOutlet="
+                            messageRef;
+                            context: {
+                                message: message.repliedToMessage,
+                                showName: true,
+                                replyAble: false,
+                                replied: true
+                            }
+                        "
+                    >
+                    </ng-container>
                 </div>
 
-                <div *ngIf="replyAble" class="reply-to cursor-pointer" mat-ripple (click)="setReplyingToMessage(message); focusReplyInput()">
+                <div
+                    *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
+                    class="reply-to cursor-pointer"
+                    mat-ripple
+                    (click)="setReplyingToMessage(message)"
+                >
                     <button mat-icon-button>
                         <mat-icon>reply</mat-icon>
                     </button>
                 </div>
+
                 <p class="m-0">
                     <ng-container *ngIf="!message.attachment?.src">
                         <span [innerHTML]="message.message"></span>
-                        <span class="spacer"></span>
+                        <span *ngIf="!replied" class="spacer"></span>
                     </ng-container>
                     <ng-container *ngIf="message.attachment?.src">
-                        <div fxLayout="column" fxLayoutAlign=" none" class="attachments">
+                        <div class="attachments">
                             <!-- Images -->
                             <div *ngIf="message.attachment.type === 'image'" (click)="previewMedia(message)">
                                 <img [src]="message.attachment.src" />
@@ -40,7 +58,7 @@
 
                             <!-- Videos -->
                             <div *ngIf="message.attachment.type === 'video'">
-                                <div fxFill fxLayout fxLayoutAlign="center center" class="video-overlay">
+                                <div class="video-overlay">
                                     <button mat-stroked-button mat-icon-button class="mat-elevation-z6" (click)="previewMedia(message)">
                                         <mat-icon>play_arrow</mat-icon>
                                     </button>
@@ -52,13 +70,8 @@
                             <audio *ngIf="message.attachment.type === 'audio'" [src]="message.attachment.src" controls></audio>
 
                             <!-- Files -->
-                            <div
-                                *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'"
-                                fxLayout="row"
-                                fxLayoutAlign=" center"
-                                class="file"
-                            >
-                                <div fxFlex="80" fxLayout="row" fxLayoutAlign=" center">
+                            <div *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'" class="file">
+                                <div fxFlex="80" class="twd-flex twd-flex-row twd-items-center">
                                     <mat-icon class="file-icon">insert_drive_file</mat-icon>
                                     <span class="file-name">{{ message.attachment.name }}</span>
                                 </div>
@@ -77,7 +90,7 @@
                             </div>
 
                             <!-- To show attachment captions -->
-                            <span *ngIf="message.message" class="mt-4"> {{ message.message }} </span>
+                            <span *ngIf="message.message" class="mt-4" [innerHTML]="message.message"></span>
 
                             <!-- Spacer for better view -->
                             <span
@@ -92,7 +105,8 @@
                     </ng-container>
                 </p>
             </div>
-            <div class="time" *ngIf="message.time" [ngClass]="message?.type" fxLayout="row" fxLayoutAlign="end center">
+
+            <div *ngIf="!replied && message.time" [ngClass]="message?.type" class="time twd-flex twd-flex-row twd-items-center twd-justify-end">
                 {{ message.time | date: 'shortTime' }}
                 <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'init'"> access_time</mat-icon>
                 <mat-icon class="s-12 ml-4" *ngIf="message.position === 'right' && message.status === 'sent'">done </mat-icon>
@@ -109,28 +123,26 @@
         (floatEvent)="floatEvent.emit($event)"
     >
         <div class="w-100-p h-100-p chat-controls">
-            <div fxLayout="column" fxLayoutAlign=" none" class="w-100-p px-12 py-4 border-radius-20 interaction-details">
-                <div fxLayout="row" fxLayoutAlign="space-between none">
-                    <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
-                    <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
+            <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
+                <div class="twd-flex twd-justify-between">
+                    <div class="twd-flex twd-items-center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'medium' }}</div>
+                    <div class="twd-flex twd-items-center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
                 </div>
-                <div fxLayout="row" fxLayoutAlign="space-between none">
-                    <div fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign=" center" *ngIf="isSMM">
+                <div class="twd-flex twd-justify-between">
+                    <div class="twd-flex twd-items-center"><mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</div>
+                    <div *ngIf="isSMM" class="twd-flex twd-items-center">
                         <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
                         <span class="text-bold ml-4">{{ channel }}</span>
                     </div>
-                    <div fxLayout="row" fxLayoutAlign=" center">
+                    <div fclass="twd-flex twd-items-center">
                         <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                     </div>
                 </div>
             </div>
 
-            <div fxLayout="row" fxLayoutAlign=" none" class="mt-4 chat-container">
-                <div fxLayout="column" fxLayoutAlign=" center" class="pt-4 interaction-selector">
-                    <div fxLayout="column" fxLayoutAlign=" start" class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust">
+            <div class="mt-4 chat-container twd-flex twd-flex-row">
+                <div class="pt-4 twd-flex twd-flex-col twd-items-center">
+                    <div class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust twd-flex twd-flex-col twd-items-start">
                         <avatar
                             *ngFor="let item of interactionList"
                             name="{{ item.user }}"
@@ -146,14 +158,8 @@
                     </div>
                 </div>
 
-                <div
-                    fxLayout="column"
-                    fxLayoutAlign=" none"
-                    fxFlex
-                    class="border-radius-20 chat-content position-relative"
-                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                >
-                    <div fxLayout="row" fxLayoutAlign="end none" class="chat-actions border-bottom">
+                <div class="chat-content border-radius-20" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                    <div class="chat-actions border-bottom">
                         <button
                             *ngIf="showAutoFreeze"
                             [disabled]="status !== 'connected'"
@@ -188,12 +194,7 @@
                                 cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                 (overlayOutsideClick)="openMoreActions = false"
                             >
-                                <div
-                                    fxLayout="column"
-                                    fxLayoutGap="10px"
-                                    class="mt-12 create-interaction-buttons"
-                                    [@widgetStagger]="moreActions.length"
-                                >
+                                <div class="mt-12 twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="moreActions.length">
                                     <button
                                         mat-mini-fab
                                         color="secondary"
@@ -211,7 +212,7 @@
                         </div>
 
                         <button
-                            *ngIf="data.Data?.InteractionCommentAllowed"
+                            *ngIf="agentFeatures.comment"
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
@@ -241,7 +242,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.Transfer.Allowed"
+                            *ngIf="agentFeatures.transfer"
                             [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                             mat-mini-fab
                             color="default"
@@ -253,7 +254,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.Conference.Allowed"
+                            *ngIf="agentFeatures.conference"
                             [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                             mat-mini-fab
                             color="default"
@@ -264,7 +265,7 @@
                             <mat-icon>group</mat-icon>
                         </button>
 
-                        <button
+                        <!-- <button
                             mat-mini-fab
                             *ngIf="data.Data.AskForScreenshareAllowed"
                             [disabled]="status !== 'connected'"
@@ -274,10 +275,10 @@
                             (click)="allowCustomerScreenShare = !allowCustomerScreenShare"
                         >
                             <mat-icon>{{ allowCustomerScreenShare ? 'screen_share' : 'stop_screen_share' }}</mat-icon>
-                        </button>
+                        </button> -->
 
                         <button
-                            *ngIf="data.Data.AudioEscalateAllowed"
+                            *ngIf="agentFeatures.audioEscalate"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -295,7 +296,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.VideoEscalateAllowed"
+                            *ngIf="agentFeatures.videoEscalate"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -314,9 +315,7 @@
 
                         <ng-container
                             *ngIf="
-                                !callWidget &&
-                                data.Data?.HoldInteractionAllowed &&
-                                (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
+                                !callWidget && agentFeatures.hold && (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
                             "
                         >
                             <button
@@ -373,9 +372,9 @@
                     </div>
 
                     <!-- CHAT CONTENT -->
-                    <div class="chat-transcripts custom-scroll-adjust" #messages fxFlex>
+                    <div class="chat-transcripts custom-scroll-adjust" #messages>
                         <!-- CHAT MESSAGES -->
-                        <div class="chat-messages">
+                        <div class="chat-messages" [ngClass]="{ 'no-reply': !agentFeatures.reply || conferenceType === 'silent' }">
                             <!-- MESSAGE -->
                             <div
                                 *ngFor="let message of chatTranscripts; let i = index"
@@ -390,18 +389,16 @@
                                 <div
                                     *ngIf="message.serverMessage"
                                     class="bg-secondary my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600"
-                                >
-                                    {{ message.message }}
-                                </div>
+                                    [innerHTML]="message.message"
+                                ></div>
 
                                 <ng-container *ngIf="!message.serverMessage">
                                     <div
                                         *ngIf="!message.divider"
-                                        fxLayout="column"
-                                        fxLayoutAlign="start start"
-                                        class="bubble mat-elevation-z1 position-absolute {{
-                                            message.position
-                                        }} animate__animated animate__slideInUp animate__faster"
+                                        [class]="
+                                            message.position +
+                                            ' bubble mat-elevation-z1 position-absolute animate__animated animate__slideInUp animate__faster'
+                                        "
                                         [ngClass]="{ maximized: maximized }"
                                     >
                                         <ng-container
@@ -410,7 +407,8 @@
                                                 context: {
                                                     message: message,
                                                     showName: isFirstMessageOfGroup(message, i),
-                                                    replyAble: data.Data.ReplyOnChatAllowed
+                                                    replyAble: agentFeatures.chatReply,
+                                                    replied: false
                                                 }
                                             "
                                         ></ng-container>
@@ -426,14 +424,24 @@
                     <!-- / CHAT CONTENT -->
 
                     <!-- CHAT FOOTER -->
-                    <div class="chat-footer" fxFlex="0 0 auto" fxLayout="column" *ngIf="conferenceType !== 'silent'">
+                    <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
                         <!-- REPLY FORM -->
-                        <div class="reply-form" fxFlex="0 0 auto" fxLayout="column" fxLayoutAlign="center center">
+                        <div class="reply-form">
                             <button style="display: none" cdkOverlayOrigin #replyingMessageOverlay="cdkOverlayOrigin"></button>
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
-                                <div *ngIf="replyingToMessage" fxLayout class="w-100-p p-4 border-radius-8 position-relative">
-                                    <div fxFlex="100%" class="p-8 border-radius-16 border-left" [ngClass]="customFuse.anchor?.body">
-                                        <ng-container *ngTemplateOutlet="messageRef; context: { message: replyingToMessage, showName: true }">
+                                <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
+                                    <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
+                                        <ng-container
+                                            *ngTemplateOutlet="
+                                                messageRef;
+                                                context: {
+                                                    message: replyingToMessage,
+                                                    showName: true,
+                                                    replyAble: false,
+                                                    replied: false
+                                                }
+                                            "
+                                        >
                                         </ng-container>
                                     </div>
                                     <button mat-icon-button (click)="replyingToMessage = null">
@@ -452,13 +460,10 @@
                                 #replyForm="ngForm"
                                 (ngSubmit)="reply($event)"
                                 (keydown.enter)="reply($event)"
-                                fxFlex
-                                fxLayout="row"
-                                fxLayoutAlign="start center"
-                                class="w-100-p"
+                                class="w-100-p twd-flex twd-flex-1 twd-justify-start twd-items-center"
                             >
                                 <button
-                                    *ngIf="data.Data.EmojiAllowed"
+                                    *ngIf="agentFeatures.emoji"
                                     cdkOverlayOrigin
                                     #emojiOverlay="cdkOverlayOrigin"
                                     (click)="showEmojiOverlay = !showEmojiOverlay"
@@ -488,7 +493,7 @@
                                 </button>
 
                                 <button
-                                    *ngIf="data.Data.AttachmentAllowed"
+                                    *ngIf="agentFeatures.attachments"
                                     cdkOverlayOrigin
                                     #attachOverlay="cdkOverlayOrigin"
                                     [disabled]="status !== 'connected'"
@@ -500,7 +505,7 @@
                                     matTooltip="Attach"
                                 >
                                     <!-- <button
-                                *ngIf="data.Data.AttachmentAllowed"
+                                *ngIf="agentFeatures.attachments"
                                 [disabled]="status !== 'connected'"
                                 (click)="attachFileRef.click()"
                                 type="button"
@@ -522,7 +527,7 @@
                                             { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }
                                         ]"
                                     >
-                                        <div fxLayout="column" fxLayoutGap="10px" [@widgetStagger]="attachActions.length">
+                                        <div class="twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="attachActions.length">
                                             <button
                                                 *ngFor="let item of attachActions"
                                                 mat-mini-fab
@@ -538,9 +543,8 @@
                                 </button>
 
                                 <mat-form-field
-                                    class="custom message-text"
-                                    [ngClass]="{ emoji: data.Data.EmojiAllowed }"
-                                    fxFlex
+                                    class="custom message-text twd-flex-1"
+                                    [ngClass]="{ emoji: agentFeatures.emoji }"
                                     floatLabel="never"
                                     appearance="standard"
                                 >

@@ -54,6 +54,15 @@
                             background-color: map-get($primary, 700);
                             color: mat-contrast($primary, 700);
                         }
+
+                        .replied {
+                            @if ($is-dark == true) {
+                                background-color: map-get($background, hover);
+                            } @else {
+                                background-color: map-get($primary, 800);
+                                color: mat-contrast($primary, 800);
+                            }
+                        }
                     }
 
                     &.right {
@@ -62,6 +71,15 @@
                         } @else {
                             color: rgba(0, 0, 0, 0.87);
                             background-color: #e0e0e0;
+                        }
+
+                        .replied {
+                            @if ($is-dark == true) {
+                                background-color: map-get($background, hover);
+                            } @else {
+                                color: rgba(0, 0, 0, 0.87);
+                                background-color: #c0c0c0;
+                            }
                         }
                     }
                 }
@@ -198,6 +216,30 @@
                 }
             }
         }
+
+        .chat-transcripts {
+            .message-row {
+                .bubble {
+                    &.left {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        } @else {
+                            background-color: map-get($primary, 700);
+                            color: mat-contrast($primary, 700);
+                        }
+                    }
+
+                    &.right {
+                        @if ($is-dark == true) {
+                            background-color: map-get($background, hover);
+                        } @else {
+                            color: rgba(0, 0, 0, 0.87);
+                            background-color: #e0e0e0;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     tw-workbench-panel {
@@ -218,7 +260,7 @@
         }
 
         workbench-email {
-            .search-input {
+            .theme-bg {
                 @if ($is-dark == true) {
                     color: #fafafa;
                     background-color: map-get($background, hover);
@@ -248,11 +290,11 @@
                         background-color: #fafafa;
                     }
 
-                    .tw-list-item {
-                        &:hover {
-                            background-color: map-get($background, hover);
-                        }
-                    }
+                    // .tw-list-item {
+                    //     &:hover {
+                    //         background-color: map-get($background, hover);
+                    //     }
+                    // }
                 }
 
                 .email-open {
@@ -278,7 +320,7 @@
         }
 
         workbench-chat {
-            .search-input {
+            .theme-bg {
                 @if ($is-dark == true) {
                     color: #fafafa;
                     background-color: map-get($background, hover);

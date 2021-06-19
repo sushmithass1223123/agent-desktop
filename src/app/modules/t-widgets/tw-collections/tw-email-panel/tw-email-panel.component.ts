@@ -79,7 +79,7 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 }

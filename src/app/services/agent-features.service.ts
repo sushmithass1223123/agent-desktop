@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { AGENT_FEATURES } from 'app/constants';
+import { Observable, Subject } from 'rxjs';
 import { AppUiService } from './app-ui.service';
 
 /**
@@ -73,7 +75,19 @@ export class AgentFeaturesService {
         };
     };
 
+    /**
+     * Need more Description
+     */
+    private _featureUpdatedSubject: Subject<boolean>;
+
     constructor(private _appUIService: AppUiService) { }
+
+    /**
+     * Get agent features
+     */
+    get features(): any | Observable<boolean> {
+        return this._featureUpdatedSubject.asObservable();
+    }
 
     /**
      * Need more Description
@@ -116,7 +130,7 @@ export class AgentFeaturesService {
             screenvideo,
             snapshot
         });
-    }
+    };
 
     /**
      * To process AgentSettingsUpdatedEvent
@@ -127,10 +141,11 @@ export class AgentFeaturesService {
         // process agent featues
         if (evt.AgentProfile.AgentFeatures.length > 0) {
             this.processAgentFeatures(evt.AgentProfile.AgentFeatures);
+            this._featureUpdatedSubject.next(true);
             // set processed
             this._processed = true;
         }
-    }
+    };
 
     /**
      * Need more Description
@@ -302,8 +317,8 @@ export class AgentFeaturesService {
     private processAgentFeatures(agentFeatures: AgentFeatures[]): void {
         // loop through the features and process
         agentFeatures.forEach((feature: AgentFeatures) => {
-            switch (feature.Feature) {
-                case 'IsCameraCaptureEnabled':
+            switch (feature.Feature.toLowerCase()) {
+                case AGENT_FEATURES.IsCameraCaptureEnabled:
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureCameraStream();
@@ -311,7 +326,7 @@ export class AgentFeaturesService {
                         this.stopCamera();
                     }
                     break;
-                case 'IsScreenCaptureEnabled':
+                case AGENT_FEATURES.IsScreenCaptureEnabled:
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureDisplayStream();
@@ -319,7 +334,7 @@ export class AgentFeaturesService {
                         this.stopScreenShare();
                     }
                     break;
-                case 'IsLocationEnabled':
+                case AGENT_FEATURES.IsLocationEnabled:
                     // check if enabled, then capture camera
                     if (feature.IsEnabled) {
                         this.captureLocation();
@@ -391,6 +406,9 @@ export class AgentFeaturesService {
 
         // set processed
         this._processed = true;
+
+        // init agent features subject
+        this._featureUpdatedSubject = new Subject();
     }
 
     /**
@@ -402,6 +420,9 @@ export class AgentFeaturesService {
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);
         SDKClient.events.off('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
+
+        this._featureUpdatedSubject.next(false);
+        this._featureUpdatedSubject.complete();
 
         // check if processed
         if (this._processed) {

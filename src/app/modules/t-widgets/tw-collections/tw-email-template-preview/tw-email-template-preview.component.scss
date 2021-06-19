@@ -1,6 +1,16 @@
-.dynamic-input {
-    min-width: 50px;
-    border-bottom: 1px solid gray;
-    width: 100px;
-    display: inline-block;
+:host {
+    .dynamic-input {
+        min-width: 50px;
+        border-bottom: 1px solid gray;
+        width: 100px;
+        display: inline-block;
+    }
+}
+
+.email-template-dialog__Form {
+    .mat-dialog-container {
+        padding: 0 !important;
+        background-color: transparent !important;
+        background: transparent !important;
+    }
 }

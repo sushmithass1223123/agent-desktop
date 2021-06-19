@@ -31,14 +31,37 @@
                                 "glob": "**/*",
                                 "input": "./node_modules/leaflet/dist/images",
                                 "output": "assets/images/leaflet/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "build-utils/",
+                                "output": "/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/tinymce/icons",
+                                "output": "assets/tinymce/icons/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/tinymce/themes",
+                                "output": "assets/tinymce/themes/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/tinymce/skins",
+                                "output": "assets/tinymce/skins/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/tinymce/plugins",
+                                "output": "assets/tinymce/plugins/"
                             }
                         ],
                         "styles": [
                             "src/styles.scss",
                             "./node_modules/animate.css/animate.min.css",
                             "./node_modules/leaflet/dist/leaflet.css",
-                            "./node_modules/quill/dist/quill.core.css",
-                            "./node_modules/quill/dist/quill.snow.css",
                             "./node_modules/@ctrl/ngx-emoji-mart/picker.css"
                         ],
                         "scripts": [],

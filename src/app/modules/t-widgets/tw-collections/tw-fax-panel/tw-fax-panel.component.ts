@@ -82,7 +82,7 @@ export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper destroy method
         this.destroyWrapper();
 
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 

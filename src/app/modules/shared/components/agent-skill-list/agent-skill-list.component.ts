@@ -30,7 +30,7 @@ type FreeTextConf = {
     /**
      * Value of freetext
      */
-    value: string
+    value: string;
 };
 /**
  * Agent Skill List Component
@@ -323,7 +323,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         this.freeTextConf = {
             agentList: { allowed: !!(this.data?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
-            skillList: { allowed: !!(this.data?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' }
+            skillList: { allowed: !!(this.data?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
+            dynamicList: { allowed: false, enabled: false, value: '' }
         };
 
         this.setupSearchInputListener();
@@ -420,7 +421,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * OnDestroy
      */
     ngOnDestroy(): void {
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 
@@ -455,6 +456,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         );
                     } else {
                         this.skillListTable.tableData.source.data = this.allFavouriteSkills;
+                    }
+                } else if (this.activeSwitcher === 'dynamicList') {
+                    // check if key not empty to apply the filter
+                    if (key) {
+                        // for skill only apply searchkey filter
+                        this.dynamicListTable.tableData.source.data = this.data.otherData.dynamicList.data.filter((x: any) =>
+                            // stringify and lowercase for .includes string search
+                            JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
+                        );
+                    } else {
+                        this.dynamicListTable.tableData.source.data = this.data.otherData.dynamicList.data;
                     }
                 }
             });
@@ -491,7 +503,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 if (dt.response.ResultCode === 0) {
                     // make call success
                     this._appUIService.showSnackbar(`Make call to ${this.selectedItem} successful`);
-                    this.close();
+                    this.close(true);
                 } else {
                     // make call failed
                     this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
@@ -537,7 +549,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this._appUIService.showSnackbar(
                     `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${this.selectedItem} successfully`
                 );
-                this.close();
+                this.close(true);
             } else {
                 // transfer call failed
                 this._appUIService.showSnackbar(
@@ -591,7 +603,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this._appUIService.showSnackbar(
                     `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${this.selectedItem} successfully`
                 );
-                this.close();
+                this.close(true);
             } else {
                 // transfer call failed
                 this._appUIService.showSnackbar(
@@ -663,11 +675,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         this.loading = false;
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
-                            this.close();
+                            this.close(true);
                         }
                         // transfer error
                         else {
-                            this._appUIService.showSnackbar(`Chat ${type} failed, please try again`, 'failure');
+                            this._appUIService.showSnackbar(`Chat ${type} failed, ${dt.response.ResultMessage}`, 'failure');
                         }
                     })
                     .catch(() => {
@@ -688,9 +700,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 .then((dt) => {
                     this.loading = false;
                     if (dt.response.ResultCode >= 0) {
-                        this.close();
+                        this.close(true);
                     } else {
-                        this._appUIService.showSnackbar(`Chat ${type} to queue failed, please try again`, 'failure');
+                        this._appUIService.showSnackbar(`Chat ${type} to queue failed, ${dt.response.ResultMessage}`, 'failure');
                     }
                 })
                 .catch(() => {
@@ -700,7 +712,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         } else {
             // no row selected
             this._appUIService.showSnackbar('Error: No row selected to transfer chat', 'failure');
-            this.close();
+            this.close(false);
         }
     }
 
@@ -722,9 +734,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 })
                     .then((res) => {
                         this.loading = false;
-                        if (res.response >= -1) {
+                        if (res.response > 0) {
                             this._appUIService.showSnackbar('Email transferred successfully', 'success');
-                            this.close();
+                            this.close(true);
                         } else {
                             console.error(res);
                             this._appUIService.showSnackbar('Email transfer failed', 'failure');
@@ -746,9 +758,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 })
                     .then((res) => {
                         this.loading = false;
-                        if (res.response >= -1) {
+                        if (res.response > 0) {
                             this._appUIService.showSnackbar('Email transferred successfully', 'success');
-                            this.close();
+                            this.close(true);
                         } else {
                             console.error(res);
                             this._appUIService.showSnackbar('Email transfer failed', 'failure');
@@ -843,6 +855,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.clearSelected();
         // assign the selected row
         this.selectedRow = null;
+        this.searchKey.setValue('');
     }
 
     /**
@@ -898,9 +911,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 if (dt.response.length > 0) {
                     // filter the same agent and bots from the list
                     const list = dt.response
-                        .filter(
-                            (r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AccessRole?.toLowerCase() !== 'chatbot'
-                        )
+                        .filter((r: AgentModel) => r.LoginID !== SDKClient.getAgentData().agentId && r.AccessRole?.toLowerCase() !== 'chatbot')
                         .map((row) =>
                             formatJsonData<Partial<AgentModel | any>>(
                                 { row },
@@ -1033,6 +1044,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.loading = true;
         const currentStatus = row.CurrentAgentStatus;
         row.CurrentAgentStatus = 'loading';
+        row.AgentName = row.FirstName + ' ' + row.LastName;
         // get agent's current status
         SDKClient.getAgentStatus({
             agentId: row.LoginID,
@@ -1075,7 +1087,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             })
             .catch((e) => {
                 console.error(e);
-                this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName} current state`, 'failure');
+                this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName}'s current state`, 'failure');
                 row.CurrentAgentStatus = currentStatus;
                 this.loading = false;
             });
@@ -1154,7 +1166,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // select the row in grid
         this.dynamicListTable.tableData.selection.select(row);
         // assign the selected item
-        this.selectedItem = row[this.data.otherData.dynamicList.selection];
+        this.selectedItemDisplayName = this.selectedItem = row[this.data.otherData.dynamicList.selection];
         // assign the selected row
         this.selectedRow = {
             type: this.data.otherData.dynamicList.type || 'dynamic',
@@ -1183,7 +1195,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         const freeTextConf = this.freeTextConf[this.activeSwitcher];
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
         if (!freeTextConf.enabled && this.selectedRow.type.includes('dynamic')) {
-            this.close();
+            this.close(true);
             return;
         }
 
@@ -1207,11 +1219,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this.transferEmail();
                 break;
             case 'pushChat':
-                this.close();
+                this.close(true);
                 break;
             default:
                 this._appUIService.showSnackbar('Error: NotImplementedException', 'failure');
-                this.close();
+                this.close(false);
                 break;
         }
     }
@@ -1221,13 +1233,14 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      *
      * @param {any} data
      */
-    close(): void {
+    close(success: boolean): void {
         // call the callback
         if (typeof this.data.callback === 'function') {
             this.data.callback({
                 source: this.selectedRow?.type,
                 selectedRow: this.selectedRow?.row,
-                isConsult: this.isConsult
+                isConsult: this.isConsult,
+                success
             });
         }
         this.wrapperComponent.close();

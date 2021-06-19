@@ -54,6 +54,9 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
         this.staticWidgets = homeWidgets.Static || [];
         this.dynamicWidgets = homeWidgets.Dynamic || [];
         this.aotWidgets = homeWidgets.AOT || [];
+
+        // set laoded true so that it will not be cleared on navbar switch
+        this.loaded = true;
     }
     /**
      * OnDestroy
@@ -67,15 +70,15 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
      * On page active callback
      */
     onActive = () => {
-        this.loaded = true;
+        // this.loaded = true;
     }
 
     /**
      * On page inactive callback
      */
     onInactive = () => {
-        if (this.loaded && this.pageActive) {
-            this.loaded = false;
-        }
+        // if (this.loaded && this.pageActive) {
+        //     this.loaded = false;
+        // }
     }
 }

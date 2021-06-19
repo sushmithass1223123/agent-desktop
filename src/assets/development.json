@@ -9,9 +9,12 @@
             "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
         },
         "DomainListEnabled": false,
-        "PasswordEnabled": false,
+        "Password": {
+            "Agent": false,
+            "Station": false
+        },
         "StationEnabled": false,
-        "LanIdDisabled": false,
+        "DisableLanId": false,
         "PromptAgentIdOnInvalidLanId": false,
         "MultiWindowMode": {
             "Enabled": false,
@@ -140,7 +143,7 @@
                                     "Channels": [
                                         {
                                             "Name": "Send SMS",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "",
                                             "Type": "text",
                                             "SubType": "sms",
@@ -149,10 +152,10 @@
                                         },
                                         {
                                             "Name": "Make Call",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "calloutbound",
                                             "Type": "voice",
-                                            "SubType": "",
+                                            "SubType": "voice",
                                             "Icon": "call",
                                             "Data": {
                                                 "Source": {
@@ -167,11 +170,20 @@
                                         },
                                         {
                                             "Name": "Send WhatsApp",
-                                            "Enable": true,
+                                            "Enabled": true,
                                             "EnableState": "",
                                             "Type": "text",
                                             "SubType": "whatsapp",
                                             "Icon": "custom-whatsapp",
+                                            "Data": {}
+                                        },
+                                        {
+                                            "Name": "Send Email",
+                                            "Enabled": true,
+                                            "EnableState": "",
+                                            "Type": "email",
+                                            "SubType": "email",
+                                            "Icon": "email",
                                             "Data": {}
                                         }
                                     ]
@@ -256,7 +268,7 @@
                         "Type": "twn-generic",
                         "Config": {
                             "Enabled": true,
-                            "Icon": "widgets"
+                            "Icon": "feed"
                         },
                         "Data": {
                             "Path": "/generic",
@@ -717,7 +729,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
-                        "AgentHierarchy": false,
+                        "AgentHierarchy": true,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1145,9 +1157,9 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use": "agentId",
+                                                                "Use": "station",
                                                                 "Display": "${LastName}, ${FirstName}",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
@@ -1159,7 +1171,7 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
@@ -1173,9 +1185,9 @@
                                                             "Allowed": true,
                                                             "Blind": false,
                                                             "Source": {
-                                                                "Use": "agentId",
+                                                                "Use": "station",
                                                                 "Display": "agentName",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
@@ -1187,7 +1199,7 @@
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": false
+                                                                "FreeTextAllowed": true
                                                             },
                                                             "ChannelPrefix": [
                                                                 "VO"
@@ -1318,7 +1330,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -1679,6 +1691,39 @@
                                         "Pinned": false
                                     },
                                     "Data": {}
+                                },
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "AutoOpen": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                    }
                                 }
                             ]
                         }
@@ -1805,8 +1850,6 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "ImmediateCallbackAllowed": false,
-                                                    "ScheduledCallbackAllowed": false,
                                                     "AudioEscalateAllowed": true,
                                                     "VideoEscalateAllowed": true,
                                                     "SignatureAllowed": true,
@@ -1819,7 +1862,7 @@
                                                     "HoldInteractionAllowed": true,
                                                     "Whiteboard": {
                                                         "Allowed": true,
-                                                        "Url": "http://dice.tetherfi.cloud:55080/Whiteboard/ui/index.html"
+                                                        "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html"
                                                     },
                                                     "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
@@ -1856,9 +1899,10 @@
                                                         "Customer": true
                                                     },
                                                     "ConversationService": {
-                                                        "Url": "https://dice.tetherfi.cloud:25213/api/v1/",
+                                                        "Url": "",
                                                         "Limit": 50
-                                                    }
+                                                    },
+                                                    "ReplyAllowed": true
                                                 }
                                             },
                                             {
@@ -1972,7 +2016,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -2372,7 +2416,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -2677,7 +2721,9 @@
                                                     "Header": true,
                                                     "Pinned": false
                                                 },
-                                                "Data": {}
+                                                "Data": {
+                                                    "CloseInteractionAllowed": false
+                                                }
                                             },
                                             {
                                                 "Name": "Customer Details",
@@ -2707,8 +2753,20 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
-                                                            "Title": "Type",
-                                                            "ValueSource": "GenericInteractionEvent.Item.Type",
+                                                            "Title": "Campaign Name",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).CampaignName",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Customer Name",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).Name",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Phone Number",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).PhoneNumber",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
@@ -2719,14 +2777,14 @@
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
-                                                            "Title": "Identifier",
-                                                            "ValueSource": "GenericInteractionEvent.Item.CustomerIdentifier",
+                                                            "Title": "Intent",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
-                                                            "Title": "Intent",
-                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
+                                                            "Title": "AutoDial",
+                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).AutoDial",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         }
@@ -2760,7 +2818,7 @@
                                                 },
                                                 "Data": {
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                    "NoOfRecords": 20,
+                                                    "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard"
                                                 }
                                             }
@@ -2810,92 +2868,6 @@
                                     }
                                 },
                                 {
-                                    "Name": "Account Information",
-                                    "Description": "",
-                                    "Key": "CustomerAccountInfo",
-                                    "Type": "tw-account-information",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "IsAuthenticated": true
-                                    }
-                                },
-                                {
-                                    "Name": "AMDOC-BCC",
-                                    "Description": "",
-                                    "Key": "AmdocBCC",
-                                    "Type": "tw-amdocs-bcc",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Customer Sentiment",
-                                    "Description": "feedback",
-                                    "Key": "CustomerSentiment",
-                                    "Type": "tw-customer-sentiment",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "sentiment_satisfied_alt",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
                                     "Name": "Work Codes",
                                     "Description": "",
                                     "Key": "WorkCodes",
@@ -2928,10 +2900,10 @@
                                     }
                                 },
                                 {
-                                    "Name": "Speech Transcripts",
+                                    "Name": "Campaign",
                                     "Description": "",
-                                    "Key": "SpeechTranscript",
-                                    "Type": "tw-voice-bot-transcripts",
+                                    "Key": "CampaignManager",
+                                    "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2939,11 +2911,11 @@
                                         "Anchor": false,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
                                         "Position": {
-                                            "X": 2,
-                                            "Y": 1
+                                            "X": 4,
+                                            "Y": 2
                                         },
                                         "Actions": [
                                             "maximize",
@@ -2953,10 +2925,48 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {}
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TCM_Client/ui/campaign_selector.html?phone=${Interaction.Item.PhoneNumber}&agentID=${AgentData.agentId}&extension=${AgentData.deviceId}&ucid=&skill=${Interaction.Item.Skill}&intid=${Interaction.InteractionID}&ID=${Interaction.Item.ID}",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ],
-                            "AOT": []
+                            "AOT": [
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "AutoOpen": true,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                    }
+                                }
+                            ]
                         }
                     }
                 },
@@ -3034,7 +3044,8 @@
                                                             ],
                                                             "Columns": []
                                                         }
-                                                    }
+                                                    },
+                                                    "SearchPollingInterval": 5000
                                                 }
                                             },
                                             {
@@ -3232,38 +3243,6 @@
                                         "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
                                         "AutoRefresh": 0
                                     }
-                                },
-                                {
-                                    "Name": "Test Page 2",
-                                    "Description": "",
-                                    "Key": "TestPage2",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "widgets",
-                                        "Class": "mx-cover",
-                                        "Position": {
-                                            "X": 3,
-                                            "Y": 3
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
-                                        "AutoRefresh": 0
-                                    }
                                 }
                             ]
                         }
@@ -3359,8 +3338,8 @@
         },
         "Urls": {
             "DashboardServerUrls": [
-                "https://dice.tetherfi.cloud/SignalRDashboard2",
-                "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
+                "https://dice.tetherfi.cloud:443/SignalRDashboardSup",
+                "https://dice.tetherfi.cloud/SignalRDashboard2"
             ],
             "FileServerUrl": {
                 "SMM": "https://dice.tetherfi.cloud:13019/upload",
@@ -3401,11 +3380,6 @@
                 },
                 "Alt": "Tetherfi"
             }
-        },
-        "WindowSettings": {
-            "SizeInPixel": false,
-            "Width": 40,
-            "Height": 100
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
@@ -3466,8 +3440,8 @@
         "SDK": {
             "Proxy": {
                 "Urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx",
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
                     "https://localhost:55443/SDKTMACProxy/TmacProxy.asmx"
                 ],
                 "Type": "soap",

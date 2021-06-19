@@ -1,0 +1,5 @@
+{
+  "tmc.conf.ProductName": "Agent-Desktop",
+  "tmc.conf.ProxyUrl": "../../TMACSDKProxy/TmacProxy.asmx",
+  "tmc.conf.ConfigMode": "remote"
+}

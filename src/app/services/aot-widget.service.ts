@@ -124,6 +124,7 @@ export class AOTWidgetService {
 
         // check if the id is null
         if (!id) {
+            TUtils.Logger.console('warn', 'AOTWidgetService.destroyWidget: widget ID is not found!');
             return;
         }
 
@@ -168,7 +169,7 @@ export class AOTWidgetService {
         TUtils.Logger.console('info', 'AOTWidgetService.unsubscribe');
 
         // unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         this._widgetsSubject.next([]);

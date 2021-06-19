@@ -1,5 +1,5 @@
-<div class="tw-widget-container custom-scroll" [ngStyle]="{ 'width.px': screenWidth, 'height.px': screenHeight }" *ngIf="loaded">
-    <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+<div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
+    <div *ngIf="staticWidgets.length || dynamicWidgets.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign="center none">
         <tw-template
             [fxFlex.gt-md]="dynamicWidgets.length > 0 ? 33 : 100"
             class="static-widget-grid"
@@ -15,19 +15,32 @@
             [widgets]="dynamicWidgets"
         ></tw-template>
 
-        <div class="tw-aot-fab" cdkDrag cdkDragBoundary=".tw-widget-container" *ngIf="aotWidgets.length > 0">
-            <widget-fab [fabWidgets]="aotWidgets"></widget-fab>
+        <div
+            class="tw-aot-fab"
+            cdkDrag
+            cdkDragBoundary=".tw-widget-container"
+            (cdkDragStarted)="aotFABDrag = true"
+            (cdkDragReleased)="aotFABDrag = false"
+            *ngIf="aotWidgets.length > 0"
+        >
+            <widget-fab [aotFABDrag]="aotFABDrag" [fabWidgets]="aotWidgets"></widget-fab>
         </div>
 
         <button
             mat-raised-button
-            color="primary"
+            color="accent"
             cdkOverlayOrigin
-            class="time-filter w-52 h-52"
+            class="time-filter w-52 h-52 z-index-1"
             #dashboardDataOverlay="cdkOverlayOrigin"
-            (click)="showDashboardDataSpanOverlay = !showDashboardDataSpanOverlay"
+            cdkDrag
+            cdkDragLockAxis="y"
+            cdkDragBoundary=".tw-content"
+            (cdkDragStarted)="dashboardDataSpanOverlayDrag = true"
+            (click)="showDashboardDataOverlay()"
         >
-            <mat-icon *ngIf="!dataLoading"> access_time </mat-icon>
+            <mat-icon *ngIf="!dataLoading" [@fabToggler180]="{ value: showDashboardDataSpanOverlay ? 'active' : 'inactive' }">
+                {{ showDashboardDataSpanOverlay ? 'chevron_left' : 'access_time' }}
+            </mat-icon>
             <mat-icon class="spin" *ngIf="dataLoading"> loop </mat-icon>
         </button>
 
@@ -58,5 +71,12 @@
         </ng-template>
     </div>
 
-    <twc-no-widgets class="twc-card" *ngIf="staticWidgets.length === 0 && dynamicWidgets.length === 0" type="home"></twc-no-widgets>
+    <twc-not-found
+        *ngIf="!staticWidgets.length && !dynamicWidgets.length"
+        class="tw-widget-container"
+        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
+        title="No Widgets"
+        type="widget"
+        message="No home widgets found!"
+    ></twc-not-found>
 </div>

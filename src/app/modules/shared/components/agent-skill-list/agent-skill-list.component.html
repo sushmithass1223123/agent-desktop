@@ -2,34 +2,57 @@
     <div mat-dialog-content class="h-100-p">
         <ng-container *ngIf="customFuse$ | async as customFuse">
             <ng-container
-                *ngIf="(freeTextConf[activeSwitcher] || { allowed: !!data?.agent?.source?.FreeTextAllowed, enabled: false, value: '' }) as currentFreeTextConf">
+                *ngIf="
+                    freeTextConf[activeSwitcher] || {
+                        allowed: !!data?.agent?.source?.FreeTextAllowed,
+                        enabled: false,
+                        value: ''
+                    } as currentFreeTextConf
+                "
+            >
                 <div fxFlex fxFill fxLayout="column">
-                    <div class="w-100-p px-16 pt-0 pb-12 border-radius-20" fxLayout="row"
-                        [ngClass]="customFuse?.content">
+                    <div class="w-100-p px-16 pt-0 pb-12 border-radius-20" fxLayout="row" [ngClass]="customFuse?.content">
                         <div fxFlex fxLayout="column">
                             <div fxLayout>
                                 <!-- <p fxFlex="20" fxLayoutAlign=" center" class="px-8">{{ mainLabel }}</p> -->
-                                <mat-form-field *ngIf="!currentFreeTextConf.enabled" fxFlex appearance="outline"
-                                    class="custom with-bg">
-                                    <input matInput readonly required [placeholder]="mainLabel"
-                                        [(ngModel)]="selectedItemDisplayName" />
-                                    <button *ngIf="currentFreeTextConf.allowed" mat-button matSuffix mat-icon-button
-                                        type="button" matTooltip="Edit"
-                                        (click)="clearSelected(); currentFreeTextConf.enabled = true">
+                                <mat-form-field *ngIf="!currentFreeTextConf.enabled" fxFlex appearance="outline" class="custom with-bg">
+                                    <input matInput readonly required [placeholder]="mainLabel" [(ngModel)]="selectedItemDisplayName" />
+                                    <button
+                                        *ngIf="currentFreeTextConf.allowed"
+                                        mat-button
+                                        matSuffix
+                                        mat-icon-button
+                                        type="button"
+                                        matTooltip="Edit"
+                                        (click)="clearSelected(); currentFreeTextConf.enabled = true"
+                                    >
                                         <mat-icon>edit</mat-icon>
                                     </button>
-                                    <button mat-button color="primary" type="button" *ngIf="selectedItem?.trim()"
-                                        matSuffix mat-icon-button aria-label="Clear" matTooltip="Clear"
-                                        (keypress)="numberOnly($event)" (click)="clearSelected()">
+                                    <button
+                                        mat-button
+                                        color="primary"
+                                        type="button"
+                                        *ngIf="selectedItem?.trim()"
+                                        matSuffix
+                                        mat-icon-button
+                                        aria-label="Clear"
+                                        matTooltip="Clear"
+                                        (keypress)="numberOnly($event)"
+                                        (click)="clearSelected()"
+                                    >
                                         <mat-icon>close</mat-icon>
                                     </button>
                                 </mat-form-field>
-                                <mat-form-field *ngIf="currentFreeTextConf.enabled" fxFlex appearance="outline"
-                                    class="custom with-bg">
-                                    <input matInput required [placeholder]="'Enter ' + mainLabel"
-                                        [(ngModel)]="currentFreeTextConf.value" />
-                                    <button mat-button matSuffix mat-icon-button type="button" matTooltip="Cancel"
-                                        (click)="clearSelected(); currentFreeTextConf.enabled = false">
+                                <mat-form-field *ngIf="currentFreeTextConf.enabled" fxFlex appearance="outline" class="custom with-bg">
+                                    <input matInput required [placeholder]="'Enter ' + mainLabel" [(ngModel)]="currentFreeTextConf.value" />
+                                    <button
+                                        mat-button
+                                        matSuffix
+                                        mat-icon-button
+                                        type="button"
+                                        matTooltip="Cancel"
+                                        (click)="clearSelected(); currentFreeTextConf.enabled = false"
+                                    >
                                         <mat-icon>cancel</mat-icon>
                                     </button>
                                     <input class="twd-hidden" required matInput [(ngModel)]="selectedItem" />
@@ -37,38 +60,53 @@
                             </div>
                             <div fxFlex fxLayout *ngIf="showComments">
                                 <!-- <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Comments</p> -->
-                                <mat-form-field fxFlex floatLabel="never" appearance="standard"
-                                    class="custom with-bg comments">
-                                    <textarea matInput [(ngModel)]="comments" placeholder="Enter comments here..."
-                                        matTextareaAutosize matAutosizeMinRows="4" matAutosizeMaxRows="4"></textarea>
+                                <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom with-bg comments">
+                                    <textarea
+                                        matInput
+                                        [(ngModel)]="comments"
+                                        placeholder="Enter comments here..."
+                                        matTextareaAutosize
+                                        matAutosizeMinRows="4"
+                                        matAutosizeMaxRows="4"
+                                    ></textarea>
                                 </mat-form-field>
                             </div>
                         </div>
                         <div fxLayout="column" class="pl-8 py-8">
-                            <button mat-raised-button class="custom-btn bg-success border-radius-20"
+                            <button
+                                mat-raised-button
+                                class="custom-btn bg-success border-radius-20"
                                 [matTooltip]="actionTooltip"
                                 [disabled]="(!selectedItem && !currentFreeTextConf.value) || loading"
-                                (click)="executeAction(true)">
+                                (click)="executeAction(true)"
+                            >
                                 <mat-icon *ngIf="!loading">{{ icon }}</mat-icon>
                                 <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                             </button>
 
-                            <button mat-raised-button *ngIf="blindAllowed" matTooltip="Blind"
+                            <button
+                                mat-raised-button
+                                *ngIf="blindAllowed"
+                                matTooltip="Blind"
                                 class="custom-btn bg-success border-radius-20 mt-8"
                                 [disabled]="(!selectedItem && !currentFreeTextConf.value) || loading"
-                                (click)="executeAction(false)">
+                                (click)="executeAction(false)"
+                            >
                                 <mat-icon *ngIf="!loading">double_arrow</mat-icon>
                                 <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                             </button>
                         </div>
                     </div>
-                    <div fxFlex class="w-100-p py-8 px-16 border-radius-20 grid-layout custom-scroll-adjust"
-                        [ngClass]="customFuse?.content">
+                    <div fxFlex class="w-100-p py-8 px-16 border-radius-20 grid-layout custom-scroll-adjust" [ngClass]="customFuse?.content">
                         <div fxLayout="column">
                             <div fxLayout class="switcher" *ngIf="showSwitcher">
-                                <div fxFlex class="switch-item" *ngFor="let item of switcherList"
+                                <div
+                                    fxFlex
+                                    class="switch-item"
+                                    *ngFor="let item of switcherList"
                                     [ngClass]="activeSwitcher === item.key && customFuse?.body"
-                                    (click)="clearSelected(); switchTab(item); searchRef.focus()">
+                                    (click)="clearSelected(); switchTab(item); searchRef.focus()"
+                                >
                                     {{ item.label }}
                                 </div>
                             </div>
@@ -76,76 +114,91 @@
                                 <div [hidden]="activeSwitcher !== 'agentList'">
                                     <div fxLayout="row" fxLayoutAlign=" center">
                                         <div #skillSelectDropdown class="twd-flex-1">
-                                            <mat-form-field class="form-field custom with-bg w-100-p"
-                                                appearance="outline">
-                                                <mat-select #skillSelectRef placeholder="Select Skill..."
-                                                    [(ngModel)]="selectedSkill">
+                                            <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                                <mat-select #skillSelectRef placeholder="Select Skill..." [(ngModel)]="selectedSkill">
                                                     <mat-option (click)="clearSkillFilter()">None</mat-option>
-                                                    <mat-option *ngFor="let item of allSkills" [value]="item.SkillID"
-                                                        (click)="filterAgentList()">{{
+                                                    <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="filterAgentList()">{{
                                                         item.SkillName
-                                                        }}</mat-option>
+                                                    }}</mat-option>
                                                 </mat-select>
                                             </mat-form-field>
                                         </div>
 
                                         <!-- skill select dropdown when clicked , select dropdown input form field shown -->
                                         <div #skillSelectButton class="ml-8 twd-hidden">
-                                            <button mat-raised-button mat-icon-button matTooltip="Select Skill" (click)="
-                                                searchKeyText.classList.replace('twd-flex-1', 'twd-hidden');
-                                                skillSelectDropdown.classList.replace('twd-hidden', 'twd-flex-1');
-                                                searchKeyButton.classList.toggle('twd-hidden');
-                                                skillSelectButton.classList.toggle('twd-hidden');
-                                                skillSelectRef.focus()
-                                            ">
+                                            <button
+                                                mat-raised-button
+                                                mat-icon-button
+                                                matTooltip="Select Skill"
+                                                (click)="
+                                                    searchKeyText.classList.replace('twd-flex-1', 'twd-hidden');
+                                                    skillSelectDropdown.classList.replace('twd-hidden', 'twd-flex-1');
+                                                    searchKeyButton.classList.toggle('twd-hidden');
+                                                    skillSelectButton.classList.toggle('twd-hidden');
+                                                    skillSelectRef.focus()
+                                                "
+                                            >
                                                 <mat-icon>school</mat-icon>
                                             </button>
                                         </div>
 
                                         <div class="ml-8">
-                                            <button mat-raised-button mat-icon-button matTooltip="Clear All"
-                                                (click)="clearAllFilter()">
+                                            <button mat-raised-button mat-icon-button matTooltip="Clear All" (click)="clearAllFilter()">
                                                 <mat-icon>close</mat-icon>
                                             </button>
                                         </div>
 
                                         <div class="ml-8">
-                                            <button mat-raised-button mat-icon-button matTooltip="Reload Agent List"
-                                                (click)="loadAgentList(true)">
+                                            <button mat-raised-button mat-icon-button matTooltip="Reload Agent List" (click)="loadAgentList(true)">
                                                 <mat-icon>refresh</mat-icon>
                                             </button>
                                         </div>
 
                                         <!-- search key button hidden by defaullt , when clicked , searchKey input form field shown -->
                                         <div #searchKeyButton class="ml-8">
-                                            <button mat-raised-button mat-icon-button matTooltip="Search" (click)="
-                                                skillSelectDropdown.classList.replace('twd-flex-1', 'twd-hidden');
-                                                searchKeyText.classList.replace('twd-hidden', 'twd-flex-1');
-                                                searchKeyButton.classList.toggle('twd-hidden');
-                                                skillSelectButton.classList.toggle('twd-hidden');
-                                                searchRef.focus()
-                                            ">
+                                            <button
+                                                mat-raised-button
+                                                mat-icon-button
+                                                matTooltip="Search"
+                                                (click)="
+                                                    skillSelectDropdown.classList.replace('twd-flex-1', 'twd-hidden');
+                                                    searchKeyText.classList.replace('twd-hidden', 'twd-flex-1');
+                                                    searchKeyButton.classList.toggle('twd-hidden');
+                                                    skillSelectButton.classList.toggle('twd-hidden');
+                                                    searchRef.focus()
+                                                "
+                                            >
                                                 <mat-icon>search</mat-icon>
                                             </button>
                                         </div>
 
                                         <!-- Search form field with form control searchKey -->
                                         <div #searchKeyText class="ml-8 twd-hidden">
-                                            <mat-form-field class="form-field custom with-bg w-100-p"
-                                                appearance="outline">
-                                                <input matInput #searchRef [formControl]="searchKey"
-                                                    placeholder="Search" />
-                                                <button *ngIf="searchRef.value" mat-button matSuffix mat-icon-button
-                                                    type="button" matTooltip="Edit" (click)="clearSelected()">
-                                                    <mat-icon>edit</mat-icon>
+                                            <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                                <input matInput #searchRef [formControl]="searchKey" placeholder="Search" />
+                                                <button
+                                                    *ngIf="searchRef.value"
+                                                    mat-button
+                                                    color="primary"
+                                                    matSuffix
+                                                    mat-icon-button
+                                                    aria-label="Clear"
+                                                    (click)="searchKey.setValue('')"
+                                                >
+                                                    <mat-icon>close</mat-icon>
                                                 </button>
                                             </mat-form-field>
                                         </div>
                                     </div>
-                                    <div class="w-100-p h-100-p custom-scroll-adjust">
-                                        <mat-table class="h-100-p" matSort matSortDisableClear
+                                    <div class="w-100-p h-100-p">
+                                        <mat-table
+                                            class="h-100-p"
+                                            matSort
+                                            matSortDisableClear
                                             [dataSource]="agentListTable.tableData.source"
-                                            matSortActive="CurrentAgentStatus" matSortDirection="asc">
+                                            matSortActive="CurrentAgentStatus"
+                                            matSortDirection="asc"
+                                        >
                                             <ng-container matColumnDef="FirstName">
                                                 <mat-header-cell *matHeaderCellDef mat-sort-header>
                                                     <span> First Name </span>
@@ -161,22 +214,21 @@
                                             </ng-container>
 
                                             <ng-container matColumnDef="AgentID">
-                                                <mat-header-cell *matHeaderCellDef mat-sort-header> <span> ID </span>
-                                                </mat-header-cell>
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> <span> ID </span> </mat-header-cell>
                                                 <mat-cell *matCellDef="let row"> {{ row.LoginID }} </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="CurrentAgentStatus">
-                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Status
-                                                </mat-header-cell>
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
                                                 <mat-cell *matCellDef="let row">
-                                                    <mat-spinner *ngIf="row.CurrentAgentStatus === 'loading'"
-                                                        diameter="20">
-                                                    </mat-spinner>
-                                                    <span class="text-truncate"
+                                                    <mat-spinner *ngIf="row.CurrentAgentStatus === 'loading'" diameter="20"> </mat-spinner>
+                                                    <span
+                                                        class="text-truncate"
                                                         *ngIf="row.CurrentAgentStatus !== 'loading'"
-                                                        [matTooltip]="row.CurrentAgentStatus">
-                                                        {{ row.CurrentAgentStatus }}</span>
+                                                        [matTooltip]="row.CurrentAgentStatus"
+                                                    >
+                                                        {{ row.CurrentAgentStatus }}</span
+                                                    >
                                                 </mat-cell>
                                             </ng-container>
 
@@ -191,22 +243,21 @@
                                                 <mat-cell *matCellDef="let row"> {{ row.InteractionCounts }} </mat-cell>
                                             </ng-container>
 
-                                            <mat-header-row
-                                                *matHeaderRowDef="agentListTable.tableData.columns; sticky: true">
-                                            </mat-header-row>
-                                            <mat-row *matRowDef="let row; columns: agentListTable.tableData.columns"
-                                                (click)="selectAgent(row)" class="selectable"
-                                                [ngClass]="{ selected: !!agentListTable.tableData.selection.isSelected(row) }">
+                                            <mat-header-row *matHeaderRowDef="agentListTable.tableData.columns; sticky: true"> </mat-header-row>
+                                            <mat-row
+                                                *matRowDef="let row; columns: agentListTable.tableData.columns"
+                                                (click)="selectAgent(row)"
+                                                class="selectable"
+                                                [ngClass]="{ selected: !!agentListTable.tableData.selection.isSelected(row) }"
+                                            >
                                             </mat-row>
                                         </mat-table>
 
-                                        <p *ngIf="!loading && agentListTable.tableData.source.data.length === 0"
-                                            class="text-center m-0 mat-title">
+                                        <p *ngIf="!loading && agentListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                             No Data Available
                                         </p>
 
-                                        <p *ngIf="loading && agentListTable.tableData.source.data.length === 0"
-                                            class="text-center m-0 mat-title">
+                                        <p *ngIf="loading && agentListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                             Loading Data, Please Wait...
                                         </p>
                                     </div>
@@ -215,13 +266,29 @@
                                     <!-- Search form field with form control searchKey -->
                                     <div class="ml-8 twd-w-full">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                            <input matInput [formControl]="searchKey" placeholder="Search" />
+                                            <input matInput [formControl]="searchKey" #skillSearchRef placeholder="Search" />
+                                            <button
+                                                *ngIf="skillSearchRef.value"
+                                                mat-button
+                                                color="primary"
+                                                matSuffix
+                                                mat-icon-button
+                                                aria-label="Clear"
+                                                (click)="searchKey.setValue('')"
+                                            >
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </mat-form-field>
                                     </div>
-                                    <div class="w-100-p h-100-p custom-scroll-adjust">
-                                        <mat-table class="h-100-p" matSort matSortDisableClear
-                                            [dataSource]="skillListTable.tableData.source" matSortActive="Name"
-                                            matSortDirection="asc">
+                                    <div class="w-100-p h-100-p">
+                                        <mat-table
+                                            class="h-100-p"
+                                            matSort
+                                            matSortDisableClear
+                                            [dataSource]="skillListTable.tableData.source"
+                                            matSortActive="Name"
+                                            matSortDirection="asc"
+                                        >
                                             <ng-container matColumnDef="Name">
                                                 <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">
                                                     <span> Name </span>
@@ -237,89 +304,108 @@
                                             </ng-container>
 
                                             <ng-container matColumnDef="ID">
-                                                <mat-header-cell *matHeaderCellDef mat-sort-header> <span> ID </span>
-                                                </mat-header-cell>
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> <span> ID </span> </mat-header-cell>
                                                 <mat-cell *matCellDef="let row"> {{ row.ID }} </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="Stf">
-                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Stf
-                                                </mat-header-cell>
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Stf </mat-header-cell>
                                                 <mat-cell *matCellDef="let row">
-                                                    <mat-spinner *ngIf="row.Staff === 'loading'" diameter="20">
-                                                    </mat-spinner>
-                                                    <span *ngIf="row.Staff !== 'loading'">{{ row.Staff || 'NA' }}
-                                                    </span>
+                                                    <mat-spinner *ngIf="row.Staff === 'loading'" diameter="20"> </mat-spinner>
+                                                    <span *ngIf="row.Staff !== 'loading'">{{ row.Staff || 'NA' }} </span>
                                                 </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="Avl">
-                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Avl
-                                                </mat-header-cell>
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Avl </mat-header-cell>
                                                 <mat-cell *matCellDef="let row">
-                                                    <mat-spinner *ngIf="row.Avail === 'loading'" diameter="20">
-                                                    </mat-spinner>
-                                                    <span *ngIf="row.Avail !== 'loading'">{{ row.Avail || 'NA' }}
-                                                    </span>
+                                                    <mat-spinner *ngIf="row.Avail === 'loading'" diameter="20"> </mat-spinner>
+                                                    <span *ngIf="row.Avail !== 'loading'">{{ row.Avail || 'NA' }} </span>
                                                 </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="CIQ">
-                                                <mat-header-cell *matHeaderCellDef mat-sort-header> CIQ
-                                                </mat-header-cell>
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> CIQ </mat-header-cell>
                                                 <mat-cell *matCellDef="let row">
-                                                    <mat-spinner *ngIf="row.CIQ === 'loading'" diameter="20">
-                                                    </mat-spinner>
+                                                    <mat-spinner *ngIf="row.CIQ === 'loading'" diameter="20"> </mat-spinner>
                                                     <span *ngIf="row.CIQ !== 'loading'">{{ row.CIQ || 'NA' }} </span>
                                                 </mat-cell>
                                             </ng-container>
 
-                                            <mat-header-row
-                                                *matHeaderRowDef="skillListTable.tableData.columns; sticky: true">
-                                            </mat-header-row>
-                                            <mat-row *matRowDef="let row; columns: skillListTable.tableData.columns"
-                                                (click)="selectSkill(row)" class="selectable"
-                                                [ngClass]="{ selected: !!skillListTable.tableData.selection.isSelected(row) }">
+                                            <mat-header-row *matHeaderRowDef="skillListTable.tableData.columns; sticky: true"> </mat-header-row>
+                                            <mat-row
+                                                *matRowDef="let row; columns: skillListTable.tableData.columns"
+                                                (click)="selectSkill(row)"
+                                                class="selectable"
+                                                [ngClass]="{ selected: !!skillListTable.tableData.selection.isSelected(row) }"
+                                            >
                                             </mat-row>
                                         </mat-table>
-                                        <p *ngIf="!loading && skillListTable.tableData.source.data.length === 0"
-                                            class="text-center m-0 mat-title">
+                                        <p *ngIf="!loading && skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                             No Data Available
                                         </p>
-                                        <p *ngIf="loading && skillListTable.tableData.source.data.length === 0"
-                                            class="text-center m-0 mat-title">
+                                        <p *ngIf="loading && skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                             Loading Data, Please Wait...
                                         </p>
                                     </div>
                                 </div>
-                            </div>
-                            <div *ngIf="dynamicListTable.enabled" [hidden]="activeSwitcher !== 'dynamicList'">
-                                <div class="w-100-p h-100-p custom-scroll-adjust">
-                                    <mat-table class="h-100-p" matSort matSortDisableClear
-                                        [dataSource]="dynamicListTable.tableData.source" matSortActive="Name"
-                                        matSortDirection="asc">
-                                        <ng-container
-                                            *ngFor="let disCol of dynamicListTable.tableData.columns; let colIndex = index"
-                                            matColumnDef="{{ disCol }}">
-                                            <mat-header-cell *matHeaderCellDef>{{ disCol }}</mat-header-cell>
-                                            <mat-cell *matCellDef="let element"> {{ element[disCol] }} </mat-cell>
-                                        </ng-container>
+                                <div *ngIf="dynamicListTable.enabled" [hidden]="activeSwitcher !== 'dynamicList'">
+                                    <!-- Search form field with form control searchKey -->
+                                    <div class="ml-8 twd-w-full">
+                                        <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                            <input
+                                                matInput
+                                                [formControl]="searchKey"
+                                                #dynamicSearchRef
+                                                placeholder="Search"
+                                                [disabled]="!dynamicListTable.tableData.source.data.length"
+                                            />
+                                            <button
+                                                *ngIf="dynamicSearchRef.value"
+                                                mat-button
+                                                color="primary"
+                                                matSuffix
+                                                mat-icon-button
+                                                aria-label="Clear"
+                                                (click)="searchKey.setValue('')"
+                                            >
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="w-100-p h-100-p">
+                                        <mat-table
+                                            class="h-100-p"
+                                            matSort
+                                            matSortDisableClear
+                                            [dataSource]="dynamicListTable.tableData.source"
+                                            matSortActive="Name"
+                                            matSortDirection="asc"
+                                        >
+                                            <ng-container
+                                                *ngFor="let disCol of dynamicListTable.tableData.columns; let colIndex = index"
+                                                matColumnDef="{{ disCol }}"
+                                            >
+                                                <mat-header-cell *matHeaderCellDef>{{ disCol }}</mat-header-cell>
+                                                <mat-cell *matCellDef="let element"> {{ element[disCol] }} </mat-cell>
+                                            </ng-container>
 
-                                        <mat-header-row *matHeaderRowDef="dynamicListTable.tableData.columns">
-                                        </mat-header-row>
-                                        <mat-row *matRowDef="let row; columns: dynamicListTable.tableData.columns"
-                                            (click)="selectDynamic(row)" class="selectable"
-                                            [ngClass]="{ selected: !!dynamicListTable.tableData.selection.isSelected(row) }">
-                                        </mat-row>
-                                    </mat-table>
-                                    <p *ngIf="!loading && dynamicListTable.tableData.source.data.length === 0"
-                                        class="text-center m-0 mat-title">
-                                        No Data Available
-                                    </p>
-                                    <p *ngIf="loading && dynamicListTable.tableData.source.data.length === 0"
-                                        class="text-center m-0 mat-title">
-                                        Loading Data, Please Wait...
-                                    </p>
+                                            <mat-header-row *matHeaderRowDef="dynamicListTable.tableData.columns"> </mat-header-row>
+                                            <mat-row
+                                                *matRowDef="let row; columns: dynamicListTable.tableData.columns"
+                                                (click)="selectDynamic(row)"
+                                                class="selectable"
+                                                [ngClass]="{ selected: !!dynamicListTable.tableData.selection.isSelected(row) }"
+                                            >
+                                            </mat-row>
+                                        </mat-table>
+                                        <p *ngIf="!loading && !dynamicListTable.tableData.source.data.length" class="text-center m-0 mat-title">
+                                            No Data Available
+                                        </p>
+                                        <p *ngIf="loading && !dynamicListTable.tableData.source.data.length" class="text-center m-0 mat-title">
+                                            Loading Data, Please Wait...
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

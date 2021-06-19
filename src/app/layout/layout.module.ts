@@ -1,19 +1,24 @@
 import { NgModule } from '@angular/core';
-import { AppThemeOptionsModule } from 'app/layout/components/theme-options/theme-options.module';
-import { HorizontalLayout1Module } from 'app/layout/horizontal/layout-1/layout-1.module';
-import { VerticalLayout1Module } from 'app/layout/vertical/layout-1/layout-1.module';
+import { FuseSidebarModule } from '@fuse/components';
+import { SharedModule } from '@modules/shared/shared.module';
+import { ContentModule } from 'app/layout/components/content/content.module';
+import { InstantMessagingModule } from 'app/layout/components/instant-messaging/instant-messaging.module';
+import { NavbarModule } from 'app/layout/components/navbar/navbar.module';
+import { QuickPanelModule } from 'app/layout/components/quick-panel/quick-panel.module';
+import { ToolbarModule } from 'app/layout/components/toolbar/toolbar.module';
+import { VerticalLayoutComponent } from 'app/layout/vertical/vertical-layout.component';
 
 @NgModule({
+    declarations: [VerticalLayoutComponent],
     imports: [
-        VerticalLayout1Module,
-        HorizontalLayout1Module,
-        AppThemeOptionsModule
+        FuseSidebarModule,
+        ContentModule,
+        NavbarModule,
+        QuickPanelModule,
+        ToolbarModule,
+        InstantMessagingModule,
+        SharedModule
     ],
-    exports: [
-        VerticalLayout1Module,
-        HorizontalLayout1Module,
-        AppThemeOptionsModule
-    ]
+    exports: [VerticalLayoutComponent]
 })
-export class LayoutModule {
-}
+export class LayoutModule { }

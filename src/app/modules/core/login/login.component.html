@@ -56,14 +56,14 @@
             <form name="loginForm" [formGroup]="loginForm" novalidate>
                 <ng-container *ngIf="showOtp">
                     <mat-form-field class="form-field custom" appearance="outline">
-                        <input class="login-input" matInput required placeholder="OTP" formControlName="otp" #lanId />
+                        <input class="login-input" matInput required placeholder="OTP" formControlName="otp" #otp />
                         <mat-error> OTP is required </mat-error>
                     </mat-form-field>
                 </ng-container>
 
                 <ng-container *ngIf="!showOtp">
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="domainListEnabled">
-                        <mat-select placeholder="DOMAIN LIST" formControlName="domain">
+                        <mat-select placeholder="Domain List" formControlName="domain">
                             <mat-option>None</mat-option>
                             <mat-option *ngFor="let item of domainList" value="item">{{ item }}</mat-option>
                         </mat-select>
@@ -71,7 +71,7 @@
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline">
-                        <input class="login-input" matInput required placeholder="LAN ID" formControlName="lanId" #lanId />
+                        <input class="login-input" matInput required placeholder="Lan ID" formControlName="lanId" #lanId />
                         <button
                             mat-button
                             type="button"
@@ -88,7 +88,7 @@
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
-                        <input class="login-input" matInput required placeholder="AGENT ID" formControlName="agentId" />
+                        <input class="login-input" matInput required placeholder="Agent ID" formControlName="agentId" />
                         <button
                             mat-button
                             color="primary"
@@ -104,15 +104,15 @@
                         <mat-error> Agent ID is required </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="passwordEnabled">
+                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Agent">
                         <input
                             class="login-input"
                             required
                             matInput
-                            [type]="hidePassword ? 'password' : 'text'"
+                            [type]="hidePassword.agent ? 'password' : 'text'"
                             required
-                            placeholder="PASSWORD"
-                            formControlName="password"
+                            placeholder="Agent Password"
+                            formControlName="agentPassword"
                         />
                         <button
                             mat-icon-button
@@ -120,11 +120,36 @@
                             color="primary"
                             color="primary"
                             matSuffix
-                            (click)="hidePassword = !hidePassword"
+                            (click)="hidePassword.agent = !hidePassword.agent"
                             [attr.aria-label]="'Hide password'"
-                            [attr.aria-pressed]="hidePassword"
+                            [attr.aria-pressed]="hidePassword.agent"
                         >
-                            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                            <mat-icon>{{ hidePassword.agent ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        <mat-error> Password is required </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Station">
+                        <input
+                            class="login-input"
+                            required
+                            matInput
+                            [type]="hidePassword.station ? 'password' : 'text'"
+                            required
+                            placeholder="Station Password"
+                            formControlName="stationPassword"
+                        />
+                        <button
+                            mat-icon-button
+                            type="button"
+                            color="primary"
+                            color="primary"
+                            matSuffix
+                            (click)="hidePassword.station = !hidePassword.station"
+                            [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hidePassword.station"
+                        >
+                            <mat-icon>{{ hidePassword.station ? 'visibility_off' : 'visibility' }}</mat-icon>
                         </button>
                         <mat-error> Password is required </mat-error>
                     </mat-form-field>
@@ -139,7 +164,7 @@
                             color="primary"
                             matInput
                             required
-                            placeholder="STATION"
+                            placeholder="Station ID"
                             (keypress)="numberOnly($event)"
                             formControlName="station"
                         />
@@ -185,11 +210,20 @@
                     </mat-list>
                 </ng-container>
                 <p class="text-center text-danger text-bold">{{ errorMessage || ' ' }}</p>
-                <button mat-raised-button color="primary" class="submit-button" aria-label="LOGIN" (click)="login(false)">LOGIN</button>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    class="submit-button"
+                    aria-label="LOGIN"
+                    (click)="login(false)"
+                    [disabled]="!loginForm.valid"
+                >
+                    LOGIN
+                </button>
             </form>
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
                 <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>
-                Copyright Tetherfi | Version: {{ version }}
+                Copyright Tetherfi | UI: {{ uiVersion }} - Server: {{ version }}
             </div>
         </div>
     </div>

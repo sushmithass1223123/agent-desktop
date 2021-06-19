@@ -10,6 +10,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
 // @import '@tmac/notebook/styles/default.scss';
 
 body {
@@ -52,6 +53,19 @@ img {
     }
 }
 
+.slim-scroll {
+    overflow: auto;
+    
+    ::-webkit-scrollbar {
+        width: 4px !important;
+        height: 4px !important;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.37) !important;
+    }
+}
+
 input[type='text'] {
     color: currentColor !important;
 }
@@ -60,4 +74,37 @@ input[type='time']::-webkit-calendar-picker-indicator {
     width: 20px;
     height: 20px;
     opacity: 0.8;
+}
+
+.editor-container {
+    min-height: 200px;
+    border: none !important;
+    height: auto;
+    overflow: auto;
+    // height: 75%;
+}
+
+.ql-toolbar {
+    border: none;
+    @apply twd-shadow-md;
+}
+
+.ql-toolbar {
+    .ql-picker {
+        color: var(--twd-primary-300) !important;
+    }
+    .ql-stroke {
+        fill: none !important;
+        stroke: var(--twd-primary-300) !important;
+        :hover {
+            stroke: var(--twd-primary-900) !important;
+        }
+    }
+    .ql-fill {
+        fill: var(--twd-primary-300) !important;
+        stroke: none !important;
+        :hover {
+            fill: var(--twd-primary-900) !important;
+        }
+    }
 }

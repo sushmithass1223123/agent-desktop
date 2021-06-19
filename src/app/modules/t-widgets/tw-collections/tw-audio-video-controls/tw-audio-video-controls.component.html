@@ -1,0 +1,269 @@
+<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event" *ngIf="showUI">
+    <ng-container
+        *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse"
+    >
+        <div *ngIf="widgetData.callType === 'audio'" fxFill class="audio">
+            <div fxFill fxLayout="column" fxLayoutAlign="space-between none" class="px-12">
+                <div *ngIf="userList.length" fxFlex fxLayout="row wrap" fxLayoutAlign=" center">
+                    <ng-container *ngFor="let item of userList">
+                        <avatar
+                            *ngIf="item.streamInfo.type === 'audio'"
+                            name="{{ item.streamInfo.user || 'User' }}"
+                            classes="w-48 h-48 border-radius-16 fuse-white mat-elevation-z2"
+                            matTooltip="{{ item.streamInfo.user || 'User' }}"
+                            class="mr-8"
+                            [ngClass]="{ talking: item.level > 0 }"
+                        ></avatar>
+                    </ng-container>
+                </div>
+
+                <div
+                    fxFlex
+                    fxLayout="column"
+                    fxLayoutAlign="center none"
+                    class="p-8 border-radius-20 call-details"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                >
+                    <div class="w-100-p border-radius-20 remote-video-container" *ngIf="remoateScreenshareRef">
+                        <div class="border-radius-20 bg-dark remote-video">
+                            <video
+                                autoplay
+                                playsinline="true"
+                                [srcObject]="remoateScreenshareRef.stream"
+                                [id]="remoateScreenshareRef.stream.id"
+                                #remoteVideo
+                            ></video>
+                            <span class="text-boxed user">{{ remoateScreenshareRef.streamInfo.user }}</span>
+                        </div>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between none">
+                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
+                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between none">
+                        <span fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
+                        </span>
+                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
+                    </div>
+                </div>
+
+                <div fxFlex fxLayout="row wrap" fxLayoutAlign="space-between center" class="call-controls">
+                    <div fxLayout="row" fxLayoutAlign="start center" class="actions-1">
+                        <button
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold"
+                            [matTooltip]="audioMuted ? 'Unmute' : 'Mute'"
+                            (click)="muteUnmuteAudioCall()"
+                            [ngClass]="{ 'mat-warn': audioMuted }"
+                        >
+                            <mat-icon> mic_off </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="widgetData.opener.agentFeatures.screenshare"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing"
+                            [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
+                            [ngClass]="{ 'bg-alt-danger': screenSharing }"
+                            (click)="shareScreen()"
+                        >
+                            <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
+                        </button>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutAlign="start center" class="actions-2">
+                        <button
+                            *ngIf="widgetData.opener.agentFeatures.hold"
+                            [disabled]="!connected"
+                            mat-flat-button
+                            mat-icon-button
+                            [class]="hold ? 'success' : 'warning'"
+                            [matTooltip]="hold ? 'Unhold Call' : 'Hold Call'"
+                            (click)="holdUnholdCall()"
+                        >
+                            <mat-icon>{{ hold ? 'phone_in_talk' : 'phone_paused' }}</mat-icon>
+                        </button>
+
+                        <button mat-flat-button mat-icon-button color="warn" matTooltip="End Call" (click)="endCall()">
+                            <mat-icon>call_end</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For audio call -->
+            <div hidden>
+                <ng-container *ngFor="let item of userList">
+                    <audio
+                        *ngIf="item.streamInfo.type === 'audio'"
+                        autoplay
+                        playsinline="true"
+                        [srcObject]="item.stream"
+                        id="{{ item.stream.id }}"
+                    ></audio>
+                </ng-container>
+            </div>
+        </div>
+
+        <div *ngIf="widgetData.callType === 'video'" fxFill fxFlex class="video">
+            <div fxFill fxFlex fxLayout="column" fxLayoutAlign="space-between none" class="position-relative video-controls">
+                <div
+                    fxFlex
+                    fxLayout="row wrap"
+                    fxLayoutAlign="center start"
+                    class="w-100-p border-radius-20 remote-video-container"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                    [@animateStagger]="{ value: '50' }"
+                >
+                    <div
+                        class="border-radius-20 bg-dark remote-video"
+                        *ngFor="let user of userList"
+                        [ngClass]="'vd-' + userList.length + ' ' + (maximized ? 'maximized' : '')"
+                        [@animate]="{ value: '*', params: { y: '100%' } }"
+                    >
+                        <video autoplay playsinline="true" [srcObject]="user.stream" [id]="user.stream.id" #remoteVideo></video>
+
+                        <div class="button-group">
+                            <button
+                                *ngIf="widgetData.opener.agentFeatures.snapshot"
+                                mat-flat-button
+                                mat-icon-button
+                                [disabled]="!connected || hold"
+                                matTooltip="Take Snapshot"
+                                (click)="takeSnapShot(user)"
+                            >
+                                <mat-icon> camera </mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="widgetData.opener.agentFeatures.webrtcTest"
+                                mat-flat-button
+                                mat-icon-button
+                                [disabled]="!connected || hold"
+                                matTooltip="Stats"
+                                (click)="showWebRTCStats()"
+                            >
+                                <mat-icon> event_note </mat-icon>
+                            </button>
+                        </div>
+
+                        <span class="text-boxed user">{{ user.streamInfo.user }}</span>
+                    </div>
+
+                    <div fxFill fxFlex fxLayout fxLayoutAlign="center center" *ngIf="userList.length === 0">
+                        <img src="assets/images/vectors/no-widget.svg" />
+                    </div>
+                </div>
+
+                <div fxLayout="column" fxLayoutAlign="center none" class="px-12 py-4 call-details">
+                    <div fxLayout="row" fxLayoutAlign="space-between none">
+                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
+                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
+                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
+                        <span fxLayout="row" fxLayoutAlign=" center">
+                            <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" fxLayout="row" fxLayoutAlign=" none" class="call-controls">
+                    <div fxFlex="40" fxLayout="row" fxLayoutAlign="start center" class="actions-1">
+                        <button
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold"
+                            [matTooltip]="audioMuted ? 'Unmute Audio' : 'Mute Audio'"
+                            (click)="muteUnmuteAudioCall()"
+                            [ngClass]="{ 'mat-warn': audioMuted }"
+                        >
+                            <mat-icon> mic_off </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="!oneWayVideo"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold"
+                            [matTooltip]="videoMuted ? 'Unmute Video' : 'Mute Video'"
+                            (click)="muteUnmuteVideoCall()"
+                            [ngClass]="{ 'mat-warn': videoMuted }"
+                        >
+                            <mat-icon> videocam_off </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="oneWayVideo"
+                            #upgradeToVideoBtn
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold"
+                            matTooltip="Change to Video"
+                            (click)="changeToVideo(upgradeToVideoBtn)"
+                        >
+                            <mat-icon> video_call </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="widgetData.opener.agentFeatures.screenshare"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing"
+                            [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
+                            [ngClass]="{ 'bg-alt-danger': screenSharing }"
+                            (click)="shareScreen()"
+                        >
+                            <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
+                        </button>
+                    </div>
+
+                    <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="actions-2">
+                        <button
+                            *ngIf="widgetData.opener.agentFeatures.hold"
+                            [disabled]="!connected"
+                            mat-flat-button
+                            mat-icon-button
+                            [class]="hold ? 'success' : 'warning'"
+                            [matTooltip]="hold ? 'Unhold Call' : 'Hold Call'"
+                            (click)="holdUnholdCall()"
+                        >
+                            <mat-icon>{{ hold ? 'phone_in_talk' : 'phone_paused' }}</mat-icon>
+                        </button>
+
+                        <button mat-flat-button mat-icon-button color="warn" matTooltip="End Call" (click)="endCall()">
+                            <mat-icon>call_end</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    cdkDrag
+                    cdkDragBoundary=".video-controls"
+                    class="border-radius-20 bg-dark self-video"
+                    [ngClass]="{ minimize: selfViewSmall }"
+                    (dblclick)="minimizeVideo()"
+                    *ngIf="selfVideo && !oneWayVideo"
+                    [@animate]="{ value: '*', params: { scale: '0.5' } }"
+                >
+                    <div class="drag-handle" cdkDragHandle>
+                        <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                            ></path>
+                            <path d="M0 0h24v24H0z" fill="none"></path>
+                        </svg>
+                    </div>
+                    <div class="overlay"></div>
+                    <video autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo" [id]="selfVideo.id"></video>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</tw-wrapper>

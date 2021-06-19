@@ -5,9 +5,11 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { IWidget } from 'app/interfaces';
 import { IResponse, SDKClient } from '@tmac/sdk';
+import { InteractionRef, IWidget } from 'app/interfaces';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Generic Controls Components
@@ -35,6 +37,11 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
     interactionId: number;
 
     /**
+     * Interaction List
+     */
+    interactionList: InteractionRef[] = [];
+
+    /**
      * Data to be displayed
      */
     displayData = {
@@ -42,11 +49,25 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         intent: ''
     };
 
+    /**
+     * To allow user to close
+     */
+    closeInteractionAllowed: boolean;
+
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
+
     constructor(
         private _appUIService: AppUiService,
         private _interactionManagerService: InteractionManagerService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _contentPageService: ContentPageService
+        private _contentPageService: ContentPageService,
+        private _fuseFacadeService: FuseFacadeService
     ) {
         super();
     }
@@ -59,6 +80,9 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        // check config, default close interaction is true
+        this.closeInteractionAllowed = this.data.Data.CloseInteractionAllowed ?? true;
+
         if (this.data.InteractionDetails) {
             const interactionDetails = this.data.InteractionDetails;
             // set the interaction id from data
@@ -69,6 +93,12 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
                 intent: interactionDetails.Item.Intent
             };
         }
+
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            // filter out the textchat interaction
+            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'generic');
+        });
     }
 
     /**
@@ -77,8 +107,7 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
      */
     ngAfterViewInit(): void {
         // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 &&
-            this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
             setTimeout(() => {
                 this._contentPageService.mode = this.data.Data.Path;
             }, 500);
@@ -160,4 +189,19 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         });
     }
 
+    /**
+     * Select Interaction
+     * @method selectInteraction
+     * @param {InteractionRef} item
+     */
+    selectInteraction(item: InteractionRef): void {
+        // if same interaction is seleted then return
+        if (this.interactionId === item.interactionId) {
+            return;
+        }
+        // update is active
+        this._interactionManagerService.updateInteraction(item.interactionId, {
+            isActive: true
+        });
+    }
 }

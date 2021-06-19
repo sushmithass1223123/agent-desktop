@@ -13,8 +13,12 @@
 <div class="navbar-content" [ngClass]="(customFuse$ | async).background">
     <div class="twn-list">
         <mat-selection-list #sidebarList [multiple]="false">
-            <div class="top mat-elevation-z1">
-                <mat-divider *ngIf="topWidgets.length > 0"></mat-divider>
+            <div
+                class="top twd-flex twd-flex-col twd-justify-start twd-items-center"
+                [ngClass]="{
+                    'border-top border-bottom py-4': topWidgets.length > 0
+                }"
+            >
                 <ng-container *ngFor="let item of topWidgets">
                     <mat-list-option
                         *ngIf="item.Config.Enabled"
@@ -31,8 +35,12 @@
                 </ng-container>
             </div>
 
-            <div class="bottom mat-elevation-z1 custom-scroll-adjust">
-                <mat-divider *ngIf="bottomWidgets.length > 0"></mat-divider>
+            <div
+                class="bottom twd-flex twd-flex-col twd-justify-start twd-items-center twd-overflow-auto"
+                [ngClass]="{
+                    'border-top border-bottom py-4': bottomWidgets.length > 0
+                }"
+            >
                 <ng-container *ngFor="let item of bottomWidgets">
                     <mat-list-option
                         *ngIf="item.Config.Enabled"

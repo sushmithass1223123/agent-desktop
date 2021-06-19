@@ -42,3 +42,4 @@ Thumbs.db
 /src/assets/development.json
 .gitignore
 /dist
+/widgets

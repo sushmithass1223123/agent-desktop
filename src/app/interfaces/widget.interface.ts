@@ -1,6 +1,4 @@
-import { TWidget } from '@modules/t-widgets/utils';
-
-export interface IWidget {
+export interface IWidget<T = any> {
     /**
      * Name of the Widget
      */
@@ -32,7 +30,7 @@ export interface IWidget {
     /**
      * Widget Interaction Details
      */
-    InteractionDetails?: any;
+    InteractionDetails?: T;
     /**
      * Need more description
      * Widget on destroy callback
@@ -57,15 +55,15 @@ export interface InteractionWidgets {
         /**
          * Static Widgets
          */
-        static: TWidget[];
+        static: IWidget[];
         /**
          * Dynamic Widgets
          */
-        dynamic: TWidget[];
+        dynamic: IWidget[];
         /**
          * AOT widgets
          */
-        aot?: TWidget[];
+        aot?: IWidget[];
     };
 }
 

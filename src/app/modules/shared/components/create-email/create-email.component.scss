@@ -1,47 +1,57 @@
-.editor-container {
-    min-height: 200px;
-    border: none !important;
-    // border: 1px solid #ccc !important;
-}
-
-.ql-toolbar {
-    margin-bottom: 10px;
-    border-radius: 20px;
-    border: none !important;
-    position: absolute;
-    bottom: -100px;
-    opacity: 0;
-    width: 90%;
-    z-index: 1;
-    display: none;
-    transition: opacity 0.5s, bottom 0.3s, display 0s;
-    &.show {
-        opacity: 1;
-        bottom: 0px;
-        left: 10px;
-        display: block;
+.attachment-overlay {
+    .attachment-menu {
+        width: 97%;
+        margin: auto;
+        overflow-y: auto;
     }
-}
-
-.dark-mode {
-    .ql-toolbar .ql-stroke {
-        fill: none;
-        stroke: #fff;
-    }
-
-    .ql-toolbar .ql-fill {
-        fill: #fff !important;
-        stroke: none;
-    }
-
-    .ql-toolbar .ql-picker {
-        color: #fff;
+    .mat-chip-list-wrapper {
+        width: 100%;
+        margin: none;
+        padding: 0 4px;
     }
 }
 
 create-email {
     height: 100%;
     max-height: 100%;
+    .tox-tinymce {
+        .tox-editor-header {
+            box-shadow: 0px 0px 5px grey !important;
+        }
+        .tox-toolbar__primary,
+        .tox-toolbar-overlord,
+        .tox-statusbar,
+        iframe {
+            background: transparent !important;
+        }
+        .tox-statusbar {
+            box-shadow: 0 0 1px grey;
+        }
+    }
+
+    .twd-min-h-auto {
+        min-height: auto !important;
+    }
+    .mat-chip {
+        @apply twd-text-xs;
+        padding: 15px !important;
+        max-width: 40%;
+    }
+
+    .mat-chip-list-wrapper {
+        width: 100%;
+    }
+
+    .email-editor-container {
+        min-height: 200px;
+    }
+
+    input {
+        border-bottom: 1px solid var(--twd-primary-default) !important;
+        // min-width: 200px !important;
+        // width: auto !important;
+        padding: 4px !important;
+    }
     .editor-wrapper {
         height: calc(100% - 50px);
     }
@@ -61,6 +71,19 @@ create-email {
     }
     .mat-form-field-appearance-outline .mat-form-field-infix {
         padding: 5px;
+    }
+
+    .attachment-list {
+        button {
+            max-width: 150px;
+
+            .mat-button-wrapper {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
     }
 }
 // .editor-container {

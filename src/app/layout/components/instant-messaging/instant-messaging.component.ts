@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -73,7 +73,7 @@ interface Chat {
     templateUrl: './instant-messaging.component.html',
     styleUrls: ['./instant-messaging.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations: widgetFabAnimations
+    animations: appAnimations
 })
 export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
@@ -200,58 +200,48 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                             this.loading = false;
                         }
                     }, 10000);
-                }
-                else {
+                } else {
                     this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, false, this.config.TeamFilter ?? false);
-                    this.selectedContact = null;
+                    this.resetChat();
                 }
             });
 
         this._tmacEventService
-            .getEvents([
-                'TeamAgentListEvent',
-                'AgentNotificaitonEvent',
-                'SupervisorAgentListEvent',
-                'AgentAVMessageEvent'
-            ])
+            .getEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent', 'AgentAVMessageEvent'])
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
-        this._instantMessagingService.getUser
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((x: string) => {
-                // get user by id
-                if (x) {
-                    // select the user by id
-                    const user = this.contacts.filter(c => c.id === x)?.[0];
-                    // if user found the toggle chat
-                    if (user) {
-                        this.toggleChat(user);
-                    }
+        this._instantMessagingService.getUser.pipe(takeUntil(this._unsubscribeAll)).subscribe((x: string) => {
+            // get user by id
+            if (x) {
+                // select the user by id
+                const user = this.contacts.filter((c) => c.id === x)?.[0];
+                // if user found the toggle chat
+                if (user) {
+                    this.toggleChat(user);
                 }
-            });
+            }
+        });
 
-        this._instantMessagingService.getConfig
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((x: WidgetData) => {
-                this.config = x;
-                // check for audio enabled
-                if (x.AudioEscalateAllowed) {
-                    this.actions.push({
-                        label: 'Video Call',
-                        icon: 'video_call',
-                        type: 'video'
-                    });
-                }
-                // check for video enabled
-                if (x.VideoEscalateAllowed) {
-                    this.actions.push({
-                        label: 'Voice Call',
-                        icon: 'call',
-                        type: 'audio'
-                    });
-                }
-            });
+        this._instantMessagingService.getConfig.pipe(takeUntil(this._unsubscribeAll)).subscribe((x: WidgetData) => {
+            this.config = x;
+            // check for audio enabled
+            if (x.AudioEscalateAllowed) {
+                this.actions.push({
+                    label: 'Video Call',
+                    icon: 'video_call',
+                    type: 'video'
+                });
+            }
+            // check for video enabled
+            if (x.VideoEscalateAllowed) {
+                this.actions.push({
+                    label: 'Voice Call',
+                    icon: 'call',
+                    type: 'audio'
+                });
+            }
+        });
     }
 
     /**
@@ -259,7 +249,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 
@@ -352,7 +342,6 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // Otherwise, we will select the contact, open
         // the sidebar and start the chat
         else {
-
             // Set the selected contact
             this.selectedContact = contact;
 
@@ -413,7 +402,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
 
     /**
      * AgentNotificaitonEvent handler
-     * @param {AgentNotificaitonEvent} evt 
+     * @param {AgentNotificaitonEvent} evt
      */
     AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
         if (evt.InteractionID > 0 || evt.Type !== 'IM') {
@@ -427,11 +416,11 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this.allChats[evt.FromAgentId].dialog.push({
             FromAgentId: evt.FromAgentId,
             Message: evt.Message,
-            CreatedTime: evt.CreatedTime,
+            CreatedTime: evt.CreatedTime
         });
 
         // check if this contact in list
-        if (!this.contacts?.filter(c => c.id === evt.FromAgentId).length) {
+        if (!this.contacts?.filter((c) => c.id === evt.FromAgentId).length) {
             // add to the list
             this.contacts.push({
                 avatar: '',
@@ -452,12 +441,12 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         }
 
         this._prepareChatForReplies();
-    }
+    };
 
     /**
      * To process AgentAVMessageEvent
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     AgentAVMessageEvent = (evt: AgentAVMessageEvent): void => {
         // check the type of message
@@ -470,11 +459,11 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         //     // send to the widget through data
         //     this.callWidget.Data.OnMessage(evt.Message);
         // }
-    }
+    };
 
     /**
      * TeamAgentListEvent Handler
-     * @param {CustomSDKEvent} evt 
+     * @param {CustomSDKEvent} evt
      */
     TeamAgentListEvent = (evt: CustomSDKEvent): void => {
         if (this.loading) {
@@ -499,7 +488,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
 
         // create contact list merging both items
         this.contacts = uniqBy(curContacts.concat(newContacts), 'id');
-    }
+    };
 
     /**
      * To process SupervisorAgentListEvent
@@ -522,13 +511,13 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
             tmacServer: x.TmacServer
         }));
-    }
+    };
 
     /**
      * Track by for avoiding rerender
      * @method trackByID
-     * @param {number} index 
-     * @param {any} contact 
+     * @param {number} index
+     * @param {any} contact
      */
     trackByID(index: number, contact: any): string {
         return contact.ID;
@@ -536,8 +525,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
 
     /**
      * To make a call to selected agent
-     * 
-     * @param { 'audio' | 'video' } type 
+     *
+     * @param { 'audio' | 'video' } type
      */
     makeCall(type: 'audio' | 'video'): void {
         this.openCallWidget(type, 'out', null);
@@ -561,7 +550,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         // get the widget type
         const widgetMode = {
             title: param === 'audio' ? 'Audio Call' : 'Video Call',
-            type: param === 'audio' ? 'tw-audio-controls' : 'tw-video-controls',
+            type: 'tw-audio-video-controls',
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
@@ -581,6 +570,8 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         widget.Data.SessionID = TUtils.Generic.uuid();
         widget.Data.AgentID = avEvent?.FromAgentId || this.selectedContact.id;
         widget.Data.TmacServer = avEvent?.FromTmacServer || this.selectedContact.tmacServer;
+        widget.Data.CallType = param;
+
         widget.Data.SendMessage = (jsonMessage: any) => {
             SDKClient.sendAgentAVMessage({
                 jsonData: '',

@@ -5,16 +5,15 @@
     } as customFuse"
 >
     <div
-        fxLayout
-        fxLayoutAlign="space-evenly center"
-        class="email-workbench w-100-p h-100-p py-8"
+        #emailWorkBench
+        class="email-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
         [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
     >
-        <div class="email-category mx-8 border-radius-20 h-100-p">
+        <div *ngIf="showCategoryMenu" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
             <div fxLayout="column" fxLayoutAlign="space-between" class="h-100-p py-20">
-                <div class="tab-menu" fxLayout="column">
+                <div class="tab-menu twd-flex twd-flex-col twd-gap-4">
                     <button
-                        class="mb-12 pb-8"
+                        class="twd-mb-3 pb-20"
                         mat-button
                         matTooltip="Queue"
                         (click)="switchTab('queue')"
@@ -28,7 +27,7 @@
                         <div>Queued</div>
                     </button>
                     <button
-                        class="mb-12 pb-8"
+                        class="twd-mb-3 pb-20"
                         mat-button
                         (click)="switchTab('inbox')"
                         matTooltip="Inbox"
@@ -42,7 +41,7 @@
                         <div>Inbox</div>
                     </button>
                     <button
-                        class="mb-12 pb-8"
+                        class="twd-mb-3 pb-20"
                         mat-button
                         (click)="switchTab('sentitem')"
                         matTooltip="Sent"
@@ -56,7 +55,7 @@
                         <div>Sent</div>
                     </button>
                     <button
-                        class="mb-12 pb-8"
+                        class="twd-mb-3 pb-20"
                         mat-button
                         matTooltip="Drafts"
                         (click)="switchTab('draft')"
@@ -73,227 +72,188 @@
             </div>
         </div>
 
-        <div fxFlex="30" class="email-list mr-8 border-radius-20">
-            <div fxLayout fxLayoutAlign="center center" class="search-input mt-8 border-radius-20 position-relative">
-                <form class="w-100-p" (ngSubmit)="doGlobalSearch()">
-                    <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
-                        <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
-                        <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
-                            <mat-icon matSuffix>search</mat-icon>
+        <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
+            <div class="theme-bg twd-px-1.5 twd-pb-5 border-radius-20 twd-h-full twd-overflow-y-auto twd-col-span-3 lg:twd-col-span-1">
+                <div class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2">
+                    <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
+                        <button class="lg:twd-hidden" #expandableButton (click)="showCategoryMenu = !showCategoryMenu">
+                            <mat-icon>{{ showCategoryMenu ? 'menu_open' : 'menu' }}</mat-icon>
                         </button>
-                        <ng-template #clearBtn>
-                            <button
-                                type="button"
-                                mat-button
-                                color="accent"
-                                matSuffix
-                                mat-icon-button
-                                aria-label="Clear"
-                                [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                (click)="globalSearchControl.reset()"
-                            >
-                                <mat-icon>close</mat-icon>
-                            </button>
-                        </ng-template>
-                    </mat-form-field>
-                </form>
-
-                <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
-                    <mat-icon>refresh</mat-icon>
-                </button>
-                <button
-                    mat-icon-button
-                    (click)="showAdvancedSearchForm = !showAdvancedSearchForm"
-                    cdkOverlayOrigin
-                    #advancedSearchMenu="cdkOverlayOrigin"
-                    matTooltip="Advance Search"
-                >
-                    <mat-icon>more_vert</mat-icon>
-                    <ng-template
-                        cdkConnectedOverlay
-                        [cdkConnectedOverlayOrigin]="advancedSearchMenu"
-                        [cdkConnectedOverlayOpen]="showAdvancedSearchForm"
-                        cdkConnectedOverlayHasBackdrop
-                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                        (backdropClick)="showAdvancedSearchForm = false"
-                        [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
-                    >
-                        <div class="advanced-search-form mat-elevation-z2 border-radius-20">
-                            <p class="text-center text-bold">Advanced Search</p>
-                            <form
-                                *ngIf="currentTab === 'queue'"
-                                [formGroup]="advancedSearchForm"
-                                class="px-12"
-                                (ngSubmit)="doAdvancedSearch()"
-                                novalidate
-                                fxLayout="row wrap"
-                                fxLayoutGap="2%"
-                            >
-                                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="email" type="text" placeholder="Email" [readonly]="globalSearchControl.value" />
-                                </mat-form-field>
-
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromDate"
-                                        [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #fromDatePicker></mat-datepicker>
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromTime"
-                                        type="time"
-                                        placeholder="From Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toDate"
-                                        [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #toDatePicker></mat-datepicker>
-                                </mat-form-field>
-
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toTime"
-                                        type="time"
-                                        placeholder="To Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
-                                </mat-form-field>
-
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="subject"
-                                        type="text"
-                                        placeholder="Subject"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="content"
-                                        type="text"
-                                        placeholder="Content"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
-                                <button
-                                    mat-raised-button
-                                    fxFlex="48"
-                                    class="adv-search-btn h-40 mb-8 border-radius-20"
-                                    type="button"
-                                    (click)="resetForm()"
-                                >
-                                    Reset
+                        <form class="twd-max-w-1/2 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
+                            <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
+                                <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
+                                <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
+                                    <mat-icon matSuffix>search</mat-icon>
                                 </button>
-                            </form>
-
-                            <form
-                                *ngIf="currentTab === 'draft' || currentTab === 'sentitem'"
-                                [formGroup]="advancedSearchForm"
-                                class="px-12"
-                                (ngSubmit)="doAdvancedSearch()"
-                                novalidate
-                                fxLayout="row wrap"
-                                fxLayoutGap="2%"
+                                <ng-template #clearBtn>
+                                    <button
+                                        type="button"
+                                        mat-button
+                                        color="accent"
+                                        matSuffix
+                                        mat-icon-button
+                                        aria-label="Clear"
+                                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                        (click)="globalSearchControl.reset()"
+                                    >
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </ng-template>
+                            </mat-form-field>
+                        </form>
+                        <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
+                            <mat-icon>refresh</mat-icon>
+                        </button>
+                        <button
+                            mat-icon-button
+                            (click)="showAdvancedSearchForm = !showAdvancedSearchForm"
+                            cdkOverlayOrigin
+                            #advancedSearchMenu="cdkOverlayOrigin"
+                            matTooltip="Advance Search"
+                        >
+                            <mat-icon>more_vert</mat-icon>
+                            <ng-template
+                                cdkConnectedOverlay
+                                [cdkConnectedOverlayOrigin]="advancedSearchMenu"
+                                [cdkConnectedOverlayOpen]="showAdvancedSearchForm"
+                                cdkConnectedOverlayHasBackdrop
+                                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                (backdropClick)="showAdvancedSearchForm = false"
+                                [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
                             >
-                                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="email" type="text" placeholder="Email" [readonly]="globalSearchControl.value" />
-                                </mat-form-field>
+                                <div class="advanced-search-form mat-elevation-z2 border-radius-20">
+                                    <p class="text-center text-bold twd-pt-8">Advanced Search</p>
+                                    <form
+                                        *ngIf="currentTab === 'queue'"
+                                        [formGroup]="advancedSearchForm"
+                                        class="px-12"
+                                        (ngSubmit)="doAdvancedSearch()"
+                                        novalidate
+                                        fxLayout="row wrap"
+                                        fxLayoutGap="2%"
+                                    >
+                                        <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
+                                            <mat-label>Email</mat-label>
+                                            <input matInput formControlName="email" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromDate"
-                                        [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #fromDatePicker></mat-datepicker>
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromTime"
-                                        type="time"
-                                        placeholder="From Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> From Date </mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="fromDate"
+                                                [matDatepicker]="fromDatePicker"
+                                                [readonly]="globalSearchControl.value"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #fromDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label>From Time</mat-label>
+                                            <input matInput formControlName="fromTime" type="time" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toDate"
-                                        [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #toDatePicker></mat-datepicker>
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label>To Date </mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="toDate"
+                                                [matDatepicker]="toDatePicker"
+                                                [readonly]="globalSearchControl.value"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #toDatePicker></mat-datepicker>
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toTime"
-                                        type="time"
-                                        placeholder="To Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label>To Time </mat-label>
+                                            <input matInput formControlName="toTime" type="time" [readonly]="globalSearchControl.value" />
+                                            <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="subject"
-                                        type="text"
-                                        placeholder="Subject"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="content"
-                                        type="text"
-                                        placeholder="Content"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label>Subject </mat-label>
+                                            <input matInput formControlName="subject" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label>Content </mat-label>
+                                            <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
+                                        <button
+                                            mat-raised-button
+                                            fxFlex="48"
+                                            class="adv-search-btn h-40 mb-8 border-radius-20"
+                                            type="button"
+                                            (click)="resetForm()"
+                                        >
+                                            Reset
+                                        </button>
+                                    </form>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="inSessionid"
-                                        type="text"
-                                        placeholder="In session Id"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                    <form
+                                        *ngIf="currentTab === 'draft' || currentTab === 'sentitem'"
+                                        [formGroup]="advancedSearchForm"
+                                        class="px-12"
+                                        (ngSubmit)="doAdvancedSearch()"
+                                        novalidate
+                                        fxLayout="row wrap"
+                                        fxLayoutGap="2%"
+                                    >
+                                        <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
+                                            <mat-label> Email </mat-label>
+                                            <input matInput formControlName="email" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> From Date </mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="fromDate"
+                                                [matDatepicker]="fromDatePicker"
+                                                [readonly]="globalSearchControl.value"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #fromDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> From Time </mat-label>
+                                            <input matInput formControlName="fromTime" type="time" [readonly]="globalSearchControl.value" />
+                                            <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
+                                        </mat-form-field>
+
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> To Date </mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="toDate"
+                                                [matDatepicker]="toDatePicker"
+                                                [readonly]="globalSearchControl.value"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #toDatePicker></mat-datepicker>
+                                        </mat-form-field>
+
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> To Time </mat-label>
+                                            <input matInput formControlName="toTime" type="time" [readonly]="globalSearchControl.value" />
+                                            <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
+                                        </mat-form-field>
+
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Subject </mat-label>
+                                            <input matInput formControlName="subject" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Content </mat-label>
+                                            <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Insession Id </mat-label>
+                                            <input matInput formControlName="inSessionid" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <!-- <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                     <input
                                         matInput
                                         formControlName="listOfMailboxes"
@@ -301,128 +261,110 @@
                                         placeholder="Mailbox"
                                         [readonly]="globalSearchControl.value"
                                     />
-                                </mat-form-field>
+                                </mat-form-field> -->
 
-                                <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
-                                <button
-                                    mat-raised-button
-                                    fxFlex="48"
-                                    class="adv-search-btn h-40 mb-8 border-radius-20"
-                                    type="button"
-                                    (click)="resetForm()"
-                                >
-                                    Reset
-                                </button>
-                            </form>
+                                        <mat-form-field fxFlex="48" appearance="outline" class="twd-text-sm">
+                                            <mat-label>List of mailboxes</mat-label>
+                                            <mat-select formControlName="listOfMailboxes" multiple [readonly]="globalSearchControl.value">
+                                                <mat-select-trigger>
+                                                    <ng-container *ngIf="advancedSearchForm.controls.listOfMailboxes?.value as selectedMailboxes">
+                                                        {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
+                                                        <span *ngIf="selectedMailboxes?.length > 1">
+                                                            (+{{ selectedMailboxes.length - 1 }}
+                                                            {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
+                                                        </span>
+                                                    </ng-container>
+                                                </mat-select-trigger>
+                                                <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{ mailbox }}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
 
-                            <form
-                                *ngIf="currentTab === 'inbox'"
-                                [formGroup]="advancedSearchForm"
-                                class="px-12"
-                                (ngSubmit)="doAdvancedSearch()"
-                                novalidate
-                                fxLayout="row wrap"
-                                fxLayoutGap="2%"
-                            >
-                                <!-- <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
+                                        <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
+                                        <button
+                                            mat-raised-button
+                                            fxFlex="48"
+                                            class="adv-search-btn h-40 mb-8 border-radius-20"
+                                            type="button"
+                                            (click)="resetForm()"
+                                        >
+                                            Reset
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        *ngIf="currentTab === 'inbox'"
+                                        [formGroup]="advancedSearchForm"
+                                        class="px-12"
+                                        (ngSubmit)="doAdvancedSearch()"
+                                        novalidate
+                                        fxLayout="row wrap"
+                                        fxLayoutGap="2%"
+                                    >
+                                        <!-- <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
                             <input matInput type="text" placeholder="Search" [formControl]="globalSearchControl" />
                         </mat-form-field> -->
-                                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="email" type="text" placeholder="Email" [readonly]="globalSearchControl.value" />
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="100" appearance="outline">
+                                            <mat-label> Email </mat-label>
+                                            <input matInput formControlName="email" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromDate"
-                                        [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #fromDatePicker></mat-datepicker>
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="fromTime"
-                                        type="time"
-                                        placeholder="From Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> From Date </mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="fromDate"
+                                                [matDatepicker]="fromDatePicker"
+                                                [readonly]="globalSearchControl.value"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #fromDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> From Time </mat-label>
+                                            <input matInput formControlName="fromTime" type="time" [readonly]="globalSearchControl.value" />
+                                            <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toDate"
-                                        [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #toDatePicker></mat-datepicker>
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> To Date </mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="toDate"
+                                                [matDatepicker]="toDatePicker"
+                                                [readonly]="globalSearchControl.value"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #toDatePicker></mat-datepicker>
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="toTime"
-                                        type="time"
-                                        placeholder="To Time"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                    <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> To Time </mat-label>
+                                            <input matInput formControlName="toTime" type="time" [readonly]="globalSearchControl.value" />
+                                            <!-- <span class="btn-time"> <mat-icon>access_time</mat-icon> </span> -->
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="subject"
-                                        type="text"
-                                        placeholder="Subject"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="content"
-                                        type="text"
-                                        placeholder="Content"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="deviceid"
-                                        type="text"
-                                        placeholder="Device Id"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="assignedTo"
-                                        type="text"
-                                        placeholder="Assigned To"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Subject </mat-label>
+                                            <input matInput formControlName="subject" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Content </mat-label>
+                                            <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Device Id </mat-label>
+                                            <input matInput formControlName="deviceid" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Assigned To </mat-label>
+                                            <input matInput formControlName="assignedTo" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
-                                    <input
-                                        matInput
-                                        formControlName="sesisonid"
-                                        type="text"
-                                        placeholder="Session Id"
-                                        [readonly]="globalSearchControl.value"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
+                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                            <mat-label> Session Id </mat-label>
+                                            <input matInput formControlName="sesisonid" type="text" [readonly]="globalSearchControl.value" />
+                                        </mat-form-field>
+                                        <!-- <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                     <input
                                         matInput
                                         formControlName="listOfMailboxes"
@@ -430,258 +372,464 @@
                                         placeholder="Mailbox"
                                         [readonly]="globalSearchControl.value"
                                     />
-                                </mat-form-field>
+                                </mat-form-field> -->
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Attachments : </span>
-                                    <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="hasAttachments" fxFlex="80">
-                                        <mat-button-toggle value="yes" fxFlex="100">Has Attachments</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">No Attachments</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                        <mat-form-field fxFlex="48" appearance="outline" class="twd-text-sm">
+                                            <mat-label>List of mailboxes</mat-label>
+                                            <mat-select formControlName="listOfMailboxes" multiple [readonly]="globalSearchControl.value">
+                                                <mat-select-trigger>
+                                                    <ng-container *ngIf="advancedSearchForm.controls.listOfMailboxes?.value as selectedMailboxes">
+                                                        {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
+                                                        <span *ngIf="selectedMailboxes?.length > 1">
+                                                            (+{{ selectedMailboxes.length - 1 }}
+                                                            {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
+                                                        </span>
+                                                    </ng-container>
+                                                </mat-select-trigger>
+                                                <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{ mailbox }}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Replied : </span>
-                                    <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="replied" fxFlex="80">
-                                        <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
-                                        <mat-button-toggle value="yes" fxFlex="100">Replied only</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">Unreplied only</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                        <div fxFlex="100" class="my-16">
+                                            <span fxFlex="30" class="mat-subheading-2 m-0"> Attachments : </span>
+                                            <input matInput placeholder="Input" style="display: none" />
+                                            <mat-radio-group class="w-100-p" formControlName="hasAttachments" fxFlex="70">
+                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Closed : </span>
-                                    <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="closed" fxFlex="80">
-                                        <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
-                                        <mat-button-toggle value="yes" fxFlex="100">Closed only</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">Not Closed</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                        <div fxFlex="100" class="my-16">
+                                            <span fxFlex="30" class="mat-subheading-2 m-0"> Replied : </span>
+                                            <mat-radio-group class="w-100-p" formControlName="replied" fxFlex="70">
+                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
 
-                                <mat-form-field class="form-field custom" fxFlex="100" appearance="outline">
-                                    <span fxFlex="20" class="mat-subheading-2"> Assigned : </span>
-                                    <input matInput placeholder="Input" style="display: none" />
-                                    <mat-button-toggle-group class="w-100-p" formControlName="assigned" fxFlex="80">
-                                        <mat-button-toggle value="any" fxFlex="100">Any</mat-button-toggle>
-                                        <mat-button-toggle value="yes" fxFlex="100">Assigned only</mat-button-toggle>
-                                        <mat-button-toggle value="no" fxFlex="100">Unassigned only</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                </mat-form-field>
+                                        <div fxFlex="100" class="my-16">
+                                            <span fxFlex="30" class="mat-subheading-2 m-0"> Closed : </span>
+                                            <input matInput placeholder="Input" style="display: none" />
+                                            <mat-radio-group class="w-100-p" formControlName="closed" fxFlex="70">
+                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
 
-                                <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
-                                <button
-                                    mat-raised-button
-                                    fxFlex="48"
-                                    class="adv-search-btn h-40 mb-8 border-radius-20"
-                                    type="button"
-                                    (click)="resetForm()"
-                                >
-                                    Reset
-                                </button>
-                            </form>
+                                        <div fxFlex="100" class="my-16">
+                                            <span fxFlex="30" class="mat-subheading-2 m-0"> Assigned : </span>
+                                            <input matInput placeholder="Input" style="display: none" />
+                                            <mat-radio-group class="w-100-p" formControlName="assigned" fxFlex="70">
+                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
+
+                                        <button mat-raised-button fxFlex="48" class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
+                                        <button
+                                            mat-raised-button
+                                            fxFlex="48"
+                                            class="adv-search-btn h-40 mb-8 border-radius-20"
+                                            type="button"
+                                            (click)="resetForm()"
+                                        >
+                                            Reset
+                                        </button>
+                                    </form>
+                                </div>
+                            </ng-template>
+                        </button>
+                    </div>
+
+                    <div id="sortControls" class="twd-flex twd-justify-between twd-items-center twd-px-2 twd-pt-2">
+                        <div class="twd-font-bold twd-text-sm">
+                            <mat-form-field class="custom with-border" appearance="outline">
+                                <mat-select [formControl]="sortControls.sortBy">
+                                    <mat-option value="default">Default</mat-option>
+                                    <mat-option value="Subject">Sort By Name</mat-option>
+                                    <mat-option value="addedTime">Sort By Time</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
-                    </ng-template>
-                </button>
-            </div>
-
-            <div *ngIf="selectedMails.length" class="bulk-operations mt-16" fxLayout fxLayoutAlign="space-around center">
-                <button
-                    mat-raised-button
-                    fxFlex="100"
-                    class="border-radius-20 mx-8"
-                    *ngIf="currentTab === 'queue'"
-                    (click)="replyToSelectedEmails(selectedMails)"
-                >
-                    Reply All
-                </button>
-                <button mat-raised-button fxFlex="100" class="border-radius-20 mx-8" *ngIf="currentTab === 'queue'">Transfer All</button>
-                <button
-                    mat-raised-button
-                    color="primary"
-                    class="border-radius-20 mx-8"
-                    *ngIf="currentTab === 'queue'"
-                    (click)="closeEmails(selectedMails)"
-                    fxFlex="100"
-                >
-                    Close Emails
-                </button>
-                <button
-                    mat-raised-button
-                    color="accent"
-                    class="border-radius-20 mx-8"
-                    *ngIf="currentTab === 'draft' || currentTab === 'inbox'"
-                    (click)="deleteEmails(selectedMails)"
-                    fxFlex="100"
-                >
-                    Delete Emails
-                </button>
-            </div>
-
-            <div *ngIf="!emailSearchRes.error" class="email-list-groups">
-                <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="tw-list-item border-radius-10 email-tree">
-                    <mat-tree-node *matTreeNodeDef="let node" class="tw-list pb-8" matTreeNodeToggle>
-                        <li
-                            class="mat-tree-node tw-list-item border-radius-10 selectable"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                        >
-                            <div class="w-10-p px-4" *ngIf="currentTab === 'queue' || currentTab === 'draft'">
-                                <mat-checkbox (change)="selectEmail($event)" [value]="node"></mat-checkbox>
-                            </div>
-                            <div fxLayout fxLayoutAlign="space-between" (click)="openEmail(node)" mat-ripple class="w-90-p px-4">
-                                <div fxFlex="70">
-                                    <p class="font-weight-600 my-4">{{ node.From || 'NA' }}</p>
-                                    <p class="my-4">Subject: {{ node.Subject || 'NA' }}</p>
-                                </div>
-                                <div fxFlex="30">
-                                    <span> {{ node.addedTime | date: 'mediumDate' }} </span>
-                                    <br />
-                                    <span> {{ node.addedTime | date: 'shortTime' }} </span>
-                                </div>
-                            </div>
-                        </li>
-                    </mat-tree-node>
-                    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" [ngClass]="{ active: treeControl.isExpanded(node) }">
-                        <li matTreeNodeToggle class="mb-8 border-radius-20" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-                            <div class="mat-tree-node">
-                                <button mat-icon-button [attr.aria-label]="'Toggle ' + (node.name || 'NA')">
-                                    <mat-icon [ngClass]="{ 'rotate-90-inverse': !treeControl.isExpanded(node) }"> arrow_drop_down_circle </mat-icon>
-                                </button>
-                                <span class="font-weight-700">
-                                    {{ node.name || 'NA' }}
-                                </span>
-                            </div>
-                            <ul
-                                [class.email-tree-invisible]="!treeControl.isExpanded(node)"
-                                [ngClass]="{ 'no-scroll': node.children?.length && node.children[0].children?.length }"
+                        <div>
+                            <ng-container
+                                *ngIf="
+                                    polling.allowed &&
+                                    (polling.enabled
+                                        ? { tooltip: 'Disable Polling', color: 'primary', class: 'enabled' }
+                                        : { tooltip: 'Enable Polling', color: 'primary', class: '' }) as pollingDetails
+                                "
                             >
-                                <ng-container matTreeNodeOutlet></ng-container>
-                            </ul>
-                        </li>
-                    </mat-nested-tree-node>
-                </mat-tree>
-            </div>
+                                <button
+                                    mat-button
+                                    mat-icon-button
+                                    class="polling-btn"
+                                    [ngClass]="pollingDetails.class + (polling.active ? ' spin' : '')"
+                                    (click)="polling.enabled = !polling.enabled; polling.active = false"
+                                    [disabled]="polling.active"
+                                    [matTooltip]="pollingDetails.tooltip"
+                                    [color]="pollingDetails.color"
+                                >
+                                    <mat-icon>sync</mat-icon>
+                                </button>
+                            </ng-container>
+                            <ng-container
+                                *ngIf="
+                                    sortControls.ascending
+                                        ? { class: 'twd-rotate-180', tooltip: 'Switch to descending' }
+                                        : { class: '', tooltip: 'Switch to ascending' } as buttonDetails
+                                "
+                            >
+                                <button
+                                    mat-button
+                                    mat-icon-button
+                                    class="twd-transform twd-transition-transform"
+                                    [ngClass]="buttonDetails.class"
+                                    [matTooltip]="buttonDetails.tooltip"
+                                    (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                                >
+                                    <mat-icon> sort </mat-icon>
+                                </button>
+                            </ng-container>
+                        </div>
+                    </div>
 
-            <div
-                *ngIf="!dataSource.data.length && !emailSearchRes.loading && !emailSearchRes.error"
-                class="w-100-p h-50-p"
-                fxLayout
-                fxLayoutAlign="center center"
-            >
-                <span class="hint-mail-text hint-text">
-                    <span>There are no emails</span>
-                </span>
-            </div>
+                    <div *ngIf="selectedMails.length" class="bulk-operations twd-mt-3" fxLayout fxLayoutAlign="space-around center">
+                        <button
+                            mat-raised-button
+                            fxFlex="100"
+                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            *ngIf="currentTab === 'queue'"
+                            (click)="replyToSelectedEmails(selectedMails)"
+                        >
+                            Reply All
+                        </button>
+                        <button
+                            mat-raised-button
+                            fxFlex="100"
+                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            *ngIf="currentTab === 'queue'"
+                            (click)="transferEmail(selectedMails)"
+                        >
+                            Transfer All
+                        </button>
+                        <button
+                            mat-raised-button
+                            color="primary"
+                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            *ngIf="currentTab === 'queue'"
+                            (click)="closeEmails(selectedMails)"
+                            fxFlex="100"
+                        >
+                            Close Emails
+                        </button>
+                        <button
+                            mat-raised-button
+                            color="accent"
+                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            *ngIf="currentTab !== 'sentitem' && currentTab !== 'queue'"
+                            (click)="deleteEmails(selectedMails)"
+                            fxFlex="100"
+                        >
+                            Delete Emails
+                        </button>
+                    </div>
+                </div>
 
-            <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" class="h-80-p" fxLayout fxLayoutAlign="center center">
-                <div fxFlex="40">
-                    <no-data-available [msg]="emailSearchRes.msg"></no-data-available>
-                    <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
+                <div class="twd-p-3" *ngIf="!emailSearchRes.error && { selectedEmail: emailSearchRes.data.selected } as selectedEmail">
+                    <!-- [trackBy]="trackBy" -->
+                    <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
+                </div>
+
+                <div
+                    *ngIf="!dataSource.data.length && !emailSearchRes.loading && !emailSearchRes.error"
+                    class="w-100-p h-50-p"
+                    fxLayout
+                    fxLayoutAlign="center center"
+                >
+                    <span class="hint-mail-text hint-text">
+                        <span>There are no emails</span>
+                    </span>
+                </div>
+
+                <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" class="h-80-p" fxLayout fxLayoutAlign="center center">
+                    <div fxFlex="40">
+                        <no-data-available [msg]="emailSearchRes.msg"></no-data-available>
+                        <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
+                    </div>
+                </div>
+
+                <div *ngIf="emailSearchRes.loading" class="loader">
+                    <mat-spinner></mat-spinner>
                 </div>
             </div>
 
-            <div *ngIf="emailSearchRes.loading" class="loader">
-                <mat-spinner></mat-spinner>
-            </div>
-        </div>
-
-        <div fxFlex class="email-open mr-8 border-radius-20 custom-scroll-adjust position-relative">
-            <ng-container *ngIf="!emailSearchRes.loading && !emailSearchRes.error && emailSearchRes.data.selected as selectedEmail">
-                <div *ngIf="selectedEmail" fxLayout fxLayoutAlign="end" fxLayoutGap="10px" class="my-20 w-95-p">
+            <div
+                *ngIf="!emailSearchRes.loading && !emailSearchRes.error && emailSearchRes.data.selected as selectedEmail"
+                class="
+                    email-open
+                    border-radius-20
+                    twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10
+                    lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto
+                "
+            >
+                <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
                     <button
                         mat-raised-button
-                        class="border-radius-20"
+                        class="border-radius-20 twd-text-xs lg:twd-text-sm"
                         *ngIf="selectedEmail.currentTab === 'queue'"
                         (click)="transferEmail([selectedEmail])"
                     >
                         Transfer
                     </button>
-                    <!-- <button mat-raised-button class="border-radius-20">Advance</button> -->
-                    <button mat-raised-button class="border-radius-20" (click)="pullEmails([selectedEmail])">Pull</button>
+                    <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" (click)="pullEmails([selectedEmail])">Pull</button>
                     <button
                         mat-raised-button
-                        class="border-radius-20"
-                        *ngIf="selectedEmail.currentTab === 'inbox'"
+                        class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                        *ngIf="currentTab !== 'sentitem'"
                         (click)="deleteEmails([selectedEmail])"
                     >
                         Delete
                     </button>
-                    <!-- <button mat-raised-button class="border-radius-20" >Push</button> -->
                     <button
                         mat-raised-button
-                        class="border-radius-20"
+                        class="border-radius-20 twd-text-xs lg:twd-text-sm"
                         color="accent"
-                        *ngIf="selectedEmail.currentTab === 'draft' || selectedEmail.currentTab === 'inbox'"
+                        *ngIf="selectedEmail.currentTab === 'inbox'"
                         (click)="markAsSpam(selectedEmail)"
                     >
                         Mark As Spam
                     </button>
+                    <button mat-icon-button (click)="removeEmailsfromView('opened')">
+                        <mat-icon>close</mat-icon>
+                    </button>
                 </div>
 
                 <div
-                    *ngIf="selectedEmail"
-                    class="email-open__body w-95-p mx-auto border-radius-20 pt-20 pb-40 px-28 mb-20"
+                    class="
+                        email-open__body
+                        twd-w-11/12
+                        mx-auto
+                        border-radius-20
+                        twd-mb-3 twd-flex-1 twd-flex twd-flex-col
+                        lg:twd-overflow-hidden lg:twd-max-h-full
+                    "
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="mat-title">{{ selectedEmail.Subject || 'NA' }}</div>
-                    <div fxLayout fxLayoutAlign="space-between">
-                        <div fxFlex="80">
-                            <p class="font-weight-600 my-4">To : {{ selectedEmail.To }}</p>
-                            <p class="font-weight-600 my-4" *ngIf="selectedEmail.ccList">CC : {{ selectedEmail.ccList }}</p>
-                            <p class="my-4 text-bold">From : {{ selectedEmail.From || 'NA' }}</p>
-                            <p class="my-4 text-bold">Status : {{ selectedEmail.currentStatus || 'NA' }}</p>
-                            <p class="my-4 text-bold">Prirority : {{ selectedEmail.priority || 'NA' }}</p>
-                            <p class="my-4 text-bold">Agent : {{ selectedEmail.agentName || 'NA' }}</p>
-                            <p class="my-4 text-bold">Replied Status : {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}</p>
-                            <p class="my-4 text-bold">Closed Status : {{ selectedEmail.closedBy ? 'Closed by' + selectedEmail.closedBy : 'Open' }}</p>
-                            <p>
-                                <mat-icon>grading</mat-icon> <span class="text-bold">{{ selectedEmail.intent || 'NA' }}</span>
-                            </p>
+                    <div class="twd-shadow">
+                        <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
+                            <div
+                                class="twd-relative twd-flex-1 twd-px-1"
+                                [ngClass]="{ 'twd-truncate': !minimizeSubject }"
+                                [innerHtml]="selectedEmail.Subject"
+                            ></div>
+                            <span (click)="minimizeSubject = !minimizeSubject" class="twd-cursor-pointer" matRipple>
+                                <mat-icon>{{ minimizeSubject ? 'expand_more' : 'expand_less' }}</mat-icon>
+                            </span>
                         </div>
-                        <div fxFlex="15">
-                            <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
-                            <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
+                        <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
+                            <div fxLayout fxLayoutAlign="space-between">
+                                <div fxFlex="80">
+                                    <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
+                                    <p class="text-bold my-4" *ngIf="selectedEmail.ccList">Cc : {{ selectedEmail.ccList }}</p>
+                                    <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Status: {{ selectedEmail.currentStatus || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Prirority: {{ selectedEmail.priority || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
+                                    <p class="my-4 text-bold">
+                                        Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        Closed Status: {{ selectedEmail.closedBy ? 'Closed by ' + selectedEmail.closedBy : 'Open' }}
+                                    </p>
+                                    <p class="my-4 text-bold">Intent: {{ selectedEmail.intent || 'NA' }}</p>
+                                </div>
+                                <div fxFlex="15">
+                                    <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
+                                    <p class="my-4">{{ selectedEmail.addedTime | date: 'shortTime' }}</p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="twd-py-2"
+                                *ngIf="{
+                                    lesstItems: selectedEmail.attachmentList.slice(0, 3),
+                                    moreItems: selectedEmail.attachmentList.slice(3, -1)
+                                } as attachList"
+                            >
+                                <button
+                                    *ngFor="let file of attachList.lesstItems"
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    [matTooltip]="file.Ext | uppercase"
+                                    (click)="openFile(file.URL)"
+                                >
+                                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                    <span>{{ file.Name }}</span>
+                                </button>
+
+                                <ng-container *ngIf="showMoreAttachments">
+                                    <button
+                                        *ngFor="let file of attachList.moreItems"
+                                        mat-stroked-button
+                                        class="border-radius-20 m-4"
+                                        [matTooltip]="file.Ext | uppercase"
+                                        (click)="openFile(file.URL)"
+                                    >
+                                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                                        <span>{{ file.Name }}</span>
+                                    </button>
+                                </ng-container>
+
+                                <button
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    *ngIf="!showMoreAttachments && attachList.moreItems.length"
+                                    (click)="showMoreAttachments = !showMoreAttachments"
+                                >
+                                    <mat-icon> expand_more </mat-icon>
+                                    View {{ attachList.moreItems.length }} more
+                                </button>
+
+                                <button
+                                    mat-stroked-button
+                                    class="border-radius-20 m-4"
+                                    *ngIf="showMoreAttachments"
+                                    (click)="showMoreAttachments = false"
+                                >
+                                    <mat-icon>expand_less</mat-icon>
+                                    Show less
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <mat-chip-list #chipList aria-label="file selection">
-                        <mat-chip class="p-16" *ngFor="let file of selectedEmail.attachmentList">
-                            <mat-icon>attach_file</mat-icon>
-                            <div class="ml-8 my-0">
-                                <p class="m-0">{{ file.Name }}</p>
-                                <a target="_blank" [href]="file.URL">
-                                    <small>View file</small>
-                                </a>
-                            </div>
-                        </mat-chip>
-                    </mat-chip-list>
-
-                    <!-- <span>Subject : {{ selectedEmail.Subject }}</span> -->
-                    <div class="mt-20" [innerHtml]="selectedEmail.body"></div>
+                    <div class="twd-flex-1 twd-relative twd-pb-11 lg:twd-pb-0">
+                        <div id="openEmailRef" class="lg:twd-absolute twd-left-0 twd-top-0 twd-w-full twd-p-1 lg:twd-h-full lg:twd-overflow-auto">
+                            <div [innerHtml]="selectedEmail.body"></div>
+                        </div>
+                    </div>
                 </div>
-            </ng-container>
+            </div>
+            <div
+                *ngIf="emailSearchRes.error"
+                class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
+            >
+                <div class="twd-flex twd-flex-col twd-justify-center">
+                    <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> error </mat-icon>
+                    <span class="twd-text-2xl">Something went wrong</span>
+                </div>
+            </div>
 
-            <div *ngIf="!emailSearchRes.data.selected" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
-                <mat-icon class="s-128 mb-16 select-message-icon hint-text"> email </mat-icon>
-                <span class="hint-mail-text">
-                    <span>Select an email to read</span>
-                </span>
+            <div
+                *ngIf="!emailSearchRes.data.selected"
+                class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
+            >
+                <div class="twd-flex twd-flex-col twd-justify-center">
+                    <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> email </mat-icon>
+                    <span class="twd-text-2xl">Select an email to read</span>
+                </div>
             </div>
         </div>
     </div>
-</ng-container>
 
-<ng-template #replyDialog>
-    <quill-editor
-        class="email-editor"
-        classes="editor-container"
-        [(ngModel)]="replyBody"
-        [placeholder]="editorConfig.placeholder"
-        [modules]="editorConfig.modules"
-        format="html"
-    >
-    </quill-editor>
-    <button mat-raised-button (click)="replyEditorModal.close(true)" color="primary">Send</button>
-    <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
-</ng-template>
+    <ng-template #replyDialog>
+        <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative">
+            <div
+                *ngIf="editorState.loading"
+                class="twd-absolute twd-bg-white twd-bg-opacity-25 twd-w-full twd-h-full twd-z-10 twd-flex twd-items-center twd-justify-center"
+            >
+                <p class="twd-text-lg twd-font-bold twd-text-center">Loading editor ...</p>
+            </div>
+            <textarea #replyEditor [id]="editorState.id"></textarea>
+            <div *ngIf="!editorState.loading" class="twd-flex twd-gap-2 twd-justify-end twd-py-2 twd-px-3">
+                <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
+                <button mat-raised-button (click)="replyEditorModal.sendEmail()" [disabled]="replyEditorModal.sendingEmail" color="primary">
+                    Send
+                </button>
+                <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template let-treeNode="treeNode" #treeNodeRef>
+        <div
+            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+            class="twd-flex twd-rounded-3xl twd-pl-2 twd-mb-2"
+            *ngFor="let node of treeNode; trackBy: trackBy"
+        >
+            <ng-container *ngIf="{ selected: emailSearchRes.data.selected } as e">
+                <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
+                    <div
+                        class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0"
+                        [ngClass]="
+                            e.selected?.uiId === node.uiId ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100' : ' theme-bg'
+                        "
+                    >
+                        <div class="twd-p-3" *ngIf="currentTab === 'queue' || currentTab === 'draft'">
+                            <mat-checkbox
+                                [value]="node.uiId"
+                                (change)="selectEmail(node, $event.checked)"
+                                [checked]="selectedMailIds.includes(node.uiId)"
+                            ></mat-checkbox>
+                        </div>
+                        <div mat-ripple class="twd-flex-1 twd-flex twd-justify-between twd-p-3" (click)="openEmail(node)">
+                            <div fxFlex="70">
+                                <p class="font-weight-600 my-4 twd-truncate">
+                                    <!-- {{ node.ToList || 'NA' }} -->
+                                    {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
+                                </p>
+                                <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
+                            </div>
+                            <div fxFlex="30">
+                                <span> {{ node.addedTime | date: 'mediumDate' }} </span>
+                                <br />
+                                <span> {{ node.addedTime | date: 'shortTime' }} </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="node.children" class="twd-w-full">
+                    <div
+                        class="border-radius-20 twd-py-2"
+                        (click)="childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')"
+                        [ngClass]="
+                            customFuse.anchor?.body ||
+                            customFuse.widget?.body +
+                                ' ' +
+                                (e.selected
+                                    ? e.selected.To === node.To
+                                        ? node.Skill
+                                            ? e.selected.Skill === node.Skill
+                                                ? ' twd-text-primary-default'
+                                                : ''
+                                            : ' twd-text-primary-default'
+                                        : ''
+                                    : '')
+                        "
+                    >
+                        <div class="twd-cursor-pointer twd-flex twd-justify-between twd-items-center">
+                            <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
+                                <span class="twd-transform twd-transition-transform twd--rotate-90" #iconRef>
+                                    <mat-icon> arrow_drop_down </mat-icon>
+                                </span>
+                                <span class="twd-flex-1 font-weight-700 twd-truncate">
+                                    {{ node.name || 'NA' }}
+                                </span>
+                            </div>
+                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm">
+                                ({{ node.grandChildren || node.children.length }})
+                            </span>
+                        </div>
+                    </div>
+                    <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
+                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-template>
+</ng-container>

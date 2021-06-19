@@ -75,7 +75,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _appDataService: AppDataService,
         private _appUIService: AppUiService
     ) {
-
         // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
@@ -89,7 +88,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Subscribe to custom fuse config changes
-        this._fuseFacadeService.getConfig()
+        this._fuseFacadeService
+            .getConfig()
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((config: FuseConfig) => {
                 this.horizontalNavbar = config.layout.navbar.position === 'top';
@@ -107,26 +107,21 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         //     });
 
         // Subscribe to config changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    // check if the config is not null
-                    if (config !== null) {
-                        // get the content widgets
-                        this.navbarWidgets = config.Main.Toolbar.Widgets || [];
-                        // loop and get the widgets
-                        this.navbarWidgets.forEach((widget: IWidget) => {
-                            if (widget.Type === 'tw-active-interaction' && widget.Config.Enabled) {
-                                this.activeInteractionWidget = widget;
-                            }
-                            else if (widget.Type === 'tw-toolbar-menu' && widget.Config.Enabled) {
-                                this.toolbarMenuWidget = widget;
-                            }
-                        });
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // check if the config is not null
+            if (config !== null) {
+                // get the content widgets
+                this.navbarWidgets = config.Main.Toolbar.Widgets || [];
+                // loop and get the widgets
+                this.navbarWidgets.forEach((widget: IWidget) => {
+                    if (widget.Type === 'tw-active-interaction' && widget.Config.Enabled) {
+                        this.activeInteractionWidget = widget;
+                    } else if (widget.Type === 'tw-toolbar-menu' && widget.Config.Enabled) {
+                        this.toolbarMenuWidget = widget;
                     }
-                }
-            );
+                });
+            }
+        });
 
         SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
     }
@@ -136,7 +131,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         SDKClient.events.off('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
@@ -144,14 +139,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     /**
      * To handle SDKConnectivityStatus
-     * 
-     * @param data 
+     *
+     * @param data
      */
     private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
         setTimeout(() => {
             this.connectivityStatus = evt;
         }, 100);
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

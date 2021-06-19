@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { APP_BASE_HREF, CommonModule, PlatformLocation } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TwWrapperModule } from '@modules/t-widgets/tw-wrapper/tw-wrapper.module';
@@ -10,18 +10,15 @@ import { WorkbenchEmailComponent } from './workbench-email/workbench-email.compo
  * Workbench Panel Module
  */
 @NgModule({
-    declarations: [
-        TwWorkbenchPanelComponent,
-        WorkbenchEmailComponent,
-        WorkbenchChatComponent
+    declarations: [TwWorkbenchPanelComponent, WorkbenchEmailComponent, WorkbenchChatComponent],
+    imports: [CommonModule, TwWrapperModule, SharedModule],
+    providers: [
+        {
+            provide: APP_BASE_HREF,
+            useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+            deps: [PlatformLocation]
+        }
     ],
-    imports: [
-        CommonModule,
-        TwWrapperModule,
-        SharedModule
-    ],
-    exports: [
-        TwWorkbenchPanelComponent
-    ]
+    exports: [TwWorkbenchPanelComponent]
 })
-export class TwWorkbenchPanelModule { }
+export class TwWorkbenchPanelModule {}

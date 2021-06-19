@@ -10,7 +10,7 @@ import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from 'app/services/app-data.service';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
-import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 /**
@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
-
     /**
      * Used for auto login
      */
@@ -169,17 +168,27 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     promptAgentIdOnInvalidLanId = false;
     /**
+     * To disable lanId
+     */
+    disableLanId = false;
+    /**
      * Agent Id enabled flag
      */
     agentIdEnabled = false;
     /**
      * Password enabled flag
      */
-    passwordEnabled = false;
+    password = {
+        Agent: false,
+        Station: false
+    };
     /**
      * To show/hide password field
      */
-    hidePassword = true;
+    hidePassword = {
+        agent: true,
+        station: true
+    };
     /**
      * Station enabled flag
      */
@@ -262,11 +271,10 @@ export class LoginComponent implements OnInit, OnDestroy {
          */
         countdown?: Observable<number>;
     } = {
-            pollingInterval: 20,
-            retrying: false,
-            errored: false
-        };
-
+        pollingInterval: 20,
+        retrying: false,
+        errored: false
+    };
     /**
      * Flag for showing otp input
      */
@@ -306,7 +314,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        // private _fuseConfigService: FuseConfigService
         private _fuseFacadeService: FuseFacadeService,
         private _formBuilder: FormBuilder,
         private _appDataService: AppDataService,
@@ -315,7 +322,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
         private route: ActivatedRoute,
-        private fuseSpashService: FuseSplashScreenService
+        private fuseSplashService: FuseSplashScreenService
     ) {
         // Configure the layout
         this._fuseFacadeService.setConfig = {
@@ -366,20 +373,20 @@ export class LoginComponent implements OnInit, OnDestroy {
         this._titleService.setTitle(title.split('-')[0].trim());
 
         this.loginForm = this._formBuilder.group({
-            domain: ['', Validators.required],
+            domain: [''],
             lanId: ['', Validators.required],
-            agentId: ['', Validators.required],
-            password: ['', Validators.required],
-            station: ['', Validators.required],
-            otp: ['', Validators.required]
+            agentId: [''],
+            agentPassword: [''],
+            stationPassword: [''],
+            station: [''],
+            otp: ['']
         });
-        // this.autoLogin();
     }
 
     /**
-     * Logs in automatically via query params
+     * To checl query params provided
      */
-    autoLogin(): void {
+    checkQueryParams(): void {
         /**
          * subscribes to Activated route
          */
@@ -387,7 +394,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 // continue only if userId present
-                filter((params) => params.u),
+                // filter((params) => params.u),
                 map((params) =>
                     // Get the query params with jd_ stripped for json data
                     Object.entries(params).reduce((acc, curr) => {
@@ -406,9 +413,19 @@ export class LoginComponent implements OnInit, OnDestroy {
                 )
             )
             .subscribe((params) => {
-                this.fuseSpashService.show();
+                // if there is not user in param then return
+                if (!params.u) {
+                    return;
+                }
+                // patch lanId to form
                 this.loginForm.patchValue({ lanId: params.u });
+                // add the params to query data
                 this.queryData = params;
+                // check if al (auto login) false or 0, then do not auto login
+                if (params.al !== undefined && (params.al === 'false' || params.al === '0')) {
+                    return;
+                }
+                this.fuseSplashService.show();
                 this.login(true);
             });
     }
@@ -418,7 +435,7 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 
@@ -437,7 +454,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.appConfig = config;
         this.configLoaded(config);
         this.getData();
-        this.autoLogin();
+        this.checkQueryParams();
+        this._appDataService.setTheme();
     }
 
     /**
@@ -454,16 +472,20 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
             this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
             this.domainListEnabled = config.Login.DomainListEnabled;
-            this.passwordEnabled = config.Login.PasswordEnabled;
             this.stationEnabled = config.Login.StationEnabled;
             this.loginModeEnabled = config.Login.Modes.Enabled;
             this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
+            this.disableLanId = config.Login.DisableLanId ?? false;
             this.brandLogo = config.AppConfigs.Logos.Default || null;
             this.multiWindowMode = config.Login.MultiWindowMode || {
                 Enabled: false,
                 Width: 0,
                 Height: 0,
                 PixelDimension: false
+            };
+            this.password = config.Login.Password ?? {
+                Agent: config.Login.PasswordEnabled ?? false, // adding for backward compatibility
+                Station: config.Login.PasswordEnabled ?? false // adding for backward compatibility
             };
 
             // check if the login mode is enabled
@@ -493,9 +515,30 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.startCamera();
             }
 
+            // check to disable lanId
+            if (this.disableLanId) {
+                this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
+            }
+
+            // Set validators for form
+            if (this.domainListEnabled) {
+                this.loginForm.controls.domain.setValidators(Validators.required);
+            }
+            if (this.stationEnabled) {
+                this.loginForm.controls.station.setValidators(Validators.required);
+            }
+            if (this.stationEnabled) {
+                this.loginForm.controls.station.setValidators(Validators.required);
+            }
+            if (this.password.Agent) {
+                this.loginForm.controls.agentPassword.setValidators(Validators.required);
+            }
+            if (this.password.Station) {
+                this.loginForm.controls.stationPassword.setValidators(Validators.required);
+            }
+
             // set loading flag
             // this.loading = false;
-
         } else {
             // we will route to error page
             this._router.navigate(['not-found'], {
@@ -533,6 +576,8 @@ export class LoginComponent implements OnInit, OnDestroy {
      * To do face authentication
      */
     private async doFaceAuthentication(): Promise<boolean> {
+        // pause the video
+        this.videoElement?.nativeElement.pause();
         // create a canvas
         const canvas = document.createElement('canvas');
         // scale the canvas accordingly
@@ -544,6 +589,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         ctx.drawImage(this.videoElement?.nativeElement, 0, 0, canvas.width, canvas.height);
         // get base64 url
         const base64 = canvas.toDataURL();
+        let ret: boolean;
 
         if (!base64) {
             // face authentication failed
@@ -556,7 +602,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         // send request to face auth server
         // get the login json from proxy
         const result: IResponse = await TUtils.HttpClient.sendRequest({
-            url: this.faceAuthServerUrl,
+            urls: [this.faceAuthServerUrl],
             requestArgs: {
                 snapdata: base64.split(',')[1],
                 snaptype: 'base64',
@@ -570,13 +616,14 @@ export class LoginComponent implements OnInit, OnDestroy {
                 'Content-Type': 'application/json'
             },
             responseType: 'json',
-            method: 'POST'
+            method: 'POST',
+            log: true
         });
 
         // check for valid response from server
         if (!result) {
             this._appUIService.showSnackbar('Login failed, Unable to reach face authentication server. Please contact the administrator', 'failure');
-            return false;
+            ret = false;
         }
 
         // check the response
@@ -587,24 +634,31 @@ export class LoginComponent implements OnInit, OnDestroy {
             if (!response.hasOwnProperty('face_found_in_image') || !response.hasOwnProperty('face_authenticated_percentage')) {
                 // login error
                 this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
-                return false;
+                ret = false;
             }
 
             // check if the response
             if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
                 // face authentication sucess
                 this._appUIService.showSnackbar('Face authentication success, trying to login', 'success', 'top', 'right');
-                return true;
+                ret = true;
             } else {
                 // face authentication failed
                 this._appUIService.showSnackbar('Face authentication failed', 'failure', 'top', 'right');
-                return false;
+                ret = false;
             }
         } else {
             // login error
             this._appUIService.showSnackbar('Face authentication: Invalid response from server', 'failure', 'top', 'right');
-            return false;
+            ret = false;
         }
+
+        if (!ret) {
+            // play the video the video back
+            this.videoElement?.nativeElement.play();
+        }
+
+        return ret;
     }
 
     /**
@@ -669,6 +723,14 @@ export class LoginComponent implements OnInit, OnDestroy {
      */
     public toggleStation(): void {
         this.stationEnabled = this.pbxChecked || this.msChecked;
+
+        // set form validation
+        if (this.stationEnabled) {
+            this.loginForm.controls.station.setValidators(Validators.required);
+        } else {
+            this.loginForm.controls.station.clearValidators();
+        }
+        this.loginForm.controls.station.updateValueAndValidity();
     }
 
     /**
@@ -691,7 +753,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         const selectedDomain = this.loginForm.get('domain').value;
         const lanId = this.loginForm.get('lanId').value;
         const agentId = this.loginForm.get('agentId').value;
-        const password = this.loginForm.get('password').value;
+        const agentPassword = this.loginForm.get('agentPassword').value;
+        const stationPassword = this.loginForm.get('stationPassword').value;
         const station = this.loginForm.get('station').value;
 
         let customAuthData = null;
@@ -705,6 +768,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             {
                 msLogin: this.msChecked,
                 pbxLogin: this.pbxChecked,
+                stationPassword,
                 customAuthData
             },
             this.queryData?.jsonData || {}
@@ -721,8 +785,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                 deviceId: this.stationEnabled ? station : lanId.split(',')[0].toLowerCase(),
                 forceReload: force,
                 jsonData: JSON.stringify(jsonData),
-                password: password,
-                sessionKey: '',
+                password: agentPassword,
+                sessionKey: ''
             },
             null
         )
@@ -734,6 +798,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             })
             .catch((e) => {
                 console.error(e);
+                this.videoElement?.nativeElement.play();
                 // set loading to true
                 this.loading = false;
                 // login error
@@ -755,7 +820,9 @@ export class LoginComponent implements OnInit, OnDestroy {
                         const customAuthType = JSON.parse(response.Data)?.customAuthType;
                         if (customAuthType === 'otp') {
                             this.showOtp = true;
-                            this.fuseSpashService.hide();
+                            this.fuseSplashService.hide();
+                            this.loginForm.controls.otp.setValidators(Validators.required);
+                            this.loginForm.controls.otp.updateValueAndValidity();
                             return;
                         }
                     } else if (response.ResultCode === 3) {
@@ -800,8 +867,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                         } else {
                             const queryParams = this.queryData?.state
                                 ? {
-                                    state: this.queryData.state
-                                }
+                                      state: this.queryData.state
+                                  }
                                 : {};
                             // we will route to main page
                             this._router.navigate([`main/${agentId}`], {
@@ -826,6 +893,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     if (this.promptAgentIdOnInvalidLanId) {
                         this.errorMessage = 'Login failed, Invalid LAN ID detected. Please provide agent ID';
                         this.agentIdEnabled = true;
+                        this.loginForm.controls.agentId.setValidators(Validators.required);
+                        this.loginForm.controls.agentId.updateValueAndValidity();
                     } else {
                         // login failed, invalid lan Id
                         this.errorMessage = 'Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access';
@@ -835,19 +904,21 @@ export class LoginComponent implements OnInit, OnDestroy {
                     this.errorMessage = response.ErrorDetails
                         ? response.ErrorDetails
                         : response.ResultMessage
-                            ? response.ResultMessage
-                            : 'Login failed, Unknown response from server';
+                        ? response.ResultMessage
+                        : 'Login failed, Unknown response from server';
                 }
             } else {
                 this.errorMessage = 'Login failed, Please contact the administrator';
             }
             // check if any error message then alert
             if (this.errorMessage) {
+                this.videoElement?.nativeElement.play();
                 // login error
                 this._appUIService.showSnackbar(this.errorMessage, 'failure', 'top', 'right');
             }
-            this.fuseSpashService.hide();
+            this.fuseSplashService.hide();
         } catch (error) {
+            this.videoElement?.nativeElement.play();
             TUtils.Logger.error('Exception in login', error);
         }
     }

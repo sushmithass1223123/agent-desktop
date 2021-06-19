@@ -105,7 +105,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.widgetData = this.data.Data;
+        this.widgetData = this.data.Data || new Object();
 
         this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
             startWith(''),
@@ -300,15 +300,20 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         )
             .then(() => {
                 this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
-                if (this.widgetData.ByGroup) {
-                    this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
-                } else {
-                    this.loadWorkCodesReq.data.listData.push(option);
+                // check the workcode from event
+                const fromEvent = (option as any)?.EventName === 'WorkCodeAddedEvent';
+                if (!fromEvent) {
+                    if (this.widgetData.ByGroup) {
+                        this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
+                    } else {
+                        this.loadWorkCodesReq.data.listData.push(option);
+                    }
                 }
                 this._appUiService.showSnackbar('Work code removed successfully', 'success');
             })
-            .catch(() => {
+            .catch((ex) => {
                 this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                console.error(ex);
             });
     }
 
@@ -348,7 +353,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     openAddWorkCodeModal(): void {
         this.matDialog.open(this.addWorkcodeModalRef, {
-            width: '50%'
+            width: '50%',
+            panelClass: 'workcode-dialog'
         });
     }
 }

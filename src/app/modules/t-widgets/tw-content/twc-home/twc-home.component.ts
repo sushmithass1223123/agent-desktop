@@ -1,11 +1,13 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { ContentPageService } from 'app/services/content-page.service';
+import { differenceInHours, startOfDay } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -15,7 +17,8 @@ import { takeUntil } from 'rxjs/operators';
     selector: 'twc-home',
     templateUrl: './twc-home.component.html',
     styleUrls: ['./twc-home.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: appAnimations
 })
 export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDestroy {
     /**
@@ -42,17 +45,18 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      * Init flag
      */
     init: boolean;
-
+    /**
+     * Data data span drag flag
+     */
+    dashboardDataSpanOverlayDrag = false;
     /**
      * dashboard data span display flag
      */
     showDashboardDataSpanOverlay = false;
-
     /**
      * Dashboard data loading flag
      */
     dataLoading: boolean;
-
     /**
      * dashboard data from date
      */
@@ -66,21 +70,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
          */
         calculatedSpan: number;
     };
-
-    /**
-     * fuse background
-     */
-    // customFuse: Observable<{
-    //     /**
-    //      * fuse background for content
-    //      */
-    //     content: string;
-    //     /**
-    //      * fuse background for body
-    //      */
-    //     body: string;
-    // }>;
-
     /**
      * Fuse custom config
      */
@@ -88,12 +77,10 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         anchor$: this._fuseFacadeService.anchorBgClasses$,
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-
     /**
      * Max date for dashboard data
      */
     maxDate: Date;
-
     /**
      * Data filter duration
      */
@@ -103,7 +90,6 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         public hostElement: ElementRef,
         public contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        // private fuseConfService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _aotWidgetService: AOTWidgetService
     ) {
@@ -120,13 +106,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.duration = this.data.Data.Duration || 100;
 
         this.maxDate = new Date();
-        this.maxDate.setDate(this.maxDate.getDate() - 1);
-
-        // this.customFuse = this.fuseConfService.config.pipe(
-        //     takeUntil(this.unsubscribeAll),
-        //     filter((config: FuseConfig) => config.layout.anchorWidget.customBackgroundColor),
-        //     map((config: FuseConfig) => ({ content: config.layout.widget.contentBackground, body: config.layout.widget.bodyBackground }))
-        // );
+        this.maxDate.setDate(this.maxDate.getDate());
 
         // subscribe to dashboard service
         this._dashboardService.subscribe();
@@ -150,7 +130,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((state: string) => {
                 // check the state
-                if (state === 'connected') {
+                if (state === 'connected' && this.loaded) {
                     // register to service
                     this.registerToService(true);
                 }
@@ -175,7 +155,14 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         };
 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
-            const deltaTime = Math.ceil((Date.now() - date.getTime()) / (1000 * 60 * 60));
+            let deltaTime: number;
+            // check if the date is today, the take from start of the day
+            if (date.getDate() === new Date().getDate()) {
+                deltaTime = differenceInHours(new Date(), startOfDay(Date.now()));
+            }
+            else {
+                deltaTime = differenceInHours(new Date(), date);
+            }
             this.duration = deltaTime;
             this.registerToService(true);
             this.showDashboardDataSpanOverlay = false;
@@ -219,6 +206,17 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             // stop getting data
             this._dashboardService.triggerAgentData(this.agentData.agentId, false, 0);
         }
+    }
+
+    /**
+     * On click of date range selection for dashboard
+     */
+    showDashboardDataOverlay(): void {
+        if (this.dashboardDataSpanOverlayDrag) {
+            this.dashboardDataSpanOverlayDrag = false;
+            return;
+        }
+        this.showDashboardDataSpanOverlay = !this.showDashboardDataSpanOverlay;
     }
 
     /**

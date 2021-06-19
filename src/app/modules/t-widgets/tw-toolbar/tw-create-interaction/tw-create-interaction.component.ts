@@ -1,9 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
-import { AgentSkillListComponent, CreateMessagingComponent } from '@modules/shared/components';
-import { IWidget } from 'app/interfaces';
+import { appAnimations } from '@modules/shared/animations/app.animation';
+import { AgentSkillListComponent, CreateMessagingComponent, MailboxSettingsComponent } from '@modules/shared/components';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
+import { AGENT_FEATURES } from 'app/constants';
+import { IWidget } from 'app/interfaces';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Create interaction
@@ -12,7 +16,7 @@ import { IAUXCodes, SDKClient } from '@tmac/sdk';
     selector: 'tw-create-interaction',
     templateUrl: './tw-create-interaction.component.html',
     styleUrls: ['./tw-create-interaction.component.scss'],
-    animations: widgetFabAnimations,
+    animations: appAnimations,
     encapsulation: ViewEncapsulation.None
 })
 export class TwCreateInteractionComponent implements OnInit, OnDestroy {
@@ -21,37 +25,89 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     @Input() data: IWidget;
 
-    constructor(
-        private _matDialog: MatDialog
-    ) { }
+    /**
+     * Subject to unsubscribe
+     */
+    private _unsubscribeAll: Subject<any>;
 
     /**
      * All channel list
      */
-    channels = [];
+    channels: IChannel[];
 
+    /**
+     * Open list flag
+     */
+    openList: boolean;
+
+    constructor(private _matDialog: MatDialog, private _agentFeaturesService: AgentFeaturesService) {
+        // set the unsubscribeAll defaults
+        this._unsubscribeAll = new Subject();
+    }
 
     /**
      * OnInit
      */
     ngOnInit(): void {
+        // get the channels from config
+        this.channels = this.data.Data.Channels;
+
+        this._agentFeaturesService.features.pipe(takeUntil(this._unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
+
+        // check agent features
+        this.checkAgentFeatures();
     }
 
     /**
      * OnDestroy
      */
     ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
         this._matDialog.closeAll();
     }
 
+    /**
+     * To check agent features for One Way Video
+     */
+    private checkAgentFeatures(): void {
+        // check the agent features to enable/disable
+        SDKClient.getAgentData().featuresList.forEach((f) => {
+            // get the featue
+            const feature = f.Feature.toLowerCase();
+
+            this.channels.forEach((c) => {
+                // get the subtype
+                const subtype = c.SubType.toLowerCase();
+
+                if (feature === AGENT_FEATURES.IsFaxOutEnabled && subtype === 'fax') {
+                    c.Enabled = f.IsEnabled;
+                } else if (feature === AGENT_FEATURES.IsSMSOutEnabled && subtype === 'sms') {
+                    c.Enabled = f.IsEnabled;
+                } else if (feature === AGENT_FEATURES.IsWhatsAppOutEnabled && subtype === 'whatsapp') {
+                    c.Enabled = f.IsEnabled;
+                } else if (feature === AGENT_FEATURES.IsEmailOutEnabled && subtype === 'email') {
+                    c.Enabled = f.IsEnabled;
+                }
+            });
+        });
+
+        // filter all enabled channels
+        this.channels = this.channels.filter((c) => c.Enabled);
+    }
 
     /**
      * Check if the agent can do action based on EnableState
-     * 
+     *
      * @param code
      */
     checkAux(code: string): boolean {
-
         // check if EnableState is provided, if not return true
         if (!code) {
             return true;
@@ -63,20 +119,19 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         // check if the logout aux matches
         if (auxItem?.Code === code) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     /**
      * To create an outgoing interaction
-     * 
+     *
      * @param channel
      * @param data
      */
     addInteraction(channel: string, data: any): void {
-        this.channels = [];
+        this.openList = false;
         switch (channel.toLowerCase()) {
             case 'text':
                 this._matDialog.open(CreateMessagingComponent, {
@@ -110,6 +165,45 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                     disableClose: true
                 });
                 break;
+            case 'email':
+                const ref = this._matDialog.open(MailboxSettingsComponent, {
+                    minWidth: '30%',
+                    data: {
+                        close: () => ref.close()
+                    }
+                });
+                break;
         }
     }
+}
+
+interface IChannel {
+    /**
+     * Channel name
+     */
+    Name: string;
+    /**
+     * Channel enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Channel enable state
+     */
+    EnableState: string;
+    /**
+     * Type of channel
+     */
+    Type: string;
+    /**
+     * Subtype of channel
+     */
+    SubType: string;
+    /**
+     * Icon for the channel
+     */
+    Icon: string;
+    /**
+     * Data for the channel
+     */
+    Data: any;
 }

@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import 'src/@fuse/scss/fuse';
 
 instant-messaging {
@@ -359,7 +360,7 @@ instant-messaging {
                             padding: 0;
                             border: none;
                             border-radius: 20px;
-                            @include mat-elevation(2);
+                            @include mat.elevation(2);
 
                             textarea {
                                 overflow: hidden;

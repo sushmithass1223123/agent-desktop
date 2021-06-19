@@ -158,24 +158,37 @@
     avatar {
         width: 53px;
         height: 38px;
-        margin-bottom: 6px;
+
+        &.row {
+            margin-right: 6px;
+
+            &.active {
+                .avatar-content {
+                    box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+                }
+            }
+        }
+
+        &:not(.row) {
+            margin-bottom: 6px;
+
+            &.active {
+                .avatar-content {
+                    box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    border-right: none !important;
+                    position: absolute;
+                    left: 7px;
+                }
+            }
+        }
 
         .avatar-content {
             width: inherit;
             height: inherit;
             border-radius: 16px;
             cursor: pointer;
-        }
-
-        &.active {
-            .avatar-content {
-                box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-                border-right: none !important;
-                position: absolute;
-                left: 7px;
-            }
         }
     }
 }

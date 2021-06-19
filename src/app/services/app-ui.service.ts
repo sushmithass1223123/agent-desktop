@@ -71,7 +71,7 @@ export class AppUiService {
      */
     private _notificationRef: Notification;
     /**
-     * UI channel subject 
+     * UI channel subject
      */
     uiChannel$: Subject<{
         /**
@@ -81,7 +81,7 @@ export class AppUiService {
         /**
          * Data
          */
-        data?: any
+        data?: any;
     }>;
 
     /**
@@ -150,7 +150,7 @@ export class AppUiService {
 
     /**
      * To show snackbar
-     * 
+     *
      * @param {SnackBarArgs} args
      */
     public showSnackbarAd(args: SnackBarArgs): MatSnackBarRef<SnackbarComponent> {
@@ -184,7 +184,7 @@ export class AppUiService {
 
     /**
      * To show customized app snackbar
-     * 
+     *
      * @param {AppSnackBarArgs} snackBarArgs
      */
     public showAppSnackbar(snackBarArgs: AppSnackBarArgs): MatSnackBarRef<AppSnackbarComponent> {
@@ -476,8 +476,7 @@ export class AppUiService {
         // recheck if the notification permission is granted
         if (Notification.permission !== 'granted') {
             Notification.requestPermission();
-        }
-        else {
+        } else {
             this._notificationRef = new Notification(title, {
                 icon: 'assets/images/logos/desktop-alert.png',
                 body: message,
@@ -492,9 +491,13 @@ export class AppUiService {
 
             // check the timeout
             if (config.DesktopAlertTimeout && config.DesktopAlertTimeout > 1000) {
-                setTimeout((x) => {
-                    x.close();
-                }, config.DesktopAlertTimeout, this._notificationRef);
+                setTimeout(
+                    (x) => {
+                        x.close();
+                    },
+                    config.DesktopAlertTimeout,
+                    this._notificationRef
+                );
             }
 
             // on click of notification
@@ -543,10 +546,10 @@ export class AppUiService {
                             'failure',
                             'top',
                             'center',
-                            10000);
-                    }
-                    else {
-                        this.showSnackbar('Please grand permission for notifications', 'info', 'top', 'center');
+                            10000
+                        );
+                    } else {
+                        this.showSnackbar('Please grant permission for notifications', 'info', 'top', 'center');
                     }
                     Notification.requestPermission();
                 }
@@ -561,7 +564,7 @@ export class AppUiService {
         TUtils.Logger.console('info', 'AppUiService.unsubscribe');
 
         // unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         this._appNotificationsSubject.next([]);

@@ -98,7 +98,7 @@ export class TWidgetWrapper {
      */
     destroyWrapper(): void {
         // Unsubscribe from all subscriptions
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 }

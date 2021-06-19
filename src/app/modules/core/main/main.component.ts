@@ -11,7 +11,6 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { AUX_STATUSES } from 'app/constants';
-import { ThemeSelector } from 'app/layout/utils/theme-selector';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
@@ -122,7 +121,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _tmacEventsService: TMACEventService,
         private _activatedRouter: ActivatedRoute,
         private _titleService: Title,
-        private fuseSpashService: FuseSplashScreenService
+        private fuseSplashService: FuseSplashScreenService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -144,7 +143,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * On init
      */
     ngOnInit(): void {
-        this.fuseSpashService.hide();
+        this.fuseSplashService.hide();
         // register to all the tmac events in service
         this._tmacEventsService.subscribe();
 
@@ -154,14 +153,12 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // });
 
         // subscribe to app changes
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-                if (Object.keys(config).length) {
-                    this.appConfig = config;
-                    this.setTheme();
-                }
-            });
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            if (Object.keys(config).length) {
+                this.appConfig = config;
+                this._appDataService.setTheme();
+            }
+        });
 
         this.autoStatusChange();
     }
@@ -179,7 +176,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
         // de-register the TMAC events in service
@@ -220,38 +217,13 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     }
 
     /**
-     * Set the app config
-     */
-    private setTheme(): void {
-        // apply the theme
-        const themeName = this.appConfig.AppConfigs.Theme || '';
-        const webFont = this.appConfig.AppConfigs.Font || 'wf-muli';
-        const flatTheme = this.appConfig.AppConfigs.FlatTheme ?? false;
-        if (themeName) {
-            const theme = ThemeSelector.getFuseConfigByTheme(themeName, false);
-
-            // this._fuseConfigService.config = {
-            //     ...theme,
-            //     flatTheme,
-            //     webFont
-            // };
-
-            this._fuseFacadeService.setConfig = {
-                ...theme,
-                flatTheme,
-                webFont
-            };
-        }
-    }
-
-    /**
      * To verify the login
      */
     private async checkLogin(): Promise<any> {
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
-        if (environment.production && (!route || route !== 'login') && opener && opener === window) {
+        if (environment.production && (!route || route !== 'login') && (!opener || opener === window)) {
             // we will route to login page
             this.routeToLogin();
             return;
@@ -264,7 +236,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
             if (route !== 'login') {
                 const config = await this._appDataService.getJsonConfig(agentId);
                 this.appConfig = config;
-                this.setTheme();
+                this._appDataService.setTheme();
             }
             // get the login data
             const loginData = await SDKClient.getLoginData(agentId);
@@ -294,9 +266,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * Route to login
      */
     private routeToLogin(): void {
-        const route = `login${this.agentId ? '/' + this.agentId : ''}`;
         // we will route to login page
-        this._router.navigate([`${route}`], { queryParamsHandling: 'preserve' });
+        this._router.navigate([`login${this.agentId ? '/' + this.agentId : ''}`]);
     }
 
     /**

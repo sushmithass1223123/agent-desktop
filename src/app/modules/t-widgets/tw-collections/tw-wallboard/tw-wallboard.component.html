@@ -1,36 +1,44 @@
 <tw-wrapper [data]="data">
     <div class="w-100-p bg-inherit mat-table-container custom-scroll-adjust h-100-p">
-        <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc" matSortDisableClear>
+        <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc"
+            matSortDisableClear>
             <ng-container matColumnDef="SkillName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="40"> <span> Skill Name </span> </mat-header-cell>
-                <mat-cell *matCellDef="let row" fxFlex="40"> {{ row.SkillName }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="40">
+                    <span> Skill Name </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" [fxFlex]="40"> {{ row.SkillName }} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="AgentsStaffed">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="slEnabled ? '15' : '20'"> <span> Stf </span> </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="slEnabled ? '15' : '20'"> {{ row.AgentsStaffed }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="widgetData.SLEnabled ? '15' : '20'">
+                    <span> Stf </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" [fxFlex]="widgetData.SLEnabled ? '15' : '20'"> {{ row.AgentsStaffed }}
+                </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="AgentAvailable">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="slEnabled ? '15' : '20'"> <span> Avl </span> </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="slEnabled ? '15' : '20'"> {{ row.AgentAvailable }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="widgetData.SLEnabled ? '15' : '20'">
+                    <span> Avl </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" [fxFlex]="widgetData.SLEnabled ? '15' : '20'"> {{ row.AgentAvailable }}
+                </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="CallsInQueue">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="slEnabled ? '15' : '20'"> <span> CIQ </span> </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="slEnabled ? '15' : '20'"> {{ row.CallsInQueue }} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="widgetData.SLEnabled ? '15' : '20'">
+                    <span> CIQ </span>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row" [fxFlex]="widgetData.SLEnabled ? '15' : '20'"> {{ row.CallsInQueue }}
+                </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ServiceLevel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="15"> <span> SL % </span> </mat-header-cell>
-                <mat-cell
-                    *matCellDef="let row"
-                    fxFlex="15"
-                    [ngStyle]="{
+                <mat-cell *matCellDef="let row" fxFlex="15" [ngStyle]="{
                         'background-color': row.BCMSData && getSLBgColor(row.BCMSData.SLPercentage),
                         color: row.BCMSData && getSLFontColor(row.BCMSData.SLPercentage)
-                    }"
-                >
+                    }">
                     {{ row.BCMSData ? row.BCMSData?.SLPercentage + '%' : 'NA' }}
                 </mat-cell>
             </ng-container>

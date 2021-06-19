@@ -11,14 +11,16 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="w-100-p h-100-p">
-            <mat-tab-group class="w-100-p h-100-p" animationDuration="0ms">
+        <div class="twd-w-full twd-h-full twd-relative">
+            <mat-tab-group class="twd-absolute twd-h-full twd-w-full twd-top-0 twd-left-0" animationDuration="0ms">
                 <mat-tab *ngFor="let channel of channels" [label]="channel.Type" #tab>
                     <ng-template mat-tab-label>
                         <div
                             class="tab-header"
                             [ngClass]="
-                                tab.isActive ? customFuse.anchor?.body || customFuse.widget?.body : customFuse.anchor?.content || customFuse.widget?.content
+                                tab.isActive
+                                    ? customFuse.anchor?.body || customFuse.widget?.body
+                                    : customFuse.anchor?.content || customFuse.widget?.content
                             "
                         >
                             <mat-icon>{{ channel.Icon }}</mat-icon>
@@ -31,6 +33,7 @@
                             [channelConf]="channel"
                             *ngSwitchCase="'email'"
                         ></workbench-email>
+
                         <workbench-chat
                             [data]="{ Data: data.Data?.General || {}, Config: data.Config }"
                             [channelConf]="channel"

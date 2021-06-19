@@ -12,4 +12,5 @@ export * from './resource-not-found/resource-not-found.component';
 export * from './shared-wrapper/shared-wrapper.component';
 export * from './snackbar/snackbar.component';
 export * from './widget-fab/widget-fab.component';
-
+export * from './email-template-selector/email-template-selector.component';
+export * from './mailbox-settings/mailbox-settings.component';

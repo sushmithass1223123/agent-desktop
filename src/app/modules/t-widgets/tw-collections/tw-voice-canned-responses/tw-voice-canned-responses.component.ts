@@ -37,10 +37,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     /**
      * Constructor
      */
-    constructor(
-        private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -60,20 +57,19 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         // get the voice templates
-        SDKClient.getInteractionTemplates('voice')
-            .then((dt: IResponse) => {
-                // get the response
-                const response: AgentInteractionTemplate[] = dt.response;
-                // check the response
-                if (response.length > 0) {
-                    this.voiceTemplates = groupBy(response, 'Category');
-                }
-            });
+        SDKClient.getInteractionTemplates('voice').then((dt: IResponse) => {
+            // get the response
+            const response: AgentInteractionTemplate[] = dt.response;
+            // check the response
+            if (response.length > 0) {
+                this.voiceTemplates = groupBy(response, 'Category');
+            }
+        });
 
         this._tmacEventService
             .getInteractionEvents(['CallDisconnectedEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
@@ -106,7 +102,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     public async sendItem(item: AgentInteractionTemplate): Promise<void> {
         // get the audio buffer from wav file
         const result: IResponse = await TUtils.HttpClient.sendRequest({
-            url: item.Data,
+            urls: [item.Data],
             responseType: 'arraybuffer'
         });
 
@@ -121,7 +117,11 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
             };
 
             // emit a template message sent event to show in UI
-            this._tmacEventService.emitSDKEvent(customEvent, true);
+            this._tmacEventService.emitSDKEvent({
+                event: customEvent,
+                isInteractionEvent: true,
+                log: true
+            });
         }
     }
 }

@@ -1,20 +1,38 @@
 <div class="fab-container">
-    <button mat-fab color="primary" class="fab-toggler" (click)="onToggleFab()">
-        <mat-icon [@fabToggler]="{ value: fabTogglerState }" class="s-30">add</mat-icon>
-        <!-- Animation here -->
+    <button
+        mat-fab
+        color="primary"
+        class="fab-toggler"
+        cdkOverlayOrigin
+        #widgetList="cdkOverlayOrigin"
+        (click)="toggleWidgetList()"
+        matTooltip="AOT Widgets"
+    >
+        <mat-icon [@fabToggler180]="{ value: openWidgetList ? 'active' : 'inactive' }"> {{ openWidgetList ? 'expand_less' : 'menu_open' }} </mat-icon>
     </button>
-    <div [@widgetStagger]="buttons.length">
-        <!-- and here -->
-        <ng-container *ngFor="let btn of buttons">
-            <button
-                mat-mini-fab
-                color="secondary"
-                *ngIf="btn.Config.Enabled && !btn.Config.Hidden"
-                class="fab-secondary"
-                (click)="openAOTWidget(btn)"
-            >
-                <mat-icon [matTooltip]="btn.Name || 'Widget'">{{ btn.Config.Icon || 'widgets' }}</mat-icon>
-            </button>
-        </ng-container>
-    </div>
+
+    <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="widgetList"
+        [cdkConnectedOverlayOpen]="openWidgetList"
+        cdkConnectedOverlayHasBackdrop
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        (overlayOutsideClick)="openWidgetList = false"
+        cdkConnectedOverlayPush="true"
+        [cdkConnectedOverlayPositions]="[{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }]"
+    >
+        <div fxLayout="column" fxLayoutGap="10px" class="mb-12 create-interaction-buttons" [@widgetStagger]="buttons.length">
+            <ng-container *ngFor="let btn of buttons">
+                <button
+                    mat-mini-fab
+                    color="secondary"
+                    *ngIf="btn.Config.Enabled && !btn.Config.Hidden"
+                    class="fab-secondary"
+                    (click)="openAOTWidget(btn)"
+                >
+                    <mat-icon [matTooltip]="btn.Name || 'Widget'">{{ btn.Config.Icon || 'widgets' }}</mat-icon>
+                </button>
+            </ng-container>
+        </div>
+    </ng-template>
 </div>

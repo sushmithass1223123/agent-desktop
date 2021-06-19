@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
-import { widgetFabAnimations } from '@modules/shared/animations/widget-fab.animation';
+import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, timer } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 /**
  * QuickPanelComponent
@@ -18,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './quick-panel.component.html',
     styleUrls: ['./quick-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations: widgetFabAnimations
+    animations: appAnimations
 })
 export class QuickPanelComponent implements OnInit, OnDestroy {
     /**
@@ -28,7 +28,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
     /**
      * Current date
      */
-    date: Date;
+    date$: Observable<Date>;
     /**
      * Event list
      */
@@ -75,7 +75,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         // init the subject
         this.unsubscribeAll = new Subject();
         // Set the defaults
-        this.date = new Date();
+        this.date$ = timer(1000, 1000).pipe(map(() => new Date()));
         this.settings = {
             notify: true,
             cloud: false,
@@ -87,35 +87,33 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * OnInit
      */
     ngOnInit(): void {
-        this._appDataService.config
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((config: any) => {
-                if (config) {
-                    // get app config
-                    this.appConfig = config;
-                    // get pinned AOTs
-                    this.pinnedAOTs = config.Main.AOT.Widgets?.filter((w: IWidget) => w.Config.Pinned === true);
-                    // set notification settings
-                    this.settings = {
-                        desktopAlert: config.AppConfigs.Notifications.DesktopAlerts,
-                        sounds: config.AppConfigs.Notifications.Sounds
-                    };
-                    this._appUIService.setNotificationSettings(this.settings);
-                }
-            });
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            if (config) {
+                // get app config
+                this.appConfig = config;
+                // get pinned AOTs
+                this.pinnedAOTs = config.Main.AOT.Widgets?.filter((w: IWidget) => w.Config.Pinned === true);
+                // set notification settings
+                this.settings = {
+                    desktopAlert: config.AppConfigs.Notifications.DesktopAlerts,
+                    sounds: config.AppConfigs.Notifications.Sounds
+                };
+                this._appUIService.setNotificationSettings(this.settings);
+            }
+        });
     }
 
     /**
      * OnDestroy
      */
     ngOnDestroy(): void {
-        this.unsubscribeAll.next();
+        this.unsubscribeAll.next(null);
         this.unsubscribeAll.complete();
     }
 
     /**
      * Open AOT widget
-     * @param {IWidget} widget 
+     * @param {IWidget} widget
      */
     openAOTWidget(widget: IWidget): void {
         // if widget data is there, then open AOT
@@ -143,12 +141,9 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         // add to the config
         this._appDataService.config = {
             ...this.appConfig,
-            'Main': {
-                'AOT': {
-                    'Widgets': [
-                        ...this.appConfig.Main.AOT.Widgets,
-                        widget
-                    ]
+            Main: {
+                AOT: {
+                    Widgets: [...this.appConfig.Main.AOT.Widgets, widget]
                 }
             }
         };
@@ -162,9 +157,9 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
 
     /**
      * To update settting
-     * 
-     * @param {String} type 
-     * @param {Boolean} checked 
+     *
+     * @param {String} type
+     * @param {Boolean} checked
      */
     updateSettings(type: string, checked: boolean): void {
         // set notification settings

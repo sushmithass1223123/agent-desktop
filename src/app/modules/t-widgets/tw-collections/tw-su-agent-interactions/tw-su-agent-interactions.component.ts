@@ -7,7 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from '@tmac/sdk';
@@ -19,7 +19,6 @@ import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, 
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     // holds all the data related to this widget from the config
     @Input() data: IWidget;
 
@@ -43,7 +42,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     };
 
     /**
-     * Constructor 
+     * Constructor
      */
     constructor(
         private _dashboardService: DashboardService,
@@ -98,7 +97,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
     /**
      * To process TeamAgentInteractionDetailsEvent
-     * 
+     *
      * @param {CustomSDKEvent} evt
      */
     private TeamAgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
@@ -112,14 +111,14 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             return;
         }
 
-        // assign the interaction details 
+        // assign the interaction details
         this.interactionList = evt.Data[0].Interactions;
 
         this.interactionDetailsTable.loaded = true;
         this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
         this.interactionDetailsTable.source.sort = this.sort;
         this.interactionDetailsTable.source.paginator = this.paginator;
-    }
+    };
 
     /**
      * To perform chat bargeIn
@@ -148,8 +147,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                     this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in successful`, 'success');
                     // close the widget
                     this._aotWidgetService.destroyWidget(this.data.ID);
-                }
-                else {
+                } else {
                     this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in failed`, 'failure');
                 }
             })
@@ -200,8 +198,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         // check if interaction action
         else if (type === 'interaction' && this.featureMap[feature.Feature].Type === type && this.featureMap[feature.Feature].SubType === subType) {
             return feature.IsEnabled;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -211,29 +208,27 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      */
     public performInteractionAction(item: InteractionDataModel, feature: AgentFeatures): void {
         console.log('performAgentAction', { item, feature });
-        switch (feature.Feature) {
-            case 'AllowSupervisorToBargeIn':
+        switch (feature.Feature.toLowerCase()) {
+            case AGENT_FEATURES.AllowSupervisorToBargeIn:
                 break;
-            case 'AllowSupervisorToChatConference':
+            case AGENT_FEATURES.AllowSupervisorToChatConference:
                 this.performChatBargeIn('conf', item);
                 break;
-            case 'AllowSupervisorToChatSilentMonitor':
+            case AGENT_FEATURES.AllowSupervisorToChatSilentMonitor:
                 this.performChatBargeIn('silent', item);
                 break;
-            case 'AllowSupervisorToChatWhisper':
+            case AGENT_FEATURES.AllowSupervisorToChatWhisper:
                 this.performChatBargeIn('whisper', item);
                 break;
-            case 'AllowSupervisorToFaxTransferAgent':
+            case AGENT_FEATURES.AllowSupervisorToFaxTransferAgent:
                 break;
-            case 'AllowSupervisorToFaxTransferSelf':
+            case AGENT_FEATURES.AllowSupervisorToFaxTransferAgent:
                 break;
-            case 'AllowSupervisorToInteractionNotification':
+            case AGENT_FEATURES.AllowSupervisorToInteractionNotification:
                 break;
-            case 'AllowSupervisorToSilentMonitor':
+            case AGENT_FEATURES.AllowSupervisorToSilentMonitor:
                 break;
-            case 'AllowSupervisorToViewEmailDetails':
-                break;
-            case 'AllowSupervisorToViewEmailDetails':
+            case AGENT_FEATURES.AllowSupervisorToViewEmailDetails:
                 break;
             default:
         }

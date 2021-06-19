@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -27,11 +27,12 @@ type CallStates = 'loading' | 'error' | 'initial' | 'completed';
     templateUrl: './workbench-chat.component.html',
     styleUrls: ['./workbench-chat.component.scss']
 })
-export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
+export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
      * holds all the data related to the parent tw workbecnh widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidgetWb;
+
     /**
      * holds all the data related to this workbench tab
      */
@@ -41,18 +42,22 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
      * Fetched Queued Chats observable
      */
     queuedChats: any[];
+
     /**
      * Advanced search visibility
      */
     showAdvancedSearchForm = false;
+
     /**
      * Current user data
      */
     user: IAgentData;
+
     /**
      * Polling Subscription
      */
     polling$: Subscription;
+
     /**
      * Tree Controls
      */
@@ -67,10 +72,12 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
      * Advanced Search form control
      */
     advancedSearchForm: FormGroup;
+
     /**
      * To store the fuse config for theme
      */
     // fuseConfig: FuseConfig;
+
     /**
      * Fuse custom config
      */
@@ -104,12 +111,18 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     @ViewChild('chatsRef')
     chatsRef: ElementRef<HTMLDivElement>;
 
+    /**
+     * Chat workbech main ref
+     */
+    @ViewChild('chatWorkBench')
+    chatWorkBench: ElementRef<HTMLDivElement>;
+
     constructor(
         private http: HttpClient,
         // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
-        private appUiService: AppUiService,
-        private matDialog: MatDialog
+        private _appUiService: AppUiService,
+        private _matDialog: MatDialog
     ) {
         super();
         const today = new Date();
@@ -134,13 +147,48 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
         // });
 
         this.user = SDKClient.getAgentData();
-        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000).subscribe(() => {
-            this.doAdvancedSearch();
-        });
     }
 
+    /**
+     * After View Init
+     */
+    ngAfterViewInit(): void {
+        // create an intersection observer to start/stop polling when page is active/inactive
+        const observer = new IntersectionObserver((entries) => {
+            entries.map((entry) => {
+                if (entry.isIntersecting) {
+                    this.startPolling();
+                } else {
+                    this.stopPolling();
+                }
+            });
+        });
+        // observe the element
+        observer.observe(this.chatWorkBench.nativeElement);
+    }
+
+    /**
+     * On Destroy
+     */
     ngOnDestroy(): void {
-        this.polling$.unsubscribe();
+        this.polling$?.unsubscribe();
+    }
+
+    /**
+     * To start polling
+     */
+    private startPolling(): void {
+        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000)
+            .subscribe(() => {
+                this.doAdvancedSearch();
+            });
+    }
+
+    /**
+     * To stop polling
+     */
+    private stopPolling(): void {
+        this.polling$?.unsubscribe();
     }
 
     /**
@@ -171,6 +219,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
             }
 
             this.callStates.search = 'loading';
+
             this.http
                 .post<any[]>(this.data.Data.WorkbenchUrl + '/chat/queue/search', {
                     skills: searchFields.skills ? [searchFields.skills] : [],
@@ -180,7 +229,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
                 })
                 .subscribe((res: any) => {
                     if (!res || res.status !== 'SUCCESS') {
-                        this.appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+                        this._appUiService.showSnackbar('Unable to complete advanced search', 'failure');
                         return;
                     }
                     this.queuedChats = res.result;
@@ -231,7 +280,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
                 });
         } catch (e) {
             console.error(e);
-            this.appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+            this._appUiService.showSnackbar('Unable to complete advanced search', 'failure');
         }
     }
 
@@ -283,7 +332,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
         const pullFunc = () => {
             const { tmacServer, agentId } = this.user;
             const { channel, itemID: itemid } = node;
-            this.appUiService.showSnackbar('Pulling Chat', 'loading');
+            this._appUiService.showSnackbar('Pulling Chat', 'loading');
             this.http
                 .post(this.data.Data.WorkbenchUrl + '/chat/queue/pull', {
                     tmacServer,
@@ -293,15 +342,15 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
                 })
                 .subscribe((res: any) => {
                     if (res && res.status !== 'FAILED') {
-                        this.appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                        this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
                         return;
                     }
-                    this.appUiService.showSnackbar('Unable to Pull chat', 'failure');
+                    this._appUiService.showSnackbar('Unable to Pull chat', 'failure');
                 });
         };
         try {
             if (this.channelConf.Config.AskPullConfirmation) {
-                const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Pull Chat', 'Are you sure you want to pull this chat ?');
+                const confirmDialogRef = this._appUiService.showAppConfirmDialog('generic', 'Pull Chat', 'Are you sure you want to pull this chat ?');
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         pullFunc();
@@ -312,7 +361,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
             }
         } catch (e) {
             console.error(e);
-            this.appUiService.showSnackbar('Chat Pull failed', 'failure');
+            this._appUiService.showSnackbar('Chat Pull failed', 'failure');
         }
     }
 
@@ -343,7 +392,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
             data.callback = (callbackData) => {
                 const { TmacServer, LoginID } = callbackData.selectedRow;
                 const { channel, itemID: itemid } = node;
-                this.appUiService.showSnackbar('Pushing Chat', 'loading');
+                this._appUiService.showSnackbar('Pushing Chat', 'loading');
                 this.http
                     .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
                         tmacServer: TmacServer,
@@ -353,14 +402,14 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
                     })
                     .subscribe((res: any) => {
                         if (res && res.status !== 'FAILED') {
-                            this.appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                            this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
                             return;
                         }
-                        this.appUiService.showSnackbar('Unable to push chat', 'failure');
+                        this._appUiService.showSnackbar('Unable to push chat', 'failure');
                     });
             };
 
-            this.matDialog.open(AgentSkillListComponent, {
+            this._matDialog.open(AgentSkillListComponent, {
                 data: {
                     ...data,
                     otherData: node
@@ -373,7 +422,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
             });
         } catch (e) {
             console.error(e);
-            this.appUiService.showSnackbar('Chat Push failed', 'failure');
+            this._appUiService.showSnackbar('Chat Push failed', 'failure');
         }
     }
 
@@ -388,4 +437,15 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit {
     resetForm(): void {
         this.advancedSearchForm.reset();
     }
+}
+
+interface IWidgetWb extends IWidget {
+    /**
+     * Chat workbench config
+     */
+    Config: any;
+    /**
+     * Chat workbench active flag
+     */
+    IsActive: boolean;
 }

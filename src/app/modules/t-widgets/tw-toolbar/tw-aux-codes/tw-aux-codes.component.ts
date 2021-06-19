@@ -46,10 +46,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     agentStatus = '';
 
-    constructor(
-        private _fuseProgressBarService: FuseProgressBarService,
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _fuseProgressBarService: FuseProgressBarService, private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -67,14 +64,13 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(byTeam, null)
-            .then((result: IResponse) => {
-                // check if the data is null
-                if (result.response && result.response.length > 0) {
-                    // filter and assign the aux codes
-                    this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
-                }
-            });
+        SDKClient.loadAUXCodes(byTeam, null).then((result: IResponse) => {
+            // check if the data is null
+            if (result.response && result.response.length > 0) {
+                // filter and assign the aux codes
+                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
+            }
+        });
 
         // get agent details
         const agentData: IAgentData = SDKClient.getAgentData();
@@ -96,17 +92,17 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * To process AgentStatusChangeEvent
-     * 
-     * @param {AgentStatusChangeEvent} evt 
+     *
+     * @param {AgentStatusChangeEvent} evt
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.currentAux = evt.Status;
-    }
+    };
 
     /**
      * To change agent status
-     * 
-     * @param {IAUXCodes} item 
+     *
+     * @param {IAUXCodes} item
      */
     changeStatus(item: IAUXCodes): void {
         // show the progress bar
@@ -116,17 +112,20 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
             EventName: 'AgentStatusChangingEvent'
         };
 
-        // emit a custom event
-        this._tmacEventService.emitSDKEvent(customEvent);
+        this._tmacEventService.emitSDKEvent({
+            event: customEvent
+        });
 
         // change the status
-        SDKClient.changeStatus({
-            type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
-            code: item.Value.toString()
-        }, item)
-            .then(() => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-            });
+        SDKClient.changeStatus(
+            {
+                type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
+                code: item.Value.toString()
+            },
+            item
+        ).then(() => {
+            // hide the progress bar
+            this._fuseProgressBarService.hide();
+        });
     }
 }

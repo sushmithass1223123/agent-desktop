@@ -1,17 +1,27 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { APP_BASE_HREF } from '@angular/common';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog } from '@angular/material/dialog';
-import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
-import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { QUILL_EDITOR_CONFIG } from 'app/constants';
-import { CreateEmailInfo, TwWidgetModel } from 'app/models';
+import { SDKClient, TUtils } from '@tmac/sdk';
+import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
+import { maticonByExtension } from 'app/utils';
 import { merge } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
-import { EmailTemplate, SDKClient } from '@tmac/sdk';
+import tinyMCE from 'tinymce';
 
 /**
  * Email creation component view only
@@ -22,11 +32,11 @@ import { EmailTemplate, SDKClient } from '@tmac/sdk';
     styleUrls: ['./create-email.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEmailComponent implements OnInit, OnDestroy {
+export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Send email event emitter
      */
-    @Output() sendEmail = new EventEmitter();
+    @Output() sendEmail = new EventEmitter<CreateEmailOutput>();
     /**
      * Template preview data
      */
@@ -35,19 +45,17 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     };
 
     /**
-     * Show toolbar flag
+     * Id for editor component
      */
-    showToolbar = true;
-
-    /**
-     * Config for quill editor
-     */
-    editorConfig = QUILL_EDITOR_CONFIG;
+    editorState = {
+        id: TUtils.Generic.uuid(),
+        loading: false
+    };
 
     /**
      * Suggested users for autocomplete
      */
-    suggestedUsers: string[];
+    suggestedUsers: string[] = [];
 
     /**
      * Email suggestion all users
@@ -55,35 +63,14 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     allUsers = [];
 
     /**
-     * Email form control
-     */
-    emailCtrl = new FormGroup({
-        To: new FormControl('', [Validators.required]),
-        CC: new FormControl(''),
-        BCC: new FormControl(''),
-        Subject: new FormControl('')
-    });
-
-    /**
-     * Separator code keys
-     */
-    separatorKeysCodes: number[] = [ENTER, COMMA];
-    /**
      * Recipient input ref
      */
     @ViewChild('recipientsInput') recipientsInput: ElementRef<HTMLInputElement>;
 
     /**
-     * Available templates
+     * Flag when currently uploading files
      */
-    availableTemplates = {
-        departments: {}
-    };
-
-    /**
-     * Files currently uploadeng
-     */
-    uploadingFiles = [];
+    // uploadingFiles = false;
 
     /**
      * Show CC / BCC
@@ -91,122 +78,177 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     showCcBcc = false;
 
     /**
-     * Email Info
-     */
-    email: CreateEmailInfo;
-
-    /**
      * Email info received from parent
      */
-    @Input() emailInfo?: CreateEmailInfo;
+    @Input() emailInfo?: CreateEmailInput = null;
+
+    /**
+     * Flag for disabling send
+     */
+    @Input() sendDisabled? = false;
 
     /**
      * Fuse custom background colors
      */
     customFuse$ = this._fuseFacadeService.widgetBgClasses$;
 
-    constructor(
-        private appUiService: AppUiService,
-        private matDialog: MatDialog,
-        private aotService: AOTWidgetService,
-        // private fuseConfig: FuseConfigService,
-        private _fuseFacadeService: FuseFacadeService
-    ) { }
+    /**
+     * Controls for email recipients
+     */
+    emailRecipientFacade = new FormGroup({
+        To: new FormControl(''),
+        CC: new FormControl(''),
+        BCC: new FormControl('')
+    });
+
+    /**
+     * Email ist
+     */
+    email: CreateEmailOutput = {
+        To: [],
+        CC: [],
+        BCC: [],
+        Subject: '',
+        Body: '',
+        Files: []
+    };
+
+    /**
+     * Flag to show attachments
+     */
+    showAttachments = false;
+
+    constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.suggestedUsers = this.allUsers;
-        // this.toolbarBg = this.fuseConfig.config.pipe(
-        //     map((config: FuseConfig) => ({
-        //         content: config.layout.widget.customBackgroundColor === true ? config.layout.widget.contentBackground : '',
-        //         body: config.layout.widget.customBackgroundColor === true ? config.layout.widget.bodyBackground : ''
-        //     }))
-        // );
-
-        this.emailCtrl.setValue({
-            To: this.emailInfo?.To || '',
-            CC: this.emailInfo?.CC || '',
-            BCC: this.emailInfo?.BCC || '',
-            Subject: this.emailInfo?.Subject || ''
-        });
-        this.email = {
-            // To: this.emailCtrl.value.To,
-            // CC: this.emailCtrl.value.CC,
-            // BCC: this.emailCtrl.value.BCC,
-            // Subject: this.emailCtrl.value.Subject,
-            Body: this.emailInfo?.Body || '',
-            Files: this.emailInfo?.Files || [],
-            ...this.emailCtrl.value
-        };
-
-        merge(this.emailCtrl.controls.To.valueChanges, this.emailCtrl.controls.CC.valueChanges, this.emailCtrl.controls.BCC.valueChanges)
+        if (this.emailInfo?.To) {
+            this.email.To = this.emailInfo?.To.split(',').filter((x) => !!x);
+        }
+        if (this.emailInfo?.CC) {
+            this.email.CC = this.emailInfo?.CC.split(',').filter((x) => !!x);
+        }
+        if (this.emailInfo?.BCC) {
+            this.email.BCC = this.emailInfo?.BCC.split(',').filter((x) => !!x);
+        }
+        this.email.Subject = this.emailInfo?.Subject || '';
+        this.email.Body = this.emailInfo?.Body || '';
+        this.email.Files = this.emailInfo?.Files || [];
+        const emailRegex =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        this.addUserSuggestions();
+        merge(
+            this.emailRecipientFacade.controls.To.valueChanges,
+            this.emailRecipientFacade.controls.CC.valueChanges,
+            this.emailRecipientFacade.controls.BCC.valueChanges
+        )
             .pipe(
-                debounceTime(1000),
-                map((val) => val.split(';').pop()?.toLowerCase())
+                debounceTime(200),
+                map((val) => val.toLowerCase())
             )
             .subscribe((val) => {
                 if (val) {
-                    this.suggestedUsers = this.allUsers.filter((x) => x.includes(val));
+                    this.suggestedUsers = this.allUsers.filter((x) => x.toLowerCase().includes(val));
+                    if (!this.suggestedUsers.length && emailRegex.test(val)) {
+                        this.suggestedUsers = [val];
+                    }
                 } else {
-                    this.suggestedUsers = [];
+                    this.suggestedUsers = this.allUsers;
                 }
             });
+        this.editorState.loading = true;
+    }
 
-        SDKClient.getEmailTemplateDepartments()
-            .then((res) => {
-                this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
-            })
-            .catch((err) => {
-                console.error(err);
-                this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
-            });
+    /**
+     * Lifecycle hook
+     */
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            tinyMCE
+                .init({
+                    selector: `textarea#${this.editorState.id}`,
+                    min_height: 200,
+                    height: '100%',
+                    menubar: false,
+                    fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
+                    forced_root_block: false,
+                    // force_br_newlines: true,
+                    // force_p_newlines: false,
+                    branding: false,
+                    base_url: `${this.baseHref}assets/tinymce/`,
+                    content_css: `${this.baseHref}assets/tinymce/editor.css`,
+                    plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code wordcount'
+                    ],
+                    toolbar:
+                        'undo redo | formatselect | ' +
+                        'bold italic backcolor | alignleft aligncenter ' +
+                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                        'removeformat | help',
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                    setup: (editor) => {
+                        editor.on('init', () => {
+                            this.editorState.loading = false;
+                            editor.setContent(this.email.Body || '');
+                            editor.on('blur', () => {
+                                this.email.Body = editor.getContent();
+                            });
+                        });
+                    }
+                })
+                .then(() => {
+                    console.log('Email editor loaded succesfully');
+                })
+                .catch((err) => {
+                    console.error('Unable to load editor');
+                    console.error(err);
+                });
+        }, 0);
     }
 
     /**
      * Lifecycle hook
      */
     ngOnDestroy(): void {
-        this.closeTemplatePreview();
+        tinyMCE.activeEditor.off('blur');
+        // tinyMCE.activeEditor.destroy();
     }
 
     /**
-     * Selects User from list of email interactions
-     * @param {String} key
-     * @param {MatAutocompleteSelectedEvent} evt
+     * Selects user from suggestions
+     * @param key
+     * @param evt
      */
-    selectUser(key: string, evt: MatAutocompleteSelectedEvent): void {
-        const missingColon = this.email[key] && this.email[key].slice(-1) !== ';' ? ';' : '';
-        this.email[key] += missingColon + evt.option.value + ';';
-        this.emailCtrl.patchValue({ [key]: this.email[key] });
-        this.removePrevSuggestions();
+    select(key: string, evt: MatAutocompleteSelectedEvent): void {
+        this.email[key].push(evt.option.value);
+        this.emailRecipientFacade.patchValue({ [key]: '' });
     }
 
     /**
-     * Remove User / Interaction
-     * @param {String} key
-     * @param {String} user
+     * Removes user chip
+     * @param key
+     * @param value
      */
-    removeUser(key: string, user: string): void {
-        this.email[key] = this.email[key].filter((x) => x !== user);
+    remove(key: string, value: string): void {
+        this.email[key] = this.email[key].filter((x) => x !== value);
     }
 
     /**
-     * Remove Previous Suggestions
+     * Adds user suggestions
      */
-    removePrevSuggestions(): void {
-        // if (!this.suggestedUsers) {
-        //     this.suggestedUsers.filtered = [];
-        // }
-        this.suggestedUsers = this.allUsers;
+    addUserSuggestions(): void {
+        SDKClient.getFrequentEmailAddressList()
+            .then((res) => {
+                this.allUsers = res.response;
+            })
+            .catch((e) => {
+                console.error(e);
+            });
     }
-
-    /**
-     * test functionn for quill editor
-     * @param {any} evt
-     */
-    onContentChanged(evt: any): void { }
 
     /**
      * Attach files to email
@@ -216,7 +258,9 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
-                this.uploadingFiles.push(input.files[0].name);
+                const ref = this.appUiService.showSnackbar(`Uploading ${input.files[0].name || 'File'}`, 'loading');
+                // this.uploadingFiles = true;
+                // this.uploadingFiles.push(input.files[0].name);
                 const Base64 = await this.convertToBase64(input.files[0]);
                 const { response } = await SDKClient.uploadFiles({
                     files: [
@@ -231,8 +275,20 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
                     ]
                 });
 
-                this.email.Files.push({ Id: response[0].RelativePath, Direction: 'OUT', Name: response[0].FileName, URL: response[0].Url });
-                this.uploadingFiles.pop();
+                const ext = response[0].FileName.split('.').pop();
+                const icon = maticonByExtension(ext);
+
+                this.email.Files.push({
+                    Id: Date.now().toString(),
+                    Direction: 'OUT',
+                    Name: response[0].FileName,
+                    URL: response[0].Url,
+                    Ext: ext,
+                    Icon: icon
+                });
+                ref.dismiss();
+                // this.uploadingFiles = false;
+                // this.uploadingFiles.pop();
             }
         } catch (e) {
             console.error(e);
@@ -262,110 +318,13 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Adds template to editor
-     */
-    useTemplate(template: EmailTemplate): void {
-        this.email.Body = `${template.BodyHTML} ${this.email.Body}`;
-        this.closeTemplatePreview();
-        // if (this.templatePreview.ref) {
-        //     this.templatePreview.ref.close();
-        // }
-    }
-
-    /**
-     * Closes tempate preview
-     */
-    closeTemplatePreview(): void {
-        this.matDialog.closeAll();
-        this.templatePreview.aots.forEach((aotID) => {
-            this.aotService.destroyWidget(aotID);
-        });
-        // if (this.templatePreview.ref) {
-        //     this.templatePreview.ref.close();
-        // }
-    }
-
-    /**
      * Select template for email
-     * @param {EmailTemplate} preview
+     * @param {string} preview
      */
-    selectTemplate(preview: EmailTemplate): void {
-        // this.templatePreview.preview = preview.BodyHTML;
-        const data = {
-            info: preview,
-            useTemplate: (info: EmailTemplate) => this.useTemplate(info),
-            closeTemplate: () => this.closeTemplatePreview()
-        };
-        if (preview.ID === 4) {
-            const widget = new TwWidgetModel('Template', 'tw-email-template-preview');
-            widget.Config.Anchor = true;
-            widget.Config.Position.W = 800;
-            widget.Config.Position.H = 300;
-            widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
-            widget.Data = data;
-            this.aotService.addWidget(widget);
-            this.templatePreview.aots.push(widget.ID);
-        } else {
-            this.matDialog.open(TwEmailTemplatePreviewComponent, { data });
-            // ref.afterClosed().subscribe(() => {
-            // this.templatePreview.preview = '';
-            // });
-            // this.templatePreview.ref = ref;
-            // this.email.Body = `${html} ${this.email.Body}`;
-        }
+    selectTemplate(html: string): void {
+        this.email.Body = `${html} ${this.email.Body}`;
+        tinyMCE.activeEditor.setContent(this.email.Body);
     }
-
-    /**
-     * Set groups for selected department
-     * @param {String} departmentId Department's Id
-     */
-    setGroups(departmentId: string): void {
-        if (!this.availableTemplates.departments[departmentId]?.groups) {
-            SDKClient.getEmailTemplateGroups(departmentId)
-                .then((res) => {
-                    if (res.response && res.response.length) {
-                        this.availableTemplates.departments[departmentId].groups = this.getDropdownKeyvaluePair(res.response, 'ID');
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
-                });
-        }
-    }
-
-    /**
-     * Set Templates for the group
-     * @param {String} departmentId  selected department Id
-     * @param {String} groupId selected group Id
-     */
-    setTemplates(departmentId: string, groupId: string): void {
-        const groups = this.availableTemplates.departments[departmentId].groups;
-        if (!groups[groupId].templates) {
-            SDKClient.getEmailTemplates({ groupId, type: '' })
-                .then((templateRes) => {
-                    if (templateRes.response && templateRes.response.length) {
-                        groups[groupId].templates = this.getDropdownKeyvaluePair(templateRes.response, 'ID');
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
-                });
-        }
-    }
-
-    /**
-     * Groups by id and returns the value
-     */
-    private getDropdownKeyvaluePair(records: any[], idKey: string): any {
-        const keyVal = {};
-        records.forEach((r) => {
-            keyVal[r[idKey]] = r;
-        });
-        return keyVal;
-    }
-
     /**
      * Focuses the editor
      * @param {any} editor
@@ -380,9 +339,14 @@ export class CreateEmailComponent implements OnInit, OnDestroy {
      * Triggers email send action
      */
     triggerEmailSend(): void {
-        if (!this.emailCtrl.valid) {
-            return;
-        }
-        this.sendEmail.emit();
+        this.sendEmail.emit(this.email);
+    }
+
+    /**
+     * Opens a selected attachment file
+     * @param {String} fileUrl
+     */
+    openFile(fileUrl: string): void {
+        window.open(fileUrl);
     }
 }

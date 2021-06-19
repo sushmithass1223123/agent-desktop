@@ -1,24 +1,10 @@
-const aHues = [100, 200, 400, 700];
-const generateColors = (color) => {
-    let pallete = new Array(10)
-        .fill(1)
-        .map((_, i) => i)
-        .reduce((acc, i) => {
-            acc[`${i * 100 || 50}`] = `var(${color}-${i * 100 || 50})`;
-            acc[`contrast-${i * 100 || 50}`] = `var(${color}-contrast-${i * 100 || 50})`;
-            return acc;
-        }, {});
-    aHues.forEach((hue) => {
-        pallete[`A${hue}`] = `var(${color}-A${hue})`;
-    });
-    return pallete;
-};
+const { generateMaterialColors } = require('@tmac/styles/tailwind');
 module.exports = {
     prefix: 'twd-',
     purge: {
-        content: ['./apps/**/*.{html,ts}', './libs/**/*.{html,ts}']
+        content: ['./src/**/*.{html,ts}']
     },
-    darkMode: 'media', // or 'media' or 'class'
+    darkMode: 'class', // or 'media' or 'class'
     theme: {
         fontSize: {
             xs: '12px',
@@ -72,15 +58,47 @@ module.exports = {
         },
         extend: {
             colors: {
-                primary: generateColors('--twd-primary'),
-                accent: generateColors('--twd-accent'),
-                warn: generateColors('--twd-warn')
+                primary: generateMaterialColors('twd-primary'),
+                accent: generateMaterialColors('twd-accent'),
+                warn: generateMaterialColors('twd-warn')
+            },
+            minHeight: {
+                0: '0',
+                '1/4': '25%',
+                '1/3': '33%',
+                '1/2': '50%',
+                '3/4': '75%',
+                '10/12': '83.33%',
+                '11/12': '91.66%',
+                full: '100%'
             },
             maxHeight: {
                 0: '0',
                 '1/4': '25%',
+                '1/3': '33%',
                 '1/2': '50%',
                 '3/4': '75%',
+                '10/12': '83.33%',
+                '11/12': '91.66%',
+                full: '100%'
+            },
+            minWidth: {
+                0: '0',
+                '1/4': '25%',
+                '1/3': '33%',
+                '1/2': '50%',
+                '3/4': '75%',
+                '10/12': '83.33%',
+                '11/12': '91.66%',
+                full: '100%'
+            },
+            maxWidth: {
+                0: '0',
+                '1/4': '25%',
+                '1/3': '33%',
+                '1/2': '50%',
+                '3/4': '75%',
+                '10/12': '83.33%',
                 '11/12': '91.66%',
                 full: '100%'
             },

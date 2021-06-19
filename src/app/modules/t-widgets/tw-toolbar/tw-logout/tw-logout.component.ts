@@ -15,7 +15,6 @@ import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
     encapsulation: ViewEncapsulation.None
 })
 export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * App config json data
      */
@@ -30,11 +29,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     canLogout: boolean;
 
-    constructor(
-        private _router: Router,
-        private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _router: Router, private _fuseProgressBarService: FuseProgressBarService, private _appUIService: AppUiService) {
         super();
     }
 
@@ -75,7 +70,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     private AgentStatusChangeEvent = () => {
         this.findLogoutAux();
-    }
+    };
 
     /**
      * Check if the agent can logout
@@ -93,8 +88,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         // check if the logout aux matches
         if (auxItem?.Code === this.logoutAux) {
             this.canLogout = true;
-        }
-        else {
+        } else {
             this.canLogout = false;
         }
     }
@@ -106,7 +100,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * To logout user from TMAC
      */
     logout(): void {
-        // confirm logout 
+        // confirm logout
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
@@ -114,9 +108,12 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this._appUIService.showSnackbar('Please wait, logging out...', 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
-                SDKClient.logout({
-                    reason: 'ManualLogout'
-                }, null)
+                SDKClient.logout(
+                    {
+                        reason: 'ManualLogout'
+                    },
+                    null
+                )
                     .then((dt: IResponse) => {
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
@@ -124,9 +121,8 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         if (dt.response && dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar('Logged out successfully');
                             // route back to login page
-                            this._router.navigate(['login'], { queryParamsHandling: 'preserve' });
-                        }
-                        else {
+                            this._router.navigate(['login']);
+                        } else {
                             // logout error
                             this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
                         }
@@ -137,5 +133,4 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             }
         });
     }
-
 }

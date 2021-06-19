@@ -176,7 +176,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             }
         }
         this.selectedDay = day;
-        this.refresh.next();
+        this.refresh.next(null);
     }
 
     /**
@@ -250,7 +250,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             });
 
             // refresh
-            this.refresh.next();
+            this.refresh.next(null);
 
             if (update) {
                 this._appUIService.showSnackbar('Events reloaded suuccessfully');

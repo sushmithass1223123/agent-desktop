@@ -83,7 +83,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the data from config
-        this.widgetData = this.data.Data;
+        this.widgetData = this.data.Data || new Object();
         // append the chart type, default is pie
         this.chart.type = this.widgetData.ChartType || 'pie';
 

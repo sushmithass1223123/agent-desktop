@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { TWidgetWrapper } from '@twidgets/utils';
 import { AgentSettingsUpdatedEvent, AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils';
 /**
  * Agent Details component
  */
@@ -13,7 +13,6 @@ import { AgentSettingsUpdatedEvent, AgentStatusChangeEvent, AUXCodeUpdateEvent, 
     encapsulation: ViewEncapsulation.None
 })
 export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * App confif widget data
      */
@@ -59,10 +58,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         }
     ];
 
-    constructor(
-        private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _fuseProgressBarService: FuseProgressBarService, private _appUIService: AppUiService) {
         super();
     }
 
@@ -79,20 +75,19 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         // get agent details
         this.agentData = SDKClient.getAgentData();
 
-        // register to events 
+        // register to events
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
         SDKClient.events.on('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
         SDKClient.events.on('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null)
-            .then((result: IResponse) => {
-                // check if the data is null
-                if (result.response && result.response.length > 0) {
-                    // filter and assign the aux codes
-                    this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
-                }
-            });
+        SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null).then((result: IResponse) => {
+            // check if the data is null
+            if (result.response && result.response.length > 0) {
+                // filter and assign the aux codes
+                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
+            }
+        });
     }
 
     /**
@@ -110,16 +105,16 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * AgentStatusChangeEvent Handler
-     * 
-     * @param {AgentStatusChangeEvent} evt 
+     *
+     * @param {AgentStatusChangeEvent} evt
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.agentData.agentStatus = evt.Status;
-    }
+    };
 
     /**
      * To process AgentSettingsUpdatedEvent
-     * 
+     *
      * @param {AgentSettingsUpdatedEvent} evt
      */
     private AgentSettingsUpdatedEvent = (evt: AgentSettingsUpdatedEvent) => {
@@ -131,12 +126,12 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
         // update the agent data
         this.agentData = SDKClient.getAgentData();
-    }
+    };
 
     /**
      * To process AUXCodeUpdateEvent
-     * 
-     * @param {AUXCodeUpdateEvent} evt 
+     *
+     * @param {AUXCodeUpdateEvent} evt
      */
     AUXCodeUpdateEvent = (evt: AUXCodeUpdateEvent) => {
         // update the aux codes
@@ -146,12 +141,12 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
             message: 'Aux Codes reloaded successfully',
             state: 'success'
         });
-    }
+    };
 
     /**
      * To change agent status
-     * 
-     * @param {IAUXCodes} item 
+     *
+     * @param {IAUXCodes} item
      */
     changeStatus(item: IAUXCodes): void {
         // show the progress bar
@@ -168,8 +163,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                     dt.response = dt.response as AgentStatusChangeEvent;
                     // get the status
                     this.agentData.agentStatus = dt.response.Status;
-                }
-                else {
+                } else {
                     this._appUIService.showSnackbar('Change status failed, please try again!', 'failure');
                 }
             })

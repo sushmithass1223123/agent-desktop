@@ -1,9 +1,8 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { FuseConfig } from '@fuse/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { Subject } from 'rxjs/internal/Subject';
+import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 /**
@@ -153,7 +152,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 
@@ -170,7 +169,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     maximize(): void {
         this.maximized = !this.maximized;
         // check if collapsed then expand
-        if (!this.maximized && this.collapsed) {
+        if (this.maximized && this.collapsed) {
             this.collapsed = false;
         }
         this.maximizeEvent.emit(this.maximized);

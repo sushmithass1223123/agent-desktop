@@ -1,12 +1,10 @@
-import { CommonModule } from '@angular/common';
+import { APP_BASE_HREF, CommonModule, PlatformLocation } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
 import * as Chart from 'chart.js';
 import { ChartsModule } from 'ng2-charts';
-import { QuillModule } from 'ngx-quill';
-import Quill from 'quill';
 import {
     AgentSkillListComponent,
     AlertDialogComponent,
@@ -21,13 +19,12 @@ import {
     ResourceNotFoundComponent,
     SharedWrapperComponent,
     SnackbarComponent,
-    WidgetFabComponent
+    WidgetFabComponent,
+    EmailTemplateSelectorComponent,
+    MailboxSettingsComponent
 } from './components';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
-
-const SizeStyle = Quill.import('attributors/style/size');
-Quill.register(SizeStyle, true);
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -51,7 +48,9 @@ const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsMo
  * Shared components
  */
 const sharedComponents = [
+    MailboxSettingsComponent,
     ResourceNotFoundComponent,
+    EmailTemplateSelectorComponent,
     CustomDialogComponent,
     AvatarComponent,
     TWChartDirective,
@@ -74,7 +73,14 @@ const sharedComponents = [
  */
 @NgModule({
     declarations: sharedComponents,
-    imports: [CommonModule, ...sharedModules, QuillModule.forRoot()],
+    imports: [CommonModule, ...sharedModules],
+    providers: [
+        {
+            provide: APP_BASE_HREF,
+            useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+            deps: [PlatformLocation]
+        }
+    ],
     exports: [...sharedModules, ...sharedComponents]
 })
 export class SharedModule {}

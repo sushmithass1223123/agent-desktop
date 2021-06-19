@@ -65,7 +65,7 @@
                     <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
                 </button>
                 <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
-                    <mat-icon>announcement</mat-icon>
+                    <mat-icon>campaign</mat-icon>
                 </button>
             </div>
             <p *ngIf="filteredAgents.length" class="m-0 text-center position-absolute left-0 right-0 bottom-0">
@@ -94,7 +94,7 @@
                         (click)="selectAgent(item)"
                         [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
                     >
-                        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="45">
+                        <div [fxFlex]="item.AgentLoginID !== selectedAgent ? 45 : 85" fxLayout="row" fxLayoutAlign="start center">
                             <div class="position-relative">
                                 <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
                                 <span
@@ -115,8 +115,10 @@
                                     /
                                     <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
                                 </span>
-                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent" matTooltip="Agent Name">
-                                    {{ item.AgentName }}
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent Name"> {{ item.AgentName }}</span>
+                                    (<span matTooltip="Lan ID">{{ item.AgentLANID }}</span
+                                    >)
                                 </div>
                                 <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
                                     <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
@@ -169,12 +171,11 @@
                         </div>
 
                         <div fxLayout="row" fxLayoutAlign="end center" fxFlex="15" class="indicators">
-                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR">supervised_user_circle</mat-icon>
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR"> supervised_user_circle</mat-icon>
                             <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
-                            <mat-icon
-                                [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer"
-                                >{{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}</mat-icon
-                            >
+                            <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
+                                {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
+                            </mat-icon>
                         </div>
                     </div>
 
@@ -295,4 +296,4 @@
     </ng-container>
 </tw-wrapper>
 
-<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget" (destroyEvent)="activityWidget = null"></tw-su-agent-activity-details>
+<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget" (destroyEvent)="activityWidget = null"> </tw-su-agent-activity-details>

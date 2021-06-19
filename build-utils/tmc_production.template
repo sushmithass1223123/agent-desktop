@@ -1,0 +1,4 @@
+{
+    "ProxyUrl": "tmc.conf.ProxyUrl",
+    "ConfigMode": "tmc.conf.ConfigMode"
+}

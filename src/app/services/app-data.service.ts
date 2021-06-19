@@ -1,11 +1,15 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
+import { IAppConfig } from 'app/interfaces';
+import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
+import { map } from 'rxjs/operators';
 import { version } from '../../../package.json';
+import { FuseFacadeService } from './fuse-facade.service';
 
 /**
  * Service to inject the data for widget from App config json
@@ -39,11 +43,15 @@ export class AppDataService {
      */
     private _postMessageSubject: Subject<any>;
 
-    constructor(@Inject(DOCUMENT) private document: any, private _titleService: Title) {
+    constructor(
+        @Inject(DOCUMENT) private document: any,
+        private _titleService: Title,
+        private _fuseFacadeService: FuseFacadeService // private _tmacEventService: TMACEventService
+    ) {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
-        this._postMessageSubject = new BehaviorSubject(new Object());
+        this._postMessageSubject = new Subject();
         this._appVersion = version;
         this.registerToPostMessage();
     }
@@ -102,7 +110,7 @@ export class AppDataService {
         return this._postMessageSubject.asObservable();
     }
 
-    // -----------------------------------------------------------------------------------------------------    
+    // -----------------------------------------------------------------------------------------------------
 
     /**
      * To get production config
@@ -136,7 +144,7 @@ export class AppDataService {
 
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
-            url: `${data.ProxyUrl}/GetTmacLoginJson`,
+            urls: [`${data.ProxyUrl}/GetTmacLoginJson`],
             header: {
                 'Content-Type': 'application/json'
             },
@@ -216,29 +224,33 @@ export class AppDataService {
      */
     private registerToPostMessage(): void {
         try {
-            window.addEventListener('message', (evt: any) => {
-                // if event data is null then return
-                if (!evt.data) {
-                    return;
-                }
-
-                let data: any = {};
-                if (typeof evt.data === 'string') {
-                    try {
-                        data = JSON.parse(evt.data);
-                    } catch (error) {
-                        data = {};
+            window.addEventListener(
+                'message',
+                (evt: any) => {
+                    // if event data is null then return
+                    if (!evt.data) {
+                        return;
                     }
-                } else if (typeof evt.data === 'object') {
-                    data = evt.data;
-                }
 
-                // check if destination is tmac
-                if (data.destination?.toLowerCase() === 'tmac') {
-                    // notify the observers
-                    this._postMessageSubject.next(data);
-                }
-            }, false);
+                    let data: any = {};
+                    if (typeof evt.data === 'string') {
+                        try {
+                            data = JSON.parse(evt.data);
+                        } catch (error) {
+                            data = {};
+                        }
+                    } else if (typeof evt.data === 'object') {
+                        data = evt.data;
+                    }
+
+                    // check if destination is tmac
+                    if (data.destination?.toLowerCase() === 'tmac') {
+                        // notify the observers
+                        this._postMessageSubject.next(data);
+                    }
+                },
+                false
+            );
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in registerToPostMessage', null, error);
         }
@@ -284,10 +296,41 @@ export class AppDataService {
 
     /**
      * To get app version
-     * 
+     *
      * @returns {String} app version
      */
     getAppVersion(): string {
         return this._appVersion;
+    }
+
+    /**
+     * Set the app config
+     */
+    setTheme(): void {
+        // apply the theme
+        const themeName = this._configSubject.getValue().AppConfigs.Theme || '';
+        const webFont = this._configSubject.getValue().AppConfigs.Font || 'wf-muli';
+        const flatTheme = this._configSubject.getValue().AppConfigs.FlatTheme ?? false;
+        if (themeName) {
+            const theme = getFuseConfigByTheme(themeName, false);
+            this._fuseFacadeService.setConfig = {
+                ...theme,
+                flatTheme,
+                webFont
+            };
+        }
+    }
+
+    /**
+     * Gets app specific keys from app config
+     *
+     * @param {Record<string , string>} json
+     * @returns {Observable<Partial<IAppConfig>>}
+     */
+    public getConfig(json?: Record<string, string>): Observable<any | Partial<IAppConfig>> {
+        if (json) {
+            return this._configSubject.pipe(map((conf) => formatJsonData(conf, json)));
+        }
+        return this._configSubject;
     }
 }

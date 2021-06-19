@@ -1,24 +1,33 @@
 <tw-wrapper [data]="data">
-    <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4 p-12">
-        <div fxLayout="row" fxLayoutAlign=" center">
-            <mat-icon>assignment</mat-icon>
-            <div>{{ displayData.type }}</div>
+    <div *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse" class="p-12">
+        <div fxLayout="row" fxLayoutAlign=" center" class="w-60-100-p h-100-p interactions">
+            <avatar *ngFor="let item of interactionList" name="{{ item.user }}"
+                [ngClass]="'row ' + item.status + (item.interactionId === interactionId ? ' active' : '')"
+                matTooltip="{{ item.user }}" matTooltipPosition="after" (click)="selectInteraction(item)" [circleColor]="
+                    item.interactionId === interactionId
+                        ? customFuse.anchor?.body || customFuse.widget?.body
+                        : customFuse.anchor?.content || customFuse.widget?.content
+                "></avatar>
         </div>
-        <div fxLayout="row" fxLayoutAlign=" center">
-            <mat-icon>grading</mat-icon>
-            <div>{{ displayData.intent }}</div>
-        </div>
-        <div fxLayout="row" fxLayoutAlign=" center">
-            <button
-                mat-raised-button
-                class="border-radius-20"
-                color="warn"
-                #closeBtn
-                (click)="confirmCloseInteraction(closeBtn)"
-                matTooltip="Close Interaction"
-            >
-                Close
-            </button>
+
+        <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
+            <div fxLayout="row" fxLayoutAlign=" center">
+                <mat-icon>assignment</mat-icon>
+                <div>{{ displayData.type }}</div>
+            </div>
+            <div fxLayout="row" fxLayoutAlign=" center">
+                <mat-icon>grading</mat-icon>
+                <div>{{ displayData.intent }}</div>
+            </div>
+            <div fxLayout="row" fxLayoutAlign=" center">
+                <button *ngIf="closeInteractionAllowed" mat-raised-button class="border-radius-20" color="warn"
+                    #closeBtn (click)="confirmCloseInteraction(closeBtn)" matTooltip="Close Interaction">
+                    Close
+                </button>
+            </div>
         </div>
     </div>
 </tw-wrapper>

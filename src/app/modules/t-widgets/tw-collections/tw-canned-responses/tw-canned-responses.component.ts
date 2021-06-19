@@ -72,11 +72,9 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      */
     private _tmacEventSub$: Subscription;
     /**
-     * Constructor 
+     * Constructor
      */
-    constructor(
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -98,20 +96,15 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         this.loading = true;
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
-                this.departments = result.response.filter(d => d.Channel.toLowerCase().includes('chat'));
+                this.departments = result.response.filter((d) => d.Channel.toLowerCase().includes('chat'));
             })
             .finally(() => {
                 this.loading = false;
             });
 
-        this._tmacEventsObs =
-            this._tmacEventService
-                .getEvents([
-                    'OnNLPDataEvent',
-                    'CallerIntentEvent',
-                    'WorkCodeAddedEvent'
-                ])
-                .pipe(takeUntil(this.unsubscribeAll));
+        this._tmacEventsObs = this._tmacEventService
+            .getEvents(['OnNLPDataEvent', 'CallerIntentEvent', 'WorkCodeAddedEvent'])
+            .pipe(takeUntil(this.unsubscribeAll));
 
         // check the response mode
         if (this.responseMode === 'auto') {
@@ -134,7 +127,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * WorkCodeAddedEvent Handler
      * @method WorkCodeAddedEvent
-     * @param {WorkCodeAddedEvent} evt 
+     * @param {WorkCodeAddedEvent} evt
      */
     private WorkCodeAddedEvent = (evt: WorkCodeAddedEvent) => {
         // check for the interaction
@@ -144,12 +137,12 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
         const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
         this.groups = newGroups;
-    }
+    };
 
     /**
      * CallerIntentEvent Handler
      * @method CallerIntentEvent
-     * @param {CallerIntentEvent} evt 
+     * @param {CallerIntentEvent} evt
      */
     private CallerIntentEvent = (evt: CallerIntentEvent) => {
         // check for the interaction
@@ -160,12 +153,12 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
         const newGroup = { ...evt, Name: evt.IntentName };
         const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
         this.groups = newGroups;
-    }
+    };
 
     /**
      * OnNLPDataEvent Handler
      * @method OnNLPDataEvent
-     * @param {OnNLPDataEvent} evt 
+     * @param {OnNLPDataEvent} evt
      */
     private OnNLPDataEvent = (evt: OnNLPDataEvent): void => {
         const parsedJson = JSON.parse(evt.JsonData);
@@ -177,12 +170,12 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
 
         const newGroup = JSON.parse(parsedJson.nluResult);
         this.onSelectGroups({ value: newGroup.intent.name });
-    }
+    };
 
     /**
      * Reset form
      * @method clearAllData
-     * 
+     *
      * @param source
      */
     private clearAllData(source?: string): void {
@@ -209,7 +202,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Select Department
      * @method onSelectDepartment
-     * @param {any} event 
+     * @param {any} event
      */
     onSelectDepartment(event: any): void {
         const value = event.value;
@@ -218,8 +211,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             // clear all data
             this.clearAllData('dept');
             return;
-        }
-        else {
+        } else {
             this.clearTemplates();
         }
 
@@ -237,7 +229,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Slect Groups
      * @method onSelectGroups
-     * @param {any} event 
+     * @param {any} event
      */
     onSelectGroups(event: any): void {
         const value = event.value;
@@ -246,8 +238,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             // clear all data
             this.clearAllData('group');
             return;
-        }
-        else {
+        } else {
             this.clearTemplates();
         }
 
@@ -257,8 +248,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             .then((result: IResponse) => {
                 if (this.responseMode === 'auto') {
                     this.templates = [...result.response, ...this.templates];
-                }
-                else {
+                } else {
                     this.templates = result.response;
                 }
             })
@@ -270,7 +260,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Template Selct
      * @method onTemplateSelect
-     * @param template 
+     * @param template
      */
     onTemplateSelect(template: any): void {
         this.selectedTemplate = template;
@@ -280,7 +270,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Send selected template
      * @method sendTemplate
-     * @param {sendTemplate} template 
+     * @param {sendTemplate} template
      */
     sendTemplate(template: any): void {
         // check if any interaction is present
@@ -298,7 +288,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             Data: { Template: template }
         };
 
-        this._tmacEventService.emitSDKEvent(customEvent, true);
+        this._tmacEventService.emitSDKEvent({
+            event: customEvent,
+            isInteractionEvent: true,
+            log: true
+        });
 
         if (this.responseMode !== 'auto') {
             // clear all data
@@ -309,7 +303,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Change Mode
      * @method changeMode
-     * @param {MatSelectChange} event 
+     * @param {MatSelectChange} event
      */
     changeMode(event: MatSelectChange): void {
         if (event.value === 'manual') {

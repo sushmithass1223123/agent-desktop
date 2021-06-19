@@ -19,7 +19,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
 import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { TwWidgetModel } from 'app/models';
@@ -357,8 +357,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {AgentFeatures} feature
      */
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
-        switch (feature.Feature) {
-            case 'AllowSupervisorToCapturePicture':
+        switch (feature.Feature.toLowerCase()) {
+            case AGENT_FEATURES.AllowSupervisorToCapturePicture:
                 this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');
                 SDKClient.getAgentActivity(
                     {
@@ -410,7 +410,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         TUtils.Logger.error('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });
                 break;
-            case 'AllowSupervisorToLogout':
+            case AGENT_FEATURES.AllowSupervisorToLogout:
+                // check the agent's current status
+                if (agent.CurrentAgentStatus.toLowerCase().includes('on call')) {
+                    this._appUIService.showSnackbar(`Logout is not allowed, ${agent.AgentName} is on call`, 'failure');
+                    return;
+                }
                 // confirm logout
                 const confirmDialogRef = this._appUIService.showAppConfirmDialog(
                     'logout',
@@ -442,7 +447,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     }
                 });
                 break;
-            case 'AllowSupervisorToSendNotification':
+            case AGENT_FEATURES.AllowSupervisorToSendNotification:
                 this._fuseSidebarService.getSidebar('chatPanel').toggleOpen();
                 setTimeout(() => {
                     this._instantMessagingService.selectUser(agent.AgentLoginID);
