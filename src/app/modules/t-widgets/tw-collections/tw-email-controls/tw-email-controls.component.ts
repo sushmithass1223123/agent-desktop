@@ -31,8 +31,8 @@ import {
 import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError, urlify } from 'app/utils';
 import { format } from 'date-fns';
-import { firstValueFrom, interval, Subscription } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { interval, Subscription } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs/operators';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
 
@@ -707,9 +707,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
             let confirmSend = true;
             if (!Subject) {
-                confirmSend = await firstValueFrom(
-                    this._appUIService.showAppConfirmDialog('generic', 'Confirm Send', 'Send email without a subject ?').afterClosed()
-                );
+                confirmSend = await this._appUIService
+                    .showAppConfirmDialog('generic', 'Confirm Send', 'Send email without a subject ?')
+                    .afterClosed()
+                    .pipe(take(1))
+                    .toPromise();
             }
             if (!confirmSend) {
                 return;
