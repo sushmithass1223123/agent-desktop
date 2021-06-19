@@ -1645,7 +1645,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         if (dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar('Interaction transfer completed successfully');
                         } else {
-                            this._appUIService.showSnackbar('Interaction transfer completion failed');
+                            this._appUIService.showSnackbar('Interaction transfer completion failed', 'failure');
                         }
                     })
                     .catch(() => {
@@ -1659,9 +1659,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // toggle the button
                         this.toggleButton(false, btn);
                         if (dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Interaction transfer cancel successful');
+                            this._appUIService.showSnackbar('Interaction transfer cancelled successfully');
                         } else {
-                            this._appUIService.showSnackbar('Interaction transfer cancel failed');
+                            this._appUIService.showSnackbar('Interaction transfer cancel failed', 'failure');
                         }
                     })
                     .catch(() => {

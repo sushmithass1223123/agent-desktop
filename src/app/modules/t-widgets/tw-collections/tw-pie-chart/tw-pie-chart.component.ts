@@ -211,7 +211,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
-                labels.push(`${c.State} - [${duration.hours}:${duration.minutes}:${duration.seconds}]`);
+                labels.push(
+                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
+                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
+                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                );
             });
 
         this.showData(datasets, labels);
@@ -230,7 +234,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
-                labels.push(`${c.State} - [${duration.hours}:${duration.minutes}:${duration.seconds}]`);
+                labels.push(
+                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
+                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
+                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                );
             });
 
         // this.chart.datasets = Object.keys(datasets).map((d) => ({

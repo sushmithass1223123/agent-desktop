@@ -232,6 +232,22 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         if (agentId) {
             if (route !== 'login') {
                 const config = await this._appDataService.getJsonConfig(agentId);
+
+                // if the json is not proper then route to not-found page
+                if (!config) {
+                    // we will route to error page
+                    this._router.navigate(['not-found'], {
+                        state: {
+                            subtitle: 'Oops',
+                            title: '404',
+                            description: 'Unable to load the config for main, please contact the administrator.',
+                            login: false
+                        },
+                        queryParamsHandling: 'preserve'
+                    });
+                    return;
+                }
+
                 this.appConfig = config;
             }
             // get the login data

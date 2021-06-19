@@ -409,6 +409,8 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
+                                // snooze the reminder
+                                this.updateReminderStatus('Snooze', parsedMessage.ID);
                                 // show an alert for auto snooze
                                 this._appUIService.showSnackbar('Meeting task is snoozed', 'info');
                             }
@@ -468,6 +470,8 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
+                                // snooze the reminder
+                                this.updateReminderStatus('Snooze', parsedMessage.ID);
                                 // show an alert for auto snooze
                                 this._appUIService.showSnackbar('Change status task is snoozed', 'info');
                             }
@@ -602,10 +606,11 @@ export class TMACEventService {
     private TCMDirectAgentNotifyTimeoutEvent = (evt: TCMDirectAgentNotifyTimeoutEvent) => {
         const obj = JSON.parse(evt.JsonData);
         const contact = JSON.parse(obj.Contact);
+        const message = `Callback request for ${contact.Name} number ${contact.PhoneNumber} timed out.`;
 
         // show an alert
         this._appUIService.addNotification({
-            message: 'Callback request for ' + contact.Name + ' number ' + contact.PhoneNumber + ' timed out.',
+            message,
             status: 'new',
             showAlert: true
         });
@@ -622,18 +627,19 @@ export class TMACEventService {
         evt.Reminders.forEach((item: AgentReminder) => {
             // check if the ref is already opened
             const ref = this._remiderTaskDialog.reminder?.filter((r) => r.id === item.ID)?.length > 0;
-
             // check if the dialog is opened for this ID
             if (!ref) {
                 let message = item.Message;
+                let alert = item.Message;
                 if (item.Type === 'event') {
                     const jsonMsg = JSON.parse(message);
+                    alert = jsonMsg.Title;
                     message = `<b>Title:</b> ${jsonMsg.Title}<br />,
                                 <b>Location:</b> ${jsonMsg.Meta.Location || 'NA'}<br />
                                 <b>Notes:</b> ${jsonMsg.Meta.Notes || 'NA'}<br />`;
                 }
+                this._appUIService.showDesktopAlert('You have a new reminder', alert, false);
                 const dialogRef = this._appUIService.showRemiderTaskModal('reminder', message, `Reminder @ ${item.RemindDate} ${item.RemindTime}`);
-
                 this._remiderTaskDialog.reminder.push({
                     id: item.ID,
                     ref: dialogRef
