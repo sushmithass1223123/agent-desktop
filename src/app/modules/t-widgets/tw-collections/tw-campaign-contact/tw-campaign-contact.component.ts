@@ -10,8 +10,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { GenericInteractionEvent, IAgentData, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
 import { processCustomerDetails } from 'app/utils';
-import { firstValueFrom } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 /**
  * Campaign Contact Component
@@ -181,9 +180,10 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         }
 
         // get TCM client web service url from config
-        const appConfig = await firstValueFrom(
-            this._appDataService.getConfig({ tcmUrl: 'Main.Urls.TCMClient' }).pipe(takeUntil(this.unsubscribeAll))
-        );
+        const appConfig = await this._appDataService
+            .getConfig({ tcmUrl: 'Main.Urls.TCMClient' })
+            .pipe(takeUntil(this.unsubscribeAll), take(1))
+            .toPromise();
 
         // get the url
         this.tcmClientUrl = appConfig?.tcmUrl;

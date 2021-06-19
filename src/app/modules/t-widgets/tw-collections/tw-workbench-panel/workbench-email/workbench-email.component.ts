@@ -2,7 +2,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -13,15 +13,15 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
+import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
 import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailOutput, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { formatJsonData, maticonByExtension } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
-import { firstValueFrom, Observable, Subscription, timer } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { Observable, Subscription, timer } from 'rxjs';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
 import tinymce from 'tinymce';
 import { TwWorkBenchService } from '../tw-workbench-panel.service';
 
@@ -675,7 +675,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         }))
                     })
                     .pipe(takeUntil(this.unsubscribeAll));
-                const res: any = await firstValueFrom(res$);
+                const res: any = await res$.pipe(take(1)).toPromise();
                 if (res.status !== 'SUCCESS') {
                     throw new Error(`Unable to delete emails ${sessionIds.join(',')}`);
                 }
@@ -1141,7 +1141,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         let loader;
         try {
             const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Confirm Spam', 'Are you sure to mark this email as spam?');
-            const dialogResult = await firstValueFrom(confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)));
+            const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
             if (dialogResult) {
                 loader = this.appUiService.showSnackbar('Spamming email', 'loading');
                 const sessionKey = this.getCurrentSessionKey();
