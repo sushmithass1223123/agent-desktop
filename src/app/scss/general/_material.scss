@@ -242,7 +242,7 @@ mat-selection-list {
         }
 
         mat-header-cell:not(:first-child) {
-            padding: 0 8px;
+            padding: 0 6px;
         }
 
         mat-header-cell:not(:last-child)::after {
@@ -262,7 +262,13 @@ mat-selection-list {
         justify-content: center;
         text-align: center;
         font-weight: 600;
-        // border-radius: 20px;
+    }
+
+    mat-cell,
+    mat-footer-cell {
+        &:not(mat-cell:first-of-type, mat-footer-cell:first-of-type) {
+            padding: 0 6px;
+        }
     }
 }
 // mat table
