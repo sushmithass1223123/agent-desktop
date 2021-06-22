@@ -81,7 +81,12 @@
                         </button>
                         <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
                             <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
-                                <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
+                                <input
+                                    class="login-input"
+                                    matInput
+                                    [placeholder]="currentTab === 'queue' ? 'Search by Subject' : 'Search'"
+                                    [formControl]="globalSearchControl"
+                                />
                                 <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
                                     <mat-icon matSuffix>search</mat-icon>
                                 </button>
@@ -462,7 +467,9 @@
                         "
                     >
                         <div [ngClass]="classes.selectClass">
-                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)"  [(ngModel)]="allEmailsSelected" > Select All </mat-checkbox>
+                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)" [(ngModel)]="allEmailsSelected">
+                                Select All
+                            </mat-checkbox>
                         </div>
                         <div class="twd-flex twd-items-center">
                             <div class="twd-font-bold twd-text-sm">
@@ -638,7 +645,7 @@
                     "
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="twd-shadow">
+                    <div class="twd-shadow twd-max-h-96 twd-overflow-auto">
                         <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
                             <div
                                 class="twd-relative twd-flex-1 twd-px-1"
@@ -651,22 +658,34 @@
                         </div>
                         <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
                             <div fxLayout fxLayoutAlign="space-between">
-                                <div fxFlex="80">
+                                <div fxFlex="80" *ngIf="{ inQueueOrInbox: ['queue', 'inbox'].includes(currentTab) } as tab">
                                     <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
                                     <p class="text-bold my-4" *ngIf="selectedEmail.ccList">Cc : {{ selectedEmail.ccList }}</p>
                                     <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
                                     <p class="my-4 text-bold">Status: {{ selectedEmail.currentStatus || 'NA' }}</p>
-                                    <p *ngIf="['inbox', 'queue'].includes(currentTab)" class="my-4 text-bold">
-                                        Prirority: {{ selectedEmail.priority || 'NA' }}
-                                    </p>
-                                    <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
-                                    <p *ngIf="['inbox', 'queue'].includes(currentTab)" class="my-4 text-bold">
-                                        Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                                    </p>
-                                    <p *ngIf="['inbox', 'queue'].includes(currentTab)" class="my-4 text-bold">
-                                        Closed Status: {{ selectedEmail.closedBy ? 'Closed by ' + selectedEmail.closedBy : 'Open' }}
-                                    </p>
-                                    <p class="my-4 text-bold">Intent: {{ selectedEmail.intent || 'NA' }}</p>
+
+                                    <ng-container *ngIf="tab.inQueueOrInbox">
+                                        <p class="my-4 text-bold">
+                                            Closed Status: {{ selectedEmail.closedBy ? 'Closed by ' + selectedEmail.closedBy : 'Open' }}
+                                        </p>
+
+                                        <p class="my-4 text-bold">Prirority: {{ selectedEmail.priority || 'NA' }}</p>
+                                        <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
+                                        <p class="my-4 text-bold">
+                                            Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                        </p>
+                                    </ng-container>
+                                    <ng-container *ngIf="!tab.inQueueOrInbox">
+                                        <p *ngIf="selectedEmail.closedBy" class="my-4 text-bold">
+                                            Closed Status: {{ 'Closed by ' + selectedEmail.closedBy  }}
+                                        </p>
+                                        <p *ngIf="selectedEmail.priority" class="my-4 text-bold">Prirority: {{ selectedEmail.priority }}</p>
+                                        <p *ngIf="selectedEmail.agentName" class="my-4 text-bold">Agent: {{ selectedEmail.agentName }}</p>
+                                        <p *ngIf="selectedEmail.repliedStatus?.length" class="my-4 text-bold">
+                                            Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                        </p>
+                                    </ng-container>
+                                    <p *ngIf="selectedEmail.intent" class="my-4 text-bold">Intent: {{ selectedEmail.intent  }}</p>
                                 </div>
                                 <div fxFlex="15">
                                     <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
@@ -729,7 +748,8 @@
                     </div>
                     <div class="twd-flex-1 twd-relative twd-pb-11 lg:twd-pb-0">
                         <div id="openEmailRef" class="lg:twd-absolute twd-left-0 twd-top-0 twd-w-full twd-p-1 lg:twd-h-full lg:twd-overflow-auto">
-                            <div [innerHtml]="selectedEmail.body"></div>
+                            <!-- <div [innerHtml]="selectedEmail.body"></div> -->
+                            <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
                         </div>
                     </div>
                 </div>
