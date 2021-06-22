@@ -1,4 +1,16 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -16,7 +28,8 @@ import {
     InteractionDataEvent,
     IResponse,
     OutgoingEmailEvent,
-    SDKClient
+    SDKClient,
+    UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import {
@@ -211,6 +224,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     sendingEmailAsMaker = false;
 
+    /**
+     * Flag to check if interaction is active
+     */
+    isInteractionActive = false;
+
     constructor(
         private _interactionManagerService: InteractionManagerService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -239,12 +257,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // filter out the textchat interaction
             this.interactionList = interactions
                 .filter((i: InteractionRef) => i.type === 'email')
-                .map((i) => ({
-                    user: i.user,
-                    status: i.status,
-                    isActive: i.isActive,
-                    interactionId: i.interactionId
-                }));
+                .map((i) => {
+                    this.isInteractionActive = i.interactionId === this.interactionId && i.isActive;
+                    return {
+                        user: i.user,
+                        status: i.status,
+                        isActive: i.isActive,
+                        interactionId: i.interactionId
+                    };
+                });
         });
 
         // -----------------------------------------------------------------------------------------------------
@@ -265,7 +286,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 if (['AgentDraftPull'].includes(this.currentInteraction.RouteReason)) {
                     this.showReplyEditor();
                 }
-                if (this.currentInteraction.RouteReason === 'CheckerQueue') {
+                if (OUTBOX_REASONS.includes(this.currentInteraction.RouteReason)) {
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
                 } else if (this.currentInteraction.JsonData) {
                     try {
@@ -312,9 +333,27 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.user = SDKClient.getAgentData() || null;
 
         this._tmacEventService
-            .getInteractionEvents(['InteractionDataEvent'], this.interactionId)
+            .getInteractionEvents(['InteractionDataEvent', 'UpdateEmailEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
+
+    /**
+     * Updates email when a new email is sent to agent from the same customer
+     * @param {UpdateEmailEvent}  _evt
+     */
+    UpdateEmailEvent(_evt: UpdateEmailEvent): void {
+        // this.setEmailDetails();
+    }
+
+    /**
+     * Iframe event when loaded , loads the email inside it
+     * @param iframe
+     */
+    loadEmailInIframe(iframe: HTMLIFrameElement): void {
+        const frag = document.createRange().createContextualFragment(this.currentInteraction.Body);
+        const doc = iframe.contentDocument || iframe.contentWindow;
+        (doc as any).body.appendChild(frag);
     }
 
     /**
@@ -459,7 +498,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
         this.emailBodies[requestedSession] = {
             CCList: res.CCList,
-            Body: this._appUIService.sanitizeEmailBody(res.Body),
+            Body: this._appUIService.sanitizeEmailBody(res.Body)['changingThisBreaksApplicationSecurity'],
             AttachmetList: res?.Attachments || []
         };
 
@@ -620,7 +659,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
             ${preBody} 
-            ${Body['changingThisBreaksApplicationSecurity']}`,
+            ${Body}`,
             Subject,
             Files: [],
             From: this.currentInteraction.Mailbox,
@@ -657,7 +696,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: From || '',
             Body: `
                 ${preBody}
-                ${Body['changingThisBreaksApplicationSecurity']}`,
+                ${Body}`,
             Subject,
             Files: [],
             From: this.currentInteraction.Mailbox,
@@ -689,7 +728,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: '',
             Body: `
                 ${preBody}
-                ${Body['changingThisBreaksApplicationSecurity']}`,
+                ${Body}`,
             Subject: `FW: ${Subject}`,
             Files,
             From: this.currentInteraction.Mailbox
@@ -702,7 +741,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
         try {
-            const { InSessionId, OutSessionId } = this.currentInteraction;
+            const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
             const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.getEmail();
 
             let confirmSend = true;
@@ -735,7 +774,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 body: Body,
                 inboxSessionId: InSessionId,
                 outboxSessionId: OutSessionId,
-                routeId: '',
+                routeId: RouteId || '',
                 subject: Subject,
                 typeOfResponse: ''
             });
@@ -784,7 +823,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         let sendLoader;
         try {
             btn.disabled = true;
-            const { InSessionId, OutSessionId } = this.currentInteraction;
+            const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
             const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
             confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
                 if (dialogResult) {
@@ -795,11 +834,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     const res = await SDKClient.sendEmail({
                         attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
                         bccList: '',
-                        body: Body['changingThisBreaksApplicationSecurity'],
+                        body: Body,
                         ccList: CC || '',
                         inboxSessionId: InSessionId,
                         outboxSessionId: OutSessionId,
-                        routeId: '',
+                        routeId: RouteId || '',
                         subject: Subject,
                         toList: From,
                         typeOfResponse: 'approve'
@@ -843,7 +882,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const { InSessionId, OutSessionId } = this.currentInteraction;
+        const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
         const email = this.createEmailRef?.getEmail();
         if (email) {
             // @TODO Files not sent as draft arg
@@ -854,7 +893,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ccList: CC.join(','),
                 inboxSessionId: InSessionId,
                 outboxSessionId: OutSessionId,
-                routeId: '',
+                routeId: RouteId || '',
                 subject: Subject,
                 toList: To.join(','),
                 typeOfResponse: ''

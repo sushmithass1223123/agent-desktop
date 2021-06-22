@@ -92,7 +92,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Interaction notes ref
      */
-    emailThreadReq: ResData<Observable<string[]>> = {
+    emailThreadReq: ResData<any> = {
         error: false,
         loading: false,
         data: null
@@ -259,11 +259,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.advancedSearchModal.openedRef?.close();
         }
     };
-
-    /**
-     * To show attachments in email
-     */
-    showAttachments = false;
 
     /**
      * Small email description falg
@@ -768,7 +763,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                              <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
                              `;
                                 // add space if there are multiple items
-                                if (index > array.length - 1) {
+                                if (index !== array.length - 1) {
                                     message += `
                                     <br />
                                     <br />
@@ -822,7 +817,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
 
             if (res.response.Body) {
-                res.response.Body = this._appUIService.sanitizeEmailBody(res.response.Body);
+                res.response.Body = this._appUIService.sanitizeEmailBody(res.response.Body)['changingThisBreaksApplicationSecurity'];
             }
 
             this.emailThreadReq.data = res.response;
@@ -952,6 +947,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }, []),
             sortId
         );
+    }
+
+    /**
+     * Iframe event when loaded , loads the email inside it
+     * @param iframe
+     */
+    loadEmailInIframe(iframe: HTMLIFrameElement): void {
+        const frag = document.createRange().createContextualFragment(this.emailThreadReq.data.Body);
+        const doc = iframe.contentDocument || iframe.contentWindow;
+        (doc as any).body.appendChild(frag);
     }
 }
 
