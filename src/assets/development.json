@@ -2512,11 +2512,7 @@
                                                         "InteractionText",
                                                         "Intent",
                                                         "AgentName",
-                                                        "CIF",
-                                                        "NRIC",
-                                                        "PhoneNumber",
                                                         "EmailID",
-                                                        "OverallSentiment",
                                                         "Actions"
                                                     ]
                                                 }
