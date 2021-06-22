@@ -375,10 +375,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         }
         const sortKey = this.sortControls.sortBy.value;
         let sorted;
-        if (sortKey !== 'default') {
-            sorted = sortBy(childrenNodes, sortKey);
-        } else {
+        if (sortKey === 'default') {
             sorted = childrenNodes;
+        } else if (sortKey === 'addedTime') {
+            sorted = sortBy(childrenNodes, (k) => k[sortKey] || '');
+        } else {
+            sorted = sortBy(childrenNodes, (k) => (k[sortKey] || '').toLowerCase());
         }
         const sortedEmails = this.sortControls.ascending ? sorted : sorted.reverse();
         this.groupNodes(sortedEmails);
@@ -521,12 +523,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             if (!mailRes.uiId) {
                                 mailRes.uiId = mailRes.SessionId;
                             }
-                            mailRes.Subject = this.domSanitizer.bypassSecurityTrustHtml(
-                                (mailRes.Subject || '').replaceAll('<a', '<a target="_blank"')
-                            )['changingThisBreaksApplicationSecurity'];
-                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml((mailRes.body || '').replaceAll('<a', '<a target="_blank"'))[
-                                'changingThisBreaksApplicationSecurity'
-                            ];
+                            mailRes.Subject = this.appUiService.sanitizeEmailBody(mailRes.Subject || '')['changingThisBreaksApplicationSecurity'];
+                            mailRes.body = this.appUiService.sanitizeEmailBody(mailRes.body || '')['changingThisBreaksApplicationSecurity'];
                             return mailRes;
                         });
                         this.sortEmailsByKey(mails);
@@ -601,7 +599,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 mailRes.addedTime = x.addedTime;
                             }
                             mailRes.id = Date.now();
-                            mailRes.body = this.domSanitizer.bypassSecurityTrustHtml((mailRes.body || '').replaceAll('<a', '<a target="_blank"'));
+                            mailRes.body = this.appUiService.sanitizeEmailBody(mailRes.body || '')['changingThisBreaksApplicationSecurity'];
                             return mailRes;
                         });
                         this.sortEmailsByKey(mails);
@@ -1102,7 +1100,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 }
 
                 this.emailBodies[requestedSession] = {
-                    body: this.domSanitizer.bypassSecurityTrustHtml((res.Body || '').replaceAll('<a', '<a target="_blank"')),
+                    body: this.appUiService.sanitizeEmailBody(res.Body || '')['changingThisBreaksApplicationSecurity'],
                     attachmentList: res?.Attachments || [],
                     agentName: res?.AgentName,
                     repliedStatus: (res as any)?.RepliedStatus,
@@ -1429,7 +1427,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @returns
      */
     trackBy = (_index: number, email: any): string => {
-        return email.uiId;
+        return this.currentTab + email.uiId;
     };
 
     /**
@@ -1454,6 +1452,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 this.emailSearchRes.data.selected = null;
             }
         }
+    }
+
+    /**
+     * Iframe event when loaded , loads the email inside it
+     * @param iframe
+     */
+    loadEmailInIframe(iframe: HTMLIFrameElement): void {
+        const frag = document.createRange().createContextualFragment(this.emailSearchRes.data.selected.body);
+        const doc = iframe.contentDocument || iframe.contentWindow;
+        (doc as any).body.appendChild(frag);
     }
 }
 

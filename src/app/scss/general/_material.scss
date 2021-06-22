@@ -143,7 +143,7 @@ mat-selection-list {
         height: 30px;
     }
 
-    th:not(:last-child)::after {
+    th.mat-header:not(:last-child)::after {
         content: '';
         position: absolute;
         width: 1px;
@@ -153,14 +153,14 @@ mat-selection-list {
         background-color: #cccccc;
     }
 
-    th,
-    td {
+    th.mat-header,
+    td.mat-cell {
         position: relative;
         text-align: center;
         border: none;
     }
 
-    th {
+    th.mat-header {
         color: currentColor !important;
         &.mat-header-cell {
             border-color: transparent !important;
@@ -180,12 +180,12 @@ mat-selection-list {
         }
     }
 
-    tr {
-        &.mat-row {
+    tr.mat-row {
+        & {
             height: 3rem !important ;
         }
 
-        td {
+        td.mat-cell {
             border: none;
             &:first-child {
                 border-top-left-radius: 20px;
@@ -206,9 +206,9 @@ mat-selection-list {
         margin-bottom: 8px;
         box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
 
-        &.selectable {
-            cursor: pointer;
-        }
+        // &.selectable {
+        //     cursor: pointer;
+        // }
 
         &.selected {
             background-color: rgb(0 0 0 / 0.2) !important;

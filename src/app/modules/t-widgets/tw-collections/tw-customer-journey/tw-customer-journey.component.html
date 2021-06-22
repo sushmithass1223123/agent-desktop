@@ -614,8 +614,20 @@
                                 </ng-container>
                             </ng-container>
 
-                            <ng-container *ngIf="mode === 'Email Preview'">
-                                <div *ngIf="emailThreadReq.data as emailInfo" id="emailInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
+                            <ng-container
+                                *ngIf="
+                                    mode === 'Email Preview' && {
+                                        loaded: !emailThreadReq.loading && !emailThreadReq.error,
+                                        error: emailThreadReq.error,
+                                        loading: emailThreadReq.loading
+                                    } as email
+                                "
+                            >
+                                <div
+                                    *ngIf="email.loaded && emailThreadReq.data as emailInfo"
+                                    id="emailInfo"
+                                    class="twd-flex-1 twd-h-full twd-z-10 twd-relative"
+                                >
                                     <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
                                         <div
                                             class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4"
@@ -626,16 +638,15 @@
                                                     class="twd-flex-1 twd-text-xl twd-mb-2 twd-truncate"
                                                     [innerHtml]="emailInfo.Subject"
                                                 ></div>
-                                                <button
-                                                    mat-icon-button
-                                                    (click)="
-                                                        emailInfoRef?.classList.toggle('twd-h-0'); emailAttachmentRef?.classList.toggle('twd-h-0')
-                                                    "
-                                                >
+                                                <button mat-icon-button (click)="smallEmailDescription = !smallEmailDescription">
                                                     <mat-icon>expand_more</mat-icon>
                                                 </button>
                                             </div>
-                                            <div #emailInfoRef class="twd-flex twd-justify-between twd-overflow-hidden twd-h-0">
+                                            <div
+                                                #emailInfoRef
+                                                class="twd-flex twd-justify-between twd-overflow-hidden twd-transition-all"
+                                                [ngClass]="{ 'twd-h-0': !smallEmailDescription }"
+                                            >
                                                 <div fxFlex="80" class="twd-flex">
                                                     <div class="twd-flex-1">
                                                         <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
@@ -670,7 +681,8 @@
                                                     lesstItems: emailInfo.Attachments?.slice(0, 3),
                                                     moreItems: emailInfo.Attachments?.slice(3, -1)
                                                 } as attachList"
-                                                class="twd-overflow-hidden twd-h-0"
+                                                class="twd-overflow-hidden twd-transition-all"
+                                                [ngClass]="{ 'twd-h-0': !smallEmailDescription }"
                                             >
                                                 <button
                                                     *ngFor="let file of attachList.lesstItems"
@@ -723,7 +735,8 @@
                                                 *ngIf="!emailThreadReq.data.loading && !emailThreadReq.data.error"
                                                 class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1 twd-p-2"
                                             >
-                                                <div [innerHtml]="emailInfo.Body"></div>
+                                                <!-- <div [innerHtml]="emailInfo.Body"></div> -->
+                                                <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
                                             </div>
 
                                             <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
@@ -739,6 +752,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div *ngIf="email.error" class="twd-flex-1 twd-w-full twd-flex twd-flex-col twd-items-center twd-justify-center">
+                                    <div class="twd-text-center">
+                                        <p>Unable to load email</p>
+                                        <button mat-raised-button color="primary">Retry</button>
+                                    </div>
+                                </div>
+                                <div *ngIf="email.loading" class="twd-flex-1 twd-w-full twd-flex twd-flex-col twd-items-center twd-justify-center">
+                                    <mat-spinner></mat-spinner>
                                 </div>
                             </ng-container>
 
@@ -756,14 +778,9 @@
                 </ng-container>
 
                 <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: customerJourneyTable.tableData.columns" [ngClass]="{ selected: row.expanded }"> </mat-row>
                 <mat-row
-                    class="selectable"
-                    *matRowDef="let row; columns: customerJourneyTable.tableData.columns"
-                    [ngClass]="{ selected: row.expanded }"
-                >
-                </mat-row>
-                <mat-row
-                    class="selectable group-header twd-transform twd-max-h-0 twd-min-h-0"
+                    class="group-header twd-transform twd-max-h-0 twd-min-h-0"
                     *matRowDef="let row; columns: ['expandedDetails']"
                     [ngClass]="{ expanded: row.expanded }"
                 >
