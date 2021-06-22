@@ -18,10 +18,12 @@ tw-customer-journey {
     .twd-min-h-0 {
         min-height: 0 !important;
     }
+
     .twd-px-0 {
         padding-left: 0px;
         padding-right: 0px;
     }
+
     .customer-journey {
         width: 100%;
         height: 100%;
@@ -68,21 +70,45 @@ tw-customer-journey {
             padding-bottom: 1em !important;
         }
         // }
+
         .table {
             width: 100%;
-            // height: 35%;
             padding: 0px 8px;
             background: inherit;
             border-radius: 20px;
+
             .mat-table {
                 padding-bottom: 0% !important;
                 flex: 1;
+                mat-header-cell:not(:first-child) {
+                    padding: 0;
+                }
+
+                mat-cell {
+                    .mat-icon {
+                        line-height: 1 !important;
+                    }
+                }
+
+                mat-cell:last-of-type,
+                mat-header-cell:last-of-type,
+                mat-footer-cell:last-of-type {
+                    padding-right: 0;
+                }
+
+                .mat-cell,
+                .mat-footer-cell {
+                    &:not(mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-cell:last-of-type, mat-footer-cell:last-of-type) {
+                        padding: 0 6px;
+                    }
+                }
             }
 
             transition-property: height;
             transition-duration: 300ms;
             transition-timing-function: ease-in-out;
         }
+
         .spread {
             width: 100%;
             // height: 65%;
@@ -95,6 +121,7 @@ tw-customer-journey {
             // justify-content: center;
             // align-items: center;
         }
+
         mat-icon {
             font-size: 18px;
             line-height: 18px;
@@ -397,21 +424,9 @@ tw-customer-journey {
     .max-col {
         max-width: 110px;
     }
-
-    .mat-table {
-        mat-header-cell:not(:first-child) {
-            padding: 0;
-        }
-
-        mat-cell:last-of-type,
-        mat-header-cell:last-of-type,
-        mat-footer-cell:last-of-type {
-            padding-right: 0;
-        }
-    }
 }
 
 .customer-journey-advanced-form .mat-dialog-container {
     padding: 0px;
-    border-radius: 20px;
+    border-radius: 20px !important;
 }

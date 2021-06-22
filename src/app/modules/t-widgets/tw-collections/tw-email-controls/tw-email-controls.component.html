@@ -169,39 +169,34 @@
 
                             <div id="subject" class="twd-text-xl twd-mb-4 twd-truncate" [innerHtml]="currentInteraction.Subject"></div>
 
-                            <div id="emailInfo" class="twd-flex">
-                                <div class="twd-flex-1">
-                                    <span class="twd-flex twd-items-center">
-                                        <mat-icon matTooltip="Intent">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
+                            <div id="emailInfo" class="twd-grid twd-auto-cols-fr">
+                                <span class="twd-flex twd-items-center">
+                                    <mat-icon matTooltip="Intent">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
+                                </span>
+                                <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
+                                    <mat-icon matTooltip="Mailbox">list_alt</mat-icon>
+                                    <span class="twd-truncate">
+                                        {{ currentInteraction.Email_Mailbox || 'NA' }}
                                     </span>
-                                    <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
-                                        <mat-icon matTooltip="Mailbox">list_alt</mat-icon>
-                                        <span class="twd-truncate">
-                                            {{ currentInteraction.Email_Mailbox || 'NA' }}
-                                        </span>
-                                    </span>
-                                    <div>
-                                        <p class="my-4 twd-truncate">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
-                                    </div>
+                                </span>
+                                <div>
+                                    <p class="my-4 twd-truncate">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
                                 </div>
-
-                                <div class="twd-grid twd-grid-cols-1 twd-justify-end">
-                                    <span matTooltip="Sentiment" class="twd-flex twd-justify-end twd-items-center">
-                                        <mat-icon>person</mat-icon>
-                                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                                        <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
-                                    </span>
-                                    <span class="twd-flex twd-items-center twd-justify-end" matTooltip="Route type">
-                                        <mat-icon>directions</mat-icon>
-                                        {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
-                                    </span>
-                                    <div class="twd-text-right">
-                                        <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
-                                        <br />
-                                        <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
-                                    </div>
+                                <span matTooltip="Sentiment" class="twd-flex twd-justify-end twd-items-center">
+                                    <mat-icon>person</mat-icon>
+                                    <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                                    <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                                    <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                                    <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
+                                </span>
+                                <span class="twd-flex twd-items-center twd-justify-end" matTooltip="Route type">
+                                    <mat-icon>directions</mat-icon>
+                                    {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
+                                </span>
+                                <div class="twd-text-right">
+                                    <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
+                                    <br />
+                                    <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
                                 </div>
                             </div>
 
@@ -358,7 +353,8 @@
                                 *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error"
                                 class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1"
                             >
-                                <div [innerHtml]="currentInteraction.Body"></div>
+                                <!-- <div [innerHtml]="currentInteraction.Body"></div> -->
+                                <iframe *ngIf="isInteractionActive" #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
                             </div>
 
                             <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
@@ -421,7 +417,7 @@
                     Cancel
                 </button>
 
-                <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20">Submit</button>
+                <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20" [disabled]="!rejectReason.comment" >Submit</button>
             </form>
         </div>
     </ng-template>
