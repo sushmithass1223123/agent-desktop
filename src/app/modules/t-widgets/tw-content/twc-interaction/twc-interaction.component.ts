@@ -145,30 +145,36 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         // get the content widgets
         const widgets = cloneDeep(this.data.Data.Widgets) || [];
 
-        const staticWidgets = widgets.Static || [];
-        const dynamicWidgets = (environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic || [];
-        const aotWidgets = widgets.AOT || [];
+        const staticWidgets = widgets.Static ?? [];
+        const dynamicWidgets = ((environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic) ?? [];
+        const aotWidgets = widgets.AOT ?? [];
 
         const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);
 
         // loop the widgets and add append interaction details
-        staticWidgets.forEach((widget: IWidget) => {
-            widget.InteractionDetails = evt;
-            widget.Data.Path = this.data.Data.Path;
-            widget.Data.RouteOnInteraction = routeOnInteraction;
-        });
+        staticWidgets
+            .filter((w: IWidget) => w.Config.Enabled)
+            .forEach((widget: IWidget) => {
+                widget.InteractionDetails = evt;
+                widget.Data.Path = this.data.Data.Path;
+                widget.Data.RouteOnInteraction = routeOnInteraction;
+            });
 
-        dynamicWidgets.forEach((widget: IWidget) => {
-            widget.InteractionDetails = evt;
-            widget.Data.Path = this.data.Data.Path;
-            widget.Data.RouteOnInteraction = routeOnInteraction;
-        });
+        dynamicWidgets
+            .filter((w: IWidget) => w.Config.Enabled)
+            .forEach((widget: IWidget) => {
+                widget.InteractionDetails = evt;
+                widget.Data.Path = this.data.Data.Path;
+                widget.Data.RouteOnInteraction = routeOnInteraction;
+            });
 
-        aotWidgets.forEach((widget: IWidget) => {
-            widget.ID = TUtils.Generic.uuid();
-            widget.InteractionDetails = evt;
-            widget.Data.Path = this.data.Data.Path;
-        });
+        aotWidgets
+            .filter((w: IWidget) => w.Config.Enabled)
+            .forEach((widget: IWidget) => {
+                widget.ID = TUtils.Generic.uuid();
+                widget.InteractionDetails = evt;
+                widget.Data.Path = this.data.Data.Path;
+            });
 
         // process aot widgets
         this._aotWidgetService.processAOTWidgets(aotWidgets);

@@ -439,7 +439,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.login(true);
             });
 
-        this.lanIdField.nativeElement.focus();
+        this.lanIdField?.nativeElement?.focus();
     }
 
     /**

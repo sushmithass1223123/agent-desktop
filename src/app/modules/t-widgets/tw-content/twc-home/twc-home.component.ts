@@ -131,9 +131,9 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // get the home content widgets
         const homeWidgets = this.widgetDataConfig.Widgets;
 
-        this.staticWidgets = homeWidgets?.Static ?? [];
-        this.dynamicWidgets = homeWidgets?.Dynamic ?? [];
-        this.aotWidgets = homeWidgets?.AOT ?? [];
+        this.staticWidgets = homeWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.dynamicWidgets = homeWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.aotWidgets = homeWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
 
         // process aot widgets
         this._aotWidgetService.processAOTWidgets(this.aotWidgets);

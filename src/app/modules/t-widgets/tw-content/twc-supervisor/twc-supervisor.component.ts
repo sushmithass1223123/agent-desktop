@@ -150,9 +150,9 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         // get the content widgets
         const supervisorWidgets = this.widgetDataConfig.Widgets;
 
-        this.staticWidgets = supervisorWidgets?.Static ?? [];
-        this.dynamicWidgets = supervisorWidgets?.Dynamic ?? [];
-        this.aotWidgets = supervisorWidgets?.AOT ?? [];
+        this.staticWidgets = supervisorWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.dynamicWidgets = supervisorWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.aotWidgets = supervisorWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
 
         // subscribe to dashboard service
         this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {

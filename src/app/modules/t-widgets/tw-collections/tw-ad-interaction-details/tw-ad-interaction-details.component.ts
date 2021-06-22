@@ -308,7 +308,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                 <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span> 
                 `;
                 // add space if there are multiple items
-                if (index > array.length - 1) {
+                if (index !== array.length - 1) {
                     message += `
                        <br />
                        <br />

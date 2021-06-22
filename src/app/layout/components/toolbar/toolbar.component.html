@@ -11,7 +11,8 @@
                 <mat-icon class="primary-text">menu</mat-icon>
             </button>
 
-            <tw-active-interactions *ngIf="activeInteractionWidget" fxHide fxShow.gt-md [data]="activeInteractionWidget"> </tw-active-interactions>
+            <tw-active-interactions *ngIf="activeInteractionWidget" fxHide fxShow.gt-md [data]="activeInteractionWidget" class="twd-overflow-auto">
+            </tw-active-interactions>
         </div>
 
         <div fxLayout="row" fxLayoutAlign="start center" class="twd-flex twd-flex-1">
