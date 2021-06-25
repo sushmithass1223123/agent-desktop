@@ -99,7 +99,7 @@
                                         mat-icon-button
                                         aria-label="Clear"
                                         [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                        (click)="globalSearchControl.reset()"
+                                        (click)="globalSearchControl.reset(); doAdvancedSearch()"
                                     >
                                         <mat-icon>close</mat-icon>
                                     </button>
@@ -120,9 +120,11 @@
                             (click)="showAdvancedSearchForm = !showAdvancedSearchForm"
                             cdkOverlayOrigin
                             #advancedSearchMenu="cdkOverlayOrigin"
+                            class="twd-relative"
                             matTooltip="Advance Search"
                         >
-                            <mat-icon>more_vert</mat-icon>
+                            <span *ngIf="advancedSearchParams[currentTab]?.changed" class="twd-absolute twd-h-2 twd-w-2 twd-top-1.5 twd-right-1.5 twd-rounded-full twd-bg-primary-default"></span>
+                            <mat-icon> more_vert </mat-icon>
                             <ng-template
                                 cdkConnectedOverlay
                                 [cdkConnectedOverlayOrigin]="advancedSearchMenu"
@@ -677,7 +679,7 @@
                                     </ng-container>
                                     <ng-container *ngIf="!tab.inQueueOrInbox">
                                         <p *ngIf="selectedEmail.closedBy" class="my-4 text-bold">
-                                            Closed Status: {{ 'Closed by ' + selectedEmail.closedBy  }}
+                                            Closed Status: {{ 'Closed by ' + selectedEmail.closedBy }}
                                         </p>
                                         <p *ngIf="selectedEmail.priority" class="my-4 text-bold">Prirority: {{ selectedEmail.priority }}</p>
                                         <p *ngIf="selectedEmail.agentName" class="my-4 text-bold">Agent: {{ selectedEmail.agentName }}</p>
@@ -685,7 +687,7 @@
                                             Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                         </p>
                                     </ng-container>
-                                    <p *ngIf="selectedEmail.intent" class="my-4 text-bold">Intent: {{ selectedEmail.intent  }}</p>
+                                    <p *ngIf="selectedEmail.intent" class="my-4 text-bold">Intent: {{ selectedEmail.intent }}</p>
                                 </div>
                                 <div fxFlex="15">
                                     <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
@@ -697,7 +699,7 @@
                                 class="twd-py-2"
                                 *ngIf="{
                                     lesstItems: selectedEmail.attachmentList.slice(0, 3),
-                                    moreItems: selectedEmail.attachmentList.slice(3, -1)
+                                    moreItems: selectedEmail.attachmentList.slice(3)
                                 } as attachList"
                             >
                                 <button
