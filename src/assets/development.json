@@ -3231,7 +3231,7 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "SearchPollingInterval": 5000
+                                                    "SearchPollingInterval": 10000
                                                 }
                                             },
                                             {
