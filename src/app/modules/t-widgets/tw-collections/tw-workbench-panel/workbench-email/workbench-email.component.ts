@@ -18,12 +18,12 @@ import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/
 import { AgentSkillListData, CreateEmailOutput, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { formatJsonData, maticonByExtension } from 'app/utils';
-import { groupBy, sortBy } from 'lodash';
+import { groupBy, sortBy, isEqual } from 'lodash';
 import * as moment from 'moment';
 import { Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 import tinymce from 'tinymce';
-import { TwWorkBenchService } from '../tw-workbench-panel.service';
+import { initEmailSearchState, TwWorkBenchService } from '../tw-workbench-panel.service';
 
 type OutboxInboxRes = (EmailOutboxModel | EmailInboxModel) & { InSessionId?: string; OutSessionId?: string };
 
@@ -170,6 +170,24 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     advancedSearchForm = this._workbenchService.globalEmailWorkbenchState$.searchParams;
     /**
+     * Saves advanced search params for different tabs
+     */
+    advancedSearchParams: Partial<
+        Record<
+            AvailableTabs,
+            {
+                /**
+                 * Value of the filters applied
+                 */
+                data: any;
+                /**
+                 * Flag to check if value has changed from the initial set values
+                 */
+                changed: boolean;
+            }
+        >
+    > = {};
+    /**
      * Tree Controls
      */
     treeControl = new NestedTreeControl<any>((node) => node.children);
@@ -303,6 +321,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
             this.availableMailboxes = res;
         });
+        this.advancedSearchForm.valueChanges.subscribe((value) => {
+            this.advancedSearchParams[this.currentTab] = {
+                data: value,
+                changed: !isEqual(value, initEmailSearchState)
+            };
+        });
         this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
     }
 
@@ -334,12 +358,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        // tinymce.editors.forEach((e) => {
-        //     if (e.id === `textarea#${this.editorState.id}`) {
-        //         e.destroy();
-        //     }
-        // });
-        // tinymce.activeEditor?.destroy();
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -353,7 +371,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     private startPolling(): void {
         this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval)
-            .pipe(filter(() => this.polling.enabled && !this.emailSearchRes.loading && !this.polling.active))
+            .pipe(filter(() => this.polling.enabled && !this.emailSearchRes.loading && !this.polling.active && !this.showAdvancedSearchForm))
             .subscribe(() => {
                 this.doAdvancedSearch(true);
             });
@@ -497,7 +515,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     doAdvancedSearch(silent = false): void {
         try {
-            if (this.globalSearchControl.value) {
+            if (this.globalSearchControl.value && !this.advancedSearchParams[this.currentTab].changed) {
                 this.doGlobalSearch(silent);
                 return;
             }
@@ -1126,6 +1144,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     switchTab(tab: AvailableTabs): void {
         this.currentTab = tab;
+        if (this.advancedSearchParams[tab]) {
+            this.advancedSearchForm.setValue(this.advancedSearchParams[tab].data);
+        }
         this.removeEmailsfromView('all');
         this.allEmailsSelected = false;
         this.emailBodies = {};
@@ -1225,7 +1246,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     replyToSelectedEmails(emails: any[]): void {
         try {
             const widget = new TwWidgetModel('Reply All', 'tw-panel');
-            // this.editorState.id = TUtils.Generic.uuid();
             widget.Config.Anchor = true;
             widget.Config.Position.W = 800;
             widget.Config.Position.H = 500;
@@ -1268,53 +1288,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 templateRef: this.ReplyEditorDialog
             };
             widget.Data = this.replyEditorModal;
-            // widget.OnDestroy = () => {
-            //     tinymce.editors.forEach((e) => {
-            //         if (e.id === `textarea#${this.editorState.id}`) {
-            //             e.destroy();
-            //         }
-            //     });
-            //     return true;
-            // };
             this._aotWidgetService.addWidget(widget);
-            // this.editorState.loading = true;
-            // setTimeout(() => {
-            //     tinymce
-            //         .init({
-            //             selector: `textarea#${this.editorState.id}`,
-            //             min_height: 200,
-            //             height: '100%',
-            //             menubar: false,
-            //             fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
-            //             forced_root_block: false,
-            //             branding: false,
-            //             base_url: `${this.baseHref}assets/tinymce/`,
-            //             content_css: `${this.baseHref}assets/tinymce/editor.css`,
-            //             plugins: [
-            //                 'advlist autolink lists link image charmap print preview anchor',
-            //                 'searchreplace visualblocks code fullscreen',
-            //                 'insertdatetime media table paste code wordcount'
-            //             ],
-            //             toolbar:
-            //                 'undo redo | formatselect | ' +
-            //                 'bold italic backcolor | alignleft aligncenter ' +
-            //                 'alignright alignjustify | bullist numlist outdent indent | ' +
-            //                 'removeformat | help',
-            //             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            //             setup: (editor) => {
-            //                 editor.on('init', () => {
-            //                     this.editorState.loading = false;
-            //                 });
-            //             }
-            //         })
-            //         .then(() => {
-            //             console.log('Email editor loaded succesfully');
-            //         })
-            //         .catch((err) => {
-            //             console.error('Unable to load editor');
-            //             console.error(err);
-            //         });
-            // }, 0);
         } catch (e) {
             console.error(e);
             this.setComponentState('email/reply/failure');
@@ -1330,6 +1304,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         yesterday.setDate(today.getDate() - 1);
 
         this._workbenchService.resetEmailState();
+        const searchParams = this.advancedSearchParams[this.currentTab];
+        if (searchParams) {
+            searchParams.changed = false;
+        }
         // this.advancedSearchForm.setValue({});
     }
 
