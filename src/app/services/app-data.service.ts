@@ -157,7 +157,7 @@ export class AppDataService {
     /**
      * To set json config
      */
-    private setJsonConfig(config: any): void {
+    private setJsonConfig(config: IAppConfig): void {
         try {
             // set the title
             if (config.AppConfigs.TitleName) {
@@ -167,6 +167,14 @@ export class AppDataService {
             // set the favicon
             if (config.AppConfigs.Logos.Favicon) {
                 this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Logos.Favicon);
+            }
+
+            // check the casing of SDK properties if smaller case then append directly
+            // NOTE:: we need to have backward compatibility for few versions so keep the Pascal case code
+            if (typeof config.AppConfigs.SDK.proxy === 'object') {
+                // set the SDK config
+                SDKClient.setConfig(config.AppConfigs.SDK);
+                return;
             }
 
             // set the SDK config
@@ -199,7 +207,7 @@ export class AppDataService {
                     sdkMethods: config.AppConfigs.SDK.Logging.SDKMethods ?? false,
                     sdkEvents: config.AppConfigs.SDK.Logging.SDKEvents ?? false
                 },
-                customScripts: [...config.AppConfigs.SDK.CustomSripts]
+                customScripts: [...config.AppConfigs.SDK.CustomScripts]
             });
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);
