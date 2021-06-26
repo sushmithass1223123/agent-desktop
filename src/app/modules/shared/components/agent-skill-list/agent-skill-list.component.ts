@@ -528,9 +528,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             let result: IResponseData<CommandResultEvent>;
             const freeTextConf = this.freeTextConf[this.activeSwitcher];
             const transferTo = freeTextConf.enabled ? freeTextConf.value : this.selectedItem;
+
+            // [MS: Jun 24, '21] commenting to call transferBlind instead of transferCall for PBX calls
             // for MS call blind transfer use method 'transferBlind'
             // if (!this.isConsult) {
-            if (!this.isConsult && this.data.otherData.isMSCall) {
+            // if (!this.isConsult && this.data.otherData.isMSCall) {
+            if (!this.isConsult) {
                 result = await SDKClient.transferBlind({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),

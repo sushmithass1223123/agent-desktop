@@ -15,14 +15,10 @@ import { filter } from 'rxjs/operators';
 })
 export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
-     * holds all the data related to this widget from the config
+     * Holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<any, WidgetData>;
 
-    /**
-     * to store the fuse config for theme
-     */
-    // fuseConfig: FuseConfig;
     /**
      * Fuse custom config
      */
@@ -34,84 +30,68 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * Channel tabs
      */
-    channels: {
-        /**
-         * Channel type
-         */
-        Type: string;
-        /**
-         * Channel icon
-         */
-        Icon: string;
-        /**
-         * Channel config
-         */
-        Config: any;
-    }[] = [];
-
-    /**
-     * active class for the tab
-     */
-    // tabActiveClass = '';
-
-    /**
-     * inactive class for the tab
-     */
-    // tabInactiveClass = '';
+    channels: IChannel[] = [];
 
     /**
      * Constructor
      */
-    constructor(
-        // private _fuseConfigService: FuseConfigService
-        private _fuseFacadeService: FuseFacadeService
-    ) {
+    constructor(private _fuseFacadeService: FuseFacadeService) {
         super();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-
-        //     // set the active tab class
-        //     this.tabActiveClass =
-        //         this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-        //             ? this.fuseConfig.layout.anchorWidget.bodyBackground
-        //             : this.fuseConfig.layout.widget.customBackgroundColor === true
-        //                 ? this.fuseConfig.layout.widget.bodyBackground
-        //                 : '';
-
-        //     // set the inactive tab class
-        //     this.tabInactiveClass =
-        //         this.fuseConfig.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-        //             ? this.fuseConfig.layout.anchorWidget.contentBackground
-        //             : this.fuseConfig.layout.widget.customBackgroundColor === true
-        //                 ? this.fuseConfig.layout.widget.contentBackground
-        //                 : '';
-        // });
-
         // set the channels
-        this.channels = this.data.Data.Channels;
+        this.channels = this.data.Data.Channels.filter((c) => (typeof c.Enabled === 'boolean' ? c.Enabled : true));
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
+}
+
+interface WidgetData {
+    /**
+     * General section
+     */
+    General: {
+        /**
+         * Workbench API url
+         */
+        WorkbenchUrl: string;
+    };
+    /**
+     * Channels to show
+     */
+    Channels: IChannel[];
+}
+
+interface IChannel {
+    /**
+     * Channel type
+     */
+    Type: string;
+    /**
+     * Enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Channel icon
+     */
+    Icon: string;
+    /**
+     * Channel config
+     */
+    Config: any;
 }
 
 // for more info visit - https://angular.io/api/core

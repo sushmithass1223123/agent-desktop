@@ -128,7 +128,9 @@
                     <div class="twd-flex twd-items-center">
                         <mat-icon class="s-20">alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}
                     </div>
-                    <div class="twd-flex twd-items-center"><mat-icon class="s-20">construction</mat-icon> {{ sessionID + '|' + interactionId }}</div>
+                    <div class="twd-flex twd-items-center">
+                        <mat-icon class="s-20">construction</mat-icon> {{ sessionID + '|' + interaction.InteractionID }}
+                    </div>
                 </div>
                 <div class="twd-flex twd-justify-between">
                     <div class="twd-flex twd-items-center">
@@ -138,6 +140,11 @@
                         <mat-icon class="s-20" [svgIcon]="'custom-' + channel"></mat-icon>
                         <span class="text-bold ml-4">{{ channel }}</span>
                     </div>
+                    <div *ngIf="isAsyncChat" class="twd-flex twd-items-center">
+                        <mat-icon class="s-20">sync_alt</mat-icon>
+                        <span class="text-bold ml-4">Async Chat</span>
+                    </div>
+
                     <div class="twd-flex twd-items-center">
                         <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                     </div>
@@ -150,11 +157,11 @@
                         <avatar
                             *ngFor="let item of interactionList"
                             name="{{ item.user }}"
-                            [ngClass]="item.status + ' ' + (item.interactionId === interactionId ? 'active' : '')"
+                            [ngClass]="item.status + ' ' + (item.interactionId === interaction.InteractionID ? 'active' : '')"
                             matTooltip="{{ item.user }}"
                             matTooltipPosition="after"
                             (click)="selectInteraction(item)"
-                            matBadge="{{ item.interactionId !== interactionId ? item.otherData.unreadCount || '' : '' }}"
+                            matBadge="{{ item.interactionId !== interaction.InteractionID ? item.otherData.unreadCount || '' : '' }}"
                             matBadgePosition="after"
                             matBadgeColor="accent"
                             [circleColor]="customFuse.anchor?.content || customFuse.widget?.content"
@@ -178,6 +185,7 @@
 
                         <div class="fab-container" *ngIf="moreActions.length">
                             <button
+                                *ngIf="!isAsyncChat"
                                 mat-icon-button
                                 [disabled]="status !== 'connected'"
                                 [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
@@ -229,7 +237,11 @@
                         </button>
 
                         <button
-                            *ngIf="supervisorInit && (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')"
+                            *ngIf="
+                                !isAsyncChat &&
+                                supervisorInit &&
+                                (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')
+                            "
                             [disabled]="status !== 'connected' || this.botConnected"
                             mat-mini-fab
                             color="default"
@@ -260,7 +272,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.conference"
+                            *ngIf="!isAsyncChat && agentFeatures.conference"
                             [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
                             mat-mini-fab
                             color="default"
@@ -284,7 +296,7 @@
                         </button> -->
 
                         <button
-                            *ngIf="agentFeatures.audioEscalate"
+                            *ngIf="!isAsyncChat && agentFeatures.audioEscalate"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -302,7 +314,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.videoEscalate"
+                            *ngIf="!isAsyncChat && agentFeatures.videoEscalate"
                             [disabled]="
                                 status !== 'connected' ||
                                 disableAV ||
@@ -321,7 +333,10 @@
 
                         <ng-container
                             *ngIf="
-                                !callWidget && agentFeatures.hold && (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
+                                !isAsyncChat &&
+                                !callWidget &&
+                                agentFeatures.hold &&
+                                (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
                             "
                         >
                             <button
@@ -342,6 +357,7 @@
                         </ng-container>
 
                         <button
+                            *ngIf="!isAsyncChat"
                             [disabled]="status !== 'connected'"
                             [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
                             mat-mini-fab
@@ -354,7 +370,7 @@
                         </button>
 
                         <button
-                            *ngIf="status === 'incoming'"
+                            *ngIf="!isAsyncChat && status === 'incoming'"
                             class="mat-elevation-z2 custom-btn bg-success"
                             mat-mini-fab
                             #answerBtn
@@ -365,7 +381,7 @@
                         </button>
 
                         <button
-                            *ngIf="status === 'disconnected'"
+                            *ngIf="status === 'disconnected' || isAsyncChat"
                             mat-raised-button
                             class="border-radius-20"
                             color="warn"
@@ -505,7 +521,7 @@
                                 </button>
 
                                 <button
-                                    *ngIf="agentFeatures.attachments"
+                                    *ngIf="!isAsyncChat && agentFeatures.attachments"
                                     cdkOverlayOrigin
                                     #attachOverlay="cdkOverlayOrigin"
                                     [disabled]="status !== 'connected'"
@@ -553,12 +569,7 @@
                                     </ng-template>
                                 </button>
 
-                                <mat-form-field
-                                    class="custom message-text twd-flex-1"
-                                    [ngClass]="{ emoji: agentFeatures.emoji }"
-                                    floatLabel="never"
-                                    appearance="standard"
-                                >
+                                <mat-form-field class="custom message-text twd-flex-1" floatLabel="never" appearance="standard">
                                     <textarea
                                         [disabled]="status !== 'connected'"
                                         matInput

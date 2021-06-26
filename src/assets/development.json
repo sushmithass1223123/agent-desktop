@@ -1929,7 +1929,7 @@
                                                         "Url": "",
                                                         "Limit": 50
                                                     },
-                                                    "ReplyAllowed": false
+                                                    "ReplyAllowed": true
                                                 }
                                             },
                                             {
@@ -3201,6 +3201,7 @@
                                         "Channels": [
                                             {
                                                 "Type": "Email",
+                                                "Enabled": true,
                                                 "Icon": "email",
                                                 "Config": {
                                                     "Transfer": {
@@ -3236,6 +3237,7 @@
                                             },
                                             {
                                                 "Type": "Chat",
+                                                "Enabled": true,
                                                 "Icon": "chat",
                                                 "Config": {
                                                     "PullAllowed": true,
@@ -3720,37 +3722,39 @@
             "sendACK": false
         },
         "SDK": {
-            "Proxy": {
-                "Urls": [
+            "proxy": {
+                "urls": [
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
+                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
-                "Type": "soap",
-                "Timeout": 60
+                "type": "soap",
+                "timeout": 60
             },
-            "SignalRProxy": {
-                "Logging": true,
-                "Protocol": "webSockets",
-                "Timeout": 10,
-                "Fallback": true
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true
             },
-            "Logging": {
-                "Enabled": true,
-                "Level": {
-                    "Debug": true,
-                    "Info": true,
-                    "Warn": true,
-                    "Error": true
+            "logging": {
+                "enabled": true,
+                "level": {
+                    "debug": true,
+                    "info": true,
+                    "warn": true,
+                    "error": true
                 },
-                "Remote": {
-                    "Enabled": true,
-                    "Timeout": 30,
-                    "Count": 30
+                "remote": {
+                    "enabled": true,
+                    "timeout": 30,
+                    "count": 30
                 },
-                "SDKMethods": true,
-                "SDKEvents": true
+                "sdkMethods": true,
+                "sdkEvents": true
             },
-            "CustomSripts": [
+            "customScripts": [
                 "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
                 "https://dice.tetherfi.cloud/tmaclibs/livechat_video.min.js",
                 "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"

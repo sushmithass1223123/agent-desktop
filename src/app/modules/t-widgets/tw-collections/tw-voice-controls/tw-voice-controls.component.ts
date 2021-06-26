@@ -869,10 +869,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             type: 'transfer'
         };
 
-        // for blind transfer to agent, we need to call transfer complete manually
-        if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
-            this.confirmCallFn(true, null);
-        }
+        // [MS: Jun 24, '21] commenting since we are calling transferBlind now
+        // // for blind transfer to agent
+        // if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
+        //     this.confirmCallFn(true, null);
+        // }
     }
 
     /**

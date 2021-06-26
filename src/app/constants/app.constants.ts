@@ -430,7 +430,6 @@ export const INVALID_CHARS = [
     151,
     166,
     167,
-    ,
     168,
     169,
     172,

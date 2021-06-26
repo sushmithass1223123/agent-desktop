@@ -73,7 +73,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To hold all the data related to this widget from the config
      */
-    @Input() data: IWidget<TextChatIncomingEvent | TextChatRemoteUserConnectedEvent>;
+    @Input() data: IWidget<TextChatIncomingEvent>;
     /**
      * Media Channels
      */
@@ -111,9 +111,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     interactionList: InteractionRef[];
     /**
-     * Current interaction ID
+     * Interaction Ref
      */
-    interactionId: number;
+    interaction: TextChatIncomingEvent;
     /**
      * Agent ref
      */
@@ -453,6 +453,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
         webrtcTest: boolean;
     };
+    /**
+     * Connected event ref
+     */
+    remoteUserConnectedEvent: TextChatRemoteUserConnectedEvent;
+    /**
+     * Async chat flag
+     */
+    isAsyncChat: boolean;
 
     /**
      * Constructor
@@ -493,8 +501,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // set the interaction id from data
-        this.interactionId = this.data.InteractionDetails?.InteractionID;
+        this.interaction = this.data.InteractionDetails;
+
+        this.isAsyncChat = this.interaction.IsAsyncChat ?? false;
 
         this.registerToEvents();
 
@@ -619,7 +628,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
                 // if no active we need to select that particular interaction
                 if (!inPage) {
-                    const interaction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
+                    const interaction = this.interactionList.filter((i) => i.interactionId === this.interaction.InteractionID)[0];
                     if (interaction && !interaction?.isActive) {
                         this.selectInteraction(interaction, true);
                     }
@@ -680,7 +689,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'HoldTimerEvent',
                     'CCLDataEvent'
                 ],
-                this.interactionId
+                this.interaction.InteractionID
             )
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
@@ -756,7 +765,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private chatMessageReceived(evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -868,12 +877,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if the interaction is active, else count unread
         this.interactionList.forEach((item: InteractionRef) => {
-            isActive = item.interactionId === this.interactionId && item.isActive;
+            isActive = item.interactionId === this.interaction.InteractionID && item.isActive;
         });
 
         // in not active then increment the count
         if (!evt.RecoveryEvent && (!isActive || this._contentPageService.getCurrentMode() !== this.data.Data.Path)) {
-            const currentInteraction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
+            const currentInteraction = this.interactionList.filter((i) => i.interactionId === this.interaction.InteractionID)[0];
             const unreadCount = ++currentInteraction.otherData.unreadCount;
 
             // play new chat sound
@@ -999,7 +1008,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private focusReplyInput(): void {
         setTimeout(() => {
-            this.replyInput.focus();
+            this.replyInput?.focus();
         });
     }
 
@@ -1083,7 +1092,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // Update the server
         SDKClient.sendTextChat({
-            interactionId: this.interactionId.toString(),
+            interactionId: this.interaction.InteractionID.toString(),
             message: messageData,
             messageId,
             templateId: template?.ID || '',
@@ -1148,13 +1157,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
-        widget.InteractionDetails = this.data.InteractionDetails;
+        widget.InteractionDetails = {
+            NRIC: this.remoteUserConnectedEvent.NRIC,
+            RegNo1: this.remoteUserConnectedEvent.RegNo1
+        };
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
         widget.Config.Actions = ['collapse', 'maximize'];
-        // widget.Data.AVConn = this.avConn;
-        // widget.Data.DirectCall = direct;
         widget.Data.EventId = this.data.InteractionDetails.EventId;
         widget.Data.ConferenceType = this.conferenceType;
         widget.Data.CustomerName = this.customerName;
@@ -1163,7 +1173,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Data.Config = this.data.Data;
         widget.Data.Opener = this;
         widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
-        widget.Data.SessionID = (this.data.InteractionDetails as TextChatRemoteUserConnectedEvent)?.TextChatSessionID;
+        widget.Data.SessionID = this.sessionID;
         widget.Data.CallType = param;
 
         // open call widget
@@ -1188,7 +1198,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         SDKClient.endTextChat(
             {
-                interactionId: this.interactionId.toString(),
+                interactionId: this.interaction.InteractionID.toString(),
                 reason
             },
             null
@@ -1244,7 +1254,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.userTyping = false;
         // send typing state
         SDKClient.notifyTextChatTyping({
-            interactionId: this.interactionId.toString(),
+            interactionId: this.interaction.InteractionID.toString(),
             state: 1
         });
     }
@@ -1350,7 +1360,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // send the request to server
         SDKClient.textChatConferenceToBot({
             destination: value,
-            interactionId: this.interactionId.toString()
+            interactionId: this.interaction.InteractionID.toString()
         })
             .then((resp) => {
                 // check the response
@@ -1400,13 +1410,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     TextChatRemoteUserConnectedEvent(evt: TextChatRemoteUserConnectedEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
-        // replace InteractionDetails with this event
-        // this event has the interaction details properties
-        this.data.InteractionDetails = evt;
+        // add connected event ref
+        this.remoteUserConnectedEvent = evt;
 
         // subscribe to the timer
         timer(1000, 1000)
@@ -1457,7 +1466,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     TextChatSelfServiceDestinationEvent(evt: TextChatSelfServiceDestinationEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -1470,7 +1479,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     TextChatAgentConnectedEvent(evt: TextChatAgentConnectedEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -1612,7 +1621,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     TextChatUserMessageWaitTimerEvent(evt: TextChatUserMessageWaitTimerEvent): void {
         // check the interaction and the interaction status
-        // if (evt.InteractionID !== this.interactionId || this.status !== 'connected') {
+        // if (evt.InteractionID !== this.interaction.InteractionID || this.status !== 'connected') {
         //     return;
         // }
 
@@ -1810,7 +1819,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     HoldTimerEvent(evt: HoldTimerEvent): void {
         this._appUIService.showAppSnackbar({
-            message: `Interaction ${this.interactionId} with [${this.customerName}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            message: `Interaction ${this.interaction.InteractionID} with [${this.customerName}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
             state: evt.ColorCode,
             onClick: () => {
                 const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
@@ -1845,7 +1854,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     AVControlMessageReceivedEvent(evt: AVControlMessageReceivedEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -1867,7 +1876,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     TextChatDisconnectedEvent(evt: TextChatDisconnectedEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -1935,7 +1944,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     TextChatAgentDisconnectedEvent(evt: TextChatAgentDisconnectedEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -1966,7 +1975,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CannedResposeEvent(evt: CustomSDKEvent): void {
         // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
+        // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
 
@@ -2065,7 +2074,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public selectInteraction(item: InteractionRef, force?: boolean): void {
         // if same interaction is seleted then return
-        if (!force && this.interactionId === item.interactionId) {
+        if (!force && this.interaction.InteractionID === item.interactionId) {
             return;
         }
 
@@ -2108,7 +2117,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.show();
                 // disable the button
                 btn.disabled = true;
-                SDKClient.closeInteraction(this.interactionId.toString(), null)
+                SDKClient.closeInteraction(this.interaction.InteractionID.toString(), null)
                     .then((dt: IResponse) => {
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
@@ -2145,7 +2154,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // show the progress bar
         // this._fuseProgressBarService.show();
         this.showAutoFreeze = false;
-        SDKClient.freezeTextChatAutoResponse(this.interactionId.toString())
+        SDKClient.freezeTextChatAutoResponse(this.interaction.InteractionID.toString())
             .then((dt: IResponse) => {
                 // hide the progress bar
                 // this._fuseProgressBarService.hide();
@@ -2174,7 +2183,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // disable the button
         btn.disabled = true;
         // answer chat
-        SDKClient.answerCall(this.interactionId.toString())
+        SDKClient.answerCall(this.interaction.InteractionID.toString())
             .then((dt) => {
                 if (dt.response.ResultCode >= 0) {
                     this._appUIService.showSnackbar('Answer chat success');
@@ -2253,7 +2262,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 btn.disabled = true;
                 // change the conference type of the chat
                 SDKClient.changeTextChatConferenceType({
-                    interactionId: this.interactionId.toString(),
+                    interactionId: this.interaction.InteractionID.toString(),
                     type,
                     sessionId: this.sessionID,
                     conferenceAgents: map(this.conferenceAgentList, (item) => ({
@@ -2311,7 +2320,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._fuseProgressBarService.show();
                 SDKClient.saveInteractionComment({
                     comment: resp1,
-                    interactionId: this.interactionId.toString()
+                    interactionId: this.interaction.InteractionID.toString()
                 })
                     .then((resp2) => {
                         if (resp2.response > 0) {
@@ -2398,7 +2407,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // add common properties
         data = {
-            interactionId: this.interactionId,
+            interactionId: this.interaction.InteractionID,
             ...data,
             otherData: {
                 type: type === 'transfer' ? 'transfer' : 'conf',
@@ -2532,12 +2541,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // disable the button
         btn.disabled = true;
         SDKClient.sendActionMessage({
-            interactionId: this.interactionId.toString(),
+            interactionId: this.interaction.InteractionID.toString(),
             message: JSON.stringify({
                 source: 'agent',
                 options: {},
                 data: {
-                    interactionId: this.interactionId.toString()
+                    interactionId: this.interaction.InteractionID.toString()
                 },
                 status: 'request',
                 type: 'sign',
@@ -2599,7 +2608,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.userTyping = true;
             // send typing state
             SDKClient.notifyTextChatTyping({
-                interactionId: this.interactionId.toString(),
+                interactionId: this.interaction.InteractionID.toString(),
                 state: 0
             });
         } else if (this.userTyping && !event.target.value) {
@@ -2643,7 +2652,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         try {
             const snackRef = this._appUIService.showSnackbar('Opening whiteboard', 'loading');
             const res = await SDKClient.sendActionMessage({
-                interactionId: this.interactionId as any,
+                interactionId: this.interaction.InteractionID as any,
                 message: JSON.stringify({
                     source: 'agent',
                     options: {},
@@ -2701,9 +2710,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     holdInteraction = async (): Promise<void> => {
         try {
             this._fuseProgressBarService.show();
-            if (this.interactionId) {
+            if (this.interaction.InteractionID) {
                 this.interactionOnHold.loading = true;
-                const res = await SDKClient.holdCall(this.interactionId.toString());
+                const res = await SDKClient.holdCall(this.interaction.InteractionID.toString());
 
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
@@ -2725,9 +2734,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     unHoldInteraction = async (): Promise<void> => {
         try {
             this._fuseProgressBarService.show();
-            if (this.interactionId) {
+            if (this.interaction.InteractionID) {
                 this.interactionOnHold.loading = true;
-                const res = await SDKClient.unHoldCall(this.interactionId.toString());
+                const res = await SDKClient.unHoldCall(this.interaction.InteractionID.toString());
 
                 this._fuseProgressBarService.hide();
                 if (res.response?.ResultCode !== 0) {
