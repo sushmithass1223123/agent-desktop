@@ -353,6 +353,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     loadEmailInIframe(iframe: HTMLIFrameElement): void {
         const frag = document.createRange().createContextualFragment(this.currentInteraction.Body);
         const doc = iframe.contentDocument || iframe.contentWindow;
+        (doc as any).body.innerHTML = `${
+            (doc as any).body.innerHTML
+        } <style>::-webkit-scrollbar{width:4px !important;height:4px !important;}::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important;}</style>`;
         (doc as any).body.appendChild(frag);
     }
 
