@@ -5,6 +5,7 @@
         "**/documentation": true,
         "**/bower_components": true,
         "**/tmp": true,
+        "**/build-utils": true,
         "**/dist": true
     },
     "typescript.tsdk": "node_modules\\typescript\\lib",

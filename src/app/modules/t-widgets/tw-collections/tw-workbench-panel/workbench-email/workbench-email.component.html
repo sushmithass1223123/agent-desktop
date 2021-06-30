@@ -10,7 +10,7 @@
         [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
     >
         <div *ngIf="!hideCategoryMenu" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
-            <div fxLayout="column" fxLayoutAlign="space-between" class="h-100-p py-20">
+            <div class="h-100-p py-20 twd-flex twd-flex-col twd-justify-between">
                 <div class="tab-menu twd-flex twd-flex-col twd-gap-4">
                     <button
                         class="twd-mb-3 pb-20"
@@ -74,7 +74,10 @@
 
         <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
             <div class="theme-bg twd-pb-5 border-radius-20 twd-h-full twd-overflow-y-auto twd-col-span-3 lg:twd-col-span-1">
-                <div class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
+                <div
+                    class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md"
+                    *ngIf="getEmailChecks() as selectedMails"
+                >
                     <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
                         <button class="lg:twd-hidden" #expandableButton (click)="hideCategoryMenu = !hideCategoryMenu">
                             <mat-icon>{{ hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
@@ -203,17 +206,17 @@
                                                 notInQueue: currentTab !== 'queue'
                                             } as show"
                                         >
-                                            <mat-form-field class="twd-text-sm" *ngIf="show.onlyForInBox" appearance="outline">
+                                            <mat-form-field class="twd-text-sm" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }" appearance="outline">
                                                 <mat-label> Assigned To </mat-label>
                                                 <input matInput formControlName="assignedTo" type="text" />
                                             </mat-form-field>
 
-                                            <mat-form-field class="twd-text-sm" appearance="outline" *ngIf="show.notInQueue">
+                                            <mat-form-field class="twd-text-sm" appearance="outline" [ngClass]="{ 'twd-hidden': !show.notInQueue }">
                                                 <mat-label> Session Id </mat-label>
                                                 <input matInput formControlName="inSessionId" type="text" />
                                             </mat-form-field>
 
-                                            <mat-form-field appearance="outline" class="twd-text-sm" *ngIf="show.notInQueue">
+                                            <mat-form-field appearance="outline" class="twd-text-sm" [ngClass]="{ 'twd-hidden': !show.notInQueue }">
                                                 <mat-label>List of mailboxes</mat-label>
                                                 <mat-select formControlName="listOfMailboxes" multiple>
                                                     <mat-select-trigger>
@@ -233,54 +236,56 @@
                                                 </mat-select>
                                             </mat-form-field>
 
-                                            <div class="my-16 twd-col-span-2" *ngIf="show.onlyForInBox">
-                                                <span fxFlex="30" class="mat-subheading-2 m-0"> Attachments : </span>
-                                                <input matInput placeholder="Input" style="display: none" />
-                                                <mat-radio-group class="w-100-p" formControlName="hasAttachments" fxFlex="70">
-                                                    <mat-radio-button [value]="2" fxFlex="100">Any</mat-radio-button>
-                                                    <mat-radio-button [value]="1" fxFlex="100">Yes</mat-radio-button>
-                                                    <mat-radio-button [value]="0" fxFlex="100">No</mat-radio-button>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Attachments : </span>
+                                                <input matInput placeholder="Input" class="twd-hidden" />
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="hasAttachments">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
 
-                                            <div class="my-16 twd-col-span-2" *ngIf="show.onlyForInBox">
-                                                <span fxFlex="30" class="mat-subheading-2 m-0"> Replied : </span>
-                                                <mat-radio-group class="w-100-p" formControlName="replied" fxFlex="70">
-                                                    <mat-radio-button [value]="2" fxFlex="100">Any</mat-radio-button>
-                                                    <mat-radio-button [value]="1" fxFlex="100">Yes</mat-radio-button>
-                                                    <mat-radio-button [value]="0" fxFlex="100">No</mat-radio-button>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Replied : </span>
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="replied">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
 
-                                            <div class="my-16 twd-col-span-2" *ngIf="show.onlyForInBox">
-                                                <span fxFlex="30" class="mat-subheading-2 m-0"> Closed : </span>
-                                                <input matInput placeholder="Input" style="display: none" />
-                                                <mat-radio-group class="w-100-p" formControlName="closed" fxFlex="70">
-                                                    <mat-radio-button [value]="2" fxFlex="100">Any</mat-radio-button>
-                                                    <mat-radio-button [value]="1" fxFlex="100">Yes</mat-radio-button>
-                                                    <mat-radio-button [value]="0" fxFlex="100">No</mat-radio-button>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Closed : </span>
+                                                <input matInput placeholder="Input" class="twd-hidden" />
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="closed">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
 
-                                            <div class="my-16 twd-col-span-2" *ngIf="show.onlyForInBox">
-                                                <span fxFlex="30" class="mat-subheading-2 m-0"> Assigned : </span>
-                                                <input matInput placeholder="Input" style="display: none" />
-                                                <mat-radio-group class="w-100-p" formControlName="assigned" fxFlex="70">
-                                                    <mat-radio-button [value]="2" fxFlex="100">Any</mat-radio-button>
-                                                    <mat-radio-button [value]="1" fxFlex="100">Yes</mat-radio-button>
-                                                    <mat-radio-button [value]="0" fxFlex="100">No</mat-radio-button>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Assigned : </span>
+                                                <input matInput placeholder="Input" class="twd-hidden" />
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="assigned">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
                                                 </mat-radio-group>
                                             </div>
                                         </ng-container>
-                                        <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
-                                        <button
-                                            mat-raised-button
-                                            class="adv-search-btn h-40 mb-8 border-radius-20"
-                                            type="button"
-                                            (click)="resetForm(); doAdvancedSearch()"
-                                        >
-                                            Reset
-                                        </button>
+                                        <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
+                                            <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
+                                            <button
+                                                mat-raised-button
+                                                class="adv-search-btn h-40 mb-8 border-radius-20"
+                                                type="button"
+                                                (click)="resetForm(); doAdvancedSearch()"
+                                            >
+                                                Reset
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </ng-template>
@@ -289,66 +294,66 @@
 
                     <div
                         id="sortControls"
-                        class="twd-flex twd-items-center twd-px-2 twd-pt-2"
+                        class="sortControls twd-flex twd-items-center twd-px-2 twd-pt-2"
                         [ngClass]="classes.hostClass"
                         *ngIf="
-                            dataSource.data?.length && ['queue', 'draft', 'inbox'].includes(currentTab)
+                            dataSource.data?.length &&
+                            (['queue', 'draft', 'inbox'].includes(currentTab)
                                 ? { hostClass: 'twd-justify-between', selectClass: '' }
-                                : { hostClass: 'twd-justify-end', selectClass: 'twd-hidden' } as classes
+                                : { hostClass: 'twd-justify-end', selectClass: 'twd-hidden' }) as classes
                         "
                     >
                         <div [ngClass]="classes.selectClass">
-                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)" [(ngModel)]="allEmailsSelected">
+                            <mat-checkbox
+                                id="selectAllCtrl"
+                                (change)="selectEmails($event.checked)"
+                                [indeterminate]="selectedMails.some"
+                                [checked]="selectedMails.all"
+                            >
                                 Select All
                             </mat-checkbox>
                         </div>
                         <div class="twd-flex twd-items-center">
                             <div class="twd-font-bold twd-text-sm">
-                                <mat-form-field class="custom with-border" appearance="outline">
-                                    <mat-select [(ngModel)]="sortControls.sortBy" (selectionChange)="sortEmailsByKey()">
-                                        <mat-option value="default">Default</mat-option>
-                                        <mat-option value="Subject">Sort By Subject</mat-option>
-                                        <mat-option value="AddedTime">Sort By Time</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <ng-container
-                                *ngIf="
-                                    sortControls.ascending
-                                        ? { class: 'twd-rotate-180', tooltip: 'Switch to descending' }
-                                        : { class: '', tooltip: 'Switch to ascending' } as buttonDetails
-                                "
-                            >
-                                <button
-                                    mat-button
-                                    mat-icon-button
-                                    class="twd-transform twd-transition-transform"
-                                    [ngClass]="buttonDetails.class"
-                                    [matTooltip]="buttonDetails.tooltip"
-                                    (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
-                                >
-                                    <mat-icon> sort </mat-icon>
+                                <button id="sortKeyBtn" mat-button class="twd-px-1.5">
+                                    <span [matMenuTriggerFor]="sortMenu"> Sort By {{ sortControls.sortBy }} </span>
+                                    <mat-menu class="custom" #sortMenu="matMenu">
+                                        <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; sortEmailsByKey()">
+                                            <span>Subject</span>
+                                        </button>
+                                        <button mat-menu-item (click)="sortControls.sortBy = 'Date'; sortEmailsByKey()">
+                                            <span>Date</span>
+                                        </button>
+                                    </mat-menu>
                                 </button>
-                            </ng-container>
+                                <button
+                                    id="sortOrderBtn"
+                                    mat-button
+                                    (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                                    class="twd-max-w-min twd-px-0"
+                                >
+                                    <mat-icon>
+                                        {{ sortControls.ascending ? 'arrow_upward' : 'arrow_downward' }}
+                                    </mat-icon>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <div *ngIf="selectedMails.length" class="bulk-operations twd-mt-3" fxLayout fxLayoutAlign="space-around center">
+                    <div *ngIf="selectedMails.some" class="bulk-operations twd-mt-3 twd-grid twd-auto-cols-auto">
                         <button
                             mat-raised-button
-                            fxFlex="100"
                             class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab === 'queue'"
-                            (click)="replyToSelectedEmails(selectedMails)"
+                            (click)="replyToSelectedEmails(getSelectedEmails())"
                         >
                             Reply All
                         </button>
                         <button
                             mat-raised-button
-                            fxFlex="100"
                             class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab === 'queue'"
-                            (click)="transferEmail(selectedMails)"
+                            (click)="transferEmail(getSelectedEmails())"
                         >
                             Transfer All
                         </button>
@@ -357,8 +362,7 @@
                             color="primary"
                             class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab === 'queue'"
-                            (click)="closeEmails(selectedMails)"
-                            fxFlex="100"
+                            (click)="closeEmails(getSelectedEmails())"
                         >
                             Close Emails
                         </button>
@@ -367,8 +371,7 @@
                             color="accent"
                             class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab !== 'sentitem' && currentTab !== 'queue'"
-                            (click)="deleteEmails(selectedMails)"
-                            fxFlex="100"
+                            (click)="deleteEmails(getSelectedEmails())"
                         >
                             Delete Emails
                         </button>
@@ -382,17 +385,13 @@
 
                 <div
                     *ngIf="!dataSource.data.length && !emailSearchRes.loading && !emailSearchRes.error"
-                    class="w-100-p h-50-p"
-                    fxLayout
-                    fxLayoutAlign="center center"
+                    class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center"
                 >
-                    <span class="hint-mail-text hint-text">
-                        <span>There are no emails</span>
-                    </span>
+                    <span class="twd-text-2xl"> There are no emails </span>
                 </div>
 
-                <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" class="h-80-p" fxLayout fxLayoutAlign="center center">
-                    <div fxFlex="40">
+                <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" class="h-80-p twd-flex twd-justify-center twd-items-center">
+                    <div class="twd-w-5/12">
                         <no-data-available [msg]="emailSearchRes.msg"></no-data-available>
                         <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
                     </div>
@@ -467,7 +466,7 @@
                             </span>
                         </div>
                         <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
-                            <div fxLayout fxLayoutAlign="space-between">
+                            <div class="twd-flex twd-justify-between">
                                 <div fxFlex="80" *ngIf="{ inQueueOrInbox: ['queue', 'inbox'].includes(currentTab) } as tab">
                                     <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
                                     <p class="text-bold my-4" *ngIf="selectedEmail.CCList">Cc : {{ selectedEmail.CCList }}</p>
@@ -602,11 +601,7 @@
                         "
                     >
                         <div class="twd-p-3" *ngIf="currentTab !== 'sent'">
-                            <mat-checkbox
-                                [value]="node.uiId"
-                                (change)="selectEmail(node, $event.checked)"
-                                [checked]="selectedMailIds.includes(node.uiId)"
-                            ></mat-checkbox>
+                            <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
                         </div>
                         <div mat-ripple class="twd-flex-1 twd-flex twd-flex-wrap twd-justify-between twd-p-3" (click)="openEmail(node)">
                             <div class="twd-w-full 2xl:twd-w-max">
@@ -631,7 +626,6 @@
                 <div *ngIf="node.children" class="twd-w-full">
                     <div
                         class="border-radius-20 twd-py-2"
-                        (click)="childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')"
                         [ngClass]="
                             customFuse.anchor?.body ||
                             customFuse.widget?.body +
@@ -647,18 +641,30 @@
                                     : '')
                         "
                     >
-                        <div class="twd-cursor-pointer twd-flex twd-justify-between twd-items-center">
-                            <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
-                                <span class="twd-transform twd-transition-transform twd--rotate-90" #iconRef>
-                                    <mat-icon> arrow_drop_down </mat-icon>
-                                </span>
-                                <span class="twd-flex-1 font-weight-700 twd-truncate">
-                                    {{ node.name || 'NA' }}
+                        <div class="twd-flex twd-items-center">
+                            <div *ngIf="currentTab !== 'queue' && node.Skill && getEmailChecks(node.children) as selected">
+                                <mat-checkbox
+                                    [indeterminate]="selected.some"
+                                    [checked]="selected.all"
+                                    (change)="selectEmails($event.checked, node.children)"
+                                ></mat-checkbox>
+                            </div>
+                            <div
+                                class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
+                                (click)="childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')"
+                            >
+                                <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
+                                    <span class="twd-transform twd-transition-transform twd--rotate-90" #iconRef>
+                                        <mat-icon> arrow_drop_down </mat-icon>
+                                    </span>
+                                    <span class="twd-flex-1 font-weight-700 twd-truncate">
+                                        {{ node.name || 'NA' }}
+                                    </span>
+                                </div>
+                                <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
+                                    ({{ node.grandChildren || node.children.length }})
                                 </span>
                             </div>
-                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
-                                ({{ node.grandChildren || node.children.length }})
-                            </span>
                         </div>
                     </div>
                     <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>

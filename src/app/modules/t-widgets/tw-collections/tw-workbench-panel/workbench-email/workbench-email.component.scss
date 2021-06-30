@@ -3,6 +3,16 @@ workbench-email {
         background: lightgrey !important;
     }
 
+    #sortKeyBtn {
+        padding: 0px 6px !important;
+        min-width: min-content;
+    }
+
+    #sortOrderBtn {
+        padding: 0px 2px !important;
+        min-width: min-content;
+    }
+
     mat-chip {
         padding: 25px 10px !important;
     }
@@ -137,5 +147,8 @@ workbench-email {
     }
     .mat-form-field-infix {
         align-items: center;
+    }
+    .twd-hidden {
+        display: none !important;
     }
 }
