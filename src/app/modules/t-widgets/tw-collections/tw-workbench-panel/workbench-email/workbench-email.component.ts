@@ -39,6 +39,7 @@ type Mail = {
     HasAttachment: boolean;
     ConversationID: string;
     IsEmailProbableSpam: boolean;
+    checked?: boolean;
 };
 
 type ComponentActions =
@@ -66,6 +67,7 @@ type AdvanceSearchFormData = { form: FormGroup; data: Partial<Record<AvailableTa
     styleUrls: ['./workbench-email.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
@@ -118,14 +120,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-    /**
-     * Selected Mail
-     */
-    selectedMails: Mail[] = [];
-    /**
-     * Selected Mail
-     */
-    selectedMailIds: any[] = [];
+    // /**
+    //  * Selected Mail
+    //  */
+    // selectedMails: Mail[] = [];
+    // /**
+    //  * Selected Mail
+    //  */
+    // selectedMailIds: any[] = [];
 
     /**
      * Email Search Stateful request
@@ -171,6 +173,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     dataSource = new MatTreeNestedDataSource<any>();
 
+    // emailTree: Array<Mail | Mail[]> = [];
+
     /**
      * Currently selected tab
      */
@@ -180,7 +184,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Sort controls
      */
     sortControls = {
-        sortBy: 'default',
+        sortBy: 'Date',
         ascending: true
     };
 
@@ -206,8 +210,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     polling = {
         allowed: false,
         enabled: true,
-        active: false,
-        sub$: Subscription
+        active: false
     };
 
     /**
@@ -317,10 +320,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         }
         const sortKey = this.sortControls.sortBy;
         let sorted;
-        if (sortKey === 'default') {
-            sorted = childrenNodes;
-        } else if (sortKey === 'AddedTime') {
-            sorted = sortBy(childrenNodes, (k) => k[sortKey] || '');
+        if (sortKey === 'Date') {
+            sorted = sortBy(childrenNodes, (k) => k.AddedTime || '');
         } else {
             sorted = sortBy(childrenNodes, (k) => (k[sortKey] || '').toLowerCase());
         }
@@ -357,14 +358,19 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     groupNodes(sortedEmails: Mail[]): void {
         const byMailList = groupBy(sortedEmails, 'Mailbox');
+        const selectedUiIds = this.getSelectedEmails().map((x) => x.uiId);
         let nodes: any;
         if (['sentitem', 'draft'].includes(this.currentTab)) {
             nodes = Object.entries(byMailList).reduce((acc, curr) => {
                 const [name, children] = curr;
                 acc.push({
                     name,
-                    children,
-                    To: name || ''
+                    children: children.map((x) => {
+                        x.checked = selectedUiIds.includes(x.uiId);
+                        return x;
+                    }),
+                    Mailbox: name,
+                    uiId: `${this.currentTab}_${name}`
                 });
                 return acc;
             }, []);
@@ -372,26 +378,26 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             nodes = Object.entries(byMailList).map((entry) => {
                 const [name, mailList] = entry;
                 const groupedNodes = groupBy(mailList, 'Skill');
+                let grandChildren = 0;
                 const children = Object.entries(groupedNodes).map((n) => {
                     const [nodeName, grandChildrenNodes] = n;
+                    grandChildren += grandChildrenNodes.length;
                     return {
                         name: nodeName,
-                        children: grandChildrenNodes,
-                        To: name,
-                        Skill: nodeName
+                        children: grandChildrenNodes.map((x) => {
+                            x.checked = selectedUiIds.includes(x.uiId);
+                            return x;
+                        }),
+                        Mailbox: name,
+                        Skill: nodeName,
+                        uiId: `${this.currentTab}_${name}_${nodeName}`
                     };
                 });
-                const { grandChildren } = children.reduce(
-                    (acc, curr) => {
-                        acc.grandChildren += curr.children.length;
-                        return acc;
-                    },
-                    { grandChildren: 0, uiId: '' }
-                );
                 return {
                     name,
                     children,
-                    To: name,
+                    Mailbox: name,
+                    uiId: `${this.currentTab}_${name}`,
                     grandChildren
                 };
             });
@@ -472,6 +478,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
                 searchParams = {
+                    global: '',
                     skills: searchFields.skills ? [searchFields.skills] : [],
                     email: searchFields.email,
                     agent: searchFields.agent || '',
@@ -682,36 +689,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     }
 
     /**
-     * Select emails
-     */
-    selectEmail(node: Mail, checked: boolean): void {
-        if (checked) {
-            this.selectedMails.push(node);
-            this.selectedMailIds.push(node.uiId);
-        } else {
-            this.selectedMails = this.selectedMails.filter((x) => x.uiId !== node.uiId);
-            this.selectedMailIds = this.selectedMails.map((x) => x.uiId) || [];
-        }
-        const allEmails = this.getAllEmailNodes()?.length || 0;
-        if (this.selectedMailIds.length === allEmails && !this.allEmailsSelected) {
-            this.allEmailsSelected = true;
-        }
-        if (this.selectedMailIds.length !== allEmails && this.allEmailsSelected) {
-            this.allEmailsSelected = false;
-        }
-    }
-
-    /**
-     * Selects all emails
-     */
-    selectAllEmails(checked: boolean): void {
-        const nodes = this.getAllEmailNodes();
-        for (const n of nodes) {
-            this.selectEmail(n, checked);
-        }
-    }
-
-    /**
      * opens email for preview
      */
     async openEmail(email: Mail): Promise<void> {
@@ -777,6 +754,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     switchTab(tab: AvailableTabs): void {
         this.currentTab = tab;
+        this.advancedSearch.show = false;
         this.removeEmailsfromView('all');
         this.allEmailsSelected = false;
         this.emailBodies = {};
@@ -830,7 +808,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {any} email
      */
     transferEmail(emails: Mail[]): void {
-        // const config = this.data.Data.Channels.filter((f: any) => f.Type === 'Email')?.[0];
         const config = this.channelConf?.Config || {};
         const agentConfig = config?.Transfer?.Agent || {};
         const skillConfig = config?.Transfer?.Skill || {};
@@ -864,7 +841,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.matDialog.open(AgentSkillListComponent, {
             data: {
                 ...data,
-                // interactionId: email.InteractionId,
                 otherData: {
                     type: 'transfer',
                     emails: emails.map((e) => ({
@@ -910,8 +886,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 body: reply,
                                 routeIdList: routeIds.join(',')
                             });
-                            this.selectedMails = [];
-                            this.selectedMailIds = [];
                             if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
                                 this.emailSearchRes.data.selected = null;
                             }
@@ -1050,7 +1024,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @returns
      */
     trackBy = (_index: number, email: Mail): string => {
-        return this.currentTab + email.uiId;
+        return email.uiId;
     };
 
     /**
@@ -1059,18 +1033,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     removeEmailsfromView(type: 'opened' | 'selected' | 'all', ids?: string[]): void {
         if (ids) {
-            if (['all', 'selected'].includes(type)) {
-                this.selectedMails = this.selectedMails.filter((m) => !ids.includes(m.uiId));
-                this.selectedMailIds = this.selectedMails.filter((m) => m.uiId) || [];
-            }
             if (['all', 'opened'].includes(type) && ids.includes(this.emailSearchRes.data.selected?.uiId)) {
                 this.emailSearchRes.data.selected = null;
             }
         } else {
-            if (['all', 'selected'].includes(type)) {
-                this.selectedMails = [];
-                this.selectedMailIds = [];
-            }
             if (['all', 'opened'].includes(type)) {
                 this.emailSearchRes.data.selected = null;
             }
@@ -1228,6 +1194,22 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
         return { ...searchParams, endDate, startDate };
     }
+
+    getSelectedEmails = () => this.getAllEmailNodes().filter((n) => n.checked);
+
+    getEmailChecks = (mails?: Mail[]) => {
+        const allEmails = mails ?? this.getAllEmailNodes();
+        const all = allEmails.every((n) => n.checked);
+        const some = allEmails.some((n) => n.checked);
+        return { all, some: some && !all };
+    };
+
+    selectEmails = (checked: boolean, emails?: Mail[]) => {
+        const mails = emails ?? this.getAllEmailNodes();
+        for (const n of mails) {
+            n.checked = checked;
+        }
+    };
 }
 
 // for more info visit - https://angular.io/api/core

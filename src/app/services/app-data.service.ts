@@ -8,7 +8,7 @@ import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { version } from '../../../package.json';
+// import packageInfo from '../../../package.json';
 import { FuseFacadeService } from './fuse-facade.service';
 
 /**
@@ -47,7 +47,7 @@ export class AppDataService {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
-        this._appVersion = version;
+        this._appVersion = 'packageInfo.version';
     }
 
     // -----------------------------------------------------------------------------------------------------

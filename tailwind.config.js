@@ -1,8 +1,13 @@
 const { generateMaterialColors, generateGrids } = require('@tmac/styles/tailwind');
+const { guessProductionMode } = require('@ngneat/tailwind');
+
+process.env.TAILWIND_MODE = guessProductionMode() ? 'build' : 'watch';
+
 module.exports = {
     prefix: 'twd-',
+    mode: 'jit',
     purge: {
-        content: ['./src/**/*.{html,ts}']
+        content: ['./src/**/*.{html,ts,css,scss,sass,less,styl}']
     },
     darkMode: 'class', // or 'media' or 'class'
     theme: {
