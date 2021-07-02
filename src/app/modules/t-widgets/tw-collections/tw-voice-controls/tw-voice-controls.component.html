@@ -94,7 +94,7 @@
                         </div>
                     </div>
                     <div
-                        *ngIf="data.Data.IVR?.MenuEnabled"
+                        *ngIf="widgetData.IVR?.MenuEnabled"
                         fxLayout="row"
                         fxLayoutAlign=" none"
                         class="mt-8 px-12 border-radius-30 position-relative ivr-history"
@@ -183,7 +183,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.Transfer.Allowed && status !== 'disconnected'"
+                            *ngIf="widgetData?.Transfer.Allowed && status !== 'disconnected'"
                             mat-mini-fab
                             color="default"
                             class="mat-elevation-z2"
@@ -196,7 +196,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.Conference.Allowed && status !== 'disconnected'"
+                            *ngIf="widgetData?.Conference.Allowed && status !== 'disconnected'"
                             mat-mini-fab
                             color="default"
                             class="mat-elevation-z2"
@@ -229,7 +229,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.DialpadAllowed && status !== 'disconnected'"
+                            *ngIf="widgetData?.DialpadAllowed && status !== 'disconnected'"
                             mat-mini-fab
                             color="default"
                             class="mat-elevation-z2"
@@ -270,21 +270,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.InteractionCommentAllowed"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="
-                                customFuse.anchor?.body + (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
-                            "
-                            matTooltip="Interaction Comment"
-                            (click)="commentsAdded = false; saveInteractionComments()"
-                        >
-                            <mat-icon>comment</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="data.Data?.MakeCallAllowed && status === 'disconnected'"
+                            *ngIf="widgetData?.MakeCallAllowed && status === 'disconnected'"
                             mat-mini-fab
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
@@ -296,7 +282,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data?.SendSMSAllowed"
+                            *ngIf="widgetData?.SendSMSAllowed"
                             mat-mini-fab
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
@@ -305,6 +291,20 @@
                             (click)="sendSMS()"
                         >
                             <mat-icon>sms</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="widgetData?.InteractionCommentAllowed"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="
+                                customFuse.anchor?.body + (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                            "
+                            matTooltip="Interaction Comment"
+                            (click)="commentsAdded = false; saveInteractionComments()"
+                        >
+                            <mat-icon>comment</mat-icon>
                         </button>
 
                         <button

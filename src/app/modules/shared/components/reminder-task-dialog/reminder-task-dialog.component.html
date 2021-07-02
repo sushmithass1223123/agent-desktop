@@ -654,7 +654,7 @@
             </button>
 
             <button
-                *ngIf="data.type !== 'tcmwqvoice' && data.type !== 'reminder'"
+                *ngIf="data.type !== 'tcmwqvoice' && !snoozeTimerTypes.includes(data.type)"
                 mat-raised-button
                 mat-icon-button
                 class="bg-warning"
@@ -665,7 +665,7 @@
             </button>
 
             <button
-                *ngIf="data.type === 'reminder'"
+                *ngIf="snoozeTimerTypes.includes(data.type)"
                 mat-raised-button
                 mat-icon-button
                 class="bg-warning"

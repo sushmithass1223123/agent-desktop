@@ -372,25 +372,21 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         // show the UI
                         this.showUI = true;
                     } else {
-                        if (param !== 'Screenshare') {
-                            // reject request
-                            evt.data.response(false);
-                            // close the call widget
-                            this._aotWidgetService.destroyWidget(this.data.ID);
-                        }
+                        // reject request
+                        evt.data.response(false);
+                        // close the call widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
                     }
                 };
 
-                if (param === 'Screenshare' && this.widgetData.opener.allowCustomerScreenShare) {
-                    onConfirmDialogClose(true);
-                } else {
-                    // config incoming call
-                    const confirmDialogRef = this._appUIService.showCustomDialog(
-                        'confirm',
-                        `${param} call requested by ${this.widgetData.customerName}, Do you want to accept it?`
-                    );
-                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-                }
+                // config incoming call
+                const confirmDialogRef = this._appUIService.showCustomDialog(
+                    'confirm',
+                    `${param} call requested by ${this.widgetData.customerName}, Do you want to accept it?`
+                );
+
+                confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+
                 break;
             case 'onTrace':
                 TUtils.Logger.info('TwVideoControlsComponent.onAVEvent.onTrace: ' + evt.data);
@@ -776,6 +772,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } else {
             this.avConn.endCall(this.wrcCallType, '');
         }
+
+        if (this.widgetData.opener.widgetData.EndInteractionOnAVEnd) {
+            this.widgetData.opener.confirmEndChat(null);
+        }
+
         // close the widget
         this.destroyWidget();
     }

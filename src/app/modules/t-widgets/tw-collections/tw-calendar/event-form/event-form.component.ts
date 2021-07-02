@@ -93,12 +93,17 @@ export class CalendarEventFormDialogComponent implements OnInit {
         this.eventForm = this.createEventForm();
         this.eventForm.controls.type.valueChanges.subscribe((type) => {
             const titleControl = this.eventForm.get('title');
+            const taskTypeControl = this.eventForm.get('taskType');
+            const taskDataControl = this.eventForm.get('taskData');
             if (type === 'executetask') {
-                titleControl.clearValidators();
+                taskTypeControl.setValidators(Validators.required);
+                taskDataControl.setValidators(Validators.required);
             } else {
                 titleControl.setValidators([Validators.required]);
             }
             titleControl.updateValueAndValidity();
+            taskTypeControl.updateValueAndValidity();
+            taskDataControl.updateValueAndValidity();
         });
     }
 
@@ -138,14 +143,14 @@ export class CalendarEventFormDialogComponent implements OnInit {
         // change the type case
         this.event.type = this.event.type.toLowerCase();
 
-        return new FormGroup({
-            title: new FormControl(this.event.title, [Validators.required]),
+        const formGroup = new FormGroup({
+            title: new FormControl(this.event.title),
             type: new FormControl({ value: this.event.type, disabled: this.action === 'edit' }),
             taskType: new FormControl({ value: this.event.type === 'executetask' ? this.event.data.Action : '', disabled: this.action === 'edit' }),
             taskData: new FormControl(
                 this.event.type === 'executetask'
-                    ? this.event.data.Action === 'changestatus'
-                        ? this.event.data.Data.split(',')[0]
+                    ? this.event.data.Action === 'changestate'
+                        ? this.event.data.Data.split(',')[1]
                         : this.event.data.Data
                     : ''
             ),
@@ -163,5 +168,7 @@ export class CalendarEventFormDialogComponent implements OnInit {
                 notes: new FormControl({ value: this.event.meta.notes, disabled: this.event.type === '' || this.event.type === 'text' })
             })
         });
+
+        return formGroup;
     }
 }

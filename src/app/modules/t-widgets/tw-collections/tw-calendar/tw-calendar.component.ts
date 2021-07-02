@@ -6,10 +6,10 @@ import { AppConfirmDialogComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { AgentReminder, AgentReminderEvent, SDKClient } from '@tmac/sdk';
+import { AgentReminder, AgentReminderEvent, SDKClient, UpdateAgentReminderEvent } from '@tmac/sdk';
 import { CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { IWidget } from 'app/interfaces';
-import { format, isBefore, isSameDay, isSameMonth } from 'date-fns';
+import { addMinutes, format, isBefore, isSameDay, isSameMonth } from 'date-fns';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
@@ -133,6 +133,10 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             {
                 label: 'AgentReminderEvent',
                 callback: this.AgentReminderEvent
+            },
+            {
+                label: 'UpdateAgentReminderEvent',
+                callback: this.UpdateAgentReminderEvent
             }
         ]);
     }
@@ -151,6 +155,10 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             {
                 label: 'AgentReminderEvent',
                 callback: this.AgentReminderEvent
+            },
+            {
+                label: 'UpdateAgentReminderEvent',
+                callback: this.UpdateAgentReminderEvent
             }
         ]);
     }
@@ -158,9 +166,78 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * To process AgentReminderEvent
      *
-     * @param evt
+     * @param {AgentReminderEvent} evt
      */
-    AgentReminderEvent(evt: AgentReminderEvent): void {}
+    AgentReminderEvent = (evt: AgentReminderEvent): void => {
+        evt.Reminders.forEach((reminder) => {
+            // update the event
+            this.events.forEach((event) => {
+                if (event.id === reminder.ID) {
+                    event = this.processEvent(reminder);
+                }
+            });
+        });
+    };
+
+    /**
+     * To process UpdateAgentReminderEvent
+     *
+     * @param {UpdateAgentReminderEvent} evt
+     */
+    UpdateAgentReminderEvent = (evt: UpdateAgentReminderEvent): void => {
+        // if valid then update
+        if (typeof evt.Data === 'object' && evt.Data.ID) {
+            this.events.forEach((event) => {
+                if (event.id === evt.Data.ID) {
+                    if (evt.Data.Status.startsWith('Snooze:')) {
+                        const time = evt.Data.Status.split(':')[1];
+                        event.start = addMinutes(event.start, time);
+                        event.end = addMinutes(event.end, time);
+                    } else {
+                        event.status = evt.Data.Status;
+                    }
+                }
+            });
+        }
+    };
+
+    /**
+     * To process reminder event
+     * @param reminder
+     * @returns
+     */
+    private processEvent(reminder: AgentReminder): CustomCalendarEvent {
+        const item = new CalendarEventModel({});
+        item.id = reminder.ID;
+        item.start = moment(reminder.RemindDate + ' ' + reminder.RemindTime, 'MM/DD/YYYY HH:mm').toDate();
+        item.end = moment(reminder.RemindDate + ' ' + reminder.RemindTime, 'MM/DD/YYYY HH:mm').toDate();
+        item.status = reminder.Status;
+        item.actions = this.actions;
+        item.meta = {
+            location: '',
+            notes: ''
+        };
+
+        // get the type
+        const type = (item.type = reminder.Type ? reminder.Type : 'text');
+
+        // check if this is a task
+        if (type.toLowerCase() === 'executetask') {
+            const task = (item.data = JSON.parse(reminder.Message));
+            item.title = this.generateTitle(task);
+            item.meta.notes = task.Comment;
+        } else if (type.toLowerCase() === 'event') {
+            const event = (item.data = JSON.parse(reminder.Message));
+            item.title = event.Title;
+            item.color.primary = event.Color.Primary;
+            item.color.secondary = event.Color.Secondary;
+            item.meta.location = event.Meta.Location;
+            item.meta.notes = event.Meta.Notes;
+        } else {
+            item.title = reminder.Message;
+        }
+        return item;
+    }
 
     /**
      * Before View Renderer
@@ -241,37 +318,8 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 this.events = [];
             }
 
-            response.forEach((element: AgentReminder) => {
-                const item = new CalendarEventModel({});
-                item.id = element.ID;
-                item.start = moment(element.RemindDate + ' ' + element.RemindTime, 'MM/DD/YYYY HH:mm').toDate();
-                item.end = moment(element.RemindDate + ' ' + element.RemindTime, 'MM/DD/YYYY HH:mm').toDate();
-                item.status = element.Status;
-                item.actions = this.actions;
-                item.meta = {
-                    location: '',
-                    notes: ''
-                };
-
-                // get the type
-                const type = (item.type = element.Type ? element.Type : 'text');
-
-                // check if this is a task
-                if (type.toLowerCase() === 'executetask') {
-                    const task = (item.data = JSON.parse(element.Message));
-                    item.title = this.generateTitle(task);
-                    item.meta.notes = task.Comment;
-                } else if (type.toLowerCase() === 'event') {
-                    const event = (item.data = JSON.parse(element.Message));
-                    item.title = event.Title;
-                    item.color.primary = event.Color.Primary;
-                    item.color.secondary = event.Color.Secondary;
-                    item.meta.location = event.Meta.Location;
-                    item.meta.notes = event.Meta.Notes;
-                } else {
-                    item.title = element.Message;
-                }
-
+            response.forEach((reminder: AgentReminder) => {
+                const item = this.processEvent(reminder);
                 // push to the list
                 this.events.push(item);
             });
@@ -377,7 +425,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                         message: this.formatMessage(formValue).message,
                         reminderDate: format(reminderDateTime, 'yyyyMMdd'),
                         reminderTime: format(reminderDateTime, 'HHmmss'),
-                        status: 'new'
+                        status: 'New'
                     })
                         .then((x) => {
                             if (x.response > 0) {
@@ -460,57 +508,77 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Add Event
      */
-    addEvent(): void {
-        this.dialogRef = this._matDialog.open(CalendarEventFormDialogComponent, {
-            panelClass: 'event-form-dialog',
-            data: {
-                action: 'new',
-                date: this.selectedDay.date,
-                data: this.data.Data
-            }
-        });
-        this.dialogRef.afterClosed().subscribe((response: FormGroup) => {
-            if (!response) {
-                return;
-            }
+    async addEvent(): Promise<void> {
+        try {
+            // check if for today
+            const dateToAdd = format(new Date(), 'yyyyMMdd') === format(this.selectedDay.date, 'yyyyMMdd') ? new Date() : this.selectedDay.date;
+            this.dialogRef = this._matDialog.open(CalendarEventFormDialogComponent, {
+                panelClass: 'event-form-dialog',
+                data: {
+                    action: 'new',
+                    date: dateToAdd,
+                    data: this.data.Data
+                }
+            });
+            this.dialogRef.afterClosed().subscribe(async (resp: FormGroup) => {
+                if (!resp) {
+                    return;
+                }
 
-            let newEvent = response.getRawValue();
-            newEvent.actions = this.actions;
+                let newEvent = resp.getRawValue();
+                newEvent.actions = this.actions;
 
-            const reminderDateTime: any = new Date(newEvent.start);
-            reminderDateTime.setHours(newEvent.startTime.split(':')[0]);
-            reminderDateTime.setMinutes(newEvent.startTime.split(':')[1]);
-            reminderDateTime.setSeconds(0);
+                const reminderDateTime: any = new Date(newEvent.start);
+                reminderDateTime.setHours(newEvent.startTime.split(':')[0]);
+                reminderDateTime.setMinutes(newEvent.startTime.split(':')[1]);
+                reminderDateTime.setSeconds(0);
 
-            newEvent.end = newEvent.start = reminderDateTime;
+                newEvent.end = newEvent.start = reminderDateTime;
 
-            this._appUIService.showSnackbar('Adding event, please wait', 'loading');
+                // format the message and newEvent
+                const formatted = this.formatMessage(newEvent);
 
-            // format the message and newEvent
-            const formatted = this.formatMessage(newEvent);
+                // update the new event as well
+                newEvent = formatted.formValue;
 
-            // update the new event as well
-            newEvent = formatted.formValue;
+                const alertType = newEvent.type === 'executetask' ? 'Task' : 'Event';
 
-            SDKClient.createAgentReminderTask({
-                message: formatted.message,
-                reminderDate: format(reminderDateTime, 'yyyyMMdd'),
-                reminderTime: format(reminderDateTime, 'HHmmss'),
-                type: newEvent.type
-            })
-                .then((x) => {
-                    if (x.response > 0) {
-                        this._appUIService.showSnackbar('Event added successfully');
+                this._appUIService.showSnackbar(`Adding ${alertType.toLowerCase()}, please wait`, 'loading');
 
-                        this.events.push(newEvent);
-                        this.refresh.next(true);
-                    } else {
-                        this._appUIService.showSnackbar('Adding event failed', 'failure');
-                    }
-                })
-                .catch(() => {
-                    this._appUIService.showSnackbar('Error in adding event', 'failure');
+                const { response } = await SDKClient.createAgentReminderTask({
+                    message: formatted.message,
+                    reminderDate: format(reminderDateTime, 'yyyyMMdd'),
+                    reminderTime: format(reminderDateTime, 'HHmmss'),
+                    type: newEvent.type
                 });
-        });
+
+                if (response > 0) {
+                    // get the event id by getting remider from DB
+                    const get = await SDKClient.getAgentReminders({
+                        message: formatted.message,
+                        status: 'New',
+                        startDateTime: format(reminderDateTime, 'yyyyMMdd') + '' + format(reminderDateTime, 'HHmmss'),
+                        endDateTime: format(reminderDateTime, 'yyyyMMdd') + '' + format(reminderDateTime, 'HHmmss')
+                    });
+
+                    // append the ID if success
+                    if (get.response) {
+                        get.response.forEach((e) => {
+                            newEvent.id = e.ID;
+                        });
+                    }
+
+                    // push event
+                    this.events.push(newEvent);
+                    this.refresh.next(true);
+
+                    this._appUIService.showSnackbar(`${alertType} added successfully`);
+                } else {
+                    this._appUIService.showSnackbar(`Adding ${alertType} failed`, 'failure');
+                }
+            });
+        } catch (error) {
+            this._appUIService.showSnackbar('Error in adding event/task', 'failure');
+        }
     }
 }

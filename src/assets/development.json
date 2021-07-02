@@ -1261,7 +1261,8 @@
                                                     "DialpadAllowed": true,
                                                     "InteractionCommentAllowed": true,
                                                     "MakeCallAllowed": true,
-                                                    "SendSMSAllowed": true
+                                                    "SendSMSAllowed": true,
+                                                    "CloseInteractionOnEnd": false
                                                 }
                                             },
                                             {
@@ -1548,7 +1549,7 @@
                                     "Data": {
                                         "Role": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -1891,7 +1892,6 @@
                                                         "Allowed": true,
                                                         "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html"
                                                     },
-                                                    "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "remote",
@@ -1903,23 +1903,6 @@
                                                         "Filter": "startswith",
                                                         "FilterByTime": false
                                                     },
-                                                    "InteractionConversion": {
-                                                        "Allowed": true,
-                                                        "Channels": [
-                                                            {
-                                                                "Name": "Generic",
-                                                                "Label": "Generic"
-                                                            },
-                                                            {
-                                                                "Name": "AudioVideo",
-                                                                "Label": "Audio Video"
-                                                            }
-                                                        ],
-                                                        "On": [
-                                                            "oncall",
-                                                            "afterdisconnect"
-                                                        ]
-                                                    },
                                                     "WebRTCTest": {
                                                         "Allowed": true,
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
@@ -1929,7 +1912,9 @@
                                                         "Url": "",
                                                         "Limit": 50
                                                     },
-                                                    "ReplyAllowed": true
+                                                    "ReplyAllowed": true,
+                                                    "EndInteractionOnAVEnd": false,
+                                                    "CloseInteractionOnEnd": false
                                                 }
                                             },
                                             {

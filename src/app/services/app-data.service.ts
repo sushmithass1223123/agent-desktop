@@ -8,7 +8,7 @@ import { environment } from 'environments/environment';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-// import packageInfo from '../../../package.json';
+import packageInfo from '../../../package.json';
 import { FuseFacadeService } from './fuse-facade.service';
 
 /**
@@ -47,7 +47,7 @@ export class AppDataService {
         // Set the config from the default config
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
-        this._appVersion = 'packageInfo.version';
+        this._appVersion = packageInfo.version;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -177,6 +177,23 @@ export class AppDataService {
                 return;
             }
 
+            TUtils.Logger.consoleLog({
+                message: 'AppConfigs.SDK accepts camel casing to support TMAC SDK case, please change to camel casing as per relase [5.0.6.30]!',
+                type: 'warn'
+            });
+
+            // backward compatibility for CustomScripts
+            let customScripts = [];
+            if (Array.isArray(config.AppConfigs.SDK.CustomSripts)) {
+                customScripts = config.AppConfigs.SDK.CustomSripts;
+                TUtils.Logger.consoleLog({
+                    message: 'AppConfigs.SDK.CustomSripts is depricated, please correct the spelling in config to -> CustomScripts',
+                    type: 'warn'
+                });
+            } else {
+                customScripts = config.AppConfigs.SDK.CustomScripts;
+            }
+
             // set the SDK config
             SDKClient.setConfig({
                 proxy: {
@@ -207,7 +224,7 @@ export class AppDataService {
                     sdkMethods: config.AppConfigs.SDK.Logging.SDKMethods ?? false,
                     sdkEvents: config.AppConfigs.SDK.Logging.SDKEvents ?? false
                 },
-                customScripts: [...config.AppConfigs.SDK.CustomScripts]
+                customScripts: [...customScripts]
             });
         } catch (error) {
             TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);

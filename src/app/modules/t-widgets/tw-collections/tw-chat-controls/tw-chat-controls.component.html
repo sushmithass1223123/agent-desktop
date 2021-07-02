@@ -172,6 +172,17 @@
                 <div class="chat-content border-radius-20" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                     <div class="chat-actions border-bottom">
                         <button
+                            *ngIf="!isAsyncChat && status === 'incoming'"
+                            class="mat-elevation-z2 custom-btn bg-success"
+                            mat-mini-fab
+                            #answerBtn
+                            (click)="answerChat(answerBtn)"
+                            matTooltip="Answer Chat"
+                        >
+                            <mat-icon>done</mat-icon>
+                        </button>
+
+                        <button
                             *ngIf="showAutoFreeze"
                             [disabled]="status !== 'connected'"
                             mat-mini-fab
@@ -181,6 +192,114 @@
                             (click)="freezeAutoResponse()"
                         >
                             <mat-icon>sync_disabled</mat-icon>
+                        </button>
+
+                        <ng-container
+                            *ngIf="
+                                !isAsyncChat &&
+                                !callWidget &&
+                                agentFeatures.hold &&
+                                (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
+                            "
+                        >
+                            <button
+                                mat-mini-fab
+                                color="default"
+                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading"
+                                [ngClass]="
+                                    ((status === 'connected' || status === 'hold' || status === 'unhold') &&
+                                        (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
+                                    ' ' +
+                                    (status === 'connected' ? 'mat-elevation-z2' : '')
+                                "
+                                [matTooltip]="interactionOnHold.buttonTooltip"
+                                (click)="holdUnhold()"
+                            >
+                                <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
+                            </button>
+                        </ng-container>
+
+                        <button
+                            *ngIf="agentFeatures.transfer"
+                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                            mat-mini-fab
+                            color="default"
+                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            matTooltip="Transfer"
+                            (click)="openTransferConferenceDialog('transfer')"
+                        >
+                            <mat-icon>forward</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="!isAsyncChat && agentFeatures.conference"
+                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                            mat-mini-fab
+                            color="default"
+                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            matTooltip="Conference"
+                            (click)="openTransferConferenceDialog('conference')"
+                        >
+                            <mat-icon>group</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="!isAsyncChat && agentFeatures.audioEscalate"
+                            [disabled]="
+                                status !== 'connected' ||
+                                disableAV ||
+                                conferenceType === 'silent' ||
+                                conferenceType === 'whisper' ||
+                                this.botConnected
+                            "
+                            mat-mini-fab
+                            color="default"
+                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            matTooltip="Escalate to Audio"
+                            (click)="escalateToAV('audio')"
+                        >
+                            <mat-icon>call</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="!isAsyncChat && agentFeatures.videoEscalate"
+                            [disabled]="
+                                status !== 'connected' ||
+                                disableAV ||
+                                conferenceType === 'silent' ||
+                                conferenceType === 'whisper' ||
+                                this.botConnected
+                            "
+                            mat-mini-fab
+                            color="default"
+                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            matTooltip="Escalate to Video"
+                            (click)="escalateToAV('video')"
+                        >
+                            <mat-icon>video_call</mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="
+                                !isAsyncChat &&
+                                supervisorInit &&
+                                (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')
+                            "
+                            [disabled]="status !== 'connected' || this.botConnected"
+                            mat-mini-fab
+                            color="default"
+                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                            [matTooltip]="
+                                conferenceType === 'silent'
+                                    ? 'Convert to Whisper'
+                                    : conferenceType === 'whisper'
+                                    ? 'Convert to Conference'
+                                    : 'Takeover'
+                            "
+                            #changeModeBtn
+                            (click)="changeConferenceType(changeModeBtn)"
+                        >
+                            <mat-icon>play_for_work</mat-icon>
                         </button>
 
                         <div class="fab-container" *ngIf="moreActions.length">
@@ -223,6 +342,19 @@
                         </div>
 
                         <button
+                            *ngIf="!isAsyncChat"
+                            [disabled]="status !== 'connected'"
+                            [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                            mat-mini-fab
+                            color="warn"
+                            #endBtn
+                            (click)="confirmEndChat(endBtn)"
+                            matTooltip="End Chat"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+
+                        <button
                             *ngIf="agentFeatures.comment"
                             mat-mini-fab
                             [ngClass]="
@@ -237,156 +369,12 @@
                         </button>
 
                         <button
-                            *ngIf="
-                                !isAsyncChat &&
-                                supervisorInit &&
-                                (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')
-                            "
-                            [disabled]="status !== 'connected' || this.botConnected"
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="
-                                conferenceType === 'silent'
-                                    ? 'Convert to Whisper'
-                                    : conferenceType === 'whisper'
-                                    ? 'Convert to Conference'
-                                    : 'Takeover'
-                            "
-                            #changeModeBtn
-                            (click)="changeConferenceType(changeModeBtn)"
-                        >
-                            <mat-icon>play_for_work</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="agentFeatures.transfer"
-                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Transfer"
-                            (click)="openTransferConferenceDialog('transfer')"
-                        >
-                            <mat-icon>forward</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="!isAsyncChat && agentFeatures.conference"
-                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Conference"
-                            (click)="openTransferConferenceDialog('conference')"
-                        >
-                            <mat-icon>group</mat-icon>
-                        </button>
-
-                        <!-- <button
-                            mat-mini-fab
-                            *ngIf="data.Data.AskForScreenshareAllowed"
-                            [disabled]="status !== 'connected'"
-                            [color]="allowCustomerScreenShare ? 'default' : 'warn'"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Ask before screenshare"
-                            (click)="allowCustomerScreenShare = !allowCustomerScreenShare"
-                        >
-                            <mat-icon>{{ allowCustomerScreenShare ? 'screen_share' : 'stop_screen_share' }}</mat-icon>
-                        </button> -->
-
-                        <button
-                            *ngIf="!isAsyncChat && agentFeatures.audioEscalate"
-                            [disabled]="
-                                status !== 'connected' ||
-                                disableAV ||
-                                conferenceType === 'silent' ||
-                                conferenceType === 'whisper' ||
-                                this.botConnected
-                            "
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Escalate to Audio"
-                            (click)="escalateToAV('audio')"
-                        >
-                            <mat-icon>call</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="!isAsyncChat && agentFeatures.videoEscalate"
-                            [disabled]="
-                                status !== 'connected' ||
-                                disableAV ||
-                                conferenceType === 'silent' ||
-                                conferenceType === 'whisper' ||
-                                this.botConnected
-                            "
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Escalate to Video"
-                            (click)="escalateToAV('video')"
-                        >
-                            <mat-icon>video_call</mat-icon>
-                        </button>
-
-                        <ng-container
-                            *ngIf="
-                                !isAsyncChat &&
-                                !callWidget &&
-                                agentFeatures.hold &&
-                                (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
-                            "
-                        >
-                            <button
-                                mat-mini-fab
-                                color="default"
-                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading"
-                                [ngClass]="
-                                    ((status === 'connected' || status === 'hold' || status === 'unhold') &&
-                                        (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
-                                    ' ' +
-                                    (status === 'connected' ? 'mat-elevation-z2' : '')
-                                "
-                                [matTooltip]="interactionOnHold.buttonTooltip"
-                                (click)="holdUnhold()"
-                            >
-                                <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
-                            </button>
-                        </ng-container>
-
-                        <button
-                            *ngIf="!isAsyncChat"
-                            [disabled]="status !== 'connected'"
-                            [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                            mat-mini-fab
-                            color="warn"
-                            #endBtn
-                            (click)="confirmEndChat(endBtn)"
-                            matTooltip="End Chat"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="!isAsyncChat && status === 'incoming'"
-                            class="mat-elevation-z2 custom-btn bg-success"
-                            mat-mini-fab
-                            #answerBtn
-                            (click)="answerChat(answerBtn)"
-                            matTooltip="Answer Chat"
-                        >
-                            <mat-icon>done</mat-icon>
-                        </button>
-
-                        <button
                             *ngIf="status === 'disconnected' || isAsyncChat"
                             mat-raised-button
                             class="border-radius-20"
                             color="warn"
                             #closeBtn
-                            (click)="closeInteraction(closeBtn)"
+                            (click)="confirmCloseInteraction(closeBtn)"
                             matTooltip="Close Interaction"
                         >
                             Close
