@@ -1,5 +1,5 @@
 import { maskData } from '@tmac/operators';
-import { IUIEvent } from '@tmac/sdk';
+import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
 import { get, join, set } from 'lodash';
 
@@ -226,5 +226,6 @@ export class ADError extends Error {
  * @param msg
  */
 export const throwADError = (msg: string) => {
+    TUtils.Logger.error('AD Error', msg);
     throw new ADError(msg);
 };

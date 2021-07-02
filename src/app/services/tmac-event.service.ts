@@ -366,10 +366,9 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
-                                // snooze the reminder
-                                this.updateReminderStatus('Snooze', parsedMessage.ID);
-                                // show an alert for auto snooze
-                                this._appUIService.showSnackbar('Make call task is snoozed', 'info');
+                                const time = resp.split(':')[1];
+                                this.updateReminderStatus(`Snooze:${time}`, parsedMessage.ID);
+                                this._appUIService.showSnackbar(`Make call task is snoozed for ${time} mins`, 'info');
                             }
 
                             // set the dialogRef to null
@@ -409,10 +408,9 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
-                                // snooze the reminder
-                                this.updateReminderStatus('Snooze', parsedMessage.ID);
-                                // show an alert for auto snooze
-                                this._appUIService.showSnackbar('Meeting task is snoozed', 'info');
+                                const time = resp.split(':')[1];
+                                this.updateReminderStatus(`Snooze:${time}`, parsedMessage.ID);
+                                this._appUIService.showSnackbar(`Meeting task is snoozed for ${time} mins`, 'info');
                             }
 
                             // set the dialogRef to null
@@ -470,10 +468,9 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
-                                // snooze the reminder
-                                this.updateReminderStatus('Snooze', parsedMessage.ID);
-                                // show an alert for auto snooze
-                                this._appUIService.showSnackbar('Change status task is snoozed', 'info');
+                                const time = resp.split(':')[1];
+                                this.updateReminderStatus(`Snooze:${time}`, parsedMessage.ID);
+                                this._appUIService.showSnackbar(`Change status task is snoozed for ${time} mins`, 'info');
                             }
 
                             // set the dialogRef to null
@@ -650,8 +647,8 @@ export class TMACEventService {
                         this.updateReminderStatus('Completed', item.ID);
                     } else if (resp.includes('snooze')) {
                         const time = resp.split(':')[1];
-                        this._appUIService.showSnackbar(`Reminder is snoozed for ${time} mins`, 'info');
                         this.updateReminderStatus(`Snooze:${time}`, item.ID);
+                        this._appUIService.showSnackbar(`Reminder is snoozed for ${time} mins`, 'info');
                     }
 
                     // remove the dialog from ref
@@ -734,7 +731,7 @@ export class TMACEventService {
      */
     private TmacServerConnectionSuccess = (evt: TmacServerConnectionSuccess) => {
         this._appUIService.showAppSnackbar({
-            message: `New TMAC server [(${evt.ResultMessage})] connection established`
+            message: `New server [${evt.ResultMessage}] connection established`
         });
     };
 

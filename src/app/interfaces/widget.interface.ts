@@ -1,4 +1,4 @@
-export interface IWidget<T = any, T2 = any> {
+export interface IWidget<T = any, K = any> {
     /**
      * Name of the Widget
      */
@@ -26,7 +26,7 @@ export interface IWidget<T = any, T2 = any> {
     /**
      * Widget Custom Data
      */
-    Data: T2;
+    Data: K;
     /**
      * Widget Interaction Details
      */

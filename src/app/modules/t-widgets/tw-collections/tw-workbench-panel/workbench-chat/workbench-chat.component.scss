@@ -23,7 +23,7 @@
     grid-template-columns: repeat(auto-fill, minmax(28%, 1fr));
     grid-gap: 15px;
     .avatar {
-        background-image: url('/assets/images/avatars/profile.jpg');
+        background-image: url('../../../../../../assets/images/avatars/profile.jpg');
         background-size: cover;
     }
 }

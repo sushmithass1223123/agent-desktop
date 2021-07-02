@@ -86,7 +86,7 @@
         <mat-icon *ngIf="auxCodeConfig.Enabled" class="arrow-icon s-24" fxHide.xs>keyboard_arrow_down</mat-icon>
     </div>
 
-    <mat-menu class="custom" #auxMenu="matMenu" xPosition="before">
+    <mat-menu class="custom aux-menu" #auxMenu="matMenu" xPosition="before">
         <button
             mat-menu-item
             *ngFor="let item of auxCodesList"

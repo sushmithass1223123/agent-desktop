@@ -609,3 +609,75 @@ export interface CustomerInfo {
      */
     MaskData?: IMaskData | boolean;
 }
+
+export interface AgentSkillRef {
+    /**
+     * Allowed flag
+     */
+    Allowed: boolean;
+    /**
+     * Agent ref
+     */
+    Agent: {
+        /**
+         * Agent allowed flag
+         */
+        Allowed: boolean;
+        /**
+         * Blind allowed flag
+         */
+        Blind: boolean;
+        /**
+         * Source for agent actions
+         */
+        Source: AgentSkillListSourceObject;
+        /**
+         * Allowed state for action
+         */
+        AllowedStates: [];
+        /**
+         * Team filter enabled flag
+         */
+        TeamFilter: boolean;
+        /**
+         * Columns to show
+         */
+        Columns: [];
+    };
+    /**
+     * Skill ref
+     */
+    Skill: {
+        /**
+         * Agent allowed flag
+         */
+        Allowed: boolean;
+        /**
+         * Blind allowed flag
+         */
+        Blind: boolean;
+        /**
+         * Source for skill actions
+         */
+        Source: AgentSkillListSourceObject;
+        /**
+         * Channel prefix to filter
+         */
+        ChannelPrefix: [];
+        /**
+         * Columns to show
+         */
+        Columns: [];
+    };
+}
+
+export interface CommonWidgetData {
+    /**
+     * Path of route
+     */
+    Path: string;
+    /**
+     * Route on interaction flag
+     */
+    RouteOnInteraction: boolean;
+}

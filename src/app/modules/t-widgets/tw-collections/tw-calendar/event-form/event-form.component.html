@@ -135,7 +135,12 @@
                 <mat-label>Notes</mat-label>
                 <textarea matInput formControlName="notes" mat-maxlength="250" max-rows="4"> </textarea>
             </mat-form-field>
-            <p *ngIf="this.event.status?.toLowerCase() === 'completed'">*Completed event/task cannot be edited!</p>
+            <p
+                *ngIf="this.event.status?.toLowerCase() === 'completed' || this.event.status?.toLowerCase() === 'rejected'"
+                class="twd-text-warn-default"
+            >
+                *{{ this.event.status }} event/task cannot be edited!
+            </p>
         </form>
     </div>
 
@@ -143,7 +148,7 @@
         <button
             *ngIf="action === 'edit'"
             mat-button
-            color="primary"
+            color="warn"
             class="mr-8"
             (click)="matDialogRef.close(['delete', eventForm])"
             aria-label="Delete"
@@ -170,7 +175,7 @@
             color="primary"
             class="save-button"
             (click)="matDialogRef.close(['save', eventForm])"
-            [disabled]="eventForm.invalid || this.event.status?.toLowerCase() === 'completed'"
+            [disabled]="eventForm.invalid || this.event.status?.toLowerCase() === 'completed' || this.event.status?.toLowerCase() === 'rejected'"
             aria-label="SAVE"
         >
             SAVE

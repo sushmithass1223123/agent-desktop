@@ -341,7 +341,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     openAddWorkCodeModal(): void {
         this.matDialog.open(this.addWorkcodeModalRef, {
-            width: '50%',
+            width: '40%',
+            minHeight: '400px',
             panelClass: 'workcode-dialog'
         });
     }
