@@ -390,6 +390,14 @@ export interface CustomDialogOtherData {
      * Message Classes
      */
     messageClasses?: string;
+    /**
+     * Button's custom msg for confirm button
+     */
+    yesMessage?: string;
+    /**
+     * Button's custom msg for cancel button
+     */
+    noMessage?: string;
 }
 
 export type AgentSkillListAgentSources = 'station' | 'agentId';

@@ -42,7 +42,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     loadWorkCodesReq: ResData<Record<string, WorkCode[]>> = {
         data: {
-            listData: []
+            'Workcode List': []
         },
         error: false,
         loading: false,
@@ -158,7 +158,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
 
             workCodeList = uniqBy(workCodeList, 'Name');
 
-            this.loadWorkCodesReq.data = this.widgetData.ByGroup ? groupBy(workCodeList, 'ParentName') : { listData: workCodeList };
+            this.loadWorkCodesReq.data = this.widgetData.ByGroup ? groupBy(workCodeList, 'ParentName') : { 'Workcode List': workCodeList };
 
             this.loadWorkCodesReq.loading = false;
             this.loadWorkCodesReq.error = false;
@@ -197,7 +197,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                     this.loadWorkCodesReq.data[k] = this.loadWorkCodesReq.data[k].filter((x) => x.Code !== evt.Code);
                 });
             } else {
-                this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== evt.Code);
+                this.loadWorkCodesReq.data['Workcode List'] = this.loadWorkCodesReq.data['Workcode List'].filter((x) => x.Code !== evt.Code);
             }
         }
     }
@@ -221,7 +221,6 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @method setup
      */
     public setup(): void {
-        this.widgetData.ByGroup = true;
         let subscription: Observable<any[]>;
 
         if (this.widgetData.Role === 'interaction') {
@@ -269,7 +268,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                         this.loadWorkCodesReq.data[group] = this.loadWorkCodesReq.data[group].filter((x) => x.Code !== option.Code);
                     }
                 } else {
-                    this.loadWorkCodesReq.data.listData = this.loadWorkCodesReq.data.listData.filter((x) => x.Code !== option.Code);
+                    this.loadWorkCodesReq.data['Workcode List'] = this.loadWorkCodesReq.data['Workcode List'].filter((x) => x.Code !== option.Code);
                 }
                 this._appUiService.showSnackbar('Work code set successfully', 'success');
                 this.workCodeInput.nativeElement.value = '';
@@ -303,7 +302,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                     if (this.widgetData.ByGroup) {
                         this.loadWorkCodesReq.data[(option as any).ParentName].push(option);
                     } else {
-                        this.loadWorkCodesReq.data.listData.push(option);
+                        this.loadWorkCodesReq.data['Workcode List'].push(option);
                     }
                 }
                 this._appUiService.showSnackbar('Work code removed successfully', 'success');
@@ -320,19 +319,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {String} name
      */
     _filterOptions(name: string): Record<string, WorkCode[]> {
-        let filteredData: any;
-        if (this.widgetData.ByGroup) {
-            filteredData = {};
-            Object.keys(this.loadWorkCodesReq.data).forEach((c) => {
-                filteredData[c] = this.loadWorkCodesReq.data[c].filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
-            });
-        } else {
-            if (!this.loadWorkCodesReq.data.listData) {
-                this.loadWorkCodesReq.data.listData = [];
-            }
-            filteredData = { listData: this.loadWorkCodesReq.data.listData.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase())) };
-        }
-        return filteredData;
+        return Object.entries(this.loadWorkCodesReq.data).reduce((acc, curr) => {
+            const [key, val] = curr;
+            acc[key] = val.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
+            return acc;
+        }, {});
     }
 
     /**

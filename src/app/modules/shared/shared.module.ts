@@ -16,6 +16,7 @@ import {
     EmailTemplateSelectorComponent,
     MailboxSettingsComponent,
     NoDataAvailableComponent,
+    PreviewEmailComponent,
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
     SharedWrapperComponent,
@@ -63,6 +64,7 @@ const sharedComponents = [
     TWChartDirective,
     CreateEmailComponent,
     AgentSkillListComponent,
+    PreviewEmailComponent,
     SharedWrapperComponent
 ];
 

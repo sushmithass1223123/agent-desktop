@@ -92,7 +92,7 @@
                                     "with": "src/environments/environment.prod.ts"
                                 }
                             ],
-                            "optimization": true,
+                            "optimization": { "scripts": true, "fonts": { "inline": true }, "styles": { "minify": true, "inlineCritical": false } },
                             "outputHashing": "all",
                             "sourceMap": true,
                             "extractCss": true,
@@ -116,13 +116,13 @@
                             "ngswConfigPath": "ngsw-config.json"
                         },
                         "development": {
-                            "aot": true,
+                            "buildOptimizer": false,
                             "optimization": false,
-                            "vendorChunk": false,
+                            "vendorChunk": true,
                             "extractLicenses": false,
                             "sourceMap": true,
-                            "outputHashing": "none",
-                            "namedChunks": true
+                            "namedChunks": true,
+                            "outputHashing": "none"
                         },
                         "ec": {
                             "budgets": [

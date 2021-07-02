@@ -2473,7 +2473,8 @@
                                                     },
                                                     "ForwardAllowed": true,
                                                     "ReplyAllAllowed": true,
-                                                    "InteractionCommentAllowed": true
+                                                    "InteractionCommentAllowed": true,
+                                                    "DraftPollingInterval": 10000
                                                 }
                                             },
                                             {
@@ -3196,7 +3197,7 @@
                                     },
                                     "Data": {
                                         "General": {
-                                            "WorkbenchUrl": "https://dice.tetherfi.cloud:55015/api/workbench"
+                                            "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
                                         },
                                         "Channels": [
                                             {
@@ -3232,7 +3233,8 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "SearchPollingInterval": 10000
+                                                    "SearchPollingInterval": 10000,
+                                                    "QueueTransferForAgent": false
                                                 }
                                             },
                                             {

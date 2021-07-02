@@ -1,16 +1,18 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { orderBy } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Agent Interactions details Table widget
@@ -23,11 +25,6 @@ import { takeUntil } from 'rxjs/operators';
     animations: fuseAnimations
 })
 export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    /**
-     * Shows Advanced Seargc Overlay
-     */
-    showAdvancedSearchOverlay = false;
-
     /**
      * app config data
      */
@@ -77,6 +74,15 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     ];
 
     /**
+     * Advanced Search Modal
+     */
+    @ViewChild('advanceSearchModal') advanceSearchModal: TemplateRef<MatDialog>;
+    /**
+     * Advanced Search Modal Ref
+     */
+    advanceSearchModalRef: MatDialogRef<any>;
+
+    /**
      * Interaction Details table data
      */
     interactionDetailsTable = {
@@ -101,7 +107,20 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         AgentComment: new FormControl()
     });
 
-    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
+    /**
+     * Fuse custom config
+     */
+    customFuse = {
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
+        widget$: this._fuseFacadeService.widgetBgClasses$
+    };
+
+    constructor(
+        private _tmacEventService: TMACEventService,
+        private _appUIService: AppUiService,
+        private _matDialog: MatDialog,
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         super();
     }
 
@@ -113,21 +132,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        const dateCols = ['CreatedTimeStart', 'CreatedTimeEnd', 'ClosedTimeStart', 'ClosedTimeEnd'];
-        this.advancedSearchForm.valueChanges.subscribe((res) => {
-            const searchKey = {};
-            Object.keys(res).forEach((k) => {
-                if (res[k]) {
-                    if (dateCols.includes(k)) {
-                        searchKey[k] = res[k].toString().trim().toLowerCase();
-                    } else {
-                        searchKey[k] = res[k].trim().toLowerCase();
-                    }
-                }
-            });
-            const stringifiedSearch = JSON.stringify(searchKey);
-            this.interactionDetailsTable.source.filter = stringifiedSearch === '{}' ? '' : stringifiedSearch;
-        });
+        this.interactionDetailsTable.source.sort = this.sort;
+        this.interactionDetailsTable.source.paginator = this.paginator;
+        this.interactionDetailsTable.source.filterPredicate = this.filterPredicate;
 
         this._tmacEventService
             .getNonInteractionEvents(['AgentInteractionDetailsEvent'])
@@ -147,98 +154,43 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     /**
      * Custom filter method fot Angular Material Datatable
      */
-    createFilter(): (data: any, filter: string) => boolean {
-        const filterFunction = (data: any, filter: string): boolean => {
-            const searchTerms = JSON.parse(filter);
-            let isFilterSet = false;
-            for (const col in searchTerms) {
-                if (searchTerms[col].toString() !== '') {
-                    isFilterSet = true;
-                } else {
-                    delete searchTerms[col];
-                }
-            }
-
-            const filtersApplied = Object.keys(searchTerms).length;
-            let filtersMatched = 0;
-
-            const createdDateCols = ['CreatedTimeStart', 'CreatedTimeEnd'];
-            const closedDateCols = ['ClosedTimeStart', 'ClosedTimeEnd'];
-            const nameSearch = () => {
-                let found = false;
-                if (isFilterSet) {
-                    Object.keys(searchTerms).map((col) => {
-                        if (createdDateCols.includes(col)) {
-                            const start = new Date(searchTerms['CreatedTimeStart']).getTime();
-                            const endDate = new Date(searchTerms['CreatedTimeEnd']);
-                            endDate.setHours(24);
-                            const end = endDate.getTime();
-                            const actualDate = new Date(data['CreatedDateTime']).getTime();
-
-                            if (start && !end) {
-                                if (actualDate >= start) {
-                                    found = true;
-                                    filtersMatched += 1;
-                                }
-                            } else if (!start && end) {
-                                if (actualDate <= end) {
-                                    found = true;
-                                    filtersMatched += 1;
-                                }
-                            } else if (start && end) {
-                                if (actualDate >= start && actualDate <= end) {
-                                    found = true;
-                                    filtersMatched += 1;
-                                }
-                            }
-                        } else if (closedDateCols.includes(col)) {
-                            const start = new Date(searchTerms['ClosedTimeStart']).getTime();
-                            const endDate = new Date(searchTerms['ClosedTimeEnd']);
-                            endDate.setHours(24);
-                            const end = endDate.getTime();
-                            const actualDate = new Date(data['ClosedDateTime']).getTime();
-                            if (start && !end) {
-                                if (actualDate >= start) {
-                                    found = true;
-                                    filtersMatched += 1;
-                                }
-                            } else if (!start && end) {
-                                if (actualDate <= end) {
-                                    found = true;
-                                    filtersMatched += 1;
-                                }
-                            } else if (start && end) {
-                                if (actualDate >= start && actualDate <= end) {
-                                    found = true;
-                                    filtersMatched += 1;
-                                }
-                            }
-                        } else {
-                            if (data[col] && data[col].toLowerCase().indexOf(searchTerms[col]) !== -1 && isFilterSet) {
-                                found = true;
-                                filtersMatched += 1;
-                            }
-                            // searchTerms[col]
-                            //     .trim()
-                            //     .toLowerCase()
-                            //     .split(' ')
-                            //     .forEach((word: any) => {
-                            //         if (data[col]?.toString().toLowerCase().indexOf(word) !== -1) {
-                            //             found = true;
-                            //         }
-                            //     });
-                        }
-                        // }
-                    });
-                    return filtersMatched === filtersApplied;
-                } else {
-                    return true;
-                }
-            };
-            return nameSearch();
+    filterPredicate = (data: any, filterStr: string): boolean => {
+        if (filterStr === '{}') {
+            return true;
+        }
+        const filters = JSON.parse(filterStr);
+        const dateCols = {
+            CreatedTimeStart: data.CreatedDateTime,
+            CreatedTimeEnd: data.CreatedDateTime,
+            ClosedTimeStart: data.ClosedDateTime,
+            ClosedTimeEnd: data.ClosedDateTime
         };
-        return filterFunction;
-    }
+
+        const compareDates = (dateKey: string): boolean => {
+            const filterDate = new Date(filters[dateKey]);
+            const recordDate = new Date(dateCols[dateKey]).getTime();
+            if (dateKey.includes('Start')) {
+                filterDate.setHours(0, 0, 0, 0);
+                return filterDate.getTime() <= recordDate;
+            } else {
+                filterDate.setHours(23, 59, 59, 9999);
+                return filterDate.getTime() >= recordDate;
+            }
+        };
+
+        const valid = Object.entries(filters).every((f) => {
+            const [key, value] = f;
+            if (!value) {
+                return true;
+            }
+            if (dateCols[key]) {
+                return compareDates(key);
+            } else {
+                return (data[key].toString().toLowerCase() as string).includes((value as string).toLowerCase());
+            }
+        });
+        return valid;
+    };
 
     /**
      * AgentInteractionDetailsEvent hanlder
@@ -260,10 +212,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']).slice(0, 15);
         }
 
-        this.interactionDetailsTable.source = new MatTableDataSource(source);
-        this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.paginator = this.paginator;
-        this.interactionDetailsTable.source.filterPredicate = this.createFilter();
+        this.interactionDetailsTable.source.data = source;
     }
 
     /**
@@ -283,8 +232,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']).slice(0, 15);
         }
 
-        this.interactionDetailsTable.source = new MatTableDataSource(source);
-        this.interactionDetailsTable.source.sort = this.sort;
+        this.interactionDetailsTable.source.data = source;
     }
 
     /**
@@ -322,5 +270,23 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             minWidth: '30%',
             maxWidth: '30%'
         });
+    }
+
+    /**
+     * Opens Advanced Search modal
+     */
+    showAdvanceSearchModal(): void {
+        this.advanceSearchModalRef = this._matDialog.open(this.advanceSearchModal, {
+            minWidth: '45%'
+        });
+    }
+
+    /**
+     * Does advanced Search over the table
+     */
+    doAdvancedSearch(): void {
+        const filters = this.advancedSearchForm.value || {};
+        this.interactionDetailsTable.source.filter = JSON.stringify(filters);
+        this.advanceSearchModalRef?.close();
     }
 }

@@ -1,16 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -32,15 +20,7 @@ import {
     UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import {
-    DRAFT_REASONS,
-    EMAIL_CURRENTSTATUS_CODES,
-    EMAIL_DRAFT_SAVE_INTERVAL,
-    EMAIL_REASONCODE_VALUES,
-    INBOX_REASONS,
-    OUTBOX_REASONS,
-    SENT_REASONS
-} from 'app/constants';
+import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError, urlify } from 'app/utils';
 import { format } from 'date-fns';
@@ -116,10 +96,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     InboxReasons = INBOX_REASONS;
 
-    // /**
-    //  * Fuse config
-    //  */
-    // fuseConfig: FuseConfig;
     /**
      * Fuse custom config
      */
@@ -207,7 +183,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Draft pollling subscription
      */
-    draftPolling: Subscription;
+    draftPolling$: Subscription;
+
+    /**
+     * Duration interval for saving email as draft in milliseconds
+     */
+    draftPollDuration = 0;
 
     /**
      * Viewing email ref
@@ -252,6 +233,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.initWrapper(this.data);
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.currentInteraction = this.data.InteractionDetails;
+        this.draftPollDuration = this.data.Data.DraftPollingInterval;
 
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
@@ -284,7 +266,16 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             try {
                 await this.setEmailDetails();
                 if (['AgentDraftPull'].includes(this.currentInteraction.RouteReason)) {
-                    this.showReplyEditor();
+                    const { Body, Subject, CCList, To, AttachmetList } = this.currentInteraction;
+                    this.replyInfo = {
+                        BCC: '',
+                        CC: CCList.split(','),
+                        To: To || '',
+                        Body,
+                        Subject,
+                        Files: [],
+                        From: this.currentInteraction.Mailbox
+                    };
                 }
                 if (OUTBOX_REASONS.includes(this.currentInteraction.RouteReason)) {
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
@@ -339,24 +330,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
+     * TODO
      * Updates email when a new email is sent to agent from the same customer
      * @param {UpdateEmailEvent}  _evt
      */
     UpdateEmailEvent(_evt: UpdateEmailEvent): void {
         // this.setEmailDetails();
-    }
-
-    /**
-     * Iframe event when loaded , loads the email inside it
-     * @param iframe
-     */
-    loadEmailInIframe(iframe: HTMLIFrameElement): void {
-        const frag = document.createRange().createContextualFragment(this.currentInteraction.Body);
-        const doc = iframe.contentDocument || iframe.contentWindow;
-        (doc as any).body.innerHTML = `${
-            (doc as any).body.innerHTML
-        } <style>::-webkit-scrollbar{width:4px !important;height:4px !important;}::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important;}</style>`;
-        (doc as any).body.appendChild(frag);
     }
 
     /**
@@ -479,6 +458,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             const msg = 'Unexpected response from server';
             if (retry) {
                 this._appUIService.showSnackbar(msg, 'failure');
+                this.getInboxMessageReq.error = true;
+                this.getInboxMessageReq.loading = false;
+                return;
             } else {
                 throwADError(msg);
             }
@@ -545,18 +527,20 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     }
                 });
         };
+        // disable the button
+        if (btn) {
+            btn.disabled = true;
+        }
         if (force) {
             closeApiCall();
         } else {
             // confirm close interaction
             const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
-            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
                 if (dialogResult) {
                     closeApiCall();
-                } else {
-                    if (btn) {
-                        btn.disabled = false;
-                    }
+                } else if (btn) {
+                    btn.disabled = false;
                 }
             });
         }
@@ -602,15 +586,28 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         } else {
             // confirm close interaction
             const confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
-            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
                 if (dialogResult) {
                     closeApiCall();
-                } else {
-                    if (btn) {
-                        btn.disabled = false;
-                    }
+                } else if (btn) {
+                    btn.disabled = false;
                 }
             });
+        }
+    }
+
+    /**
+     * Deletes the draft copy of the email
+     */
+    async deleteDraftEmail(): Promise<void> {
+        try {
+            const { InSessionId, OutSessionId, EmailDraftExists } = this.currentInteraction;
+            if (EmailDraftExists || this.draftPollDuration) {
+                await SDKClient.deleteBulkEmailsInDraft(`${InSessionId}|${OutSessionId}`);
+            }
+        } catch (e) {
+            console.error('Unable to delete the draft copy of the email');
+            console.error(e);
         }
     }
 
@@ -638,11 +635,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Body, Subject, From, To, CreatedTime, RejectReason, RouteReason } = currentInteraction;
-        const preBody =
-            RejectReason || this.DraftReasons.includes(RouteReason)
-                ? ''
-                : `
+        const { AttachmetList, Body, Subject, From, To, CreatedTime, RejectReason, RouteReason, ToList, Mailbox } = currentInteraction;
+        const preBody = RejectReason
+            ? ''
+            : `
         <p></p>
         <br/>
         <div style='border-top: 1px solid gray;'>
@@ -659,13 +655,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.replyInfo = {
             BCC: '',
             CC: '',
-            To: From || '',
+            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? ToList : From) || '',
             Body: `
             ${preBody} 
             ${Body}`,
             Subject,
             Files: [],
-            From: this.currentInteraction.Mailbox,
+            From: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? From : Mailbox) || '',
             Replying: true
         };
         this.saveEmailAsDraft();
@@ -696,13 +692,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.replyInfo = {
             BCC: '',
             CC: CCList || '',
-            To: From || '',
+            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? this.currentInteraction.Mailbox : From) || '',
             Body: `
                 ${preBody}
                 ${Body}`,
             Subject,
             Files: [],
-            From: this.currentInteraction.Mailbox,
+            From: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? From : this.currentInteraction.Mailbox) || '',
             Replying: true
         };
         this.saveEmailAsDraft();
@@ -768,7 +764,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 btn.disabled = true;
             }
             this.sendingEmailAsMaker = true;
-            this._fuseProgressBarService.show();
+            // this._fuseProgressBarService.show();
+            const ref = this._appUIService.showSnackbar('Sending Email', 'loading');
             const res = await SDKClient.sendEmail({
                 attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: InSessionId }))) : '',
                 bccList: BCC.join(','),
@@ -781,7 +778,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 subject: Subject,
                 typeOfResponse: ''
             });
-            this._fuseProgressBarService.hide();
+            // this._fuseProgressBarService.hide();
+            ref.dismiss();
             if (!res.response) {
                 throwADError('Unexpected response from Server');
             }
@@ -803,7 +801,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             this.sendingEmailAsMaker = false;
             this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
-            this.draftPolling?.unsubscribe();
+            this.draftPolling$?.unsubscribe();
         } catch (err) {
             console.error(err);
             let msg = 'Unable to send email';
@@ -861,7 +859,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         throwADError(`${reasonCodeMsg} [${res.response.SendStatus}]`);
                     }
                     this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
-                    this.draftPolling?.unsubscribe();
+                    this.draftPolling$?.unsubscribe();
                     sendLoader?.dismiss();
                     btn.disabled = false;
                 } else {
@@ -884,41 +882,75 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Save email as Draft
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
-        const email = this.createEmailRef?.getEmail();
-        if (email) {
-            // @TODO Files not sent as draft arg
-            const { BCC, CC, To, Subject, Body, Files } = email;
-            SDKClient.saveEmailDraft({
-                bccList: BCC.join(','),
-                body: Body.toString(),
-                ccList: CC.join(','),
-                inboxSessionId: InSessionId,
-                outboxSessionId: OutSessionId,
-                routeId: RouteId || '',
-                subject: Subject,
-                toList: To.join(','),
-                typeOfResponse: ''
-            }).then((x) => {
-                this.currentInteraction.OutSessionId = x.response;
-                if (closeEmail) {
-                    this.closeInteraction(btn, true);
-                }
-            });
-        }
-        if (!this.draftPolling) {
-            const polling = interval(EMAIL_DRAFT_SAVE_INTERVAL);
-            this.draftPolling = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
+        if (this.draftPollDuration) {
+            // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
+            const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
+            const email = this.createEmailRef?.getEmail();
+            if (email) {
+                // @TODO Files not sent as draft arg
+                const { BCC, CC, To, Subject, Body, Files } = email;
+                SDKClient.saveEmailDraft({
+                    bccList: BCC.join(','),
+                    body: Body.toString(),
+                    ccList: CC.join(','),
+                    inboxSessionId: InSessionId,
+                    outboxSessionId: OutSessionId,
+                    routeId: RouteId || '',
+                    subject: Subject,
+                    toList: To.join(','),
+                    typeOfResponse: ''
+                }).then((x) => {
+                    this.currentInteraction.EmailDraftExists = true;
+                    if (x.response) {
+                        this.currentInteraction.OutSessionId = x.response;
+                    }
+                    if (closeEmail) {
+                        this.closeInteraction(btn, true);
+                    }
+                });
+            }
+            if (!this.draftPolling$) {
+                const polling = interval(this.draftPollDuration);
+                this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
+            }
         }
     }
 
     /**
      * Closes the editor
      */
-    closeEditor(): void {
-        this.replyInfo = null;
-        this.draftPolling?.unsubscribe();
+    closeEditor(btn?: MatButton): void {
+        // confirm close interaction
+        const confirmDialogRef = this._appUIService.showCustomDialog(
+            'confirm',
+            '',
+            'Save email as draft and close?',
+            {
+                yesMessage: 'Yes',
+                noMessage: 'No, Just close'
+            },
+            {
+                disableClose: false
+            }
+        );
+        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
+            if (dialogResult) {
+                this.saveEmailAsDraft();
+                this.replyInfo = null;
+                this.draftPolling$?.unsubscribe();
+            } else {
+                // this checks if the user clicked on cancel, or on the overlay
+                // if the user clicks on cancel, this will be boolean false. Else it will be undefined
+                if (dialogResult === false) {
+                    this.deleteDraftEmail();
+                    this.replyInfo = null;
+                    this.draftPolling$?.unsubscribe();
+                }
+                if (btn) {
+                    btn.disabled = false;
+                }
+            }
+        });
     }
 
     /**
@@ -960,14 +992,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             evt.disabled = false;
         });
-    }
-
-    /**
-     * Opens a selected attachment file
-     * @param {String} fileUrl
-     */
-    openFile(fileUrl: string): void {
-        window.open(fileUrl);
     }
 
     /**

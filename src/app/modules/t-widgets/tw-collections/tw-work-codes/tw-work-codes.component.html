@@ -75,7 +75,7 @@
     </mat-form-field>
 
     <ng-container *ngFor="let group of filteredOptions | async | keyvalue">
-        <p class="mat-title">{{ group.key }}</p>
+        <p class="mat-title" *ngIf="group.value && group.value.length">{{ group.key }}</p>
         <mat-chip-list aria-label="WorkCodes">
             <mat-chip *ngFor="let workCode of group.value" class="bg-secondary" (click)="setWorkCode(workCode, group.key)">
                 <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
