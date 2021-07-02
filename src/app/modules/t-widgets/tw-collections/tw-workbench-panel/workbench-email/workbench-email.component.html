@@ -339,11 +339,10 @@
                             </div>
                         </div>
                     </div>
-
-                    <div *ngIf="selectedMails.some" class="bulk-operations twd-mt-3 twd-grid twd-auto-cols-auto">
+                    <div *ngIf="selectedMails.some || selectedMails.all" class="bulk-operations twd-mt-3 twd-mb-2 twd-flex twd-gap-1">
                         <button
                             mat-raised-button
-                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab === 'queue'"
                             (click)="replyToSelectedEmails(getSelectedEmails())"
                         >
@@ -351,8 +350,8 @@
                         </button>
                         <button
                             mat-raised-button
-                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                            *ngIf="currentTab === 'queue'"
+                            class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            *ngIf="currentTab === 'queue' && allowQueueTransfer"
                             (click)="transferEmail(getSelectedEmails())"
                         >
                             Transfer All
@@ -360,7 +359,7 @@
                         <button
                             mat-raised-button
                             color="primary"
-                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab === 'queue'"
                             (click)="closeEmails(getSelectedEmails())"
                         >
@@ -369,7 +368,7 @@
                         <button
                             mat-raised-button
                             color="accent"
-                            class="twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
+                            class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                             *ngIf="currentTab !== 'sentitem' && currentTab !== 'queue'"
                             (click)="deleteEmails(getSelectedEmails())"
                         >
@@ -415,7 +414,7 @@
                     <button
                         mat-raised-button
                         class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                        *ngIf="selectedEmail.currentTab === 'queue'"
+                        *ngIf="selectedEmail.currentTab === 'queue' && allowQueueTransfer"
                         (click)="transferEmail([selectedEmail])"
                     >
                         Transfer
@@ -454,24 +453,21 @@
                     "
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="twd-shadow twd-max-h-96 twd-overflow-auto">
-                        <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
-                            <div
-                                class="twd-relative twd-flex-1 twd-px-1"
-                                [ngClass]="{ 'twd-truncate': !minimizeSubject }"
-                                [innerHtml]="selectedEmail.Subject"
-                            ></div>
-                            <span (click)="minimizeSubject = !minimizeSubject" class="twd-cursor-pointer" matRipple>
-                                <mat-icon>{{ minimizeSubject ? 'expand_more' : 'expand_less' }}</mat-icon>
-                            </span>
-                        </div>
-                        <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
+                    <preview-email
+                        [email]="{
+                            Subject: selectedEmail.Subject,
+                            Body: selectedEmail.Body,
+                            Files: selectedEmail.Attachments
+                        }"
+                    >
+                        <div id="emailInfo" class="px-28">
                             <div class="twd-flex twd-justify-between">
                                 <div fxFlex="80" *ngIf="{ inQueueOrInbox: ['queue', 'inbox'].includes(currentTab) } as tab">
                                     <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
                                     <p class="text-bold my-4" *ngIf="selectedEmail.CCList">Cc : {{ selectedEmail.CCList }}</p>
                                     <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
                                     <p class="my-4 text-bold">Status: {{ selectedEmail.CurrentStatus || 'NA' }}</p>
+                                    <p class="my-4 text-bold">Agent: {{ selectedEmail.AgentName || 'NA' }}</p>
 
                                     <ng-container *ngIf="tab.inQueueOrInbox">
                                         <p class="my-4 text-bold">
@@ -479,7 +475,6 @@
                                         </p>
 
                                         <p class="my-4 text-bold">Prirority: {{ selectedEmail.Priority || 'NA' }}</p>
-                                        <p class="my-4 text-bold">Agent: {{ selectedEmail.AgentName || 'NA' }}</p>
                                         <p class="my-4 text-bold">
                                             Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                         </p>
@@ -489,78 +484,19 @@
                                             Closed Status: {{ 'Closed by ' + selectedEmail.ClosedBy }}
                                         </p>
                                         <p *ngIf="selectedEmail.Priority" class="my-4 text-bold">Prirority: {{ selectedEmail.Priority }}</p>
-                                        <p *ngIf="selectedEmail.AgentName" class="my-4 text-bold">Agent: {{ selectedEmail.AgentName }}</p>
                                         <p *ngIf="selectedEmail.RepliedStatus?.length" class="my-4 text-bold">
                                             Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                         </p>
                                     </ng-container>
-                                    <p *ngIf="selectedEmail.intent" class="my-4 text-bold">Intent: {{ selectedEmail.intent }}</p>
+                                    <p *ngIf="selectedEmail.Intent" class="my-4 text-bold">Intent: {{ selectedEmail.Intent }}</p>
                                 </div>
                                 <div fxFlex="15">
                                     <p class="my-4">{{ selectedEmail.AddedTime | date: 'longDate' }}</p>
                                     <p class="my-4">{{ selectedEmail.AddedTime | date: 'shortTime' }}</p>
                                 </div>
                             </div>
-
-                            <div
-                                class="twd-py-2"
-                                *ngIf="{
-                                    lesstItems: selectedEmail.Attachments.slice(0, 3),
-                                    moreItems: selectedEmail.Attachments.slice(3)
-                                } as attachList"
-                            >
-                                <button
-                                    *ngFor="let file of attachList.lesstItems"
-                                    mat-stroked-button
-                                    class="border-radius-20 m-4"
-                                    [matTooltip]="file.Ext | uppercase"
-                                    (click)="openFile(file.URL)"
-                                >
-                                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                    <span>{{ file.Name }}</span>
-                                </button>
-
-                                <ng-container *ngIf="showMoreAttachments">
-                                    <button
-                                        *ngFor="let file of attachList.moreItems"
-                                        mat-stroked-button
-                                        class="border-radius-20 m-4"
-                                        [matTooltip]="file.Ext | uppercase"
-                                        (click)="openFile(file.URL)"
-                                    >
-                                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                        <span>{{ file.Name }}</span>
-                                    </button>
-                                </ng-container>
-
-                                <button
-                                    mat-stroked-button
-                                    class="border-radius-20 m-4"
-                                    *ngIf="!showMoreAttachments && attachList.moreItems.length"
-                                    (click)="showMoreAttachments = !showMoreAttachments"
-                                >
-                                    <mat-icon> expand_more </mat-icon>
-                                    View {{ attachList.moreItems.length }} more
-                                </button>
-
-                                <button
-                                    mat-stroked-button
-                                    class="border-radius-20 m-4"
-                                    *ngIf="showMoreAttachments"
-                                    (click)="showMoreAttachments = false"
-                                >
-                                    <mat-icon>expand_less</mat-icon>
-                                    Show less
-                                </button>
-                            </div>
                         </div>
-                    </div>
-                    <div class="twd-flex-1 twd-relative twd-pb-11 lg:twd-pb-0">
-                        <div id="openEmailRef" class="lg:twd-absolute twd-left-0 twd-top-0 twd-w-full twd-p-1 lg:twd-h-full lg:twd-overflow-auto">
-                            <!-- <div [innerHtml]="selectedEmail.body"></div> -->
-                            <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
-                        </div>
-                    </div>
+                    </preview-email>
                 </div>
             </div>
             <div
@@ -603,15 +539,18 @@
                         <div class="twd-p-3" *ngIf="currentTab !== 'sent'">
                             <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
                         </div>
-                        <div mat-ripple class="twd-flex-1 twd-flex twd-flex-wrap twd-justify-between twd-p-3" (click)="openEmail(node)">
-                            <div class="twd-w-full 2xl:twd-w-max">
+                        <div
+                            mat-ripple
+                            class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-p-3 twd-overflow-hidden"
+                            (click)="openEmail(node)"
+                        >
+                            <div class="twd-w-full 2xl:twd-max-w-9/12">
                                 <p class="font-weight-600 my-4 twd-truncate">
-                                    <!-- {{ node.ToList || 'NA' }} -->
                                     {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
                                 </p>
                                 <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
                             </div>
-                            <div class="twd-w-full 2xl:twd-w-max twd-flex twd-items-start">
+                            <div class="twd-flex-1 twd-flex 2xl:twd-justify-between twd-items-start">
                                 <div class="twd-text-xs twd-font-bold twd-mt-1.5">
                                     <p>{{ node.AddedTime | date: 'mediumDate' }}</p>
                                     <span> {{ node.AddedTime | date: 'shortTime' }} </span>
@@ -642,7 +581,7 @@
                         "
                     >
                         <div class="twd-flex twd-items-center">
-                            <div *ngIf="currentTab !== 'queue' && node.Skill && getEmailChecks(node.children) as selected">
+                            <div *ngIf="currentTab !== 'queue' && !node.grandChildren&& getEmailChecks(node.children) as selected">
                                 <mat-checkbox
                                     [indeterminate]="selected.some"
                                     [checked]="selected.all"

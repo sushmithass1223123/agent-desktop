@@ -22,7 +22,9 @@
 </div>
 
 <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
-    <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">Cancel</button>
+    <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
+        {{ data.noMessage ? data.noMessage : 'Cancel' }}
+    </button>
     <button
         mat-raised-button
         [disabled]="data.type === 'prompt' && promptData.trim() === ''"
@@ -30,6 +32,8 @@
         (click)="data.done(data.type === 'prompt' ? promptData : true)"
         tabindex="-1"
     >
-        {{ data.type === 'prompt' || data.type === 'alert' ? 'Ok' : data.type === 'confirm' ? 'Confirm' : 'Done' }}
+        {{
+            data.yesMessage ? data.yesMessage : data.type === 'prompt' || data.type === 'alert' ? 'Ok' : data.type === 'confirm' ? 'Confirm' : 'Done'
+        }}
     </button>
 </div>

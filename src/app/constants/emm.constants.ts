@@ -14,7 +14,7 @@ export const AVAILABLE_ENTITIES = [
 
 export const EMAIL_REASONCODE_VALUES = {
     0: 'success',
-    1: 'Email Scheduled',
+    1: 'success', // was Email Scheduled. Changed due to server issue
     20: 'Mailbox is not enabled',
     21: 'Mailbox sending out not enabled',
     22: 'Exception (refer to emm logs)',

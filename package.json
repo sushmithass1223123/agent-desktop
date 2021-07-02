@@ -9,7 +9,7 @@
     "build": "ng build --baseHref=/agent-desktop/",
     "build:prod": "ng build --prod --baseHref=/agent-desktop/",
     "build:prod:stats": "ng build --prod --baseHref=/agent-desktop/ --stats-json",
-    "build:prod:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod",
+    "build:prod:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --baseHref=/agent-desktop/ --prod",
     "build:serve": "serve dist -l 5000",
     "test": "ng test",
     "lint": "ng lint",

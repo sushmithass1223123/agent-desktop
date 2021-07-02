@@ -336,11 +336,6 @@ export const AGENT_FEATURES_MAP = {
     }
 };
 
-/**
- * Duration interval for saving email as draft in milliseconds
- */
-export const EMAIL_DRAFT_SAVE_INTERVAL = 20000;
-
 export const AUX_STATUSES = {
     available: {
         type: 'available',

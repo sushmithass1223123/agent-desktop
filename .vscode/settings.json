@@ -108,8 +108,8 @@
             "description": "A scope may be provided to a commit’s type, to provide additional contextual information and is contained within parenthesis, e.g., \"feat(parser): add ability to parse arrays\".",
             "type": "text",
             "multiline": false,
-            "prefix": "(",
-            "suffix": ")"
+            "prefix": "",
+            "suffix": ""
         },
         {
             "label": "Short description",

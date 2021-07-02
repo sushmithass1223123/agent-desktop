@@ -436,7 +436,7 @@
                                 </button>
                             </mat-menu>
                         </button>
-                        <!-- <button
+                        <button
                             mat-icon-button
                             class="w-32 h-32 twd-leading-none"
                             matTooltip="Show Group"
@@ -446,7 +446,7 @@
                             <mat-icon>
                                 {{ element.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
                             </mat-icon>
-                        </button> -->
+                        </button>
                     </mat-cell>
                 </ng-container>
 
@@ -614,161 +614,53 @@
                                 </ng-container>
                             </ng-container>
 
-                            <ng-container
-                                *ngIf="
-                                    mode === 'Email Preview' && {
-                                        loaded: !emailThreadReq.loading && !emailThreadReq.error,
-                                        error: emailThreadReq.error,
-                                        loading: emailThreadReq.loading
-                                    } as email
-                                "
-                            >
-                                <div
-                                    *ngIf="email.loaded && emailThreadReq.data as emailInfo"
-                                    id="emailInfo"
-                                    class="twd-flex-1 twd-h-full twd-z-10 twd-relative"
+                            <ng-container *ngIf="mode === 'Email Preview'">
+                                <preview-email
+                                    [email]="emailThreadReq.data"
+                                    [loading]="emailThreadReq.loading"
+                                    [error]="emailThreadReq.error"
+                                    (retry)="showEmailThread()"
                                 >
-                                    <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
-                                        <div
-                                            class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md twd-px-4"
-                                        >
-                                            <div class="twd-flex twd-justify-between">
-                                                <div
-                                                    id="subject"
-                                                    class="twd-flex-1 twd-text-xl twd-mb-2 twd-truncate"
-                                                    [innerHtml]="emailInfo.Subject"
-                                                ></div>
-                                                <button mat-icon-button (click)="smallEmailDescription = !smallEmailDescription">
-                                                    <mat-icon>expand_more</mat-icon>
-                                                </button>
-                                            </div>
-                                            <div
-                                                #emailInfoRef
-                                                class="twd-flex twd-justify-between twd-overflow-hidden twd-transition-all"
-                                                [ngClass]="{ 'twd-h-0': !smallEmailDescription }"
-                                            >
-                                                <div fxFlex="80" class="twd-flex">
-                                                    <div class="twd-flex-1">
-                                                        <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
-                                                        <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
-                                                        <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
-                                                        <p matTooltip="Intent">
-                                                            <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
-                                                        </p>
-                                                        <p class="my-4 text-bold">
-                                                            Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                                                        </p>
-                                                        <ng-container *ngIf="emailInfo.AddedTime">
-                                                            <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
-                                                            <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
-                                                        </ng-container>
-                                                    </div>
-
-                                                    <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
-                                                        <p class="my-4 text-bold">Status: {{ emailInfo.CurrentStatus || 'NA' }}</p>
-                                                        <p class="my-4 text-bold">Prirority: {{ emailInfo.Priority || 'NA' }}</p>
-                                                        <p class="my-4 text-bold">Agent: {{ emailInfo.AgentName || 'NA' }}</p>
-                                                        <p class="my-4 text-bold">
-                                                            Closed Status: {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div
-                                                #emailAttachmentRef
-                                                *ngIf="{
-                                                    lesstItems: emailInfo.Attachments?.slice(0, 3),
-                                                    moreItems: emailInfo.Attachments?.slice(3, -1)
-                                                } as attachList"
-                                                class="twd-overflow-hidden twd-transition-all"
-                                                [ngClass]="{ 'twd-h-0': !smallEmailDescription }"
-                                            >
-                                                <button
-                                                    *ngFor="let file of attachList.lesstItems"
-                                                    mat-stroked-button
-                                                    class="border-radius-20 m-4"
-                                                    [matTooltip]="file.Ext | uppercase"
-                                                    (click)="openFile(file.URL)"
-                                                >
-                                                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                                    <span>{{ file.Name }}</span>
-                                                </button>
-
-                                                <ng-container *ngIf="showMoreAttachments">
-                                                    <button
-                                                        *ngFor="let file of attachList.moreItems"
-                                                        mat-stroked-button
-                                                        class="border-radius-20 m-4"
-                                                        [matTooltip]="file.Ext | uppercase"
-                                                        (click)="openFile(file.URL)"
-                                                    >
-                                                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                                        <span>{{ file.Name }}</span>
-                                                    </button>
+                                    <div
+                                        *ngIf="emailThreadReq.data as emailInfo"
+                                        id="emailInfo"
+                                        class="twd-flex twd-justify-between twd-overflow-hidden twd-transition-all"
+                                    >
+                                        <div fxFlex="80" class="twd-flex">
+                                            <div class="twd-flex-1">
+                                                <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
+                                                <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
+                                                <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
+                                                <p matTooltip="Intent">
+                                                    <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
+                                                </p>
+                                                <p class="my-4 text-bold">
+                                                    Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                                </p>
+                                                <ng-container *ngIf="emailInfo.AddedTime">
+                                                    <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
+                                                    <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
                                                 </ng-container>
-
-                                                <button
-                                                    mat-stroked-button
-                                                    class="border-radius-20 m-4"
-                                                    *ngIf="!showMoreAttachments && attachList.moreItems?.length"
-                                                    (click)="showMoreAttachments = !showMoreAttachments"
-                                                >
-                                                    <mat-icon> expand_more </mat-icon>
-                                                    View {{ attachList.moreItems.length }} more
-                                                </button>
-
-                                                <button
-                                                    mat-stroked-button
-                                                    class="border-radius-20 m-4"
-                                                    *ngIf="showMoreAttachments"
-                                                    (click)="showMoreAttachments = false"
-                                                >
-                                                    <mat-icon>expand_less</mat-icon>
-                                                    Show less
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div class="twd-relative twd-flex-1 twd-overflow-auto">
-                                            <div
-                                                *ngIf="!emailThreadReq.data.loading && !emailThreadReq.data.error"
-                                                class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1 twd-p-2"
-                                            >
-                                                <!-- <div [innerHtml]="emailInfo.Body"></div> -->
-                                                <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
                                             </div>
 
-                                            <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
-                                                <ng-container *ngIf="emailThreadReq.data.loading">
-                                                    <mat-spinner></mat-spinner>
-                                                </ng-container>
-                                                <div *ngIf="emailThreadReq.data.error" class="twd-text-center">
-                                                    <p>Unable to fetch the email details</p>
-                                                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="showEmailThread()">
-                                                        Retry
-                                                    </button>
-                                                </div>
+                                            <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
+                                                <p class="my-4 text-bold">Status: {{ emailInfo.CurrentStatus || 'NA' }}</p>
+                                                <p class="my-4 text-bold">Prirority: {{ emailInfo.Priority || 'NA' }}</p>
+                                                <p class="my-4 text-bold">Agent: {{ emailInfo.AgentName || 'NA' }}</p>
+                                                <p class="my-4 text-bold">
+                                                    Closed Status: {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div *ngIf="email.error" class="twd-flex-1 twd-w-full twd-flex twd-flex-col twd-items-center twd-justify-center">
-                                    <div class="twd-text-center">
-                                        <p>Unable to load email</p>
-                                        <button mat-raised-button color="primary">Retry</button>
-                                    </div>
-                                </div>
-                                <div *ngIf="email.loading" class="twd-flex-1 twd-w-full twd-flex twd-flex-col twd-items-center twd-justify-center">
-                                    <mat-spinner></mat-spinner>
-                                </div>
+                                </preview-email>
                             </ng-container>
 
                             <ng-container *ngIf="mode === 'Session Emails'">
                                 <ng-container
                                     [ngTemplateOutlet]="table"
                                     [ngTemplateOutletContext]="{
-                                        dataSource: element.Children,
+                                        dataSource: selectedRow.Children,
                                         sortDisabled: true
                                     }"
                                 ></ng-container>

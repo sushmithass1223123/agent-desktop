@@ -120,14 +120,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-    // /**
-    //  * Selected Mail
-    //  */
-    // selectedMails: Mail[] = [];
-    // /**
-    //  * Selected Mail
-    //  */
-    // selectedMailIds: any[] = [];
 
     /**
      * Email Search Stateful request
@@ -185,7 +177,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     sortControls = {
         sortBy: 'Date',
-        ascending: true
+        ascending: false
     };
 
     /**
@@ -219,6 +211,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     allEmailsSelected = false;
 
     /**
+     * Flag to allow transfer email button
+     */
+    allowQueueTransfer = false;
+
+    /**
      * Constructor
      */
     constructor(
@@ -243,6 +240,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async ngOnInit(): Promise<void> {
         await this.setAvailableMailboxes();
+        const { accessRole } = SDKClient.getAgentData();
+        this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : accessRole !== 'Agent';
         this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
         this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
     }
@@ -731,6 +730,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     Body: this.appUiService.sanitizeEmailBody(res.Body || '')['changingThisBreaksApplicationSecurity'],
                     Attachments: res.Attachments || [],
                     AgentName: res.AgentName,
+                    Intent: (res as EmailInboxModel).Intent,
                     RepliedStatus: (res as any).RepliedStatus,
                     ConversationID: res.ConversationID,
                     CurrentStatus: res.CurrentStatus,
@@ -943,14 +943,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     }
 
     /**
-     * Opens a selected attachment file
-     * @param {String} fileUrl
-     */
-    openFile(fileUrl: string): void {
-        window.open(fileUrl);
-    }
-
-    /**
      * Sets component state
      * @param {ComponentActions} action
      * @param {any} payload
@@ -971,6 +963,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             case 'emails/failure':
                 this.emailSearchRes.loading = false;
                 this.emailSearchRes.error = true;
+                this.polling.active = false;
                 this.emailSearchRes.msg = 'Error occured while fetching emails';
                 break;
 
@@ -1053,6 +1046,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         (doc as any).body.appendChild(frag);
     }
 
+    /**
+     * This method is used to formate the email list reponse from the queue search
+     * @param {any} result This is the response form the queue search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
     mapQueuedEmails = (result: any): Mail[] => {
         if (!result || !result.length) {
             return [];
@@ -1077,6 +1075,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         });
     };
 
+    /**
+     * This method is used to formate the email list reponse from the inbox search
+     * @param {any} result This is the response form the inbox search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
     mapInboxEmails = (result: any): Mail[] => {
         if (!result || !result.length) {
             return [];
@@ -1108,6 +1111,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         });
     };
 
+    /**
+     * This method is used to formate the email list reponse from the draft search
+     * @param {any} result This is the response form the draft search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
     mapDraftEmails = (result: any): Mail[] => {
         if (!result || !result.length) {
             return [];
@@ -1139,6 +1147,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         });
     };
 
+    /**
+     * This method is used to formate the email list reponse from the sent items search
+     * @param {any} result This is the response form the sent items search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
     mapSentItemsEmails = (result: any): Mail[] => {
         if (!result || !result.length) {
             return [];
@@ -1170,7 +1183,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         });
     };
 
-    parseDateFromSearchParams(searchParams: any) {
+    /**
+     * This method is used to parse the date from the search params
+     * @param {any} searchParams
+     * @returns {any} returns the search params for the advanced search
+     */
+    parseDateFromSearchParams(searchParams: any): any {
         const searchFields = searchParams;
 
         let startDate: any = '';
@@ -1195,15 +1213,44 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         return { ...searchParams, endDate, startDate };
     }
 
+    /**
+     * This method returns a list of selected emails
+     * @returns Emails that are selected or checked
+     */
     getSelectedEmails = () => this.getAllEmailNodes().filter((n) => n.checked);
 
-    getEmailChecks = (mails?: Mail[]) => {
+    /**
+     * This method is used to fill the checked and indeterminate inputs to checkbox,
+     * which is used for bulk selection
+     * @param {Mail[]} mails if this isnt passed, all the emails across all folders are used for this check
+     * @returns {{all :boolean , some : boolean}} all when all emails selected under the folder or some when some selected
+     */
+    getEmailChecks = (
+        mails?: Mail[]
+    ): {
+        /**
+         * flag if all emails selected
+         */
+        all: boolean;
+        /**
+         * flag if some emails selected
+         */
+        some: boolean;
+    } => {
         const allEmails = mails ?? this.getAllEmailNodes();
-        const all = allEmails.every((n) => n.checked);
-        const some = allEmails.some((n) => n.checked);
-        return { all, some: some && !all };
+        const checks = { all: false, some: false };
+        if (allEmails.length) {
+            checks.all = allEmails.every((n) => n.checked);
+            checks.some = allEmails.some((n) => n.checked) && !checks.all;
+        }
+        return checks;
     };
 
+    /**
+     * Selects emails for folders
+     * @param {boolean} checked state of the checkbox
+     * @param {Mail[]} emails if this isnt passed, all the emails across all folders are used for this check
+     */
     selectEmails = (checked: boolean, emails?: Mail[]) => {
         const mails = emails ?? this.getAllEmailNodes();
         for (const n of mails) {
