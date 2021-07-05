@@ -206,11 +206,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     };
 
     /**
-     * All selected emails flag
-     */
-    allEmailsSelected = false;
-
-    /**
      * Flag to allow transfer email button
      */
     allowQueueTransfer = false;
@@ -737,7 +732,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     ClosedBy: (res as any).ClosedBy,
                     CCList: res.CCList,
                     Priority: (res as any).Priority,
-                    From: res.From
+                    From: res.From,
+                    ToList: res.ToList
                 };
             }
             this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
@@ -753,11 +749,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {AvailableTabs} tab tab key passed as argument
      */
     switchTab(tab: AvailableTabs): void {
-        this.currentTab = tab;
         this.advancedSearch.show = false;
+        this.dataSource.data = [];
         this.removeEmailsfromView('all');
-        this.allEmailsSelected = false;
         this.emailBodies = {};
+        this.currentTab = tab;
         if (this.advancedSearch.data[tab]) {
             this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
             this.globalSearch.form.setValue(this.globalSearch.data[tab]);
