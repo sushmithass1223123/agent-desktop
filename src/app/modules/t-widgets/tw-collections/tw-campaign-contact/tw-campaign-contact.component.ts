@@ -1,13 +1,16 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { GenericInteractionEvent, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { IWidget } from 'app/interfaces';
-import { getValueFromJson } from 'app/utils';
-import { firstValueFrom } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { GenericInteractionEvent, IAgentData, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
+import { processCustomerDetails } from 'app/utils';
+import { take, takeUntil } from 'rxjs/operators';
 
 /**
  * Campaign Contact Component
@@ -22,12 +25,17 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<IncomingCallEvent | GenericInteractionEvent, WidgetData>;
+
+    /**
+     * Widget data
+     */
+    widgetData: WidgetData;
 
     /**
      * To store entire app config and get update
      */
-    appConfig: any;
+    appConfig: IAppConfig;
 
     /**
      * ID of interaction
@@ -48,8 +56,70 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      */
     customerInfo: CustomerInfo[];
 
-    constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
+    /**
+     * Confirm dialog ref
+     */
+    dialogRef: MatDialogRef<any, any>;
+
+    /**
+     * Customer primary phone number
+     */
+    phoneNumber: string;
+
+    /**
+     * Current agent data
+     */
+    user: IAgentData;
+
+    /**
+     * TCM client url
+     */
+    tcmClientUrl: string;
+
+    /**
+     * Show make call button flag
+     */
+    showMakeCall: boolean;
+
+    /**
+     * Maximized flag
+     */
+    maximized: boolean;
+
+    /**
+     * Campaign status list to update
+     */
+    statusList: StatusReasonCode[];
+
+    /**
+     * Reason list
+     */
+    reasonList: StatusReasonCode[];
+
+    /**
+     * Submit form
+     */
+    submitForm: FormGroup;
+
+    /**
+     * Flag to check whether call is made to customer
+     */
+    callMadeToCustomer: boolean;
+
+    /**
+     * To show progress
+     */
+    progress: boolean;
+
+    constructor(
+        private _appDataService: AppDataService,
+        private _appUIService: AppUiService,
+        private _tmacEventService: TMACEventService,
+        private _formBuilder: FormBuilder
+    ) {
         super();
+        this.showMakeCall = false;
+        this.callMadeToCustomer = false;
     }
 
     /**
@@ -58,6 +128,21 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     async ngOnInit(): Promise<void> {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.widgetData = this.data.Data;
+
+        this.user = SDKClient.getAgentData();
+
+        this.submitForm = this._formBuilder.group({
+            status: ['', Validators.required],
+            reason: [''],
+            comment: ['']
+        });
+
+        // Set validators for form
+        if (this.widgetData.ReasonEnabled) {
+            this.submitForm.controls.reason.setValidators(Validators.required);
+        }
 
         // get interaction id
         this.interaction = this.data.InteractionDetails;
@@ -89,25 +174,27 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) =>
                     evts.forEach((evt) => {
-                        this.processCustomerDetails(evt);
+                        processCustomerDetails(this.customerInfo, evt);
                     })
                 );
         }
 
         // get TCM client web service url from config
-        const appConfig = await firstValueFrom(
-            this._appDataService.getConfig({ tcmUrl: 'Main.Urls.TCMClient' }).pipe(takeUntil(this.unsubscribeAll))
-        );
+        const appConfig = await this._appDataService
+            .getConfig({ tcmUrl: 'Main.Urls.TCMClient' })
+            .pipe(takeUntil(this.unsubscribeAll), take(1))
+            .toPromise();
 
         // get the url
-        const tcmClientUrl = appConfig?.tcmUrl;
+        this.tcmClientUrl = appConfig?.tcmUrl;
 
         // check if we got the url
-        if (!tcmClientUrl) {
+        if (!this.tcmClientUrl) {
+            TUtils.Logger.warn('TwCampaignContactComponent: Unable to fetch TCM client url, please check the config!');
             return;
         }
 
-        let phone = '7012765814';
+        let phone = '';
         let fromAddr = '';
         let ucid = '';
         let skill = '';
@@ -116,7 +203,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         let urlPath = '';
 
         // check the interaction whether its voice or generic
-        if (this.interaction as IncomingCallEvent) {
+        if (this.interaction?.EventName === 'IncomingCallEvent') {
             const interaction = this.interaction as IncomingCallEvent;
             if (interaction.SubType.toLowerCase() === 'camp') {
                 // get the subtype data
@@ -126,19 +213,25 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 ucid = interaction.UCID;
                 skill = interaction.Queue;
             }
-        } else if (this.interaction as GenericInteractionEvent) {
+        } else if (this.interaction?.EventName === 'GenericInteractionEvent') {
             const interaction = this.interaction as GenericInteractionEvent;
 
-            phone = interaction.Item.PhoneNumber;
+            phone = this.phoneNumber = interaction.Item.PhoneNumber;
             skill = interaction.Item.Skill;
             contactId = interaction.Item.ID;
+
+            // TODO:: only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
+            // if (!this.interaction?.RecoveryEvent) {
+            //     // call TCM to notify assigned
+            //     this.notifyTcmAssigned(phone, interaction.Item.Type);
+            // }
+
+            this.notifyTcmAssigned(phone, interaction.Item.Type);
         }
 
-        const { agentId, deviceId } = SDKClient.getAgentData();
-
         let requestArgs = {
-            agentID: agentId,
-            extension: deviceId,
+            agentID: this.user.agentId,
+            extension: this.user.deviceId,
             ucid: ucid,
             skill: skill
         } as any;
@@ -157,7 +250,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                 ...requestArgs,
                 phone
             };
-        } else if (fromAddr && this.interaction.InteractionID) {
+        } else if (fromAddr && this.interaction?.InteractionID) {
             // to get customer contact data by fromAddr and interaction id
             urlPath = '/GetCustomerContactInteractionData';
             requestArgs = {
@@ -174,16 +267,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             };
         }
 
-        const result: IResponse = await TUtils.HttpClient.sendRequest({
-            urls: [tcmClientUrl + urlPath],
-            requestArgs,
-            header: {
-                'Content-Type': 'application/json'
-            },
-            responseType: 'json',
-            method: 'POST',
-            log: true
-        });
+        const result = await this.restCall(urlPath, requestArgs);
 
         this.contactData.loading = false;
 
@@ -196,10 +280,29 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         // store the data
         this.contactData.data = result.response.d ? JSON.parse(result.response.d) : null;
 
-        this.processCustomerDetails({
+        // emit custom event
+        this._tmacEventService.emitSDKEvent({
+            event: {
+                EventName: 'CustomerContactInfoReceivedEvent',
+                InteractionID: this.interaction?.InteractionID ?? '0',
+                ...this.contactData.data
+            },
+            isInteractionEvent: true,
+            log: true
+        });
+
+        processCustomerDetails(this.customerInfo, {
             EventName: 'ContactData',
             ...this.contactData.data
         });
+
+        // get the campaign status list
+        const statusResult = await this.restCall('/GetCampaignStatusCodes', {
+            campId: this.contactData.data.campaignContact.CampId,
+            id: ''
+        });
+
+        this.statusList = statusResult.response?.d ?? [];
     }
 
     /**
@@ -211,84 +314,195 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * To do rest call to TCM
+     * To notify TCM about item assignment
+     *
+     * @param {String }phone
+     * @param {String }type
      */
-    restCall(): void {}
+    private async notifyTcmAssigned(phone: string, type: string): Promise<void> {
+        try {
+            const result = await this.restCall('/OnDacNotificationEvent', {
+                fromAddr: phone,
+                response: 'assigned',
+                agentID: this.user.agentId,
+                extension: this.user.deviceId,
+                scheduletime: '',
+                interactionId: this.interaction?.InteractionID ?? '0'
+            });
 
-    /**
-     * IUIEvent Handelr
-     * @param {Any} data
-     */
-    private processCustomerDetails = (evt: any) => {
-        // check if customer info map is available in this event
-        this.customerInfo.forEach((item: CustomerInfo) => {
-            // check if value is added, then ignore
-            if (item.Value) {
-                return;
-            }
-            // get the value source
-            const valueSource = item.ValueSource;
-            let valueSourceSplit = [];
-            // check if we need to parse the json
-            if (valueSource.toLowerCase().includes('jsonparse')) {
-                // expected value = jsonparse(EventName.{...path}).getValue
-                // get the path by taking string between ()
-                const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
-
-                if (path) {
-                    // split the value source
-                    valueSourceSplit = path.split('.');
-                    // check if the value source event name matches with the current event
-                    if (valueSourceSplit[0] !== evt.EventName) {
-                        return;
-                    }
-
-                    // get the value from path
-                    const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
-
-                    if (jsonStr) {
-                        // get the property by taking string between ) and last
-                        const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
-
-                        item.Value = JSON.parse(jsonStr)[prop] ?? '';
-                    }
+            // check the response
+            if (result.response.d === 1) {
+                if (type.toLowerCase() === 'tcmvoicewq') {
+                    this.showMakeCall = true;
                 }
             } else {
-                valueSourceSplit = item.ValueSource.split('.');
-                // check if the value source event name matches with the current event
-                if (valueSourceSplit[0] !== evt.EventName) {
-                    return;
-                }
+                this._appUIService.showSnackbar('Failed to assign the direct agent item to campaign manager', 'failure');
+            }
+        } catch (error) {
+            this._appUIService.showSnackbar('Error in assigning the direct agent item to campaign manager', 'failure');
+        }
+    }
 
-                // get the value from path or default value
-                item.Value = getValueFromJson(valueSourceSplit, evt, item.DefaultValue);
+    /**
+     * To make rest call
+     *
+     * @param {String} method
+     * @param {Any} requestArgs
+     */
+    private async restCall(method: string, requestArgs: any): Promise<IResponse> {
+        this.progress = true;
+        let response: IResponse | PromiseLike<IResponse>;
+        try {
+            response = await TUtils.HttpClient.sendRequest<IResponse>({
+                urls: [this.tcmClientUrl + method],
+                requestArgs,
+                header: {
+                    'Content-Type': 'application/json'
+                },
+                responseType: 'json',
+                method: 'POST',
+                log: true
+            });
+        } catch (error) {}
+        this.progress = false;
+        return response;
+    }
+
+    /**
+     * To confirm make call
+     */
+    confirmMakeCall(): void {
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Make Call', `Are you sure to make call to ${this.phoneNumber}`);
+        this.dialogRef.afterClosed().subscribe((res) => {
+            if (res) {
+                // send end chat to server
+                this.makeCallToCustomer();
             }
         });
-    };
+    }
+
+    /**
+     * To make call to customer
+     */
+    makeCallToCustomer(): void {
+        // signal TCM that the callback request has been accepted
+        this.restCall('/OnAgentResponseToDacRequest', {
+            fromAddr: this.phoneNumber,
+            response: 'accept',
+            agentID: this.user.agentId,
+            extension: this.user.deviceId,
+            scheduletime: ''
+        });
+
+        // make call to the provided number and complete the reminder
+        SDKClient.makeCall({
+            interactionId: this.interaction.InteractionID.toString(),
+            number: this.phoneNumber,
+            source: '',
+            sourceId: ''
+        })
+            .then((dt) => {
+                if (dt.response.ResultCode === 0) {
+                    this._appUIService.showSnackbar(`Make call to ${this.phoneNumber} successful`);
+                } else {
+                    this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
+                }
+            })
+            .catch((err) => {
+                this._appUIService.showSnackbar('Make call error', 'failure');
+                TUtils.Logger.error('Error in TwCampaignContactComponent.makeCallToCustomer', err);
+            });
+    }
+
+    /**
+     * On status change
+     *
+     * @param {MatSelectChange} data
+     */
+    async onStatusChange(data: MatSelectChange): Promise<void> {
+        this.reasonList = [];
+
+        if (!data.value) {
+            return;
+        }
+
+        // load reason list by status value
+        const statusResult = await this.restCall('/GetCampaignStatusCodeReasons', {
+            codeId: data.value,
+            id: ''
+        });
+        this.reasonList = statusResult.response?.d ?? [];
+    }
+
+    /**
+     * To check for submit button
+     *
+     * @returns {Boolean}
+     */
+    checkForSubmit(): boolean {
+        try {
+            const agentStatus = SDKClient.getAgentData().agentStatus.toLowerCase();
+            return (this.showMakeCall ? this.callMadeToCustomer : true) && this.submitForm.valid && !agentStatus.includes('on call');
+        } catch (error) {}
+        return false;
+    }
+
+    /**
+     * To submit a callback with status
+     */
+    submitCallback(btn: MatButton): void {
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Submit', `Are you sure to submit`);
+        this.dialogRef.afterClosed().subscribe(async (res) => {
+            if (res) {
+                btn.disabled = true;
+                try {
+                    const resp = await this.restCall('/UpdateRecordData', {
+                        rid: this.contactData.data.recordId,
+                        stat: this.submitForm.get('status').value,
+                        reason: this.submitForm.get('reason').value ?? '',
+                        comment: this.submitForm.get('comment').value ?? ''
+                    });
+
+                    if (resp.response?.d?.resultCode === 1) {
+                        this._appUIService.showSnackbar('Callback status updated successfully');
+                        if (this.interaction) {
+                            SDKClient.closeInteraction(this.interaction.InteractionID.toString());
+                        }
+                    } else {
+                        this._appUIService.showSnackbar('Failed to update callback status', 'failure');
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    this._appUIService.showSnackbar('Error in updating callback status', 'failure');
+                    btn.disabled = false;
+                }
+            }
+        });
+    }
 }
 
-/**
- * Customer info Model
- */
-interface CustomerInfo {
+interface WidgetData {
     /**
-     * Title
+     * Customer info config
      */
-    Title: string;
+    CustomerInfo: CustomerInfo[];
     /**
-     * Value Source
+     * Reason flag
      */
-    ValueSource: string;
+    ReasonEnabled: boolean;
+}
+
+interface StatusReasonCode {
     /**
-     * Value
+     * Status
      */
-    Value?: string;
+    Status: number;
     /**
-     * Unit
+     * Text of status code
      */
-    Unit: string;
+    Text: string;
     /**
-     * Default Value
+     * Value of status code
      */
-    DefaultValue: string;
+    Value: string;
 }

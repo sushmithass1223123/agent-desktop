@@ -2,33 +2,67 @@
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
-    <div
-        *ngIf="interactionDetailsTable.loaded"
-        class="w-100-p bg-inherit custom-scroll-adjust"
-        [ngClass]="maximized ? 'h-90-p' : 'h-100-p'"
-    >
+    <div *ngIf="interactionDetailsTable.loaded" class="w-100-p bg-inherit custom-scroll-adjust" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'">
         <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
-            <ng-container matColumnDef="InteractionID">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.InteractionID || 'NA' }}
-                </mat-cell>
-            </ng-container>
-
             <ng-container matColumnDef="Channel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-icon class="channel-icon" color="primary">
-                        {{
-                            element.Channel === 'Voice'
-                                ? 'phone'
-                                : element.Channel === 'TextChat'
-                                ? 'chat'
-                                : element.Channel === 'Email'
-                                ? 'email'
-                                : 'library_books'
-                        }}
-                    </mat-icon>
+                    <ng-container [ngSwitch]="element.Channel | lowercase">
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'voice'" matTooltip="Voice">phone</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'textchat'" matTooltip="Chat">chat</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'audiochat'" matTooltip="Audio">wifi_calling_3</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'videochat'" matTooltip="Video">duo</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'sms'" matTooltip="SMS">sms</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'email'" matTooltip="Email">email</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'emc'" matTooltip="Email">email</mat-icon>
+                        <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.Channel"> feed </mat-icon>
+                    </ng-container>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="SubChannel">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Channel</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <ng-container [ngSwitch]="element.Channel | lowercase">
+                        <ng-container *ngSwitchCase="'textchat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'audiochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'videochat'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'services'">
+                            <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
+                        </ng-container>
+
+                        <ng-template #interactionBrandType let-subChannel="InteractionData.SubChannel">
+                            <ng-container [ngSwitch]="subChannel | lowercase">
+                                <mat-icon color="primary" *ngSwitchCase="'textchat'" matTooltip="Chat">chat</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'chat'" matTooltip="Chat">chat</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'text'" matTooltip="Chat">chat</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'audio'" matTooltip="Audio">wifi_calling_3</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'video'" matTooltip="Video">duo</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'whatsapp'" svgIcon="custom-whatsapp" matTooltip="WhatsApp"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'we'" svgIcon="custom-we" matTooltip="We Chat"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'line'" svgIcon="custom-line" matTooltip="Line"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'viber'" svgIcon="custom-viber" matTooltip="Viber"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'twitter'" svgIcon="custom-twitter" matTooltip="Twitter"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'fb'" svgIcon="custom-fb" matTooltip="Facebook"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'telegram'" svgIcon="custom-telegram" matTooltip="Telegram"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'store'" matTooltip="Store">store</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'field'" matTooltip="Field">roofing</mat-icon>
+                                <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
+                            </ng-container>
+                        </ng-template>
+
+                        <mat-icon color="primary" *ngSwitchCase="'voice'" matTooltip="Voice"> phone </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'sms'" matTooltip="SMS"> textsms </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'email'" matTooltip="Email"> email </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'fax'" matTooltip="Fax"> print </mat-icon>
+                        <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.InteractionData.SubChannel"> feed </mat-icon>
+                    </ng-container>
                 </mat-cell>
             </ng-container>
 

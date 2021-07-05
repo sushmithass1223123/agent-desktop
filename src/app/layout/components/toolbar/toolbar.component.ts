@@ -62,6 +62,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     /**
+     * Info loading flag
+     */
+    private infoLoading: boolean;
+
+    /**
      * Constructor
      *
      * @param {FuseFacadeService} _fuseFacadeService
@@ -69,7 +74,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      * @param {AppDataService} _appDataService
      */
     constructor(
-        // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _fuseSidebarService: FuseSidebarService,
         private _appDataService: AppDataService,
@@ -96,15 +100,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 this.rightNavbar = config.layout.navbar.position === 'right';
                 this.hiddenNavbar = config.layout.navbar.hidden === true;
             });
-
-        // Subscribe to config changes
-        // this._fuseConfigService.config
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((settings: any) => {
-        //         this.horizontalNavbar = settings.layout.navbar.position === 'top';
-        //         this.rightNavbar = settings.layout.navbar.position === 'right';
-        //         this.hiddenNavbar = settings.layout.navbar.hidden === true;
-        //     });
 
         // Subscribe to config changes
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
@@ -162,29 +157,42 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To get SDK connection info
+     * To get application information
      */
-    getSDKConnectionData(): void {
-        const connectionData = SDKClient.getConnectionData();
-        const message = `
-        <div><b>TMAC Server:<b></div>
-        <span class="time secondary-text">${connectionData.tmacServer || 'NA'}</span>
-        <br /> <br />
+    async showAppInfo(): Promise<void> {
+        try {
+            this.infoLoading = true;
+            const connectionData = SDKClient.getConnectionData();
+            const resp = await SDKClient.getTMACVersion(SDKClient.getAgentData().tmacServer);
 
-        <div><b>Event Mode:<b></div>
-        <span class="time secondary-text">${connectionData.eventMode || 'NA'}</span>
-        <br /> <br />
+            const message = `
+            <div><b>Agent Desktop:<b></div>
+            <span class="time secondary-text">${this._appDataService.getAppVersion()}</span>
+            <br /> <br />   
 
-        <div><b>Proxy URL:<b></div>
-        <span class="time secondary-text">${connectionData.connectedProxyUrl || 'NA'}</span>
-        <br /> <br />
+            <div><b>TMAC Server:<b></div>
+            <span class="time secondary-text">${resp.response ?? 'NA'}</span>
+            <br /> <br />
 
-        <div><b>SignalR URL:<b></div>
-        <span class="time secondary-text">${connectionData.signalRUrl || 'NA'}</span>
-        <br /> <br />
-        `;
+            <div><b>Event Mode:<b></div>
+            <span class="time secondary-text">${connectionData.eventMode ?? 'NA'}</span>
+            <br /> <br />
 
-        // show the dialog
-        this._appUIService.showCustomDialog('alert', message, 'SDK Connection Info');
+            <div><b>Proxy URL:<b></div>
+            <span class="time secondary-text">${connectionData.connectedProxyUrl ?? 'NA'}</span>
+            <br /> <br />
+
+            <div><b>SignalR URL:<b></div>
+            <span class="time secondary-text">${connectionData.signalRUrl ?? 'NA'}</span>
+            <br /> <br />     
+            `;
+
+            // show the dialog
+            this._appUIService.showCustomDialog('alert', message, 'Application Information');
+        } catch (error) {
+            this._appUIService.showSnackbar('Error in fetching application information', 'failure');
+        }
+
+        this.infoLoading = false;
     }
 }

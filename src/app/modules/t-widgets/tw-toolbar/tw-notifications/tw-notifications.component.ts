@@ -88,7 +88,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // get the type
-        const type = evt.Type?.toLowerCase() || '';
+        const type = evt.Type?.toLowerCase() ?? '';
 
         // check the type
         if (
@@ -106,7 +106,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                 showAlert: type !== 'broadcast'
             });
         }
-    }
+    };
 
     /**
      * Toggle Menu

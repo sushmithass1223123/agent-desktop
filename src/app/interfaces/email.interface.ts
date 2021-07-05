@@ -18,6 +18,7 @@ export interface CreateEmailInput {
     Body: string;
     Subject: string;
     Files: EmailFile[];
+    Replying?: true;
 }
 
 export interface CreateEmailOutput {

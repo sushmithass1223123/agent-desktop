@@ -64,7 +64,7 @@
                 <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="reload">
                     <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
                 </button>
-                <button *ngIf="isAgentSupervisor" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
+                <button *ngIf="allowBroadcast" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
                     <mat-icon>campaign</mat-icon>
                 </button>
             </div>
@@ -185,6 +185,7 @@
                                 <button
                                     #agentActionBtn
                                     mat-icon-button
+                                    mat-raised-button
                                     *ngIf="featureCheck(feature, 'agent', '')"
                                     (click)="performAgentAction(item, feature)"
                                     [matTooltip]="featureMap[feature.Feature].Label"
@@ -195,6 +196,7 @@
                                 <button
                                     #agentActionBtn
                                     mat-icon-button
+                                    mat-raised-button
                                     [matMenuTriggerFor]="menu"
                                     *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
                                     [matTooltip]="featureMap[feature.Feature].Label"
@@ -224,6 +226,7 @@
 
                                 <button
                                     mat-icon-button
+                                    mat-raised-button
                                     matTooltip="Send Quiz"
                                     [matMenuTriggerFor]="quizIntentMenu"
                                     *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
@@ -296,4 +299,4 @@
     </ng-container>
 </tw-wrapper>
 
-<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget" (destroyEvent)="activityWidget = null"> </tw-su-agent-activity-details>
+<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget"> </tw-su-agent-activity-details>

@@ -7,7 +7,6 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
 import { AppUiService } from 'app/services/app-ui.service';
 import { get, join } from 'lodash';
@@ -127,7 +126,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      */
     dataMap: {
         /**
-         * Name 
+         * Name
          */
         Name: {
             /**
@@ -200,24 +199,24 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         // create event names to subscribe
         const eventNames = [];
 
-        Object.entries(this.dataMap)
-            .forEach(a => {
-                try {
-                    // get the event name from value source
-                    const eventName = a[1].ValueSource?.split('.')?.shift();
-                    if (eventName && !eventNames.includes(eventName)) {
-                        eventNames.push(eventName);
-                    }
-                } catch (error) {
-                    TUtils.Logger.console('error', 'Error in TwRegisterCallbackComponent', null, error);
+        Object.entries(this.dataMap).forEach((a) => {
+            try {
+                // get the event name from value source
+                const eventName = a[1].ValueSource?.split('.')?.shift();
+                if (eventName && !eventNames.includes(eventName)) {
+                    eventNames.push(eventName);
                 }
-            });
+            } catch (error) {
+                TUtils.Logger.console('error', 'Error in TwRegisterCallbackComponent', null, error);
+            }
+        });
 
         // listen to events only if opened in an interaction
         if (this.interactionId && eventNames.length) {
-            this._tmacEventService.getInteractionEvents(eventNames, this.interactionId)
+            this._tmacEventService
+                .getInteractionEvents(eventNames, this.interactionId)
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this.processCustomerDetails(evt)));
+                .subscribe((evts) => evts.forEach((evt) => this.processCustomerDetails(evt)));
         }
     }
 
@@ -232,7 +231,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     /**
      * Custmer details processed
      * @method processCustomerDetails
-     * @param {IUIEvent} evt 
+     * @param {IUIEvent} evt
      */
     private processCustomerDetails = (evt: IUIEvent) => {
         // return if no map found
@@ -256,10 +255,10 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             // assign to the map
             this.dataMapValues[key] = get(evt, valueMap, this.dataMap[key].DefaultValue);
         }
-    }
+    };
 
     /**
-     * Fetch campaigns 
+     * Fetch campaigns
      * @method fetchCampaigns
      */
     fetchCampaigns(): void {
@@ -278,7 +277,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     this.getCampaignsReq = {
                         error: true,
                         loading: false,
-                        msg: COMMON_ERR_MESSAGE
+                        msg: 'Unable to fetch campaigns'
                     };
                 }
             );
@@ -357,13 +356,12 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     this.addCampaingReq = {
                         error: true,
                         loading: false,
-                        msg: COMMON_ERR_MESSAGE
+                        msg: 'Unable to add new contact'
                     };
-                    this._appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                    this._appUiService.showSnackbar('Unable to add new contact', 'failure');
                 }
             );
-        }
-        else {
+        } else {
             this.getCampaignsReq = {
                 error: true,
                 loading: false,
@@ -373,7 +371,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     }
 
     /**
-     * 
+     *
      * Toggle Callback Form display
      * @param {ResCampaign} campaign
      */
@@ -388,13 +386,12 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                 this.addContactFormGroup.patchValue(this.dataMapValues);
             }
 
-            this.matDialog
-                .open(this.addContactFormDialog, {
-                    data: campaign,
-                    width: '20%',
-                    panelClass: 'new-campaign-contact',
-                    disableClose: true
-                });
+            this.matDialog.open(this.addContactFormDialog, {
+                data: campaign,
+                width: '20%',
+                panelClass: 'new-campaign-contact',
+                disableClose: true
+            });
         }
     }
 

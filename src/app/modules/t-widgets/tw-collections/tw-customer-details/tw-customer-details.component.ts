@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
-import { IUIEvent, TUtils } from '@tmac/sdk';
+import { TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { CustomerInfo } from 'app/interfaces';
+import { processCustomerDetails } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { getValueFromJson } from 'app/utils';
 
 /**
  * Custommer details widget
@@ -85,7 +86,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) =>
                 evts.forEach((evt) => {
-                    this.processCustomerDetails(evt);
+                    processCustomerDetails(this.customerInfo, evt);
                 })
             );
     }
@@ -98,81 +99,4 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    /**
-     * IUIEvent Handelr
-     * @param {IUIEvent} evt
-     */
-    private processCustomerDetails = (evt: IUIEvent) => {
-        // check if customer info map is available in this event
-        this.customerInfo.forEach((item: CustomerInfo) => {
-            // check if value is added, then ignore
-            if (item.Value) {
-                return;
-            }
-            // get the value source
-            const valueSource = item.ValueSource;
-            let valueSourceSplit = [];
-            // check if we need to parse the json
-            if (valueSource.toLowerCase().includes('jsonparse')) {
-                // expected value = jsonparse(EventName.{...path}).getValue
-                // get the path by taking string between ()
-                const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
-
-                if (path) {
-                    // split the value source
-                    valueSourceSplit = path.split('.');
-                    // check if the value source event name matches with the current event
-                    if (valueSourceSplit[0] !== evt.EventName) {
-                        return;
-                    }
-
-                    // get the value from path
-                    const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
-
-                    if (jsonStr) {
-                        // get the property by taking string between ) and last
-                        const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
-
-                        item.Value = JSON.parse(jsonStr)[prop] ?? '';
-                    }
-                }
-            } else {
-                valueSourceSplit = item.ValueSource.split('.');
-                // check if the value source event name matches with the current event
-                if (valueSourceSplit[0] !== evt.EventName) {
-                    return;
-                }
-
-                // get the value from path or default value
-                item.Value = getValueFromJson(valueSourceSplit, evt, item.DefaultValue);
-            }
-        });
-    };
-}
-
-/**
- * Customer info Model
- */
-interface CustomerInfo {
-    /**
-     * Title
-     */
-    Title: string;
-    /**
-     * Value Source
-     */
-    ValueSource: string;
-    /**
-     * Value
-     */
-    Value?: string;
-    /**
-     * Unit
-     */
-    Unit: string;
-    /**
-     * Default Value
-     */
-    DefaultValue: string;
 }

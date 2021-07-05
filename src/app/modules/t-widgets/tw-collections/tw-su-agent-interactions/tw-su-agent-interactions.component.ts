@@ -1,17 +1,19 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentInteractionModel, SuAgentModel } from '@tmac/sdk';
 
+/**
+ * Supervisor Agent Interactions Component
+ */
 @Component({
     selector: 'tw-su-agent-interactions',
     templateUrl: './tw-su-agent-interactions.component.html',
@@ -19,22 +21,49 @@ import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, 
     encapsulation: ViewEncapsulation.None
 })
 export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    // holds all the data related to this widget from the config
+    /**
+     * Holds all the data related to this widget from the config
+     */
     @Input() data: IWidget;
 
+    /**
+     * Mat sort for mat table
+     */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
+    /**
+     * Config data
+     */
     configData: SuAgentModel;
 
+    /**
+     * Maximized flag
+     */
     maximized = false;
+
+    /**
+     * Interaction list
+     */
     interactionList: any;
 
-    mindisplayedColumns: string[] = ['InteractionID', 'Channel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
+    /**
+     * Mat table minimized displayed columns
+     */
+    mindisplayedColumns = ['Channel', 'SubChannel', 'LastStatus', 'User', 'ActiveTime', 'HoldTime', 'Actions'];
 
+    /**
+     * Agent feature map
+     */
     featureMap = AGENT_FEATURES_MAP;
+
+    /**
+     * Agent data
+     */
     agentData: IAgentData;
 
+    /**
+     * Interaction details table
+     */
     interactionDetailsTable = {
         source: new MatTableDataSource([]),
         columns: this.mindisplayedColumns,
@@ -72,7 +101,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
         // register to event
         this._tmacEventService
-            .getEvents(['TeamAgentInteractionDetailsEvent'])
+            .getNonInteractionEvents(['TeamAgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
@@ -90,35 +119,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         // stop receiving data
         this._dashboardService.triggerAgentInteractions(this.configData?.AgentLoginID, false);
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * To process TeamAgentInteractionDetailsEvent
-     *
-     * @param {CustomSDKEvent} evt
-     */
-    private TeamAgentInteractionDetailsEvent = (evt: CustomSDKEvent) => {
-        // if the list is empty the return
-        if (evt.Data.length === 0) {
-            return;
-        }
-
-        // filter for the agent
-        if (evt.Data[0].AgentLoginID !== this.configData?.AgentLoginID) {
-            return;
-        }
-
-        // assign the interaction details
-        this.interactionList = evt.Data[0].Interactions;
-
-        this.interactionDetailsTable.loaded = true;
-        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
-        this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.paginator = this.paginator;
-    };
 
     /**
      * To perform chat bargeIn
@@ -152,13 +152,33 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                this._appUIService.showSnackbar('Error in chat barge-in', 'failure');
             });
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * To process TeamAgentInteractionDetailsEvent
+     *
+     * @param {CustomSDKEvent} evt
+     */
+    TeamAgentInteractionDetailsEvent(evt: CustomSDKEvent): void {
+        // if the list is empty the return
+        if (evt.Data.length === 0) {
+            return;
+        }
+
+        // filter for the agent
+        if (evt.Data[0].AgentLoginID !== this.configData?.AgentLoginID) {
+            return;
+        }
+
+        // assign the interaction details
+        this.interactionList = evt.Data[0].Interactions;
+
+        this.interactionDetailsTable.loaded = true;
+        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
+        this.interactionDetailsTable.source.sort = this.sort;
+    }
 
     /**
      * On widget maximized event

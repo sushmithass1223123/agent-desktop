@@ -3,7 +3,6 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { IWidget, ResData } from 'app/interfaces';
 import * as moment from 'moment';
 
@@ -58,19 +57,16 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     };
 
     /**
-     * TCM proxy Url
+     * Data Config
      */
-    tcmProxyUrl: string;
+    dataConfig: WidgetData;
 
     /**
      * Constructor
      * @param {http} HttpClient
      * @param {appUiService} AppUiService
      */
-    constructor(
-        private http: HttpClient,
-        private appUiService: AppUiService
-    ) {
+    constructor(private http: HttpClient, private appUiService: AppUiService) {
         super();
         this.pendingCallbacksTable = {
             source: new MatTableDataSource([]),
@@ -83,20 +79,22 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // assign the proxy url
-        const url = this.data.Data.TCMProxyUrl;
-        this.tcmProxyUrl = url.endsWith('/') ? url : url + '/';
-        if (!this.tcmProxyUrl) {
+        this.dataConfig = this.data.Data;
+
+        const url = this.dataConfig.TCMProxyUrl;
+
+        if (!url) {
             this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Missing TCMProxy in config', data: false };
             return;
         }
+
+        this.dataConfig.TCMProxyUrl = url.endsWith('/') ? url : url + '/';
 
         // assign the phone number
         this.phone = this.data.InteractionDetails?.PhoneNumber;
@@ -106,45 +104,37 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
-
     /**
      * Get all callbacks
      */
     async getPendingCallbacks(): Promise<void> {
         try {
-            const url = new URL(`${this.tcmProxyUrl}/api/Contact/GetContactsByPhoneNumber`);
+            const url = new URL(`${this.dataConfig.TCMProxyUrl}/Contact/GetContactsByPhoneNumber`);
             url.searchParams.append('phone', this.phone.toString());
             this.getPendingCallbacksReq = { loading: true, error: false };
-            this.http.get(url.toString()).subscribe(
-                (res: any) => {
+            this.http.get(url.toString()).subscribe({
+                next: (res: any) => {
                     this.pendingCallbacksTable.source.data = res.map((x: any) => ({
                         ...x,
                         ScheduleTime: moment(x.ScheduleTime, 'YYYYMMDDHHmmss').format('DD-MM-YYYY hh:mm:ss A')
                     }));
                     this.getPendingCallbacksReq = { loading: false, error: false, data: true };
                 },
-                (err) => {
+                error: (err) => {
                     console.error({ err });
-                    this.getPendingCallbacksReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE, data: false };
+                    this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Unable to fetch pending callbacks', data: false };
                 }
-            );
+            });
         } catch (err) {
             console.error({ err });
-            this.getPendingCallbacksReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE, data: false };
+            this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Unable to fetch pending callbacks', data: false };
         }
     }
 
@@ -157,7 +147,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
             // const { agentStatus } = SDKClient.getAgentData();
             this.changeContactStatusReq = { loading: true, error: false, data: callback.id };
             this.http
-                .post(`${this.tcmProxyUrl}/api/Contact/ChangeContactStatus`, {
+                .post(`${this.dataConfig.TCMProxyUrl}/api/Contact/ChangeContactStatus`, {
                     campaignId: callback.campaignId,
                     contactIds: [callback.id],
                     contactStatus: 'Completed',
@@ -165,8 +155,8 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                     reason: 'Closed',
                     comment: ''
                 })
-                .subscribe(
-                    (res: any) => {
+                .subscribe({
+                    next: (res: any) => {
                         if (res.resultCode) {
                             this.changeContactStatusReq = { loading: false, error: false };
                             this.pendingCallbacksTable.source.data = this.pendingCallbacksTable.source.data.filter((x) => x.Id !== callback.id);
@@ -174,18 +164,25 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                             this.changeContactStatusReq = { loading: false, error: false };
                         }
                     },
-                    (err) => {
+                    error: (err) => {
                         console.error({ err });
-                        this.changeContactStatusReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
-                        this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                        this.changeContactStatusReq = { loading: false, error: true, msg: 'Unable to close callback' };
+                        this.appUiService.showSnackbar('Unable to close callback', 'failure');
                     }
-                );
+                });
         } catch (err) {
             console.error({ err });
-            this.changeContactStatusReq = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
-            this.appUiService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+            this.changeContactStatusReq = { loading: false, error: true, msg: 'Unable to close callback' };
+            this.appUiService.showSnackbar('Unable to close callback', 'failure');
         }
     }
+}
+
+interface WidgetData {
+    /**
+     * TCM Proxy api URL
+     */
+    TCMProxyUrl: string;
 }
 
 // for more info visit - https://angular.io/api/core

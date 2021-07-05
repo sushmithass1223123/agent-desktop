@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
-import { GenericEvent, SDKClient } from '@tmac/sdk';
+import { GenericEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
 import { IWidget, TwChartConfig } from 'app/interfaces';
@@ -141,9 +141,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     /**
      * Constructor
      */
-    constructor(
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -165,9 +163,9 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
         if (this.interactionId) {
             // listen to TMAC events
             this._tmacEventService
-                .getEvents([
-                    'OnNLPDataEvent'
-                ])
+                // NLPDataEvent is an interaction event but it does not have InteractionID so we get from 'getNonInteractionEvents'
+                // TODO:: Need server side changes to get from 'getInteractionEvents'
+                .getNonInteractionEvents(['OnNLPDataEvent'])
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
@@ -187,9 +185,9 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
 
     /**
      * OnNLPDataEvent handler
-     * @param {GenericEvent} evt 
+     * @param {GenericEvent} evt
      */
-    private OnNLPDataEvent(evt: GenericEvent): void {
+    OnNLPDataEvent(evt: GenericEvent): void {
         const receivedData = evt;
         if (receivedData) {
             const parsedJson = JSON.parse(receivedData.JsonData);

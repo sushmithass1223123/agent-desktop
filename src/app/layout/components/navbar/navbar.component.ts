@@ -34,10 +34,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     @ViewChildren('sidebarListOption') sidebarListOptions: QueryList<MatListOption>;
 
     /**
-     * Fuse config
-     */
-    // fuseConfig: any;
-    /**
      * Fuse custom config
      */
     customFuse$ = this._fuseFacadeService.getConfig({ layoutNavbar: 'layout.navbar' }).pipe(
@@ -84,7 +80,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * @param {InteractionManagerService} _interactionManagerService
      */
     constructor(
-        // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
@@ -103,13 +98,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Subscribe to the config changes
-        // this._fuseConfigService.config
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((fuseConfig: any) => {
-        //         this.fuseConfig = fuseConfig;
-        //     });
-
         // Subscribe to config changes
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
             // check if the config is not null

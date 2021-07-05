@@ -14,7 +14,7 @@
 // @import '@tmac/notebook/styles/default.scss';
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Muli';
 
     &.wf-muli {
         font-family: 'Muli';
@@ -55,7 +55,7 @@ img {
 
 .slim-scroll {
     overflow: auto;
-    
+
     ::-webkit-scrollbar {
         width: 4px !important;
         height: 4px !important;
@@ -81,30 +81,25 @@ input[type='time']::-webkit-calendar-picker-indicator {
     border: none !important;
     height: auto;
     overflow: auto;
-    // height: 75%;
 }
 
-.ql-toolbar {
-    border: none;
-    @apply twd-shadow-md;
+.tox-statusbar__path {
+    visibility: hidden !important;
 }
 
-.ql-toolbar {
-    .ql-picker {
-        color: var(--twd-primary-300) !important;
+.tox-toolbar__overflow {
+    max-width: none !important;
+}
+
+iframe.app-scroll {
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+        background-color: rgba(0, 0, 0, 0);
     }
-    .ql-stroke {
-        fill: none !important;
-        stroke: var(--twd-primary-300) !important;
-        :hover {
-            stroke: var(--twd-primary-900) !important;
-        }
-    }
-    .ql-fill {
-        fill: var(--twd-primary-300) !important;
-        stroke: none !important;
-        :hover {
-            fill: var(--twd-primary-900) !important;
-        }
+    ::-webkit-scrollbar-thumb {
+        border: 2px solid transparent;
+        box-shadow: inset 0 0 0 12px rgb(0 0 0 / 37%);
+        border-radius: 12px;
     }
 }

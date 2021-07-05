@@ -80,20 +80,18 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         let eventName: CustomTMACEventTypes;
         if (this.widgetData.Role === 'agent') {
             eventName = 'WallboardRefreshEvent';
-        }
-        else if (this.widgetData.Role === 'supervisor') {
+        } else if (this.widgetData.Role === 'supervisor') {
             eventName = 'TeamWallboardRefreshEvent';
-        }
-        else {
+        } else {
             TUtils.Logger.warn(`TwWallboardComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
         }
 
         // register if only eventname is there
         if (eventName) {
             this._tmacEventService
-                .getEvents([eventName])
+                .getNonInteractionEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this.wallboardRefreshEvent(evt)));
+                .subscribe((evts) => evts.forEach((evt) => this.wallboardRefreshEvent(evt)));
         }
     }
 
@@ -110,13 +108,14 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Updates table data on event
      */
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
+        // get skills to show
+        let skillsToShow = evt.Skills;
         // for team wallboard event filter staffed agents
         if (evt.EventName === 'TeamWallboardRefreshEvent') {
-            evt.Skills = evt.Skills.filter(s => s.AgentsStaffed > 0);
-        }
-        else if (evt.EventName === 'WallboardRefreshEvent') {
+            skillsToShow = evt.Skills.filter((s) => s.AgentsStaffed > 0 || s.CallsInQueue > 0);
+        } else if (evt.EventName === 'WallboardRefreshEvent') {
             // check for skill update
-            if (this.dataSource.data.length && this.dataSource.data.length !== evt.Skills.length) {
+            if (this.dataSource.data.length && this.dataSource.data.length !== skillsToShow.length) {
                 this._appUIService.showAppSnackbar({
                     message: 'Agent skills has been updated!',
                     state: 'success',
@@ -126,7 +125,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
 
         // assign the data
-        this.dataSource = new MatTableDataSource(evt.Skills);
+        this.dataSource = new MatTableDataSource(skillsToShow);
         // sorting data accessor for nested object sorting
         // check if the SL is enabled, since we need custom sort for Service Level only!
         if (this.widgetData.SLEnabled) {
@@ -141,7 +140,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
         // add the sort
         this.dataSource.sort = this.sort;
-    }
+    };
 
     /**
      * To get SL bg color
@@ -183,4 +182,3 @@ interface WidgetData {
      */
     SLEnabled: boolean;
 }
-

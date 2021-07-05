@@ -79,9 +79,14 @@
                         <button class="lg:twd-hidden" #expandableButton (click)="showCategoryMenu = !showCategoryMenu">
                             <mat-icon>{{ showCategoryMenu ? 'menu_open' : 'menu' }}</mat-icon>
                         </button>
-                        <form class="twd-max-w-1/2 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
+                        <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1" (ngSubmit)="doGlobalSearch()">
                             <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
-                                <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
+                                <input
+                                    class="login-input"
+                                    matInput
+                                    [placeholder]="currentTab === 'queue' ? 'Search by Subject' : 'Search'"
+                                    [formControl]="globalSearchControl"
+                                />
                                 <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
                                     <mat-icon matSuffix>search</mat-icon>
                                 </button>
@@ -101,7 +106,13 @@
                                 </ng-template>
                             </mat-form-field>
                         </form>
-                        <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
+                        <button
+                            mat-icon-button
+                            (click)="doAdvancedSearch()"
+                            [ngClass]="{ 'twd-animate-spin': polling.active }"
+                            [disabled]="polling.active"
+                            matTooltip="Refresh"
+                        >
                             <mat-icon>refresh</mat-icon>
                         </button>
                         <button
@@ -351,10 +362,10 @@
                                             <mat-label> Content </mat-label>
                                             <input matInput formControlName="content" type="text" [readonly]="globalSearchControl.value" />
                                         </mat-form-field>
-                                        <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
+                                        <!-- <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                             <mat-label> Device Id </mat-label>
                                             <input matInput formControlName="deviceid" type="text" [readonly]="globalSearchControl.value" />
-                                        </mat-form-field>
+                                        </mat-form-field> -->
                                         <mat-form-field class="twd-text-sm" fxFlex="48" appearance="outline">
                                             <mat-label> Assigned To </mat-label>
                                             <input matInput formControlName="assignedTo" type="text" [readonly]="globalSearchControl.value" />
@@ -394,18 +405,18 @@
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Attachments : </span>
                                             <input matInput placeholder="Input" style="display: none" />
                                             <mat-radio-group class="w-100-p" formControlName="hasAttachments" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
                                         <div fxFlex="100" class="my-16">
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Replied : </span>
                                             <mat-radio-group class="w-100-p" formControlName="replied" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
@@ -413,9 +424,9 @@
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Closed : </span>
                                             <input matInput placeholder="Input" style="display: none" />
                                             <mat-radio-group class="w-100-p" formControlName="closed" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
@@ -423,9 +434,9 @@
                                             <span fxFlex="30" class="mat-subheading-2 m-0"> Assigned : </span>
                                             <input matInput placeholder="Input" style="display: none" />
                                             <mat-radio-group class="w-100-p" formControlName="assigned" fxFlex="70">
-                                                <mat-radio-button value="any" fxFlex="100">Any</mat-radio-button>
-                                                <mat-radio-button value="yes" fxFlex="100">Yes</mat-radio-button>
-                                                <mat-radio-button value="no" fxFlex="100">No</mat-radio-button>
+                                                <mat-radio-button value="2" fxFlex="100">Any</mat-radio-button>
+                                                <mat-radio-button value="1" fxFlex="100">Yes</mat-radio-button>
+                                                <mat-radio-button value="0" fxFlex="100">No</mat-radio-button>
                                             </mat-radio-group>
                                         </div>
 
@@ -445,18 +456,32 @@
                         </button>
                     </div>
 
-                    <div id="sortControls" class="twd-flex twd-justify-between twd-items-center twd-px-2 twd-pt-2">
-                        <div class="twd-font-bold twd-text-sm">
-                            <mat-form-field class="custom with-border" appearance="outline">
-                                <mat-select [formControl]="sortControls.sortBy">
-                                    <mat-option value="default">Default</mat-option>
-                                    <mat-option value="Subject">Sort By Name</mat-option>
-                                    <mat-option value="addedTime">Sort By Time</mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                    <div
+                        id="sortControls"
+                        class="twd-flex twd-items-center twd-px-2 twd-pt-2"
+                        [ngClass]="classes.hostClass"
+                        *ngIf="
+                            dataSource.data?.length && ['queue', 'draft'].includes(currentTab)
+                                ? { hostClass: 'twd-justify-between', selectClass: '' }
+                                : { hostClass: 'twd-justify-end', selectClass: 'twd-hidden' } as classes
+                        "
+                    >
+                        <div [ngClass]="classes.selectClass">
+                            <mat-checkbox id="selectAllCtrl" (change)="selectAllEmails($event.checked)" [(ngModel)]="allEmailsSelected">
+                                Select All
+                            </mat-checkbox>
                         </div>
-                        <div>
-                            <ng-container
+                        <div class="twd-flex twd-items-center">
+                            <div class="twd-font-bold twd-text-sm">
+                                <mat-form-field class="custom with-border" appearance="outline">
+                                    <mat-select [formControl]="sortControls.sortBy">
+                                        <mat-option value="default">Default</mat-option>
+                                        <mat-option value="Subject">Sort By Subject</mat-option>
+                                        <mat-option value="addedTime">Sort By Time</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <!-- <ng-container
                                 *ngIf="
                                     polling.allowed &&
                                     (polling.enabled
@@ -476,7 +501,7 @@
                                 >
                                     <mat-icon>sync</mat-icon>
                                 </button>
-                            </ng-container>
+                            </ng-container> -->
                             <ng-container
                                 *ngIf="
                                     sortControls.ascending
@@ -569,7 +594,7 @@
             </div>
 
             <div
-                *ngIf="!emailSearchRes.loading && !emailSearchRes.error && emailSearchRes.data.selected as selectedEmail"
+                *ngIf="emailSearchRes.data.selected as selectedEmail"
                 class="
                     email-open
                     border-radius-20
@@ -620,7 +645,7 @@
                     "
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="twd-shadow">
+                    <div class="twd-shadow twd-max-h-96 twd-overflow-auto">
                         <div class="twd-text-xl twd-flex twd-justify-between twd-items-center pt-20 px-28 twd-pb-3">
                             <div
                                 class="twd-relative twd-flex-1 twd-px-1"
@@ -633,20 +658,34 @@
                         </div>
                         <div class="twd-transition-all px-28" [ngClass]="{ 'twd-h-0 twd-overflow-y-hidden twd-opacity-0': minimizeSubject }">
                             <div fxLayout fxLayoutAlign="space-between">
-                                <div fxFlex="80">
+                                <div fxFlex="80" *ngIf="{ inQueueOrInbox: ['queue', 'inbox'].includes(currentTab) } as tab">
                                     <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
                                     <p class="text-bold my-4" *ngIf="selectedEmail.ccList">Cc : {{ selectedEmail.ccList }}</p>
                                     <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
                                     <p class="my-4 text-bold">Status: {{ selectedEmail.currentStatus || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Prirority: {{ selectedEmail.priority || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
-                                    <p class="my-4 text-bold">
-                                        Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                                    </p>
-                                    <p class="my-4 text-bold">
-                                        Closed Status: {{ selectedEmail.closedBy ? 'Closed by ' + selectedEmail.closedBy : 'Open' }}
-                                    </p>
-                                    <p class="my-4 text-bold">Intent: {{ selectedEmail.intent || 'NA' }}</p>
+
+                                    <ng-container *ngIf="tab.inQueueOrInbox">
+                                        <p class="my-4 text-bold">
+                                            Closed Status: {{ selectedEmail.closedBy ? 'Closed by ' + selectedEmail.closedBy : 'Open' }}
+                                        </p>
+
+                                        <p class="my-4 text-bold">Prirority: {{ selectedEmail.priority || 'NA' }}</p>
+                                        <p class="my-4 text-bold">Agent: {{ selectedEmail.agentName || 'NA' }}</p>
+                                        <p class="my-4 text-bold">
+                                            Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                        </p>
+                                    </ng-container>
+                                    <ng-container *ngIf="!tab.inQueueOrInbox">
+                                        <p *ngIf="selectedEmail.closedBy" class="my-4 text-bold">
+                                            Closed Status: {{ 'Closed by ' + selectedEmail.closedBy  }}
+                                        </p>
+                                        <p *ngIf="selectedEmail.priority" class="my-4 text-bold">Prirority: {{ selectedEmail.priority }}</p>
+                                        <p *ngIf="selectedEmail.agentName" class="my-4 text-bold">Agent: {{ selectedEmail.agentName }}</p>
+                                        <p *ngIf="selectedEmail.repliedStatus?.length" class="my-4 text-bold">
+                                            Replied Status: {{ selectedEmail.repliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                        </p>
+                                    </ng-container>
+                                    <p *ngIf="selectedEmail.intent" class="my-4 text-bold">Intent: {{ selectedEmail.intent  }}</p>
                                 </div>
                                 <div fxFlex="15">
                                     <p class="my-4">{{ selectedEmail.addedTime | date: 'longDate' }}</p>
@@ -709,21 +748,12 @@
                     </div>
                     <div class="twd-flex-1 twd-relative twd-pb-11 lg:twd-pb-0">
                         <div id="openEmailRef" class="lg:twd-absolute twd-left-0 twd-top-0 twd-w-full twd-p-1 lg:twd-h-full lg:twd-overflow-auto">
-                            <div [innerHtml]="selectedEmail.body"></div>
+                            <!-- <div [innerHtml]="selectedEmail.body"></div> -->
+                            <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
                         </div>
                     </div>
                 </div>
             </div>
-            <div
-                *ngIf="emailSearchRes.error"
-                class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
-            >
-                <div class="twd-flex twd-flex-col twd-justify-center">
-                    <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> error </mat-icon>
-                    <span class="twd-text-2xl">Something went wrong</span>
-                </div>
-            </div>
-
             <div
                 *ngIf="!emailSearchRes.data.selected"
                 class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
@@ -737,21 +767,27 @@
     </div>
 
     <ng-template #replyDialog>
-        <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative">
-            <div
+        <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative twd-p-2">
+            <!-- <div
                 *ngIf="editorState.loading"
                 class="twd-absolute twd-bg-white twd-bg-opacity-25 twd-w-full twd-h-full twd-z-10 twd-flex twd-items-center twd-justify-center"
             >
                 <p class="twd-text-lg twd-font-bold twd-text-center">Loading editor ...</p>
-            </div>
-            <textarea #replyEditor [id]="editorState.id"></textarea>
+            </div> -->
+            <create-email
+                [emailInfo]="replyInfo"
+                (sendEmail)="replyEditorModal.sendEmail($event)"
+                [sendDisabled]="replyEditorModal.sendingEmail"
+                [hiddenFields]="['To', 'Subject']"
+            ></create-email>
+            <!-- <textarea #replyEditor [id]="editorState.id"></textarea>
             <div *ngIf="!editorState.loading" class="twd-flex twd-gap-2 twd-justify-end twd-py-2 twd-px-3">
                 <email-template-selector (selectTemplate)="selectEmailTemplate($event)"></email-template-selector>
                 <button mat-raised-button (click)="replyEditorModal.sendEmail()" [disabled]="replyEditorModal.sendingEmail" color="primary">
                     Send
                 </button>
                 <button mat-raised-button (click)="replyEditorModal.close()" color="accent">Cancel</button>
-            </div>
+            </div> -->
         </div>
     </ng-template>
 
@@ -776,18 +812,22 @@
                                 [checked]="selectedMailIds.includes(node.uiId)"
                             ></mat-checkbox>
                         </div>
-                        <div mat-ripple class="twd-flex-1 twd-flex twd-justify-between twd-p-3" (click)="openEmail(node)">
-                            <div fxFlex="70">
+                        <div mat-ripple class="twd-flex-1 twd-flex twd-flex-wrap twd-justify-between twd-p-3" (click)="openEmail(node)">
+                            <div class="twd-w-full 2xl:twd-w-max">
                                 <p class="font-weight-600 my-4 twd-truncate">
                                     <!-- {{ node.ToList || 'NA' }} -->
                                     {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
                                 </p>
                                 <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
                             </div>
-                            <div fxFlex="30">
-                                <span> {{ node.addedTime | date: 'mediumDate' }} </span>
-                                <br />
-                                <span> {{ node.addedTime | date: 'shortTime' }} </span>
+                            <div class="twd-w-full 2xl:twd-w-max twd-flex twd-items-start">
+                                <div class="twd-text-xs twd-font-bold twd-mt-1.5">
+                                    <p>{{ node.addedTime | date: 'mediumDate' }}</p>
+                                    <span> {{ node.addedTime | date: 'shortTime' }} </span>
+                                </div>
+                                <div *ngIf="node.HasAttachment" class="twd-transform twd-rotate-90">
+                                    <span><mat-icon>attachment</mat-icon></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -820,7 +860,7 @@
                                     {{ node.name || 'NA' }}
                                 </span>
                             </div>
-                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm">
+                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
                                 ({{ node.grandChildren || node.children.length }})
                             </span>
                         </div>

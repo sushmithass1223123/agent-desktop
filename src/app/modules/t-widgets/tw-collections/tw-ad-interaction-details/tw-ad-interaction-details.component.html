@@ -14,17 +14,16 @@
             <ng-container matColumnDef="Channel">
                 <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="maximized ? 10 : 20">Channel</mat-header-cell>
                 <mat-cell *matCellDef="let element" [fxFlex]="maximized ? 10 : 20">
-                    <mat-icon class="channel-icon" color="primary" [matTooltip]="element.Channel">
-                        {{
-                            element.Channel === 'Voice'
-                                ? 'phone'
-                                : element.Channel === 'TextChat'
-                                ? 'chat'
-                                : element.Channel === 'Email'
-                                ? 'email'
-                                : 'feed'
-                        }}
-                    </mat-icon>
+                    <ng-container [ngSwitch]="element.Channel | lowercase">
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'voice'" matTooltip="Voice">phone</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'textchat'" matTooltip="Chat">chat</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'audiochat'" matTooltip="Audio">wifi_calling_3</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'videochat'" matTooltip="Video">duo</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'sms'" matTooltip="SMS">sms</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'email'" matTooltip="Email">email</mat-icon>
+                        <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'emc'" matTooltip="Email">email</mat-icon>
+                        <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.Channel"> feed </mat-icon>
+                    </ng-container>
                 </mat-cell>
             </ng-container>
 
@@ -56,44 +55,27 @@
                         </ng-container>
 
                         <ng-template #interactionBrandType let-subChannel="SubChannel">
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'chat'" matTooltip="Chat">chat</mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'text'" matTooltip="Chat">chat</mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'audio'" matTooltip="Audio Call">phone</mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'video'" matTooltip="Video Call">duo</mat-icon>
-                            <mat-icon
-                                color="primary"
-                                *ngIf="subChannel.toLowerCase() === 'whatsapp'"
-                                matTooltip="WhatsApp"
-                                svgIcon="custom-whatsapp"
-                            ></mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'we'" matTooltip="WeChat" svgIcon="custom-we"></mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'line'" matTooltip="Line" svgIcon="custom-line"></mat-icon>
-                            <mat-icon
-                                color="primary"
-                                *ngIf="subChannel.toLowerCase() === 'viber'"
-                                matTooltip="Viber"
-                                svgIcon="custom-viber"
-                            ></mat-icon>
-                            <mat-icon
-                                color="primary"
-                                *ngIf="subChannel.toLowerCase() === 'twitter'"
-                                matTooltip="Twitter"
-                                svgIcon="custom-twitter"
-                            ></mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'fb'" matTooltip="FB" svgIcon="custom-fb"></mat-icon>
-                            <mat-icon
-                                color="primary"
-                                *ngIf="subChannel.toLowerCase() === 'telegram'"
-                                matTooltip="Telegram"
-                                svgIcon="custom-telegram"
-                            ></mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'textchat'" matTooltip="Chat">chat</mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'store'" matTooltip="Store">store</mat-icon>
-                            <mat-icon color="primary" *ngIf="subChannel.toLowerCase() === 'field'" matTooltip="Field">roofing</mat-icon>
+                            <ng-container [ngSwitch]="subChannel | lowercase">
+                                <mat-icon color="primary" *ngSwitchCase="'textchat'" matTooltip="Chat">chat</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'chat'" matTooltip="Chat">chat</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'text'" matTooltip="Chat">chat</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'audio'" matTooltip="Audio">wifi_calling_3</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'video'" matTooltip="Video">duo</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'whatsapp'" svgIcon="custom-whatsapp" matTooltip="WhatsApp"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'we'" svgIcon="custom-we" matTooltip="We Chat"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'line'" svgIcon="custom-line" matTooltip="Line"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'viber'" svgIcon="custom-viber" matTooltip="Viber"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'twitter'" svgIcon="custom-twitter" matTooltip="Twitter"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'fb'" svgIcon="custom-fb" matTooltip="Facebook"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'telegram'" svgIcon="custom-telegram" matTooltip="Telegram"></mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'store'" matTooltip="Store">store</mat-icon>
+                                <mat-icon color="primary" *ngSwitchCase="'field'" matTooltip="Field">roofing</mat-icon>
+                                <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
+                            </ng-container>
                         </ng-template>
 
-                        <mat-icon color="primary" *ngSwitchCase="'voice'" matTooltip="Voice"> call </mat-icon>
-                        <mat-icon color="primary" *ngSwitchCase="'sms'" matTooltip="SMS"> textsms </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'voice'" matTooltip="Voice"> phone </mat-icon>
+                        <mat-icon color="primary" *ngSwitchCase="'sms'" matTooltip="SMS"> sms </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'email'" matTooltip="Email"> email </mat-icon>
                         <mat-icon color="primary" *ngSwitchCase="'fax'" matTooltip="Fax"> print </mat-icon>
                         <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.SubChannel"> feed </mat-icon>
@@ -103,41 +85,51 @@
 
             <ng-container matColumnDef="User">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.User">
-                    {{ element.User || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.User">
+                    <div class="text-truncate">
+                        {{ element.User || 'NA' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Dnis">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>DNIS</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.Dnis">
-                    {{ element.Dnis || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.Dnis">
+                    <div class="text-truncate">
+                        {{ element.Dnis || 'NA' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Intent">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Intent</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{ element.Intent || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.Intent">
+                    <div class="text-truncate">
+                        {{ element.Intent || 'NA' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="CreatedDateTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Created Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.CreatedDateTime | date: 'd/M/yy, hh:mm a'">
-                    {{ element.CreatedDateTime | date: 'd/M/yy, hh:mm a' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.CreatedDateTime | date: 'd/M/yy, hh:mm a'">
+                    <div class="text-truncate">
+                        {{ element.CreatedDateTime | date: 'd/M/yy, hh:mm a' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ClosedDateTime">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="px-8">Closed Time</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="text-truncate px-8" [matTooltip]="element.ClosedDateTime | date: 'd/M/yy, hh:mm a'">
-                    {{ element.ClosedDateTime | date: 'd/M/yy, hh:mm a' }}
+                <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element.ClosedDateTime | date: 'd/M/yy, hh:mm a'">
+                    <div class="text-truncate">
+                        {{ element.ClosedDateTime | date: 'd/M/yy, hh:mm a' }}
+                    </div>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ActiveTime">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="10">ActiveTime</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="10">Active Time</mat-header-cell>
                 <mat-cell *matCellDef="let element" fxFlex="10">
                     {{ element.ActiveTime * 1000 | date: 'HH:mm:ss':'UTC' }}
                 </mat-cell>
@@ -145,8 +137,11 @@
 
             <ng-container matColumnDef="AgentComment">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Comments</mat-header-cell>
-                <mat-cell *matCellDef="let element" class="px-8 text-truncate" [matTooltip]="element.AgentComment">
-                    {{ element.AgentComment || 'NA' }}
+                <mat-cell *matCellDef="let element" class="px-8">
+                    {{ element.AgentComment?.trim() ? '' : 'NA' }}
+                    <button *ngIf="element.AgentComment?.trim()" mat-icon-button matTooltip="View Comments" (click)="showNotes(element.AgentComment)">
+                        <mat-icon> notes </mat-icon>
+                    </button>
                 </mat-cell>
             </ng-container>
 

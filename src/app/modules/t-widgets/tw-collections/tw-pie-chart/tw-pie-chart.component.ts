@@ -65,10 +65,16 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     };
 
     /**
+     * No data message
+     */
+    noDataMessage: string;
+
+    /**
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService) {
         super();
+        this.noDataMessage = 'No Data Available';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -92,14 +98,15 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             case 'auxstatus':
                 if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentStatusDetailsEvent';
-                }
-                else if (this.widgetData.Role === 'supervisor') {
+                } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamActiveStatusDetailsEvent';
+                    this.noDataMessage = 'No Active Agents';
                 }
                 break;
 
             case 'ciq':
                 eventName = 'TeamWallboardRefreshEvent';
+                this.noDataMessage = 'No Calls in Queue';
                 break;
 
             case 'intentlist':
@@ -109,25 +116,24 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             case 'totalinteractions':
                 if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentChannelListEvent';
-                }
-                else if (this.widgetData.Role === 'supervisor') {
+                } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamChannelListEvent';
                 }
                 break;
 
             case 'activechannels':
                 eventName = 'TeamActiveChannelListEvent';
+                this.noDataMessage = 'No Active Channels';
                 break;
         }
 
         // if event name register to it
         if (eventName) {
             this._tmacEventService
-                .getEvents([eventName])
+                .getNonInteractionEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
-        }
-        else {
+                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        } else {
             TUtils.Logger.warn(`TwPieChartComponent: unable to get event name to regiser, Source=${this.widgetData.Source}`);
         }
     }
@@ -146,11 +152,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * To reduce config data limit of restore view
-     * 
-     * @param datasets 
-     * @param labels 
+     *
+     * @param datasets
+     * @param labels
      */
-    private showData(datasets: { [x: string]: any; }, labels: any[]): void {
+    private showData(datasets: { [x: string]: any }, labels: any[]): void {
         const limit = this.widgetData.Limit;
 
         if (!limit) {
@@ -205,7 +211,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
-                labels.push(`${c.State} - [${duration.hours}:${duration.minutes}:${duration.seconds}]`);
+                labels.push(
+                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
+                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
+                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                );
             });
 
         this.showData(datasets, labels);
@@ -224,7 +234,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
-                labels.push(`${c.State} - [${duration.hours}:${duration.minutes}:${duration.seconds}]`);
+                labels.push(
+                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
+                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
+                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                );
             });
 
         // this.chart.datasets = Object.keys(datasets).map((d) => ({
@@ -244,7 +258,10 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     private TeamWallboardRefreshEvent(evt: WallboardRefreshEvent): void {
         const datasets = { 'Calls In Queue': [] };
         const labels = [];
-        sortBy(evt.Skills, 'CallsInQueue')
+        // filter only CIQ's greater than 0
+        const skills = evt.Skills.filter((s) => s.CallsInQueue > 0);
+
+        sortBy(skills, 'CallsInQueue')
             .reverse()
             .forEach((c) => {
                 datasets['Calls In Queue'].push(c.CallsInQueue);
@@ -259,12 +276,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         // });
         // this.chart.labels = labels;
 
-        datasets['Calls In Queue'] = Object.keys(datasets).map((d) => {
-            if (datasets[d].every((x: number) => x === 0)) {
-                datasets[d] = [];
-            }
-            return datasets[d];
-        })[0] || [];
+        datasets['Calls In Queue'] =
+            Object.keys(datasets).map((d) => {
+                if (datasets[d].every((x: number) => x === 0)) {
+                    datasets[d] = [];
+                }
+                return datasets[d];
+            })[0] || [];
 
         this.showData(datasets, labels);
     }
@@ -338,12 +356,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         //     });
         // this.chart.labels = labels;
 
-        datasets.Count = Object.keys(datasets)
-            .map(d => datasets[d])
-            .filter((x) => {
-                const sum = x && x.length ? x.reduce((a: number, b: number) => a + b) : null;
-                return !!sum;
-            })[0] || [];
+        datasets.Count =
+            Object.keys(datasets)
+                .map((d) => datasets[d])
+                .filter((x) => {
+                    const sum = x && x.length ? x.reduce((a: number, b: number) => a + b) : null;
+                    return !!sum;
+                })[0] || [];
 
         this.showData(datasets, labels);
     }
@@ -391,4 +410,3 @@ interface WidgetData {
      */
     Limit: number;
 }
-

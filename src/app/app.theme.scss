@@ -178,7 +178,7 @@ $custom_palettes: (
 
 // Angular Material typography
 $typography: mat-typography-config(
-    $font-family: 'Arial, sans-serif',
+    $font-family: 'Muli',
     $title: mat-typography-level(20px, 32px, 600),
     $body-2: mat-typography-level(14px, 24px, 600),
     $button: mat-typography-level(14px, 14px, 600),
@@ -187,20 +187,6 @@ $typography: mat-typography-config(
 
 // Setup the typography
 @include angular-material-typography($typography);
-
-body.wf-muli {
-    // Angular Material typography
-    $typography: mat-typography-config(
-        $font-family: 'Muli',
-        $title: mat-typography-level(20px, 32px, 600),
-        $body-2: mat-typography-level(14px, 24px, 600),
-        $button: mat-typography-level(14px, 14px, 600),
-        $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-    );
-
-    // Setup the typography
-    @include angular-material-typography($typography);
-}
 
 body.wf-montserrat {
     // Angular Material typography
@@ -295,6 +281,37 @@ body.theme-teal-red {
         primary: $teal-red-primary-palette,
         accent: $teal-red-accent-palette,
         warn: $teal-red-warn-palette
+    );
+
+    @include tailwind-core-theme($palettes, 700);
+    @include fuse-color-classes($palettes);
+}
+
+// Define the primary, accent and warn palettes
+$cyan-orange-primary-palette: mat-palette($mat-cyan);
+$cyan-orange-accent-palette: mat-palette($mat-orange, 400);
+$cyan-orange-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$theme: mat-light-theme($cyan-orange-primary-palette, $cyan-orange-accent-palette, $cyan-orange-warn-palette);
+
+// Add ".theme-cyan-orange" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-cyan-orange {
+    // Create an Angular Material theme from the $theme map
+    @include angular-material-theme($theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($theme);
+
+    // Apply the theme to the user components
+    @include app-core-theme($theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $cyan-orange-primary-palette,
+        accent: $cyan-orange-accent-palette,
+        warn: $cyan-orange-warn-palette
     );
 
     @include tailwind-core-theme($palettes, 700);

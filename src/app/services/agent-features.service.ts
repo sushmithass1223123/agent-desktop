@@ -80,7 +80,21 @@ export class AgentFeaturesService {
      */
     private _featureUpdatedSubject: Subject<boolean>;
 
-    constructor(private _appUIService: AppUiService) { }
+    constructor(private _appUIService: AppUiService) {
+        this._featureUpdatedSubject = new Subject();
+        this._agentFeatureInfo = {
+            permissions: {
+                camera: false,
+                display: false,
+                location: false
+            },
+            data: {
+                cameraStream: null,
+                displayStream: null,
+                location: null
+            }
+        };
+    }
 
     /**
      * Get agent features
@@ -375,6 +389,9 @@ export class AgentFeaturesService {
     public subscribe(): void {
         TUtils.Logger.console('info', 'AgentFeaturesService.subscribe');
 
+        // init agent features subject
+        this._featureUpdatedSubject = new Subject();
+
         this._agentFeatureInfo = {
             permissions: {
                 camera: false,
@@ -406,9 +423,6 @@ export class AgentFeaturesService {
 
         // set processed
         this._processed = true;
-
-        // init agent features subject
-        this._featureUpdatedSubject = new Subject();
     }
 
     /**

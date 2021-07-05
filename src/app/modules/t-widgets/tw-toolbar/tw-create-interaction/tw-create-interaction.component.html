@@ -15,10 +15,10 @@
         <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="channels.length">
             <ng-container *ngFor="let channel of channels">
                 <button
+                    *ngIf="channel.Enabled"
                     mat-mini-fab
-                    color="secondary"
+                    color="default"
                     (click)="addInteraction(channel.Type, channel)"
-                    class="fab-secondary"
                     [disabled]="!checkAux(channel.EnableState)"
                     [matTooltip]="channel.Name"
                 >

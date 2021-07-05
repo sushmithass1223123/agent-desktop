@@ -30,6 +30,7 @@ import {
     TextChatAgentDisconnectedEvent,
     TextChatAgentMessageReceivedEvent,
     TextChatDisconnectedEvent,
+    TextChatIncomingEvent,
     TextChatMessageReceivedEvent,
     TextChatMessageSentEvent,
     TextChatMessageTemplateSentEvent,
@@ -49,6 +50,7 @@ import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
 import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, IWidget, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { urlify } from 'app/utils';
+import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
 import { from, Subject, timer } from 'rxjs';
@@ -71,7 +73,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To hold all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<TextChatIncomingEvent | TextChatRemoteUserConnectedEvent>;
     /**
      * Media Channels
      */
@@ -308,6 +310,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     savedComments: InteractionComment[] = [];
     /**
+     * Flag to blink comments button when added from server
+     */
+    commentsAdded: boolean;
+    /**
      * Flag to allow screen share without prompting user for permission
      */
     allowCustomerScreenShare = true;
@@ -342,6 +348,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     userTyping: boolean;
     /**
+     * Remote typing ref
+     */
+    remoteTyping: {
+        /**
+         * Name of user typing (conf agent/customer)
+         */
+        name: string;
+        /**
+         * Typing flag
+         */
+        typing: boolean;
+    };
+    /**
      * Typing timer
      */
     typingTimer: any;
@@ -364,7 +383,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Agent action features
      */
-     agentFeatures: {
+    agentFeatures: {
         /**
          * Audio escalate
          */
@@ -468,7 +487,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
@@ -477,38 +496,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // set the interaction id from data
         this.interactionId = this.data.InteractionDetails?.InteractionID;
 
-        // listen to TMAC events
-        this._tmacEventService
-            .getInteractionEvents(
-                [
-                    'TextChatRemoteUserConnectedEvent',
-                    'TextChatSelfServiceDestinationEvent',
-                    'TextChatAgentConnectedEvent',
-                    'TextChatTranscriptForTransferEvent',
-                    'TextChatMessageSentEvent',
-                    'TextChatMessageTemplateSentEvent',
-                    'TextChatUserMessageWaitTimerEvent',
-                    'TextChatTypingStateChangedEvent',
-                    'TextChatMessageReceivedEvent',
-                    'TextChatAgentMessageReceivedEvent',
-                    'AVControlMessageReceivedEvent',
-                    'TextChatDisconnectedEvent',
-                    'TextChatAgentDisconnectedEvent',
-                    'CannedResposeEvent',
-                    'TextChatTransferSuccessEvent',
-                    'TextChatTransferFailedEvent',
-                    'TextChatTransferRejectEvent',
-                    'ActionMessageReceivedEvent',
-                    'InteractionDataEvent',
-                    'CallHoldEvent',
-                    'CallHoldReconnectEvent',
-                    'HoldTimerEvent',
-                    'CCLDataEvent'
-                ],
-                this.interactionId
-            )
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        this.registerToEvents();
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
@@ -572,13 +560,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.status = 'incoming';
 
         // set the start time
-        this.startTime = new Date(Date.parse(this.data.InteractionDetails.CreatedTime)) || new Date();
+        this.startTime = new Date(this.data.InteractionDetails.CreatedTime) ?? new Date();
 
         // get the file upload Url
         this.fileUploadUrl = this.appConfig.Main.Urls?.FileServerUrl || null;
 
         // update the line Id
-        this.lineId = this.data.InteractionDetails?.RecoveryData?.lineid || '';
+        this.lineId = (this.data.InteractionDetails as TextChatIncomingEvent)?.RecoveryData?.lineid || '';
 
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
@@ -621,11 +609,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Define an ngAfterViewInit() method to handle any additional initialization tasks.
      */
     ngAfterViewInit(): void {
-        // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+        // check if the current page is email page
+        if (this.data.Data.RouteOnInteraction && this._interactionManagerService.getInteractionCount().active <= 1) {
             setTimeout(() => {
-                this._contentPageService.mode = this.data.Data.Path;
-            });
+                let inPage = true;
+                if (this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+                    inPage = false;
+                    this._contentPageService.mode = this.data.Data.Path;
+                }
+                // if no active we need to select that particular interaction
+                if (!inPage) {
+                    const interaction = this.interactionList.filter((i) => i.interactionId === this.interactionId)[0];
+                    if (interaction && !interaction?.isActive) {
+                        this.selectInteraction(interaction, true);
+                    }
+                }
+            }, 500);
         }
 
         // play new chat sound
@@ -637,8 +636,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -649,6 +647,44 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Register to events
+     */
+    private registerToEvents(): void {
+        // listen to TMAC events
+        this._tmacEventService
+            .getInteractionEvents(
+                [
+                    'TextChatRemoteUserConnectedEvent',
+                    'TextChatSelfServiceDestinationEvent',
+                    'TextChatAgentConnectedEvent',
+                    'TextChatTranscriptForTransferEvent',
+                    'TextChatMessageSentEvent',
+                    'TextChatMessageTemplateSentEvent',
+                    'TextChatUserMessageWaitTimerEvent',
+                    'TextChatTypingStateChangedEvent',
+                    'TextChatMessageReceivedEvent',
+                    'TextChatAgentMessageReceivedEvent',
+                    'AVControlMessageReceivedEvent',
+                    'TextChatDisconnectedEvent',
+                    'TextChatAgentDisconnectedEvent',
+                    'CannedResposeEvent',
+                    'TextChatTransferSuccessEvent',
+                    'TextChatTransferFailedEvent',
+                    'TextChatTransferRejectEvent',
+                    'ActionMessageReceivedEvent',
+                    'InteractionDataEvent',
+                    'CallHoldEvent',
+                    'CallHoldReconnectEvent',
+                    'HoldTimerEvent',
+                    'CCLDataEvent'
+                ],
+                this.interactionId
+            )
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
 
     /**
      * To check agent features for One Way Video
@@ -1044,6 +1080,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
         }
         this.replyingToMessage = null;
+
         // Update the server
         SDKClient.sendTextChat({
             interactionId: this.interactionId.toString(),
@@ -1055,7 +1092,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             .then((res) => {
                 if (res.response > 0) {
                     // show freeze auto response button
-                    if (this.callWidget) {
+                    if (this.callWidget || !this.agentFeatures.reply) {
                         this.freezeAutoResponse(true);
                     } else {
                         this.showAutoFreeze = true;
@@ -1077,6 +1114,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 });
             });
+
+        // send done typing
+        this.doneTyping();
 
         // Reset the reply form
         this.replyForm?.reset();
@@ -1123,7 +1163,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Data.Config = this.data.Data;
         widget.Data.Opener = this;
         widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
-        widget.Data.SessionID = this.data.InteractionDetails?.TextChatSessionID;
+        widget.Data.SessionID = (this.data.InteractionDetails as TextChatRemoteUserConnectedEvent)?.TextChatSessionID;
         widget.Data.CallType = param;
 
         // open call widget
@@ -1197,6 +1237,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Done typing
      */
     private doneTyping(): void {
+        if (!this.userTyping) {
+            return;
+        }
         // set typing to false
         this.userTyping = false;
         // send typing state
@@ -1601,10 +1644,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param evt TextChatTypingStateChangedEvent evt
      */
     TextChatTypingStateChangedEvent(evt: TextChatTypingStateChangedEvent): void {
-        // check the interaction
-        // if (evt.InteractionID !== this.interactionId) {
-        //     return;
-        // }
+        let user = 'User';
+        const status = evt.Status; // 0=start, 1=stop
+
+        if (evt.User === '0') {
+            // customer typing
+            user = this.customerName;
+        } else {
+            // other agent typing
+            const confAgent = this.conferenceAgentList.filter((c) => c.AgentId === evt.User)[0];
+            user = confAgent?.AgentName ?? 'User';
+        }
+
+        // in a conference scenario  check if any user stopped typing
+        // then verify if the same user is currently typing then only indicate as stop typing
+        if (status === 1 && this.remoteTyping?.name !== user) {
+            return;
+        }
+
+        this.remoteTyping = {
+            name: user,
+            typing: status === 0
+        };
     }
 
     /**
@@ -1700,6 +1761,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            this.commentsAdded = true;
             evt.InteractionComments.forEach((c) => {
                 const dt = JSON.parse(c);
                 this.savedComments.push({
@@ -1772,11 +1834,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.customerName = evt.CallerName;
             // update the interaction status and user
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                status: 'connected',
-                user: this.customerName,
-                otherData: {
-                    icon: this.isSMM ? 'custom-' + this.channel : 'chat'
-                }
+                user: this.customerName
             });
         }
     }
@@ -2229,9 +2287,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check the saved comments
         this.savedComments.forEach((item) => {
             message += `
-                 <div class="text-primary m-0 mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
-                 <span class="time secondary-text mat-body-1">${item.User}</span>,
-                 <span class="time secondary-text mat-body-1">${new Date(item.Time).toLocaleString()}</span>
+                 <div class="text-primary mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time muted-text mat-body-1">${item.User}</span>,
+                 <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
                  <br />
                  <br />
                  `;
@@ -2241,7 +2299,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const dialogRef = this._appUIService.showCustomDialog(
             'prompt',
             message,
-            'Interaction Notes',
+            'Interaction Comments',
             { minRows: 4 },
             {
                 minWidth: '30%',

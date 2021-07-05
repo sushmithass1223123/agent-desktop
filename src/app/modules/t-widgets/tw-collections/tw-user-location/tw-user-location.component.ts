@@ -61,7 +61,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
             }, 0);
         } catch (e) {
             console.error(e);
-            this.error = 'Something went wrong';
+            this.error = 'Unable to set location';
         }
     }
 }

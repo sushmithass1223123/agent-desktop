@@ -17,6 +17,7 @@ import { TwCampaignContactComponent } from './tw-campaign-contact/tw-campaign-co
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
 import { TwChatControlsModule } from './tw-chat-controls/tw-chat-controls.module';
 import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
+import { TwComposeMessagingComponent } from './tw-compose-messaging/tw-compose-messaging.component';
 import { TwCustomComponent } from './tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from './tw-customer-details/tw-customer-details.component';
 import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-journey.component';
@@ -100,7 +101,8 @@ const collectionComponents = [
     TwGenericPanelComponent,
     TwGenericControlsComponent,
     TwAudioVideoControlsComponent,
-    TwCampaignContactComponent
+    TwCampaignContactComponent,
+    TwComposeMessagingComponent
 ];
 
 /**
@@ -111,4 +113,4 @@ const collectionComponents = [
     imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule],
     exports: collectionComponents
 })
-export class TwCollectionsModule { }
+export class TwCollectionsModule {}

@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
@@ -19,7 +20,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AGENT_FEATURES_MAP, COMMON_ERR_MESSAGE } from 'app/constants';
+import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { TwWidgetModel } from 'app/models';
@@ -100,7 +101,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Reload agent data flag
      */
     reload: boolean;
-
     /**
      * Available quiz intents
      */
@@ -109,11 +109,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         { name: 'Product Quiz', intent: 'CallCenterQuiz' },
         { name: 'Training Quiz', intent: 'CallCenterQuiz' }
     ];
-
     /**
-     * Is Agent a supervisor
+     * To allow broadcast
      */
-    isAgentSupervisor: boolean;
+    allowBroadcast: boolean;
 
     /**
      * Constructor
@@ -126,7 +125,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _tmacEventService: TMACEventService,
         private _dashboardService: DashboardService,
         private _fuseSidebarService: FuseSidebarService,
-        private _instantMessagingService: InstantMessagingService
+        private _instantMessagingService: InstantMessagingService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super();
 
@@ -146,28 +146,33 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        this.isAgentSupervisor = SDKClient.getAgentData().agentProfile === 'S';
-
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
 
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
 
         this._tmacEventService
-            .getEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
+            .getNonInteractionEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(false, null).then((result: IResponse) => {
+        SDKClient.loadAUXCodes(false).then((result: IResponse) => {
             // check if the data is null
             if (result.response && result.response.length > 0) {
                 // filter and assign the aux codes
                 this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
             }
         });
+
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
+
+        // check agent features
+        this.checkAgentFeatures();
     }
 
     /**
@@ -178,16 +183,48 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this.destroyWrapper();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * To check agent features for IsSetBroadcastEnabled
+     */
+    private checkAgentFeatures(): void {
+        try {
+            const checkFeature = SDKClient.getAgentData().featuresList.filter(
+                (f) => f.Feature === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
+            )?.[0];
+            this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
+        } catch (error) {}
+    }
+
+    /**
+     * createActivityWidget
+     * Need more description
+     * @method createActivityWidget
+     * @param {any} item
+     */
+    private createActivityWidget(item: any): void {
+        // create activity details widget
+        const widget = new TwWidgetModel(item.title, 'tw-su-agent-activity-details', 'local_activity');
+        widget.Config.Actions = ['collapse', 'destroy'];
+        widget.Config.ViewState = 'maximize';
+        widget.Config.Anchor = true;
+        widget.Config.Position.X = 3;
+        widget.Config.Position.Y = 4;
+        widget.Config.Class = 'mx-cover no-restore inherit-header';
+        widget.Data.ActivityDetails = item;
+        widget.destroy = () => {
+            this.activityWidget = null;
+        };
+
+        // push the widget to list
+        this.activityWidget = widget;
+    }
 
     /**
      * SupervisorAgentListEvent handler
      * @method SupervisorAgentListEvent
      * @param {CustomSDKEvent} evt
      */
-    private SupervisorAgentListEvent = (evt: CustomSDKEvent) => {
+    SupervisorAgentListEvent(evt: CustomSDKEvent): void {
         // filter for excpet me
         this.agentList = this.filteredAgents = evt.Data || [];
         // check any search term is there, then filter
@@ -209,7 +246,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @method TeamAgentListDataEvent
      * @param {CustomSDKEvent} evt
      */
-    private TeamAgentListDataEvent = (evt: CustomSDKEvent) => {
+    TeamAgentListDataEvent(evt: CustomSDKEvent): void {
         if (this.agentList.length === 0) {
             return;
         }
@@ -232,31 +269,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // sort agent list
         this.sortAgentList();
     }
-
-    /**
-     * createActivityWidget
-     * Need more description
-     * @method createActivityWidget
-     * @param {any} item
-     */
-    private createActivityWidget(item: any): void {
-        // create activity details widget
-        const widget = new TwWidgetModel(item.title, 'tw-su-agent-activity-details', 'local_activity');
-        widget.Config.Actions = ['collapse', 'destroy'];
-        widget.Config.ViewState = 'maximize';
-        widget.Config.Anchor = true;
-        widget.Config.Position.X = 3;
-        widget.Config.Position.Y = 4;
-        widget.Config.Class = 'mx-cover no-restore inherit-header';
-        widget.Data.ActivityDetails = item;
-
-        // push the widget to list
-        this.activityWidget = widget;
-    }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * Filter Agents
@@ -405,7 +417,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     })
                     .catch((error: string) => {
-                        this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                        this._appUIService.showSnackbar('Unable to get agent activity', 'failure');
                         // log the error to server for troubleshooting purpose
                         TUtils.Logger.error('Exception in performAgentAction.AgentSnapShotEvent', error);
                     });
@@ -510,7 +522,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 if (dt.response.EventName === 'AgentStatusChangeEvent') {
                     // parse the result to AgentStatusChangeEvent
                     const response = dt.response as AgentStatusChangeEvent;
-                    this._appUIService.showSnackbar('Status changed successfully', 'success');
+                    let message = 'Agent status changed successfully';
+                    if (agent.CurrentAgentStatus.includes('On Call')) {
+                        message = 'Agent is on call, status change request sent successfully';
+                    }
+                    this._appUIService.showSnackbar(message, 'success');
                     this.filteredAgents = map(this.filteredAgents, (agt: SuAgentModel) => {
                         if (agt.StationID === agent.StationID) {
                             agt.CurrentAgentStatus = response.Status;
@@ -524,7 +540,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             })
             .catch(() => {
                 // logout error
-                this._appUIService.showSnackbar('Change status failed, please try again', 'failure');
+                this._appUIService.showSnackbar('Error in status change, please try again', 'failure');
             });
     }
 
@@ -586,7 +602,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     sendBroadcast(): void {
         const { agentId, teamId } = SDKClient.getAgentData();
-        if (this.isAgentSupervisor) {
+        if (this.allowBroadcast) {
             const dialogRef = this._appUIService.showCustomDialog(
                 'prompt',
                 'Write the message to be broadcasted below',

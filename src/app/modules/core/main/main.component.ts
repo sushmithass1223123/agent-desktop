@@ -8,6 +8,7 @@ import { AgentFeaturesService } from '@services/agent-features.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { AUX_STATUSES } from 'app/constants';
@@ -104,12 +105,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * @param {Router} _router
      * @param {AppUiService} _appUIService
      * @param {AgentFeaturesService} _agentFeaturesService
-     * @param {TMACEventService} _tmacEventsService
+     * @param {TMACEventService} _tmacEventService
      * @param {ActivatedRoute} _activatedRouter
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
-        // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _fuseSidebarService: FuseSidebarService,
@@ -117,8 +117,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private route: ActivatedRoute,
         private _appUIService: AppUiService,
         private _agentFeaturesService: AgentFeaturesService,
-        // this service must not be removed, this will listen to some TMAC events
-        private _tmacEventsService: TMACEventService,
+        private _tmacEventService: TMACEventService,
+        private _interactionManagerService: InteractionManagerService,
         private _activatedRouter: ActivatedRoute,
         private _titleService: Title,
         private fuseSplashService: FuseSplashScreenService
@@ -144,13 +144,9 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     ngOnInit(): void {
         this.fuseSplashService.hide();
-        // register to all the tmac events in service
-        this._tmacEventsService.subscribe();
-
-        // subscribe to config changes
-        // this._fuseConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
+        // subscribe to TMACEventService and InteractionManagerService
+        this._tmacEventService.subscribe();
+        this._interactionManagerService.subscribe();
 
         // subscribe to app changes
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
@@ -175,12 +171,13 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * On destroy
      */
     ngOnDestroy(): void {
-        // Unsubscribe from all subscriptions
+        // unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
-        // de-register the TMAC events in service
-        this._tmacEventsService.unsubscribe();
+        // unsubscribe from TMACEventService and InteractionManagerService
+        this._tmacEventService.unsubscribe();
+        this._interactionManagerService.unsubscribe();
 
         // remove the processed features
         this._agentFeaturesService.unsubscribe();
@@ -230,13 +227,28 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         }
 
         // get the logging agent id
-        const agentId = history.state?.agentId || this.agentId;
+        const agentId = history.state?.agentId ?? this.agentId;
         // check the agent Id
         if (agentId) {
             if (route !== 'login') {
                 const config = await this._appDataService.getJsonConfig(agentId);
+
+                // if the json is not proper then route to not-found page
+                if (!config) {
+                    // we will route to error page
+                    this._router.navigate(['not-found'], {
+                        state: {
+                            subtitle: 'Oops',
+                            title: '404',
+                            description: 'Unable to load the config for main, please contact the administrator.',
+                            login: false
+                        },
+                        queryParamsHandling: 'preserve'
+                    });
+                    return;
+                }
+
                 this.appConfig = config;
-                this._appDataService.setTheme();
             }
             // get the login data
             const loginData = await SDKClient.getLoginData(agentId);

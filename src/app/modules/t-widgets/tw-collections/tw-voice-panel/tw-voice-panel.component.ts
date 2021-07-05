@@ -12,7 +12,6 @@ import { IWidget } from 'app/interfaces';
     encapsulation: ViewEncapsulation.None
 })
 export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * App config json data
      */
@@ -30,7 +29,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
@@ -41,7 +40,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
@@ -52,7 +51,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         {
             'tw-voice-controls': false,
             'tw-customer-details': false,
-            'tw-customer-journey': false,
+            'tw-customer-journey': false
         }
     ];
 
@@ -72,11 +71,12 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the toolbar menu widgets
-        this.widgets = (this.data.Data.Widgets).filter((w: IWidget) => w.Config.Enabled);
+        this.widgets = this.data.Data.Widgets.filter((w: IWidget) => w.Config.Enabled);
         // loop through the widgets and pass the interaction details
         this.widgets.forEach((widget: IWidget) => {
             widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
+            widget.Data.RouteOnInteraction = this.data.Data.RouteOnInteraction ?? true;
         });
     }
 
@@ -91,8 +91,8 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
 
     /**
      * On maximised event handler
-     * @param {Boolean} ismaximized 
-     * @param {String} type 
+     * @param {Boolean} ismaximized
+     * @param {String} type
      */
     onmaximized(ismaximized: boolean, type: string): void {
         this.maximized[type] = ismaximized;
@@ -100,8 +100,8 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
 
     /**
      * On collapsed event handler
-     * @param {Boolean} isCollapsed 
-     * @param {String} type 
+     * @param {Boolean} isCollapsed
+     * @param {String} type
      */
     onCollapsed(isCollapsed: boolean, type: string): void {
         this.collapsed[type] = isCollapsed;
@@ -109,8 +109,8 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
 
     /**
      * On floating event handler
-     * @param {Boolean} isFloating 
-     * @param {String} type 
+     * @param {Boolean} isFloating
+     * @param {String} type
      */
     onFloating(isFloating: boolean, type: string): void {
         this.floating[type] = isFloating;

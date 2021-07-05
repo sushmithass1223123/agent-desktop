@@ -1,4 +1,4 @@
-const { generateMaterialColors } = require('@tmac/styles/tailwind');
+const { generateMaterialColors, generateGrids } = require('@tmac/styles/tailwind');
 module.exports = {
     prefix: 'twd-',
     purge: {
@@ -62,46 +62,12 @@ module.exports = {
                 accent: generateMaterialColors('twd-accent'),
                 warn: generateMaterialColors('twd-warn')
             },
-            minHeight: {
-                0: '0',
-                '1/4': '25%',
-                '1/3': '33%',
-                '1/2': '50%',
-                '3/4': '75%',
-                '10/12': '83.33%',
-                '11/12': '91.66%',
-                full: '100%'
-            },
-            maxHeight: {
-                0: '0',
-                '1/4': '25%',
-                '1/3': '33%',
-                '1/2': '50%',
-                '3/4': '75%',
-                '10/12': '83.33%',
-                '11/12': '91.66%',
-                full: '100%'
-            },
-            minWidth: {
-                0: '0',
-                '1/4': '25%',
-                '1/3': '33%',
-                '1/2': '50%',
-                '3/4': '75%',
-                '10/12': '83.33%',
-                '11/12': '91.66%',
-                full: '100%'
-            },
-            maxWidth: {
-                0: '0',
-                '1/4': '25%',
-                '1/3': '33%',
-                '1/2': '50%',
-                '3/4': '75%',
-                '10/12': '83.33%',
-                '11/12': '91.66%',
-                full: '100%'
-            },
+            width: generateGrids(),
+            minWidth: generateGrids(),
+            maxWidth: generateGrids(),
+            height: generateGrids(),
+            minHeight: generateGrids(),
+            maxHeight: generateGrids(),
             lineHeight: {
                 3: '12px',
                 4: '16px',
@@ -111,6 +77,9 @@ module.exports = {
                 8: '32px',
                 9: '36px',
                 10: '40px'
+            },
+            flex: {
+                full: '1 1 100%'
             }
         }
     },

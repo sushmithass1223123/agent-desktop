@@ -22,12 +22,12 @@ export const initEmailSearchState = {
     inSessionid: '',
 
     deviceid: '',
-    hasAttachments: 'no',
+    hasAttachments: 2,
     assignedTo: '',
 
-    replied: 'any',
-    closed: 'any',
-    assigned: 'any',
+    replied: 2,
+    closed: 2,
+    assigned: 2,
 
     sesisonid: '',
     global: '',
@@ -73,7 +73,7 @@ export class TwWorkBenchService {
      */
     private readonly _internal$ = {
         email: {
-            initialized: false,
+            // initialized: false,
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
@@ -86,7 +86,7 @@ export class TwWorkBenchService {
      */
     readonly globalEmailWorkbenchState$ = this._internal$.email;
 
-    constructor() { }
+    constructor() {}
 
     /**
      * Service init method
@@ -101,15 +101,18 @@ export class TwWorkBenchService {
     async setMailboxes(): Promise<void> {
         try {
             const res = await SDKClient.getMailboxes('agent');
+            if (!res.response) {
+                throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
+            }
             if (res.response.length) {
-                this._internal$.email.initialized = true;
+                // this._internal$.email.initialized = true;
                 const listOfMailboxes =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
                         return mail;
                     }) || [];
                 this.globalEmailWorkbenchState$.searchParams.patchValue({ listOfMailboxes });
-                // this.globalEmailWorkbenchState$.defaultEmail.setValue(res.response[0]);
+                this.globalEmailWorkbenchState$.defaultEmail.setValue(res.response[0]);
                 this.globalEmailWorkbenchState$.availableMailboxes.setValue(res.response);
             }
         } catch (e) {

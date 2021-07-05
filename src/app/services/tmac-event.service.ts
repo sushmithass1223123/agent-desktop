@@ -9,28 +9,25 @@ import {
     AgentReminder,
     AgentReminderEvent,
     AgentStatusChangeEvent,
+    AutoCloseTabEvent,
     CommandResultEvent,
-    GenericInteractionEvent,
     IResponse,
     IUIEvent,
     SDKClient,
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
     TMACEventTypes,
-    TmacServerConnectionAborted,
     TmacServerConnectionSuccess,
     TUtils
 } from '@tmac/sdk';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
-import { CustomTMACEventTypes, IAction, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
+import { CustomTMACEventTypes, IAction, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { map as lodashMap, upperFirst } from 'lodash';
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { upperFirst } from 'lodash';
+import { concat, merge, Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
-import { InteractionManagerService } from './interaction-manager.service';
 
 /**
  *  Componentless Event service
@@ -47,27 +44,27 @@ export class TMACEventService {
     /**
      * App config
      */
-    appConfig: any;
+    appConfig: IAppConfig;
     /**
      * Interaction events storage array
      */
-    private _interactionEventArray: any[];
+    private _interactionEventArray: IUIEvent[];
     /**
      * Interaction event subject
      */
-    private _interactionEventSub: Subject<any[]>;
+    private _interactionEvent$: Subject<IUIEvent[]>;
     /**
      * TMAC events story array
      */
-    private _nonInteractionEventArray: any[];
+    private _nonInteractionEventArray: IUIEvent[];
     /**
      * Non interaction event subject
      */
-    private _nonInteractionEventSub: Subject<any[]>;
+    private _nonInteractionEvent$: Subject<IUIEvent[]>;
     /**
-     * Construct and Dispose TMAC event subject
+     * Need more Description
      */
-    private _constructDisposeEventSubject: Subject<any>;
+    private _postMessage$: Subject<IPostMessage>;
     /**
      * Array to store the list AOT widgets for AgentNotificaitonEvent's ExecuteAction and ExecuteTask
      */
@@ -93,10 +90,6 @@ export class TMACEventService {
          */
         dacRequest: MatDialogRef<ReminderTaskDialogComponent, any>;
         /**
-         * TCM WQ voice DAC request dialog ref
-         */
-        tcmWQVoice: MatDialogRef<ReminderTaskDialogComponent, any>;
-        /**
          * Normal reminder
          */
         reminder: {
@@ -114,28 +107,23 @@ export class TMACEventService {
     /**
      * Constructor
      * @param {AppDataService} _appDataService
-     * @param {InteractionManagerService} _interactionManagerService
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
     constructor(
         private _appDataService: AppDataService,
-        private _interactionManagerService: InteractionManagerService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _router: Router
-    ) {}
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
-
-    // /**
-    //  * getter for interaction construct/dispose events
-    //  */
-    // get constructDisposeEvents(): any | Observable<any> {
-    //     return this._constructDisposeEventSubject.asObservable();
-    // }
+    ) {
+        // intialize all the subject
+        this._unsubscribeAll = new Subject();
+        this._interactionEventArray = [];
+        this._nonInteractionEventArray = [];
+        this._nonInteractionEvent$ = new Subject();
+        this._interactionEvent$ = new Subject();
+        this._postMessage$ = new Subject();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Private Methods
@@ -161,20 +149,13 @@ export class TMACEventService {
     private processInteractionEvents(evt: IUIEvent): void {
         // add all the interaction events to the array
         this._interactionEventArray.push(evt);
-        // check for construct/dispose events
-        if (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) {
-            // for dispose event remove the reference from array
-            if (evt.IsInteractionDisposeEvent) {
-                // remove the events for the ID
-                this.removeEvents(evt.InteractionID);
-                // remove the interaction reference
-                this._interactionManagerService.removeInteraction(evt.InteractionID);
-            }
-            // notify the observers
-            this._constructDisposeEventSubject.next(evt);
+        // for dispose event remove the reference from array
+        if (evt.IsInteractionDisposeEvent) {
+            // remove the events for the InteractionID
+            this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
         }
-        // notify the subscribers
-        this._interactionEventSub.next([evt]);
+        // notify the observers
+        this._interactionEvent$.next([evt]);
     }
 
     /**
@@ -183,30 +164,14 @@ export class TMACEventService {
      * @param {IUIEvent} evt
      */
     private processNonInteractionEvents(evt: IUIEvent): void {
-        let updated = false;
-        // check event is already there, then update
-        this._nonInteractionEventArray = lodashMap(this._nonInteractionEventArray, (tEvent: IUIEvent) => {
-            if (tEvent.EventName === evt.EventName) {
-                tEvent = evt;
-                updated = true;
-            }
-            return tEvent;
-        });
-
-        // if not updated then add
-        if (!updated) {
+        const i = this._nonInteractionEventArray.findIndex((item) => item.EventName === evt.EventName);
+        if (i > -1) {
+            this._nonInteractionEventArray[i] = evt;
+        } else {
             this._nonInteractionEventArray.push(evt);
         }
-
-        // notify the subscribers
-        this._nonInteractionEventSub.next([evt]);
-    }
-
-    /**
-     * To remove all the events from reference which related to an interaction
-     */
-    private removeEvents(interactionId: number): void {
-        this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== interactionId);
+        // notify the observers
+        this._nonInteractionEvent$.next([evt]);
     }
 
     /**
@@ -224,7 +189,7 @@ export class TMACEventService {
             // }
 
             // get the type
-            const type = evt.Type?.toLowerCase() || '';
+            const type = evt.Type?.toLowerCase() ?? '';
 
             // handle alerts
             if (type === 'alert' && evt.Message) {
@@ -444,6 +409,8 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
+                                // snooze the reminder
+                                this.updateReminderStatus('Snooze', parsedMessage.ID);
                                 // show an alert for auto snooze
                                 this._appUIService.showSnackbar('Meeting task is snoozed', 'info');
                             }
@@ -503,6 +470,8 @@ export class TMACEventService {
                                 // reject the reminder
                                 this.updateReminderStatus('Rejected', parsedMessage.ID);
                             } else {
+                                // snooze the reminder
+                                this.updateReminderStatus('Snooze', parsedMessage.ID);
                                 // show an alert for auto snooze
                                 this._appUIService.showSnackbar('Change status task is snoozed', 'info');
                             }
@@ -550,7 +519,7 @@ export class TMACEventService {
                                 }
                             })
                             .catch(() => {
-                                this._appUIService.showSnackbar(COMMON_ERR_MESSAGE, 'failure');
+                                this._appUIService.showSnackbar('Error in chat silent barge-in', 'failure');
                             });
                     }
                 });
@@ -631,137 +600,20 @@ export class TMACEventService {
     };
 
     /**
-     * Tp process GenericInteractionEvent
-     * @param {GenericInteractionEvent} evt
-     */
-    private GenericInteractionEvent = (evt: GenericInteractionEvent) => {
-        // check the type for TCMVoiceWQ
-        if (!evt.Item.Type.toLowerCase().includes('tcm')) {
-            return;
-        }
-
-        const { PhoneNumber } = evt.Item;
-        const { agentId, deviceId } = SDKClient.getAgentData();
-        const tcmClientUrl = this.appConfig.Main.Urls.TCMClient || '';
-
-        // only notify that callback request is assigned if it was assigned the first time and not if the UI is reloaded or re-login
-        if (!evt.RecoveryEvent) {
-            if (tcmClientUrl) {
-                TUtils.HttpClient.sendRequest({
-                    urls: [tcmClientUrl + '/OnDacNotificationEvent'],
-                    header: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST',
-                    responseType: 'json',
-                    requestArgs: {
-                        fromAddr: PhoneNumber,
-                        response: 'assigned',
-                        agentID: agentId,
-                        extension: deviceId,
-                        scheduletime: '',
-                        interactionId: evt.InteractionID
-                    }
-                })
-                    .then((dt: IResponse) => {
-                        if (dt.response.d === 1) {
-                            if (evt.Item.Type.toLowerCase() === 'tcmvoicewq') {
-                                this.promptTCMWQDACRequest(evt);
-                            }
-                        } else {
-                            this.tcwWQDACRequestError(evt.InteractionID.toString());
-                        }
-                    })
-                    .catch(() => {
-                        this.tcwWQDACRequestError(evt.InteractionID.toString());
-                    });
-            } else {
-                this.tcwWQDACRequestError(evt.InteractionID.toString());
-                return;
-            }
-        } else {
-            this.promptTCMWQDACRequest(evt);
-        }
-    };
-
-    /**
-     * To process TCM WQ DAC request
-     *
-     * @param {GenericInteractionEvent} evt
-     */
-    private promptTCMWQDACRequest(evt: GenericInteractionEvent): void {
-        // check the type for TCMVoiceWQ
-        if (evt.Item.Type.toLowerCase() !== 'tcmvoicewq') {
-            return;
-        }
-
-        const { PhoneNumber, Skill, ID } = evt.Item;
-        const { agentId, deviceId } = SDKClient.getAgentData();
-        this._remiderTaskDialog.tcmWQVoice = this._appUIService.showRemiderTaskModal('tcmwqvoice', `Dial-out to customer ${PhoneNumber}?`);
-        this._remiderTaskDialog.tcmWQVoice.afterClosed().subscribe((resp) => {
-            // if agent accept the callback
-            if (resp === 'accept') {
-                // prepare query string
-                const queryParams = `fromAddr=${PhoneNumber}&agentID=${agentId}&extension=${deviceId}&ucid=''&skill=${Skill}&intid=${evt.InteractionID}&ID=${ID}`;
-                // make call to the provided number and complete the reminder
-                SDKClient.makeCall({
-                    interactionId: '0',
-                    number: PhoneNumber,
-                    source: 'tcamp',
-                    sourceId: queryParams
-                })
-                    .then((dt) => {
-                        // check the response
-                        if (dt.response.ResultCode === 0) {
-                            // make call success
-                            this._appUIService.showSnackbar(`Make call to ${PhoneNumber} successful`);
-                        } else {
-                            // make call failed
-                            this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
-                        }
-                    })
-                    .catch(() => {
-                        // make call error
-                        this._appUIService.showSnackbar('Make call error', 'failure');
-                    });
-            }
-            // close the dialog
-            this._remiderTaskDialog.tcmWQVoice = null;
-        });
-    }
-
-    /**
-     * To handle TCM WQ DAC request error
-     */
-    private tcwWQDACRequestError(interactionId: string): void {
-        this._appUIService.addNotification({
-            message: 'Error in assigning DAC item, Please contact administrator',
-            status: 'new',
-            icon: 'error',
-            showAlert: true
-        });
-        // close the dialog
-        this._remiderTaskDialog.tcmWQVoice = null;
-        // close the generic interaction in server
-        SDKClient.closeInteraction(interactionId);
-    }
-
-    /**
      * To process TCM_DirectAgentNotifyTimeoutEvent
      * @param {TCMDirectAgentNotifyTimeoutEvent} evt
      */
     private TCMDirectAgentNotifyTimeoutEvent = (evt: TCMDirectAgentNotifyTimeoutEvent) => {
         const obj = JSON.parse(evt.JsonData);
         const contact = JSON.parse(obj.Contact);
+        const message = `Callback request for ${contact.Name} number ${contact.PhoneNumber} timed out.`;
 
         // show an alert
         this._appUIService.addNotification({
-            message: 'Callback request for ' + contact.Name + ' number ' + contact.PhoneNumber + ' timed out.',
+            message,
             status: 'new',
             showAlert: true
         });
-        // close the dialog
-        this._remiderTaskDialog.tcmWQVoice = null;
         // close the generic interaction in server
         SDKClient.closeInteraction(evt.InteractionID.toString());
     };
@@ -775,18 +627,19 @@ export class TMACEventService {
         evt.Reminders.forEach((item: AgentReminder) => {
             // check if the ref is already opened
             const ref = this._remiderTaskDialog.reminder?.filter((r) => r.id === item.ID)?.length > 0;
-
             // check if the dialog is opened for this ID
             if (!ref) {
                 let message = item.Message;
+                let alert = item.Message;
                 if (item.Type === 'event') {
                     const jsonMsg = JSON.parse(message);
+                    alert = jsonMsg.Title;
                     message = `<b>Title:</b> ${jsonMsg.Title}<br />,
                                 <b>Location:</b> ${jsonMsg.Meta.Location || 'NA'}<br />
                                 <b>Notes:</b> ${jsonMsg.Meta.Notes || 'NA'}<br />`;
                 }
+                this._appUIService.showDesktopAlert('You have a new reminder', alert, false);
                 const dialogRef = this._appUIService.showRemiderTaskModal('reminder', message, `Reminder @ ${item.RemindDate} ${item.RemindTime}`);
-
                 this._remiderTaskDialog.reminder.push({
                     id: item.ID,
                     ref: dialogRef
@@ -890,37 +743,112 @@ export class TMACEventService {
      *
      * @param {TmacServerConnectionAborted} evt
      */
-    private TmacServerConnectionAborted = (evt: TmacServerConnectionAborted) => {
+    private TmacServerConnectionAborted = () => {
         // we will route to login page
         this._router.navigate(['login']);
         this._appUIService.showSnackbar('TMAC Server connection closed, Please relogin!');
     };
 
+    /**
+     * To process AutoCloseTabEvent
+     *
+     * @param {AutoCloseTabEvent} evt
+     */
+    private AutoCloseTabEvent = (evt: AutoCloseTabEvent) => {
+        // remove the events for the InteractionID
+        this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
+    };
+
+    /**
+     * Post message received event
+     *
+     * @param {MessageEvent} evt
+     */
+    private postMessageReceived = (evt: MessageEvent) => {
+        // if event data is null then return
+        if (!evt.data) {
+            return;
+        }
+
+        let data: any = {};
+        if (typeof evt.data === 'string') {
+            try {
+                data = JSON.parse(evt.data);
+            } catch (error) {
+                data = {};
+            }
+        } else if (typeof evt.data === 'object') {
+            data = evt.data;
+        }
+
+        // check if destination is tmac
+        if (data.destination?.toLowerCase() === 'tmac') {
+            const message = data;
+            const fn = message.function?.toLowerCase();
+            // handle generic function here only
+            if (fn === 'emitevent') {
+                this.emitSDKEvent({
+                    event: {
+                        ...message.data
+                    },
+                    isInteractionEvent: !!message.data.InteractionID,
+                    log: true
+                });
+            } else if (fn.endsWith('event')) {
+                // for backward compatibility to support emitting event when AD receives any post message with function which has 'event'
+                this.emitSDKEvent({
+                    event: {
+                        EventName: message.function,
+                        ...message.data
+                    },
+                    isInteractionEvent: !!message.data.InteractionID,
+                    log: true
+                });
+            }
+            // to close tab/interaction
+            else if (fn === 'closetab' || fn === 'closeinteraction') {
+                // check the interactionId
+                const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId;
+                if (!intId) {
+                    TUtils.Logger.info('TMACEventService: PostMessage to close tab reject, interaction id not found');
+                    return;
+                }
+                // close tab
+                SDKClient.closeInteraction(message.data.interactionID);
+            }
+
+            // notify the observers
+            this._postMessage$.next(data);
+        }
+    };
+
     // -----------------------------------------------------------------------------------------------------
-    // @ Public Methods
+    // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
 
     /**
      * To subscribe to TMACEventService service
      */
-    public subscribe(): void {
+    subscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.subscribe');
 
         // intialize all the subject
         this._unsubscribeAll = new Subject();
-        this._constructDisposeEventSubject = new BehaviorSubject({});
         this._interactionEventArray = new Array();
         this._nonInteractionEventArray = new Array();
-        this._nonInteractionEventSub = new Subject();
-        this._interactionEventSub = new Subject();
+        this._nonInteractionEvent$ = new Subject();
+        this._interactionEvent$ = new Subject();
+        this._postMessage$ = new Subject();
         this._remiderTaskDialog = {
             makeCall: null,
             meeting: null,
             changeState: null,
             dacRequest: null,
-            tcmWQVoice: null,
             reminder: []
         };
+
+        // subscribe to post message
+        window.addEventListener('message', this.postMessageReceived);
 
         // subscribe to app config
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
@@ -942,10 +870,6 @@ export class TMACEventService {
                 callback: this.AgentNotificaitonEvent
             },
             {
-                label: 'GenericInteractionEvent',
-                callback: this.GenericInteractionEvent
-            },
-            {
                 label: 'TCMDirectAgentNotifyTimeoutEvent',
                 callback: this.TCMDirectAgentNotifyTimeoutEvent
             },
@@ -980,53 +904,18 @@ export class TMACEventService {
             {
                 label: 'TmacServerConnectionAborted',
                 callback: this.TmacServerConnectionAborted
+            },
+            {
+                label: 'AutoCloseTabEvent',
+                callback: this.AutoCloseTabEvent
             }
         ]);
-
-        // subscribe to InteractionManagerService
-        this._interactionManagerService.subscribe();
-
-        // register to post message subject
-        this._appDataService.postMessage.pipe(takeUntil(this._unsubscribeAll)).subscribe((message: IPostMessage) => {
-            const fn = message.function?.toLowerCase();
-            // handle generic function here only
-            if (fn === 'emitevent') {
-                this.emitSDKEvent({
-                    event: {
-                        ...message.data
-                    },
-                    isInteractionEvent: message.data.InteractionID !== undefined,
-                    log: true
-                });
-            } else if (fn.endsWith('event')) {
-                // for backward compatibility to support emitting event when AD receives any post message with function which has 'event'
-                this.emitSDKEvent({
-                    event: {
-                        EventName: message.function,
-                        ...message.data
-                    },
-                    isInteractionEvent: message.data.InteractionID !== undefined,
-                    log: true
-                });
-            }
-            // to close tab/interaction
-            else if (fn === 'closetab' || fn === 'closeinteraction') {
-                // check the interactionId
-                const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId;
-                if (!intId) {
-                    TUtils.Logger.info('TMACEventService: PostMessage to close tab reject, interaction id not found');
-                    return;
-                }
-                // close tab
-                SDKClient.closeInteraction(message.data.interactionID);
-            }
-        });
     }
 
     /**
      * To unsubscribe to TMACEventService service
      */
-    public unsubscribe(): void {
+    unsubscribe(): void {
         TUtils.Logger.console('info', 'TMACEventService.unsubscribe');
 
         // this.removeTMACEventListener([
@@ -1035,6 +924,9 @@ export class TMACEventService {
         //         callback: this.OnTMACEvent
         //     }
         // ]);
+
+        // unsubscribe from post message
+        window.removeEventListener('message', this.postMessageReceived);
 
         this.removeTMACEventListener([
             {
@@ -1046,10 +938,6 @@ export class TMACEventService {
                 callback: this.AgentNotificaitonEvent
             },
             {
-                label: 'GenericInteractionEvent',
-                callback: this.GenericInteractionEvent
-            },
-            {
                 label: 'TCMDirectAgentNotifyTimeoutEvent',
                 callback: this.TCMDirectAgentNotifyTimeoutEvent
             },
@@ -1084,6 +972,10 @@ export class TMACEventService {
             {
                 label: 'TmacServerConnectionAborted',
                 callback: this.TmacServerConnectionAborted
+            },
+            {
+                label: 'AutoCloseTabEvent',
+                callback: this.AutoCloseTabEvent
             }
         ]);
 
@@ -1091,14 +983,11 @@ export class TMACEventService {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
-        this._constructDisposeEventSubject.next(null);
-        this._constructDisposeEventSubject.complete();
+        this._nonInteractionEvent$.next(null);
+        this._nonInteractionEvent$.complete();
 
-        this._nonInteractionEventSub.next(null);
-        this._nonInteractionEventSub.complete();
-
-        this._nonInteractionEventSub.next(null);
-        this._nonInteractionEventSub.complete();
+        this._nonInteractionEvent$.next(null);
+        this._nonInteractionEvent$.complete();
 
         this._interactionEventArray = new Array();
         this._nonInteractionEventArray = new Array();
@@ -1108,12 +997,15 @@ export class TMACEventService {
             meeting: null,
             changeState: null,
             dacRequest: null,
-            tcmWQVoice: null,
             reminder: []
         };
+    }
 
-        // unsubscribe from InteractionManagerService
-        this._interactionManagerService.unsubscribe();
+    /**
+     * Get PostMessages
+     */
+    get postMessage(): any | Observable<IPostMessage> {
+        return this._postMessage$.asObservable();
     }
 
     /**
@@ -1121,184 +1013,214 @@ export class TMACEventService {
      *
      * @param interactionId ID of the interaction
      */
-    public interactionEvents(interactionId: number): any[] {
-        // get the events based on interaction Id
-        const events = this._interactionEventArray.filter((i) => i.InteractionID === interactionId);
-        if (events.length > 0) {
-            return events;
-        }
-        return [];
+    getInteractionEventsArray(interactionId: number): any[] {
+        return this._interactionEventArray.filter((i) => i.InteractionID === interactionId);
     }
 
     /**
      * To get all the existing non interaction events.
      */
-    public nonInteractionEvents(): any[] {
-        // get the events based on interaction Id
-        const events = this._nonInteractionEventArray;
-        if (events.length > 0) {
-            return events;
-        }
-        return [];
+    getNonInteractionEventsArray(): any[] {
+        return this._nonInteractionEventArray;
     }
 
     /**
-     * To get interaction as well as non interaction events
-     */
-    public getAllEventsArray(): any[] {
-        return [...this._nonInteractionEventArray, ...this._interactionEventArray];
-    }
-
-    /**
-     * To get non-interaction TMAC event with event name
+     * To get interaction events (interaction id) as well as non interaction events
      *
-     * @param eventName Name of the event
+     * @param {Number} interactionId
      */
-    public getEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
-        // get the event based on interaction Id
-        const events = this._nonInteractionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+    getAllEventsArray(interactionId?: number): any[] {
+        let events = [];
+        if (interactionId) {
+            events = this._interactionEventArray.filter((e) => e.InteractionID === interactionId);
+        }
+        return [...events, ...this._nonInteractionEventArray];
+    }
 
+    /**
+     * To get interaction events (interaction id) as well as non interaction events excluded events
+     *
+     * @param {CustomTMACEventTypes[]} eventNames
+     * @param {Number} interactionId
+     * @returns
+     */
+    getAllEventsArrayExcluded(eventNames: CustomTMACEventTypes[], interactionId?: number): any[] {
+        return this.getAllEventsArray(interactionId).filter((e) => !eventNames.includes(e.EventName));
+    }
+
+    /**
+     * To get non-interaction TMAC events for provided eventnames
+     *
+     * @param {CustomTMACEventTypes[]} eventNames
+     */
+    getNonInteractionEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
-        // check if anything exist, then send
-        if (events.length) {
-            setTimeout(() => {
-                tempSub.next(events);
-            });
-        }
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._nonInteractionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+            tempSub.next(events);
+            tempSub.complete();
+        });
 
-        // return all non interaction events for provided event names
-        return merge(tempSub, this._nonInteractionEventSub).pipe(
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all non interaction events for provided eventnames
+        return concat(tempSub, this._nonInteractionEvent$).pipe(
             map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
             filter((evts) => evts.length > 0)
         );
     }
 
     /**
-     * To get non-interaction TMAC event with event name
+     * To get non-interaction TMAC events for provided eventnames excluded
      *
-     * @param eventName Name of the event
+     * @param {CustomTMACEventTypes[]} eventName Name of the event
      */
-    public getAllEvents<T = any>(): Observable<T[]> {
-        // get the event based on interaction Id
-        const events = this._nonInteractionEventArray;
+    getNonInteractionEventsExcluded<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
-        // check if anything exist, then send
-        if (events.length) {
-            setTimeout(() => {
-                tempSub.next(events);
-            });
-        }
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._nonInteractionEventArray.filter((i: IUIEvent) => !eventNames.includes(i.EventName));
+            tempSub.next(events);
+            tempSub.complete();
+        });
 
-        // return all non interaction events
-        return merge(tempSub, this._nonInteractionEventSub).pipe(filter((evts) => evts.length > 0));
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all non interaction events for provided eventnames excluded
+        return merge(tempSub, this._nonInteractionEvent$).pipe(
+            map((evts) => evts?.filter((evt) => evt && !eventNames.includes(evt.EventName))),
+            filter((evts) => evts.length > 0)
+        );
     }
 
     /**
-     * To get interaction TMAC event by event names and interaction id
+     * To get interaction TMAC events for provided eventsnames and interaction id
      *
-     * @param {String[]} eventNames Names of the event
-     * @param {Number} interactionId InteractionId to filter
+     * @param {CustomTMACEventTypes[]} eventNames
+     * @param {Number} interactionId
      */
-    public getInteractionEvents<T = any>(eventNames: CustomTMACEventTypes[], interactionId: number): Observable<T[]> {
-        // get the event based on interaction Id
-        const events = this._interactionEventArray.filter((i: IUIEvent) => i.InteractionID === interactionId && eventNames.includes(i.EventName));
-
+    getInteractionEvents<T = any>(eventNames: CustomTMACEventTypes[], interactionId: number): Observable<T[]> {
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
-        // check if anything exist, then send
-        if (events.length) {
-            setTimeout(() => {
-                tempSub.next(events);
-            });
-        }
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._interactionEventArray.filter((i: IUIEvent) => i.InteractionID === interactionId && eventNames.includes(i.EventName));
+            tempSub.next(events);
+            tempSub.complete();
+        });
 
-        // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub).pipe(
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for provided interaction id and eventnames
+        return concat(tempSub, this._interactionEvent$).pipe(
             map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
             filter((evts) => evts.length > 0)
         );
     }
 
     /**
-     * To get interaction TMAC event with event names
+     * To get interaction TMAC events for provided eventnames
      *
      * @param {String[]} eventNames Names of the event
      */
-    public getInteractionEventsByName<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
-        // get the event based on interaction Id
-        const events = this._interactionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
-
+    getInteractionEventsByName<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
-        // check if anything exist, then send
-        if (events.length) {
-            setTimeout(() => {
-                tempSub.next(events);
-            });
-        }
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._interactionEventArray.filter((i: IUIEvent) => eventNames.includes(i.EventName));
+            tempSub.next(events);
+            tempSub.complete();
+        });
 
-        // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub).pipe(
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for provided eventnames
+        return concat(tempSub, this._interactionEvent$).pipe(
             map((evts) => evts?.filter((evt) => evt && eventNames.includes(evt.EventName))),
             filter((evts) => evts.length > 0)
         );
     }
 
     /**
-     * To get interaction TMAC event with event by ID
+     * To get interaction TMAC events for provided interaction id
      *
      * @param {Number} interactionId InteractionId to filter
      */
-    public getInteractionEventsById<T = any>(interactionId: number): Observable<T[]> {
-        // get the event based on interaction Id
-        const events = this._interactionEventArray.filter((i: IUIEvent) => i.InteractionID === interactionId);
-
+    getInteractionEventsById<T = any>(interactionId: number): Observable<T[]> {
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
-        // check if anything exist, then send
-        if (events.length) {
-            setTimeout(() => {
-                tempSub.next(events);
-            });
-        }
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._interactionEventArray.filter((i: IUIEvent) => i.InteractionID === interactionId);
+            tempSub.next(events);
+            tempSub.complete();
+        });
 
-        // return all interaction events for that interaction id
-        return merge(tempSub, this._interactionEventSub).pipe(
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for provided interaction id
+        return concat(tempSub, this._interactionEvent$).pipe(
             map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId)),
             filter((evts) => evts.length > 0)
         );
     }
 
     /**
-     * To get construct/dispose events
+     * To get construct/dispose TMAC events
      *
      * @param {String[]} eventNames Names of the event
      */
-    public getConstructDisposeEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
+    getConstructDisposeEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
         // get the event based on interaction Id
-        const events = this._interactionEventArray.filter(
-            (i: IUIEvent) => (i.IsInteractionConstructEvent || i.IsInteractionDisposeEvent) && eventNames.includes(i.EventName)
-        );
-
         // create a new temp subject
         const tempSub = new Subject<any[]>();
 
-        // check if anything exist, then send
-        if (events.length) {
-            setTimeout(() => {
-                tempSub.next(events);
-            });
-        }
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._interactionEventArray.filter(
+                (i: IUIEvent) => (i.IsInteractionConstructEvent || i.IsInteractionDisposeEvent) && eventNames.includes(i.EventName)
+            );
+            tempSub.next(events);
+            tempSub.complete();
+        });
 
-        // return all interaction events for that interaction id and event names
-        return merge(tempSub, this._interactionEventSub).pipe(
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for that is a IsInteractionConstructEvent or IsInteractionDisposeEvent
+        return concat(tempSub, this._interactionEvent$).pipe(
             map((evts) =>
                 evts?.filter((evt) => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))
             ),
@@ -1309,7 +1231,7 @@ export class TMACEventService {
     /**
      * To register to TMAC events
      */
-    public addTMACEventListener(
+    addTMACEventListener(
         events: {
             /**
              * Event label
@@ -1330,7 +1252,7 @@ export class TMACEventService {
     /**
      * To de-register from TMAC events
      */
-    public removeTMACEventListener(
+    removeTMACEventListener(
         events: {
             /**
              * Event label
@@ -1354,7 +1276,7 @@ export class TMACEventService {
      * @param {Any} evt
      * @param {Boolean} interactionEvent [OPTIONAL]
      */
-    public emitSDKEvent(data: {
+    emitSDKEvent(data: {
         /**
          * Event to emit
          */
@@ -1389,3 +1311,26 @@ export class TMACEventService {
         } catch (error) {}
     }
 }
+
+/**
+ * [COMMENT: 01]
+ * [MS: Jun 5, '21]
+ *
+ * Emit and complete inorder to use rxjs 'concat' instead of 'merge'
+ * Since we use 'concat' the current stream (i.e., tempSub) should be completed
+ * then only it subscribes to next sequence (i.e., _interactionEvent$) and
+ * passes its values on through to the resulting sequence.
+ */
+
+/**
+ * [COMMENT: 02]
+ * [MS: Jun 5, '21]
+ *
+ * Changing 'merge' to 'concat'
+ * Since we merge 2 observable using 'merge' will not ensure the order of emissions
+ * It is simply interested in all values coming out from multiple combined streams as if they were produced by one stream.
+ *
+ * Using 'concat' will ensure the order of emissions and
+ * will first see values emitted by streams that you pass first to the operator (i.e., tempSub)
+ * once the first stream is completed then it will start emitting second stream.
+ */

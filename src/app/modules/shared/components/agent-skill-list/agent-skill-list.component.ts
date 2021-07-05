@@ -66,7 +66,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Label for text field
      */
-    mainLabel = 'Agent ID';
+    mainLabel = 'Agent ID/Station';
     /**
      * Active switcher
      */
@@ -82,7 +82,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         {
             key: 'agentList',
             label: 'Agent List',
-            textLabel: 'Agent ID'
+            textLabel: 'Agent ID/Station'
         },
         {
             key: 'skillList',
@@ -120,6 +120,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Skill list table ref
      */
     skillListTable: {
+        /**
+         * List of all favourite skills
+         */
+        skillList: SkillType[];
         /**
          *  Mat table data
          */
@@ -193,10 +197,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      * Skill list to filter agent list based on skill
      */
     allSkills: any[];
-    /**
-     * List of all favourite skills
-     */
-    allFavouriteSkills: SkillType[];
     /**
      * Selected skill for agent list filter
      */
@@ -273,6 +273,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         };
 
         this.skillListTable = {
+            skillList: [],
             tableData: {
                 columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ'],
                 selection: new SelectionModel<any>(false, []),
@@ -450,12 +451,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     // check if key not empty to apply the filter
                     if (key) {
                         // for skill only apply searchkey filter
-                        this.skillListTable.tableData.source.data = this.allFavouriteSkills.filter((x) =>
+                        this.skillListTable.tableData.source.data = this.skillListTable.skillList.filter((x) =>
                             // stringify and lowercase for .includes string search
                             JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
                         );
                     } else {
-                        this.skillListTable.tableData.source.data = this.allFavouriteSkills;
+                        this.skillListTable.tableData.source.data = this.skillListTable.skillList;
                     }
                 } else if (this.activeSwitcher === 'dynamicList') {
                     // check if key not empty to apply the filter
@@ -491,9 +492,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     private makeCall(): void {
         this.loading = true;
         const freeTextConf = this.freeTextConf[this.activeSwitcher];
+        const dialTo = freeTextConf.enabled ? freeTextConf.value : this.selectedItem;
         SDKClient.makeCall({
             interactionId: this.interactionId.toString(),
-            number: freeTextConf.enabled ? freeTextConf.value : this.selectedItem,
+            number: dialTo,
             source: '',
             sourceId: ''
         })
@@ -502,17 +504,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 // check the response
                 if (dt.response.ResultCode === 0) {
                     // make call success
-                    this._appUIService.showSnackbar(`Make call to ${this.selectedItem} successful`);
+                    this._appUIService.showSnackbar(`Make call initiated to ${dialTo} successfully`);
                     this.close(true);
                 } else {
                     // make call failed
-                    this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
+                    this._appUIService.showSnackbar(`Make call initiated failed, ${dt.response.ResultMessage}`, 'failure');
                 }
             })
             .catch(() => {
                 this.loading = false;
                 // make call error
-                this._appUIService.showSnackbar('Make call error, please try again', 'failure');
+                this._appUIService.showSnackbar('Make call initiated error, please try again', 'failure');
             });
     }
 
@@ -525,21 +527,21 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             // init response
             let result: IResponseData<CommandResultEvent>;
             const freeTextConf = this.freeTextConf[this.activeSwitcher];
-
+            const transferTo = freeTextConf.enabled ? freeTextConf.value : this.selectedItem;
             // for MS call blind transfer use method 'transferBlind'
             // if (!this.isConsult) {
             if (!this.isConsult && this.data.otherData.isMSCall) {
                 result = await SDKClient.transferBlind({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: freeTextConf.enabled ? freeTextConf.value : this.selectedItem
+                    number: transferTo
                 });
             } else {
                 // for consult call and PBX blind use the same method
                 result = await SDKClient.transferCall({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: freeTextConf.enabled ? freeTextConf.value : this.selectedItem
+                    number: transferTo
                 });
             }
 
@@ -547,7 +549,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             if (result.response?.ResultCode === 0) {
                 // transfer call success
                 this._appUIService.showSnackbar(
-                    `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${this.selectedItem} successfully`
+                    `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${transferTo} successfully`
                 );
                 this.close(true);
             } else {
@@ -577,6 +579,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         try {
             const freeTextConf = this.freeTextConf[this.activeSwitcher];
+            const conferenceTo = freeTextConf.enabled ? freeTextConf.value : this.selectedItem;
+
             // init response
             let result: IResponseData<CommandResultEvent>;
 
@@ -585,7 +589,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 result = await SDKClient.conferenceCall({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: freeTextConf.enabled ? freeTextConf.value : this.selectedItem
+                    number: conferenceTo
                 });
             }
             // for blind
@@ -593,7 +597,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 result = await SDKClient.conferenceBlind({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
-                    number: freeTextConf.enabled ? freeTextConf.value : this.selectedItem
+                    number: conferenceTo
                 });
             }
 
@@ -601,7 +605,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             if (result.response?.ResultCode === 0) {
                 // transfer call success
                 this._appUIService.showSnackbar(
-                    `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${this.selectedItem} successfully`
+                    `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${conferenceTo} successfully`
                 );
                 this.close(true);
             } else {
@@ -723,6 +727,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.loading = true;
         const emails: any[] = this.data.otherData.emails;
         const freeTextConf = this.freeTextConf[this.activeSwitcher];
+        const transferTo = freeTextConf.enabled ? freeTextConf.value : this.selectedItem;
+
         // agent transfer/conf
         if (this.selectedRow?.type === 'agent') {
             emails.forEach((email) => {
@@ -730,12 +736,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 SDKClient.transferEmailToAgent({
                     routeId: RouteId,
                     sessionId: SessionId,
-                    toAgentId: freeTextConf.enabled ? freeTextConf.value : this.selectedItem
+                    toAgentId: transferTo
                 })
                     .then((res) => {
                         this.loading = false;
                         if (res.response > 0) {
-                            this._appUIService.showSnackbar('Email transferred successfully', 'success');
+                            this._appUIService.showSnackbar(`Email transferred to ${transferTo} successfully`, 'success');
                             this.close(true);
                         } else {
                             console.error(res);
@@ -745,7 +751,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     .catch((err) => {
                         this.loading = false;
                         console.error(err);
-                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                        this._appUIService.showSnackbar('Error in email transfer', 'failure');
                     });
             });
         } else {
@@ -754,12 +760,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 SDKClient.transferEmailToSkill({
                     routeId: RouteId,
                     sessionId: SessionId,
-                    skillId: freeTextConf.enabled ? freeTextConf.value : this.selectedItem
+                    skillId: transferTo
                 })
                     .then((res) => {
                         this.loading = false;
                         if (res.response > 0) {
-                            this._appUIService.showSnackbar('Email transferred successfully', 'success');
+                            this._appUIService.showSnackbar(`Email transferred to ${transferTo} successfully`, 'success');
                             this.close(true);
                         } else {
                             console.error(res);
@@ -769,7 +775,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                     .catch((err) => {
                         this.loading = false;
                         console.error(err);
-                        this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                        this._appUIService.showSnackbar('Error in email transfer', 'failure');
                     });
             });
         }
@@ -951,71 +957,77 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.loading = true;
         const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-        // get agent list
+        const getOpHours = (opHours: any, key: string) => {
+            const time = new Date();
+            time.setHours(opHours[key].Hours);
+            time.setMinutes(opHours[key].Minutes);
+            time.setSeconds(opHours[key].Seconds);
+            return time;
+        };
+
+        // Getting favourite skills from api
         SDKClient.getFavouriteSkills()
-            // mock promise
-            // new Promise((resolve) => resolve({ response: res }))
             .then((dt: IResponse) => {
                 this.loading = false;
                 // check if data found
                 if (dt.response.length > 0) {
                     // check the prefix list
                     const channelPrefix = this.data?.skill.channelPrfix || [];
-                    let list: SkillType[] = [];
-                    if (channelPrefix.length > 0) {
-                        channelPrefix.forEach((prefix) => {
-                            const filtered = dt.response.filter((item) => {
-                                if (item.Name.toLowerCase().startsWith(prefix.toLowerCase())) {
-                                    return item;
-                                }
-                            });
-                            list = [...list, ...filtered];
-                        });
-                    } else {
-                        list = dt.response;
-                    }
-                    list = list.map((row) =>
-                        formatJsonData<Partial<FavouriteSkill | any>>(
-                            { row },
-                            {
-                                CIQ: 'row.CIQ',
-                                Avail: 'row.Avail',
-                                Staff: 'row.Staff',
-                                ID: 'row.ID',
-                                VDN: 'row.VDN',
-                                Name: 'row.Name',
-                                OperatingHours: 'row.OperatingHours'
-                            }
-                        )
-                    );
-                    const today = new Date();
-                    this.allFavouriteSkills = list.filter((skill) => {
-                        if (!skill.OperatingHours || !skill.OperatingHours.length) {
-                            return true;
-                        }
-                        let available = false;
-                        skill.OperatingHours.forEach((opHours) => {
-                            if (weekdays.indexOf(opHours.Day) === today.getDay()) {
-                                const startTime = new Date();
-                                startTime.setHours(opHours.StartTime.Hours);
-                                startTime.setMinutes(opHours.StartTime.Minutes);
-                                startTime.setSeconds(opHours.StartTime.Seconds);
-                                const endTime = new Date();
-                                endTime.setHours(opHours.EndTime.Hours);
-                                endTime.setMinutes(opHours.EndTime.Minutes);
-                                endTime.setSeconds(opHours.EndTime.Seconds);
-                                if (startTime.getTime() <= today.getTime()) {
-                                    if (endTime.getTime() >= today.getTime()) {
-                                        available = true;
-                                        return;
-                                    }
-                                }
-                            }
-                        });
-                        return available;
-                    });
 
-                    this.skillListTable.tableData.source.data = list;
+                    // Filtering skills based on
+                    // 1. The prefix passed in Config
+                    // 2. Operating hours
+                    this.skillListTable.skillList = (dt.response as SkillType[]).reduce((acc, skill) => {
+                        const valid = { prefix: false, opHours: false };
+                        // Filter 1 : The prefix passed in Config
+                        if (channelPrefix.length > 0) {
+                            valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
+                        } else {
+                            valid.prefix = true;
+                        }
+
+                        // Filter 2 : Operating hours
+                        //  But before checking , Checking if the prefix condition is satisfied
+                        if (valid.prefix) {
+                            if (!skill.OperatingHours || !skill.OperatingHours.length) {
+                                valid.opHours = true;
+                            } else {
+                                const today = new Date();
+                                skill.OperatingHours.forEach((opHours) => {
+                                    if (weekdays.indexOf(opHours.Day) === today.getDay()) {
+                                        const startTime = getOpHours(opHours, 'StartTime');
+                                        const endTime = getOpHours(opHours, 'EndTime');
+                                        if (startTime.getTime() <= today.getTime()) {
+                                            if (endTime.getTime() >= today.getTime()) {
+                                                valid.opHours = true;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                        // Push to the Acc array if both the conditions are satisfied
+                        if (valid.prefix && valid.opHours) {
+                            acc.push(
+                                formatJsonData<Partial<FavouriteSkill | any>>(
+                                    { row: skill },
+                                    {
+                                        CIQ: 'row.CIQ',
+                                        Avail: 'row.Avail',
+                                        Staff: 'row.Staff',
+                                        ID: 'row.ID',
+                                        VDN: 'row.VDN',
+                                        Name: 'row.Name',
+                                        OperatingHours: 'row.OperatingHours'
+                                    }
+                                )
+                            );
+                        }
+                        return acc;
+                    }, []);
+
+                    this.skillListTable.tableData.source.data = this.skillListTable.skillList;
                     this.skillListTable.tableData.source.sort = this.sort;
                 }
             })

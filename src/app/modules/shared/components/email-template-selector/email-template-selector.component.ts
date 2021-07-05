@@ -124,8 +124,9 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             useTemplate: (info: EmailTemplate) => this.useTemplate(info),
             closeTemplate: () => this.closeTemplatePreview()
         };
-        if (preview.ID === 4) {
+        if (preview.Type === 'Form') {
             const widget = new TwWidgetModel('Template', 'tw-email-template-preview');
+            widget.Name = 'Template';
             widget.Config.Anchor = true;
             widget.Config.Position.W = 500;
             widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
@@ -136,7 +137,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             this.previewDialogRef = this.matDialog.open(TwEmailTemplatePreviewComponent, {
                 data,
                 minWidth: '40%',
-                panelClass: `email-template-dialog__${data.info?.Type || ''}`
+                panelClass: `email-template-dialog__${(data.info?.Type || '').replaceAll(' ', '')}`
             });
         }
     }

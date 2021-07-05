@@ -1,28 +1,29 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
+import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
-import { IResponse, SDKClient } from '@tmac/sdk';
+import { TMACEventService } from '@services/tmac-event.service';
+import { IResponse, IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { IWidget } from 'app/interfaces';
+import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';
-import { Subject } from 'rxjs';
-import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
+import { takeUntil } from 'rxjs/operators';
 
 /**
- *  Create  SMS Component
+ * Tw Compose Messaging Component
  */
 @Component({
-    selector: 'create-messaging',
-    templateUrl: './create-messaging.component.html',
-    styleUrls: ['./create-messaging.component.scss'],
+    selector: 'tw-compose-messaging',
+    templateUrl: './tw-compose-messaging.component.html',
+    styleUrls: ['./tw-compose-messaging.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class CreateMessagingComponent implements OnInit, OnDestroy {
-
+export class TwComposeMessagingComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
-     * To unsubscribe from subscription subject
+     * holds all the data related to this widget from the config
      */
-    unsubscribeAll = new Subject();
+    @Input() data: IWidget<any, IWidgetData>;
     /**
      * Departments
      */
@@ -60,41 +61,92 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
      */
     loading: boolean;
     /**
-     * Wrapper component Ref
+     * Widget data
      */
-    @ViewChild(SharedWrapperComponent) wrapperComponent: SharedWrapperComponent;
+    widgetData: IWidgetData;
     /**
-     * Fuse custom background colors
+     * Interaction reference
      */
+    interaction: IUIEvent;
 
-    constructor(
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        private _appUIService: AppUiService
-    ) { }
+    constructor(private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
+        super();
+    }
 
     /**
      * OnInit
      */
     ngOnInit(): void {
+        // call the wrapper init method
+        this.initWrapper(this.data);
+
+        // set widget data
+        this.widgetData = this.data.Data;
+
         // set loading to true
         this.loading = true;
+
+        // check if number to be taken from TMAC event
+        if (this.widgetData.Number && !isNaN(Number(this.widgetData.Number))) {
+            this.toNumber = this.widgetData.Number;
+        }
 
         // get the text templates
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
-                this.departments = result.response.filter(d => d.Channel.toLowerCase() === 'sms');
+                this.departments = result.response.filter((d) => d.Channel.toLowerCase() === 'sms');
+            })
+            .catch((err) => {
+                this._appUIService.showSnackbar('Error in fetching SMS templates', 'failure');
+                TUtils.Logger.consoleLog({
+                    type: 'error',
+                    message: 'Error in fetching SMS templates',
+                    err
+                });
             })
             .finally(() => {
                 this.loading = false;
             });
+
+        // if there is an interaction
+        if (this.data.InteractionDetails) {
+            this.interaction = this.data.InteractionDetails;
+
+            // check if number to be taken from TMAC event
+            if (!this.widgetData.Number?.toLowerCase().includes('event')) {
+                return;
+            }
+
+            // get the event name
+            const eventName = this.widgetData.Number?.split('.')?.shift() as any;
+            // register to tmac events
+            if (eventName) {
+                this._tmacEventService
+                    .getInteractionEvents([eventName], this.interaction.InteractionID)
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) =>
+                        evts.forEach((evt) => {
+                            this.toNumber = getValueFromEvent(
+                                {
+                                    DefaultValue: '',
+                                    Title: '',
+                                    ValueSource: this.widgetData.Number,
+                                    MaskData: null
+                                },
+                                evt
+                            );
+                        })
+                    );
+            }
+        }
     }
 
     /**
      * OnDestroy
      */
     ngOnDestroy(): void {
-        this.unsubscribeAll.next(null);
-        this.unsubscribeAll.complete();
+        // call the wrapper destroy method
+        this.destroyWrapper();
     }
 
     /**
@@ -120,7 +172,7 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
     /**
      * Select Department
      * @method onSelectDepartment
-     * @param {any} event 
+     * @param {any} event
      */
     onSelectDepartment(event: any): void {
         const value = event.value;
@@ -130,8 +182,7 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
             // clear all data
             this.clearAllData();
             return;
-        }
-        else {
+        } else {
             this.clearTemplates();
         }
 
@@ -151,7 +202,7 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
     /**
      * Slect Groups
      * @method onSelectGroups
-     * @param {any} event 
+     * @param {any} event
      */
     onSelectGroups(event: any): void {
         const value = event.value;
@@ -165,9 +216,10 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
         this.loading = true;
 
         // get the templates for the group
-        SDKClient.getTextTemplates(value, null).then((result: IResponse) => {
-            this.templates = result.response;
-        })
+        SDKClient.getTextTemplates(value, null)
+            .then((result: IResponse) => {
+                this.templates = result.response;
+            })
             .finally(() => {
                 this.loading = false;
             });
@@ -176,7 +228,7 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
     /**
      * Template Selct
      * @method onTemplateSelect
-     * @param template 
+     * @param template
      */
     onTemplateSelect(template: any): void {
         this.selectedTemplate = template;
@@ -185,7 +237,7 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
 
     /**
      * Send selected template
-     * @method sendTemplate 
+     * @method sendTemplate
      */
     async sendTemplate(): Promise<void> {
         try {
@@ -194,14 +246,13 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
             // init response
             let resp: IResponse = null;
             // check the subtype
-            if (this.data.SubType.toLowerCase() === 'sms') {
+            if (this.widgetData.Type.toLowerCase() === 'sms') {
                 resp = await SDKClient.sendInstantSMS({
-                    interactionId: '',
+                    interactionId: this.interaction?.InteractionID.toString() ?? '',
                     message: this.templateText,
                     mobile: this.toNumber.replace(/ /g, '')
                 });
-            }
-            else if (this.data.SubType.toLowerCase() === 'whatsapp') {
+            } else if (this.widgetData.Type.toLowerCase() === 'whatsapp') {
                 resp = await SDKClient.SendWhatsApp({
                     interactionId: '',
                     message: this.templateText,
@@ -212,9 +263,14 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
             // check the response
             if (resp?.response > 0) {
                 this._appUIService.showSnackbar(`Message sent to ${this.toNumber} successfully`, 'success');
-                this.wrapperComponent.close();
-            }
-            else {
+                // clear data
+                this.clearAllData();
+                this.toNumber = '';
+                // destroy this widget provided
+                if (typeof this.data.destroy === 'function') {
+                    this.data.destroy();
+                }
+            } else {
                 this._appUIService.showSnackbar(`Message send failed to ${this.toNumber}`, 'failure');
             }
         } catch (error) {
@@ -231,10 +287,20 @@ export class CreateMessagingComponent implements OnInit, OnDestroy {
         const charCode = event.which ? event.which : event.keyCode;
         if (event.key === '*' || event.key === '+' || event.key === '#') {
             return true;
-        }
-        else if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        } else if (charCode > 31 && (charCode < 48 || charCode > 57)) {
             return false;
         }
         return true;
     }
+}
+
+interface IWidgetData {
+    /**
+     * Type of messaging
+     */
+    Type: string;
+    /**
+     * Number to send/ Number template to fetch from TMAC event
+     */
+    Number: string;
 }

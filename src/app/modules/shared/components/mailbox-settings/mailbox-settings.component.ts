@@ -42,7 +42,7 @@ export class MailboxSettingsComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         try {
             const emailWorkbenchstate = this._twWorkbenchService.globalEmailWorkbenchState$;
-            if (!emailWorkbenchstate.initialized) {
+            if (!emailWorkbenchstate.availableMailboxes.value?.length) {
                 await this._twWorkbenchService.init();
                 this.mailboxes.form.controls.default.disable();
                 this.mailboxes.form.controls.selected.disable();

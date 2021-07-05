@@ -130,7 +130,8 @@ export class DashboardService {
                     event: {
                         EventName: 'CallbackDataReceivedForAgent',
                         Data: dataForAgent
-                    }
+                    },
+                    log: true
                 });
             });
 

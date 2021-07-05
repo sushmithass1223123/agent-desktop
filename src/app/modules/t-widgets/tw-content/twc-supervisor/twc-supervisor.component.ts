@@ -5,6 +5,7 @@ import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
+import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { differenceInHours, startOfDay } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
@@ -81,6 +82,10 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
      */
     maxDate: Date;
     /**
+     * Min date for dashboard data
+     */
+    minDate: Date;
+    /**
      * Data filter duration
      */
     duration: number;
@@ -107,35 +112,34 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
 
         this.widgetDataConfig = this.data.Data;
 
-        this.duration = this.data.Data.Duration || 100;
+        this.duration = this.widgetDataConfig.Duration ?? 100;
 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate());
 
+        this.minDate = new Date();
+        this.minDate.setDate(this.minDate.getDate() - 90);
+
         const initialDate = new Date();
-        initialDate.setDate(initialDate.getDate() - Math.round((this.duration) / 24));
+        initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
 
         this.dashboardDataFromDate = {
             calculatedSpan: 100,
             formControl: new FormControl(initialDate)
         };
 
-        this.dashboardDataFromDate
-            .formControl
-            .valueChanges
-            .subscribe((date: Date) => {
-                let deltaTime: number;
-                // check if the date is today, the take from start of the day
-                if (date.getDate() === new Date().getDate()) {
-                    deltaTime = differenceInHours(new Date(), startOfDay(Date.now()));
-                }
-                else {
-                    deltaTime = differenceInHours(new Date(), date);
-                }
-                this.duration = deltaTime;
-                this.registerToService(true);
-                this.showDashboardDataSpanOverlay = false;
-            });
+        this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {
+            let deltaTime: number;
+            // check if the date is today, the take from start of the day
+            if (date.getDate() === new Date().getDate()) {
+                deltaTime = differenceInHours(new Date(), startOfDay(Date.now()));
+            } else {
+                deltaTime = differenceInHours(new Date(), date);
+            }
+            this.duration = deltaTime;
+            this.registerToService(true);
+            this.showDashboardDataSpanOverlay = false;
+        });
 
         // get the agent data
         this.agentData = SDKClient.getAgentData();
@@ -144,34 +148,26 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this._dashboardService.subscribe();
 
         // get the content widgets
-        const supervisorWidgets = this.data.Data.Widgets || [];
+        const supervisorWidgets = this.widgetDataConfig.Widgets;
 
-        this.staticWidgets = supervisorWidgets.Static || [];
-        this.dynamicWidgets = supervisorWidgets.Dynamic || [];
-        this.aotWidgets = supervisorWidgets.AOT || [];
-
+        this.staticWidgets = supervisorWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.dynamicWidgets = supervisorWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.aotWidgets = supervisorWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
 
         // subscribe to dashboard service
-        this._dashboardService.
-            connectionState
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((state: string) => {
-                // check the state
-                if (state === 'connected' && this.loaded) {
-                    this.registerToService(true);
-                }
-            });
+        this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
+            // check the state
+            if (state === 'connected' && this.loaded) {
+                this.registerToService(true);
+            }
+        });
 
-
-        this._dashboardService.
-            dataReceived
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((state: string) => {
-                // check the state
-                if (state === 'supervisor-received') {
-                    this.dataLoading = false;
-                }
-            });
+        this._dashboardService.dataReceived.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
+            // check the state
+            if (state === 'supervisor-received') {
+                this.dataLoading = false;
+            }
+        });
 
         // set init flag to true
         this.init = true;
@@ -233,7 +229,6 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.showDashboardDataSpanOverlay = !this.showDashboardDataSpanOverlay;
     }
 
-
     /**
      * On page active callback
      */
@@ -246,7 +241,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             }
             this.loaded = true;
         }
-    }
+    };
 
     /**
      * On page inactive callback
@@ -256,14 +251,39 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
             this.loaded = false;
             this.registerToService(false);
         }
-    }
+    };
 }
 
 interface WidgetData {
     /**
+     * Widget list
+     */
+    Widgets: {
+        /**
+         * Static widget
+         */
+        Static: IWidget[];
+        /**
+         * Dynamic widget
+         */
+        Dynamic: IWidget[];
+        /**
+         * AOT widgets
+         */
+        AOT: IWidget[];
+        /**
+         * Agent widgets
+         */
+        Agent: IWidget[];
+    };
+    /**
      * Dashboard data duration
      */
     Duration: number;
+    /**
+     * Min date for dashboard filter
+     */
+    DataForDays: number;
     /**
      * Agent hierarchy filter flag
      */

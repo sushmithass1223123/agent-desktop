@@ -2,7 +2,8 @@
 <mat-card-header class="card-header" [ngClass]="headerColor + ' ' + (widgetState.floating ? 'floating' : '') + ' ' + (widgetState.aot ? 'aot' : '')">
     <!-- We add a material icon from config of default a widget icon -->
     <div mat-card-avatar>
-        <mat-icon>{{ data.Config.Icon || 'widgets' }}</mat-icon>
+        <mat-icon *ngIf="data.Config.Icon.indexOf('custom') < 0">{{ data.Config.Icon || 'widgets' }}</mat-icon>
+        <mat-icon *ngIf="data.Config.Icon.indexOf('custom') >= 0" [svgIcon]="data.Config.Icon"></mat-icon>
     </div>
 
     <!-- Add titile if provided in config or add widget by default -->
@@ -12,7 +13,7 @@
 
     <!-- All the action buttons goes here -->
 
-    <button *ngIf="data.Config.Actions.includes('pin')" mat-icon-button [matTooltip]="data.Config.Pinned ? 'Unpin' : 'Pin'" (click)="pinWidget()">
+    <button *ngIf="data.Config.Actions.includes('pin')" mat-icon-button [matTooltip]="data.Config.Pinned ? 'Unpin' : 'Pin'">
         <mat-icon [ngClass]="{ 'rotate-45': data.Config.Pinned }">push_pin</mat-icon>
     </button>
 

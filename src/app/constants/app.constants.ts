@@ -63,17 +63,17 @@ export const GAMIFICATION_METRIC_LABELS = {
 /**
  * Active callback statuses
  */
-export const ACTIVE_CALL_STATUSES = ['AgentConnected', 'DacAccepted'];
+export const ACTIVE_CALL_STATUSES = ['agentconnected', 'dacaccepted'];
 
 /**
  * Failed callback statuses
  */
-export const FAILED_CALL_STATUSES = ['DacNotificationFailed'];
+export const FAILED_CALL_STATUSES = ['dacnotificationfailed', 'deleted', 'queuetimeout'];
 
 /**
  * Pending callback statuses
  */
-export const PENDING_CALL_STATUSES = ['Open', 'QueueConnected'];
+export const PENDING_CALL_STATUSES = ['open', 'queueconnected'];
 
 /**
  * Alert dialog constants
@@ -225,6 +225,7 @@ export const AGENT_FEATURES = {
     AllowSupervisorToSendNotification: 'allowsupervisortosendnotification',
     AllowSupervisorToSilentMonitor: 'allowsupervisortosilentmonitor',
     AllowSupervisorToViewEmailDetails: 'allowsupervisortoviewemaildetails',
+    IsSetBroadcastEnabled: 'issetbroadcastenabled',
     IsCameraCaptureEnabled: 'iscameracaptureenabled',
     IsScreenCaptureEnabled: 'isscreencaptureenabled',
     IsLocationEnabled: 'islocationenabled',
@@ -445,3 +446,15 @@ export const INVALID_CHARS = [
     182,
     183
 ];
+
+export const CUSTOM_DATE_FORMATS = {
+    parse: {
+        dateInput: 'DD/MM/YYYY'
+    },
+    display: {
+        dateInput: 'DD/MM/YYYY',
+        monthYearLabel: 'MMMM YYYY',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'MMMM YYYY'
+    }
+};

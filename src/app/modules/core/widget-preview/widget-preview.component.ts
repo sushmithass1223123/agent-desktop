@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
+import { AppDataService } from '@services/app-data.service';
 import { IResponse, TUtils } from '@tmac/sdk';
-import { TwWidgetModel } from 'app/models';
 
 /**
  * Widget Preview
@@ -16,22 +15,25 @@ import { TwWidgetModel } from 'app/models';
 })
 export class WidgetPreviewComponent implements OnInit {
     /**
-     * Static widgets
+     * Widgets
      */
-    staticWidgets = [];
-    /**
-     * Dynamic Widgets
-     */
-    dynamicWidgets = [];
+    widgets = [];
 
     /**
      * Loading state
      */
     loading = true;
+
     /**
      * App config path
      */
     appConfigPath = 'assets/production.json';
+
+    /**
+     * Local template path
+     */
+    localTemplatePath = 'assets/preview.json';
+
     /**
      * App config
      */
@@ -40,34 +42,19 @@ export class WidgetPreviewComponent implements OnInit {
     constructor(
         private _activatedRouter: ActivatedRoute,
         private _router: Router,
-        private _fuseProgressBarService: FuseProgressBarService,
-        private fuseSplashService: FuseSplashScreenService
+        private fuseSplashService: FuseSplashScreenService,
+        private _appDataService: AppDataService
     ) {}
 
     /**
      * Lifecycle Hook
      */
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
+        await this._appDataService.getJsonConfig('', true);
         // get the config
-        this.getConfig();
-
-        // assing the widget model to data
-        const staticWidget = new TwWidgetModel('Static', 'tw-sample');
-        staticWidget.Config.Position.X = 3;
-        staticWidget.Config.Position.Y = 6;
-
-        this.staticWidgets = [staticWidget];
-    }
-
-    /**
-     * Get config
-     * @method
-     */
-    private async getConfig(): Promise<any> {
-        // get the config
-        const respnse = await fetch(this.appConfigPath);
+        const response = await fetch(this.appConfigPath);
         // get the json response
-        const config = await respnse.json();
+        const config = await response.json();
         // assign the config if found
         if (config) {
             this.appConfig = config;
@@ -98,7 +85,8 @@ export class WidgetPreviewComponent implements OnInit {
                 subtitle: 'Oops',
                 title: '',
                 description: message,
-                login: false
+                login: false,
+                route: 'preview'
             },
             queryParamsHandling: 'preserve'
         });
@@ -110,7 +98,22 @@ export class WidgetPreviewComponent implements OnInit {
      */
     private async getTemplateJson(templateName: string): Promise<void> {
         try {
-            this._fuseProgressBarService.show();
+            // check if local template
+            if (templateName === 'local') {
+                TUtils.Logger.console('info', `WidgetPreviewComponent.getTemplateJson load local template @ ${this.localTemplatePath}`);
+                // get the config
+                const templateFetch = await fetch(this.localTemplatePath);
+                if (!templateFetch.ok) {
+                    this.loading = false;
+                    return;
+                }
+                // get the json response
+                const template = (await templateFetch.json()) ?? [];
+                this.loading = false;
+                this.widgets = template;
+                return;
+            }
+
             // get the template json
             const result: IResponse = await TUtils.HttpClient.sendRequest({
                 urls: [`${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`],
@@ -124,13 +127,10 @@ export class WidgetPreviewComponent implements OnInit {
 
             setTimeout(
                 (x) => {
-                    this._fuseProgressBarService.hide();
                     // check the response
                     if (x.response) {
-                        // set loading false
                         this.loading = false;
-                        // assign the widgets
-                        this.dynamicWidgets = x.response.d ? JSON.parse(x.response.d) : [];
+                        this.widgets = x.response.d ? JSON.parse(x.response.d) : [];
                     } else {
                         this.routeToNotFound('Template name is not found!');
                     }

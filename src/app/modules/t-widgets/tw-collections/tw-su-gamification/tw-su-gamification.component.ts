@@ -121,7 +121,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
                     this.gamificationReqStatus = { msg: '', error: false, loading: false };
                 },
                 () => {
-                    this.gamificationReqStatus = { msg: 'Something went wrong', error: true, loading: false };
+                    this.gamificationReqStatus = { msg: 'Unable to fetch leaderboard details', error: true, loading: false };
                 }
             );
     }

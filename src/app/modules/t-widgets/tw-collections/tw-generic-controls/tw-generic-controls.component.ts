@@ -106,8 +106,12 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
      * @method
      */
     ngAfterViewInit(): void {
-        // check if the current page is textchat page
-        if (this._interactionManagerService.getInteractionCount().active <= 1 && this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+        // check if the current page is email page
+        if (
+            this.data.Data.RouteOnInteraction &&
+            this._interactionManagerService.getInteractionCount().active <= 1 &&
+            this._contentPageService.getCurrentMode() !== this.data.Data.Path
+        ) {
             setTimeout(() => {
                 this._contentPageService.mode = this.data.Data.Path;
             }, 500);
@@ -179,7 +183,6 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
      * @param {MatButton} btn
      */
     confirmCloseInteraction(btn: MatButton): void {
-        // config force login
         this.dialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {

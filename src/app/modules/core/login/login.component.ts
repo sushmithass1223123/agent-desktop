@@ -279,7 +279,18 @@ export class LoginComponent implements OnInit, OnDestroy {
      * Flag for showing otp input
      */
     showOtp = false;
-
+    /**
+     * Lan Id input children ref
+     */
+    @ViewChild('lanId') lanIdField: ElementRef<HTMLInputElement>;
+    /**
+     * Station input children ref
+     */
+    @ViewChild('stationId') stationField: ElementRef<HTMLInputElement>;
+    /**
+     * Agent Id input children ref
+     */
+    @ViewChild('agentId') agentIdField: ElementRef<HTMLInputElement>;
     /**
      * Disable opening console / refreshing
      * @param {KeyboardEvent} event
@@ -321,7 +332,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _appUIService: AppUiService,
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
-        private route: ActivatedRoute,
         private fuseSplashService: FuseSplashScreenService
     ) {
         // Configure the layout
@@ -390,7 +400,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         /**
          * subscribes to Activated route
          */
-        this.route.queryParams
+        this._activatedRoute.queryParams
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 // continue only if userId present
@@ -428,6 +438,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.fuseSplashService.show();
                 this.login(true);
             });
+
+        this.lanIdField?.nativeElement?.focus();
     }
 
     /**
@@ -451,11 +463,26 @@ export class LoginComponent implements OnInit, OnDestroy {
     async loadConfig(agentId?: string): Promise<void> {
         // load the config
         const config = await this._appDataService.getJsonConfig(agentId);
+
+        // if the json is not proper then route to not-found page
+        if (!config) {
+            // we will route to error page
+            this._router.navigate(['not-found'], {
+                state: {
+                    subtitle: 'Oops',
+                    title: '404',
+                    description: 'Unable to load the config for login, please contact the administrator.',
+                    login: false
+                },
+                queryParamsHandling: 'preserve'
+            });
+            return;
+        }
+
         this.appConfig = config;
         this.configLoaded(config);
         this.getData();
         this.checkQueryParams();
-        this._appDataService.setTheme();
     }
 
     /**
@@ -464,92 +491,72 @@ export class LoginComponent implements OnInit, OnDestroy {
      * @param config
      */
     private configLoaded(config: any): void {
-        // check if the config is not null
-        if (config !== null) {
-            this.loginConfig = config.Login;
-            this.appCustomerLogo = config.AppConfigs.Logos.Customer || null;
+        this.loginConfig = config.Login;
+        this.appCustomerLogo = config.AppConfigs.Logos.Customer || null;
 
-            this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
-            this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
-            this.domainListEnabled = config.Login.DomainListEnabled;
-            this.stationEnabled = config.Login.StationEnabled;
-            this.loginModeEnabled = config.Login.Modes.Enabled;
-            this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
-            this.disableLanId = config.Login.DisableLanId ?? false;
-            this.brandLogo = config.AppConfigs.Logos.Default || null;
-            this.multiWindowMode = config.Login.MultiWindowMode || {
-                Enabled: false,
-                Width: 0,
-                Height: 0,
-                PixelDimension: false
-            };
-            this.password = config.Login.Password ?? {
-                Agent: config.Login.PasswordEnabled ?? false, // adding for backward compatibility
-                Station: config.Login.PasswordEnabled ?? false // adding for backward compatibility
-            };
+        this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
+        this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
+        this.domainListEnabled = config.Login.DomainListEnabled;
+        this.stationEnabled = config.Login.StationEnabled;
+        this.loginModeEnabled = config.Login.Modes.Enabled;
+        this.promptAgentIdOnInvalidLanId = config.Login.PromptAgentIdOnInvalidLanId;
+        this.disableLanId = config.Login.DisableLanId ?? false;
+        this.brandLogo = config.AppConfigs.Logos.Default || null;
+        this.multiWindowMode = config.Login.MultiWindowMode || {
+            Enabled: false,
+            Width: 0,
+            Height: 0,
+            PixelDimension: false
+        };
+        this.password = config.Login.Password ?? {
+            Agent: config.Login.PasswordEnabled ?? false, // adding for backward compatibility
+            Station: config.Login.PasswordEnabled ?? false // adding for backward compatibility
+        };
 
-            // check if the login mode is enabled
-            if (this.loginModeEnabled) {
-                // check the login mode type
-                if (config.Login.Modes.Type === 'pbx') {
-                    // show station and check PBX
-                    this.stationEnabled = true;
-                    this.pbxChecked = true;
-                } else if (config.Login.Modes.Type === 'ms') {
-                    // show station and check MS
-                    this.stationEnabled = true;
-                    this.msChecked = true;
-                } else if (config.Login.Modes.Type === 'pbxms') {
-                    // show station and check PBX and MS
-                    this.stationEnabled = true;
-                    this.pbxChecked = true;
-                    this.msChecked = true;
-                } else {
-                    // hide station
-                    this.stationEnabled = false;
-                }
+        // check if the login mode is enabled
+        if (this.loginModeEnabled) {
+            // check the login mode type
+            if (config.Login.Modes.Type === 'pbx') {
+                // show station and check PBX
+                this.stationEnabled = true;
+                this.pbxChecked = true;
+            } else if (config.Login.Modes.Type === 'ms') {
+                // show station and check MS
+                this.stationEnabled = true;
+                this.msChecked = true;
+            } else if (config.Login.Modes.Type === 'pbxms') {
+                // show station and check PBX and MS
+                this.stationEnabled = true;
+                this.pbxChecked = true;
+                this.msChecked = true;
+            } else {
+                // hide station
+                this.stationEnabled = false;
             }
+        }
 
-            // open self view if face auth is enabled
-            if (this.faceAuthEnabled) {
-                this.startCamera();
-            }
+        // open self view if face auth is enabled
+        if (this.faceAuthEnabled) {
+            this.startCamera();
+        }
 
-            // check to disable lanId
-            if (this.disableLanId) {
-                this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
-            }
+        // check to disable lanId
+        if (this.disableLanId) {
+            this.loginForm.get('lanId').disable({ onlySelf: this.disableLanId });
+        }
 
-            // Set validators for form
-            if (this.domainListEnabled) {
-                this.loginForm.controls.domain.setValidators(Validators.required);
-            }
-            if (this.stationEnabled) {
-                this.loginForm.controls.station.setValidators(Validators.required);
-            }
-            if (this.stationEnabled) {
-                this.loginForm.controls.station.setValidators(Validators.required);
-            }
-            if (this.password.Agent) {
-                this.loginForm.controls.agentPassword.setValidators(Validators.required);
-            }
-            if (this.password.Station) {
-                this.loginForm.controls.stationPassword.setValidators(Validators.required);
-            }
-
-            // set loading flag
-            // this.loading = false;
-        } else {
-            // we will route to error page
-            this._router.navigate(['not-found'], {
-                state: {
-                    subtitle: 'Oops',
-                    title: '404',
-                    description: 'Unable to load the config, please contact the administrator.',
-                    login: false
-                },
-                queryParamsHandling: 'preserve'
-            });
+        // Set validators for form
+        if (this.domainListEnabled) {
+            this.loginForm.controls.domain.setValidators(Validators.required);
+        }
+        if (this.stationEnabled) {
+            this.loginForm.controls.station.setValidators(Validators.required);
+        }
+        if (this.password.Agent) {
+            this.loginForm.controls.agentPassword.setValidators(Validators.required);
+        }
+        if (this.password.Station) {
+            this.loginForm.controls.stationPassword.setValidators(Validators.required);
         }
     }
 
@@ -727,6 +734,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         // set form validation
         if (this.stationEnabled) {
             this.loginForm.controls.station.setValidators(Validators.required);
+            setTimeout(() => {
+                this.stationField.nativeElement.focus();
+            });
         } else {
             this.loginForm.controls.station.clearValidators();
         }
@@ -895,6 +905,9 @@ export class LoginComponent implements OnInit, OnDestroy {
                         this.agentIdEnabled = true;
                         this.loginForm.controls.agentId.setValidators(Validators.required);
                         this.loginForm.controls.agentId.updateValueAndValidity();
+                        setTimeout(() => {
+                            this.agentIdField.nativeElement.focus();
+                        });
                     } else {
                         // login failed, invalid lan Id
                         this.errorMessage = 'Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access';
@@ -927,12 +940,11 @@ export class LoginComponent implements OnInit, OnDestroy {
      * To check for number only
      * @param event input event
      */
-    public numberOnly(event: any): boolean {
-        const charCode = event.which ? event.which : event.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
+    public numberOnly(event: KeyboardEvent): boolean {
+        if (!isNaN(Number(event.key)) || event.key === 'Enter') {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**

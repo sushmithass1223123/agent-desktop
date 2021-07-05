@@ -6,6 +6,7 @@ import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
+import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { differenceInHours, startOfDay } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
@@ -82,9 +83,17 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
      */
     maxDate: Date;
     /**
+     * Min date for dashboard data
+     */
+    minDate: Date;
+    /**
      * Data filter duration
      */
     duration: number;
+    /**
+     * Widget data
+     */
+    widgetDataConfig: WidgetData;
 
     constructor(
         public hostElement: ElementRef,
@@ -103,10 +112,15 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.duration = this.data.Data.Duration || 100;
+        this.widgetDataConfig = this.data.Data;
+
+        this.duration = this.widgetDataConfig.Duration ?? 100;
 
         this.maxDate = new Date();
         this.maxDate.setDate(this.maxDate.getDate());
+
+        this.minDate = new Date();
+        this.minDate.setDate(this.minDate.getDate() - 90);
 
         // subscribe to dashboard service
         this._dashboardService.subscribe();
@@ -115,36 +129,30 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.agentData = SDKClient.getAgentData();
 
         // get the home content widgets
-        const homeWidgets = this.data.Data.Widgets || [];
+        const homeWidgets = this.widgetDataConfig.Widgets;
 
-        this.staticWidgets = homeWidgets.Static || [];
-        this.dynamicWidgets = homeWidgets.Dynamic || [];
-        this.aotWidgets = homeWidgets.AOT || [];
+        this.staticWidgets = homeWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.dynamicWidgets = homeWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.aotWidgets = homeWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
 
         // process aot widgets
         this._aotWidgetService.processAOTWidgets(this.aotWidgets);
 
         // subscribe to dashboard service
-        this._dashboardService
-            .connectionState
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((state: string) => {
-                // check the state
-                if (state === 'connected' && this.loaded) {
-                    // register to service
-                    this.registerToService(true);
-                }
-            });
+        this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
+            // check the state
+            if (state === 'connected' && this.loaded) {
+                // register to service
+                this.registerToService(true);
+            }
+        });
 
-        this._dashboardService.
-            dataReceived
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((state: string) => {
-                // check the state
-                if (state === 'agent-received') {
-                    this.dataLoading = false;
-                }
-            });
+        this._dashboardService.dataReceived.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
+            // check the state
+            if (state === 'agent-received') {
+                this.dataLoading = false;
+            }
+        });
 
         const initialDate = new Date();
         initialDate.setDate(initialDate.getDate() - Math.round(this.duration / 24));
@@ -159,8 +167,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             // check if the date is today, the take from start of the day
             if (date.getDate() === new Date().getDate()) {
                 deltaTime = differenceInHours(new Date(), startOfDay(Date.now()));
-            }
-            else {
+            } else {
                 deltaTime = differenceInHours(new Date(), date);
             }
             this.duration = deltaTime;
@@ -231,7 +238,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             }
             this.loaded = true;
         }
-    }
+    };
 
     /**
      * On page inactive callback
@@ -241,5 +248,33 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
             this.loaded = false;
             this.registerToService(false);
         }
-    }
+    };
+}
+
+interface WidgetData {
+    /**
+     * Widget list
+     */
+    Widgets: {
+        /**
+         * Static widget
+         */
+        Static: IWidget[];
+        /**
+         * Dynamic widget
+         */
+        Dynamic: IWidget[];
+        /**
+         * AOT widgets
+         */
+        AOT: IWidget[];
+    };
+    /**
+     * Dashboard data duration
+     */
+    Duration: number;
+    /**
+     * Min date for dashboard filter
+     */
+    DataForDays: number;
 }

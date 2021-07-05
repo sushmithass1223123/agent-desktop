@@ -12,25 +12,25 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
-    EmailInboxModel,
-    EmailOutboxModel,
     IGetInteractionHistory,
     InteractionAction,
     InteractionHistory,
+    InteractionHistoryEvent,
+    InteractionHistoryOnDemandEvent,
     InteractionHistoryReadyEvent,
-    IResponseData,
+    InteractionHistoryReLoadEvent,
     SDKClient
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
 import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
-import { orderBy, sortBy } from 'lodash';
+import { format, parse } from 'date-fns';
+import { groupBy, orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { from, Observable, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
 
-type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | null;
+type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
 /**
  * Customer journey component
@@ -47,17 +47,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Input data from app config json
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<any, WidgetData>;
 
-    /**
-     * Fuse confi
-     */
-    // fuseConfig: FuseConfig;
-
-    /**
-     * common fuse background
-     */
-    // customFuse: { content: string; body: string };
     /**
      * Fuse custom config
      */
@@ -75,16 +66,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Search for record in table
      */
     searchForm = new FormGroup({
-        SessionID: new FormControl(''),
-        PhoneNumber: new FormControl(''),
-        Channel: new FormControl(''),
         InteractionDateStart: new FormControl(),
         InteractionDateEnd: new FormControl(),
+        Channel: new FormControl(''),
+        Direction: new FormControl(''),
+        InteractionText: new FormControl(''),
+        Intent: new FormControl(''),
+        AgentName: new FormControl(''),
         CIF: new FormControl(''),
         NRIC: new FormControl(''),
-        OverallSentiment: new FormControl(''),
-        Agent: new FormControl(''),
-        Intent: new FormControl('')
+        PhoneNumber: new FormControl(''),
+        EmailID: new FormControl(''),
+        OverallSentiment: new FormControl('')
     });
 
     /**
@@ -99,7 +92,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Interaction notes ref
      */
-    emailThreadReq: ResData<Observable<string[]>> = {
+    emailThreadReq: ResData<any> = {
         error: false,
         loading: false,
         data: null
@@ -229,6 +222,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
              * Size of the pages in table
              */
             pageSizes: number[];
+            /**
+             * Flag to enable sort
+             */
+            sortDisabled: boolean;
         };
     };
 
@@ -252,7 +249,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         open: () => {
             if (this.advancedSearchModal.ref) {
                 this.advancedSearchModal.openedRef = this.matDialog.open(this.advancedSearchModal.ref, {
-                    width: '50%',
+                    width: '40%',
                     panelClass: 'customer-journey-advanced-form'
                 });
             }
@@ -264,14 +261,20 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     };
 
     /**
-     * To show attachments in email
-     */
-    showAttachments = false;
-
-    /**
      * Small email description falg
      */
     smallEmailDescription = true;
+
+    /**
+     * This is the input for how the table records should be grouped
+     */
+    groupCtrl = new FormControl('');
+
+    /**
+     * Reduced records
+     */
+    reducedRecords: Record<string, InteractionHistory[]> = {};
+
     /**
      *
      * @param _fuseFacadeService
@@ -296,10 +299,24 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             iframeUrl: '',
             lastId: '',
             tableData: {
-                columns: ['InteractionDate', 'Channel', 'Intent', 'AgentName', 'CIF', 'NRIC', 'PhoneNumber', 'OverallSentiment', 'Actions'],
+                columns: [
+                    'InteractionDate',
+                    'Channel',
+                    'Direction',
+                    'InteractionText',
+                    'Intent',
+                    'AgentName',
+                    'CIF',
+                    'NRIC',
+                    'PhoneNumber',
+                    'EmailID',
+                    'OverallSentiment',
+                    'Actions'
+                ],
                 selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([]),
-                pageSizes: []
+                pageSizes: [],
+                sortDisabled: false
             }
         };
     }
@@ -319,38 +336,27 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.interactionId = this.data.InteractionDetails.InteractionID;
 
         const noOfRecords = this.data.Data.NoOfRecords;
-        this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
 
-        // subscribe to fuse
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     // config = config;
-        //     this.customFuse = {
-        //         content:
-        //             config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-        //                 ? config.layout.anchorWidget.contentBackground
-        //                 : config.layout.widget.customBackgroundColor === true
-        //                     ? config.layout.widget.contentBackground
-        //                     : '',
-        //         body:
-        //             config.layout.anchorWidget.customBackgroundColor === true && this.data.Config.Anchor
-        //                 ? config.layout.anchorWidget.bodyBackground
-        //                 : config.layout.widget.customBackgroundColor === true
-        //                     ? config.layout.widget.bodyBackground
-        //                     : ''
-        //     };
-        // });
+        if (this.data.Data.Columns && this.data.Data.Columns.length) {
+            this.customerJourneyTable.tableData.columns = this.data.Data.Columns;
+        }
+
+        this.customerJourneyTable.tableData.pageSizes = [0, 5, 10].map((r) => r + noOfRecords);
 
         this.historyParams = {
             cif: '',
             email: '',
             nric: '',
             phone: '',
-            noOfRecords: this.data.Data.NoOfRecords,
+            noOfRecords: this.data.Data.NoOfRecords.toString(),
             lastId: '0'
         };
 
         this._tmacEventService
-            .getInteractionEvents(['InteractionHistoryReadyEvent'], this.interactionId)
+            .getInteractionEvents(
+                ['InteractionHistoryReadyEvent', 'InteractionHistoryEvent', 'InteractionHistoryOnDemandEvent', 'InteractionHistoryReLoadEvent'],
+                this.interactionId
+            )
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
@@ -448,31 +454,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Handler for InteractionHistoryReadyEvent
-     */
-    InteractionHistoryReadyEvent = (evt: InteractionHistoryReadyEvent): void => {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-        const noOfRecords = this.customerJourneyTable.tableData.source.paginator?.pageSize.toString() || this.data.Data.NoOfRecords;
-        // assign the history params
-        this.historyParams = {
-            cif: evt.HistoryParameters.CIF,
-            email: evt.HistoryParameters.EmailID,
-            nric: evt.HistoryParameters.NRIC,
-            phone: evt.HistoryParameters.PhoneNumber,
-            noOfRecords,
-            lastId: '0'
-        };
-        // get history
-        this.getInteractionHistory();
-    };
-
-    /**
      * Gets interaction history and sets to table
      */
-    private getInteractionHistory(): void {
+    private getInteractionHistory(
+        noOfRecords = (this.customerJourneyTable.tableData.source.paginator?.pageSize || parseInt(this.historyParams.noOfRecords, 10)).toString()
+    ): void {
         // // Interaction History Dummy data
         // SDKClient.getInteractionHistory(
         //     lastId ? { ...this.historyParams, lastId, phone: '96975347' } : { ...this.historyParams, phone: '96975347' },
@@ -482,82 +468,192 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (!lastId) {
             this.customerJourneyTable.loading = true;
         }
-        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId } : this.historyParams, null)
+        SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId, noOfRecords } : { ...this.historyParams, noOfRecords }, null)
             .then((res) => {
                 if (!res.response) {
                     throw new Error('Invalid response from server');
                 }
                 if (res.response.length) {
-                    const tableData = {};
-                    let transcripts: Record<string, ChatTranscripts[]> = {};
-                    let sortedTabledata = [];
-                    sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(res.response), 'ItemID').reverse();
-                    sortedTabledata.forEach((data) => {
-                        if (!tableData[data.SessionID]) {
-                            tableData[data.SessionID] = {
-                                InteractionDate: data.InteractionDate,
-                                Channel: data.Channel,
-                                Intent: data.Intent,
-                                AgentName: data.AgentName,
-                                CIF: data.CIF,
-                                NRIC: data.NRIC,
-                                PhoneNumber: data.PhoneNumber,
-                                OverallSentiment: data.OverallSentiment,
-                                ItemID: data.ItemID,
-                                SubType: data.SubType,
-                                SessionID: data.SessionID,
-                                Direction: data.Direction,
-                                ID: data.ID
-                            };
-                            // tableData[data.SessionID] = data;
-                            transcripts[data.SessionID] = [];
-                        }
-                        let message: any;
-                        try {
-                            message = JSON.parse(data.InteractionText);
-                        } catch (e) {
-                            message = {
-                                type: 'text',
-                                message: data.InteractionText
-                            };
-                        }
-                        transcripts[data.SessionID].push({
-                            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
-                            isAgent: data.Direction === 'Out',
-                            message,
-                            time: data.InteractionDate,
-                            type: data.SubType,
-                            messageId: data.ItemID
-                        });
-                    });
-                    transcripts = Object.entries(transcripts).reduce((acc, curr) => {
-                        const [key, val] = curr;
-                        acc[key] = sortBy(val, 'messageId');
-                        return acc;
-                    }, {});
-                    // assign the transcripts
-                    this.interactionTranscripts = transcripts;
-                    // order table data by received date
-                    if (!this.customerJourneyTable.tableData.source.data) {
-                        this.customerJourneyTable.tableData.source.data = [];
-                    }
-                    const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']) as InteractionHistory[];
-                    this.customerJourneyTable.tableData.source.data = newRecords;
-                    const lastEl = res.response.slice(-1);
-                    this.customerJourneyTable.lastId = lastEl[0].LastID?.toString();
-                    this.customerJourneyTable.loading = false;
+                    this.processHistoryData(res.response, true);
                 }
             })
             .catch((err) => {
                 console.error(err);
+            })
+            .finally(() => {
                 this.customerJourneyTable.loading = false;
             });
     }
 
     /**
+     * To process history data
+     *
+     * @param {InteractionHistory[]} historyData
+     * @param {Boolean} update
+     */
+    processHistoryData(historyData: InteractionHistory[], update?: boolean): void {
+        const tableData = {};
+        let transcripts: Record<string, ChatTranscripts[]> = {};
+        let sortedTabledata = [];
+        // try {
+        //     console.log(this.groupTable(historyData, 'GroupID', 'InteractionDate', 'SessionID', 'InteractionDate'));
+        // } catch (e) {
+        //     console.error(e);
+        // }
+        if (update) {
+            sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(historyData), 'ItemID').reverse();
+        } else {
+            sortedTabledata = sortBy(historyData, 'ItemID').reverse();
+        }
+        sortedTabledata.forEach((data) => {
+            if (!(data.InteractionDate instanceof Date)) {
+                data.InteractionDate = parse(data.InteractionDate, 'dd/M/yyyy HH:mm:ss', new Date());
+            }
+            if (!tableData[data.GroupID]) {
+                tableData[data.GroupID] = {
+                    InteractionDate: data.InteractionDate,
+                    Channel: data.Channel,
+                    Intent: data.Intent,
+                    AgentName: data.AgentName,
+                    CIF: data.CIF,
+                    EmailID: data.EmailID,
+                    NRIC: data.NRIC,
+                    PhoneNumber: data.PhoneNumber,
+                    OverallSentiment: data.OverallSentiment,
+                    ItemID: data.ItemID,
+                    SubType: data.SubType,
+                    SessionID: data.SessionID,
+                    Direction: data.Direction,
+                    ID: data.ID,
+                    GroupID: data.GroupID,
+                    LastID: data.LastID,
+                    InteractionText: data.InteractionText,
+                    Children: [],
+                    expanded: false
+                };
+                transcripts[data.GroupID] = [];
+            } else {
+                const Children = tableData[data.GroupID].Children;
+                Children.push({ ...tableData[data.GroupID], Children: null });
+                tableData[data.GroupID] = {
+                    InteractionDate: data.InteractionDate,
+                    Channel: data.Channel,
+                    Intent: data.Intent,
+                    AgentName: data.AgentName,
+                    CIF: data.CIF,
+                    EmailID: data.EmailID,
+                    NRIC: data.NRIC,
+                    PhoneNumber: data.PhoneNumber,
+                    OverallSentiment: data.OverallSentiment,
+                    ItemID: data.ItemID,
+                    SubType: data.SubType,
+                    SessionID: data.SessionID,
+                    Direction: data.Direction,
+                    ID: data.ID,
+                    GroupID: data.GroupID,
+                    LastID: data.LastID,
+                    InteractionText: data.InteractionText,
+                    Children,
+                    expanded: false
+                };
+            }
+            let message: any;
+            try {
+                message = JSON.parse(data.InteractionText);
+            } catch (e) {
+                message = {
+                    type: 'text',
+                    message: data.InteractionText
+                };
+            }
+            transcripts[data.GroupID].push({
+                who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+                isAgent: data.Direction === 'Out',
+                message,
+                time: data.InteractionDate,
+                type: data.SubType,
+                messageId: data.ItemID
+            });
+        });
+        transcripts = Object.entries(transcripts).reduce((acc, curr) => {
+            const [key, val] = curr;
+            acc[key] = sortBy(val, 'messageId');
+            return acc;
+        }, {});
+        // assign the transcripts
+        this.interactionTranscripts = transcripts;
+        // order table data by received date
+        if (!this.customerJourneyTable.tableData.source.data) {
+            this.customerJourneyTable.tableData.source.data = [];
+        }
+        const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']) as InteractionHistory[];
+        this.customerJourneyTable.tableData.source.data = newRecords;
+        const lastEl = sortedTabledata.slice(-1) || [];
+        this.customerJourneyTable.lastId = lastEl[0]?.LastID?.toString();
+        this.customerJourneyTable.loading = false;
+        const pageOffset = newRecords.length % parseInt(this.historyParams.noOfRecords, 10);
+        const recordsIncompleteInFirstPage =
+            newRecords.length < this.customerJourneyTable.tableData.source.paginator?.pageSize
+                ? parseInt(this.historyParams.noOfRecords, 10) - pageOffset
+                : 0;
+        if (recordsIncompleteInFirstPage) {
+            this.getInteractionHistory((recordsIncompleteInFirstPage + 1).toString());
+        } else if (pageOffset === 0) {
+            this.getInteractionHistory('1');
+        }
+    }
+
+    /**
+     * Handler for InteractionHistoryReadyEvent
+     */
+    InteractionHistoryReadyEvent(evt: InteractionHistoryReadyEvent): void {
+        // check for the interaction
+        if (this.interactionId !== evt.InteractionID) {
+            return;
+        }
+        const noOfRecords = this.data.Data.NoOfRecords;
+        // assign the history params
+        this.historyParams = {
+            cif: evt.HistoryParameters.CIF,
+            email: evt.HistoryParameters.EmailID,
+            nric: evt.HistoryParameters.NRIC,
+            phone: evt.HistoryParameters.PhoneNumber,
+            noOfRecords: noOfRecords.toString(),
+            lastId: '0'
+        };
+        // get history
+        this.getInteractionHistory();
+    }
+
+    /**
+     * To process InteractionHistoryEvent
+     *
+     * @param {InteractionHistoryEvent} evt
+     */
+    InteractionHistoryEvent(evt: InteractionHistoryEvent): void {
+        this.processHistoryData(evt.History, false);
+    }
+
+    /**
+     * To process InteractionHistoryOnDemandEvent
+     *
+     * @param {InteractionHistoryOnDemandEvent} evt
+     */
+    InteractionHistoryOnDemandEvent(evt: InteractionHistoryOnDemandEvent): void {}
+
+    /**
+     * To process InteractionHistoryReLoadEvent
+     *
+     * @param {InteractionHistoryReLoadEvent} evt
+     */
+    InteractionHistoryReLoadEvent(evt: InteractionHistoryReLoadEvent): void {
+        this.processHistoryData(evt.History, false);
+    }
+
+    /**
      * Sets iframe for selected session
      */
-    public setIframe(row: InteractionHistory): void {
+    setIframe(row: InteractionHistory): void {
         if (!this.maximized) {
             this.maximized = true;
             this.wrapperComponent.maximize();
@@ -569,7 +665,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Material table pagination event
      */
-    public pageEvent(_evt: any): void {
+    pageEvent(_evt: any): void {
         if (!this.customerJourneyTable.tableData.source.paginator.hasNextPage()) {
             this.getInteractionHistory();
         }
@@ -579,7 +675,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Get actions of selected sessionId
      * @param {String} sessionId selected Session Id
      */
-    public async getSessionActions(sessionId: string): Promise<void> {
+    async getSessionActions(sessionId: string): Promise<void> {
         try {
             this.sessionActions = { loading: true, error: false };
             const res = await SDKClient.getInteractionActions(sessionId);
@@ -589,7 +685,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
             };
         } catch (e) {
-            this.sessionActions = { loading: false, error: true, msg: COMMON_ERR_MESSAGE };
+            this.sessionActions = { loading: false, error: true, msg: 'Unable to fetch session actions' };
             console.error(e);
         }
     }
@@ -599,7 +695,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      *
      * @param sessionId
      */
-    public openSentimentDashboard(sessionId: string): void {
+    openSentimentDashboard(sessionId: string): void {
         let url = this.data.Data.SentimentDashboardUrl;
 
         // verify the url
@@ -622,16 +718,21 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * On widget maximized
      */
-    public onMaximized(max: boolean): void {
+    onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
+        if (max) {
+            setTimeout(() => {
+                this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
+            }, 0);
+        }
     }
 
     /**
      * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
      */
-    public async showInteractionData(record: InteractionHistory): Promise<void> {
+    async showInteractionData(record: InteractionHistory): Promise<void> {
         this.interactionNotesReq.loading = true;
         this.interactionNotesReq.data = from(
             SDKClient.getInteractionData({
@@ -640,10 +741,39 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 interactionId: '',
                 sessionId: record.SessionID,
                 toDate: '',
-                agentId: record.AgentID
+                agentId: ''
             })
         ).pipe(
-            map((res) => res.response.filter((ih) => ih.AgentComment).map((ihF) => ihF.AgentComment)),
+            map((res) =>
+                res.response
+                    .filter((ih) => ih.AgentComment)
+                    .map((ihF) => {
+                        let message = `
+                        <div class='twd-whitespace-pre-line'>
+                        ${ihF.AgentComment}
+                        </div>
+                        `;
+                        try {
+                            const jsonMessage = JSON.parse(ihF.AgentComment);
+                            message = '';
+                            jsonMessage.forEach((item: any, index: number, array: []) => {
+                                message += `
+                             <div class="text-primary mat-body-2">${item.Comment.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                             <span class="time muted-text mat-body-1">${item.User}</span>,
+                             <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
+                             `;
+                                // add space if there are multiple items
+                                if (index !== array.length - 1) {
+                                    message += `
+                                    <br />
+                                    <br />
+                                    `;
+                                }
+                            });
+                        } catch (error) {}
+                        return message;
+                    })
+            ),
             tap(() => (this.interactionNotesReq.loading = false)),
             catchError((err) => {
                 console.error(err);
@@ -658,7 +788,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Shows email thread for the session
      * @param record
      */
-    public async showEmailThread(interaction?: InteractionHistory): Promise<void> {
+    async showEmailThread(interaction?: InteractionHistory): Promise<void> {
         if (!interaction) {
             interaction = this.customerJourneyTable.tableData.selection.selected[0];
         }
@@ -687,7 +817,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
 
             if (res.response.Body) {
-                res.response.Body = res.response.Body.replaceAll('<a', '<a target="_blank"');
+                res.response.Body = this._appUIService.sanitizeEmailBody(res.response.Body)['changingThisBreaksApplicationSecurity'];
             }
 
             this.emailThreadReq.data = res.response;
@@ -717,17 +847,22 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Switches Maximized View
      * @param {Mode} mode
      */
-    public switchMaximizedViewMode(mode: Mode, row: InteractionHistory): void {
-        this.mode = mode;
+    switchMaximizedViewMode(mode: Mode, row: InteractionHistory): void {
         if (!this.maximized) {
             this.maximized = true;
             this.wrapperComponent.maximize();
         }
-        if (this.customerJourneyTable.tableData.selection?.selected[0]?.ID !== row.ID) {
-            setTimeout(() => {
-                this.customerJourneyTable.tableData.selection.toggle(row);
-            }, 0);
+        const selectedRow = this.customerJourneyTable.tableData.source.data.find((x: any) => x.expanded);
+        if (selectedRow?.ID === row.ID && mode === this.mode) {
+            return;
         }
+        if (selectedRow?.ID !== row.ID) {
+            if (selectedRow) {
+                (selectedRow as any).expanded = false;
+            }
+            (row as any).expanded = true;
+        }
+        this.mode = mode;
         switch (mode) {
             case 'Session History': {
                 this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -753,31 +888,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 this.showEmailThread(row);
                 break;
             }
+            case 'Session Emails': {
+                break;
+            }
         }
-    }
-
-    /**
-     * Closes the bottom action window
-     */
-    public closeActionWindow(): void {
-        this.mode = null;
-        this.customerJourneyTable.tableData.selection.clear();
-        // this.interactionTranscripts = JSON.stringify(this.interactionTranscripts);
-    }
-
-    /**
-     * Opens advanced search form inside a modal window
-     */
-    openAdvancedSearchModal(): void {}
-
-    /**
-     * Is row selected
-     * @param row
-     * @returns
-     */
-    isRowSelected(row: any): boolean {
-        const selected = this.customerJourneyTable.tableData.selection.isSelected(row);
-        return selected;
     }
 
     /**
@@ -787,4 +901,80 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     openFile(fileUrl: string): void {
         window.open(fileUrl);
     }
+
+    /**
+     * Groups table data
+     * @param tableData
+     * @param row
+     * @param groupId
+     */
+    groupTable(response: any[], groupId: string, sortId: string, groupChildrenBy?: string, sortChildrenBy?: string): any[] {
+        const records = response.map((data) => ({
+            InteractionDate: data.InteractionDate,
+            Channel: data.Channel,
+            Intent: data.Intent,
+            AgentName: data.AgentName,
+            CIF: data.CIF,
+            EmailID: data.EmailID,
+            NRIC: data.NRIC,
+            PhoneNumber: data.PhoneNumber,
+            OverallSentiment: data.OverallSentiment,
+            ItemID: data.ItemID,
+            SubType: data.SubType,
+            SessionID: data.SessionID,
+            Direction: data.Direction,
+            ID: data.ID,
+            GroupID: data.GroupID,
+            LastID: data.LastID,
+            InteractionText: data.InteractionText,
+            Children: [],
+            expanded: false
+        }));
+        const groupedRecordsById = groupBy(records, groupId);
+        return sortBy(
+            Object.entries(groupedRecordsById).reduce((firstRow, curr) => {
+                let [, val] = curr;
+                const tableRow = val.shift();
+                if (groupChildrenBy) {
+                    val = this.groupTable(val, groupChildrenBy, sortChildrenBy, '', 'messageId');
+                }
+                if (sortChildrenBy) {
+                    val = sortBy(val, sortChildrenBy);
+                }
+                (tableRow as any).Children = val;
+                firstRow.push(tableRow);
+                return firstRow;
+            }, []),
+            sortId
+        );
+    }
+
+    /**
+     * Iframe event when loaded , loads the email inside it
+     * @param iframe
+     */
+    loadEmailInIframe(iframe: HTMLIFrameElement): void {
+        const frag = document.createRange().createContextualFragment(this.emailThreadReq.data.Body);
+        const doc = iframe.contentDocument || iframe.contentWindow;
+        (doc as any).body.appendChild(frag);
+    }
+}
+
+interface WidgetData {
+    /**
+     * Customer session journey url
+     */
+    IframeBaseUrl: string;
+    /**
+     * No of records to load
+     */
+    NoOfRecords: number;
+    /**
+     * Sentiment dashboard url
+     */
+    SentimentDashboardUrl: string;
+    /**
+     * Columns to show
+     */
+    Columns: string[];
 }

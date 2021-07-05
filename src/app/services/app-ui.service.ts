@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AlertDialogComponent } from '@modules/shared/components/alert-dialog/alert-dialog.component';
 import { AppConfirmDialogComponent } from '@modules/shared/components/app-confirm-dialog/app-confirm-dialog.component';
 import { AppSnackbarComponent } from '@modules/shared/components/app-snackbar/app-snackbar.component';
 import { CustomDialogComponent } from '@modules/shared/components/custom-dialog/custom-dialog.component';
 import { ReminderTaskDialogComponent } from '@modules/shared/components/reminder-task-dialog/reminder-task-dialog.component';
 import { SnackbarComponent } from '@modules/shared/components/snackbar/snackbar.component';
+import { TUtils } from '@tmac/sdk';
 import {
     AppAlertDialogTypes,
     AppConfirmDialogTypes,
@@ -20,7 +22,6 @@ import {
 import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 
 type UiChanActions = 'hold/select-chat';
@@ -90,7 +91,12 @@ export class AppUiService {
      * @param {MatDialog} _matDialog
      * @param {AppDataService} _appDataService
      */
-    constructor(private _matSnackBar: MatSnackBar, private _matDialog: MatDialog, private _appDataService: AppDataService) {
+    constructor(
+        private _matSnackBar: MatSnackBar,
+        private _matDialog: MatDialog,
+        private _appDataService: AppDataService,
+        private domSanitizer: DomSanitizer
+    ) {
         this.init();
     }
 
@@ -196,6 +202,9 @@ export class AppUiService {
         };
         this._matSnackBar.dismiss();
 
+        // add desktop alert
+        this.showDesktopAlert('You have a new notification', snackBarArgs.message, false);
+
         // add to the notifications
         this.addNotification({
             icon: 'notification_important',
@@ -229,6 +238,11 @@ export class AppUiService {
     public showAlertModal(message: string, type: AppAlertDialogTypes = 'success', heading?: string): MatDialogRef<AlertDialogComponent> {
         // play new chat sound
         this.playAudio('alert', 0.5, false);
+
+        // add desktop alert
+        this.showDesktopAlert('You have a new notification', message, false);
+
+        // show alert
         const dialogRef = this._matDialog.open(AlertDialogComponent, {
             data: {
                 message,
@@ -569,5 +583,18 @@ export class AppUiService {
 
         this._appNotificationsSubject.next([]);
         this._appNotificationsSubject.complete();
+    }
+
+    /**
+     * This method sanitizes email body and adds all <a>  tags with a target='_blank'
+     * This makes it safer for injecttion in innerHtml and when a link is opened , it opens in new Tab
+     */
+    sanitizeEmailBody(
+        /**
+         * Email's body as html string
+         */
+        body: string
+    ): SafeHtml {
+        return this.domSanitizer.bypassSecurityTrustHtml(body.replaceAll('<a', '<a target="_blank"'));
     }
 }

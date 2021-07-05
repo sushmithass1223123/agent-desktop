@@ -1,6 +1,12 @@
-create-messaging {
-    .mat-dialog-content {
-        width: 500px;
+tw-compose-messaging {
+    .mat-progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    mat-card-content {
+        position: relative;
     }
 
     mat-form-field {

@@ -19,8 +19,9 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, TUtils } from '@tmac/sdk';
 import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { maticonByExtension } from 'app/utils';
-import { merge } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { fromEvent, merge, Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import tinymce, { Editor } from 'tinymce';
 import tinyMCE from 'tinymce';
 
 /**
@@ -87,6 +88,8 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     @Input() sendDisabled? = false;
 
+    @Input() hiddenFields?: Array<'To' | 'Subject'>;
+
     /**
      * Fuse custom background colors
      */
@@ -118,12 +121,23 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     showAttachments = false;
 
+    /**
+     * This shows the RE: tag when doing an email reply
+     */
+    replyTag = '';
+
+    /**
+     * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
+     */
+    unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
+
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
+        this.replyTag = this.emailInfo?.Replying ? (this.emailInfo.Subject ? (this.emailInfo.Subject.startsWith('RE:') ? '' : 'RE:') : '') : '';
         if (this.emailInfo?.To) {
             this.email.To = this.emailInfo?.To.split(',').filter((x) => !!x);
         }
@@ -145,6 +159,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
             this.emailRecipientFacade.controls.BCC.valueChanges
         )
             .pipe(
+                takeUntil(this.unsubscribeAll$),
                 debounceTime(200),
                 map((val) => val.toLowerCase())
             )
@@ -188,15 +203,22 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                         'undo redo | formatselect | ' +
                         'bold italic backcolor | alignleft aligncenter ' +
                         'alignright alignjustify | bullist numlist outdent indent | ' +
-                        'removeformat | help',
+                        'removeformat',
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
                         editor.on('init', () => {
                             this.editorState.loading = false;
                             editor.setContent(this.email.Body || '');
-                            editor.on('blur', () => {
-                                this.email.Body = editor.getContent();
-                            });
+                            fromEvent(editor, 'blur')
+                                .pipe(takeUntil(this.unsubscribeAll$))
+                                .subscribe({
+                                    next: () => {
+                                        this.email.Body = editor.getContent();
+                                    }
+                                });
+                            // editor.on('blur', () => {
+                            //     this.email.Body = editor.getContent();
+                            // });
                         });
                     }
                 })
@@ -214,7 +236,10 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      * Lifecycle hook
      */
     ngOnDestroy(): void {
-        tinyMCE.activeEditor.off('blur');
+        const e = this.getCurrentEditor();
+        e.off('blur');
+        e.destroy();
+        // tinyMCE.activeEditor.off('blur');
         // tinyMCE.activeEditor.destroy();
     }
 
@@ -323,7 +348,9 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     selectTemplate(html: string): void {
         this.email.Body = `${html} ${this.email.Body}`;
-        tinyMCE.activeEditor.setContent(this.email.Body);
+        const e = this.getCurrentEditor();
+        e.setContent(this.email.Body);
+        // tinyMCE.activeEditor.setContent(this.email.Body);
     }
     /**
      * Focuses the editor
@@ -348,5 +375,21 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     openFile(fileUrl: string): void {
         window.open(fileUrl);
+    }
+
+    /**
+     * Gets email from the editor
+     */
+    getEmail(): CreateEmailOutput {
+        const e = this.getCurrentEditor();
+        this.email.Body = e.getContent();
+        return this.email;
+    }
+
+    /**
+     * gets the current editor
+     */
+    getCurrentEditor(): Editor {
+        return tinymce.editors.find((e) => e.id === this.editorState.id);
     }
 }

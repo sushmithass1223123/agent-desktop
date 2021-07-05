@@ -2,8 +2,10 @@ import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RemiderTaskDialogConstants } from 'app/constants';
 import { ReminderTaskDialogData, ReminderTaskDialogTypes } from 'app/interfaces';
-import { log } from 'console';
 
+/**
+ * Reminder task dialog component
+ */
 @Component({
     selector: 'reminder-task-dialog',
     templateUrl: './reminder-task-dialog.component.html',
@@ -24,7 +26,7 @@ export class ReminderTaskDialogComponent implements OnInit {
      */
     snoozeTimer: number[] = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: ReminderTaskDialogData) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: ReminderTaskDialogData) {}
 
     /**
      * On Init
