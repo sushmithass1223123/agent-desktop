@@ -269,8 +269,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     const { Body, Subject, CCList, To, AttachmetList } = this.currentInteraction;
                     this.replyInfo = {
                         BCC: '',
-                        CC: CCList.split(','),
-                        To: To || '',
+                        CC: CCList,
+                        To: To,
                         Body,
                         Subject,
                         Files: [],

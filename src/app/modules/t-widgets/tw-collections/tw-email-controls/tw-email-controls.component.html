@@ -120,7 +120,8 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 color="accent"
-                                (click)="closeEditor(true)"
+                                (click)="closeEditor(closeEditorBtn, true)"
+                                #closeEditorBtn
                                 matTooltip="Close Editor"
                                 [disabled]="sendingEmailAsMaker"
                             >
