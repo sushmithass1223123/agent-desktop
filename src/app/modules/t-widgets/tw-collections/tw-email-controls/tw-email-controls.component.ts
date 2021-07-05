@@ -919,7 +919,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Closes the editor
      */
-    closeEditor(btn?: MatButton): void {
+    closeEditor(btn?: MatButton, closeEmail = false): void {
         // confirm close interaction
         const confirmDialogRef = this._appUIService.showCustomDialog(
             'confirm',
@@ -936,20 +936,27 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
             if (dialogResult) {
                 this.saveEmailAsDraft();
+                if (closeEmail) {
+                    this.closeInteraction(null, true);
+                    return;
+                }
                 this.replyInfo = null;
-                this.draftPolling$?.unsubscribe();
             } else {
                 // this checks if the user clicked on cancel, or on the overlay
                 // if the user clicks on cancel, this will be boolean false. Else it will be undefined
                 if (dialogResult === false) {
                     this.deleteDraftEmail();
+                    if (closeEmail) {
+                        this.closeInteraction(null, true);
+                        return;
+                    }
                     this.replyInfo = null;
-                    this.draftPolling$?.unsubscribe();
                 }
                 if (btn) {
                     btn.disabled = false;
                 }
             }
+            this.draftPolling$?.unsubscribe();
         });
     }
 

@@ -74,20 +74,23 @@
     </div>
 
     <div class="twd-relative twd-flex-1 twd-overflow-auto">
-        <div *ngIf="!loading && !error; else errorLoadRef" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1">
+        <div
+            *ngIf="!loading && !error"
+            [ngClass]="{ 'twd-hidden': _internal.iframeLoading }"
+            class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1"
+        >
             <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
         </div>
 
-        <ng-template #errorLoadRef>
-            <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
-                <ng-container *ngIf="loading">
-                    <mat-spinner></mat-spinner>
-                </ng-container>
-                <div *ngIf="error" class="twd-text-center">
-                    <p class="twd-font-bold twd-mb-3 twd-text-lg">Unable to load email</p>
-                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry()">Retry</button>
-                </div>
+        <div *ngIf="loading || _internal.iframeLoading" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+            <mat-spinner></mat-spinner>
+        </div>
+
+        <div *ngIf="error" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+            <div class="twd-text-center">
+                <p class="twd-font-bold twd-mb-3 twd-text-lg">Unable to load email</p>
+                <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry()">Retry</button>
             </div>
-        </ng-template>
+        </div>
     </div>
 </div>
