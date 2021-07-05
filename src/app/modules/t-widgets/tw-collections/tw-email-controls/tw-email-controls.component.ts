@@ -927,7 +927,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             'Save email as draft and close?',
             {
                 yesMessage: 'Yes',
-                noMessage: 'No, Just close'
+                noMessage: 'No, Close'
             },
             {
                 disableClose: false
