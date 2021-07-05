@@ -82,7 +82,7 @@
             <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
         </div>
 
-        <div *ngIf="loading || _internal.iframeLoading" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+        <div *ngIf="(loading || _internal.iframeLoading) && !error" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
             <mat-spinner></mat-spinner>
         </div>
 
