@@ -717,7 +717,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.maximizeEvent.emit(max);
         if (max) {
             setTimeout(() => {
-                this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
+                this.customerJourneyTable.tableData.source?.sort?.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
             }, 0);
         }
     }
