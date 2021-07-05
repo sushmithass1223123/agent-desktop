@@ -1093,14 +1093,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             agent: {
                 allowed: agentConfig.Allowed,
                 allowedStates: agentConfig.AllowedStates,
+                consult: agentConfig.Consult,
                 blind: agentConfig.Blind,
+                comments: agentConfig.Comments,
                 source: agentConfig.Source,
                 columns: agentConfig.Columns,
                 teamFilter: agentConfig.TeamFilter
             },
             skill: {
                 allowed: skillConfig.Allowed,
+                consult: skillConfig.Consult,
                 blind: false,
+                comments: skillConfig.Comments,
                 channelPrfix: skillConfig.ChannelPrefix,
                 source: skillConfig.Source,
                 columns: skillConfig.Columns

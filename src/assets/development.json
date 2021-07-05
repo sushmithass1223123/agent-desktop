@@ -1186,7 +1186,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "station",
                                                                 "Display": "${LastName}, ${FirstName}",
@@ -1198,7 +1200,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1214,7 +1218,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "station",
                                                                 "Display": "agentName",
@@ -1226,7 +1232,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1828,7 +1836,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -1840,7 +1850,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": false,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1854,7 +1866,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -1866,7 +1880,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -2432,7 +2448,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -2444,7 +2462,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -3194,7 +3214,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -3206,7 +3228,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",

@@ -240,8 +240,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async ngOnInit(): Promise<void> {
         await this.setAvailableMailboxes();
-        const { accessRole } = SDKClient.getAgentData();
-        this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : accessRole !== 'Agent';
+        const { agentProfile } = SDKClient.getAgentData();
+        this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : agentProfile === 'S';
         this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
         this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
     }
@@ -817,17 +817,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             type: 'transferEmail',
             agent: {
                 allowed: agentConfig.Allowed,
-                allowedStates: agentConfig.AllowedStates,
+                consult: agentConfig.Consult,
                 blind: agentConfig.Blind,
+                comments: agentConfig.Comments,
                 source: agentConfig.Source,
+                allowedStates: agentConfig.AllowedStates,
                 columns: agentConfig.Columns,
                 teamFilter: agentConfig.TeamFilter
             },
             skill: {
                 allowed: skillConfig.Allowed,
-                blind: false,
-                channelPrfix: skillConfig.ChannelPrefix,
+                consult: skillConfig.Consult,
+                blind: skillConfig.Blind,
+                comments: skillConfig.Comments,
                 source: skillConfig.Source,
+                channelPrfix: skillConfig.ChannelPrefix,
                 columns: skillConfig.Columns
             },
             callback: ({ success }) => {

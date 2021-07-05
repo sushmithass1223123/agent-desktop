@@ -162,7 +162,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                         type: 'makeCall',
                         agent: {
                             allowed: true,
-                            blind: false,
+                            consult: true,
                             source: data.Data.Source,
                             allowedStates: data.Data.AllowedStates,
                             columns: data.Data.Columns,

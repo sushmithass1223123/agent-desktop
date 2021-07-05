@@ -199,9 +199,22 @@ export interface ChatTranscripts {
         name: string;
     };
     /**
-     * Message from server
+     * Divider message
      */
-    serverMessage?: boolean;
+    dividerMessage?: boolean;
+    /**
+     * Message to server
+     */
+    messageToServer?: {
+        /**
+         * Message to send
+         */
+        message: string;
+        /**
+         * Message template id
+         */
+        templateId: string;
+    };
 }
 
 export interface AppNotification {
@@ -444,7 +457,15 @@ export interface AgentSkillListData {
          */
         allowed: boolean;
         /**
-         * BlindD allowed flag
+         * Consult allowed flag
+         */
+        consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        comments: boolean;
+        /**
+         * Blind allowed flag
          */
         blind: boolean;
         /**
@@ -472,6 +493,14 @@ export interface AgentSkillListData {
          * Agent allowed flag
          */
         allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        comments: boolean;
         /**
          * Blind allowed flag
          */
@@ -624,9 +653,17 @@ export interface AgentSkillRef {
          */
         Allowed: boolean;
         /**
+         * Consult allowed flag
+         */
+        Consult: boolean;
+        /**
          * Blind allowed flag
          */
         Blind: boolean;
+        /**
+         * Comments allowed flag
+         */
+        Comments: boolean;
         /**
          * Source for agent actions
          */
@@ -652,6 +689,14 @@ export interface AgentSkillRef {
          * Agent allowed flag
          */
         Allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        Consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        Comments: boolean;
         /**
          * Blind allowed flag
          */

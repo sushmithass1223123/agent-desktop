@@ -58,7 +58,7 @@
                                     <input class="twd-hidden" required matInput [(ngModel)]="selectedItem" />
                                 </mat-form-field>
                             </div>
-                            <div fxFlex fxLayout *ngIf="showComments">
+                            <div fxFlex fxLayout *ngIf="commentsAllowed">
                                 <!-- <p fxFlex="20" fxLayoutAlign=" flex-start" class="px-8 mt-16">Comments</p> -->
                                 <mat-form-field fxFlex floatLabel="never" appearance="standard" class="custom with-bg comments">
                                     <textarea
@@ -72,8 +72,9 @@
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div fxLayout="column" class="pl-8 py-8">
+                        <div fxLayout="column" class="pl-8 py-4 twd-gap-2">
                             <button
+                                *ngIf="consultAllowed"
                                 mat-raised-button
                                 class="custom-btn bg-success border-radius-20"
                                 [matTooltip]="actionTooltip"
@@ -85,14 +86,15 @@
                             </button>
 
                             <button
-                                mat-raised-button
                                 *ngIf="blindAllowed"
+                                mat-raised-button
                                 matTooltip="Blind"
-                                class="custom-btn bg-success border-radius-20 mt-8"
+                                class="custom-btn bg-success border-radius-20"
                                 [disabled]="(!selectedItem && !currentFreeTextConf.value) || loading"
                                 (click)="executeAction(false)"
                             >
-                                <mat-icon *ngIf="!loading">double_arrow</mat-icon>
+                                <!-- <mat-icon *ngIf="!loading">double_arrow</mat-icon> -->
+                                <span *ngIf="!loading" class="twd-font-extrabold">BT</span>
                                 <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                             </button>
                         </div>
@@ -203,14 +205,24 @@
                                                 <mat-header-cell *matHeaderCellDef mat-sort-header>
                                                     <span> First Name </span>
                                                 </mat-header-cell>
-                                                <mat-cell *matCellDef="let row"> {{ row.FirstName || 'NA' }} </mat-cell>
+                                                <mat-cell *matCellDef="let row">
+                                                    <div class="twd-w-full twd-flex twd-justify-start">
+                                                        <div class="text-truncate" [matTooltip]="row.FirstName">
+                                                            {{ row.FirstName || 'NA' }}
+                                                        </div>
+                                                    </div>
+                                                </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="LastName">
                                                 <mat-header-cell *matHeaderCellDef mat-sort-header>
                                                     <span> Last Name </span>
                                                 </mat-header-cell>
-                                                <mat-cell *matCellDef="let row"> {{ row.LastName || 'NA' }} </mat-cell>
+                                                <mat-cell *matCellDef="let row">
+                                                    <div class="text-truncate" [matTooltip]="row.LastName">
+                                                        {{ row.LastName || 'NA' }}
+                                                    </div>
+                                                </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="AgentID">
@@ -293,7 +305,13 @@
                                                 <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="30">
                                                     <span> Name </span>
                                                 </mat-header-cell>
-                                                <mat-cell *matCellDef="let row" fxFlex="30"> {{ row.Name }} </mat-cell>
+                                                <mat-cell *matCellDef="let row" fxFlex="30">
+                                                    <div class="twd-w-full twd-flex twd-justify-start">
+                                                        <div class="text-truncate" [matTooltip]="row.Name">
+                                                            {{ row.Name || 'NA' }}
+                                                        </div>
+                                                    </div>
+                                                </mat-cell>
                                             </ng-container>
 
                                             <ng-container matColumnDef="VDN">
