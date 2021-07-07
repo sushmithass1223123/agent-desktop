@@ -186,7 +186,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             if (dateCols[key]) {
                 return compareDates(key);
             } else {
-                return (data[key].toString().toLowerCase() as string).includes((value as string).toLowerCase());
+                return data[key] && (data[key].toString().toLowerCase() as string).includes((value as string).toLowerCase());
             }
         });
         return valid;
@@ -277,7 +277,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      */
     showAdvanceSearchModal(): void {
         this.advanceSearchModalRef = this._matDialog.open(this.advanceSearchModal, {
-            minWidth: '45%'
+            width: '50%',
+            panelClass: 'interaction-details-advanced-form'
         });
     }
 

@@ -1,0 +1,11 @@
+:host {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    & > * {
+        margin-bottom: 8px;
+        &:last-child {
+            margin-bottom: 0px;
+        }
+    }
+}

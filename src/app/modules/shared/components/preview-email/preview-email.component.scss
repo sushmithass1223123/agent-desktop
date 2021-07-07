@@ -1,7 +1,12 @@
 :host {
     height: 100%;
     width: 100%;
-    .email-header {
-        scroll-behavior: smooth;
-    }
+}
+.email-header {
+    scroll-behavior: smooth;
+}
+.twd-truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    white-space: nowrap !important;
 }

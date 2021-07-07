@@ -17,6 +17,7 @@
                         mat-button
                         matTooltip="Queue"
                         (click)="switchTab('queue')"
+                        [disabled]="emailSearchRes.loading"
                         matTooltipPosition="right"
                         [ngClass]="{
                             'mat-raised-button': currentTab === 'queue'
@@ -31,6 +32,7 @@
                         mat-button
                         (click)="switchTab('inbox')"
                         matTooltip="Inbox"
+                        [disabled]="emailSearchRes.loading"
                         matTooltipPosition="right"
                         [ngClass]="{
                             'mat-raised-button': currentTab === 'inbox'
@@ -45,6 +47,7 @@
                         mat-button
                         (click)="switchTab('sentitem')"
                         matTooltip="Sent"
+                        [disabled]="emailSearchRes.loading"
                         matTooltipPosition="right"
                         [ngClass]="{
                             'mat-raised-button': currentTab === 'sentitem'
@@ -59,6 +62,7 @@
                         mat-button
                         matTooltip="Drafts"
                         (click)="switchTab('draft')"
+                        [disabled]="emailSearchRes.loading"
                         matTooltipPosition="right"
                         [ngClass]="{
                             'mat-raised-button': currentTab === 'draft'
@@ -294,29 +298,28 @@
 
                     <div
                         id="sortControls"
-                        class="sortControls twd-flex twd-items-center twd-px-2 twd-pt-2"
-                        [ngClass]="classes.hostClass"
-                        *ngIf="
-                            dataSource.data?.length &&
-                            (['queue', 'draft', 'inbox'].includes(currentTab)
-                                ? { hostClass: 'twd-justify-between', selectClass: '' }
-                                : { hostClass: 'twd-justify-end', selectClass: 'twd-hidden' }) as classes
-                        "
+                        class="twd-flex twd-items-center twd-justify-between twd-px-2 twd-pt-2"
+                        *ngIf="!['sentitem'].includes(currentTab)"
                     >
-                        <div [ngClass]="classes.selectClass">
-                            <mat-checkbox
-                                id="selectAllCtrl"
-                                (change)="selectEmails($event.checked)"
-                                [indeterminate]="selectedMails.some"
-                                [checked]="selectedMails.all"
-                            >
-                                Select All
-                            </mat-checkbox>
-                        </div>
+                        <mat-checkbox
+                            id="selectAllCtrl"
+                            (change)="selectEmails($event.checked)"
+                            [indeterminate]="selectedMails.some"
+                            [checked]="selectedMails.all"
+                            [disabled]="!dataSource.data?.length"
+                        >
+                            Select All
+                        </mat-checkbox>
                         <div class="twd-flex twd-items-center">
                             <div class="twd-font-bold twd-text-sm">
-                                <button id="sortKeyBtn" mat-button class="twd-px-1.5">
-                                    <span [matMenuTriggerFor]="sortMenu"> Sort By {{ sortControls.sortBy }} </span>
+                                <button
+                                    id="sortKeyBtn"
+                                    mat-button
+                                    class="twd-px-1.5"
+                                    [matMenuTriggerFor]="sortMenu"
+                                    [disabled]="!dataSource.data?.length"
+                                >
+                                    <span> Sort By {{ sortControls.sortBy }} </span>
                                     <mat-menu class="custom" #sortMenu="matMenu">
                                         <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; sortEmailsByKey()">
                                             <span>Subject</span>
@@ -331,6 +334,7 @@
                                     mat-button
                                     (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
                                     class="twd-max-w-min twd-px-0"
+                                    [disabled]="!dataSource.data?.length"
                                 >
                                     <mat-icon>
                                         {{ sortControls.ascending ? 'arrow_upward' : 'arrow_downward' }}
@@ -377,8 +381,18 @@
                     </div>
                 </div>
 
-                <div class="twd-p-3" *ngIf="!emailSearchRes.error && { selectedEmail: emailSearchRes.data.selected } as selectedEmail">
-                    <!-- [trackBy]="trackBy" -->
+                <div class="twd-p-3" *ngIf="emailSearchRes.loading && !dataSource.data.length">
+                    <div
+                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                        class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full"
+                    >
+                        <span class="twd-transform twd-transition-transform twd--rotate-90">
+                            <mat-icon> arrow_drop_down </mat-icon>
+                        </span>
+                        <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"> </skeleton>
+                    </div>
+                </div>
+                <div class="twd-p-3" *ngIf="!emailSearchRes.error">
                     <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
                 </div>
 
@@ -395,14 +409,10 @@
                         <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">Retry</button>
                     </div>
                 </div>
-
-                <div *ngIf="emailSearchRes.loading" class="loader">
-                    <mat-spinner></mat-spinner>
-                </div>
             </div>
 
             <div
-                *ngIf="emailSearchRes.data.selected as selectedEmail"
+                *ngIf="openEmailRes.loading || openEmailRes.data as selectedEmail"
                 class="
                     email-open
                     border-radius-20
@@ -437,7 +447,7 @@
                     >
                         Mark As Spam
                     </button>
-                    <button mat-icon-button (click)="removeEmailsfromView('opened')">
+                    <button mat-icon-button (click)="openEmailRes.data = null">
                         <mat-icon>close</mat-icon>
                     </button>
                 </div>
@@ -445,8 +455,7 @@
                 <div
                     class="
                         email-open__body
-                        twd-w-11/12
-                        mx-auto
+                        twd-mx-4
                         border-radius-20
                         twd-mb-3 twd-flex-1 twd-flex twd-flex-col
                         lg:twd-overflow-hidden lg:twd-max-h-full
@@ -459,35 +468,26 @@
                             Body: selectedEmail.Body,
                             Files: selectedEmail.Attachments
                         }"
+                        [loading]="openEmailRes.loading"
+                        [error]="openEmailRes.error"
                     >
                         <div id="emailInfo" class="px-28">
                             <div class="twd-flex twd-justify-between">
-                                <div fxFlex="80" *ngIf="{ inQueueOrInbox: ['queue', 'inbox'].includes(currentTab) } as tab">
+                                <div fxFlex="80">
                                     <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
                                     <p class="text-bold my-4" *ngIf="selectedEmail.CCList">Cc : {{ selectedEmail.CCList }}</p>
                                     <p class="my-4 text-bold">From: {{ selectedEmail.From || 'NA' }}</p>
                                     <p class="my-4 text-bold">Status: {{ selectedEmail.CurrentStatus || 'NA' }}</p>
                                     <p class="my-4 text-bold">Agent: {{ selectedEmail.AgentName || 'NA' }}</p>
 
-                                    <ng-container *ngIf="tab.inQueueOrInbox">
-                                        <p class="my-4 text-bold">
-                                            Closed Status: {{ selectedEmail.ClosedBy ? 'Closed by ' + selectedEmail.ClosedBy : 'Open' }}
-                                        </p>
+                                    <p class="my-4 text-bold">
+                                        Closed Status: {{ selectedEmail.ClosedBy ? 'Closed by ' + selectedEmail.ClosedBy : 'Open' }}
+                                    </p>
 
-                                        <p class="my-4 text-bold">Prirority: {{ selectedEmail.Priority || 'NA' }}</p>
-                                        <p class="my-4 text-bold">
-                                            Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                                        </p>
-                                    </ng-container>
-                                    <ng-container *ngIf="!tab.inQueueOrInbox">
-                                        <p *ngIf="selectedEmail.ClosedBy" class="my-4 text-bold">
-                                            Closed Status: {{ 'Closed by ' + selectedEmail.ClosedBy }}
-                                        </p>
-                                        <p *ngIf="selectedEmail.Priority" class="my-4 text-bold">Prirority: {{ selectedEmail.Priority }}</p>
-                                        <p *ngIf="selectedEmail.RepliedStatus?.length" class="my-4 text-bold">
-                                            Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
-                                        </p>
-                                    </ng-container>
+                                    <p class="my-4 text-bold">Prirority: {{ selectedEmail.Priority || 'NA' }}</p>
+                                    <p class="my-4 text-bold">
+                                        Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                    </p>
                                     <p *ngIf="selectedEmail.Intent" class="my-4 text-bold">Intent: {{ selectedEmail.Intent }}</p>
                                 </div>
                                 <div fxFlex="15">
@@ -499,8 +499,9 @@
                     </preview-email>
                 </div>
             </div>
+
             <div
-                *ngIf="!emailSearchRes.data.selected"
+                *ngIf="!openEmailRes.data && !openEmailRes.loading"
                 class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
             >
                 <div class="twd-flex twd-flex-col twd-justify-center">
@@ -528,89 +529,87 @@
             class="twd-flex twd-rounded-3xl twd-pl-2 twd-mb-2"
             *ngFor="let node of treeNode; trackBy: trackBy"
         >
-            <ng-container *ngIf="{ selected: emailSearchRes.data.selected } as e">
-                <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
+            <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
+                <div
+                    class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0"
+                    [ngClass]="
+                        openEmailRes.data?.uiId === node.uiId ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100' : ' theme-bg'
+                    "
+                >
+                    <div class="twd-p-3" *ngIf="currentTab !== 'sent'">
+                        <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                    </div>
                     <div
-                        class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0"
-                        [ngClass]="
-                            e.selected?.uiId === node.uiId ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100' : ' theme-bg'
-                        "
+                        mat-ripple
+                        class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-p-3 twd-overflow-hidden"
+                        (click)="openEmail(node)"
                     >
-                        <div class="twd-p-3" *ngIf="currentTab !== 'sent'">
-                            <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                        <div class="twd-w-full 2xl:twd-max-w-9/12">
+                            <p class="font-weight-600 my-4 twd-truncate">
+                                {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
+                            </p>
+                            <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
+                        </div>
+                        <div class="twd-flex-1 twd-flex 2xl:twd-justify-between twd-items-start">
+                            <div class="twd-text-xs twd-font-bold twd-mt-1.5">
+                                <p>{{ node.AddedTime | date: 'mediumDate' }}</p>
+                                <span> {{ node.AddedTime | date: 'shortTime' }} </span>
+                            </div>
+                            <div *ngIf="node.HasAttachment" class="twd-transform twd-rotate-90">
+                                <span><mat-icon>attachment</mat-icon></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="node.children" class="twd-w-full">
+                <div
+                    class="border-radius-20 twd-py-2"
+                    [ngClass]="
+                        customFuse.anchor?.body ||
+                        customFuse.widget?.body +
+                            ' ' +
+                            (openEmailRes.data
+                                ? openEmailRes.data.Mailbox === node.Mailbox
+                                    ? node.Skill
+                                        ? openEmailRes.data.Skill === node.Skill
+                                            ? ' twd-text-primary-default'
+                                            : ''
+                                        : ' twd-text-primary-default'
+                                    : ''
+                                : '')
+                    "
+                >
+                    <div class="twd-flex twd-items-center">
+                        <div *ngIf="currentTab !== 'queue' && !node.grandChildren && getEmailChecks(node.children) as selected">
+                            <mat-checkbox
+                                [indeterminate]="selected.some"
+                                [checked]="selected.all"
+                                (change)="selectEmails($event.checked, node.children)"
+                            ></mat-checkbox>
                         </div>
                         <div
-                            mat-ripple
-                            class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-p-3 twd-overflow-hidden"
-                            (click)="openEmail(node)"
+                            class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
+                            (click)="childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')"
                         >
-                            <div class="twd-w-full 2xl:twd-max-w-9/12">
-                                <p class="font-weight-600 my-4 twd-truncate">
-                                    {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
-                                </p>
-                                <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
-                            </div>
-                            <div class="twd-flex-1 twd-flex 2xl:twd-justify-between twd-items-start">
-                                <div class="twd-text-xs twd-font-bold twd-mt-1.5">
-                                    <p>{{ node.AddedTime | date: 'mediumDate' }}</p>
-                                    <span> {{ node.AddedTime | date: 'shortTime' }} </span>
-                                </div>
-                                <div *ngIf="node.HasAttachment" class="twd-transform twd-rotate-90">
-                                    <span><mat-icon>attachment</mat-icon></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="node.children" class="twd-w-full">
-                    <div
-                        class="border-radius-20 twd-py-2"
-                        [ngClass]="
-                            customFuse.anchor?.body ||
-                            customFuse.widget?.body +
-                                ' ' +
-                                (e.selected
-                                    ? e.selected.Mailbox === node.Mailbox
-                                        ? node.Skill
-                                            ? e.selected.Skill === node.Skill
-                                                ? ' twd-text-primary-default'
-                                                : ''
-                                            : ' twd-text-primary-default'
-                                        : ''
-                                    : '')
-                        "
-                    >
-                        <div class="twd-flex twd-items-center">
-                            <div *ngIf="currentTab !== 'queue' && !node.grandChildren&& getEmailChecks(node.children) as selected">
-                                <mat-checkbox
-                                    [indeterminate]="selected.some"
-                                    [checked]="selected.all"
-                                    (change)="selectEmails($event.checked, node.children)"
-                                ></mat-checkbox>
-                            </div>
-                            <div
-                                class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
-                                (click)="childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')"
-                            >
-                                <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
-                                    <span class="twd-transform twd-transition-transform twd--rotate-90" #iconRef>
-                                        <mat-icon> arrow_drop_down </mat-icon>
-                                    </span>
-                                    <span class="twd-flex-1 font-weight-700 twd-truncate">
-                                        {{ node.name || 'NA' }}
-                                    </span>
-                                </div>
-                                <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
-                                    ({{ node.grandChildren || node.children.length }})
+                            <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
+                                <span class="twd-transform twd-transition-transform twd--rotate-90" #iconRef>
+                                    <mat-icon> arrow_drop_down </mat-icon>
+                                </span>
+                                <span class="twd-flex-1 font-weight-700 twd-truncate">
+                                    {{ node.name || 'NA' }}
                                 </span>
                             </div>
+                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
+                                ({{ node.grandChildren || node.children.length }})
+                            </span>
                         </div>
                     </div>
-                    <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
-                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
-                    </div>
                 </div>
-            </ng-container>
+                <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
+                    <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
+                </div>
+            </div>
         </div>
     </ng-template>
 </ng-container>
