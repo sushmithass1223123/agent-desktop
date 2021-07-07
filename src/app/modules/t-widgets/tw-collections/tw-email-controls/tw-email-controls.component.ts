@@ -484,7 +484,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.emailBodies[requestedSession] = {
             CCList: res.CCList,
             Body: this._appUIService.sanitizeEmailBody(res.Body)['changingThisBreaksApplicationSecurity'],
-            AttachmetList: res?.Attachments || []
+            AttachmetList: res?.Attachments || [],
+            To: res.ToList,
+            From: res.From
         };
 
         this.getInboxMessageReq = { error: false, loading: false };
@@ -635,7 +637,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showReplyEditor(): void {
         // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
         const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Body, Subject, From, To, CreatedTime, RejectReason, RouteReason, ToList, Mailbox } = currentInteraction;
+        const { AttachmetList, Body, Subject, From, To, CreatedTime, RejectReason, RouteReason, ParsedJsonData, Mailbox } = currentInteraction;
         const preBody = RejectReason
             ? ''
             : `
@@ -655,7 +657,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.replyInfo = {
             BCC: '',
             CC: '',
-            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? ToList : From) || '',
+            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? To : From) || '',
             Body: `
             ${preBody} 
             ${Body}`,
@@ -692,7 +694,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.replyInfo = {
             BCC: '',
             CC: CCList || '',
-            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? this.currentInteraction.Mailbox : From) || '',
+            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? To : From) || '',
             Body: `
                 ${preBody}
                 ${Body}`,
@@ -882,37 +884,34 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Save email as Draft
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
-        if (this.draftPollDuration) {
-            // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-            const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
-            const email = this.createEmailRef?.getEmail();
-            if (email) {
-                // @TODO Files not sent as draft arg
-                const { BCC, CC, To, Subject, Body, Files } = email;
-                SDKClient.saveEmailDraft({
-                    bccList: BCC.join(','),
-                    body: Body.toString(),
-                    ccList: CC.join(','),
-                    inboxSessionId: InSessionId,
-                    outboxSessionId: OutSessionId,
-                    routeId: RouteId || '',
-                    subject: Subject,
-                    toList: To.join(','),
-                    typeOfResponse: ''
-                }).then((x) => {
-                    this.currentInteraction.EmailDraftExists = true;
-                    if (x.response) {
-                        this.currentInteraction.OutSessionId = x.response;
-                    }
-                    if (closeEmail) {
-                        this.closeInteraction(btn, true);
-                    }
-                });
-            }
-            if (!this.draftPolling$) {
-                const polling = interval(this.draftPollDuration);
-                this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
-            }
+        const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
+        const email = this.createEmailRef?.getEmail();
+        if (email) {
+            // @TODO Files not sent as draft arg
+            const { BCC, CC, To, Subject, Body, Files } = email;
+            SDKClient.saveEmailDraft({
+                bccList: BCC.join(','),
+                body: Body.toString(),
+                ccList: CC.join(','),
+                inboxSessionId: InSessionId,
+                outboxSessionId: OutSessionId,
+                routeId: RouteId || '',
+                subject: Subject,
+                toList: To.join(','),
+                typeOfResponse: ''
+            }).then((x) => {
+                this.currentInteraction.EmailDraftExists = true;
+                if (x.response) {
+                    this.currentInteraction.OutSessionId = x.response;
+                }
+                if (closeEmail) {
+                    this.closeInteraction(btn, true);
+                }
+            });
+        }
+        if (!this.draftPolling$ && this.draftPollDuration) {
+            const polling = interval(this.draftPollDuration);
+            this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
         }
     }
 

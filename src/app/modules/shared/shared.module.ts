@@ -20,6 +20,7 @@ import {
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
     SharedWrapperComponent,
+    SkeletonComponent,
     SnackbarComponent,
     WidgetFabComponent
 } from './components';
@@ -65,6 +66,7 @@ const sharedComponents = [
     CreateEmailComponent,
     AgentSkillListComponent,
     PreviewEmailComponent,
+    SkeletonComponent,
     SharedWrapperComponent
 ];
 

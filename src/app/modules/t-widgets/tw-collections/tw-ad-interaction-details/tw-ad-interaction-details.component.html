@@ -3,7 +3,13 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
     <div class="w-100-p bg-inherit custom-scroll-adjust" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'">
-        <mat-table [dataSource]="interactionDetailsTable.source.filteredData" matSort matSortActive="CreatedDateTime" matSortDirection="desc" matSortDisableClear>
+        <mat-table
+            [dataSource]="interactionDetailsTable.source.filteredData"
+            matSort
+            matSortActive="CreatedDateTime"
+            matSortDirection="desc"
+            matSortDisableClear
+        >
             <ng-container matColumnDef="SessionId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>SessionId</mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -151,11 +157,19 @@
 
         <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
     </div>
-    <div *ngIf="maximized" fxLayout fxLayoutAlign="space-between">
-        <div fxLayout fxLayoutAlign="center center">
+    <div *ngIf="maximized" class="twd-flex twd-justify-between">
+        <div class="twd-flex twd-items-center twd-gap-2 twd-px-2">
             <button (click)="showAdvanceSearchModal()" mat-button color="primary">
                 <mat-icon>search</mat-icon>
                 Advanced Search
+            </button>
+            <button
+                mat-raised-button
+                type="button"
+                [disabled]="!interactionDetailsTable.source.filter"
+                (click)="advancedSearchForm.reset(); doAdvancedSearch()"
+            >
+                Reset
             </button>
         </div>
         <mat-paginator
@@ -174,74 +188,73 @@
             anchor: (customFuse.anchor$ | async),
             widget: (customFuse.widget$ | async)
         } as customFuse$"
-        class="mat-elevation-z1 p-12"
+        class="mat-elevation-z1 twd-p-4"
+        [ngClass]="customFuse$.anchor?.body || customFuse$.widget?.body"
     >
-        {{ interactionDetailsTable.source.filter | json }}
-        <p class="twd-text-xl twd-my-1">Advanced Search</p>
-        <form
-            class="twd-grid twd-grid-cols-2 twd-gap-2"
-            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-            (ngSubmit)="doAdvancedSearch()"
-            [formGroup]="advancedSearchForm"
-            novalidate
-        >
-            <mat-form-field class="flex-1">
-                <mat-label>Channel</mat-label>
-                <input matInput type="text" formControlName="Channel" />
-            </mat-form-field>
-            <mat-form-field class="flex-1">
-                <mat-label>Channel</mat-label>
-                <input matInput type="text" formControlName="Channel" />
-            </mat-form-field>
+        <div class="twd-rounded-3xl mat-elevation-z1 twd-p-4" [ngClass]="customFuse$.anchor?.content || customFuse$.widget?.content">
+            <p class="twd-text-xl twd-font-bold twd-my-3">Advanced Search</p>
+            <form
+                class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-3"
+                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                (ngSubmit)="doAdvancedSearch()"
+                [formGroup]="advancedSearchForm"
+                novalidate
+            >
+                <mat-form-field>
+                    <mat-label>Channel</mat-label>
+                    <input matInput type="text" formControlName="Channel" />
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>Sub Channel</mat-label>
-                <input matInput type="text" formControlName="SubChannel" />
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Sub Channel</mat-label>
+                    <input matInput type="text" formControlName="SubChannel" />
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>Direction</mat-label>
-                <input matInput type="text" formControlName="Direction" />
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Direction</mat-label>
+                    <input matInput type="text" formControlName="Direction" />
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>User</mat-label>
-                <input matInput type="text" formControlName="User" />
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>User</mat-label>
+                    <input matInput type="text" formControlName="User" />
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>DNIS</mat-label>
-                <input matInput type="text" formControlName="Dnis" />
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Created Time</mat-label>
+                    <mat-date-range-input [rangePicker]="createdTimePicker">
+                        <input matStartDate placeholder="Start date" formControlName="CreatedTimeStart" />
+                        <input matEndDate placeholder="End date" formControlName="CreatedTimeEnd" />
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="createdTimePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #createdTimePicker></mat-date-range-picker>
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>Created Time</mat-label>
-                <mat-date-range-input [rangePicker]="createdTimePicker">
-                    <input matStartDate placeholder="Start date" formControlName="CreatedTimeStart" />
-                    <input matEndDate placeholder="End date" formControlName="CreatedTimeEnd" />
-                </mat-date-range-input>
-                <mat-datepicker-toggle matSuffix [for]="createdTimePicker"></mat-datepicker-toggle>
-                <mat-date-range-picker #createdTimePicker></mat-date-range-picker>
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Closed Time</mat-label>
+                    <mat-date-range-input [rangePicker]="closedTimePicker">
+                        <input matStartDate placeholder="Start date" formControlName="ClosedTimeStart" />
+                        <input matEndDate placeholder="End date" formControlName="ClosedTimeEnd" />
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="closedTimePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #closedTimePicker></mat-date-range-picker>
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>Closed Time</mat-label>
-                <mat-date-range-input [rangePicker]="closedTimePicker">
-                    <input matStartDate placeholder="Start date" formControlName="ClosedTimeStart" />
-                    <input matEndDate placeholder="End date" formControlName="ClosedTimeEnd" />
-                </mat-date-range-input>
-                <mat-datepicker-toggle matSuffix [for]="closedTimePicker"></mat-datepicker-toggle>
-                <mat-date-range-picker #closedTimePicker></mat-date-range-picker>
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>DNIS</mat-label>
+                    <input matInput type="text" formControlName="Dnis" />
+                </mat-form-field>
 
-            <mat-form-field class="flex-1">
-                <mat-label>Comments</mat-label>
-                <input matInput type="text" formControlName="AgentComment" />
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Comments</mat-label>
+                    <input matInput type="text" formControlName="AgentComment" />
+                </mat-form-field>
 
-            <div class="twd-col-span-2 twd-flex twd-justify-center">
-                <button mat-raised-button class="twd-w-4/12" color="primary">Search</button>
-            </div>
-        </form>
+                <div class="xl:twd-col-span-2 twd-my-1 twd-flex twd-gap-4 twd-justify-end">
+                    <button mat-raised-button class="twd-w-2/12" type="button" (click)="advancedSearchForm.reset(); doAdvancedSearch()">Reset</button>
+                    <button mat-raised-button class="twd-w-2/12" color="primary">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
 </ng-template>
