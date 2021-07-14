@@ -22,6 +22,7 @@ import {
     SharedWrapperComponent,
     SkeletonComponent,
     SnackbarComponent,
+    TableComponent,
     WidgetFabComponent
 } from './components';
 import { TWChartDirective } from './directives';
@@ -67,7 +68,8 @@ const sharedComponents = [
     AgentSkillListComponent,
     PreviewEmailComponent,
     SkeletonComponent,
-    SharedWrapperComponent
+    SharedWrapperComponent,
+    TableComponent
 ];
 
 /**

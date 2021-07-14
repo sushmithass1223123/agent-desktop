@@ -59,7 +59,13 @@ type ComponentActions =
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 
 type GlobalSearchFormData = { form: FormControl; data: Partial<Record<AvailableTabs, string>> };
-type AdvanceSearchFormData = { form: FormGroup; data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>; show: boolean; sub$: any };
+type AdvanceSearchFormData = {
+    form: FormGroup;
+    data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>;
+    show: boolean;
+    sub$: any;
+    snackbarRef: any;
+};
 
 /**
  * Workbench Email
@@ -162,7 +168,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         form: this._workbenchService.globalEmailWorkbenchState$.searchParams,
         data: {},
         show: false,
-        sub$: null
+        sub$: null,
+        snackbarRef: null
     };
 
     /**
@@ -537,6 +544,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     error: (e) => {
                         console.error(e);
                         this.setComponentState('emails/failure', { silent });
+                        this.setComponentState('email/polling/inactive', { silent });
                     },
                     complete: () => {
                         this.setComponentState('email/polling/inactive', { silent });
@@ -604,7 +612,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     throw new Error(`Unable to delete emails ${sessionIds.join(',')}`);
                 }
             }
-            if (uiIds.includes(this.openEmailRes.data.uiId)) {
+            if (uiIds.includes(this.openEmailRes.data?.uiId)) {
                 this.openEmailRes.data = null;
             }
             this.doAdvancedSearch(true);
@@ -632,7 +640,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 { routeIds: [], uiIds: [] }
             );
             await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
-            if (uiIds.includes(this.openEmailRes.data.uiId)) {
+            if (uiIds.includes(this.openEmailRes.data?.uiId)) {
                 this.openEmailRes.data = null;
             }
             this.doAdvancedSearch(true);
@@ -680,7 +688,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             this.appUiService.showSnackbar('Unable to pull email', 'failure');
                             return;
                         }
-                        if (uiIds.includes(this.openEmailRes.data.uiId)) {
+                        if (uiIds.includes(this.openEmailRes.data?.uiId)) {
                             this.openEmailRes.data = null;
                         }
                         loader.dismiss();
@@ -812,7 +820,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 if (res.response < 1) {
                     throw new Error('Email spam request failed');
                 }
-                if (email.uiId === this.openEmailRes.data.uiId) {
+                if (email.uiId === this.openEmailRes.data?.uiId) {
                     this.openEmailRes.data = null;
                 }
                 loader?.dismiss();
@@ -859,7 +867,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             callback: ({ success }) => {
                 if (success) {
                     this.doAdvancedSearch(true);
-                    if (uiIds.includes(this.openEmailRes.data.uiId)) {
+                    if (uiIds.includes(this.openEmailRes.data?.uiId)) {
                         this.openEmailRes.data = null;
                     }
                 }
@@ -914,7 +922,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 body: reply,
                                 routeIdList: routeIds.join(',')
                             });
-                            if (uiIds.includes(this.openEmailRes.data.uiId)) {
+                            if (uiIds.includes(this.openEmailRes.data?.uiId)) {
                                 this.openEmailRes.data = null;
                             }
                             this.doAdvancedSearch(true);
@@ -981,15 +989,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
                 this.openEmailRes.data = null;
-                this.appUiService.showSnackbar('Loading emails', 'loading');
+                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar('Loading emails', 'loading');
                 break;
 
             case 'emails/success':
                 this.emailSearchRes.loading = false;
                 this.emailSearchRes.error = false;
-                if (!payload?.silent) {
-                    this.appUiService.showSnackbar('Emails loaded', 'success', null, null, 3000);
-                }
+                this.advancedSearch.snackbarRef?.dismiss();
+                // if (!payload?.silent) {
+                //     this.appUiService.showSnackbar('Emails loaded', 'success', 'top', 'center', 3000);
+                // }
                 break;
 
             case 'emails/failure':

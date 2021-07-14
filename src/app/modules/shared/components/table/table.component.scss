@@ -1,0 +1,16 @@
+ad-table {
+    height: 100%;
+    min-width: 100%;
+    overflow-x: hidden;
+    background: inherit;
+}
+
+.ad-table-advancedsearch-form .mat-dialog-container {
+    padding: 0px;
+    border-radius: 20px !important;
+    form {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 0px 12px;
+    }
+}
