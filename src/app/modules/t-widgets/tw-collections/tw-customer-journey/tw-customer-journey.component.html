@@ -85,12 +85,17 @@
 
             <!-- maximised view start - Table -->
             <div
-                *ngIf="maximized"
-                class="table twd-overflow-y-auto twd-h-full twd-flex-col"
+                class="table twd-overflow-y-auto twd-h-full twd-flex twd-flex-col twd-justify-between"
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 [formGroup]="searchForm"
+                *ngIf="
+                    maximized && {
+                        data: customerJourneyTable.tableData.source.data.length,
+                        noFilteredData: !customerJourneyTable.tableData.source.filteredData?.length && customerJourneyTable.tableData.source.filter
+                    } as avl
+                "
             >
-                <ng-container *ngIf="customerJourneyTable.tableData.source.data.length">
+                <div *ngIf="avl.data" class="twd-max-h-11/12 twd-overflow-y-auto bg-inherit" [ngClass]="{ 'twd-flex-1': !avl.noFilteredData }">
                     <ng-container
                         [ngTemplateOutlet]="table"
                         [ngTemplateOutletContext]="{
@@ -98,35 +103,43 @@
                             sortDisabled: customerJourneyTable.tableData.sortDisabled
                         }"
                     ></ng-container>
-                    <div class="twd-flex twd-justify-between">
-                        <div class="twd-w-5/12 twd-flex twd-items-center">
-                            <button mat-button color="primary" class="border-radius-20" (click)="advancedSearchModal.open()">
-                                Search
-                                <mat-icon>search</mat-icon>
-                            </button>
-                            <button
-                                mat-button
-                                color="warn"
-                                class="border-radius-20 twd-ml-2"
-                                (click)="searchForm.reset(); doAdvancedSearch()"
-                                [disabled]="!customerJourneyTable.tableData.source.filter"
-                            >
-                                Clear Search
-                                <mat-icon>close</mat-icon>
-                            </button>
-                            <ng-template #advancedSearchFormRef>
-                                <div class="mat-elevation-z1 twd-rounded-2xl twd-p-3" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                </div>
+                <div *ngIf="!avl.data" class="twd-flex-1 twd-grid twd-items-center">
+                    <p class="text-center twd-text-2xl twd-font-semibold twd-mb-20">No Data Available</p>
+                </div>
+                <div *ngIf="avl.noFilteredData" class="twd-flex-1 twd-grid twd-items-center">
+                    <p class="text-center twd-text-2xl twd-font-semibold twd-mb-20">No Data With Applied Filters Available</p>
+                </div>
+                <div *ngIf="avl.data" class="twd-flex twd-justify-between twd-py-2">
+                    <div class="twd-w-5/12 twd-flex twd-items-center">
+                        <button mat-button color="primary" class="border-radius-20" (click)="advancedSearchModal.open()">
+                            Advanced Search
+                            <mat-icon>search</mat-icon>
+                        </button>
+                        <button
+                            mat-button
+                            color="warn"
+                            class="border-radius-20 twd-ml-2"
+                            (click)="searchForm.reset(); doAdvancedSearch()"
+                            [disabled]="!customerJourneyTable.tableData.source.filter"
+                        >
+                            Clear Search
+                            <mat-icon>close</mat-icon>
+                        </button>
+                        <ng-template #advancedSearchFormRef>
+                            <div class="mat-elevation-z1 twd-p-4" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                <div
+                                    class="twd-rounded-3xl mat-elevation-z1 twd-p-4"
+                                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                                >
+                                    <p class="twd-text-xl twd-font-bold twd-mt-1 twd-mb-6">Advanced Search</p>
                                     <form
-                                        class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-gap-5 twd-p-4 border-radius-20"
-                                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                                        class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-y-3 twd-gap-x-5"
                                         [formGroup]="searchForm"
-                                        (ngSubmit)="doAdvancedSearch(); advancedSearchModal.close()"
+                                        (ngSubmit)="doAdvancedSearch()"
                                         novalidate
                                     >
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('InteractionDate')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('InteractionDate')">
                                             <mat-label>Received At</mat-label>
                                             <mat-date-range-input #dateRangePicker [rangePicker]="interactionDatePicker">
                                                 <input matStartDate placeholder="Start date" formControlName="InteractionDateStart" />
@@ -136,106 +149,81 @@
                                             <mat-date-range-picker #interactionDatePicker></mat-date-range-picker>
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('Channel')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('Channel')">
                                             <mat-label>Channel</mat-label>
                                             <input matInput type="text" formControlName="Channel" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('Direction')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('Direction')">
                                             <mat-label>Direction</mat-label>
                                             <input matInput type="text" formControlName="Direction" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('InteractionText')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('InteractionText')">
                                             <mat-label>Interaction Text</mat-label>
                                             <input matInput type="text" formControlName="InteractionText" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('Intent')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('Intent')">
                                             <mat-label>Intent</mat-label>
                                             <input matInput type="text" formControlName="Intent" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('AgentName')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('AgentName')">
                                             <mat-label>Agent</mat-label>
                                             <input matInput type="text" formControlName="AgentName" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('CIF')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('CIF')">
                                             <mat-label>CIF</mat-label>
                                             <input matInput type="text" formControlName="CIF" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('NRIC')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('NRIC')">
                                             <mat-label>NRIC</mat-label>
                                             <input matInput type="text" formControlName="NRIC" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('PhoneNumber')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('PhoneNumber')">
                                             <mat-label>Phone Number</mat-label>
                                             <input matInput type="text" formControlName="PhoneNumber" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('EmailID')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('EmailID')">
                                             <mat-label>Email</mat-label>
                                             <input matInput type="text" formControlName="EmailID" />
                                         </mat-form-field>
 
-                                        <mat-form-field
-                                            *ngIf="customerJourneyTable.tableData.columns.includes('OverallSentiment')"
-                                            class="twd-flex-full twd-max-w-5/12"
-                                        >
+                                        <mat-form-field *ngIf="customerJourneyTable.tableData.columns.includes('OverallSentiment')">
                                             <mat-label>Overall Sentiment</mat-label>
                                             <input matInput type="text" formControlName="OverallSentiment" />
                                         </mat-form-field>
 
-                                        <div fxFlex="100" class="twd-mt-3 twd-flex-full twd-max-w-full">
-                                            <div class="twd-mx-auto w-40-p">
-                                                <button mat-raised-button class="twd-w-full border-radius-20" color="primary">Search</button>
-                                            </div>
+                                        <div class="xl:twd-col-span-2 twd-my-1 twd-flex twd-gap-4 twd-justify-end">
+                                            <button
+                                                mat-raised-button
+                                                class="twd-w-2/12 twd-rounded-3xl"
+                                                type="button"
+                                                (click)="searchForm.reset(); doAdvancedSearch()"
+                                            >
+                                                Reset
+                                            </button>
+                                            <button mat-raised-button class="twd-w-2/12 twd-rounded-3xl" color="primary">Search</button>
                                         </div>
                                     </form>
                                 </div>
-                            </ng-template>
-                        </div>
-
-                        <mat-paginator
-                            *ngIf="customerJourneyTable.tableData.source.data.length"
-                            (page)="pageEvent($event)"
-                            [pageSizeOptions]="customerJourneyTable.tableData.pageSizes"
-                            showFirstLastButtons
-                        >
-                        </mat-paginator>
+                            </div>
+                        </ng-template>
                     </div>
-                </ng-container>
-                <p *ngIf="!customerJourneyTable.tableData.source.data.length" class="text-center twd-mt-40 twd-text-3xl">No Data Available</p>
+
+                    <mat-paginator
+                        *ngIf="customerJourneyTable.tableData.source.data.length"
+                        (page)="pageEvent($event)"
+                        [pageSizeOptions]="customerJourneyTable.tableData.pageSizes"
+                        showFirstLastButtons
+                    >
+                    </mat-paginator>
+                </div>
             </div>
 
             <!-- maximised view end - Table -->
@@ -456,7 +444,6 @@
                         class="twd-h-full twd-px-0 twd-py-1"
                         *matCellDef="let selectedRow"
                     >
-                        <!-- [ngClass]="customFuse.anchor?.content || customFuse.widget?.content" -->
                         <div
                             *ngIf="maximized && mode && selectedRow.expanded"
                             class="spread animate__animated animate__slideInUp animate__faster twd-h-full twd-overflow-y-auto"
@@ -528,7 +515,7 @@
 
                             <ng-container *ngIf="mode === 'Transcripts'">
                                 <ng-container *ngIf="interactionTranscripts">
-                                    <ng-container *ngIf="interactionTranscripts[selectedRow.GroupID] as chatTranscripts">
+                                    <ng-container *ngIf="interactionTranscripts[selectedRow.SessionID] as chatTranscripts">
                                         <div
                                             *ngIf="chatTranscripts.length"
                                             fxLayout="row"
@@ -669,7 +656,7 @@
                     </mat-cell>
                 </ng-container>
 
-                <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true"></mat-header-row>
+                <mat-header-row *matHeaderRowDef="customerJourneyTable.tableData.columns; sticky: true" class="bg-inherit"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: customerJourneyTable.tableData.columns" [ngClass]="{ selected: row.expanded }"> </mat-row>
                 <mat-row
                     class="group-header twd-transform twd-max-h-0 twd-min-h-0"

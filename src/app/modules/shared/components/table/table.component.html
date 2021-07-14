@@ -1,0 +1,146 @@
+<div
+    class="twd-w-full twd-h-full twd-flex twd-flex-col twd-overflow-auto bg-inherit"
+    *ngIf="{
+        data: dataSource.data.length,
+        noFilteredData: !dataSource.filteredData?.length && dataSource.filter
+    } as avl"
+>
+    <div *ngIf="avl.data" class="twd-max-h-11/12 twd-overflow-y-auto bg-inherit" [ngClass]="{ 'twd-flex-1': !avl.noFilteredData }">
+        <mat-table [dataSource]="dataSource" matSort matSortDisableClear [matSortDisabled]="sortDisabled" multiTemplateDataRows>
+            <!-- NA Note that these columns can be defined in any order.
+The actual rendered columns are set as a property on the row definition" -->
+
+            <ng-container *ngFor="let c of columns">
+                <ng-container *ngIf="isSimpleCell(c); else customCell">
+                    <ng-container [matColumnDef]="c">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ c }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element[c]" [matTooltipDisabled]="c.hideTooltip">
+                            <div [ngClass]="{ 'twd-truncate': !c.doNotTruncate }">
+                                {{ element[c] || 'NA' }}
+                            </div>
+                        </mat-cell>
+                    </ng-container>
+                </ng-container>
+                <ng-template #customCell>
+                    <ng-container [matColumnDef]="c.key">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ c.displayName ?? c.key }}</mat-header-cell>
+                        <mat-cell *matCellDef="let element" class="px-8" [matTooltip]="element[c.key]" [matTooltipDisabled]="c.hideTooltip">
+                            <div [ngSwitch]="c.type">
+                                <ng-container *ngSwitchCase="'icon'">
+                                    <ng-container *ngIf="icons[element[c.key] | lowercase] || icons.default as myIcon">
+                                        <mat-icon color="primary" *ngIf="myIcon.includes('custom-'); else normalIcon" [svgIcon]="myIcon"> </mat-icon>
+                                        <ng-template #normalIcon>
+                                            <mat-icon color="primary"> {{ myIcon }} </mat-icon>
+                                        </ng-template>
+                                    </ng-container>
+                                    <span *ngIf="!c.iconOnly" [ngClass]="{ 'twd-truncate': !c.doNotTruncate }"> {{ element[c.key] || 'NA' }} </span>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'date'">
+                                    {{ element[c.key] | date: 'd/M/yy, hh:mm a' }}
+                                </ng-container>
+                            </div>
+                        </mat-cell>
+                    </ng-container>
+                </ng-template>
+            </ng-container>
+
+            <!-- <ng-container matColumnDef="expandedDetails">
+                <mat-cell [attr.colspan]="columns.length" class="twd-h-full twd-px-0 twd-py-1" *matCellDef="let selectedRow">
+                    yo !!
+                </mat-cell>
+            </ng-container> -->
+
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="bg-inherit"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns" [ngClass]="{ selected: row.expanded }"> </mat-row>
+            <!-- <mat-row
+                class="group-header twd-transform twd-max-h-0 twd-min-h-0"
+                *matRowDef="let row; columns: ['expandedDetails']"
+                [ngClass]="{ expanded: row.expanded }"
+            >
+            </mat-row> -->
+        </mat-table>
+    </div>
+
+    <div *ngIf="!avl.data" class="twd-flex-1 twd-grid twd-items-center">
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-20">No Data Available</p>
+    </div>
+
+    <div *ngIf="avl.noFilteredData" class="twd-flex-1 twd-grid twd-items-center">
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-20">No Data With Applied Filters Available</p>
+    </div>
+
+    <ng-container
+        *ngIf="{
+            advanceSearchAllowed: searchable.length,
+            paginationAllowed: paginator !== 'disabled',
+            paginationHidden: paginator !== 'show'
+        } as permit"
+    >
+        <div
+            *ngIf="permit.advanceSearchAllowed && permit.paginationAllowed"
+            class="twd-flex twd-justify-between twd-py-2"
+            [ngClass]="{ 'twd-hidden': !avl.data }"
+        >
+            <div *ngIf="permit.advanceSearchAllowed" class="twd-flex twd-items-center twd-gap-2 twd-px-2">
+                <button (click)="showAdvanceSearchModal()" mat-button class="twd-rounded-3xl" color="primary">
+                    <mat-icon>search</mat-icon>
+                    Advanced Search
+                </button>
+                <button mat-raised-button type="button" class="twd-rounded-3xl" [disabled]="!dataSource.filter">Reset</button>
+            </div>
+            <mat-paginator
+                *ngIf="paginator !== 'disabled'"
+                [ngClass]="{ 'twd-hidden': permit.paginationHidden }"
+                [pageSize]="20"
+                [pageSizeOptions]="[20, 40, 60, 100]"
+                showFirstLastButtons
+            >
+            </mat-paginator>
+        </div>
+    </ng-container>
+</div>
+
+<ng-template #advanceSearchModal>
+    <div *ngIf="fuseBg$ as fuseBg" class="mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.body">
+        <div class="twd-rounded-3xl mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.content">
+            <p class="twd-text-xl twd-font-bold twd-mt-1 twd-mb-6">Advanced Search</p>
+            <form
+                class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-3"
+                (ngSubmit)="doAdvancedSearch()"
+                [formGroup]="advancedSearchForm"
+                novalidate
+            >
+                <ng-container *ngFor="let s of searchable">
+                    <ng-template #textFormRef>
+                        <mat-form-field>
+                            <mat-label> {{ s }} </mat-label>
+                            <input matInput type="text" [formControlName]="s" />
+                        </mat-form-field>
+                    </ng-template>
+
+                    <mat-form-field *ngIf="s.type === 'date'; else textFormRef">
+                        <mat-label>{{ s.label || s.key }}</mat-label>
+                        <mat-date-range-input [rangePicker]="timePicker">
+                            <input matStartDate placeholder="Start date" [formControlName]="s.key + '_Start'" />
+                            <input matEndDate placeholder="End date" [formControlName]="s.key + '_End'" />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #timePicker></mat-date-range-picker>
+                    </mat-form-field>
+                </ng-container>
+
+                <div class="xl:twd-col-span-2 twd-my-1 twd-flex twd-gap-4 twd-justify-end">
+                    <button
+                        mat-raised-button
+                        class="twd-w-2/12 twd-rounded-3xl"
+                        type="button"
+                        (click)="advancedSearchForm.reset(); doAdvancedSearch()"
+                    >
+                        Reset
+                    </button>
+                    <button mat-raised-button class="twd-w-2/12 twd-rounded-3xl" color="primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

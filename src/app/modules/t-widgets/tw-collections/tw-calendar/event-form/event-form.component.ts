@@ -169,6 +169,10 @@ export class CalendarEventFormDialogComponent implements OnInit {
             })
         });
 
+        formGroup.controls.start.valueChanges.subscribe(() => {
+            formGroup.controls.startTime.updateValueAndValidity();
+        });
+
         return formGroup;
     }
 }

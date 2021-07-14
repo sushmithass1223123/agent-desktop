@@ -1,10 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
+import { TableCellConfig } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -24,43 +25,46 @@ import { filter, takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * app config data
      */
     @Input() data: any;
 
     /**
-     * Table sort ref
+     * Sorting Ref
      */
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatSort) set sortContent(content: MatSort) {
+        if (content) {
+            // initially setter gets called with undefined
+            this.interactionDetailsTable.source.sort = content;
+        }
+    }
 
     /**
      * Table Paginator ref
      */
     @ViewChild(MatPaginator)
     set paginator(value: MatPaginator) {
-        this.interactionDetailsTable.source.paginator = value;
+        if (value && !this.interactionDetailsTable.source.paginator) {
+            this.interactionDetailsTable.source.paginator = value;
+        }
     }
 
     /**
      * Maximized state
      */
     maximized = false;
-    /**
-     * Interaction List
-     */
-    interactionList: any[] = [];
 
     /**
      * Minimized displayed columns
      */
-    mindisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedDateTime'];
+    minDisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedDateTime'];
 
     /**
      * Maximized displayed columns
      */
-    maxdisplayedColumns: string[] = [
+    maxDisplayedColumns: string[] = [
         'Channel',
         'SubChannel',
         'Direction',
@@ -87,7 +91,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      */
     interactionDetailsTable = {
         source: new MatTableDataSource([]),
-        columns: this.mindisplayedColumns
+        columns: this.minDisplayedColumns
     };
 
     /**
@@ -115,6 +119,16 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
 
+    /**
+     * The AD table component data tobe used when the component is completed
+     */
+    adTableData = {
+        enabled: false,
+        iconMap: {},
+        searchable: [],
+        tableColumns: []
+    };
+
     constructor(
         private _tmacEventService: TMACEventService,
         private _appUIService: AppUiService,
@@ -131,15 +145,75 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.paginator = this.paginator;
-        this.interactionDetailsTable.source.filterPredicate = this.filterPredicate;
-
         this._tmacEventService
             .getNonInteractionEvents(['AgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
+
+    /**
+     * Lifecycle Hook
+     */
+    ngAfterViewInit(): void {
+        // this.interactionDetailsTable.source.sort = this.sort;
+        this.interactionDetailsTable.source.filterPredicate = this.filterPredicate;
+        // this.interactionDetailsTable.source.paginator = this.paginator;
+    }
+
+    /**
+     * Sets up the new AD table component
+     */
+    setupNewAdTable(): void {
+        this.adTableData = {
+            enabled: true,
+            iconMap: {
+                default: 'feed',
+                voice: 'video',
+                textchat: 'chat',
+                audiochat: 'wifi_calling_3',
+                videochat: 'duo',
+                sms: 'sms',
+                email: 'email',
+                emc: 'email',
+
+                chat: 'chat',
+                text: 'chat',
+                audio: 'wifi_calling_3',
+                video: 'duo',
+
+                store: 'store',
+                field: 'roofing',
+
+                whatsapp: 'custom-whatsapp',
+                we: 'custom-we',
+                line: 'custom-line',
+                viber: 'custom-viber',
+                twitter: 'custom-twitter',
+                fb: 'custom-fb',
+                telegram: 'custom-telegram',
+                out: 'north',
+                in: 'south'
+            },
+            searchable: [
+                'Channel',
+                'SubChannel',
+                'Direction',
+                'User',
+                'Dnis',
+                {
+                    key: 'CreatedDateTime',
+                    label: 'Created Between',
+                    type: 'date'
+                },
+                {
+                    key: 'ClosedDateTime',
+                    label: 'Closed Between',
+                    type: 'date'
+                },
+                'AgentComment'
+            ],
+            tableColumns: []
+        };
     }
 
     /**
@@ -197,22 +271,40 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * @param {CustomSDKEvent} data
      */
     private AgentInteractionDetailsEvent(evt: CustomSDKEvent): void {
+        let interactionList = [];
         // check if empty array then reset
-        if (!evt.Data.length) {
-            this.interactionList = [];
-        } else {
-            this.interactionList = [...this.interactionList, ...evt.Data];
+        if (evt.Data.length) {
+            interactionList = this.interactionDetailsTable.source.data.concat(evt.Data);
         }
+        interactionList = orderBy(interactionList, 'CreatedDateTime', ['desc']);
 
-        // assign the interaction list
-        let source = this.interactionList;
+        this.interactionDetailsTable.source.data = interactionList;
 
-        // take only 10 for minimized mode
+        // take only 15 for minimized mode
         if (!this.maximized) {
-            source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']).slice(0, 15);
+            this.interactionDetailsTable.source.paginator.pageSize = 20;
+            // this.interactionDetailsTable.pageSize = 20;
         }
 
-        this.interactionDetailsTable.source.data = source;
+        if (this.adTableData.enabled) {
+            const typeMap = {
+                Channel: 'icon',
+                SubChannel: 'icon',
+                Direction: 'icon',
+                CreatedDateTime: 'date',
+                ClosedDateTime: 'date'
+            };
+            this.adTableData.tableColumns = this.maxDisplayedColumns.map((c) => {
+                const type = typeMap[c];
+                if (type) {
+                    const r: TableCellConfig = { key: c, type, iconOnly: ['Channel', 'SubChannel'].includes(c) };
+                    if (c === '') {
+                    }
+                    return r;
+                }
+                return c;
+            });
+        }
     }
 
     /**
@@ -221,18 +313,16 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      */
     maximizeEvent(state: boolean): void {
         this.maximized = state;
-        // assign the interaction list
-        let source = this.interactionList;
 
         if (state) {
-            this.interactionDetailsTable.columns = this.maxdisplayedColumns;
-            source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']);
+            this.interactionDetailsTable.columns = this.maxDisplayedColumns;
         } else {
-            this.interactionDetailsTable.columns = this.mindisplayedColumns;
-            source = orderBy(this.interactionList, 'CreatedDateTime', ['desc']).slice(0, 15);
+            this.advancedSearchForm.reset();
+            this.doAdvancedSearch();
+            this.interactionDetailsTable.columns = this.minDisplayedColumns;
+            this.interactionDetailsTable.source.paginator.pageSize = 20;
+            this.interactionDetailsTable.source.paginator.firstPage();
         }
-
-        this.interactionDetailsTable.source.data = source;
     }
 
     /**
