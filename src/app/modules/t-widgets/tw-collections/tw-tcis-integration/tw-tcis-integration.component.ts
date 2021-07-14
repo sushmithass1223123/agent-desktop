@@ -80,6 +80,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                     const action = this.WidgetData.Actions.filter((a) => a.EventName === evt.EventName)?.[0];
                     // if no action return
                     if (!action) {
+                        TUtils.Logger.warn(`TwTcisIntegration: no action specified for ${evt.EventName}, ignore process!`);
                         return;
                     }
 

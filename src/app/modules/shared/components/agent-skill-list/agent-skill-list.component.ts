@@ -324,7 +324,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.title = this.data?.title || 'Agent Skill List';
         this.activeSwitcher = this.data?.agent.allowed ? 'agentList' : this.data?.skill.allowed ? 'skillList' : '';
         this.showSwitcher = this.data?.agent.allowed && this.data?.skill.allowed;
-        this.interactionId = this.data?.interactionId || 0;
+        this.interactionId = this.data?.interactionId ?? 0;
 
         this.freeTextConf = {
             agentList: { allowed: !!(this.data?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
@@ -342,7 +342,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
             case 'transferCall':
                 this.icon = 'phone_forwarded';
-                this.commentsAllowed = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'conferenceCall':
@@ -352,19 +351,16 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             case 'transferChat':
                 this.disableInput = true;
                 this.icon = 'forward';
-                this.commentsAllowed = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'pushChat':
                 this.disableInput = true;
                 this.icon = 'forward';
-                this.commentsAllowed = false;
                 this.actionTooltip = 'Push';
                 break;
             case 'conferenceChat':
                 this.disableInput = true;
                 this.icon = 'group_add';
-                this.commentsAllowed = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'transferEmail':
@@ -404,8 +400,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             this.loadSkillList();
         }
 
-        // check for blind
-        this.checkForBlind();
+        // check for actions
+        this.checkForActions();
 
         this.setNewColumns();
     }
@@ -478,9 +474,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To check blind button is allowed
+     * To check action button is allowed
      */
-    private checkForBlind(): void {
+    private checkForActions(): void {
         if (this.activeSwitcher === 'dynamicList') {
             this.consultAllowed = this.data?.otherData?.dynamicList?.consultAllowed ?? true;
             this.blindAllowed = this.data?.otherData?.dynamicList?.blindAllowed;
@@ -492,7 +488,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         } else {
             this.consultAllowed = this.data?.skill?.consult ?? true;
             this.blindAllowed = this.data?.skill.blind;
-            this.consultAllowed = this.data?.skill?.comments ?? false;
+            this.commentsAllowed = this.data?.skill?.comments ?? false;
         }
     }
 
@@ -817,8 +813,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // get the main label dynamically
         this.mainLabel = this.switcherList.filter((f) => f.key === item.key)?.[0].textLabel || '';
 
-        // check for blind
-        this.checkForBlind();
+        // check for actions
+        this.checkForActions();
 
         // clear the selection
         this.selectedItem = '';

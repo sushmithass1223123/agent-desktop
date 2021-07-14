@@ -1109,7 +1109,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             skill: {
                 allowed: skillConfig.Allowed,
                 consult: skillConfig.Consult,
-                blind: false,
+                blind: skillConfig.Blind,
                 comments: skillConfig.Comments,
                 channelPrfix: skillConfig.ChannelPrefix,
                 source: skillConfig.Source,

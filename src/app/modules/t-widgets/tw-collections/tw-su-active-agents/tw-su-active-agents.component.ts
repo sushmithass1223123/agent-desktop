@@ -381,7 +381,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         screenvideo: agent.AgentFeatures.filter((f) => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
                         snapshot: agent.AgentFeatures.filter((f) => f.Feature === 'IsCameraCaptureEnabled')?.[0].IsEnabled || false,
                         source: 'supervisor',
-                        sourceId: SDKClient.getAgentData().agentId
+                        sourceId: SDKClient.getAgentData().agentId,
+                        tmacServer: agent.TmacServer
                     },
                     { agent }
                 )
@@ -514,7 +515,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             {
                 deviceId: agent.StationID,
                 type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
-                code: item.Value.toString()
+                code: item.Value.toString(),
+                tmacServer: agent.TmacServer
             },
             item
         )

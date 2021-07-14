@@ -96,11 +96,11 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
 
     constructor(
         public hostElement: ElementRef,
-        public contentPageService: ContentPageService,
+        public _contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
         private _fuseFacadeService: FuseFacadeService
     ) {
-        super(hostElement, contentPageService);
+        super(hostElement, _contentPageService);
     }
 
     /**

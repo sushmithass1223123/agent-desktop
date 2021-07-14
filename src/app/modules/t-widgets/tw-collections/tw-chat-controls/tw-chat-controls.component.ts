@@ -1533,7 +1533,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     type: 'text',
                     time: new Date(res.DateTime),
                     attachment: null,
-                    dividerMessage: res.ItemType === 2
+                    dividerMessage: res.ItemType > 2
                 });
 
                 this.asyncChatRef.firstId = res.FirstId;
@@ -2179,7 +2179,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     async AgentNotificaitonEvent(evt: AgentNotificaitonEvent): Promise<void> {
         // check the type
-        if (evt.Type === 'AsyncChatUpdated') {
+        if (evt.Type === 'AsyncChatMessage') {
             // get from event
             // this.chatTranscripts.push({
             //     who: this.customerName,
