@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { AgentFeatures, AgentSettingsUpdatedEvent, AgentSnapShotEvent, SDKClient, TUtils } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
 import { Observable, Subject } from 'rxjs';
 import { AppUiService } from './app-ui.service';
@@ -108,7 +108,7 @@ export class AgentFeaturesService {
      * Event to take snapshot
      * @param {any} evt
      */
-    private AgentSnapShotEvent = async (evt: any) => {
+    private AgentSnapShotEvent = async (evt: AgentSnapShotEvent) => {
         // init variables
         let screenshot = '';
         let snapshot = '';
@@ -142,7 +142,8 @@ export class AgentFeaturesService {
             location,
             screenshot,
             screenvideo,
-            snapshot
+            snapshot,
+            tmacServer: evt.TmacServer
         });
     };
 

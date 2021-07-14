@@ -2449,7 +2449,7 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": false,
+                                                            "Blind": true,
                                                             "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
@@ -2463,7 +2463,7 @@
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": false,
+                                                            "Blind": true,
                                                             "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",

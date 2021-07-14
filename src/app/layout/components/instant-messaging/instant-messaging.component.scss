@@ -149,21 +149,17 @@ instant-messaging {
                 left: 50px;
                 border: 2px solid;
                 border-radius: 50%;
-                background-color: #838383;
+                background-color: #ffc107;
 
-                &.online {
+                &.available {
                     background-color: #4caf50;
                 }
 
-                &.do-not-disturb {
+                &.on-call {
                     background-color: #f44336;
                 }
 
-                &.away {
-                    background-color: #ffc107;
-                }
-
-                &.offline {
+                &.not-logged-in {
                     background-color: #646464;
                 }
             }
@@ -188,7 +184,7 @@ instant-messaging {
                 flex-direction: column;
                 align-items: flex-start;
                 justify-content: flex-end;
-                padding: 0 16px 4px 16px;
+                padding: 0 18px 4px 16px;
 
                 .avatar {
                     position: absolute;
@@ -203,6 +199,7 @@ instant-messaging {
                     justify-content: center;
                     padding: 12px;
                     max-width: 100%;
+                    @include mat-elevation(1);
 
                     .message {
                         white-space: pre-wrap;
@@ -346,34 +343,47 @@ instant-messaging {
         .reply-form {
             position: relative;
 
-            .message-text {
-                padding: 16px 8px;
-                border-top: 1px solid;
+            mat-form-field {
+                &.message-text {
+                    padding: 16px 8px;
+                    border-top: 1px solid;
 
-                .mat-form-field-wrapper {
-                    padding: 0;
-
-                    .mat-form-field-flex {
+                    .mat-form-field-wrapper {
                         padding: 0;
 
-                        .mat-form-field-infix {
+                        .mat-form-field-flex {
                             padding: 0;
-                            border: none;
-                            border-radius: 20px;
-                            @include mat.elevation(2);
 
-                            textarea {
-                                overflow: hidden;
-                                margin: 16px 48px 16px 16px;
-                                width: calc(100% - 64px);
+                            .mat-form-field-infix {
                                 padding: 0;
+                                border: none;
+                                border-radius: 20px;
+                                // @include mat.elevation(2);
+
+                                textarea {
+                                    overflow: hidden;
+                                    margin: 16px 48px 16px 16px;
+                                    width: calc(100% - 64px);
+                                    padding: 0;
+                                }
                             }
                         }
+
+                        .mat-form-field-underline {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+            
+            mat-form-field:not(.mat-form-field-disabled) {
+                .mat-form-field-wrapper {
+                    .mat-form-field-flex {
+                        .mat-form-field-infix {
+                            @include mat.elevation(2);     
+                        }  
                     }
 
-                    .mat-form-field-underline {
-                        display: none !important;
-                    }
                 }
             }
 

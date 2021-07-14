@@ -37,6 +37,7 @@ tw-chat-controls {
                 .chat-actions {
                     display: flex;
                     flex-direction: row;
+                    flex-wrap: wrap;
                     justify-content: flex-end;
                     align-items: stretch;
                     border-top-left-radius: 20px;
