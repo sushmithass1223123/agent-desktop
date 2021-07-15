@@ -45,59 +45,55 @@
                     "value": ""
                 },
                 {
-                    "label": "🌟 feat",
-                    "value": "🌟",
-                    "description": "A new feature"
+                  "label": "🌟 feat",
+                  "description": "A new feature"
                 },
                 {
-                    "label": "⭐ enc",
-                    "value": "⭐",
-                    "description": "An enhancement that improves a feature"
+                  "label": "⭐ enc",
+                  "description": "An enhancement that improves a feature"
                 },
                 {
-                    "label": "🔨 fix",
-                    "value": "🔨",
-                    "description": "A bug fix"
+                  "label": "🔨 fix",
+                  "description": "A bug fix"
                 },
                 {
-                    "label": "🔥 hotfix",
-                    "value": "🔥",
-                    "description": "A minor fix"
+                  "label": "🔥 hotfix",
+                  "description": "A minor fix"
                 },
                 {
-                    "label": "build",
-                    "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)"
+                  "label": "💻 build",
+                  "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)"
                 },
                 {
-                    "label": "chore",
-                    "description": "Updating grunt tasks etc; no production code change"
+                  "label": "⚓ chore",
+                  "description": "Updating grunt tasks etc; no production code change"
                 },
                 {
-                    "label": "ci",
-                    "description": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)"
+                  "label": "🚀 ci",
+                  "description": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)"
                 },
                 {
-                    "label": "docs",
-                    "description": "Documentation only changes"
+                  "label": "📝 docs",
+                  "description": "Documentation only changes"
                 },
                 {
-                    "label": "perf",
-                    "description": "A code change that improves performance"
+                  "label": "🎢 perf",
+                  "description": "A code change that improves performance"
                 },
                 {
-                    "label": "refactor",
-                    "description": "A code change that neither fixes a bug nor adds a feature"
+                  "label": "♻️ refactor",
+                  "description": "A code change that neither fixes a bug nor adds a feature"
                 },
                 {
-                    "label": "revert"
+                  "label": "❗ revert"
                 },
                 {
-                    "label": "style",
-                    "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"
+                  "label": "🎨 style",
+                  "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"
                 },
                 {
-                    "label": "test",
-                    "description": "Adding missing tests or correcting existing tests"
+                  "label": "💉 test",
+                  "description": "Adding missing tests or correcting existing tests"
                 }
             ],
             "description": "Type of changes"

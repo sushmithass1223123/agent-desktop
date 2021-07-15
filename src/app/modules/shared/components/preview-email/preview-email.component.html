@@ -35,6 +35,7 @@
                     <skeleton *ngIf="!error" class="twd-opacity-70 twd-mx-3 twd-w-3/12" [rows]="3"> </skeleton>
                 </ng-template>
             </ng-container>
+            <ng-content *ngIf="!loading" select="#emailNotification"></ng-content>
             <div
                 id="attachmentList"
                 class="twd-text-left twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list"
