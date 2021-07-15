@@ -57,7 +57,7 @@
             </mat-form-field>
 
             <div fxFlex="1 0 auto" fxLayout="column" fxLayout.gt-xs="row" formGroupName="color">
-                <mat-form-field appearance="outline" class="pr-sm-8" fxFlex="50">
+                <!-- <mat-form-field appearance="outline" class="pr-sm-8" fxFlex="50">
                     <mat-label>Primary color</mat-label>
                     <input
                         matInput
@@ -85,7 +85,7 @@
                         [style.background]="event.color.secondary"
                         (colorPickerChange)="event.color.secondary = $event; eventForm.patchValue({ color: { secondary: $event } })"
                     />
-                </mat-form-field>
+                </mat-form-field> -->
             </div>
 
             <!-- <div class="pb-32" fxFlex="1 0 auto" fxLayout="row">

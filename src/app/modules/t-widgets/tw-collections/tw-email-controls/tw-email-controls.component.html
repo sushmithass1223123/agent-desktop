@@ -218,6 +218,15 @@
                                 {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                             </a>
                         </div>
+
+                        <div
+                            id="emailNotification"
+                            *ngIf="currentInteraction.IsEmailProbableSpam"
+                            class="twd-flex twd-items-center twd-px-2 twd-py-0.5 twd-opacity-80 twd-rounded-3xl twd-mb-2"
+                            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                        >
+                            <mat-icon>report</mat-icon> <small class="twd-pl-2"> This email is possibly a spam </small>
+                        </div>
                         <div
                             id="emailControlButtons"
                             class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
@@ -236,13 +245,7 @@
                             >
                                 <mat-icon>comment</mat-icon>
                             </button>
-                            <button
-                                *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
-                                mat-raised-button
-                                class="border-radius-20"
-                                (click)="markAsSpam()"
-                                matTooltip="Mark As Spam"
-                            >
+                            <button *ngIf="!replyInfo" mat-raised-button class="border-radius-20" (click)="markAsSpam()" matTooltip="Mark As Spam">
                                 <mat-icon>report</mat-icon>
                             </button>
                             <button
