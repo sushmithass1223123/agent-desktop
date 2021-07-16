@@ -131,6 +131,16 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
 
+    /**
+     * Top level div's ref used to check if the email is in viewport
+     */
+    @ViewChild('createEmail') createEmail: ElementRef<HTMLDivElement>;
+
+    /**
+     * Intersection observer ref
+     */
+    intersectionObserver: IntersectionObserver;
+
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
@@ -231,6 +241,18 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                     console.error(err);
                 });
         }, 0);
+        // create an intersection observer to start/stop polling when page is active/inactive
+        this.intersectionObserver = new IntersectionObserver((entries) => {
+            entries.map((entry) => {
+                if (entry.isIntersecting) {
+                    this.getCurrentEditor()?.show();
+                } else {
+                    this.getCurrentEditor()?.hide();
+                }
+            });
+        });
+        // observe the element
+        this.intersectionObserver.observe(this.createEmail.nativeElement);
     }
 
     /**
@@ -240,6 +262,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         const e = this.getCurrentEditor();
         e.off('blur');
         e.destroy();
+        this.intersectionObserver?.disconnect();
         // tinyMCE.activeEditor.off('blur');
         // tinyMCE.activeEditor.destroy();
     }

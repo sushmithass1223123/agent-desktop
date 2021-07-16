@@ -1961,6 +1961,12 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
+                                                            "Title": "Channel",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                                            "Unit": "",
+                                                            "DefaultValue": "yoyoyo"
+                                                        },
+                                                        {
                                                             "Title": "Queue time",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
                                                             "Unit": "s",
@@ -2861,19 +2867,19 @@
                                                     "CustomerInfo": [
                                                         {
                                                             "Title": "Campaign Name",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).CampaignName",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.CampaignName",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
                                                             "Title": "Customer Name",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).Name",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.Name",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
                                                             "Title": "Phone Number",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).PhoneNumber",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.PhoneNumber",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
@@ -2891,7 +2897,7 @@
                                                         },
                                                         {
                                                             "Title": "AutoDial",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).AutoDial",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.AutoDial",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         }
@@ -3617,6 +3623,7 @@
                                 "EventName": "TextChatDisconnectedEvent",
                                 "Parameters": [
                                     "TMACEvent.TextChatIncomingEvent.UCID",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                     "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
                                     "AgentData.agentId",
                                     "AgentData.deviceId",

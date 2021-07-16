@@ -127,40 +127,8 @@ export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEve
  * @returns
  */
 export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
-    // get the value source
-    const valueSource = item.ValueSource;
-    let valueSourceSplit = [];
-    // check if we need to parse the json
-    if (valueSource.toLowerCase().includes('jsonparse')) {
-        // expected value = jsonparse(EventName.{...path}).getValue
-        // get the path by taking string between ()
-        const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
-        if (path) {
-            // split the value source
-            valueSourceSplit = path.split('.');
-            // check if the value source event name matches with the current event
-            if (valueSourceSplit[0] !== evt.EventName) {
-                return;
-            }
-
-            // get the value from path
-            const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
-            if (jsonStr) {
-                // get the property by taking string between ) and last
-                const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
-                item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
-            }
-        }
-    } else {
-        valueSourceSplit = item.ValueSource.split('.');
-        // check if the value source event name matches with the current event
-        if (valueSourceSplit[0] !== evt.EventName) {
-            return;
-        }
-        // get the value from path or default value
-        item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
-    }
-
+    // get the value from path or default value
+    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.DefaultValue, item.MaskData);
     // return value
     return item.Value;
 };
@@ -228,4 +196,18 @@ export class ADError extends Error {
 export const throwADError = (msg: string) => {
     TUtils.Logger.error('AD Error', msg);
     throw new ADError(msg);
+};
+
+export const extractJsonVal = (val: any, path: string) => {
+    return path.split('.').reduce((acc, curr) => {
+        if (!acc) {
+            acc = {};
+        }
+        try {
+            acc = JSON.parse(acc[curr]);
+        } catch (e) {
+            acc = acc[curr];
+        }
+        return acc;
+    }, val);
 };
