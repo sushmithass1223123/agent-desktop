@@ -3757,9 +3757,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx",
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "type": "soap",
                 "timeout": 60
@@ -3788,9 +3786,9 @@
                 "sdkEvents": true
             },
             "customScripts": [
-                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/livechat_video.min.js",
-                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
+                "https://dice.tetherfi.cloud/agent-desktop/libs/adapter.js",
+                "https://dice.tetherfi.cloud/agent-desktop/libs/livechat_video.min.js",
+                "https://dice.tetherfi.cloud/agent-desktop/libs/collector.min.js"
             ]
         }
     }
