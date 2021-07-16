@@ -14,7 +14,7 @@
         <mat-icon color="primary" *ngSwitchCase="'telegram'" svgIcon="custom-telegram" matTooltip="Telegram"></mat-icon>
         <mat-icon color="primary" *ngSwitchCase="'store'" matTooltip="Store">store</mat-icon>
         <mat-icon color="primary" *ngSwitchCase="'field'" matTooltip="Field">roofing</mat-icon>
-        <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
+        <mat-icon color="primary" *ngSwitchDefault [matTooltip]="subType"> feed </mat-icon>
     </ng-container>
 </ng-template>
 
@@ -245,13 +245,7 @@
 
                 <ng-container matColumnDef="Channel">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="twd-flex-full" style="max-width: 100px"> Channel </mat-header-cell>
-                    <mat-cell
-                        *matCellDef="let element"
-                        [ngSwitch]="element.Channel | lowercase"
-                        [matTooltip]="element.Channel"
-                        class="twd-flex-full"
-                        style="max-width: 100px"
-                    >
+                    <mat-cell *matCellDef="let element" [ngSwitch]="element.Channel | lowercase" class="twd-flex-full" style="max-width: 100px">
                         <ng-container *ngSwitchCase="'textchat'">
                             <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                         </ng-container>
@@ -264,11 +258,11 @@
                         <ng-container *ngSwitchCase="'services'">
                             <ng-container *ngTemplateOutlet="interactionBrandType; context: element"></ng-container>
                         </ng-container>
-                        <mat-icon color="primary" *ngSwitchCase="'voice'"> call </mat-icon>
-                        <mat-icon color="primary" *ngSwitchCase="'sms'"> textsms </mat-icon>
-                        <mat-icon color="primary" *ngSwitchCase="'email'"> email </mat-icon>
-                        <mat-icon color="primary" *ngSwitchCase="'fax'"> print </mat-icon>
-                        <mat-icon color="primary" *ngSwitchDefault> feed </mat-icon>
+                        <mat-icon color="primary" matTooltip="Voice" *ngSwitchCase="'voice'"> call </mat-icon>
+                        <mat-icon color="primary" matTooltip="SMS" *ngSwitchCase="'sms'"> textsms </mat-icon>
+                        <mat-icon color="primary" matTooltip="Email" *ngSwitchCase="'email'"> email </mat-icon>
+                        <mat-icon color="primary" matTooltip="Fax" *ngSwitchCase="'fax'"> print </mat-icon>
+                        <mat-icon color="primary" [matTooltip]="element.Channel" *ngSwitchDefault> feed </mat-icon>
                     </mat-cell>
                 </ng-container>
 
@@ -514,90 +508,88 @@
                             </ng-container>
 
                             <ng-container *ngIf="mode === 'Transcripts'">
-                                <ng-container *ngIf="interactionTranscripts">
-                                    <ng-container *ngIf="interactionTranscripts[selectedRow.SessionID] as chatTranscripts">
-                                        <div
-                                            *ngIf="chatTranscripts.length"
-                                            fxLayout="row"
-                                            fxLayoutAlign=" none"
-                                            class="w-100-p pb-16 chat-container custom-scroll-adjust"
-                                        >
-                                            <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
-                                                <!-- CHAT CONTENT -->
-                                                <div class="chat-transcripts" fxFlex="1 1 auto">
-                                                    <!-- CHAT MESSAGES -->
-                                                    <div class="chat-messages px-12">
-                                                        <!-- MESSAGE -->
-                                                        <ng-container *ngFor="let item of chatTranscripts; let i = index">
+                                <ng-container *ngIf="chatTranscripts">
+                                    <div
+                                        *ngIf="chatTranscripts.length"
+                                        fxLayout="row"
+                                        fxLayoutAlign=" none"
+                                        class="w-100-p pb-16 chat-container custom-scroll-adjust"
+                                    >
+                                        <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
+                                            <!-- CHAT CONTENT -->
+                                            <div class="chat-transcripts" fxFlex="1 1 auto">
+                                                <!-- CHAT MESSAGES -->
+                                                <div class="chat-messages px-12">
+                                                    <!-- MESSAGE -->
+                                                    <ng-container *ngFor="let item of chatTranscripts; let i = index">
+                                                        <div
+                                                            *ngIf="item.message"
+                                                            class="message-row"
+                                                            [ngClass]="{
+                                                                me: item?.who !== defaultCustomerName,
+                                                                contact: item?.who === defaultCustomerName
+                                                            }"
+                                                        >
                                                             <div
-                                                                *ngIf="item.message"
-                                                                class="message-row"
-                                                                [ngClass]="{
-                                                                    me: item?.who !== defaultCustomerName,
-                                                                    contact: item?.who === defaultCustomerName
-                                                                }"
+                                                                fxLayout="column"
+                                                                fxLayoutAlign="start start"
+                                                                class="bubble"
+                                                                [ngClass]="item.isAgent ? 'right' : 'left'"
                                                             >
                                                                 <div
-                                                                    fxLayout="column"
-                                                                    fxLayoutAlign="start start"
-                                                                    class="bubble"
-                                                                    [ngClass]="item.isAgent ? 'right' : 'left'"
+                                                                    *ngIf="chatTranscripts[i - 1]?.who !== item.who"
+                                                                    class="user-label font-size-16 text-bold mb-4"
                                                                 >
-                                                                    <div
-                                                                        *ngIf="chatTranscripts[i - 1]?.who !== item.who"
-                                                                        class="user-label font-size-16 text-bold mb-4"
-                                                                    >
-                                                                        {{ item.who }}
-                                                                    </div>
+                                                                    {{ item.who }}
+                                                                </div>
 
-                                                                    <div class="message">
-                                                                        <div *ngIf="item.message.type === 'attachment'">
-                                                                            <img
-                                                                                [src]="
-                                                                                    ((fileUploadUrl$ | async) || 'TmacProxy') +
-                                                                                    '/' +
-                                                                                    selectedRow.SessionID +
-                                                                                    '/' +
-                                                                                    item.message.attachment.name
-                                                                                "
-                                                                                class="w-100-p"
-                                                                                [alt]="item.message.attachment.name"
-                                                                            />
+                                                                <div class="message">
+                                                                    <div *ngIf="item.message.type === 'attachment'">
+                                                                        <img
+                                                                            [src]="
+                                                                                ((fileUploadUrl$ | async) || 'TmacProxy') +
+                                                                                '/' +
+                                                                                selectedRow.SessionID +
+                                                                                '/' +
+                                                                                item.message.attachment.name
+                                                                            "
+                                                                            class="w-100-p"
+                                                                            [alt]="item.message.attachment.name"
+                                                                        />
 
-                                                                            <!-- <img
+                                                                        <!-- <img
                                                                             [src]="item.message.attachment.src"
                                                                             class="w-100-p"
                                                                             [alt]="item.message.attachment.name"
                                                                         /> -->
 
-                                                                            <span [innerHTML]="item.message.message"></span>
-                                                                        </div>
+                                                                        <span [innerHTML]="item.message.message"></span>
+                                                                    </div>
 
-                                                                        <span
-                                                                            *ngIf="item.message.type === 'text'"
-                                                                            [innerHTML]="item.message.message"
-                                                                        ></span>
-                                                                    </div>
-                                                                    <div class="time">
-                                                                        {{ item.time | date: 'dd/MM/yy, hh:mm a' }}
-                                                                    </div>
+                                                                    <span
+                                                                        *ngIf="item.message.type === 'text'"
+                                                                        [innerHTML]="item.message.message"
+                                                                    ></span>
+                                                                </div>
+                                                                <div class="time">
+                                                                    {{ item.time | date: 'dd/MM/yy, hh:mm a' }}
                                                                 </div>
                                                             </div>
-                                                        </ng-container>
-                                                        <!-- / MESSAGE -->
-                                                    </div>
-                                                    <!-- CHAT MESSAGES -->
+                                                        </div>
+                                                    </ng-container>
+                                                    <!-- / MESSAGE -->
                                                 </div>
-                                                <!-- / CHAT CONTENT -->
+                                                <!-- CHAT MESSAGES -->
                                             </div>
+                                            <!-- / CHAT CONTENT -->
                                         </div>
-                                        <div *ngIf="!chatTranscripts.length" class="w-100-p">
-                                            <div class="w-25-p mx-auto mb-20">
-                                                <img src="assets/images/vectors/no-data-1.svg" class="box-shadow-3d" />
-                                            </div>
-                                            <p class="text-center mat-title m-0">No Transcripts Available</p>
+                                    </div>
+                                    <div *ngIf="!chatTranscripts.length" class="w-100-p">
+                                        <div class="w-25-p mx-auto mb-20">
+                                            <img src="assets/images/vectors/no-data-1.svg" class="box-shadow-3d" />
                                         </div>
-                                    </ng-container>
+                                        <p class="text-center mat-title m-0">No Transcripts Available</p>
+                                    </div>
                                 </ng-container>
                             </ng-container>
 

@@ -5,11 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { IUIEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget, ReqCampaignContact, ResCampaign, ResData } from 'app/interfaces';
 import { AppUiService } from 'app/services/app-ui.service';
-import { get, join } from 'lodash';
+import { extractJsonVal, throwADError } from 'app/utils';
+import { uniq } from 'lodash';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 
@@ -196,27 +197,18 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         this.interactionId = this.data.InteractionDetails?.InteractionID;
         this.dataMap = this.data.Data?.DataMap || new Object();
 
-        // create event names to subscribe
-        const eventNames = [];
-
-        Object.entries(this.dataMap).forEach((a) => {
-            try {
-                // get the event name from value source
-                const eventName = a[1].ValueSource?.split('.')?.shift();
-                if (eventName && !eventNames.includes(eventName)) {
-                    eventNames.push(eventName);
-                }
-            } catch (error) {
-                TUtils.Logger.console('error', 'Error in TwRegisterCallbackComponent', null, error);
+        try {
+            // create event names to subscribe
+            const eventNames: any = uniq(Object.entries(this.dataMap).map((a) => a[1].ValueSource?.split('.')?.shift() ?? []));
+            // listen to events only if opened in an interaction
+            if (this.interactionId && eventNames.length) {
+                this._tmacEventService
+                    .getInteractionEvents(eventNames, this.interactionId)
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) => evts.forEach((evt) => this.processCustomerDetails(evt)));
             }
-        });
-
-        // listen to events only if opened in an interaction
-        if (this.interactionId && eventNames.length) {
-            this._tmacEventService
-                .getInteractionEvents(eventNames, this.interactionId)
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => evts.forEach((evt) => this.processCustomerDetails(evt)));
+        } catch (error) {
+            throwADError('Error in TwRegisterCallbackComponent', error);
         }
     }
 
@@ -239,21 +231,13 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             return;
         }
 
-        // check if customer info map is available in this event
-        for (const [key, value] of Object.entries(this.dataMap)) {
-            // split the value source
-            const valueSourceSplit = this.dataMap[key].ValueSource.split('.');
-            // check if the value source event name matches with the current event
-            if (valueSourceSplit[0] !== evt.EventName) {
-                return;
+        try {
+            // check if customer info map is available in this event
+            for (const [key, value] of Object.entries(this.dataMap)) {
+                this.dataMapValues[key] = extractJsonVal({ [evt.EventName]: evt }, this.dataMap[key].ValueSource) || this.dataMap[key].DefaultValue;
             }
-            // remove the event name from the array
-            valueSourceSplit.shift();
-            // map the property and get the value from event property
-            const valueMap = join(valueSourceSplit, '.');
-
-            // assign to the map
-            this.dataMapValues[key] = get(evt, valueMap, this.dataMap[key].DefaultValue);
+        } catch (error) {
+            console.error(error);
         }
     };
 

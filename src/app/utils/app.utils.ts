@@ -128,9 +128,23 @@ export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEve
  */
 export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
     // get the value from path or default value
-    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.DefaultValue, item.MaskData);
+    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) || item.DefaultValue, item.MaskData);
     // return value
     return item.Value;
+};
+
+export const extractJsonVal = (val: any, path: string) => {
+    return path.split('.').reduce((acc, curr) => {
+        if (!acc) {
+            acc = {};
+        }
+        try {
+            acc = JSON.parse(acc[curr]);
+        } catch (e) {
+            acc = acc[curr];
+        }
+        return acc;
+    }, val);
 };
 
 /**
@@ -193,21 +207,7 @@ export class ADError extends Error {
  *
  * @param msg
  */
-export const throwADError = (msg: string) => {
-    TUtils.Logger.error('AD Error', msg);
-    throw new ADError(msg);
-};
-
-export const extractJsonVal = (val: any, path: string) => {
-    return path.split('.').reduce((acc, curr) => {
-        if (!acc) {
-            acc = {};
-        }
-        try {
-            acc = JSON.parse(acc[curr]);
-        } catch (e) {
-            acc = acc[curr];
-        }
-        return acc;
-    }, val);
+export const throwADError = (msg: string, error: any) => {
+    TUtils.Logger.error(msg ?? 'Error in AD', error);
+    throw new ADError(error);
 };

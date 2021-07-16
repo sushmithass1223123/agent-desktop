@@ -1,10 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AgentStatusChangeEvent, IAgentData, IAUXCodes, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
-import { AgentStatusChangeEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 
+/**
+ * Aux codes components
+ */
 @Component({
     selector: 'tw-aux-codes',
     templateUrl: './tw-aux-codes.component.html',
@@ -15,7 +18,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Widget data
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<any, IWidgetData>;
     /**
      * AUX code menu opened falg
      */
@@ -57,18 +60,22 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        // get the widget extra data
-        const byTeam = this.data.Data.ByTeam || false;
-
         // register to event
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(byTeam, null).then((result: IResponse) => {
+        SDKClient.loadAUXCodes(this.data.Data.ByTeam ?? false, null).then((result) => {
             // check if the data is null
-            if (result.response && result.response.length > 0) {
+            if (result.response && result.response.length) {
+                // check for default Aux
+                result.response = result.response.map((aux) => {
+                    if (aux.Value === 110 && this.data.Data.DefaultLogout) {
+                        aux.Display = 1;
+                    }
+                    return aux;
+                });
                 // filter and assign the aux codes
-                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
+                this.auxCodesList = result.response;
             }
         });
 
@@ -85,7 +92,6 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
         // unregister from event
         SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
     }
@@ -97,6 +103,17 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         this.currentAux = evt.Status;
+        // if DefaultACW is enabled, then enable on call only
+        if (this.data.Data.DefaultACW) {
+            const index = this.auxCodesList.findIndex((a) => a.Value === 111);
+            if (index >= 0) {
+                if (evt.Status.includes('On Call')) {
+                    this.auxCodesList[index].Display = 1;
+                } else {
+                    this.auxCodesList[index].Display = 0;
+                }
+            }
+        }
     };
 
     /**
@@ -128,4 +145,19 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
             this._fuseProgressBarService.hide();
         });
     }
+}
+
+interface IWidgetData {
+    /**
+     * Load by team flag
+     */
+    ByTeam: boolean;
+    /**
+     * To show default ACW status
+     */
+    DefaultACW: boolean;
+    /**
+     * To show default Logout status
+     */
+    DefaultLogout: boolean;
 }

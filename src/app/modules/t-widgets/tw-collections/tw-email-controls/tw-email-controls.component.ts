@@ -462,7 +462,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.getInboxMessageReq.loading = false;
                 return;
             } else {
-                throwADError(msg);
+                throwADError('Error in TwEmailControlsComponent.setEmailDetails', msg);
             }
         }
 
@@ -783,20 +783,20 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // this._fuseProgressBarService.hide();
             ref.dismiss();
             if (!res.response) {
-                throwADError('Unexpected response from Server');
+                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
             }
             // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
             // Display the message in snackbar accordingly
             const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
             const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
             if (!reasonCodeMsg) {
-                throwADError('Unable to send email. Invalid Reason Code');
+                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Reason Code');
             }
             if (!currentStatusMsg) {
-                throwADError('Unable to send email. Invalid Current Status');
+                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Current Status');
             }
             if (reasonCodeMsg !== 'success') {
-                throwADError(`${reasonCodeMsg} [${res.response.SendStatus}]`);
+                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
             }
             if (btn) {
                 btn.disabled = false;
@@ -852,13 +852,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
                     const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
                     if (!reasonCodeMsg) {
-                        throwADError('Unable to send email. Invalid Reason Code');
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Reason Code');
                     }
                     if (!currentStatusMsg) {
-                        throwADError('Unable to send email. Invalid Current Status');
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Current Status');
                     }
                     if (reasonCodeMsg !== 'success') {
-                        throwADError(`${reasonCodeMsg} [${res.response.SendStatus}]`);
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
                     }
                     this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
                     this.draftPolling$?.unsubscribe();

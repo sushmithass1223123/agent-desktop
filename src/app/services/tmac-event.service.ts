@@ -1010,14 +1010,14 @@ export class TMACEventService {
      *
      * @param interactionId ID of the interaction
      */
-    getInteractionEventsArray(interactionId: number): any[] {
+    getInteractionEventsArray(interactionId: number): IUIEvent[] {
         return this._interactionEventArray.filter((i) => i.InteractionID === interactionId);
     }
 
     /**
      * To get all the existing non interaction events.
      */
-    getNonInteractionEventsArray(): any[] {
+    getNonInteractionEventsArray(): IUIEvent[] {
         return this._nonInteractionEventArray;
     }
 
@@ -1026,7 +1026,7 @@ export class TMACEventService {
      *
      * @param {Number} interactionId
      */
-    getAllEventsArray(interactionId?: number): any[] {
+    getAllEventsArray(interactionId?: number): IUIEvent[] {
         let events = [];
         if (interactionId) {
             events = this._interactionEventArray.filter((e) => e.InteractionID === interactionId);
@@ -1041,7 +1041,7 @@ export class TMACEventService {
      * @param {Number} interactionId
      * @returns
      */
-    getAllEventsArrayExcluded(eventNames: CustomTMACEventTypes[], interactionId?: number): any[] {
+    getAllEventsArrayExcluded(eventNames: CustomTMACEventTypes[], interactionId?: number): IUIEvent[] {
         return this.getAllEventsArray(interactionId).filter((e) => !eventNames.includes(e.EventName));
     }
 

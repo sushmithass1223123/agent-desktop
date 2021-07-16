@@ -432,14 +432,18 @@ mat-dialog-container {
             line-height: 2rem;
 
             .mat-icon {
-                color: #6c757d;
+                color: #757575;
 
                 &.available {
-                    color: #28a745;
+                    color: #4caf50;
                 }
 
                 &.logout {
                     color: #f44336;
+                }
+
+                &.acw {
+                    color: #ff9800;
                 }
             }
         }
