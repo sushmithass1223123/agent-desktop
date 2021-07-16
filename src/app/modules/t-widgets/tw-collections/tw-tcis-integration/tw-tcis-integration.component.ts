@@ -4,6 +4,7 @@ import { getStringVars } from '@tmac/operators';
 import { IUIEvent, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
+import { extractJsonVal } from 'app/utils';
 import { get } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
@@ -65,7 +66,8 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                 'GenericInteractionEvent',
                 'UUIDataEvent',
                 'CCLDataEvent',
-                'InteractionClosedEvent'
+                'InteractionClosedEvent',
+                'GenericInteractionEvent'
             ])
             .pipe(takeUntil(this.unsubscribeAll))
             // .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
@@ -120,20 +122,18 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
             const AgentData = SDKClient.getAgentData();
             return params.reduce((acc, curr) => {
                 const [prefix, tmacEvtName] = curr.split('.');
-                let TMACEvent = this._tmacEventService
-                    .getInteractionEventsArray(evt.InteractionID)
-                    .reverse()
-                    .find((e) => e.EventName === tmacEvtName);
-                if (TMACEvent?.EventName) {
-                    TMACEvent = {
-                        [TMACEvent.EventName]: TMACEvent
-                    };
-                }
+
                 if (prefix === 'AgentData') {
                     const val = get({ AgentData }, curr, '');
                     acc += `,${val}`;
                 } else if (prefix === 'TMACEvent') {
-                    const val = get({ TMACEvent }, curr, '');
+                    const TMACEvent = {
+                        [tmacEvtName]: this._tmacEventService
+                            .getInteractionEventsArray(evt.InteractionID)
+                            .reverse()
+                            .find((e) => e.EventName === tmacEvtName)
+                    };
+                    const val = extractJsonVal({ TMACEvent }, curr);
                     acc += `,${val}`;
                 } else {
                     const newParams = getStringVars(curr);

@@ -229,6 +229,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     allowQueueTransfer = false;
 
     /**
+     * Intersection observer ref
+     */
+    intersectionObserver: IntersectionObserver;
+
+    /**
      * Constructor
      */
     constructor(
@@ -264,7 +269,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     ngAfterViewInit(): void {
         // create an intersection observer to start/stop polling when page is active/inactive
-        const observer = new IntersectionObserver((entries) => {
+        this.intersectionObserver = new IntersectionObserver((entries) => {
             entries.map((entry) => {
                 if (entry.isIntersecting) {
                     this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
@@ -280,7 +285,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             });
         });
         // observe the element
-        observer.observe(this.emailWorkBench.nativeElement);
+        this.intersectionObserver.observe(this.emailWorkBench.nativeElement);
     }
 
     /**
@@ -289,6 +294,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        this.intersectionObserver?.disconnect();
     }
 
     // -----------------------------------------------------------------------------------------------------
