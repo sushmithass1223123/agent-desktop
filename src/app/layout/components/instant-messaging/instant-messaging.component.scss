@@ -203,6 +203,7 @@ instant-messaging {
 
                     .message {
                         white-space: pre-wrap;
+                        word-wrap: normal;
                         line-height: 1.2;
                     }
 
@@ -375,15 +376,14 @@ instant-messaging {
                     }
                 }
             }
-            
+
             mat-form-field:not(.mat-form-field-disabled) {
                 .mat-form-field-wrapper {
                     .mat-form-field-flex {
                         .mat-form-field-infix {
-                            @include mat.elevation(2);     
-                        }  
+                            @include mat.elevation(2);
+                        }
                     }
-
                 }
             }
 
