@@ -1,7 +1,7 @@
 // import { SelectionModel } from '@angular/cdk/collections';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,7 +22,7 @@ import {
     SDKClient
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ChatTranscripts, CreateEmailInput, IWidget, ResData } from 'app/interfaces';
+import { CreateEmailInput, IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
@@ -119,11 +119,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         loading: false,
         data: null
     };
-
-    /**
-     * Interaction transcripts
-     */
-    interactionTranscripts = {};
 
     /**
      * Default customer name
@@ -287,6 +282,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Reduced records
      */
     reducedRecords: Record<string, InteractionHistory[]> = {};
+
+    chatTranscripts = [];
 
     /**
      *
@@ -507,18 +504,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     processHistoryData(historyData: InteractionHistory[], update?: boolean): void {
         const tableData: Record<string, IHRecord> = {};
         let sortedTabledata = [];
-
-        // try {
-        //     console.log(this.groupTable(historyData, 'GroupID', 'InteractionDate', 'SessionID', 'InteractionDate'));
-        // } catch (e) {
-        //     console.error(e);
-        // }
-
-        if (update) {
-            sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(historyData as any[]), 'ItemID').reverse();
-        } else {
-            sortedTabledata = sortBy(historyData, 'ItemID').reverse();
-        }
+        sortedTabledata = sortBy(historyData, 'ItemID').reverse();
         sortedTabledata.forEach((data) => {
             if (!(data.InteractionDate instanceof Date)) {
                 data.InteractionDate = parse(data.InteractionDate, 'dd/M/yyyy HH:mm:ss', new Date());
@@ -571,93 +557,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 };
             }
         });
-        const transcriptsFromSessionID = (acc, curr) => {
-            const [key, val] = curr;
-            acc[key] =
-                val.map((data) => {
-                    let msg: any;
-                    try {
-                        msg = JSON.parse(data.InteractionText);
-                    } catch (e) {
-                        msg = {
-                            type: 'text',
-                            message: data.InteractionText
-                        };
-                    }
-                    return {
-                        who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
-                        isAgent: data.Direction === 'Out',
-                        message: msg,
-                        time: data.InteractionDate,
-                        type: data.SubType,
-                        messageId: data.ItemID
-                    };
-                }) || [];
 
-            return acc;
-        };
-        const transcriptsFromGroupID = (acc, curr) => {
-            const [key, val] = curr;
-            let message: any;
-            try {
-                message = JSON.parse(val.InteractionText);
-            } catch (e) {
-                message = {
-                    type: 'text',
-                    message: val.InteractionText
-                };
-            }
-            acc[key] = [
-                {
-                    who: val.Direction === 'Out' ? val.AgentName : this.defaultCustomerName,
-                    isAgent: val.Direction === 'Out',
-                    message,
-                    time: val.InteractionDate,
-                    type: val.SubType,
-                    messageId: val.ItemID
-                }
-            ];
-            acc[key] = acc[key].concat(
-                val.Children.map((data) => {
-                    let msg: any;
-                    try {
-                        msg = JSON.parse(data.InteractionText);
-                    } catch (e) {
-                        msg = {
-                            type: 'text',
-                            message: data.InteractionText
-                        };
-                    }
-                    return {
-                        who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
-                        isAgent: data.Direction === 'Out',
-                        message: msg,
-                        time: data.InteractionDate,
-                        type: data.SubType,
-                        messageId: data.ItemID
-                    };
-                }) || []
-            );
-            return acc;
-        };
-        // assign the transcripts
-        // this.interactionTranscripts = Object.entries(groupBy(sortedTabledata, 'GroupID')).reduce(transcriptsFromGroupID, {});
-        this.interactionTranscripts = Object.entries(groupBy(sortedTabledata, 'SessionID')).reduce(transcriptsFromSessionID, {});
         // order table data by received date
         if (!this.customerJourneyTable.tableData.source.data) {
             this.customerJourneyTable.tableData.source.data = [];
         }
+
         const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']);
-
-        // const newRecords = this.groupTable(
-        //     (this.customerJourneyTable.tableData.source.data || []).concat(historyData),
-        //     'GroupID',
-        //     'InteractionDate',
-        //     'SessionID',
-        //     'InteractionDate'
-        // );
-
-        this.customerJourneyTable.tableData.source.data = newRecords;
+        this.customerJourneyTable.tableData.source.data = this.customerJourneyTable.tableData.source.data.concat(newRecords);
         const lastEl = sortedTabledata.slice(-1) || [];
         this.customerJourneyTable.lastId = lastEl[0]?.LastID?.toString();
         this.customerJourneyTable.loading = false;
@@ -860,7 +767,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         const onSuccess = (res: any) => {
             if (!res.response) {
                 this._appUIService.showSnackbar('Unable to fetch email', 'failure');
-                throwADError('Unable to load Email');
+                throwADError('Error in TwCustomerJourneyComponent.showEmailThread', 'Unable to load Email');
                 return;
             }
             // check if attachements are there
@@ -936,9 +843,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 break;
             }
             case 'Transcripts': {
-                // if (typeof this.interactionTranscripts === 'string') {
-                //     this.interactionTranscripts = JSON.parse(this.interactionTranscripts);
-                // }
+                this.chatTranscripts = row.Children.map(this.formatTranscript).concat(this.formatTranscript(row)).reverse();
                 break;
             }
             case 'Comments': {
@@ -954,7 +859,32 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
         }
     }
-    //  this.groupTable(historyData, 'GroupID', 'InteractionDate', 'SessionID', 'InteractionDate')
+
+    /**
+     * To format transcript
+     *
+     * @param {IHRecord} data
+     * @returns
+     */
+    private formatTranscript = (data: IHRecord) => {
+        let msg: any = data.InteractionText.replace(/^T\[.*?]:/, '');
+        try {
+            msg = JSON.parse(msg);
+        } catch (e) {
+            msg = {
+                type: 'text',
+                message: msg
+            };
+        }
+        return {
+            who: data.Direction === 'Out' ? data.AgentName : this.defaultCustomerName,
+            isAgent: data.Direction === 'Out',
+            message: msg,
+            time: data.InteractionDate,
+            type: data.SubType,
+            messageId: data.ItemID
+        };
+    };
 
     /**
      * Groups table data

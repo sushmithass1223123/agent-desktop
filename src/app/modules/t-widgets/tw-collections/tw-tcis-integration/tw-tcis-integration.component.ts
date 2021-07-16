@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { getStringVars } from '@tmac/operators';
-import { IUIEvent, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
+import { IUIEvent, SDKClient, SignalRWrapper, TMACEventTypes, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { extractJsonVal } from 'app/utils';
-import { get } from 'lodash';
+import { get, uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -13,8 +13,8 @@ import { takeUntil } from 'rxjs/operators';
  */
 @Component({
     selector: 'tw-tcis-integration',
-    templateUrl: './tw-tcis-integration.component.html',
-    styleUrls: ['./tw-tcis-integration.component.scss'],
+    template: 'Tw Tcis Integration Component',
+    styles: [],
     encapsulation: ViewEncapsulation.None
 })
 export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit, OnDestroy {
@@ -43,34 +43,17 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
         // assign the data
         this.WidgetData = this.data.Data;
-
+        const eventNames = uniq(this.WidgetData.Actions.map((a) => a.EventName) ?? []);
+        if (!eventNames.length) {
+            TUtils.Logger.warn(`TwTcisIntegration: no action events specified, ignore process!`);
+            return;
+        }
         // listen to tmac events
         this._tmacEventService
-            .getInteractionEventsByName([
-                'IncomingCallEvent',
-                'OutgoingCallEvent',
-                'CallConnectedEvent',
-                'CallerIntentEvent',
-                'CallDisconnectedEvent',
-                'TextChatIncomingEvent',
-                'TextChatRemoteUserConnectedEvent',
-                'TextChatDisconnectedEvent',
-                'IncomingEmailEvent',
-                'OutgoingEmailEvent',
-                'FaxReceivedEvent',
-                'SMSIncomingEvent',
-                'SMSOutgoingEvent',
-                'GenericInteractionEvent',
-                'UUIDataEvent',
-                'CCLDataEvent',
-                'InteractionClosedEvent',
-                'GenericInteractionEvent'
-            ])
+            .getInteractionEventsByName(eventNames)
             .pipe(takeUntil(this.unsubscribeAll))
-            // .subscribe(evts => evts.forEach(evt => this[evt.EventName](evt)));
             .subscribe((evts) =>
                 evts.forEach((evt: IUIEvent) => {
                     // check if recovery event, then return
@@ -78,37 +61,74 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                         return;
                     }
 
-                    // get the action based on event name
-                    const action = this.WidgetData.Actions.filter((a) => a.EventName === evt.EventName)?.[0];
-                    // if no action return
-                    if (!action) {
-                        TUtils.Logger.warn(`TwTcisIntegration: no action specified for ${evt.EventName}, ignore process!`);
-                        return;
-                    }
-
-                    let args = '';
-                    // check if any action to be executed on this event
-                    if (action.EventName === evt.EventName) {
-                        if (action.Parameters && action.Parameters.length) {
-                            args = this.reduceParams(action.Parameters, evt);
+                    // execute action for this event and channel
+                    this.WidgetData.Actions.forEach((action) => {
+                        if (action.EventName === evt.EventName) {
+                            let args = '';
+                            // check if any action to be executed on this event
+                            if (action.EventName === evt.EventName && this.matchChannel(evt, action.Channel)) {
+                                if (action.Parameters && action.Parameters.length) {
+                                    args = this.reduceParams(action.Parameters, evt);
+                                }
+                                // execute action
+                                this.executeAction(action.Method, action.ExeName, (args || ',').slice(1));
+                            }
                         }
-                        // execute action
-                        this.executeAction(action.Method, action.ExeName, (args || ',').slice(1));
-                    }
+                    });
                 })
             );
 
         // check if Urls provided
         if (this.WidgetData.Urls.length) {
-            // create a signalR wrapper
             this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub);
-
-            // register to hub events
             this.registerHubEvents();
-
-            // connect to the server
             this._signalrWrapper.connect();
         }
+    }
+
+    /**
+     * On Destroy.
+     */
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+    }
+
+    /**
+     * To match channel
+     *
+     * @param {IUIEvent} evt
+     * @param {TChannels} channel
+     * @returns
+     */
+    private matchChannel(evt: IUIEvent, channel: TChannels): boolean {
+        try {
+            if (!channel) {
+                TUtils.Logger.warn(`TwTcisIntegration.matchChannel: channel is not provided for action event ${evt.EventName}, ignore process!`);
+                return;
+            }
+            // get the construct event of this action event
+            const event = this._tmacEventService.getInteractionEventsArray(evt.InteractionID).filter((e) => e.IsInteractionConstructEvent)?.[0];
+            // if event is found the match it with the channel construct event
+            if (event) {
+                switch (channel.toLowerCase()) {
+                    case 'chat':
+                        return event.EventName === 'TextChatIncomingEvent';
+                    case 'email':
+                        return event.EventName === 'IncomingEmailEvent' || event.EventName === 'OutgoingEmailEvent';
+                    case 'fax':
+                        return event.EventName === 'FaxReceivedEvent';
+                    case 'generic':
+                        return event.EventName === 'GenericInteractionEvent';
+                    case 'sms':
+                        return event.EventName === 'SMSIncomingEvent' || event.EventName === 'SMSOutgoingEvent';
+                    case 'voice':
+                        return event.EventName === 'IncomingCallEvent' || event.EventName === 'OutgoingCallEvent';
+                }
+            }
+        } catch (error) {}
+        TUtils.Logger.warn(`TwTcisIntegration.matchChannel: no matching construct event for ${evt.EventName} and channel ${channel}!`);
+        return false;
     }
 
     /**
@@ -159,14 +179,6 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * On Destroy.
-     */
-    ngOnDestroy(): void {
-        // call the wrapper destroy method
-        this.destroyWrapper();
-    }
-
-    /**
      * To register hub events
      */
     private registerHubEvents(): void {}
@@ -175,20 +187,22 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
      * Method to execute action to invoke the server
      */
     private executeAction(exeName: string, method: string, params: string): void {
-        TUtils.Logger.console('info', `TwTcisIntegrationComponent.executeAction: ${exeName} - ${method} - ${params}`);
+        TUtils.Logger.console('info', `TwTcisIntegrationComponent.executeAction: ${exeName} - ${method} - ${params.length}`);
         // check if exeName/method
         if (!exeName || !method) {
-            TUtils.Logger.warn('TCIS: exeName|method not found');
+            TUtils.Logger.warn('TwTcisIntegrationComponent.executeAction: exeName|method not found');
             return;
         }
         // check if connection exists
         if (this._signalrWrapper?.isConnected()) {
             this._signalrWrapper.hub.invoke(exeName, method, params, false);
         } else {
-            TUtils.Logger.warn('TCIS: Signalr Connection to the server is not available');
+            TUtils.Logger.warn('TwTcisIntegrationComponent.executeAction: Signalr Connection to the server is not available');
         }
     }
 }
+
+type TChannels = 'voice' | 'chat' | 'email' | 'fax' | 'sms' | 'generic';
 
 interface WidgetData {
     /**
@@ -204,9 +218,13 @@ interface WidgetData {
      */
     Actions: {
         /**
+         * Channel to match
+         */
+        Channel: TChannels;
+        /**
          * On which event the action to be executed
          */
-        EventName: string;
+        EventName: TMACEventTypes;
         /**
          * Parameters for actions
          */

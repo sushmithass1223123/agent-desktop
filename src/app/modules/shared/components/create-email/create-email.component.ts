@@ -21,8 +21,7 @@ import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import tinymce, { Editor } from 'tinymce';
-import tinyMCE from 'tinymce';
+import { default as tinymce, default as tinyMCE, Editor } from 'tinymce';
 
 /**
  * Email creation component view only
@@ -88,6 +87,9 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     @Input() sendDisabled? = false;
 
+    /**
+     * Hidden fileds ref
+     */
     @Input() hiddenFields?: Array<'To' | 'Subject'>;
 
     /**
@@ -293,7 +295,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         SDKClient.getFrequentEmailAddressList()
             .then((res) => {
                 if (!res.response) {
-                    throwADError('Unexpected response from server');
+                    throwADError('Error in CreateEmailComponent.addUserSuggestions', 'Unexpected response from server');
                 }
                 this.allUsers = res.response;
             })

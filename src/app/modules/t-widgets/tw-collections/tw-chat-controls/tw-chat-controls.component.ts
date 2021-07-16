@@ -1083,6 +1083,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
+        let templateId = template?.ID ?? '';
         const attachment = template?.Attachment ?? null;
         const type = template?.Type ? 'attachment' : 'text';
 
@@ -1121,7 +1122,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 templateId: template?.ID ?? '',
                 attachment
             };
-
+            // template Id is added to the json so clear it
+            templateId = '';
             // stringy the json
             messageData = JSON.stringify(jsonMessage);
         } else if (attachment && this.isSMM) {
@@ -1133,17 +1135,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 _attachmentPreviewId: '',
                 _attachmentSize: attachment.size
             });
+            // do not send template id for SMM
+            templateId = '';
         }
         this.replyingToMessage = null;
 
-        this.sendTextChat(messageData, messageId, template?.ID ?? '');
+        this.sendTextChat(messageData, messageId, templateId);
 
         // Add the message to the chat
         this.pushToTranscript({
             ...message,
             messageToServer: {
                 message: messageData,
-                templateId: template?.ID ?? ''
+                templateId
             }
         });
 

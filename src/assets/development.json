@@ -74,7 +74,9 @@
                                     "Status": true,
                                     "AuxCodes": {
                                         "Enabled": true,
-                                        "ByTeam": true
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
                                     }
                                 }
                             },
@@ -86,7 +88,9 @@
                                     "Enabled": false
                                 },
                                 "Data": {
-                                    "ByTeam": false
+                                    "ByTeam": false,
+                                    "DefaultACW": false,
+                                    "DefaultLogout": false
                                 }
                             },
                             {
@@ -97,7 +101,8 @@
                                     "Enabled": true
                                 },
                                 "Data": {
-                                    "LogoutAux": "logout"
+                                    "LogoutAux": "logout",
+                                    "AllowLogoutOnOpenInteractions": false
                                 }
                             },
                             {
@@ -1961,12 +1966,6 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
-                                                            "Title": "Channel",
-                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
-                                                            "Unit": "",
-                                                            "DefaultValue": "yoyoyo"
-                                                        },
-                                                        {
                                                             "Title": "Queue time",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
                                                             "Unit": "s",
@@ -3620,11 +3619,27 @@
                         "Hub": "AgentPopUpHub",
                         "Actions": [
                             {
-                                "EventName": "TextChatDisconnectedEvent",
+                                "EventName": "CCLDataEvent",
+                                "Channel": "chat",
                                 "Parameters": [
                                     "TMACEvent.TextChatIncomingEvent.UCID",
-                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                     "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                    "AgentData.agentId",
+                                    "AgentData.deviceId",
+                                    "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.TextChatIncomingEvent.PhoneNumber}&agentId=${AgentData.agentId}",
+                                    "rawtext"
+                                ],
+                                "Method": "RunCustomApplication",
+                                "ExeName": "AgentPopUp"
+                            },
+                            {
+                                "EventName": "CCLDataEvent",
+                                "Channel": "voice",
+                                "Parameters": [
+                                    "TMACEvent.TextChatIncomingEvent.UCID",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                     "AgentData.agentId",
                                     "AgentData.deviceId",
                                     "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.TextChatIncomingEvent.PhoneNumber}&agentId=${AgentData.agentId}",

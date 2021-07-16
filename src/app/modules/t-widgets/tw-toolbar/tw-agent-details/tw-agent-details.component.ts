@@ -1,8 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { AgentSettingsUpdatedEvent, AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
+import { TMACEventService } from '@services/tmac-event.service';
+import { AgentStatusChangeEvent, AUXCodeUpdateEvent, IAgentData, IAUXCodes, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
+import { throwADError } from 'app/utils';
+import { takeUntil } from 'rxjs/operators';
 /**
  * Agent Details component
  */
@@ -16,7 +20,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * App confif widget data
      */
-    @Input() data: any;
+    @Input() data: IWidget<any, IWidgetData>;
 
     /**
      * Agent Data
@@ -32,18 +36,9 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      */
     auxOpened: boolean;
     /**
-     * Aux code config
+     * Aux codes config
      */
-    auxCodeConfig: {
-        /**
-         * Enabled flag
-         */
-        Enabled: boolean;
-        /**
-         * Load by team flag
-         */
-        ByTeam: boolean;
-    };
+    auxCodeConfig: IAuxCodeConfig;
     /**
      * AUX code list with default data
      */
@@ -58,7 +53,11 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         }
     ];
 
-    constructor(private _fuseProgressBarService: FuseProgressBarService, private _appUIService: AppUiService) {
+    constructor(
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _appUIService: AppUiService,
+        private _tmacEventService: TMACEventService
+    ) {
         super();
     }
 
@@ -70,24 +69,43 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         this.initWrapper(this.data);
 
         // get the widget extra data
-        this.auxCodeConfig = this.data.Data.AuxCodes || {};
+        this.auxCodeConfig = this.data.Data.AuxCodes || {
+            Enabled: false,
+            ByTeam: false,
+            DefaultACW: false,
+            DefaultLogout: false
+        };
 
         // get agent details
         this.agentData = SDKClient.getAgentData();
 
         // register to events
-        SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
-        SDKClient.events.on('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
-        SDKClient.events.on('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
+        this._tmacEventService
+            .getNonInteractionEvents(['AgentStatusChangeEvent', 'AUXCodeUpdateEvent', 'AgentSettingsUpdatedEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // get agent aux codes
-        SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null).then((result: IResponse) => {
-            // check if the data is null
-            if (result.response && result.response.length > 0) {
+        SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null)
+            .then((result) => {
+                if (!result.response || !result.response.length) {
+                    return;
+                }
+
+                // check for default Aux
+                result.response = result.response.map((aux) => {
+                    if (aux.Value === 110 && this.auxCodeConfig.DefaultLogout) {
+                        aux.Display = 1;
+                    }
+                    return aux;
+                });
+
                 // filter and assign the aux codes
-                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
-            }
-        });
+                this.auxCodesList = result.response;
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar('Error in loading aux codes', 'failure');
+            });
     }
 
     /**
@@ -96,11 +114,6 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        // unregister from events
-        SDKClient.events.off('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
-        SDKClient.events.off('AUXCodeUpdateEvent', this.AUXCodeUpdateEvent);
-        SDKClient.events.off('AgentSettingsUpdatedEvent', this.AgentSettingsUpdatedEvent);
     }
 
     /**
@@ -108,16 +121,25 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param {AgentStatusChangeEvent} evt
      */
-    private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
+    AgentStatusChangeEvent(evt: AgentStatusChangeEvent): void {
         this.agentData.agentStatus = evt.Status;
-    };
+        // if DefaultACW is enabled, then enable on call only
+        if (this.auxCodeConfig.DefaultACW) {
+            const index = this.auxCodesList.findIndex((a) => a.Value === 111);
+            if (index >= 0) {
+                if (evt.Status.includes('On Call')) {
+                    this.auxCodesList[index].Display = 1;
+                } else {
+                    this.auxCodesList[index].Display = 0;
+                }
+            }
+        }
+    }
 
     /**
      * To process AgentSettingsUpdatedEvent
-     *
-     * @param {AgentSettingsUpdatedEvent} evt
      */
-    private AgentSettingsUpdatedEvent = (evt: AgentSettingsUpdatedEvent) => {
+    AgentSettingsUpdatedEvent(): void {
         this._appUIService.showAppSnackbar({
             message: 'Agent setting has been updated!',
             state: 'success',
@@ -126,14 +148,14 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
         // update the agent data
         this.agentData = SDKClient.getAgentData();
-    };
+    }
 
     /**
      * To process AUXCodeUpdateEvent
      *
      * @param {AUXCodeUpdateEvent} evt
      */
-    AUXCodeUpdateEvent = (evt: AUXCodeUpdateEvent) => {
+    AUXCodeUpdateEvent(evt: AUXCodeUpdateEvent): void {
         // update the aux codes
         this.auxCodesList = evt.AUXCodes;
         // show an alert
@@ -141,7 +163,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
             message: 'Aux Codes reloaded successfully',
             state: 'success'
         });
-    };
+    }
 
     /**
      * To change agent status
@@ -172,4 +194,38 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
             })
             .finally(() => this._fuseProgressBarService.hide());
     }
+}
+
+interface IWidgetData {
+    /**
+     * To show profile picture
+     */
+    ProfilePicture: boolean;
+    /**
+     * To show agent status
+     */
+    Status: boolean;
+    /**
+     * Auxcodes ref
+     */
+    AuxCodes: IAuxCodeConfig;
+}
+
+interface IAuxCodeConfig {
+    /**
+     * Enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Load by team flag
+     */
+    ByTeam: boolean;
+    /**
+     * To show default ACW status
+     */
+    DefaultACW: boolean;
+    /**
+     * To show default Logout status
+     */
+    DefaultLogout: boolean;
 }

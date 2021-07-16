@@ -530,7 +530,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 .pipe(
                     map((res: any) => {
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
-                            throwADError(`Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`);
+                            throwADError(
+                                'Error in WorkbenchEmailComponent.doAdvancedSearch',
+                                `Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`
+                            );
                         }
                         const mails = res.map((x) => x.result || []).flat();
                         return maps[this.currentTab](mails);
@@ -726,14 +729,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 if (fetchFromOutbox) {
                     res = (await SDKClient.getOutboxEmail(requestedSession)).response;
                     if (!res) {
-                        throwADError('Unexpected Response from server');
+                        throwADError('Error in WorkbenchEmailComponent.getOutboxEmail', 'Unexpected Response from server');
                     }
                     res.InSessionId = res.InSessionID;
                     res.OutSessionId = res.SessionID;
                 } else {
                     res = (await SDKClient.getInboxEmail(requestedSession)).response;
                     if (!res) {
-                        throwADError('Unexpected Response from server');
+                        throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
                     }
                     res.InSessionId = res.SessionID;
                     res.OutSessionId = '';

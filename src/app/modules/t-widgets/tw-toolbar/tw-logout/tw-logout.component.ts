@@ -2,8 +2,9 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { TWidgetWrapper } from '@twidgets/utils';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils';
+import { IWidget } from 'app/interfaces';
 
 /**
  * Logout button component
@@ -18,12 +19,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * App config json data
      */
-    @Input() data: any;
-
-    /**
-     * Logout Aux
-     */
-    logoutAux = '';
+    @Input() data: IWidget<any, IWidgetData>;
     /**
      * Can logout flag
      */
@@ -40,14 +36,15 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
+        // set defaults
+        this.data.Data = {
+            LogoutAux: '',
+            AllowLogoutOnOpenInteractions: true,
+            ...this.data.Data
+        };
         // listen for agent status change event
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
-
-        // assign the logout aux if any
-        this.logoutAux = this.data.Data.LogoutAux || '';
-        this.canLogout = this.logoutAux === '';
-
+        this.canLogout = !(this.data.Data.LogoutAux ?? '');
         // initial check
         this.findLogoutAux();
     }
@@ -78,19 +75,22 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     private findLogoutAux(): void {
         // check if logout aux provided
-        if (!this.logoutAux) {
+        if (!this.data.Data.LogoutAux) {
             return;
         }
 
-        // get the logout code from aux codes list
-        const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter((a: IAUXCodes) => a.Name === SDKClient.getAgentData().agentStatus)?.[0];
-
-        // check if the logout aux matches
-        if (auxItem?.Code === this.logoutAux) {
-            this.canLogout = true;
-        } else {
-            this.canLogout = false;
-        }
+        try {
+            // get the logout code from aux codes list
+            const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter(
+                (a: IAUXCodes) => a.Name === SDKClient.getAgentData().agentStatus
+            )?.[0];
+            // check if the logout aux matches
+            if (auxItem?.Code === this.data.Data.LogoutAux) {
+                this.canLogout = true;
+            } else {
+                this.canLogout = false;
+            }
+        } catch (error) {}
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -100,6 +100,12 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * To logout user from TMAC
      */
     logout(): void {
+        //
+        if (!this.data.Data.AllowLogoutOnOpenInteractions && SDKClient.getInteractions().length) {
+            this._appUIService.showSnackbar('Please complete the interaction before logging out!', 'failure');
+            return;
+        }
+
         // confirm logout
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
@@ -133,4 +139,15 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             }
         });
     }
+}
+
+interface IWidgetData {
+    /**
+     * Logout aux
+     */
+    LogoutAux: string;
+    /**
+     * Flag to allow logout on open tabs
+     */
+    AllowLogoutOnOpenInteractions: boolean;
 }
