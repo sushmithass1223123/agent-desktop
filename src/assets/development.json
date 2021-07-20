@@ -1966,6 +1966,12 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
+                                                            "Title": "Channel",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                                            "Unit": "",
+                                                            "DefaultValue": "yoyoyo"
+                                                        },
+                                                        {
                                                             "Title": "Queue time",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
                                                             "Unit": "s",
@@ -3638,6 +3644,7 @@
                                 "Channel": "voice",
                                 "Parameters": [
                                     "TMACEvent.TextChatIncomingEvent.UCID",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                     "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
                                     "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                     "AgentData.agentId",

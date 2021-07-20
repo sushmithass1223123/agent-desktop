@@ -1,75 +1,17 @@
 <tw-wrapper [data]="data">
     <div class="w-100-p bg-inherit mat-table-container custom-scroll-adjust h-100-p">
-        <mat-table matSort [dataSource]="dataSource" matSortActive="CallsInQueue" matSortDirection="desc"
-            matSortDisableClear>
-            <ng-container matColumnDef="SkillName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="40">
-                    <span> Skill Name </span>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="40"> {{ row.SkillName }} </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="AgentsStaffed">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="widgetData.SLEnabled ? '15' : '20'">
-                    <span> Stf </span>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="widgetData.SLEnabled ? '15' : '20'"> {{ row.AgentsStaffed }}
-                </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="AgentAvailable">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="widgetData.SLEnabled ? '15' : '20'">
-                    <span> Avl </span>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="widgetData.SLEnabled ? '15' : '20'"> {{ row.AgentAvailable }}
-                </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="CallsInQueue">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [fxFlex]="widgetData.SLEnabled ? '15' : '20'">
-                    <span> CIQ </span>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row" [fxFlex]="widgetData.SLEnabled ? '15' : '20'"> {{ row.CallsInQueue }}
-                </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="ServiceLevel">
-                <mat-header-cell *matHeaderCellDef mat-sort-header fxFlex="15"> <span> SL % </span> </mat-header-cell>
-                <mat-cell *matCellDef="let row" fxFlex="15" [ngStyle]="{
-                        'background-color': row.BCMSData && getSLBgColor(row.BCMSData.SLPercentage),
-                        color: row.BCMSData && getSLFontColor(row.BCMSData.SLPercentage)
-                    }">
-                    {{ row.BCMSData ? row.BCMSData?.SLPercentage + '%' : 'NA' }}
-                </mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-        </mat-table>
-
-        <p *ngIf="dataSource.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+        <ad-table></ad-table>
+        <img *ngIf="widgetData.Role === 'agent'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
     </div>
-
-    <img *ngIf="widgetData.Role === 'agent'" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
-
-    <!-- <div class="w-100-p h-100-p custom-scroll">
-        <div class="record p-8" *ngFor="let item of getInteractionHistoryDemo()">
-            <div class="card">
-                <div class="date-circle">
-                    <div class="date">
-                        {{ item.date | date: 'dd' }}
-                    </div>
-                </div>
-                <div class="connector"></div>
-                <div class="record-details">
-                    <div>{{ item.date | date: 'shortDate' }}</div>
-                    <div>{{ item.type }} - {{ item.date | date: 'shortTime' }}</div>
-                    <div>{{ item.name }}</div>
-                    <div class="indicators">
-                        <mat-icon>add</mat-icon>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
 </tw-wrapper>
+
+<ng-template #customServiceLevelCell let-row="record">
+    <div
+        [ngStyle]="{
+            'background-color': row.BCMSData && getSLBgColor(row.BCMSData.SLPercentage),
+            color: row.BCMSData && getSLFontColor(row.BCMSData.SLPercentage)
+        }"
+    >
+        {{ row.BCMSData ? row.BCMSData?.SLPercentage + '%' : 'NA' }}
+    </div>
+</ng-template>

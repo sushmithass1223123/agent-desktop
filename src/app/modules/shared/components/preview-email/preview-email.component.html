@@ -7,7 +7,7 @@
         <ng-container>
             <div
                 id="subject"
-                *ngIf="email.Subject"
+                *ngIf="email?.Subject"
                 class="twd-text-xl twd-flex twd-justify-between twd-p-2"
                 mat-ripple
                 (click)="emailHeader.scrollTop = 0; _internal.headerCollapsed = !_internal.headerCollapsed"
@@ -15,7 +15,7 @@
                 <span
                     class="twd-flex-1 twd-max-w-11/12 twd-text-left"
                     [ngClass]="{ 'twd-truncate': _internal.headerCollapsed }"
-                    [innerHtml]="email.Subject || 'Subject: NA'"
+                    [innerHtml]="email?.Subject || 'Subject: NA'"
                 ></span>
                 <span class="twd-p-1">
                     <mat-icon>
@@ -23,7 +23,7 @@
                     </mat-icon>
                 </span>
             </div>
-            <ng-container *ngIf="!email.Subject && loading">
+            <ng-container *ngIf="!email?.Subject && loading">
                 <skeleton class="twd-opacity-60 twd-w-6/12 twd-m-3"> </skeleton>
             </ng-container>
         </ng-container>
@@ -39,7 +39,7 @@
             <div
                 id="attachmentList"
                 class="twd-text-left twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list"
-                *ngIf="!loading && email.Files && email.Files.length && email.Files as attachments"
+                *ngIf="!loading && email?.Files && email?.Files.length && email?.Files as attachments"
             >
                 <button
                     *ngFor="let file of attachments | slice: 0:2"

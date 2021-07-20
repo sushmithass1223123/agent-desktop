@@ -1,8 +1,6 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
+import { TableComponent } from '@modules/shared/components';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -28,24 +26,11 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * App config json data
      */
     @Input() data: any;
-
-    /**
-     * Table Sort ref
-     */
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-    /**
-     * Table Paginator ref
-     */
-    @ViewChild(MatPaginator)
-    set paginator(value: MatPaginator) {
-        this.interactionDetailsTable.source.paginator = value;
-    }
 
     /**
      * Widget Maximized status
@@ -82,12 +67,9 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     };
 
     /**
-     * Interaction Details table data
+     * Ad table's component ref
      */
-    interactionDetailsTable = {
-        source: new MatTableDataSource([]),
-        columns: ['Channel', 'AverageHandleTime', 'Transfer', 'Conference']
-    };
+    @ViewChild(TableComponent) table: TableComponent;
 
     constructor(private _tmacEventService: TMACEventService) {
         super();
@@ -123,6 +105,15 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     }
 
     /**
+     * Life cycle hook
+     */
+    ngAfterViewInit(): void {
+        if (this.widgetData.Type === 'grid') {
+            this.setupADTable();
+        }
+    }
+
+    /**
      * Lifecycle hook
      * @method
      */
@@ -132,14 +123,37 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     }
 
     /**
+     * Sets up table data
+     */
+    setupADTable(): void {
+        const iconMap = {
+            voice: 'phone',
+            textchat: 'chat',
+            audiochat: 'wifi_calling_3',
+            videochat: 'duo',
+            sms: 'sms',
+            email: 'email',
+            emc: 'email'
+        };
+        this.table.config = {
+            Channel: { value: (el: any) => iconMap[el.Channel?.toLowerCase()] || 'feed' },
+            AverageHandleTime: {
+                title: 'AHT'
+            },
+            Transfer: {},
+            Conference: {}
+        };
+        this.table.columns = ['Channel', 'AverageHandleTime', 'Transfer', 'Conference'];
+        this.table.sort = true;
+    }
+
+    /**
      * AgentChannelListEvent handler
      * @param {CustomSDKEvent} evt
      */
     private AgentChannelListEvent(evt: CustomSDKEvent): void {
         this.interactionList = evt.Data.Channels;
-        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
-        this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.paginator = this.paginator;
+        this.table.source.data = this.interactionList;
     }
 
     /**
