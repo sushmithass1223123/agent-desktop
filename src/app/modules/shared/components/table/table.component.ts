@@ -1,46 +1,58 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 
-type Generic = string | number;
+type GenericLabel<T, K> = K | ((el: T) => K);
 
-export type TableCellConfig =
-    | Generic
+type Icon = { name?: string; only?: boolean; color?: 'warn' | 'primary' | 'accent'; prefixed?: boolean };
+
+export type TableConfig<T = any> =
     | {
           /**
            * Json key of the record
            */
-          key: Generic;
+          title?: string;
+          type?: 'string';
+          value?: (el: T) => string;
+          icon?: GenericLabel<T, Icon>;
+          tooltip?: boolean;
+          truncate?: boolean;
+          uppercase?: boolean;
+          searchable?: boolean;
+          width?: string;
+          custom?: TemplateRef<any>;
+      }
+    | {
+          /**
+           * Json key of the record
+           */
+          title?: string;
           /**
            * Type of the cell
            */
-          type: 'string' | 'date' | 'icon' | 'html';
-
+          type: 'date';
+          value?: (el: T) => string;
+          tooltip?: boolean;
+          width?: string;
+          truncate?: boolean;
+          searchable?: boolean;
+      }
+    | {
           /**
-           * Display name of the cell header
+           * Json key of the record
            */
-          displayName?: Generic;
-
+          title?: string;
           /**
-           * Icon applied to the row (not header) cell
+           * Type of the cell
            */
-          icon?: string;
-          /**
-           * When enabled, only the icon is shown in the mat row cell's (not header)  content
-           */
-          iconOnly?: boolean;
-          /**
-           * Shows full text in the child row's cell (not header)
-           */
-          doNotTruncate?: boolean;
-          /**
-           * When enabled, doesnt render the tooltip for the Mat row cell (not header)
-           */
-          hideTooltip?: boolean;
+          type: 'controls';
+          width?: string;
+          value?: GenericLabel<T, { title: string; icon: string }[]>;
+          tooltip?: boolean;
+          truncate?: boolean;
       };
 
 /**
@@ -53,49 +65,82 @@ export type TableCellConfig =
     encapsulation: ViewEncapsulation.None
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent implements OnInit, OnChanges, AfterViewInit {
+export class TableComponent implements OnInit {
     /**
      * list of Columns allowed in the table
      */
-    @Input() columns = [];
-    /**
-     * The record list for the table
-     */
-    @Input() data = [];
+    @Input() config: Record<string, TableConfig>;
     /**
      * List of displayed columns
      */
-    @Input() displayedColumns = [];
-    /**
-     * Icons to be used by this table instance.
-     * This is normally optional, unless a column with icon type cells need to be rendered
-     */
-    @Input() icons = {};
-    /**
-     * This is used to generate a dynamic advanced search. This is optional.
-     * To disable, pass an empty list or dont pass it at all
-     */
-    @Input() searchable = [];
+    @Input() columns = [];
     /**
      * Paginator flag
-     * Allowed 'disabled' | 'show' | 'hide
+     * this enables pagination for the table
      */
-    @Input() paginator: 'disabled' | 'show' | 'hide' = 'disabled';
+    @Input() pagination = false;
     /**
      * Sort flag
-     * Allowed  'disabled' | 'enabled'
+     * This enables sort for the table
      */
-    @Input() sort: 'disabled' | 'enabled' = 'disabled';
+    @Input() sort = false;
+    /**
+     * Grouping flag
+     * This enables grouping for the table
+     */
+    @Input() grouping = false;
+
+    /**
+     * Expandable rows flag
+     */
+    @Input() expandableRows = false;
+
+    /**
+     * Page size when pagination enabled
+     */
+    @Input() pageSizeOptions = [15, 20, 30];
+
+    /**
+     * Footer flag
+     * This disables, shhows or hides the footer ie advanced search button and pagination controls
+     */
+    @Input() footer: 'disabled' | 'show' | 'hide' = 'show';
+
+    /**
+     * Flag for loading
+     * true when table is loading
+     */
+    @Input() loading: boolean;
+
+    /**
+     * Emits action events
+     */
+    @Output() actionReducer = new EventEmitter();
+
+    /**
+     * Paginator event
+     */
+    @Output() pageEvent = new EventEmitter<any>();
 
     /**
      * Table sort ref
      */
-    @ViewChild(MatSort, { static: true }) sortRef: MatSort;
+    @ViewChild(MatSort) set sortContent(content: MatSort) {
+        if (content && !this.source.sort && this.sort) {
+            // initially setter gets called with undefined
+            this.source.sort = content;
+        }
+    }
 
     /**
      * Table Paginator ref
      */
-    @ViewChild(MatPaginator) paginationRef: MatPaginator;
+    @ViewChild(MatPaginator) set paginatorContent(content: MatPaginator) {
+        if (content && !this.source.paginator && this.pagination) {
+            // initially setter gets called with undefined
+            this.source.paginator = content;
+        }
+    }
 
     /**
      * Advanced Search Modal
@@ -108,74 +153,48 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     /**
      * Advanced search form
      */
-    advancedSearchForm: FormGroup;
+    advancedSearchForm: Record<string, string> = {};
 
     /**
      * Date col keys and their relevant inputs
      */
-    dateCols: Record<string, string> = {};
+    private dateCols: Record<string, string> = {};
 
     /**
      * Mat table's data source
      */
-    dataSource = new MatTableDataSource([]);
+    source = new MatTableDataSource([]);
 
     /**
      * Fuse custom config
      */
     fuseBg$ = this._fuseFacadeService.widgetBgClasses$;
 
-    constructor(private _fb: FormBuilder, private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
+    /**
+     * Selected row config
+     */
+    selected: {
+        /**
+         * Action selected of the row
+         */
+        action: string;
+        /**
+         * Selected record
+         */
+        record: any;
+    } = null;
+
+    @Input() customRow: TemplateRef<any>;
+    @Input() expandedRow: TemplateRef<any>;
+
+    constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.dataSource = new MatTableDataSource(this.data);
-        this.advancedSearchForm = this._fb.group(
-            this.searchable.reduce((acc, curr) => {
-                if (curr.type === 'date') {
-                    acc[`${curr.key}_Start`] = this._fb.control('');
-                    this.dateCols[`${curr.key}_Start`] = '';
-                    acc[`${curr.key}_End`] = this._fb.control('');
-                    this.dateCols[`${curr.key}_End`] = '';
-                } else {
-                    acc[curr] = this._fb.control('');
-                }
-                return acc;
-            }, {})
-        );
-        this.dataSource.filterPredicate = this.filterPredicate;
-    }
-
-    /**
-     * Lifecycle hook
-     */
-    ngAfterViewInit(): void {
-        if (this.paginator !== 'disabled') {
-            this.dataSource.paginator = this.paginationRef;
-        }
-        if (this.sort === 'enabled') {
-            this.dataSource.sort = this.sortRef;
-        }
-    }
-
-    /**
-     * Lifecycle hook
-     */
-    ngOnChanges(changes): void {
-        if (changes.data) {
-            this.dataSource.data = changes.data.currentValue;
-        }
-    }
-
-    /**
-     * Checks if the table cell is simlpe text or a complex one like date or icon
-     * @param {TableCellConfig} c
-     * @returns
-     */
-    isSimpleCell(c: TableCellConfig): boolean {
-        return ['string', 'number'].includes(typeof c);
+        this.source = new MatTableDataSource([]);
+        this.source.filterPredicate = this.filterPredicate;
     }
 
     /**
@@ -234,8 +253,67 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
      * Does advanced Search over the table
      */
     doAdvancedSearch(): void {
-        const filters = this.advancedSearchForm.value || {};
-        this.dataSource.filter = JSON.stringify(filters);
+        const filters = this.advancedSearchForm;
+        this.source.filter = Object.keys(filters).length ? JSON.stringify(filters) : '';
         this.advanceSearchModalRef?.close();
     }
+
+    /**
+     * Triggers action for control buttons
+     * @param {string} action
+     * @param {any} record
+     */
+    triggerAction(action: string, record: any): void {
+        if (this.selected) {
+            this.selected = null;
+            // this.collapseExpanded();
+        }
+        record.expanded = true;
+        const payload = { action, record };
+        this.actionReducer.emit(payload);
+        this.selected = payload;
+    }
+
+    /**
+     * Returns Column config
+     * @param {string} key
+     * @param {any} conf
+     * @param {any} el
+     * @returns
+     */
+    getColumnConfig(key: string, conf: any, el: any): void {
+        return {
+            ...conf,
+            value: conf.value ? (typeof conf.value === 'function' ? conf.value(el) : conf.value) : el[key],
+            icon: typeof conf.icon === 'function' ? conf.icon(el) : conf.icon,
+            key: key
+        };
+    }
+
+    /**
+     * Collapses the expanded row
+     * @param {any} record
+     */
+    collapseExpanded(): void {
+        const selectedRow = this.source.data.find((x: any) => x.expanded);
+        selectedRow.expanded = false;
+    }
+
+    /**
+     * Emits paginator events
+     * @param {any} evt
+     */
+    emitPageEvent(evt: any): void {
+        this.pageEvent?.emit(evt);
+    }
+
+    /**
+     * Checks if row is expandable
+     * @param {any} row
+     * @returns
+     */
+    isExpanded = (_: number, row: any): boolean => {
+        console.log(_, row);
+        return this.expandableRows && row.expanded;
+    };
 }

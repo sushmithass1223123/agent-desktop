@@ -1,11 +1,6 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
-import { TableCellConfig } from '@modules/shared/components';
+import { TableComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -32,31 +27,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @Input() data: any;
 
     /**
-     * Sorting Ref
-     */
-    @ViewChild(MatSort) set sortContent(content: MatSort) {
-        if (content) {
-            // initially setter gets called with undefined
-            this.interactionDetailsTable.source.sort = content;
-        }
-    }
-
-    /**
-     * Table Paginator ref
-     */
-    @ViewChild(MatPaginator)
-    set paginator(value: MatPaginator) {
-        if (value && !this.interactionDetailsTable.source.paginator) {
-            this.interactionDetailsTable.source.paginator = value;
-        }
-    }
-
-    /**
-     * Maximized state
-     */
-    maximized = false;
-
-    /**
      * Minimized displayed columns
      */
     minDisplayedColumns: string[] = ['Channel', 'Direction', 'User', 'CreatedDateTime'];
@@ -78,38 +48,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     ];
 
     /**
-     * Advanced Search Modal
+     * Maximized state
      */
-    @ViewChild('advanceSearchModal') advanceSearchModal: TemplateRef<MatDialog>;
-    /**
-     * Advanced Search Modal Ref
-     */
-    advanceSearchModalRef: MatDialogRef<any>;
-
-    /**
-     * Interaction Details table data
-     */
-    interactionDetailsTable = {
-        source: new MatTableDataSource([]),
-        columns: this.minDisplayedColumns
-    };
-
-    /**
-     * Advanced search form
-     */
-    advancedSearchForm = new FormGroup({
-        Channel: new FormControl(),
-        SubChannel: new FormControl(),
-        Direction: new FormControl(),
-        User: new FormControl(),
-        Dnis: new FormControl(),
-        Intent: new FormControl(),
-        CreatedTimeStart: new FormControl(),
-        CreatedTimeEnd: new FormControl(),
-        ClosedTimeStart: new FormControl(),
-        ClosedTimeEnd: new FormControl(),
-        AgentComment: new FormControl()
-    });
+    maximized = false;
 
     /**
      * Fuse custom config
@@ -120,21 +61,11 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     };
 
     /**
-     * The AD table component data tobe used when the component is completed
+     * Table component ref
      */
-    adTableData = {
-        enabled: false,
-        iconMap: {},
-        searchable: [],
-        tableColumns: []
-    };
+    @ViewChild(TableComponent) table: TableComponent;
 
-    constructor(
-        private _tmacEventService: TMACEventService,
-        private _appUIService: AppUiService,
-        private _matDialog: MatDialog,
-        private _fuseFacadeService: FuseFacadeService
-    ) {
+    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
         super();
     }
 
@@ -152,68 +83,98 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     }
 
     /**
-     * Lifecycle Hook
+     * Lifecycle hook
      */
     ngAfterViewInit(): void {
-        // this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.filterPredicate = this.filterPredicate;
-        // this.interactionDetailsTable.source.paginator = this.paginator;
+        this.setupAdTable();
     }
 
     /**
      * Sets up the new AD table component
      */
-    setupNewAdTable(): void {
-        this.adTableData = {
-            enabled: true,
-            iconMap: {
-                default: 'feed',
-                voice: 'video',
-                textchat: 'chat',
-                audiochat: 'wifi_calling_3',
-                videochat: 'duo',
-                sms: 'sms',
-                email: 'email',
-                emc: 'email',
-
-                chat: 'chat',
-                text: 'chat',
-                audio: 'wifi_calling_3',
-                video: 'duo',
-
-                store: 'store',
-                field: 'roofing',
-
-                whatsapp: 'custom-whatsapp',
-                we: 'custom-we',
-                line: 'custom-line',
-                viber: 'custom-viber',
-                twitter: 'custom-twitter',
-                fb: 'custom-fb',
-                telegram: 'custom-telegram',
-                out: 'north',
-                in: 'south'
-            },
-            searchable: [
-                'Channel',
-                'SubChannel',
-                'Direction',
-                'User',
-                'Dnis',
-                {
-                    key: 'CreatedDateTime',
-                    label: 'Created Between',
-                    type: 'date'
-                },
-                {
-                    key: 'ClosedDateTime',
-                    label: 'Closed Between',
-                    type: 'date'
-                },
-                'AgentComment'
-            ],
-            tableColumns: []
+    setupAdTable(): void {
+        const iconMap = {
+            default: 'feed',
+            textchat: 'chat',
+            audiochat: 'wifi_calling_3',
+            voice: 'phone',
+            sms: 'sms',
+            videochat: 'duo',
+            email: 'email',
+            fax: 'print',
+            chat: 'chat',
+            text: 'chat',
+            audio: 'wifi_calling_3',
+            video: 'duo',
+            whatsapp: 'custom-whatsapp',
+            we: 'custom-we',
+            line: 'custom-line',
+            viber: 'custom-viber',
+            twitter: 'custom-twitter',
+            fb: 'custom-fb',
+            telegram: 'custom-telegram',
+            store: 'store',
+            in: 'south',
+            out: 'north'
         };
+        this.table.config = {
+            Channel: {
+                searchable: true,
+                tooltip: true,
+                icon: (el: any) => ({ name: iconMap[(el.Channel || '').toLowerCase()] || 'feed', only: true })
+            },
+            SubChannel: {
+                searchable: true,
+                tooltip: true,
+                icon: (el: any) => ({ name: iconMap[(el.SubChannel || '').toLowerCase()] || 'feed', only: true })
+            },
+            Direction: {
+                searchable: true,
+                uppercase: true,
+                icon: (el: any) => ({ name: iconMap[(el.Direction || '').toLowerCase()] || 'feed', color: 'accent' })
+            },
+            CreatedDateTime: {
+                searchable: true,
+                title: 'Created On',
+                type: 'date'
+            },
+            ClosedDateTime: {
+                searchable: true,
+                title: 'Closed On',
+                type: 'date'
+            },
+            AgentComment: {
+                title: '',
+                type: 'controls',
+                value: (el: any) =>
+                    el.AgentComment?.trim()
+                        ? [
+                              {
+                                  title: 'View Comments',
+                                  icon: 'notes'
+                              }
+                          ]
+                        : []
+            },
+            User: {
+                searchable: true,
+                truncate: true,
+                tooltip: true
+            },
+            Dnis: {
+                title: 'DNIS',
+                searchable: true,
+                truncate: true,
+                tooltip: true
+            },
+            Intent: {},
+            ActiveTime: {
+                value: (el: any) => el.ActiveTime
+            }
+        };
+        this.table.sort = true;
+        this.table.pagination = true;
+        this.table.pageSizeOptions = [0, 5, 10].map((r) => r + 10);
     }
 
     /**
@@ -226,47 +187,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     }
 
     /**
-     * Custom filter method fot Angular Material Datatable
-     */
-    filterPredicate = (data: any, filterStr: string): boolean => {
-        if (filterStr === '{}') {
-            return true;
-        }
-        const filters = JSON.parse(filterStr);
-        const dateCols = {
-            CreatedTimeStart: data.CreatedDateTime,
-            CreatedTimeEnd: data.CreatedDateTime,
-            ClosedTimeStart: data.ClosedDateTime,
-            ClosedTimeEnd: data.ClosedDateTime
-        };
-
-        const compareDates = (dateKey: string): boolean => {
-            const filterDate = new Date(filters[dateKey]);
-            const recordDate = new Date(dateCols[dateKey]).getTime();
-            if (dateKey.includes('Start')) {
-                filterDate.setHours(0, 0, 0, 0);
-                return filterDate.getTime() <= recordDate;
-            } else {
-                filterDate.setHours(23, 59, 59, 9999);
-                return filterDate.getTime() >= recordDate;
-            }
-        };
-
-        const valid = Object.entries(filters).every((f) => {
-            const [key, value] = f;
-            if (!value) {
-                return true;
-            }
-            if (dateCols[key]) {
-                return compareDates(key);
-            } else {
-                return data[key] && (data[key].toString().toLowerCase() as string).includes((value as string).toLowerCase());
-            }
-        });
-        return valid;
-    };
-
-    /**
      * AgentInteractionDetailsEvent hanlder
      * @param {CustomSDKEvent} data
      */
@@ -274,37 +194,11 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         let interactionList = [];
         // check if empty array then reset
         if (evt.Data.length) {
-            interactionList = this.interactionDetailsTable.source.data.concat(evt.Data);
+            interactionList = this.table.source.data.concat(evt.Data);
         }
         interactionList = orderBy(interactionList, 'CreatedDateTime', ['desc']);
 
-        this.interactionDetailsTable.source.data = interactionList;
-
-        // take only 15 for minimized mode
-        if (!this.maximized) {
-            this.interactionDetailsTable.source.paginator.pageSize = 20;
-            // this.interactionDetailsTable.pageSize = 20;
-        }
-
-        if (this.adTableData.enabled) {
-            const typeMap = {
-                Channel: 'icon',
-                SubChannel: 'icon',
-                Direction: 'icon',
-                CreatedDateTime: 'date',
-                ClosedDateTime: 'date'
-            };
-            this.adTableData.tableColumns = this.maxDisplayedColumns.map((c) => {
-                const type = typeMap[c];
-                if (type) {
-                    const r: TableCellConfig = { key: c, type, iconOnly: ['Channel', 'SubChannel'].includes(c) };
-                    if (c === '') {
-                    }
-                    return r;
-                }
-                return c;
-            });
-        }
+        this.table.source.data = interactionList;
     }
 
     /**
@@ -315,13 +209,14 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.maximized = state;
 
         if (state) {
-            this.interactionDetailsTable.columns = this.maxDisplayedColumns;
+            // this.table.columns = this.maxDisplayedColumns;
+            this.setupAdTable();
         } else {
-            this.advancedSearchForm.reset();
-            this.doAdvancedSearch();
-            this.interactionDetailsTable.columns = this.minDisplayedColumns;
-            this.interactionDetailsTable.source.paginator.pageSize = 20;
-            this.interactionDetailsTable.source.paginator.firstPage();
+            this.table.advancedSearchForm = {};
+            this.table.doAdvancedSearch();
+            // this.table.columns = this.minDisplayedColumns;
+            // this.table.source.paginator.pageSize = 20;
+            // this.table.source.paginator.firstPage();
         }
     }
 
@@ -362,22 +257,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         });
     }
 
-    /**
-     * Opens Advanced Search modal
-     */
-    showAdvanceSearchModal(): void {
-        this.advanceSearchModalRef = this._matDialog.open(this.advanceSearchModal, {
-            width: '50%',
-            panelClass: 'interaction-details-advanced-form'
-        });
-    }
-
-    /**
-     * Does advanced Search over the table
-     */
-    doAdvancedSearch(): void {
-        const filters = this.advancedSearchForm.value || {};
-        this.interactionDetailsTable.source.filter = JSON.stringify(filters);
-        this.advanceSearchModalRef?.close();
+    handleActions(evt: any): void {
+        console.log(evt);
     }
 }

@@ -35,6 +35,7 @@
         "{breaking_change}{footer}"
     ],
     "commit-message-editor.tokens": [
+    "#/definitions/common/properties/preLaunchTask"
         {
             "label": "Type",
             "name": "type",
@@ -46,53 +47,66 @@
                 },
                 {
                   "label": "🌟 feat",
+                  "value": "🌟",
                   "description": "A new feature"
                 },
                 {
                   "label": "⭐ enc",
+                  "value": "⭐",
                   "description": "An enhancement that improves a feature"
                 },
                 {
                   "label": "🔨 fix",
+                  "value": "🔨",
                   "description": "A bug fix"
                 },
                 {
                   "label": "🔥 hotfix",
+                  "value": "🔥",
                   "description": "A minor fix"
                 },
                 {
                   "label": "💻 build",
+                  "value": "💻",
                   "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)"
                 },
                 {
                   "label": "⚓ chore",
+                  "value": "⚓",
                   "description": "Updating grunt tasks etc; no production code change"
                 },
                 {
                   "label": "🚀 ci",
+                  "value": "🚀",
                   "description": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)"
                 },
                 {
                   "label": "📝 docs",
+                  "value": "📝",
                   "description": "Documentation only changes"
                 },
                 {
                   "label": "🎢 perf",
+                  "value": "🎢",
                   "description": "A code change that improves performance"
                 },
                 {
                   "label": "♻️ refactor",
+                  "value": "♻️",
                   "description": "A code change that neither fixes a bug nor adds a feature"
                 },
                 {
-                  "label": "❗ revert"
+                  "label": "❗ revert",
+                  "value": "❗",
                 },
                 {
                   "label": "🎨 style",
+                  "value": "🎨",
                   "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"
                 },
                 {
                   "label": "💉 test",
+                  "value": "💉",
                   "description": "Adding missing tests or correcting existing tests"
                 }
             ],

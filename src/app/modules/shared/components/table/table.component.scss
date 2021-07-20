@@ -3,6 +3,22 @@ ad-table {
     min-width: 100%;
     overflow-x: hidden;
     background: inherit;
+
+    .expanded-details-row {
+        margin-bottom: 0 !important;
+        min-height: 0px;
+        transition: max-height 0.5s;
+        &.expanded {
+            overflow: auto;
+            min-height: 30px;
+            margin-bottom: 8px !important;
+        }
+    }
+
+    .mat-column-CustomRow,
+    .mat-column-ExpandedDetails {
+        padding: 0 !important;
+    }
 }
 
 .ad-table-advancedsearch-form .mat-dialog-container {
