@@ -10,7 +10,6 @@
         <mat-chip-list *ngIf="nlpData.length > 0; else noData">
             <mat-chip
                 *ngFor="let item of nlpData"
-                removable
                 (click)="openAssitWidget(item.Name, false, item.Url, item.Width, item.Height)"
                 [ngClass]="{
                     'bg-info': item.Count < 5,
@@ -21,7 +20,6 @@
                 }"
             >
                 {{ item.Name }}
-                <mat-icon matChipRemove>close</mat-icon>
             </mat-chip>
         </mat-chip-list>
 

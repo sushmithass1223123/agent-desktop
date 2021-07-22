@@ -136,7 +136,12 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
             emc: 'email'
         };
         this.table.config = {
-            Channel: { value: (el: any) => iconMap[el.Channel?.toLowerCase()] || 'feed' },
+            Channel: {
+                icon: (el: any) => ({
+                    name: iconMap[el.Channel?.toLowerCase()] || 'feed',
+                    only: true
+                })
+            },
             AverageHandleTime: {
                 title: 'AHT'
             },

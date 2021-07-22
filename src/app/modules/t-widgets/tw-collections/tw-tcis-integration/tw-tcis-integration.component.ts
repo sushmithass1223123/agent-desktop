@@ -82,7 +82,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
         if (this.WidgetData.Urls.length) {
             this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub);
             this.registerHubEvents();
-            this._signalrWrapper.connect();
+            this._signalrWrapper?.connect();
         }
     }
 
@@ -92,6 +92,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        this._signalrWrapper?.close(true);
     }
 
     /**

@@ -121,6 +121,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             Channel: {
                 searchable: true,
                 tooltip: true,
+                width: '20%',
                 icon: (el: any) => ({ name: iconMap[(el.Channel || '').toLowerCase()] || 'feed', only: true })
             },
             SubChannel: {
@@ -144,7 +145,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                 type: 'date'
             },
             AgentComment: {
-                title: '',
+                title: 'Comments',
                 type: 'controls',
                 value: (el: any) =>
                     el.AgentComment?.trim()

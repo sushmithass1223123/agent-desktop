@@ -660,7 +660,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? To : From) || '',
             Body: `
             ${preBody} 
-            ${Body}`,
+            ${(Body || '').replaceAll(/(?:\r\n|\r|\n)/g, '<br />')}`,
             Subject,
             Files: [],
             From: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? From : Mailbox) || '',
@@ -691,13 +691,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
         </div>
         <br />`;
+        const ToList = To + ',' + Array.from(new Set((From || '').replaceAll(this.currentInteraction.Email_Mailbox, '').split(','))).join(',');
+        const FromList = From + ',' + Array.from(new Set((To || '').replaceAll(this.currentInteraction.Email_Mailbox, '').split(','))).join(',');
         this.replyInfo = {
             BCC: '',
             CC: CCList || '',
-            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? To : From) || '',
+            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? ToList : FromList) || '',
             Body: `
                 ${preBody}
-                ${Body}`,
+                ${(Body || '').replaceAll(/(?:\r\n|\r|\n)/g, '<br />')}`,
             Subject,
             Files: [],
             From: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? From : this.currentInteraction.Mailbox) || '',
@@ -729,7 +731,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             To: '',
             Body: `
                 ${preBody}
-                ${Body}`,
+                ${(Body || '').replaceAll(/(?:\r\n|\r|\n)/g, '<br />')}`,
             Subject: `FW: ${Subject}`,
             Files,
             From: this.currentInteraction.Mailbox
