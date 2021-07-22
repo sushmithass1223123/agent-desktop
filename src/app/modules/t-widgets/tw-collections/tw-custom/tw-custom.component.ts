@@ -141,35 +141,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
         // check if the url is provided
         if (this.data.Data.Url) {
-            // get the url
-            let url = this.data.Data.Url;
-
-            const stringVals = getStringVars(url);
-            let setJson = {};
-
-            if (stringVals && stringVals.length) {
-                stringVals.forEach((val) => {
-                    // get the path by taking string between ()
-                    const path = val.substring(val.lastIndexOf('${') + 2, val.lastIndexOf('}'));
-                    const splitPath = path.split('.');
-                    if (splitPath[0].toLowerCase() === 'agentdata') {
-                        setJson = {
-                            ...setJson,
-                            AgentData: SDKClient.getAgentData()
-                        };
-                    } else if (this.data.InteractionDetails && splitPath[0].toLowerCase() === 'interaction') {
-                        setJson = {
-                            ...setJson,
-                            Interaction: this.data.InteractionDetails
-                        };
-                    }
-                });
-
-                // check if json has data
-                if (Object.keys(setJson).length) {
-                    url = setStringVars(url, setJson);
-                }
-            }
+            const url = setStringVars(this.data.Data.Url, {
+                AgentData: SDKClient.getAgentData(),
+                Interaction: this.data.InteractionDetails
+            });
 
             // check 'Open In New' widget
             if (this.data.Data.OpenInNew) {

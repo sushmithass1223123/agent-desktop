@@ -337,9 +337,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Gets interaction history and sets to table
      */
-    private getInteractionHistory(
-        noOfRecords = (this.table.source.paginator?.pageSize || parseInt(this.historyParams.noOfRecords, 10)).toString()
-    ): void {
+    private getInteractionHistory(noOfRecords = (this.table.pageSizeOptions[0] || parseInt(this.historyParams.noOfRecords, 10)).toString()): void {
         if (!this.historyParams.lastId) {
             this.table.loading = true;
         }
@@ -435,9 +433,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         const lastEl = sortedTabledata.slice(-1) || [];
         this.historyParams.lastId = lastEl[0]?.LastID?.toString();
         this.table.loading = false;
-        const pageOffset = newRecords.length % parseInt(this.historyParams.noOfRecords, 10);
+        const pageOffset = this.table.source.data.length % parseInt(this.historyParams.noOfRecords, 10);
         const recordsIncompleteInFirstPage =
-            newRecords.length < this.table.source.paginator?.pageSize ? parseInt(this.historyParams.noOfRecords, 10) - pageOffset : 0;
+            this.table.source.data.length < this.table.pageSizeOptions[0] ? parseInt(this.historyParams.noOfRecords, 10) - pageOffset : 0;
         if (recordsIncompleteInFirstPage) {
             this.getInteractionHistory((recordsIncompleteInFirstPage + 1).toString());
         } else if (pageOffset === 0) {

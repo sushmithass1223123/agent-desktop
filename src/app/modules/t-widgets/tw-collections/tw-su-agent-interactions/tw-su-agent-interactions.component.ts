@@ -200,11 +200,13 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * @param {'agent' | 'interaction'} type Type of feature
      * @param {string} subType Subtype of feature
      */
-    public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', subType: string): boolean {
+    public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', element: InteractionDataModel): boolean {
         // if not allow supervisor or in map the item is not found return false
-        if (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
+        if (element.LastStatus.includes('Disconnected') && (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature])) {
             return false;
         }
+
+        const subType = element.Channel.toLowerCase();
 
         // check for the type and subtype
         if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {

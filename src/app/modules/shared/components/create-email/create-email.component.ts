@@ -85,7 +85,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Flag for disabling send
      */
-    @Input() sendDisabled? = false;
+    @Input() sendDisabled = false;
 
     /**
      * Hidden fileds ref

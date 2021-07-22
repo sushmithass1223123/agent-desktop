@@ -654,6 +654,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
             this.doAdvancedSearch(true);
             loader.dismiss();
+            this.appUiService.showSnackbar('Emails closed successfully', 'success');
         } catch (e) {
             console.error(e);
             loader.dismiss();

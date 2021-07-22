@@ -43,7 +43,15 @@ export class PreviewEmailComponent {
     loadEmailInIframe(iframe: HTMLIFrameElement): void {
         const frag = document.createRange().createContextualFragment(this.email.Body);
         const doc: any = iframe.contentDocument || iframe.contentWindow;
-        doc.body.innerHTML = `${doc.body.innerHTML} <style>::-webkit-scrollbar{width:4px !important;height:4px !important;}::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important;}</style>`;
+        doc.body.innerHTML = `
+        ${doc.body.innerHTML} 
+        <style>
+            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+            body {
+                white-space: pre-wrap;
+            }
+        </style>`;
         doc.body.appendChild(frag);
         this._internal.iframeLoading = false;
     }

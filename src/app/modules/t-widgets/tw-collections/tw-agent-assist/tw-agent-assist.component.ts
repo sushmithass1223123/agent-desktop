@@ -3,7 +3,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { setStringVars } from '@tmac/operators';
-import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
+import { AgentAssistDataEvent, CallerIntentEvent, GenericEvent, SDKClient, TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -291,13 +291,11 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // if the url is provided with the method then do not process it query params
         if (!assistUrl) {
-            // get the intent name
-            const ucid = this.ucid;
-
             // get the map object
             const mapObj = {
                 intent: intent,
-                ucid: ucid
+                Interaction: this.data?.InteractionDetails,
+                AgentData: SDKClient.getAgentData()
             };
 
             // form the url
