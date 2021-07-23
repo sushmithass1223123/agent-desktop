@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 
@@ -16,7 +16,7 @@ export type TableConfig<T = any> =
            */
           title?: string;
           type?: 'string';
-          value?: (el: T) => string;
+          value?: GenericLabel<T, string | number>;
           icon?: GenericLabel<T, Icon>;
           tooltip?: boolean;
           truncate?: boolean;
@@ -34,7 +34,7 @@ export type TableConfig<T = any> =
            * Type of the cell
            */
           type: 'date';
-          value?: (el: T) => string;
+          value?: GenericLabel<T, string | number>;
           tooltip?: boolean;
           width?: string;
           truncate?: boolean;
@@ -125,7 +125,7 @@ export class TableComponent implements OnInit {
     /**
      * Table sort ref
      */
-    @ViewChild(MatSort) set sortContent(content: MatSort) {
+    @ViewChild(MatSort) private set sortContent(content: MatSort) {
         if (content && !this.source.sort && this.sort) {
             // initially setter gets called with undefined
             this.source.sort = content;
@@ -135,7 +135,7 @@ export class TableComponent implements OnInit {
     /**
      * Table Paginator ref
      */
-    @ViewChild(MatPaginator) set paginatorContent(content: MatPaginator) {
+    @ViewChild(MatPaginator) private set paginatorContent(content: MatPaginator) {
         if (content && !this.source.paginator && this.pagination) {
             // initially setter gets called with undefined
             this.source.paginator = content;
@@ -184,8 +184,25 @@ export class TableComponent implements OnInit {
         record: any;
     } = null;
 
+    /**
+     * Ref for a custom roe
+     */
     @Input() customRow: TemplateRef<any>;
+
+    /**
+     * Ref for expanded row which appears under the selected row
+     */
     @Input() expandedRow: TemplateRef<any>;
+
+    /**
+     * Sort by key
+     */
+    @Input() sortBy: string;
+
+    /**
+     * Direction of the sort
+     */
+    @Input() sortDirection: SortDirection = 'desc';
 
     constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
 

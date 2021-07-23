@@ -174,6 +174,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             }
         };
         this.table.sort = true;
+        this.table.sortBy = 'CreatedDateTime';
         this.table.pagination = true;
         this.table.pageSizeOptions = [0, 5, 10].map((r) => r + 10);
     }

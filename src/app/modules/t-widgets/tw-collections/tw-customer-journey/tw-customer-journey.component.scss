@@ -22,61 +22,6 @@ tw-customer-journey {
         width: 100%;
         height: 100%;
         background: inherit;
-        .mat-form-field-wrapper {
-            padding-bottom: 1em !important;
-        }
-
-        .table {
-            width: 100%;
-            padding: 0px 8px;
-            background: inherit;
-            border-radius: 20px;
-
-            .mat-table {
-                padding-bottom: 0% !important;
-                flex: 1;
-                mat-header-cell:not(:first-child) {
-                    padding: 0;
-                }
-
-                mat-cell {
-                    .mat-icon {
-                        line-height: 1 !important;
-                    }
-                }
-
-                mat-cell:last-of-type,
-                mat-header-cell:last-of-type,
-                mat-footer-cell:last-of-type {
-                    padding-right: 0;
-                }
-
-                .mat-cell,
-                .mat-footer-cell {
-                    &:not(mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-cell:last-of-type, mat-footer-cell:last-of-type) {
-                        padding: 0 6px;
-                    }
-                }
-            }
-
-            transition-property: height;
-            transition-duration: 300ms;
-            transition-timing-function: ease-in-out;
-        }
-
-        .spread {
-            width: 100%;
-            // height: 65%;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            & > *:nth-child(2) {
-                flex: 1;
-            }
-            // justify-content: center;
-            // align-items: center;
-        }
-
         mat-icon {
             font-size: 18px;
             line-height: 18px;
@@ -84,6 +29,35 @@ tw-customer-journey {
             height: 18px;
             min-height: 18px;
             min-width: 18px;
+        }
+        &:not(.maximized) {
+            mat-row:not(:nth-last-child(2)) {
+                position: relative;
+                &::before {
+                    content: '';
+                    position: absolute;
+                    height: 50%;
+                    top: 85%;
+                    z-index: 1;
+                    width: 2px;
+                    left: calc(25% + 35px);
+                    background-color: var(--twd-primary-default);
+                }
+            }
+        }
+    }
+
+    .actions .action-item:not(:nth-last-child(1)) {
+        position: relative;
+        &::before {
+            content: '';
+            position: absolute;
+            height: 60%;
+            top: 70%;
+            z-index: 1;
+            width: 2px;
+            left: calc(25% + 11px);
+            background-color: var(--twd-primary-default);
         }
     }
 
@@ -376,10 +350,6 @@ tw-customer-journey {
                 }
             }
         }
-    }
-
-    .max-col {
-        max-width: 110px;
     }
 }
 

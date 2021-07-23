@@ -6,6 +6,7 @@ import { TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, TwChartConfig } from 'app/interfaces';
+import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -143,7 +144,8 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
                 })
             },
             AverageHandleTime: {
-                title: 'AHT'
+                title: 'AHT',
+                value: (element: any) => format((element.AverageActiveTime + element.AverageHoldTime) * 1000, 'hh:mm:ss') || '00:00:00'
             },
             Transfer: {},
             Conference: {}
