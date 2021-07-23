@@ -127,12 +127,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     async setAvailableDevices(): Promise<void> {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                TUtils.Logger.console(
-                    'error',
-                    'Error in TwAvailableMediaDeviceComponent.setAvailableDevices',
-                    null,
-                    'enumerateDevices() not supported'
-                );
+                TUtils.Logger.error('Error in TwAvailableMediaDeviceComponent.setAvailableDevices', 'enumerateDevices() not supported', false);
                 return;
             }
             this.setComponentState('availableDevices/fetching');

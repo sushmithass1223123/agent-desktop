@@ -848,9 +848,9 @@ export class LoginComponent implements OnInit, OnDestroy {
                         if (environment.production && this.appConfig?.ConfigMode === 'remote' && response.OtherData.ItemTwo) {
                             // assign the agent based config
                             this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
-                            TUtils.Logger.console('debug', 'App config updated!');
+                            TUtils.Logger.debug('App config updated!', false);
                         } else {
-                            TUtils.Logger.console('debug', 'Using developement/login config only!');
+                            TUtils.Logger.debug('Using developement/login config only!', false);
                         }
                         // get the agent ID
                         const agentId = response.Data.AgentID;

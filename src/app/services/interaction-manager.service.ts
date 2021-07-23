@@ -38,7 +38,7 @@ export class InteractionManagerService {
      * To subscribe to InteractionManagerService service
      */
     public subscribe(): void {
-        TUtils.Logger.console('info', 'InteractionManagerService.subscribe');
+        TUtils.Logger.info('InteractionManagerService.subscribe', false);
 
         // intialize the subject
         this._interactionsSubject = new BehaviorSubject([]);
@@ -48,7 +48,7 @@ export class InteractionManagerService {
      * To unsubscribe to InteractionManagerService service
      */
     public unsubscribe(): void {
-        TUtils.Logger.console('info', 'InteractionManagerService.unsubscribe');
+        TUtils.Logger.info('InteractionManagerService.unsubscribe', false);
 
         // unsubscribe from the subject
         this._interactionsSubject.next([]);

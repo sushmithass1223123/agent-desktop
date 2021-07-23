@@ -14,6 +14,8 @@
             [matSortDirection]="sortDirection"
             matSortDisableClear
             [matSortDisabled]="!sort"
+            [matSortActive]="sortBy"
+            [matSortDirection]="sortDirection"
             multiTemplateDataRows
             *ngIf="customRow ? ['CustomRow'] : columns as displayedColumns"
         >

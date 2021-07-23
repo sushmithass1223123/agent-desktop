@@ -122,12 +122,12 @@ export class AppDataService {
 
         // check the config mode
         if (data.ConfigMode === 'local') {
-            TUtils.Logger.console('info', 'Config mode=local, load config from development.json');
+            TUtils.Logger.info('Config mode=local, load config from development.json', false);
             // get the config from local for development
             return await this.getDevelopmentConfig();
         }
 
-        TUtils.Logger.console('info', 'Config mode=remote, load config from server');
+        TUtils.Logger.info('Config mode=remote, load config from server', false);
 
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
@@ -177,19 +177,16 @@ export class AppDataService {
                 return;
             }
 
-            TUtils.Logger.consoleLog({
-                message: 'AppConfigs.SDK accepts camel casing to support TMAC SDK case, please change to camel casing as per relase [5.0.6.30]!',
-                type: 'warn'
-            });
+            TUtils.Logger.warn(
+                'AppConfigs.SDK accepts camel casing to support TMAC SDK case, please change to camel casing as per relase [5.0.6.30]!',
+                false
+            );
 
             // backward compatibility for CustomScripts
             let customScripts = [];
             if (Array.isArray(config.AppConfigs.SDK.CustomSripts)) {
                 customScripts = config.AppConfigs.SDK.CustomSripts;
-                TUtils.Logger.consoleLog({
-                    message: 'AppConfigs.SDK.CustomSripts is depricated, please correct the spelling in config to -> CustomScripts',
-                    type: 'warn'
-                });
+                TUtils.Logger.warn('AppConfigs.SDK.CustomSripts is depricated, please correct the spelling in config to -> CustomScripts', false);
             } else {
                 customScripts = config.AppConfigs.SDK.CustomScripts;
             }
@@ -227,7 +224,7 @@ export class AppDataService {
                 customScripts: [...customScripts]
             });
         } catch (error) {
-            TUtils.Logger.console('error', 'Exception in AppDataService.setJsonConfig', null, error);
+            TUtils.Logger.error('Exception in AppDataService.setJsonConfig', error, false);
         }
     }
 
@@ -243,11 +240,13 @@ export class AppDataService {
             if (!local && environment.production) {
                 // get the config from server for production
                 data = await this.getProductionConfig(agentId);
-                TUtils.Logger.console('info', 'Production config loaded');
+                TUtils.Logger.info('Production config loaded', false);
+                console.log(data);
             } else {
                 // get the config from local for development
                 data = await this.getDevelopmentConfig();
-                TUtils.Logger.console('info', 'Development config loaded', data);
+                TUtils.Logger.info('Development config loaded', false);
+                console.log(data);
             }
 
             // set the config to service
@@ -265,7 +264,7 @@ export class AppDataService {
                 };
             }
         } catch (error) {
-            TUtils.Logger.console('error', 'Exception in AppDataService.getJsonConfig', null, error);
+            TUtils.Logger.error('Exception in AppDataService.getJsonConfig', error, false);
         }
         return null;
     }

@@ -529,7 +529,7 @@ export class AppUiService {
      * To subscribe to App UI service
      */
     public subscribe(): void {
-        TUtils.Logger.console('info', 'AppUiService.subscribe');
+        TUtils.Logger.info('AppUiService.subscribe', false);
 
         // init the subject
         this._unsubscribeAll = new Subject();
@@ -575,7 +575,7 @@ export class AppUiService {
      * To unsubscribe to App UI service
      */
     public unsubscribe(): void {
-        TUtils.Logger.console('info', 'AppUiService.unsubscribe');
+        TUtils.Logger.info('AppUiService.unsubscribe', false);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);

@@ -205,7 +205,6 @@ export class TableComponent implements OnInit {
     @Input() sortDirection: SortDirection = 'desc';
 
     constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
-
     /**
      * Lifecycle hook
      */

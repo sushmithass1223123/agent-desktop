@@ -574,7 +574,7 @@ export interface IPostMessage {
     /**
      * Callback function to be invoked
      */
-    callback: string;
+    callback: any;
     /**
      * Data to send
      */
