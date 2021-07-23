@@ -188,7 +188,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
      * Method to execute action to invoke the server
      */
     private executeAction(exeName: string, method: string, params: string): void {
-        TUtils.Logger.console('info', `TwTcisIntegrationComponent.executeAction: ${exeName} - ${method} - ${params.length}`);
+        TUtils.Logger.info(`TwTcisIntegrationComponent.executeAction: ${exeName} - ${method} - ${params.length}`, false);
         // check if exeName/method
         if (!exeName || !method) {
             TUtils.Logger.warn('TwTcisIntegrationComponent.executeAction: exeName|method not found');

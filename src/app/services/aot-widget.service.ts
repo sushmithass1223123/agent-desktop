@@ -23,9 +23,7 @@ export class AOTWidgetService {
      */
     private _widgetsSubject: BehaviorSubject<IWidget[]>;
 
-    constructor(
-        private _appDataService: AppDataService
-    ) { }
+    constructor(private _appDataService: AppDataService) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -42,27 +40,23 @@ export class AOTWidgetService {
      * To subscribe to the service
      */
     public subscribe(): void {
-        TUtils.Logger.console('info', 'AOTWidgetService.subscribe');
+        TUtils.Logger.info('AOTWidgetService.subscribe', false);
 
         // init the subject
         this._unsubscribeAll = new Subject();
         this._widgetsSubject = new BehaviorSubject([]);
 
         // get the config and check for AOT widgets
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(
-                (config: any) => {
-                    // get the AOT widgets
-                    const widgets = config.Main.AOT.Widgets;
-                    this.processAOTWidgets(widgets);
-                }
-            );
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // get the AOT widgets
+            const widgets = config.Main.AOT.Widgets;
+            this.processAOTWidgets(widgets);
+        });
     }
 
     /**
      * To process AOT widgets
-     * 
+     *
      * @param {IWidget[]} widgets
      */
     public processAOTWidgets(widgets: IWidget[]): void {
@@ -87,7 +81,6 @@ export class AOTWidgetService {
      * @param widget Widget model
      */
     public addWidget(widget: IWidget): void {
-
         // check if the widget is null
         if (!widget || !widget.Config.Enabled) {
             return;
@@ -121,10 +114,9 @@ export class AOTWidgetService {
      * @param force [OPTIONAL] To force close widget with out triggering OnDestroy
      */
     public destroyWidget(id: string, force?: boolean): void {
-
         // check if the id is null
         if (!id) {
-            TUtils.Logger.console('warn', 'AOTWidgetService.destroyWidget: widget ID is not found!');
+            TUtils.Logger.warn('AOTWidgetService.destroyWidget: widget ID is not found!', false);
             return;
         }
 
@@ -146,7 +138,7 @@ export class AOTWidgetService {
         }
 
         // remove the widget
-        widgetList = this._widgetsSubject.getValue().filter(w => w.ID !== id);
+        widgetList = this._widgetsSubject.getValue().filter((w) => w.ID !== id);
 
         // check if any item is removed
         if (widgetList.length !== currentCount) {
@@ -166,7 +158,7 @@ export class AOTWidgetService {
      * To unsubscribe from the service
      */
     public unsubscribe(): void {
-        TUtils.Logger.console('info', 'AOTWidgetService.unsubscribe');
+        TUtils.Logger.info('AOTWidgetService.unsubscribe', false);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);

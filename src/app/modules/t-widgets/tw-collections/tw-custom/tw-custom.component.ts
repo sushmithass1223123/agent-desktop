@@ -1,9 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { getStringVars, setStringVars } from '@tmac/operators';
+import { setStringVars } from '@tmac/operators';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes, IPostMessage, IWidget } from 'app/interfaces';
@@ -77,11 +79,17 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     excludedEvents: CustomTMACEventTypes[];
 
+    /**
+     * Mat dialog ref
+     */
+    dialogRef: MatDialogRef<any, any>;
+
     constructor(
         private sanitizer: DomSanitizer,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private _appUIService: AppUiService
     ) {
         super();
 
@@ -132,8 +140,17 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     // check event are there
                     if (events.length) {
                         // send event to the frame/opener
-                        this.sendEventsToWindow(events);
+                        this.sendDataToWindow(message.callback || 'onTMACEvent', events);
                     }
+                    break;
+                case 'showconfirmdialog':
+                    this.dialogRef = this._appUIService.showAppConfirmDialog('generic', message.data?.title, message.data?.message);
+                    this.dialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+                        this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult);
+                    });
+                    break;
+                case 'closeconfirmdialog':
+                    this.dialogRef?.close();
                     break;
                 default:
             }
@@ -192,6 +209,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        this.dialogRef?.close();
     }
 
     /**
@@ -204,11 +222,12 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     }
 
     /**
-     * To send TMAC events to the iframe/popup window
+     * To send data to the iframe/popup window
      *
-     * @param {any[]} events
+     * @param {String} fn
+     * @param {Any} data
      */
-    private sendEventsToWindow(evts: any[]): void {
+    private sendDataToWindow(fn: string, data: any): void {
         const iframe = document.getElementById('tw_frame_' + this.data.ID);
         // get the element
         const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
@@ -217,9 +236,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             // send post message to the element
             element.postMessage(
                 {
-                    function: 'onTMACEvent',
+                    function: fn,
                     callback: null,
-                    data: evts,
+                    data,
                     source: 'tmac',
                     userObject: null
                 },
@@ -238,14 +257,14 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this.subscriptions.eventsById = this._tmacEventService
                     .getInteractionEventsById(this.interactionId)
                     .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe((evts) => this.sendEventsToWindow(evts));
+                    .subscribe((evts) => this.sendDataToWindow('onTMACEvent', evts));
             }
 
             // subscribe to all non interaction events
             this.subscriptions.allEvents = this._tmacEventService
                 .getNonInteractionEventsExcluded(this.excludedEvents)
                 .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.sendEventsToWindow(evts));
+                .subscribe((evts) => this.sendDataToWindow('onTMACEvent', evts));
         }
 
         // check if id is there to make sure loaded completely

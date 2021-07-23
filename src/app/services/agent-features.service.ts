@@ -388,7 +388,7 @@ export class AgentFeaturesService {
      * Subscribe to the available features
      */
     public subscribe(): void {
-        TUtils.Logger.console('info', 'AgentFeaturesService.subscribe');
+        TUtils.Logger.info('AgentFeaturesService.subscribe', false);
 
         // init agent features subject
         this._featureUpdatedSubject = new Subject();
@@ -430,7 +430,7 @@ export class AgentFeaturesService {
      * Unsubscribe from all subscriptions
      */
     public unsubscribe(): void {
-        TUtils.Logger.console('info', 'AgentFeaturesService.unsubscribe');
+        TUtils.Logger.info('AgentFeaturesService.unsubscribe', false);
 
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);

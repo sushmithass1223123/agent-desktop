@@ -441,11 +441,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 this.selectedContact.status = 'Not Logged In';
             }
         } catch (err) {
-            TUtils.Logger.consoleLog({
-                message: 'Exception in sendIM',
-                type: 'error',
-                err
-            });
+            TUtils.Logger.error('Excpetion in InstantMessagingComponent.sendIM', err, false);
             this._appUIService.showSnackbar('Error in sending message', 'failure');
         } finally {
             let dialog = this.allChats[this.selectedContact.id].dialog;

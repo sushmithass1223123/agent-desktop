@@ -5,7 +5,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel } from '@tmac/sdk';
+import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
@@ -201,27 +201,35 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * @param {string} subType Subtype of feature
      */
     public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', element: InteractionDataModel): boolean {
-        // if not allow supervisor or in map the item is not found return false
-        if (element.LastStatus.includes('Disconnected') && (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature])) {
-            return false;
-        }
+        try {
+            // if not allow supervisor or in map the item is not found return false
+            if (element.LastStatus.includes('Disconnected') || !feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
+                return false;
+            }
 
-        const subType = element.Channel.toLowerCase();
+            const subType = element.Channel.toLowerCase();
 
-        // check for the type and subtype
-        if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
-            return false;
-        }
+            // check for the type and subtype
+            if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
+                return false;
+            }
 
-        // check if agent action
-        if (type === 'agent') {
-            return feature.IsEnabled;
-        }
-        // check if interaction action
-        else if (type === 'interaction' && this.featureMap[feature.Feature].Type === type && this.featureMap[feature.Feature].SubType === subType) {
-            return feature.IsEnabled;
-        } else {
-            return false;
+            // check if agent action
+            if (type === 'agent') {
+                return feature.IsEnabled;
+            }
+            // check if interaction action
+            else if (
+                type === 'interaction' &&
+                this.featureMap[feature.Feature].Type === type &&
+                this.featureMap[feature.Feature].SubType === subType
+            ) {
+                return feature.IsEnabled;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            TUtils.Logger.error('Excpetion in TwSuAgentInteractionsComponent.featureCheck', err, false);
         }
     }
 

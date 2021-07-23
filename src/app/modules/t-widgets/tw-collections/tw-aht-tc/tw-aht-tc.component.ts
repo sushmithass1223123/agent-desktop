@@ -138,6 +138,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         };
         this.table.config = {
             Channel: {
+                tooltip: true,
                 icon: (el: any) => ({
                     name: iconMap[el.Channel?.toLowerCase()] || 'feed',
                     only: true
