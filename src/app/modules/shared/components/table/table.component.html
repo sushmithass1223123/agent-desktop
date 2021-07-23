@@ -10,6 +10,8 @@
         <mat-table
             [dataSource]="source"
             matSort
+            [matSortActive]="sortBy"
+            [matSortDirection]="sortDirection"
             matSortDisableClear
             [matSortDisabled]="!sort"
             multiTemplateDataRows
@@ -40,7 +42,7 @@ The actual rendered columns are set as a property on the row definition" -->
                                 *ngIf="!cell.custom"
                                 [matTooltip]="cell.value || 'NA'"
                                 [matTooltipDisabled]="!cell.tooltip"
-                                [ngClass]="{ 'twd-truncate': cell.truncate }"
+                                [ngClass]="{ 'twd-truncate': cell.truncate, 'twd-flex twd-items-center': !cell.truncate }"
                                 [ngSwitch]="cell.type"
                             >
                                 <ng-container *ngSwitchCase="'date'">
@@ -114,7 +116,7 @@ The actual rendered columns are set as a property on the row definition" -->
                                 </ng-container>
                                 <ng-container *ngSwitchDefault>
                                     <span *ngIf="!cell.icon?.only" [ngClass]="{ 'twd-uppercase': cell.uppercase }">
-                                        {{ cell.value ?? 'NA' }}
+                                        {{ (cell.value?.toString()).length ? cell.value : 'NA' }}
                                     </span>
                                     <ng-container *ngTemplateOutlet="iconRef; context: { icon: cell.icon }"></ng-container>
                                 </ng-container>
@@ -133,13 +135,13 @@ The actual rendered columns are set as a property on the row definition" -->
             </ng-container>
 
             <ng-container matColumnDef="CustomRow">
-                <mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let selectedRow">
+                <mat-cell [attr.colspan]="displayedColumns.length" class="border-radius-20" *matCellDef="let selectedRow">
                     <ng-container *ngTemplateOutlet="customRow; context: { record: selectedRow }"></ng-container>
                 </mat-cell>
             </ng-container>
 
             <mat-header-row *matHeaderRowDef="columns; sticky: true" class="bg-inherit" [ngClass]="{ 'twd-hidden': customRow }"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns" class="twd-overflow-hidden" [ngClass]="{ selected: row.expanded }"> </mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns" [ngClass]="{ selected: row.expanded }"> </mat-row>
             <mat-row
                 class="expanded-details-row"
                 *matRowDef="let row; columns: ['ExpandedDetails']"

@@ -34,8 +34,14 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     dashboardColors: DashboardColorCodeModel[];
 
+    /**
+     * Table Component's Ref
+     */
     @ViewChild(TableComponent) table: TableComponent;
 
+    /**
+     * Custom cell ref for 'CustomerServiceLevel'
+     */
     @ViewChild('customServiceLevelCell') customServiceLevelCell: TemplateRef<HTMLDivElement>;
 
     /**
@@ -112,6 +118,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             ServiceLevel: { title: 'SL %', custom: this.customServiceLevelCell }
         };
         this.table.sort = true;
+        this.table.sortBy = 'CallsInQueue';
         this.table.footer = 'disabled';
         this.table.columns = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
     }

@@ -5,7 +5,7 @@
     } as customFuse"
 >
     <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)">
-        <div [ngClass]="maximized && (customFuse.anchor?.content || customFuse.widget?.content)" class="customer-journey">
+        <div [ngClass]="maximized && (customFuse.anchor?.content || customFuse.widget?.content) + ' maximized'" class="customer-journey">
             <ad-table
                 [footer]="maximized ? 'show' : 'hide'"
                 [pagination]="true"
@@ -22,10 +22,11 @@
     </tw-wrapper>
 
     <ng-template #customRow let-record="record">
+        <div class="custom-row-timeline"></div>
         <div
             *ngIf="record as s"
             (click)="switchMaximizedViewMode('Session History', s)"
-            class="twd-cursor-pointer twd-w-full twd-flex twd-py-1 twd-px-2"
+            class="twd-cursor-pointer twd-w-full twd-flex twd-items-center twd-py-1 twd-px-2"
             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
         >
             <div class="twd-w-3/12">
@@ -75,10 +76,15 @@
                     twd-flex twd-justify-between twd-p-2 twd-items-center twd-sticky
                 "
             >
-                <span> {{ expanded.mode }} </span>
-                <button mat-icon-button color="warn" class="twd-mr-auto" (click)="table.collapseExpanded(); table.selected = null">
-                    <mat-icon> close </mat-icon>
-                </button>
+                <span class="twd-flex-1 twd-text-left"> {{ expanded.mode }} </span>
+                <div class="twd-relative">
+                    <a *ngIf="expanded.mode === 'Session History'" mat-icon-button [href]="selected" target="_blank" color="primary"
+                        ><mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <button mat-icon-button color="warn" class="twd-ml-2" (click)="table.collapseExpanded(); table.selected = null">
+                        <mat-icon> close </mat-icon>
+                    </button>
+                </div>
             </div>
             <div class="twd-py-2 twd-h-full twd-rounded-3xl">
                 <ng-container *ngIf="expanded.mode === 'Comments'">
@@ -98,18 +104,23 @@
                 </ng-container>
 
                 <ng-container *ngIf="expanded.mode === 'Actions'">
-                    <div class="px-12 pb-12" *ngIf="!selected.error && !selected.loading">
+                    <div class="actions px-12 pb-12" *ngIf="!selected.error && !selected.loading">
                         <div *ngIf="!selected.data?.length" class="text-center mt-40 mat-headline">No data available</div>
-
                         <div
                             *ngFor="let action of selected.data"
-                            class="twd-mb-1 twd-pb-1 mat-elevation-z1 twd-text-base twd-font-semibold twd-rounded-3xl"
+                            class="
+                                action-item
+                                twd-mb-1 twd-pb-1
+                                mat-elevation-z1
+                                twd-text-base twd-font-semibold twd-rounded-3xl twd-flex twd-items-center
+                            "
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                         >
-                            <div fxFlex="20" fxLayout fxLayoutAlign="center center" class="step-time p-8">
+                            <div class="twd-w-3/12 step-time p-8 twd-flex twd-items-center twd-justify-center">
                                 {{ action.ActionTime | date: 'dd/MM/yyyy, hh:mm:ss a' }}
                             </div>
-                            <div fxFlex="75" fxLayout fxLayoutAlign="space-between center" class="step-details px-16 p-8">
+                            <div class="w-24 h-24 twd-border-primary-default twd-border-2 twd-rounded-full"></div>
+                            <div class="twd-flex-1 step-details px-16 p-8 twd-flex twd-items-center">
                                 {{ action.Action }}
                             </div>
                         </div>
@@ -128,7 +139,7 @@
                 </ng-container>
 
                 <ng-container *ngIf="expanded.mode === 'Session History'">
-                    <iframe *ngIf="!!selected" [src]="selected" class="w-100-p h-100-p" frameborder="0" seamless="seamless"></iframe>
+                    <iframe *ngIf="!!selected" [src]="selected" class="twd-w-full twd-h-full" frameborder="0" seamless="seamless"></iframe>
                 </ng-container>
 
                 <ng-container *ngIf="expanded.mode === 'Transcripts'">
