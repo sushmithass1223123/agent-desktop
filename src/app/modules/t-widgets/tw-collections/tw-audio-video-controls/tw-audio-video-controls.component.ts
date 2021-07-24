@@ -328,7 +328,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // check if the connection is created
         if (!connection) {
-            TUtils.Logger.debug('Error in AVChannel: Could not create AV channel instance!');
+            this.logger.error('Error in createAVConnection.AVChannel', 'Could not create AV channel instance!');
             return null;
         }
 
@@ -359,160 +359,164 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param {AVEvent} evt
      */
     private onAVEvent = (evt: AVEvent) => {
-        // swtich the av events
-        switch (evt.event) {
-            case 'onIncoming':
-                // request param
-                const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
+        try {
+            // swtich the av events
+            switch (evt.event) {
+                case 'onIncoming':
+                    // request param
+                    const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
-                const onConfirmDialogClose = (resp: any) => {
-                    if (resp) {
-                        // accept request
-                        evt.data.response(true);
-                        // show the UI
-                        this.showUI = true;
+                    const onConfirmDialogClose = (resp: any) => {
+                        if (resp) {
+                            // accept request
+                            evt.data.response(true);
+                            // show the UI
+                            this.showUI = true;
+                        } else {
+                            // reject request
+                            evt.data.response(false);
+                            // close the call widget
+                            this._aotWidgetService.destroyWidget(this.data.ID);
+                        }
+                    };
+
+                    // config incoming call
+                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                        'confirm',
+                        `${param} call requested by ${this.widgetData.customerName}, Do you want to accept it?`
+                    );
+
+                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+
+                    break;
+                case 'onTrace':
+                    this.logger.info('onAVEvent.onTrace: ' + evt.data);
+                    break;
+                case 'onError':
+                    let error = evt.data?.error || 'Error occured in AV connection';
+                    if (evt.data?.code in AV_ERRORS) {
+                        error = AV_ERRORS[evt.data.code];
+                    }
+                    this.status = `Error : ${error}`;
+                    this._appUIService.showSnackbar(error, 'failure');
+                    this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+                    break;
+                case 'onAVStats':
+                    this.status = evt.data;
+                    break;
+                case 'onConnected':
+                    this.connected = true;
+                    this.status = 'connected';
+                    // subscribe to the timer
+                    timer(1000, 1000)
+                        .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.unsubscribeAll))
+                        .subscribe((val) => {
+                            this.duration = (val + 1) * 1000;
+                        });
+                    break;
+                case 'onSourceVideoAdded':
+                    // assign the local stream
+                    this.selfVideo = evt.data[0];
+                    break;
+                case 'onRemoteVideoAdded':
+                    // check if the user connected is customer
+                    if (evt.data.streamInfo?.user === 'customer' && evt.data.streamInfo?.type !== 'screenshare') {
+                        evt.data.streamInfo.user = this.widgetData.customerName;
                     } else {
-                        // reject request
-                        evt.data.response(false);
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
+                        // other agent connected
                     }
-                };
-
-                // config incoming call
-                const confirmDialogRef = this._appUIService.showCustomDialog(
-                    'confirm',
-                    `${param} call requested by ${this.widgetData.customerName}, Do you want to accept it?`
-                );
-
-                confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
-                break;
-            case 'onTrace':
-                TUtils.Logger.info('TwVideoControlsComponent.onAVEvent.onTrace: ' + evt.data);
-                break;
-            case 'onError':
-                let error = evt.data?.error || 'Error occured in AV connection';
-                if (evt.data?.code in AV_ERRORS) {
-                    error = AV_ERRORS[evt.data.code];
-                }
-                this.status = `Error : ${error}`;
-                this._appUIService.showSnackbar(error, 'failure');
-                TUtils.Logger.error('TwVideoControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
-                break;
-            case 'onAVStats':
-                this.status = evt.data;
-                break;
-            case 'onConnected':
-                this.connected = true;
-                this.status = 'connected';
-                // subscribe to the timer
-                timer(1000, 1000)
-                    .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.unsubscribeAll))
-                    .subscribe((val) => {
-                        this.duration = (val + 1) * 1000;
+                    // add the level
+                    evt.data.level = 0;
+                    // push to the list
+                    this.userList.push(evt.data);
+                    break;
+                case 'onScreenshareStarted':
+                    this.screenSharing = true;
+                    this.status = 'ss-started';
+                    break;
+                case 'onScreenshareConnected':
+                    this.remoteScreenSharing = true;
+                    this.status = 'ss-connected';
+                    // check if the user connected is customer
+                    if (evt.data.streamInfo?.user === 'customer') {
+                        evt.data.streamInfo.user = this.widgetData.customerName + '-Presenting';
+                        this.remoateScreenshareRef = evt.data;
+                    } else {
+                        // other agent connected
+                    }
+                    // push to the list
+                    this.userList.push(evt.data);
+                    break;
+                case 'onScreenshareEnded':
+                    this.status = 'screenshare-ended';
+                    this.screenSharing = false;
+                    break;
+                case 'onScreenshareDisconnected':
+                    this.status = 'ss-disconnected';
+                    this.remoteScreenSharing = false;
+                    this.remoateScreenshareRef = null;
+                    // remove the screenshare user
+                    this.userList = this.userList.filter((u) => u.streamInfo.type !== 'screenshare');
+                    break;
+                case 'onFail':
+                    // show the error
+                    this.connected = false;
+                    this.status = 'failed';
+                    if (evt.data.code === TEnums.WrcCodes.Rejected) {
+                        this._appUIService.showSnackbar('User has rejected your request', 'failure');
+                    } else {
+                        this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
+                    }
+                    // close the widget
+                    this.destroyWidget();
+                    break;
+                case 'onDisconnected':
+                    this.connected = false;
+                    this.status = 'disconnected';
+                    this._appUIService.showSnackbar('Call disconnected, unexpected end!', 'failure');
+                    // close the widget
+                    this.destroyWidget();
+                    break;
+                case 'onVoiceActivity':
+                    map(this.userList, (user: any) => {
+                        // set the level to 0
+                        user.level = 0;
+                        // check for matching stream id and change the level
+                        if (user.stream.id === evt.data.streamId) {
+                            user.level = evt.data.level;
+                        }
                     });
-                break;
-            case 'onSourceVideoAdded':
-                // assign the local stream
-                this.selfVideo = evt.data[0];
-                break;
-            case 'onRemoteVideoAdded':
-                // check if the user connected is customer
-                if (evt.data.streamInfo?.user === 'customer' && evt.data.streamInfo?.type !== 'screenshare') {
-                    evt.data.streamInfo.user = this.widgetData.customerName;
-                } else {
-                    // other agent connected
-                }
-                // add the level
-                evt.data.level = 0;
-                // push to the list
-                this.userList.push(evt.data);
-                break;
-            case 'onScreenshareStarted':
-                this.screenSharing = true;
-                this.status = 'ss-started';
-                break;
-            case 'onScreenshareConnected':
-                this.remoteScreenSharing = true;
-                this.status = 'ss-connected';
-                // check if the user connected is customer
-                if (evt.data.streamInfo?.user === 'customer') {
-                    evt.data.streamInfo.user = this.widgetData.customerName + '-Presenting';
-                    this.remoateScreenshareRef = evt.data;
-                } else {
-                    // other agent connected
-                }
-                // push to the list
-                this.userList.push(evt.data);
-                break;
-            case 'onScreenshareEnded':
-                this.status = 'screenshare-ended';
-                this.screenSharing = false;
-                break;
-            case 'onScreenshareDisconnected':
-                this.status = 'ss-disconnected';
-                this.remoteScreenSharing = false;
-                this.remoateScreenshareRef = null;
-                // remove the screenshare user
-                this.userList = this.userList.filter((u) => u.streamInfo.type !== 'screenshare');
-                break;
-            case 'onFail':
-                // show the error
-                this.connected = false;
-                this.status = 'failed';
-                if (evt.data.code === TEnums.WrcCodes.Rejected) {
-                    this._appUIService.showSnackbar('User has rejected your request', 'failure');
-                } else {
-                    this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
-                }
-                // close the widget
-                this.destroyWidget();
-                break;
-            case 'onDisconnected':
-                this.connected = false;
-                this.status = 'disconnected';
-                this._appUIService.showSnackbar('Call disconnected, unexpected end!', 'failure');
-                // close the widget
-                this.destroyWidget();
-                break;
-            case 'onVoiceActivity':
-                map(this.userList, (user: any) => {
-                    // set the level to 0
-                    user.level = 0;
-                    // check for matching stream id and change the level
-                    if (user.stream.id === evt.data.streamId) {
-                        user.level = evt.data.level;
+                    break;
+                case 'onCollectorStats':
+                    // update the mos value
+                    this.mos = evt.data.stats.audio.local.mos.toFixed(2);
+                    break;
+                case 'onEnd':
+                    this.connected = false;
+                    this.status = 'ended';
+                    this._appUIService.showSnackbar('User has ended the call', 'info');
+                    // close the widget
+                    this.destroyWidget();
+                    break;
+                case 'onUserLeft':
+                    this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
+                    break;
+                case 'onReconnecting':
+                    break;
+                case 'onReconnected':
+                    break;
+                case 'onStreamStatusChanged':
+                    // 1 : connected
+                    // 2  :disconnected
+                    if (evt.data.status === 2) {
+                    } else if (evt.data.status === 1) {
                     }
-                });
-                break;
-            case 'onCollectorStats':
-                // update the mos value
-                this.mos = evt.data.stats.audio.local.mos.toFixed(2);
-                break;
-            case 'onEnd':
-                this.connected = false;
-                this.status = 'ended';
-                this._appUIService.showSnackbar('User has ended the call', 'info');
-                // close the widget
-                this.destroyWidget();
-                break;
-            case 'onUserLeft':
-                this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
-                break;
-            case 'onReconnecting':
-                break;
-            case 'onReconnected':
-                break;
-            case 'onStreamStatusChanged':
-                // 1 : connected
-                // 2  :disconnected
-                if (evt.data.status === 2) {
-                } else if (evt.data.status === 1) {
-                }
-                break;
-            default:
-            // console.log(`unhandled:: [${evt.event}]`, evt);
+                    break;
+                default:
+                // console.log(`unhandled:: [${evt.event}]`, evt);
+            }
+        } catch (error) {
+            this.logger.error('Error in onAVEvent', error);
         }
     };
 

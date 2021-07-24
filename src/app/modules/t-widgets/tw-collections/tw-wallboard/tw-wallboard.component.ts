@@ -3,7 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TableComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { DashboardColorCodeModel, SDKClient, TUtils, WallboardRefreshEvent } from '@tmac/sdk';
+import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
@@ -79,7 +79,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         } else if (this.widgetData.Role === 'supervisor') {
             eventName = 'TeamWallboardRefreshEvent';
         } else {
-            TUtils.Logger.warn(`TwWallboardComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
+            this.logger.warn(`Unable to get event name to regiser, Role=${this.widgetData.Role}`);
         }
 
         // register if only eventname is there

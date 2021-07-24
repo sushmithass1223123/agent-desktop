@@ -41,7 +41,9 @@
                             </div>
                             <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon *ngIf="!callLines.length">construction</mat-icon>
-                                <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="cursor-pointer">construction</mat-icon>
+                                <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="twd-cursor-pointer"
+                                    >construction</mat-icon
+                                >
                                 {{ sessionID + '|' + (interaction?.InteractionID || 'NA') }}
                                 <mat-menu #sessionsMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
                                     <div *ngFor="let item of callLines" mat-menu-item fxLayout fxLayoutAlign=" center">

@@ -47,7 +47,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
         this.WidgetData = this.data.Data;
         const eventNames = uniq(this.WidgetData.Actions.map((a) => a.EventName) ?? []);
         if (!eventNames.length) {
-            TUtils.Logger.warn(`TwTcisIntegration: no action events specified, ignore process!`);
+            this.logger.warn(`No action events specified, ignore process!`);
             return;
         }
         // listen to tmac events
@@ -105,7 +105,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     private matchChannel(evt: IUIEvent, channel: TChannels): boolean {
         try {
             if (!channel) {
-                TUtils.Logger.warn(`TwTcisIntegration.matchChannel: channel is not provided for action event ${evt.EventName}, ignore process!`);
+                this.logger.warn(`matchChannel: channel is not provided for action event ${evt.EventName}, ignore process!`);
                 return;
             }
             // get the construct event of this action event
@@ -128,7 +128,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                 }
             }
         } catch (error) {}
-        TUtils.Logger.warn(`TwTcisIntegration.matchChannel: no matching construct event for ${evt.EventName} and channel ${channel}!`);
+        this.logger.warn(`matchChannel: no matching construct event for ${evt.EventName} and channel ${channel}!`);
         return false;
     }
 
@@ -175,7 +175,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                 return acc;
             }, '');
         } catch (error) {
-            TUtils.Logger.error('Exception in TwTcisIntegrationComponent.reduceParams', error);
+            this.logger.error('Error in reduceParams', error);
         }
     }
 
@@ -188,17 +188,17 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
      * Method to execute action to invoke the server
      */
     private executeAction(exeName: string, method: string, params: string): void {
-        TUtils.Logger.info(`TwTcisIntegrationComponent.executeAction: ${exeName} - ${method} - ${params.length}`, false);
+        this.logger.info(`executeAction: ${exeName} - ${method} - ${params.length}`, false);
         // check if exeName/method
         if (!exeName || !method) {
-            TUtils.Logger.warn('TwTcisIntegrationComponent.executeAction: exeName|method not found');
+            this.logger.warn('executeAction: exeName|method not found');
             return;
         }
         // check if connection exists
         if (this._signalrWrapper?.isConnected()) {
             this._signalrWrapper.hub.invoke(exeName, method, params, false);
         } else {
-            TUtils.Logger.warn('TwTcisIntegrationComponent.executeAction: Signalr Connection to the server is not available');
+            this.logger.warn('executeAction: Signalr Connection to the server is not available');
         }
     }
 }

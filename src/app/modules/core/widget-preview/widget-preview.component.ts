@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { TUtils } from '@tmac/sdk';
 
@@ -13,7 +14,7 @@ import { TUtils } from '@tmac/sdk';
     styleUrls: ['./widget-preview.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class WidgetPreviewComponent implements OnInit {
+export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
     /**
      * Widgets
      */
@@ -40,11 +41,13 @@ export class WidgetPreviewComponent implements OnInit {
     appConfig: any;
 
     constructor(
+        private fuseSplashService: FuseSplashScreenService,
         private _activatedRouter: ActivatedRoute,
         private _router: Router,
-        private fuseSplashService: FuseSplashScreenService,
         private _appDataService: AppDataService
-    ) {}
+    ) {
+        super();
+    }
 
     /**
      * Lifecycle Hook
@@ -100,7 +103,7 @@ export class WidgetPreviewComponent implements OnInit {
         try {
             // check if local template
             if (templateName === 'local') {
-                TUtils.Logger.info(`WidgetPreviewComponent.getTemplateJson load local template @ ${this.localTemplatePath}`, false);
+                this.logger.info(`getTemplateJson load local template @ ${this.localTemplatePath}`, false);
                 // get the config
                 const templateFetch = await fetch(this.localTemplatePath);
                 if (!templateFetch.ok) {
@@ -139,7 +142,7 @@ export class WidgetPreviewComponent implements OnInit {
                 result
             );
         } catch (error) {
-            TUtils.Logger.error('Exception in getTemplateJson', error, false);
+            this.logger.error('Error in getTemplateJson', error, false);
             this.routeToNotFound('Error in getting template');
         }
     }

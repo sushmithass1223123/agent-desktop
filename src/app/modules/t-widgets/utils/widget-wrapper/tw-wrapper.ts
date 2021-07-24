@@ -1,7 +1,7 @@
-import { HostBinding, Directive } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Directive, HostBinding } from '@angular/core';
+import { ILogger, TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
-import { TUtils } from '@tmac/sdk';
+import { Subject } from 'rxjs';
 
 /**
  * T Widget Wrapper directive
@@ -27,14 +27,20 @@ export class TWidgetWrapper {
      */
     unsubscribeAll: Subject<any>;
 
+    /**
+     * Logger ref
+     */
+    logger: ILogger;
+
     constructor() {
         // Set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
+        this.logger = TUtils.Logger.register(`AD-${this.constructor.name.replace('Tw', '').replace('Component', 'Widget')}`);
     }
 
     /**
      * On widget init
-     *  
+     *
      * @param {IWidget} data Widget data
      */
     initWrapper(data: IWidget): void {

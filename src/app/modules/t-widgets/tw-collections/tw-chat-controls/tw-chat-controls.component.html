@@ -35,7 +35,7 @@
 
                 <div
                     *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
-                    class="reply-to cursor-pointer"
+                    class="reply-to twd-cursor-pointer"
                     mat-ripple
                     (click)="setReplyingToMessage(message)"
                 >
@@ -453,7 +453,7 @@
                         <!-- CHAT TYPING -->
                         <div
                             *ngIf="remoteTyping && remoteTyping.typing"
-                            class="twd-absolute top--20 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
+                            class="twd-absolute twd--top-5 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
                         >
                             {{ remoteTyping.name }} is typing...
                         </div>
@@ -484,7 +484,7 @@
                             </div>
 
                             <mat-chip-list *ngIf="textTemplates.filtered.length" class="w-100-p mx-16 mb-8">
-                                <mat-chip class="cursor-pointer" *ngFor="let item of textTemplates.filtered" (click)="selectTemplate(item)">
+                                <mat-chip class="twd-cursor-pointer" *ngFor="let item of textTemplates.filtered" (click)="selectTemplate(item)">
                                     {{ item.Name }}
                                 </mat-chip>
                             </mat-chip-list>

@@ -1,17 +1,19 @@
 <div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
-    <div *ngIf="staticWidgets.length || dynamicWidgets.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+    <div
+        *ngIf="staticWidgets.length || dynamicWidgets.length"
+        class="lg:twd-flex twd-flex-row twd-flex-full twd-w-full twd-h-full twd-justify-center twd-items-stretch twd-gap-1.5"
+    >
         <tw-template
-            [fxFlex.gt-md]="dynamicWidgets.length > 0 ? 33 : 100"
-            class="static-widget-grid"
             *ngIf="staticWidgets.length > 0"
+            [ngClass]="{ 'lg:twd-max-w-4/12': dynamicWidgets.length > 0 }"
+            class="static-widget-grid twd-flex-full twd-gap-1.5"
             [widgets]="staticWidgets"
         ></tw-template>
 
         <tw-template
-            [fxFlex.gt-md]="staticWidgets.length > 0 ? 66 : 100"
-            [ngClass]="{ 'static-less': staticWidgets.length === 0 }"
-            class="dynamic-widget-grid"
             *ngIf="dynamicWidgets.length > 0"
+            [ngClass]="{ 'lg:twd-max-w-8/12': staticWidgets.length > 0, 'static-less': staticWidgets.length === 0 }"
+            class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
             [widgets]="dynamicWidgets"
         ></tw-template>
 
@@ -30,7 +32,7 @@
             mat-raised-button
             color="accent"
             cdkOverlayOrigin
-            class="time-filter w-52 h-52 z-index-1"
+            class="time-filter w-52 h-52 twd-z-10"
             #dashboardDataOverlay="cdkOverlayOrigin"
             cdkDrag
             cdkDragLockAxis="y"

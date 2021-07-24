@@ -181,7 +181,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
 
         // check if we got the url
         if (!this.tcmClientUrl) {
-            TUtils.Logger.warn('TwCampaignContactComponent: Unable to fetch TCM client url, please check the config!');
+            this.logger.warn('Unable to fetch TCM client url, please check the config!');
             return;
         }
 
@@ -401,7 +401,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             })
             .catch((err) => {
                 this._appUIService.showSnackbar('Make call error', 'failure');
-                TUtils.Logger.error('Error in TwCampaignContactComponent.makeCallToCustomer', err);
+                this.logger.error('Error in makeCallToCustomer', err);
             });
     }
 

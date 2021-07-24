@@ -16,19 +16,18 @@
         [ngClass]="item.interactionId === activeInteraction ? 'active' : ''"
         [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
     >
-        <div fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
+        <div class="lg:twd-flex twd-flex-row twd-flex-full twd-w-full twd-h-full twd-justify-center twd-items-stretch twd-gap-1.5">
             <tw-template
-                [fxFlex.gt-md]="item.widgets.dynamic.length > 0 ? 33 : 100"
-                class="static-widget-grid"
                 *ngIf="item.widgets.static.length > 0"
+                [ngClass]="{ 'lg:twd-max-w-4/12': dynamicWidgets.length > 0 }"
+                class="static-widget-grid twd-flex-full twd-gap-1.5"
                 [widgets]="item.widgets.static"
             ></tw-template>
 
             <tw-template
-                [fxFlex.gt-md]="item.widgets.static.length > 0 ? 66 : 100"
-                [ngClass]="{ 'static-less': item.widgets.static.length === 0 }"
-                class="dynamic-widget-grid"
                 *ngIf="item.widgets.dynamic.length > 0"
+                [ngClass]="{ 'lg:twd-max-w-8/12': staticWidgets.length > 0, 'static-less': staticWidgets.length === 0 }"
+                class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
                 [widgets]="item.widgets.dynamic"
             ></tw-template>
 

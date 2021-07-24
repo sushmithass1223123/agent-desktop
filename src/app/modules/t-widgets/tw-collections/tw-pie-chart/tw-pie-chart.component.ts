@@ -134,7 +134,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         } else {
-            TUtils.Logger.warn(`TwPieChartComponent: unable to get event name to regiser, Source=${this.widgetData.Source}`);
+            this.logger.warn(`Unable to get event name to regiser, Source=${this.widgetData.Source}`);
         }
     }
 

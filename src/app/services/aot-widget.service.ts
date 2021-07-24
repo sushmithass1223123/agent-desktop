@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TUtils } from '@tmac/sdk';
 import { AppDataService } from './app-data.service';
 
 /**
@@ -13,7 +13,7 @@ import { AppDataService } from './app-data.service';
 @Injectable({
     providedIn: 'root'
 })
-export class AOTWidgetService {
+export class AOTWidgetService extends SharedWrapper {
     /**
      * Subject to unsubscribe for all subscriptions
      */
@@ -23,7 +23,9 @@ export class AOTWidgetService {
      */
     private _widgetsSubject: BehaviorSubject<IWidget[]>;
 
-    constructor(private _appDataService: AppDataService) {}
+    constructor(private _appDataService: AppDataService) {
+        super();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -40,7 +42,7 @@ export class AOTWidgetService {
      * To subscribe to the service
      */
     public subscribe(): void {
-        TUtils.Logger.info('AOTWidgetService.subscribe', false);
+        this.logger.info('subscribe', false);
 
         // init the subject
         this._unsubscribeAll = new Subject();
@@ -116,7 +118,7 @@ export class AOTWidgetService {
     public destroyWidget(id: string, force?: boolean): void {
         // check if the id is null
         if (!id) {
-            TUtils.Logger.warn('AOTWidgetService.destroyWidget: widget ID is not found!', false);
+            this.logger.warn('destroyWidget: widget ID is not found!', false);
             return;
         }
 
@@ -158,7 +160,7 @@ export class AOTWidgetService {
      * To unsubscribe from the service
      */
     public unsubscribe(): void {
-        TUtils.Logger.info('AOTWidgetService.unsubscribe', false);
+        this.logger.info('unsubscribe', false);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);

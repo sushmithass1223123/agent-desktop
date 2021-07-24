@@ -5,7 +5,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
+import { AgentFeatures, IAgentData, InteractionDataModel, IResponse, SDKClient, SuAgentModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
@@ -229,7 +229,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 return false;
             }
         } catch (err) {
-            TUtils.Logger.error('Excpetion in TwSuAgentInteractionsComponent.featureCheck', err, false);
+            this.logger.error('Error in featureCheck', err, false);
         }
     }
 

@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
 import { IAppConfig } from 'app/interfaces';
 import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
@@ -17,7 +18,7 @@ import { FuseFacadeService } from './fuse-facade.service';
 @Injectable({
     providedIn: 'root'
 })
-export class AppDataService {
+export class AppDataService extends SharedWrapper {
     /**
      * Production conofig path
      */
@@ -45,6 +46,7 @@ export class AppDataService {
         private _fuseFacadeService: FuseFacadeService // private _tmacEventService: TMACEventService
     ) {
         // Set the config from the default config
+        super();
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
         this._appVersion = packageInfo.version;
@@ -122,12 +124,12 @@ export class AppDataService {
 
         // check the config mode
         if (data.ConfigMode === 'local') {
-            TUtils.Logger.info('Config mode=local, load config from development.json', false);
+            this.logger.info('Config mode=local, load config from development.json', false);
             // get the config from local for development
             return await this.getDevelopmentConfig();
         }
 
-        TUtils.Logger.info('Config mode=remote, load config from server', false);
+        this.logger.info('Config mode=remote, load config from server', false);
 
         // get the login json from proxy
         const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
@@ -177,7 +179,7 @@ export class AppDataService {
                 return;
             }
 
-            TUtils.Logger.warn(
+            this.logger.warn(
                 'AppConfigs.SDK accepts camel casing to support TMAC SDK case, please change to camel casing as per relase [5.0.6.30]!',
                 false
             );
@@ -186,7 +188,7 @@ export class AppDataService {
             let customScripts = [];
             if (Array.isArray(config.AppConfigs.SDK.CustomSripts)) {
                 customScripts = config.AppConfigs.SDK.CustomSripts;
-                TUtils.Logger.warn('AppConfigs.SDK.CustomSripts is depricated, please correct the spelling in config to -> CustomScripts', false);
+                this.logger.warn('AppConfigs.SDK.CustomSripts is depricated, please correct the spelling in config to -> CustomScripts', false);
             } else {
                 customScripts = config.AppConfigs.SDK.CustomScripts;
             }
@@ -224,7 +226,7 @@ export class AppDataService {
                 customScripts: [...customScripts]
             });
         } catch (error) {
-            TUtils.Logger.error('Exception in AppDataService.setJsonConfig', error, false);
+            this.logger.error('Error in setJsonConfig', error, false);
         }
     }
 
@@ -240,12 +242,12 @@ export class AppDataService {
             if (!local && environment.production) {
                 // get the config from server for production
                 data = await this.getProductionConfig(agentId);
-                TUtils.Logger.info('Production config loaded', false);
+                this.logger.info('Production config loaded', false);
                 console.log(data);
             } else {
                 // get the config from local for development
                 data = await this.getDevelopmentConfig();
-                TUtils.Logger.info('Development config loaded', false);
+                this.logger.info('Development config loaded', false);
                 console.log(data);
             }
 
@@ -264,7 +266,7 @@ export class AppDataService {
                 };
             }
         } catch (error) {
-            TUtils.Logger.error('Exception in AppDataService.getJsonConfig', error, false);
+            this.logger.error('Error in getJsonConfig', error, false);
         }
         return null;
     }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import {
     ACWTimerEvent,
     AgentForcedLogoffEvent,
@@ -17,8 +18,7 @@ import {
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
     TMACEventTypes,
-    TmacServerConnectionSuccess,
-    TUtils
+    TmacServerConnectionSuccess
 } from '@tmac/sdk';
 import { CustomTMACEventTypes, IAction, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -35,7 +35,7 @@ import { AppUiService } from './app-ui.service';
 @Injectable({
     providedIn: 'root'
 })
-export class TMACEventService {
+export class TMACEventService extends SharedWrapper {
     // Private
     /**
      * Unsubscribe all subject
@@ -117,6 +117,7 @@ export class TMACEventService {
         private _router: Router
     ) {
         // intialize all the subject
+        super();
         this._unsubscribeAll = new Subject();
         this._interactionEventArray = [];
         this._nonInteractionEventArray = [];
@@ -184,7 +185,7 @@ export class TMACEventService {
             // TODO:: check if the interaction id is there then return
             // and to handle interaction AgentNotificaitonEvent separatly
             // if (evt.InteractionID > 0) {
-            //     TUtils.Logger.info('TMACEventService.AgentNotificaitonEvent: event for an interaction, return', false);
+            //     this.logger.info('AgentNotificaitonEvent: event for an interaction, return', false);
             //     return;
             // }
 
@@ -237,7 +238,7 @@ export class TMACEventService {
                     case 'dacrequest': {
                         // check if the dialog is already opened
                         if (this._remiderTaskDialog.dacRequest) {
-                            TUtils.Logger.info('TMACEventService.AgentNotificaitonEvent: dacRequest dialog is already opened!', false);
+                            this.logger.info('AgentNotificaitonEvent: dacRequest dialog is already opened!', false);
                             return;
                         }
 
@@ -325,7 +326,7 @@ export class TMACEventService {
                     case 'makecall': {
                         // check if the dialog is already opened
                         if (this._remiderTaskDialog.makeCall) {
-                            TUtils.Logger.info('TMACEventService.AgentNotificaitonEvent: makeCall dialog is already opened!', false);
+                            this.logger.info('AgentNotificaitonEvent: makeCall dialog is already opened!', false);
                             return;
                         }
 
@@ -379,7 +380,7 @@ export class TMACEventService {
                     case 'meeting': {
                         // check if the dialog is already opened
                         if (this._remiderTaskDialog.meeting) {
-                            TUtils.Logger.info('TMACEventService.AgentNotificaitonEvent: meeting dialog is already opened!', false);
+                            this.logger.info('AgentNotificaitonEvent: meeting dialog is already opened!', false);
                             return;
                         }
 
@@ -421,7 +422,7 @@ export class TMACEventService {
                     case 'changestate': {
                         // check if the dialog is already opened
                         if (this._remiderTaskDialog.changeState) {
-                            TUtils.Logger.info('TMACEventService.AgentNotificaitonEvent: changeState dialog is already opened!', false);
+                            this.logger.info('AgentNotificaitonEvent: changeState dialog is already opened!', false);
                             return;
                         }
 
@@ -530,7 +531,7 @@ export class TMACEventService {
                 });
             }
         } catch (error) {
-            TUtils.Logger.error('Exception in AgentNotificaitonEvent', error);
+            this.logger.error('Error in AgentNotificaitonEvent', error);
         }
     };
 
@@ -808,7 +809,7 @@ export class TMACEventService {
                     // check the interactionId
                     const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId;
                     if (!intId) {
-                        TUtils.Logger.info('TMACEventService: PostMessage to close tab reject, interaction id not found');
+                        this.logger.info('postMessageReceived to close tab reject, interaction id not found');
                         return;
                     }
                     // close tab
@@ -832,7 +833,7 @@ export class TMACEventService {
                 this._postMessage$.next(data);
             }
         } catch (error) {
-            TUtils.Logger.error('Error in TMACEventService.postMessageReceived', error, false);
+            this.logger.error('Error in postMessageReceived', error, false);
         }
     };
 
@@ -844,7 +845,7 @@ export class TMACEventService {
      * To subscribe to TMACEventService service
      */
     subscribe(): void {
-        TUtils.Logger.info('TMACEventService.subscribe', false);
+        this.logger.info('subscribe', false);
 
         // intialize all the subject
         this._unsubscribeAll = new Subject();
@@ -930,7 +931,7 @@ export class TMACEventService {
      * To unsubscribe to TMACEventService service
      */
     unsubscribe(): void {
-        TUtils.Logger.info('TMACEventService.unsubscribe', false);
+        this.logger.info('unsubscribe', false);
 
         // this.removeTMACEventListener([
         //     {
@@ -1320,7 +1321,7 @@ export class TMACEventService {
 
             // to log the event
             if (logEnabled && data.log) {
-                TUtils.Logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
+                this.logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
             }
         } catch (error) {}
     }
