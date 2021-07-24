@@ -98,7 +98,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             })
             .catch((err) => {
                 this._appUIService.showSnackbar('Error in fetching chat templates', 'failure');
-                TUtils.Logger.error('Error in fetching chat templates', err, false);
+                this.logger.error('Error in fetching chat templates', err, false);
             })
             .finally(() => {
                 this.loading = false;

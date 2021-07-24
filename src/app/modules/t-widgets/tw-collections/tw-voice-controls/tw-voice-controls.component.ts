@@ -37,7 +37,6 @@ import {
     OutgoingCallEvent,
     SDKClient,
     TEnums,
-    TUtils,
     UUIDataEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -490,7 +489,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             );
 
             if (!connection) {
-                TUtils.Logger.warn(`TwVoiceControlsComponent: Error in creating AVChannel for MS call: ${sessionId}`);
+                this.logger.warn(`Unable to create AVChannel for MS call: ${sessionId}`);
                 return;
             }
 
@@ -526,7 +525,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // return the connection
             return connection;
         } catch (error) {
-            TUtils.Logger.error('Exception in TwVoiceControlsComponent.createAVConnection', error);
+            this.logger.error('Error in createAVConnection', error);
         }
         return null;
     }
@@ -539,10 +538,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // swtich the av events
         switch (evt.event) {
             case 'onTrace':
-                TUtils.Logger.info('TwVoiceControlsComponent.onAVEvent.onTrace: ' + evt.data);
+                this.logger.info('onAVEvent.onTrace: ' + evt.data);
                 break;
             case 'onError':
-                TUtils.Logger.error('TwVoiceControlsComponent.onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+                this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
                 break;
             case 'onConnected':
                 break;
@@ -1058,7 +1057,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             }
         } catch (error) {
-            TUtils.Logger.error('Exception in TwVoiceControlsComponent.MediaServerEvent', error);
+            this.logger.error('Error in MediaServerEvent', error);
         }
     }
 
@@ -1265,7 +1264,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // clear the array after processing
                 this.mediaServerMessages = [];
             } else {
-                TUtils.Logger.debug(`Error in answerCall: AV connection is not found - ${this.sessionID}`);
+                this.logger.warn(`answerCall: AV connection is not found - ${this.sessionID}`);
             }
             // set the process media message to true for further messages
             this.processMediaMessages = true;
@@ -1821,7 +1820,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     })
                     .catch((err) => {
                         this._appUIService.showSnackbar('Make call error', 'failure');
-                        TUtils.Logger.error('Error in TwVoiceControlsComponent.makeCall', err);
+                        this.logger.error('Error in makeCall', err);
                     });
             }
         });

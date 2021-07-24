@@ -2,6 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation 
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { appAnimations } from '@modules/shared/animations/app.animation';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
@@ -73,7 +74,7 @@ interface Chat {
     encapsulation: ViewEncapsulation.None,
     animations: appAnimations
 })
-export class InstantMessagingComponent implements OnInit, OnDestroy {
+export class InstantMessagingComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * contact List
      */
@@ -161,10 +162,9 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService
     ) {
+        super();
         // Set the defaults
         this.selectedContact = null;
-
-        // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
 
@@ -441,7 +441,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 this.selectedContact.status = 'Not Logged In';
             }
         } catch (err) {
-            TUtils.Logger.error('Excpetion in InstantMessagingComponent.sendIM', err, false);
+            this.logger.error('Error in sendIM', err, false);
             this._appUIService.showSnackbar('Error in sending message', 'failure');
         } finally {
             let dialog = this.allChats[this.selectedContact.id].dialog;

@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 
@@ -29,7 +30,7 @@ type AvailableDevices = {
     styleUrls: ['./tw-available-media-device.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwAvailableMediaDeviceComponent implements OnInit {
+export class TwAvailableMediaDeviceComponent extends SharedWrapper implements OnInit {
     /**
      * Available devices Dialog ref
      */
@@ -77,7 +78,9 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     @ViewChild('videoElm')
     videoElm: ElementRef<HTMLMediaElement>;
 
-    constructor(private matDialog: MatDialog) {}
+    constructor(private matDialog: MatDialog) {
+        super();
+    }
 
     /**
      * Lifecycle hook
@@ -127,7 +130,7 @@ export class TwAvailableMediaDeviceComponent implements OnInit {
     async setAvailableDevices(): Promise<void> {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                TUtils.Logger.error('Error in TwAvailableMediaDeviceComponent.setAvailableDevices', 'enumerateDevices() not supported', false);
+                this.logger.error('Error in setAvailableDevices', 'enumerateDevices() not supported', false);
                 return;
             }
             this.setComponentState('availableDevices/fetching');

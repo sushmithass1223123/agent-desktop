@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 import { ContentPageService } from '@services/content-page.service';
-import { TUtils } from '@tmac/sdk';
+import { ILogger, TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -52,6 +52,10 @@ export class TWContentWrapper {
      */
     aotFABDrag: boolean;
     /**
+     * Logger ref
+     */
+    logger: ILogger;
+    /**
      * To listen to the window resize
      */
     @HostListener('window:resize', ['$event'])
@@ -59,14 +63,12 @@ export class TWContentWrapper {
         this.setWidthHeight();
     }
 
-    constructor(
-        public hostElement: ElementRef,
-        public contentPageService: ContentPageService
-    ) {
+    constructor(public hostElement: ElementRef, public contentPageService: ContentPageService) {
         // set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
         this.pageActive = false;
         this.setWidthHeight();
+        this.logger = TUtils.Logger.register(`AD-${this.constructor.name.replace('Twc', '').replace('Component', 'Widget')}`);
     }
 
     /**
@@ -106,7 +108,7 @@ export class TWContentWrapper {
 
     /**
      * On widget init
-     *  
+     *
      * @param {IWidget} data Widget data
      */
     initWrapper(data: IWidget): void {
@@ -149,23 +151,20 @@ export class TWContentWrapper {
         }
 
         // subscribe to the viewModeObservable
-        this.contentPageService.mode
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((d: string) => {
-                // get the path
-                const active = d === this.widgetData.Data.Path;
-                // set the style
-                this.hostElement.nativeElement.style.display = (active ? 'block' : 'none');
-                // check if active, then trigger event
-                if (active) {
-                    this.onActive();
-                    this.pageActive = true;
-                }
-                else {
-                    this.onInactive();
-                    this.pageActive = false;
-                }
-            });
+        this.contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((d: string) => {
+            // get the path
+            const active = d === this.widgetData.Data.Path;
+            // set the style
+            this.hostElement.nativeElement.style.display = active ? 'block' : 'none';
+            // check if active, then trigger event
+            if (active) {
+                this.onActive();
+                this.pageActive = true;
+            } else {
+                this.onInactive();
+                this.pageActive = false;
+            }
+        });
     }
 
     /**
@@ -180,11 +179,10 @@ export class TWContentWrapper {
     /**
      * On page active callback
      */
-    onActive = () => { };
+    onActive = () => {};
 
     /**
      * On page inactive callback
      */
-    onInactive = () => { };
-
+    onInactive = () => {};
 }

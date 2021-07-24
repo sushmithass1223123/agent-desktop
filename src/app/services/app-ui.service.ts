@@ -8,6 +8,7 @@ import { AppSnackbarComponent } from '@modules/shared/components/app-snackbar/ap
 import { CustomDialogComponent } from '@modules/shared/components/custom-dialog/custom-dialog.component';
 import { ReminderTaskDialogComponent } from '@modules/shared/components/reminder-task-dialog/reminder-task-dialog.component';
 import { SnackbarComponent } from '@modules/shared/components/snackbar/snackbar.component';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { TUtils } from '@tmac/sdk';
 import {
     AppAlertDialogTypes,
@@ -33,7 +34,7 @@ type UiChanActions = 'hold/select-chat';
 @Injectable({
     providedIn: 'root'
 })
-export class AppUiService {
+export class AppUiService extends SharedWrapper {
     /**
      * Audio interval reference to repeat
      */
@@ -97,6 +98,7 @@ export class AppUiService {
         private _appDataService: AppDataService,
         private domSanitizer: DomSanitizer
     ) {
+        super();
         this.init();
     }
 
@@ -529,7 +531,7 @@ export class AppUiService {
      * To subscribe to App UI service
      */
     public subscribe(): void {
-        TUtils.Logger.info('AppUiService.subscribe', false);
+        this.logger.info('subscribe', false);
 
         // init the subject
         this._unsubscribeAll = new Subject();
@@ -575,7 +577,7 @@ export class AppUiService {
      * To unsubscribe to App UI service
      */
     public unsubscribe(): void {
-        TUtils.Logger.info('AppUiService.unsubscribe', false);
+        this.logger.info('unsubscribe', false);
 
         // unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);

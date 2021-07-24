@@ -2,7 +2,6 @@ import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEnca
 import { fuseAnimations } from '@fuse/animations';
 import { TableComponent } from '@modules/shared/components';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, TwChartConfig } from 'app/interfaces';
@@ -93,7 +92,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         } else if (this.widgetData.Role === 'supervisor') {
             eventName = 'TeamChannelListEvent';
         } else {
-            TUtils.Logger.warn(`TwAhtTcComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
+            this.logger.warn(`Unable to get event name to regiser, Role=${this.widgetData.Role}`);
         }
 
         if (eventName) {
