@@ -1,0 +1,31 @@
+{
+    "Name": "Compose Messaging",
+    "Description": "",
+    "Key": "ComposeMessaging",
+    "Type": "tw-compose-messaging",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "sms",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 2
+        },
+        "Actions": [
+            "maximize",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Type": "sms",
+        "Number": "CCLDataEvent.RegisteredPhone"
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "Name": "TextChat",
+    "Description": "",
+    "Type": "twn-textchat",
+    "Config": {
+        "Enabled": true,
+        "Icon": "chat"
+    },
+    "Data": {
+        "Path": "/textchat",
+        "Active": false
+    }
+}

@@ -4,7 +4,7 @@ import { TableComponent } from '@modules/shared/components';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { CustomSDKEvent, TwChartConfig } from 'app/interfaces';
+import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
 import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 
@@ -30,21 +30,17 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     /**
      * App config json data
      */
-    @Input() data: any;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Widget Maximized status
      */
     maximized = false;
+
     /**
      * Interactino list
      */
     interactionList: any[] = [];
-
-    /**
-     * App data config
-     */
-    widgetData: WidgetData;
 
     /**
      * AHT chart config
@@ -84,15 +80,13 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.widgetData = this.data.Data || new Object();
-
         let eventName: any;
-        if (this.widgetData.Role === 'agent') {
+        if (this.data.Data?.Role === 'agent') {
             eventName = 'AgentChannelListEvent';
-        } else if (this.widgetData.Role === 'supervisor') {
+        } else if (this.data.Data?.Role === 'supervisor') {
             eventName = 'TeamChannelListEvent';
         } else {
-            this.logger.warn(`Unable to get event name to regiser, Role=${this.widgetData.Role}`);
+            this.logger.warn(`Unable to get event name to regiser, Role=${this.data.Data?.Role}`);
         }
 
         if (eventName) {
@@ -108,7 +102,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * Life cycle hook
      */
     ngAfterViewInit(): void {
-        if (this.widgetData.Type === 'grid') {
+        if (this.data.Data?.Type === 'grid') {
             this.setupADTable();
         }
     }
@@ -152,13 +146,14 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         };
         this.table.columns = ['Channel', 'AverageHandleTime', 'Transfer', 'Conference'];
         this.table.sort = true;
+        this.table.footer = 'disabled';
     }
 
     /**
      * AgentChannelListEvent handler
      * @param {CustomSDKEvent} evt
      */
-    private AgentChannelListEvent(evt: CustomSDKEvent): void {
+    AgentChannelListEvent(evt: CustomSDKEvent): void {
         this.interactionList = evt.Data.Channels;
         this.table.source.data = this.interactionList;
     }
@@ -167,7 +162,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * TeamChannelListEvent handler
      * @param {CustomSDKEvent} evt
      */
-    private TeamChannelListEvent(evt: CustomSDKEvent): void {
+    TeamChannelListEvent(evt: CustomSDKEvent): void {
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];
         evt.Data.Channels.forEach((c: any) => {
@@ -195,6 +190,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         this.ahtChart.labels = labels;
     }
 }
+
 interface WidgetData {
     /**
      * Available Roles for this reusable component

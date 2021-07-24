@@ -1,0 +1,22 @@
+{
+    "Name": "Docker",
+    "Description": "",
+    "Type": "twc-docker",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/docker",
+        "Unload": false,
+        "Widgets": {
+            "Static": []
+        }
+    }
+}

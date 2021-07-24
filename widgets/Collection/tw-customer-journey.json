@@ -1,0 +1,32 @@
+{
+    "Name": "Customer Journey",
+    "Description": "",
+    "Type": "tw-customer-journey",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "storage",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "collapse"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "IframeBaseUrl": "",
+        "NoOfRecords": 10,
+        "SentimentDashboardUrl": "",
+        "Columns": []
+    }
+}

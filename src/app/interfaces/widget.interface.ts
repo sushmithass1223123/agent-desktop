@@ -1,3 +1,5 @@
+import { IUIEvent } from '@tmac/sdk';
+
 export interface IWidget<T = any, K = any> {
     /**
      * Name of the Widget
@@ -45,9 +47,9 @@ export interface IWidget<T = any, K = any> {
 
 export interface InteractionWidgets {
     /**
-     * Interaction Id
+     * Interaction details
      */
-    interactionId: number;
+    interactionDetails: Partial<IUIEvent>;
     /**
      * Widgets
      */

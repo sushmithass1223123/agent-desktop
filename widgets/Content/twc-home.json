@@ -1,0 +1,24 @@
+{
+    "Name": "Home",
+    "Description": "",
+    "Type": "twc-home",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/home",
+        "Duration": 100,
+        "Widgets": {
+            "Static": [],
+            "Dynamic": [],
+            "AOT": []
+        }
+    }
+}

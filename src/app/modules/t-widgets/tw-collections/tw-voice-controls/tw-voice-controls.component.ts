@@ -1797,7 +1797,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     makeCall(): void {
         this.makeCallDialogRef = this._matDialog.open(this.MakeCallDialog, {
-            panelClass: 'make-call-dialog',
+            panelClass: 'shared-dialog',
             maxWidth: '450px',
             disableClose: true
         });

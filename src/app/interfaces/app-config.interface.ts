@@ -270,6 +270,10 @@ export interface IAppConfig {
          */
         DevToolsDisabled: boolean;
         /**
+         * Flag to enabled add AOT widget
+         */
+        AddAOTWidgetEnabled: boolean;
+        /**
          * Notification settings
          */
         Notifications: {

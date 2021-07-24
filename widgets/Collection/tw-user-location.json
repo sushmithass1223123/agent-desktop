@@ -1,0 +1,28 @@
+{
+    "Name": "User location",
+    "Description": "",
+    "Key": "UserLocation",
+    "Type": "tw-user-location",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "location_on",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "float",
+            "maximize"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {}
+}

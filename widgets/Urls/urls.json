@@ -1,0 +1,8 @@
+{
+    "DashboardServerUrls": [],
+    "FileServerUrl": {
+        "SMM": "",
+        "MediaProxy": ""
+    },
+    "TCMClient": ""
+}

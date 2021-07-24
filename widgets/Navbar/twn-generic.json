@@ -1,0 +1,13 @@
+{
+    "Name": "Generic",
+    "Description": "",
+    "Type": "twn-generic",
+    "Config": {
+        "Enabled": true,
+        "Icon": "feed"
+    },
+    "Data": {
+        "Path": "/generic",
+        "Active": false
+    }
+}

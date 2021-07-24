@@ -79,6 +79,12 @@
 
     <mat-divider></mat-divider>
 
+    <div *ngIf="addWidgetEnabled" class="twd-absolute twd-bottom-3 twd-right-3">
+        <button mat-icon-button mat-raised-button color="primary" matTooltip="Add Widget" (click)="openAddWidget()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+
     <!-- <mat-list>
         <h3 matSubheader>
             <span>Pinned Widgets</span>
@@ -158,3 +164,33 @@
     </mat-list>
     <mat-divider></mat-divider> -->
 </div>
+
+<ng-template #addWidgetDialog>
+    <shared-wrapper icon="widgets" title="Add Widget" [loading]="false">
+        <form (ngSubmit)="addWidgetDialogRef?.close(true)" class="twd-flex twd-flex-col twd-items-center twd-px-4 twd-py-2">
+            <mat-form-field class="custom with-bg border-radius-20 twd-w-full" appearance="outline">
+                <mat-select placeholder="Page" name="page" [(ngModel)]="newWidget.page">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let item of addWidgetPages" [value]="item">{{ item }}</mat-option>
+                </mat-select>
+                <mat-error> Page is required </mat-error>
+            </mat-form-field>
+
+            <mat-form-field floatLabel="never" appearance="standard" class="custom-2 twd-mb-2 border-radius-20 with-bg twd-w-full">
+                <textarea
+                    placeholder="Add widget json..."
+                    [(ngModel)]="newWidget.json"
+                    matInput
+                    name="json"
+                    matTextareaAutosize
+                    rows="10"
+                    required
+                ></textarea>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" class="border-radius-20 twd-w-32" [disabled]="newWidget.page === '' || newWidget.json === ''">
+                Add
+            </button>
+        </form>
+    </shared-wrapper>
+</ng-template>

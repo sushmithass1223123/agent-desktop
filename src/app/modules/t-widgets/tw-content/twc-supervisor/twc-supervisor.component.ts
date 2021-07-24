@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { appAnimations } from '@modules/shared/animations/app.animation';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
@@ -98,7 +99,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         public hostElement: ElementRef,
         public _contentPageService: ContentPageService,
         private _dashboardService: DashboardService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private _aotWidgetService: AOTWidgetService
     ) {
         super(hostElement, _contentPageService);
     }
@@ -153,6 +155,16 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.staticWidgets = supervisorWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         this.dynamicWidgets = supervisorWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         this.aotWidgets = supervisorWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+
+        // process aot widgets
+        this._aotWidgetService.processAOTWidgets(this.aotWidgets);
+
+        this._aotWidgetService.newWidget('supervisor').subscribe((x) => {
+            this.aotWidgets.push(x.json);
+            if (x.json.Config?.AutoOpen) {
+                this._aotWidgetService.addWidget(x.json);
+            }
+        });
 
         // subscribe to dashboard service
         this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {

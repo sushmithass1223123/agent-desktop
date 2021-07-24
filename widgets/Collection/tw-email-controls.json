@@ -1,0 +1,65 @@
+{
+    "Name": "Email Controls",
+    "Description": "",
+    "Type": "tw-email-controls",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "chat",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "collapse",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Transfer": {
+            "Allowed": true,
+            "Agent": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": false,
+                "Source": {
+                    "Use": "agentId",
+                    "Display": "agentName",
+                    "FreeTextAllowed": false
+                },
+                "AllowedStates": [],
+                "TeamFilter": false,
+                "Columns": []
+            },
+            "Skill": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": false,
+                "Source": {
+                    "Use": "vdn",
+                    "Display": "skill",
+                    "FreeTextAllowed": true
+                },
+                "ChannelPrefix": [
+                    "EM"
+                ],
+                "Columns": []
+            }
+        },
+        "ForwardAllowed": true,
+        "ReplyAllAllowed": true,
+        "InteractionCommentAllowed": true,
+        "DraftPollingInterval": 10000
+    }
+}

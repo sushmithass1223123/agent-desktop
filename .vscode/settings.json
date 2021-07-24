@@ -150,5 +150,6 @@
             "type": "text",
             "multiline": true
         }
-    ]
+    ],
+    "commit-message-editor.view.defaultView": "form"
 }

@@ -1,0 +1,21 @@
+{
+    "Name": "Workbench",
+    "Description": "",
+    "Type": "twc-workbench",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/workbench",
+        "Widgets": {
+            "Static": []
+        }
+    }
+}

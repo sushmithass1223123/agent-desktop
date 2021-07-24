@@ -1,0 +1,13 @@
+{
+    "Name": "Home",
+    "Description": "",
+    "Type": "twn-home",
+    "Config": {
+        "Enabled": true,
+        "Icon": "home"
+    },
+    "Data": {
+        "Path": "/home",
+        "Active": true
+    }
+}

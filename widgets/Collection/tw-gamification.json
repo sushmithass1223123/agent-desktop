@@ -1,0 +1,33 @@
+{
+    "Name": "Gamification Leaderboard",
+    "Description": "",
+    "Key": "Gamification",
+    "Type": "tw-gamification",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": true,
+        "AutoOpen": false,
+        "Icon": "extension",
+        "Class": "",
+        "Position": {
+            "X": 4,
+            "Y": 2,
+            "W": 1200,
+            "H": 700
+        },
+        "Actions": [
+            "maximize",
+            "destroy"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "GamificationProxyUrl": "",
+        "TVirtualStoreUrl": ""
+    }
+}

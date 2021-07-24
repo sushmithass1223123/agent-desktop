@@ -1,0 +1,11 @@
+{
+    "Name": "Toolbar Menu",
+    "Description": "",
+    "Type": "tw-toolbar-menu",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {
+        "Widgets": []
+    }
+}

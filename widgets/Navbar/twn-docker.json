@@ -1,0 +1,13 @@
+{
+    "Name": "Docker",
+    "Description": "",
+    "Type": "twn-docker",
+    "Config": {
+        "Enabled": true,
+        "Icon": "dock"
+    },
+    "Data": {
+        "Path": "/docker",
+        "Active": false
+    }
+}

@@ -138,6 +138,13 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         // process aot widgets
         this._aotWidgetService.processAOTWidgets(this.aotWidgets);
 
+        this._aotWidgetService.newWidget('home').subscribe((x) => {
+            this.aotWidgets.push(x.json);
+            if (x.json.Config?.AutoOpen) {
+                this._aotWidgetService.addWidget(x.json);
+            }
+        });
+
         // subscribe to dashboard service
         this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {
             // check the state

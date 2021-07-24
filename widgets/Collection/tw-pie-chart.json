@@ -1,0 +1,33 @@
+{
+    "Name": "Chart",
+    "Description": "",
+    "Key": "Chart-1",
+    "Type": "tw-pie-chart",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "dvr",
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Source": "totalinteractions",
+        "ChartType": "pie",
+        "Role": "agent",
+        "Limit": 0
+    }
+}

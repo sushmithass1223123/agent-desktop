@@ -1,0 +1,24 @@
+{
+    "Name": "Email",
+    "Description": "",
+    "Type": "twc-email",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/email",
+        "RouteOnInteraction": true,
+        "Widgets": {
+            "Static": [],
+            "Dynamic": [],
+            "AOT": []
+        }
+    }
+}

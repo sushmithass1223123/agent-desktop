@@ -1,0 +1,82 @@
+{
+    "Name": "Workbench Panel",
+    "Description": "",
+    "Type": "tw-workbench-panel",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": true,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "dvr",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 3
+        },
+        "Actions": [],
+        "ViewState": "restore",
+        "Header": false,
+        "Pinned": false
+    },
+    "Data": {
+        "General": {
+            "WorkbenchUrl": ""
+        },
+        "Channels": [
+            {
+                "Type": "Email",
+                "Enabled": true,
+                "Icon": "email",
+                "Config": {
+                    "Transfer": {
+                        "Allowed": true,
+                        "Agent": {
+                            "Allowed": true,
+                            "Consult": true,
+                            "Blind": false,
+                            "Comments": false,
+                            "Source": {
+                                "Use": "agentId",
+                                "Display": "agentName",
+                                "FreeTextAllowed": false
+                            },
+                            "AllowedStates": [],
+                            "TeamFilter": false,
+                            "Columns": []
+                        },
+                        "Skill": {
+                            "Allowed": true,
+                            "Consult": true,
+                            "Blind": false,
+                            "Comments": false,
+                            "Source": {
+                                "Use": "vdn",
+                                "Display": "skill",
+                                "FreeTextAllowed": false
+                            },
+                            "ChannelPrefix": [
+                                "EM"
+                            ],
+                            "Columns": []
+                        }
+                    },
+                    "SearchPollingInterval": 10000,
+                    "QueueTransferForAgent": false
+                }
+            },
+            {
+                "Type": "Chat",
+                "Enabled": true,
+                "Icon": "chat",
+                "Config": {
+                    "PullAllowed": true,
+                    "AskPullConfirmation": true,
+                    "PushAllowed": true,
+                    "SearchPollingInterval": 5000
+                }
+            }
+        ]
+    }
+}

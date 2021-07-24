@@ -1,0 +1,13 @@
+{
+    "Name": "Email",
+    "Description": "",
+    "Type": "twn-email",
+    "Config": {
+        "Enabled": true,
+        "Icon": "email"
+    },
+    "Data": {
+        "Path": "/email",
+        "Active": false
+    }
+}
