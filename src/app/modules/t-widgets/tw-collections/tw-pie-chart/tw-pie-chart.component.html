@@ -1,15 +1,9 @@
-<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
-<!-- implement following events in your component to access widget wrapper action events -->
-<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="chart.legend = $event">
-    <!-- your code goes here -->
     <div
         *ngIf="chart.datasets.length >= 1 && chart.datasets[0].data.length"
-        fxLayout="column"
-        fxLayoutAlign="center center"
-        class="w-100-p h-100-p animate__animated animate__zoomIn animate__faster"
+        class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full animate__animated animate__zoomIn animate__faster"
     >
-        <div class="tw-chart w-100-p h-100-p p-8" #chartContainerRef>
+        <div class="tw-chart twd-w-full twd-h-full twd-p-2" #chartContainerRef>
             <canvas
                 baseChart
                 class="box-shadow-3d"
@@ -27,12 +21,9 @@
 
     <div
         *ngIf="chart.datasets.length === 0 || (chart.datasets.length >= 1 && !chart.datasets[0].data.length)"
-        class="w-100-p h-100-p text-center"
-        fxLayout="column"
-        fxLayoutAlign="center center"
+        class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center"
     >
-        <img src="assets/images/vectors/no-data-1.svg" class="w-85-p h-85-p box-shadow-3d" />
+        <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
         <p class="text-center m-0" [ngClass]="{ 'mat-display-2': chart.legend, ' mat-title': !chart.legend }">{{ noDataMessage }}</p>
     </div>
-    <!-- your code goes here -->
 </tw-wrapper>

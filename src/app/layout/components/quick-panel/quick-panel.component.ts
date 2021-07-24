@@ -1,11 +1,12 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
-import { IWidget } from 'app/interfaces';
+import { IAppConfig, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Observable, Subject, timer } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -61,6 +62,38 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * New link to add
      */
     newLink: string;
+    /**
+     * Add widget dialog
+     */
+    @ViewChild('addWidgetDialog')
+    addWidgetDialog: TemplateRef<any>;
+    /**
+     * Add widget dialog ref
+     */
+    addWidgetDialogRef: MatDialogRef<any>;
+    /**
+     * New widget model
+     */
+    newWidget: {
+        /**
+         * Page of widget
+         */
+        page: any;
+        /**
+         * Widget json
+         */
+        json: string;
+    };
+
+    /**
+     * Add widget enabled flag
+     */
+    addWidgetEnabled: boolean;
+
+    /**
+     * Add new widget pages
+     */
+    addWidgetPages = ['Home', 'Supervisor', 'Voice', 'TextChat', 'Email', 'Generic'];
 
     /**
      * Constructor
@@ -70,7 +103,8 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         private _aotWidgetService: AOTWidgetService,
         private _fuseSidebarService: FuseSidebarService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _matDialog: MatDialog
     ) {
         // init the subject
         this.unsubscribeAll = new Subject();
@@ -87,7 +121,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * OnInit
      */
     ngOnInit(): void {
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: IAppConfig) => {
             if (config) {
                 // get app config
                 this.appConfig = config;
@@ -99,6 +133,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
                     sounds: config.AppConfigs.Notifications.Sounds
                 };
                 this._appUIService.setNotificationSettings(this.settings);
+                this.addWidgetEnabled = config.AppConfigs.AddAOTWidgetEnabled ?? false;
             }
         });
     }
@@ -165,5 +200,32 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         // set notification settings
         this.settings[type] = checked;
         this._appUIService.setNotificationSettings(this.settings);
+    }
+
+    /**
+     * To add a new widget
+     */
+    openAddWidget(): void {
+        this.newWidget = {
+            page: '',
+            json: ''
+        };
+        this.addWidgetDialogRef = this._matDialog.open(this.addWidgetDialog, {
+            panelClass: 'shared-dialog',
+            maxWidth: '80%',
+            width: '500px'
+        });
+
+        this.addWidgetDialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                const resp = this._aotWidgetService.addNewWidget(this.newWidget.page.toLowerCase(), this.newWidget.json);
+                if (resp) {
+                    this._fuseSidebarService.getSidebar('quickPanel').close();
+                    this._appUIService.showSnackbar(`AOT widget added successfully to ${this.newWidget.page} page`);
+                } else {
+                    this._appUIService.showSnackbar('Error in adding widget, please verify the JSON!', 'failure');
+                }
+            }
+        });
     }
 }

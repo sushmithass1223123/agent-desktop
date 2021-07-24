@@ -1,0 +1,25 @@
+{
+    "Name": "Generic-Panel",
+    "Description": "",
+    "Type": "tw-generic-panel",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": true,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 3
+        },
+        "Actions": [],
+        "ViewState": "restore",
+        "Header": false
+    },
+    "Data": {
+        "Widgets": []
+    }
+}

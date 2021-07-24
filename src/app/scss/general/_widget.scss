@@ -248,3 +248,11 @@ body.fit-to-screen {
         }
     }
 }
+
+.shared-dialog {
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 20px !important;
+        overflow-x: hidden;
+    }
+}

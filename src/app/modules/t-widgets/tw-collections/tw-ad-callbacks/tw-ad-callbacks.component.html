@@ -1,14 +1,10 @@
-<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
-<!-- implement following events in your component to access widget wrapper action events -->
-<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper [data]="data" (maximizeEvent)="this.maximized = $event">
-    <!-- your code goes here -->
     <div
         *ngIf="!getDashboardDataRes.loading && !getDashboardDataRes.error"
-        class="w-100-p h-100-p p-8 twd-flex twd-flex-1 twd-flex-row twd-justify-around"
+        class="twd-w-full twd-h-full p-8 twd-flex twd-flex-1 twd-flex-row twd-justify-around"
     >
         <div class="twd-flex-1 twd-max-w-7/12">
-            <div class="h-100-p custom-scroll-adjust twd-p-2">
+            <div class="twd-h-full custom-scroll-adjust twd-p-2">
                 <div
                     *ngFor="let cb of getDashboardDataRes.data.callbacks"
                     class="twd-p-2 border-radius-20 twd-flex twd-justify-between twd-items-center twd-gap-1"
@@ -24,11 +20,11 @@
                     </small>
                 </div>
 
-                <div *ngIf="!getDashboardDataRes.data.callbacks.length" class="w-100-p h-100-p">
+                <div *ngIf="!getDashboardDataRes.data.callbacks.length" class="twd-w-full twd-h-full">
                     <img
                         src="assets/images/vectors/no-data-4.svg"
-                        class="w-100-p box-shadow-3d"
-                        [ngClass]="{ 'h-95-p': maximized, ' h-85-p': !maximized }"
+                        class="twd-w-full box-shadow-3d"
+                        [ngClass]="{ 'twd-h-11/12': maximized, 'twd-h-10/12': !maximized }"
                     />
                     <p class="text-center mat-title m-0">No Callbacks Yet!</p>
                 </div>
@@ -36,13 +32,14 @@
         </div>
 
         <div
-            class="callback-total twd-flex-1 twd-max-w-5/12 twd-flex twd-flex-col {{
-                maximized ? 'twd-justify-start twd-items-stretch' : 'twd-justify-center twd-items-center'
-            }}"
-            [ngClass]="{ maximized: maximized }"
+            class="callback-total twd-flex-1 twd-max-w-5/12 twd-flex twd-flex-col"
+            [ngClass]="{
+                'maximized twd-justify-start twd-items-stretch twd-gap-3': maximized,
+                'twd-justify-center twd-items-center twd-gap-2': !maximized
+            }"
         >
             <div
-                class="handled p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
+                class="p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
                 [ngClass]="{ selected: currentFilter === 'handled' }"
                 (click)="filterCallbacks('handled')"
             >
@@ -58,7 +55,7 @@
             </div>
 
             <div
-                class="handled p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
+                class="p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
                 [ngClass]="{ selected: currentFilter === 'missed' }"
                 (click)="filterCallbacks('missed')"
             >
@@ -74,7 +71,7 @@
             </div>
 
             <div
-                class="missed p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
+                class="p-10 mat-elevation-z2 twd-flex twd-justify-between twd-items-center twd-cursor-pointer"
                 [ngClass]="{ selected: currentFilter === 'pending' }"
                 (click)="filterCallbacks('pending')"
             >
@@ -91,16 +88,14 @@
         </div>
     </div>
 
-    <div *ngIf="getDashboardDataRes.loading" class="w-100-p h-100-p twd-flex twd-justify-center twd-items-center">
+    <div *ngIf="getDashboardDataRes.loading" class="twd-w-full twd-h-full twd-flex twd-justify-center twd-items-center">
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="getDashboardDataRes.error" class="w-100-p h-100-p text-center twd-flex twd-flex-col twd-justify-center twd-items-center">
+    <div *ngIf="getDashboardDataRes.error" class="twd-w-full twd-h-full text-center twd-flex twd-flex-col twd-justify-center twd-items-center">
         <p>
             {{ getDashboardDataRes.msg }}
         </p>
         <button mat-raised-button color="primary">Retry</button>
     </div>
-
-    <!-- your code goes here -->
 </tw-wrapper>

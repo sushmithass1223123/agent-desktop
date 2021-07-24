@@ -1,7 +1,7 @@
 import { maskData } from '@tmac/operators';
 import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
-import { get, join, set } from 'lodash';
+import { get, set } from 'lodash';
 
 type Generic = string | number;
 
@@ -134,22 +134,6 @@ export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => 
 };
 
 /**
- * To get property value from event
- *
- * @param {String[]} valueSourceSplit
- * @param {Any} json
- * @param {String} defaultValue
- */
-const getValueFromJson = (valueSourceSplit: string[], json: any, defaultValue: string) => {
-    // remove the event name from the array
-    valueSourceSplit.shift();
-    // map the property and get the value from event property
-    const valueMap = join(valueSourceSplit, '.');
-    // get the value from path or default value
-    return get(json, valueMap, defaultValue);
-};
-
-/**
  * To mask a value based on config
  *
  * @param {String} value
@@ -210,4 +194,14 @@ export const extractJsonVal = (val: any, path: string) => {
         }
         return acc;
     }, val);
+};
+
+/**
+ * To check if a string is html
+ *
+ * @param {String} str String to compare
+ * @returns
+ */
+export const checkStringIsHTML = (str: string) => {
+    return /<\/?[a-z][\s\S]*>/i.test(str);
 };

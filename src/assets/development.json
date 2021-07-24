@@ -3674,7 +3674,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-cyan-orange",
+        "Theme": "theme-teal-red",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",

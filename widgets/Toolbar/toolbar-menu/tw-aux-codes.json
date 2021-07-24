@@ -1,0 +1,13 @@
+{
+    "Name": "Aux Codes",
+    "Description": "",
+    "Type": "tw-aux-codes",
+    "Config": {
+        "Enabled": false
+    },
+    "Data": {
+        "ByTeam": false,
+        "DefaultACW": false,
+        "DefaultLogout": false
+    }
+}

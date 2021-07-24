@@ -1,0 +1,24 @@
+{
+    "Name": "Generic",
+    "Description": "",
+    "Type": "twc-generic",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/generic",
+        "RouteOnInteraction": true,
+        "Widgets": {
+            "Static": [],
+            "Dynamic": [],
+            "AOT": []
+        }
+    }
+}

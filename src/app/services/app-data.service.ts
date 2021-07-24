@@ -70,7 +70,7 @@ export class AppDataService extends SharedWrapper {
         this._configSubject.next(config);
     }
 
-    get config(): any | Observable<any> {
+    get config(): any | Observable<IAppConfig> {
         return this._configSubject.asObservable();
     }
 

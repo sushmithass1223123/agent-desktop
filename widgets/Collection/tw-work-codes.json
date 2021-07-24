@@ -1,0 +1,30 @@
+{
+    "Name": "Work Codes",
+    "Description": "",
+    "Key": "TeamWorkCodes",
+    "Type": "tw-work-codes",
+    "Config": {
+        "Enabled": true,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Role": "supervisor",
+        "ByTeam": true,
+        "ByGroup": false
+    }
+}

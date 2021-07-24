@@ -1,0 +1,42 @@
+{
+    "Name": "Customer Details",
+    "Description": "",
+    "Type": "tw-customer-details",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "person",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "collapse"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "CustomerInfo": [
+            {
+                "Title": "CallerName",
+                "ValueSource": "CCLDataEvent.CallerName",
+                "Unit": "",
+                "DefaultValue": "",
+                "MaskData": {
+                    "MaskWith": "*",
+                    "MaxMaskedChars": 14,
+                    "UnMaskedStartChars": 0,
+                    "UnMaskedEndChars": 4
+                }
+            }
+        ]
+    }
+}

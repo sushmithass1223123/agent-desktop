@@ -1,0 +1,31 @@
+{
+    "Name": "Custom-1",
+    "Description": "",
+    "Key": "Custom-1",
+    "Type": "tw-custom",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "widgets",
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "destroy"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "OpenInNew": true,
+        "Url": ""
+    }
+}

@@ -1,0 +1,49 @@
+{
+    "Name": "TCIS",
+    "Description": "",
+    "Key": "TCIS",
+    "Type": "tw-tcis-integration",
+    "Config": {
+        "Enabled": true,
+        "Hidden": true,
+        "Static": false,
+        "Anchor": false,
+        "AOT": true,
+        "AutoOpen": true,
+        "Icon": "",
+        "Class": "",
+        "Position": {
+            "X": 0,
+            "Y": 1,
+            "W": 325,
+            "H": 325
+        },
+        "Actions": [
+            "collapse",
+            "destroy"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Urls": [],
+        "Hub": "AgentPopUpHub",
+        "Actions": [
+            {
+                "EventName": "CCLDataEvent",
+                "Channel": "chat",
+                "Parameters": [
+                    "TMACEvent.TextChatIncomingEvent.UCID",
+                    "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
+                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                    "AgentData.agentId",
+                    "AgentData.deviceId",
+                    "rawtext"
+                ],
+                "Method": "RunCustomApplication",
+                "ExeName": "AgentPopUp"
+            }
+        ]
+    }
+}

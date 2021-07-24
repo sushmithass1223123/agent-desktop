@@ -1,0 +1,13 @@
+{
+    "Name": "Workbench",
+    "Description": "",
+    "Type": "twc-workbench",
+    "Config": {
+        "Enabled": true,
+        "Icon": "library_books"
+    },
+    "Data": {
+        "Path": "/workbench",
+        "Active": false
+    }
+}

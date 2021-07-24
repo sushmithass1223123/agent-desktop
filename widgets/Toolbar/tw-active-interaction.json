@@ -1,0 +1,9 @@
+{
+    "Name": "Interaction indicators",
+    "Description": "",
+    "Type": "tw-active-interaction",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {}
+}

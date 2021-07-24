@@ -1,0 +1,32 @@
+{
+    "Name": "Pending Callbacks",
+    "Description": "",
+    "Key": "CustomerPendingCallbacks",
+    "Type": "tw-pending-callbacks",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": true,
+        "AutoOpen": false,
+        "Icon": "pending_actions",
+        "Class": "",
+        "Position": {
+            "X": 0,
+            "Y": 1,
+            "W": 700,
+            "H": 300
+        },
+        "Actions": [
+            "maximize",
+            "destroy"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "TCMProxyUrl": ""
+    }
+}

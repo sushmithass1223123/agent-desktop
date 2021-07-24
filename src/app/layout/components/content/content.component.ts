@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TWidget } from '@modules/t-widgets/utils';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
@@ -23,7 +22,7 @@ export class ContentComponent implements OnInit, OnDestroy {
     /**
      * Content widget list
      */
-    contentWidgets: TWidget[] = [];
+    contentWidgets: IWidget[];
     /**
      * AOT widget list
      */
@@ -38,6 +37,8 @@ export class ContentComponent implements OnInit, OnDestroy {
     constructor(private _appDataService: AppDataService, private _aotWidgetService: AOTWidgetService) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+        this.contentWidgets = [];
+        this.aotWidgets = [];
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -1,0 +1,11 @@
+{
+    "Name": "Logout Button",
+    "Description": "",
+    "Type": "tw-logout",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {
+        "LogoutAux": "logout"
+    }
+}

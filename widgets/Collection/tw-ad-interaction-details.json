@@ -1,0 +1,28 @@
+{
+    "Name": "Interaction Details",
+    "Description": "",
+    "Key": "InteractionDetails",
+    "Type": "tw-ad-interaction-details",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "format_list_bulleted",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {}
+}

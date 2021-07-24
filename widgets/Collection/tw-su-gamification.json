@@ -1,0 +1,32 @@
+{
+    "Name": "Leaderboard",
+    "Description": "",
+    "Key": "Leaderboard",
+    "Type": "tw-su-gamification",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": true,
+        "AutoOpen": false,
+        "Icon": "extension",
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1,
+            "W": 500,
+            "H": 300
+        },
+        "Actions": [
+            "maximize",
+            "destroy"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "GamificationProxyUrl": ""
+    }
+}

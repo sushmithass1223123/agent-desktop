@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
+import { TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { merge } from 'lodash';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, concat, Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
 
 /**
@@ -18,10 +19,16 @@ export class AOTWidgetService extends SharedWrapper {
      * Subject to unsubscribe for all subscriptions
      */
     private _unsubscribeAll: Subject<any>;
+
     /**
      * Widget subject to emit when AOT is added or removed
      */
-    private _widgetsSubject: BehaviorSubject<IWidget[]>;
+    private _widgets$: BehaviorSubject<IWidget[]>;
+
+    /**
+     * New widget subject
+     */
+    private _newWidget$: Subject<INewAOT>;
 
     constructor(private _appDataService: AppDataService) {
         super();
@@ -35,7 +42,25 @@ export class AOTWidgetService extends SharedWrapper {
      * Getter for widgets
      */
     get widgets(): any | Observable<any> {
-        return this._widgetsSubject.asObservable();
+        return this._widgets$.asObservable();
+    }
+
+    /**
+     * Getter for new widget
+     */
+    newWidget(page: IWidgetPage): Observable<INewAOT> {
+        const tempSub = new Subject<INewAOT>();
+        setTimeout(() => {
+            try {
+                const get = sessionStorage.getItem('ad-temp-widget');
+                const set = get ? JSON.parse(get) : [];
+                set.forEach((elm: any) => {
+                    tempSub.next(elm);
+                });
+            } catch (error) {}
+            tempSub.complete();
+        });
+        return concat(tempSub, this._newWidget$).pipe(filter((f) => f && f.page === page));
     }
 
     /**
@@ -46,7 +71,8 @@ export class AOTWidgetService extends SharedWrapper {
 
         // init the subject
         this._unsubscribeAll = new Subject();
-        this._widgetsSubject = new BehaviorSubject([]);
+        this._widgets$ = new BehaviorSubject([]);
+        this._newWidget$ = new Subject();
 
         // get the config and check for AOT widgets
         this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
@@ -96,7 +122,7 @@ export class AOTWidgetService extends SharedWrapper {
         widget.Config.AOT = true;
 
         // get the value from the behavior subject
-        const widgetList = this._widgetsSubject.getValue();
+        const widgetList = this._widgets$.getValue();
 
         // push the new content
         widgetList.push(widget);
@@ -107,7 +133,7 @@ export class AOTWidgetService extends SharedWrapper {
         };
 
         // notify the observers
-        this._widgetsSubject.next(widgetList);
+        this._widgets$.next(widgetList);
     }
 
     /**
@@ -123,7 +149,7 @@ export class AOTWidgetService extends SharedWrapper {
         }
 
         // get the value from the behavior subject
-        let widgetList = this._widgetsSubject.getValue();
+        let widgetList = this._widgets$.getValue();
         const currentCount = widgetList.length;
 
         // if there are no widgets for this id return
@@ -140,20 +166,44 @@ export class AOTWidgetService extends SharedWrapper {
         }
 
         // remove the widget
-        widgetList = this._widgetsSubject.getValue().filter((w) => w.ID !== id);
+        widgetList = this._widgets$.getValue().filter((w) => w.ID !== id);
 
         // check if any item is removed
         if (widgetList.length !== currentCount) {
             // notify the observers
-            this._widgetsSubject.next(widgetList);
+            this._widgets$.next(widgetList);
         }
+    }
+
+    /**
+     * TO add new AOT widget to any page
+     *
+     * @param {IWidgetPage} page
+     * @param {String} json
+     */
+    public addNewWidget(page: IWidgetPage, json: string): boolean {
+        try {
+            const item = {
+                page,
+                json: JSON.parse(json)
+            } as INewAOT;
+            item.json.ID = TUtils.Generic.uuid();
+            this._newWidget$.next(item);
+            const key = 'ad-temp-widget';
+            const get = sessionStorage.getItem(key);
+            const set = get ? JSON.parse(get) : [];
+            set.push(item);
+            sessionStorage.setItem(key, JSON.stringify(set));
+            return true;
+        } catch (error) {}
+        return false;
     }
 
     /**
      * To get the current widget list
      */
     public getWidgets(): IWidget[] {
-        return { ...this._widgetsSubject.getValue() };
+        return { ...this._widgets$.getValue() };
     }
 
     /**
@@ -166,7 +216,20 @@ export class AOTWidgetService extends SharedWrapper {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
-        this._widgetsSubject.next([]);
-        this._widgetsSubject.complete();
+        this._widgets$.next([]);
+        this._widgets$.complete();
     }
 }
+
+export interface INewAOT {
+    /**
+     * Page of widget
+     */
+    page: IWidgetPage;
+    /**
+     * Widget json
+     */
+    json: IWidget;
+}
+
+export type IWidgetPage = 'home' | 'supervisor' | 'voice' | 'textchat' | 'email' | 'generic';

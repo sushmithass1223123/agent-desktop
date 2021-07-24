@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CreateEmailInput } from 'app/interfaces';
+import { checkStringIsHTML } from 'app/utils';
 
 /**
  * Previews emails
@@ -48,8 +49,12 @@ export class PreviewEmailComponent {
         <style>
             ::-webkit-scrollbar{width:4px !important;height:4px !important;}
             ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
-            body {
+            ${
+                !checkStringIsHTML(this.email.Body)
+                    ? `body {
                 white-space: pre-wrap;
+            }`
+                    : ''
             }
         </style>`;
         doc.body.appendChild(frag);

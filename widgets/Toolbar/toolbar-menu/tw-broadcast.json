@@ -1,0 +1,9 @@
+{
+    "Name": "Broadcast Message",
+    "Description": "",
+    "Type": "tw-broadcast",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {}
+}

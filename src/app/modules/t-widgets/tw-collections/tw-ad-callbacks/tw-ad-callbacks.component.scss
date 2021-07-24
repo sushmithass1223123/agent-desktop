@@ -1,15 +1,10 @@
 tw-ad-callbacks {
     .callback-total {
         & > * {
-            // min-width: 210px;
-            min-width: 100%;
+            width: 100%;
             background-color: white;
             padding: 8px 14px;
             border-radius: 20px;
-            margin-bottom: 8px;
-            &:last-child {
-                margin-bottom: 0px;
-            }
             &.selected {
                 box-shadow: none;
             }
@@ -18,7 +13,6 @@ tw-ad-callbacks {
             & > * {
                 font-size: 16px;
                 padding: 16px;
-                margin: 10px;
             }
         }
     }

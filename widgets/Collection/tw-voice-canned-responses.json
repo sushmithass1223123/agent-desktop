@@ -1,0 +1,30 @@
+{
+    "Name": "Voice Canned Responses",
+    "Description": "",
+    "Key": "VoiceCannedResponses",
+    "Type": "tw-voice-canned-responses",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": true,
+        "AutoOpen": false,
+        "Icon": "audiotrack",
+        "Class": "",
+        "Position": {
+            "X": 0,
+            "Y": 1,
+            "W": 300,
+            "H": 300
+        },
+        "Actions": [
+            "collapse",
+            "destroy"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {}
+}

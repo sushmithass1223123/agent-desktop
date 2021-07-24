@@ -1,25 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { TwcInteractionComponent } from './twc-content.component';
+import { TwcInteractionComponent } from './twc-interaction.component';
 
 describe('TwcInteractionComponent', () => {
-  let component: TwcInteractionComponent;
-  let fixture: ComponentFixture<TwcInteractionComponent>;
+    let component: TwcInteractionComponent;
+    let fixture: ComponentFixture<TwcInteractionComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TwcInteractionComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [TwcInteractionComponent]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TwcInteractionComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(TwcInteractionComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });
