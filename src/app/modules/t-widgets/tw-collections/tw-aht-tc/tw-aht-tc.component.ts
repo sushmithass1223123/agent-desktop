@@ -154,7 +154,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * @param {CustomSDKEvent} evt
      */
     AgentChannelListEvent(evt: CustomSDKEvent): void {
-        this.interactionList = evt.Data.Channels;
+        this.interactionList = evt.Data?.Channels || [];
         this.table.source.data = this.interactionList;
     }
 

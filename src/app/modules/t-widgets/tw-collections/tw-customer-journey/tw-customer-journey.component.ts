@@ -313,11 +313,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     },
                     {
                         title: 'Transcripts',
-                        icon: 'chat'
+                        icon: 'chat',
+                        visible: (element: any) => (element.Channel || '').toLowerCase().includes('chat')
                     },
                     {
                         title: 'Email Preview',
-                        icon: 'email'
+                        icon: 'email',
+                        visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
                     }
                 ]
             }
@@ -341,9 +343,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (!this.historyParams.lastId) {
             this.table.loading = true;
         }
-        // Interaction History Dummy data
-        SDKClient.getInteractionHistory({ ...this.historyParams, phone: '96975347', noOfRecords }, null)
-            // SDKClient.getInteractionHistory(lastId ? { ...this.historyParams, lastId, noOfRecords } : { ...this.historyParams, noOfRecords }, null)
+        SDKClient.getInteractionHistory({ ...this.historyParams, noOfRecords }, null)
             .then((res) => {
                 if (!res.response) {
                     throw new Error('Invalid response from server');
