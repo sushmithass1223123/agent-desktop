@@ -50,7 +50,7 @@ export type TableConfig<T = any> =
            */
           type: 'controls';
           width?: string;
-          value?: GenericLabel<T, { title: string; icon: string }[]>;
+          value?: { title: string; icon: string; visible?: (el: T) => boolean }[];
           tooltip?: boolean;
           truncate?: boolean;
       };
@@ -329,7 +329,6 @@ export class TableComponent implements OnInit {
      * @returns
      */
     isExpanded = (_: number, row: any): boolean => {
-        console.log(_, row);
         return this.expandableRows && row.expanded;
     };
 }

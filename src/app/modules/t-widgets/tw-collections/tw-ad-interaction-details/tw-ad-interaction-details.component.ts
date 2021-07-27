@@ -147,15 +147,13 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             AgentComment: {
                 title: 'Comments',
                 type: 'controls',
-                value: (el: any) =>
-                    el.AgentComment?.trim()
-                        ? [
-                              {
-                                  title: 'View Comments',
-                                  icon: 'notes'
-                              }
-                          ]
-                        : []
+                value: [
+                    {
+                        title: 'View Comments',
+                        icon: 'notes',
+                        visible: (el: any) => el.AgentComment?.trim()
+                    }
+                ]
             },
             User: {
                 searchable: true,

@@ -295,6 +295,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // call the wrapper destroy method
         this.destroyWrapper();
         this.intersectionObserver?.disconnect();
+        this.stopPolling();
     }
 
     // -----------------------------------------------------------------------------------------------------

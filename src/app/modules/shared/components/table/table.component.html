@@ -65,6 +65,7 @@ The actual rendered columns are set as a property on the row definition" -->
                                                         <div class="twd-grid twd-px-2.5">
                                                             <ng-container *ngFor="let ctrl of cell.value">
                                                                 <button
+                                                                    *ngIf="ctrl.visible ? ctrl.visible(element) : true"
                                                                     class="twd-text-left twd-flex twd-gap-1.5 twd-items-center"
                                                                     (click)="triggerAction(ctrl.title, element)"
                                                                 >

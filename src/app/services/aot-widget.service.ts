@@ -7,6 +7,7 @@ import { merge } from 'lodash';
 import { BehaviorSubject, concat, Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
+import { AppUiService } from './app-ui.service';
 
 /**
  * Service for AOT - Always On Top Widgets
@@ -30,7 +31,7 @@ export class AOTWidgetService extends SharedWrapper {
      */
     private _newWidget$: Subject<INewAOT>;
 
-    constructor(private _appDataService: AppDataService) {
+    constructor(private _appDataService: AppDataService, private _appUiService: AppUiService) {
         super();
     }
 
@@ -114,15 +115,21 @@ export class AOTWidgetService extends SharedWrapper {
             return;
         }
 
+        // get the value from the behavior subject
+        const widgetList = this._widgets$.getValue();
+        const alreadyOpen = widgetList.find((w) => w.Type === widget.Type);
+        if (alreadyOpen) {
+            const trailMsg = alreadyOpen.Name !== widget.Name ? `by the name ${alreadyOpen.Name}` : '';
+            this._appUiService.showSnackbar(`${widget.Name || 'This widget'} has already been opened ${trailMsg}`, 'failure');
+            return;
+        }
+
         // prepare widget data, use TwWidgetModel to make sure that newly added config is added
         // with default value inorder to stop app from breaking
         widget = merge({}, new TwWidgetModel(widget.Name, widget.Type), widget);
 
         // set AOT true
         widget.Config.AOT = true;
-
-        // get the value from the behavior subject
-        const widgetList = this._widgets$.getValue();
 
         // push the new content
         widgetList.push(widget);
