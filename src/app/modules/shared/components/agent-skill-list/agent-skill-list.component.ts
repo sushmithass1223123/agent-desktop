@@ -10,7 +10,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import setStringVars from '@tmac/operators/setStringVars';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from '@tmac/sdk';
 import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
-import { formatJsonData } from 'app/utils';
+import { ADError, formatJsonData, throwADError } from 'app/utils';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -1074,6 +1074,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         })
             .then((dt: IResponse) => {
                 this.loading = false;
+
+                if (!dt.response) {
+                    this._appUIService.showSnackbar(`Agent '${row.AgentName}' has logged out`, 'failure');
+                    return;
+                }
                 // get the allowed state list
                 const allowedStates = this.data?.agent.allowedStates || [];
                 // source to select
