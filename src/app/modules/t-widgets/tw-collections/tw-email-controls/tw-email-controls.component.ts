@@ -22,7 +22,7 @@ import {
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
-import { ADError, maticonByExtension, throwADError, urlify } from 'app/utils';
+import { ADError, formatJsonData, maticonByExtension, throwADError, urlify } from 'app/utils';
 import { format } from 'date-fns';
 import { interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
@@ -276,6 +276,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         Files: [],
                         From: this.currentInteraction.Mailbox
                     };
+                    this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
+                    this.saveEmailAsDraft();
                 }
                 if (OUTBOX_REASONS.includes(this.currentInteraction.RouteReason)) {
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
@@ -317,6 +319,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 To: '',
                 From: this.currentInteraction.Mailbox
             };
+            this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
             this.saveEmailAsDraft();
         }
 
@@ -603,9 +606,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async deleteDraftEmail(): Promise<void> {
         try {
-            const { InSessionId, OutSessionId, EmailDraftExists } = this.currentInteraction;
-            if (EmailDraftExists || this.draftPollDuration) {
-                await SDKClient.deleteBulkEmailsInDraft(`${InSessionId}|${OutSessionId}`);
+            const { InSessionId, CurrOutSessionId } = this.currentInteraction;
+            if (CurrOutSessionId || this.draftPollDuration) {
+                await SDKClient.deleteBulkEmailsInDraft(`${InSessionId}|${CurrOutSessionId}`);
             }
         } catch (e) {
             console.error('Unable to delete the draft copy of the email');
@@ -744,7 +747,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
         try {
-            const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
+            const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
             const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.getEmail();
 
             let confirmSend = true;
@@ -777,7 +780,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ccList: CC.join(','),
                 body: Body,
                 inboxSessionId: InSessionId,
-                outboxSessionId: OutSessionId,
+                outboxSessionId: CurrOutSessionId || '',
                 routeId: RouteId || '',
                 subject: Subject,
                 typeOfResponse: ''
@@ -806,6 +809,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sendingEmailAsMaker = false;
             this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
             this.draftPolling$?.unsubscribe();
+            if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
+                this.deleteDraftEmail();
+            }
         } catch (err) {
             console.error(err);
             let msg = 'Unable to send email';
@@ -828,7 +834,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         let sendLoader;
         try {
             btn.disabled = true;
-            const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
+            const { InSessionId, CurrOutSessionId, RouteId } = this.currentInteraction;
             const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', 'Are you sure to approve this email?');
             confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
                 if (dialogResult) {
@@ -842,7 +848,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         body: Body,
                         ccList: CC || '',
                         inboxSessionId: InSessionId,
-                        outboxSessionId: OutSessionId,
+                        outboxSessionId: CurrOutSessionId || '',
                         routeId: RouteId || '',
                         subject: Subject,
                         toList: From,
@@ -886,34 +892,59 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Save email as Draft
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
-        const { InSessionId, OutSessionId, RouteId } = this.currentInteraction;
-        const email = this.createEmailRef?.getEmail();
-        if (email) {
+        if (this.draftPollDuration || btn) {
+            const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
+            const email = this.createEmailRef?.getEmail();
             // @TODO Files not sent as draft arg
-            const { BCC, CC, To, Subject, Body, Files } = email;
-            SDKClient.saveEmailDraft({
-                bccList: BCC.join(','),
-                body: Body.toString(),
-                ccList: CC.join(','),
-                inboxSessionId: InSessionId,
-                outboxSessionId: OutSessionId,
-                routeId: RouteId || '',
-                subject: Subject,
-                toList: To.join(','),
-                typeOfResponse: ''
-            }).then((x) => {
-                this.currentInteraction.EmailDraftExists = true;
-                if (x.response) {
-                    this.currentInteraction.OutSessionId = x.response;
-                }
-                if (closeEmail) {
-                    this.closeInteraction(btn, true);
-                }
+            let { BCC, CC, To, Subject, Body, Files } = formatJsonData(this.currentInteraction, {
+                BCC: 'BCC',
+                CC: 'CCList',
+                To: 'To',
+                Subject: 'Subject',
+                Body: 'Body',
+                Files: 'AttachmetList'
             });
-        }
-        if (!this.draftPolling$ && this.draftPollDuration) {
-            const polling = interval(this.draftPollDuration);
-            this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.saveEmailAsDraft());
+            if (email) {
+                BCC = email.BCC.join(',');
+                To = email.To.join(',');
+                CC = email.CC.join(',');
+                Body = email.Body;
+                Subject = email.Subject;
+                Files = email.Files;
+            }
+            SDKClient.saveEmailDraft({
+                bccList: BCC || '',
+                body: (Body || '').toString(),
+                ccList: CC || '',
+                inboxSessionId: InSessionId,
+                outboxSessionId: CurrOutSessionId || '',
+                routeId: RouteId || '',
+                subject: Subject || '',
+                toList: To || '',
+                typeOfResponse: ''
+            })
+                .then((x) => {
+                    if (x.response) {
+                        this.currentInteraction.CurrOutSessionId = x.response;
+                    } else {
+                        throwADError('Unable to save as draft', new Error('Invalid server response'));
+                    }
+                    if (btn) {
+                        btn.disabled = false;
+                    }
+                    if (closeEmail) {
+                        this.closeInteraction(btn, true);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            if (!this.draftPolling$ && this.draftPollDuration) {
+                const polling = interval(this.draftPollDuration);
+                this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+                    this.saveEmailAsDraft();
+                });
+            }
         }
     }
 

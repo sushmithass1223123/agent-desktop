@@ -542,7 +542,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 )
                 .subscribe({
                     next: (res: Mail[]) => {
-                        const uniqMails = uniqBy(res, 'InSessionId');
+                        const uniqMails = uniqBy(res, ['sentitem', 'draft'].includes(this.currentTab) ? 'OutSessionId' : 'InSessionId');
                         const mails = uniqMails.map((mailRes) => {
                             mailRes.Subject = this.appUiService.sanitizeEmailBody(mailRes.Subject || '')['changingThisBreaksApplicationSecurity'];
                             return mailRes;
@@ -673,13 +673,20 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const { agentId, tmacServer } = SDKClient.getAgentData();
             const { items, uiIds } = emails.reduce(
                 (acc, curr) => {
-                    acc.items.push({
+                    const item = {
                         routeId: curr.RouteId || '',
-                        sessionId: this.currentTab === 'draft' ? curr.OutSessionId : curr.InSessionId,
-                        conversationId: curr.ConversationID || '',
+                        sessionId: curr.InSessionId,
                         inSessionId: curr.InSessionId,
+                        conversationId: curr.ConversationID || '',
                         mailbox: curr.Mailbox
-                    });
+                    };
+                    if (this.currentTab === 'draft') {
+                        item.sessionId = curr.OutSessionId;
+                    } else if (this.currentTab === 'sentitem') {
+                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                        // item.inSessionId = curr.OutSessionId;
+                    }
+                    acc.items.push(item);
                     acc.uiIds.push(curr.uiId);
                     return acc;
                 },

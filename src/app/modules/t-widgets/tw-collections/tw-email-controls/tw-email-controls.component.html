@@ -49,6 +49,7 @@
                             *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20"
+                            [disabled]="!currentInteraction.CurrOutSessionId || sendingEmailAsMaker"
                             (click)="saveEmailAsDraft(true, saveAsDraft)"
                             #saveAsDraft
                         >
@@ -109,6 +110,7 @@
                                 *ngIf="replyInfo"
                                 mat-raised-button
                                 class="border-radius-20"
+                                [disabled]="!currentInteraction.CurrOutSessionId || sendingEmailAsMaker"
                                 (click)="saveEmailAsDraft(true, saveAsDraft)"
                                 #saveAsDraft
                             >
@@ -245,14 +247,21 @@
                             >
                                 <mat-icon>comment</mat-icon>
                             </button>
-                            <button *ngIf="!replyInfo" mat-raised-button class="border-radius-20" (click)="markAsSpam()" matTooltip="Mark As Spam">
+                            <button
+                                *ngIf="!replyInfo"
+                                mat-raised-button
+                                class="border-radius-20"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                (click)="markAsSpam()"
+                                matTooltip="Mark As Spam"
+                            >
                                 <mat-icon>report</mat-icon>
                             </button>
                             <button
                                 *ngIf="data.Data.Transfer.Allowed"
                                 mat-raised-button
                                 class="border-radius-20"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 (click)="transferEmail(currentInteraction)"
                                 matTooltip="Transfer"
                             >
@@ -262,7 +271,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 (click)="showReplyEditor()"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 matTooltip="Reply"
                             >
                                 <mat-icon>reply</mat-icon>
@@ -272,7 +281,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 (click)="showReplyAllEmailEditor()"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 matTooltip="Reply All"
                             >
                                 <mat-icon>reply_all</mat-icon>
@@ -282,7 +291,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 (click)="showForwardEmailEditor()"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 matTooltip="Forward"
                             >
                                 <mat-icon>forward</mat-icon>
