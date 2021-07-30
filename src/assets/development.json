@@ -1969,7 +1969,7 @@
                                                             "Title": "Channel",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                                             "Unit": "",
-                                                            "DefaultValue": "yoyoyo"
+                                                            "DefaultValue": ""
                                                         },
                                                         {
                                                             "Title": "Queue time",
@@ -3707,6 +3707,7 @@
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
+        "AddAOTWidgetEnabled": true,
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,

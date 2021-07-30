@@ -2,9 +2,10 @@ import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEnca
 import { fuseAnimations } from '@fuse/animations';
 import { TableComponent } from '@modules/shared/components';
 import { TMACEventService } from '@services/tmac-event.service';
+import { AgentChannelDataModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
+import { ChannelListEvent, CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
 import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 
@@ -40,7 +41,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     /**
      * Interactino list
      */
-    interactionList: any[] = [];
+    interactionList: AgentChannelDataModel[] = [];
 
     /**
      * AHT chart config
@@ -162,10 +163,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * TeamChannelListEvent handler
      * @param {CustomSDKEvent} evt
      */
-    TeamChannelListEvent(evt: CustomSDKEvent): void {
+    TeamChannelListEvent(evt: CustomSDKEvent<ChannelListEvent>): void {
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];
-        evt.Data.Channels.forEach((c: any) => {
+        evt.Data?.Channels.forEach((c) => {
             if (c.AverageActiveTime + c.AverageHoldTime) {
                 datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             }
