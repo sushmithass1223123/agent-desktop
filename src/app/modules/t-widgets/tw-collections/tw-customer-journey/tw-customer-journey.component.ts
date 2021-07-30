@@ -938,6 +938,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             sortId
         );
     }
+
+    /**
+     * Iframe event when loaded , loads the email inside it
+     * @param iframe
+     */
+    loadEmailInIframe(iframe: HTMLIFrameElement): void {
+        const frag = document.createRange().createContextualFragment(this.emailThreadReq.data.Body);
+        const doc = iframe.contentDocument || iframe.contentWindow;
+        (doc as any).body.appendChild(frag);
+    }
 }
 
 interface WidgetData {
