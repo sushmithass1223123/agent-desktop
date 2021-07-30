@@ -117,10 +117,10 @@ export class AOTWidgetService extends SharedWrapper {
 
         // get the value from the behavior subject
         const widgetList = this._widgets$.getValue();
-        const alreadyOpen = widgetList.find((w) => w.Type === widget.Type);
+        const alreadyOpen = widgetList.find((w) => w.ID === widget.ID);
         if (alreadyOpen) {
             const trailMsg = alreadyOpen.Name !== widget.Name ? `by the name ${alreadyOpen.Name}` : '';
-            this._appUiService.showSnackbar(`${widget.Name || 'This widget'} has already been opened ${trailMsg}`, 'failure');
+            this._appUiService.showSnackbar(`${widget.Name || 'This widget'} has already been opened ${trailMsg}`, 'warning');
             return;
         }
 
