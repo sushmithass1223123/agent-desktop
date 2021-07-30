@@ -1,12 +1,10 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { APP_BASE_HREF } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { DomSanitizer } from '@angular/platform-browser';
 import { fuseAnimations } from '@fuse/animations';
 import { AgentSkillListComponent, SnackbarComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
@@ -17,15 +15,32 @@ import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
 import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, CreateEmailOutput, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { formatJsonData, maticonByExtension } from 'app/utils';
-import { groupBy, sortBy } from 'lodash';
+import { maticonByExtension, throwADError } from 'app/utils';
+import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
 import * as moment from 'moment';
-import { Observable, Subscription, timer } from 'rxjs';
+import { forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 import tinymce from 'tinymce';
-import { TwWorkBenchService } from '../tw-workbench-panel.service';
+import { initEmailSearchState, TwWorkBenchService } from '../tw-workbench-panel.service';
 
 type OutboxInboxRes = (EmailOutboxModel | EmailInboxModel) & { InSessionId?: string; OutSessionId?: string };
+
+type Mail = {
+    Mailbox: string;
+    ToList: string;
+    Skill: string;
+    Subject: string;
+    From: string;
+    AddedTime: Date;
+    OutSessionId: string;
+    InSessionId: string;
+    uiId: string;
+    RouteId: string;
+    HasAttachment: boolean;
+    ConversationID: string;
+    IsEmailProbableSpam: boolean;
+    checked?: boolean;
+};
 
 type ComponentActions =
     | 'emails/loading'
@@ -39,20 +54,10 @@ type ComponentActions =
     | 'email/polling/inactive';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
-type EmailPullItem = {
-    /**
-     * Session ID
-     */
-    sessionId: string;
-    /**
-     * Route ID
-     */
-    routeId: string;
-    /**
-     * Conversation ID
-     */
-    conversationId: string;
-};
+
+type GlobalSearchFormData = { form: FormControl; data: Partial<Record<AvailableTabs, string>> };
+type AdvanceSearchFormData = { form: FormGroup; data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>; show: boolean };
+
 /**
  * Workbench Email
  */
@@ -62,6 +67,7 @@ type EmailPullItem = {
     styleUrls: ['./workbench-email.component.scss'],
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
@@ -94,37 +100,19 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     emailBodies: Record<string, any> = {};
     /**
-     * Reply body for reply email in bulk
-     */
-    // replyBody = '';
-    /**
      * Email reply dialog ref
      */
     @ViewChild('replyDialog')
     ReplyEditorDialog: TemplateRef<any>;
 
     /**
-     * replyEditor div ref
-     */
-    @ViewChild('replyEditor')
-    ReplyEditor: ElementRef<HTMLDivElement>;
-    /**
-     * openeing email flag for loader display
-     */
-    openingEmail = false;
-    /**
      * Reply editor Modal
      */
     replyEditorModal: {
         sendEmail: (email: CreateEmailOutput) => void;
-        // close: () => void;
         templateRef: any;
         sendingEmail: MatSnackBarRef<SnackbarComponent>;
     };
-    /**
-     * To store the fuse config for theme
-     */
-    // fuseConfig: FuseConfig;
     /**
      * Fuse custom config
      */
@@ -132,18 +120,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-    /**
-     * Search key
-     */
-    searchTerm = '';
-    /**
-     * Selected Mail
-     */
-    selectedMails: any[] = [];
-    /**
-     * Selected Mail
-     */
-    selectedMailIds: any[] = [];
 
     /**
      * Email Search Stateful request
@@ -161,57 +137,47 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             selected: false
         }
     };
+
     /**
-     * Global search form control
+     * Global search form control and cached data for each category
      */
-    globalSearchControl = this._workbenchService.globalEmailWorkbenchState$.globalSearchKey;
+    globalSearch: GlobalSearchFormData = {
+        form: new FormControl(''),
+        data: {}
+    };
+
     /**
-     * Advanced search form group
+     * Advanced search form controls and cached search fields for each category
      */
-    advancedSearchForm = this._workbenchService.globalEmailWorkbenchState$.searchParams;
+    advancedSearch: AdvanceSearchFormData = {
+        form: this._workbenchService.globalEmailWorkbenchState$.searchParams,
+        data: {},
+        show: false
+    };
+
     /**
      * Tree Controls
      */
     treeControl = new NestedTreeControl<any>((node) => node.children);
+
     /**
      * Tree Data source
      */
     dataSource = new MatTreeNestedDataSource<any>();
-    /**
-     * Advanced search visibility
-     */
-    showAdvancedSearchForm = false;
+
+    // emailTree: Array<Mail | Mail[]> = [];
+
     /**
      * Currently selected tab
      */
     currentTab: AvailableTabs = 'queue';
-    /**
-     * Search methods hash map
-     */
-    searchReqObs$: Record<AvailableTabs, (searchParams?: any, silent?: boolean) => Observable<any>>;
-
-    /**
-     * Show more Attachments flag
-     */
-    showMoreAttachments = false;
-
-    /**
-     * Oepened Email's body ref
-     */
-    @ViewChild('openEmailBody')
-    openEmailBodyRef: ElementRef<HTMLDivElement>;
-
-    /**
-     * Minimizes subject and details of opened email
-     */
-    minimizeSubject = false;
 
     /**
      * Sort controls
      */
     sortControls = {
-        sortBy: new FormControl('default'),
-        ascending: true
+        sortBy: 'Date',
+        ascending: false
     };
 
     /**
@@ -240,22 +206,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     };
 
     /**
-     * Shows email's category menu
+     * Flag to allow transfer email button
      */
-    showCategoryMenu = true;
-
-    /**
-     * Id for editor component
-     */
-    // editorState = {
-    //     id: TUtils.Generic.uuid(),
-    //     loading: false
-    // };
-
-    /**
-     * All selected emails flag
-     */
-    allEmailsSelected = false;
+    allowQueueTransfer = false;
 
     /**
      * Constructor
@@ -264,20 +217,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private http: HttpClient,
-        private domSanitizer: DomSanitizer,
         private appUiService: AppUiService,
         private matDialog: MatDialog,
         private _workbenchService: TwWorkBenchService,
-        @Inject(APP_BASE_HREF) private baseHref: string,
         private _aotWidgetService: AOTWidgetService
     ) {
         super();
-        this.searchReqObs$ = {
-            draft: this.advanceSearchDraftEmail,
-            inbox: this.advanceSearchInboxEmail,
-            queue: this.advanceSearchQueuedEmail,
-            sentitem: this.advanceSearchSentEmail
-        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -289,21 +234,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     async ngOnInit(): Promise<void> {
-        if (!this.globalSearchControl.value) {
-            this.globalSearchControl.reset();
-        }
-        if (!this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.value?.length) {
-            try {
-                await this._workbenchService.init();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        this.availableMailboxes = this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.value;
-        this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
-            this.availableMailboxes = res;
-        });
-        this.sortControls.sortBy.valueChanges.subscribe(() => this.sortEmailsByKey());
+        await this.setAvailableMailboxes();
+        const { agentProfile } = SDKClient.getAgentData();
+        this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : agentProfile === 'S';
+        this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
+        this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
     }
 
     /**
@@ -322,7 +257,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     }
                 } else {
                     this.stopPolling();
-                    this.showAdvancedSearchForm = false;
+                    this.advancedSearch.show = false;
                 }
             });
         });
@@ -334,12 +269,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        // tinymce.editors.forEach((e) => {
-        //     if (e.id === `textarea#${this.editorState.id}`) {
-        //         e.destroy();
-        //     }
-        // });
-        // tinymce.activeEditor?.destroy();
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -348,12 +277,22 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
+    private async setAvailableMailboxes() {
+        if (!this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.value?.length) {
+            await this._workbenchService.init();
+        }
+        this.availableMailboxes = this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.value;
+        this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((res) => {
+            this.availableMailboxes = res;
+        });
+    }
+
     /**
      * To start polling
      */
     private startPolling(): void {
         this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval)
-            .pipe(filter(() => this.polling.enabled && !this.emailSearchRes.loading && !this.polling.active))
+            .pipe(filter(() => this.polling.enabled && !this.emailSearchRes.loading && !this.polling.active && !this.advancedSearch.show))
             .subscribe(() => {
                 this.doAdvancedSearch(true);
             });
@@ -369,16 +308,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Sort Callback
      */
-    sortEmailsByKey(childrenNodes?: any[]): void {
+    sortEmailsByKey(childrenNodes?: Mail[]): void {
         if (!childrenNodes) {
             childrenNodes = this.getAllEmailNodes();
         }
-        const sortKey = this.sortControls.sortBy.value;
+        const sortKey = this.sortControls.sortBy;
         let sorted;
-        if (sortKey === 'default') {
-            sorted = childrenNodes;
-        } else if (sortKey === 'addedTime') {
-            sorted = sortBy(childrenNodes, (k) => k[sortKey] || '');
+        if (sortKey === 'Date') {
+            sorted = sortBy(childrenNodes, (k) => k.AddedTime || '');
         } else {
             sorted = sortBy(childrenNodes, (k) => (k[sortKey] || '').toLowerCase());
         }
@@ -399,7 +336,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Returns all emails nodes
      * @returns
      */
-    getAllEmailNodes(): any[] {
+    getAllEmailNodes(): Mail[] {
         return this.dataSource.data.reduce((acc, curr) => {
             const descendants = this.treeControl.getDescendants(curr).filter((x) => !x.children);
             if (descendants && descendants.length) {
@@ -413,21 +350,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Groups nodes and assigns to mat-tree
      * @param sortedEmails
      */
-    groupNodes(sortedEmails: any[]): void {
-        const byMailList = groupBy(sortedEmails, 'To');
+    groupNodes(sortedEmails: Mail[]): void {
+        const byMailList = groupBy(sortedEmails, 'Mailbox');
+        const selectedUiIds = this.getSelectedEmails().map((x) => x.uiId);
         let nodes: any;
         if (['sentitem', 'draft'].includes(this.currentTab)) {
             nodes = Object.entries(byMailList).reduce((acc, curr) => {
                 const [name, children] = curr;
-                const uiId = children.reduce((acc, curr) => {
-                    acc += curr.uiId;
-                    return acc;
-                }, '');
                 acc.push({
                     name,
-                    children,
-                    To: name || ''
-                    // uiId
+                    children: children.map((x) => {
+                        x.checked = selectedUiIds.includes(x.uiId);
+                        return x;
+                    }),
+                    Mailbox: name,
+                    uiId: `${this.currentTab}_${name}`
                 });
                 return acc;
             }, []);
@@ -435,49 +372,31 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             nodes = Object.entries(byMailList).map((entry) => {
                 const [name, mailList] = entry;
                 const groupedNodes = groupBy(mailList, 'Skill');
+                let grandChildren = 0;
                 const children = Object.entries(groupedNodes).map((n) => {
                     const [nodeName, grandChildrenNodes] = n;
-                    const subUiId = grandChildrenNodes.reduce((acc, curr) => {
-                        acc += curr.uiId;
-                        return acc;
-                    }, '');
+                    grandChildren += grandChildrenNodes.length;
                     return {
                         name: nodeName,
-                        children: grandChildrenNodes,
-                        To: name,
-                        Skill: nodeName
-                        // uiId: subUiId
+                        children: grandChildrenNodes.map((x) => {
+                            x.checked = selectedUiIds.includes(x.uiId);
+                            return x;
+                        }),
+                        Mailbox: name,
+                        Skill: nodeName,
+                        uiId: `${this.currentTab}_${name}_${nodeName}`
                     };
                 });
-                const { grandChildren, uiId } = children.reduce(
-                    (acc, curr) => {
-                        acc.grandChildren += curr.children.length;
-                        // acc.uiId += curr.uiId;
-                        return acc;
-                    },
-                    { grandChildren: 0, uiId: '' }
-                );
                 return {
                     name,
                     children,
-                    To: name,
+                    Mailbox: name,
+                    uiId: `${this.currentTab}_${name}`,
                     grandChildren
-                    // uiId
                 };
             });
         }
         this.dataSource.data = nodes;
-        // const selected = this.treeControl.expansionModel.selected?.map((n) => n.uiId) || [];
-        // this.treeControl.expandAll();
-        // setTimeout(() => {
-        //     if (selected.length) {
-        //         this.treeControl.dataNodes.forEach((n) => {
-        //             if (selected.includes(n.uiId)) {
-        //                 this.treeControl.expand(n);
-        //             }
-        //         });
-        //     }
-        // }, 0);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -485,11 +404,29 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Check if tree node has child
-     * @param {number} _
-     * @param {any} node
+     * Pushes advance search form to advancedSearch.data
+     * When the tab is switched, this vallue will be retained in advancedSearch.data
      */
-    hasChild = (_: number, node: any) => !!node.children && node.children.length > 0;
+    submitAdvanceSearchForm(): void {
+        const searchParams = this.advancedSearch.form.value;
+        this.advancedSearch.data[this.currentTab] = {
+            data: searchParams,
+            changed: !isEqual(searchParams, {
+                ...initEmailSearchState,
+                listOfMailboxes: this.advancedSearch.data[this.currentTab]?.data.listOfMailboxes ?? []
+            })
+        };
+        this.doAdvancedSearch();
+    }
+
+    /**
+     * Commits the value from global search control value to globalSearch.data
+     * When the tab is swithced, this value will be retained in globalSearch.data
+     */
+    submitGlobalSearchForm(): void {
+        this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
+        this.doAdvancedSearch();
+    }
 
     /**
      * Advanced Search
@@ -497,10 +434,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     doAdvancedSearch(silent = false): void {
         try {
-            if (this.globalSearchControl.value) {
-                this.doGlobalSearch(silent);
-                return;
-            }
             if (!this.data.Data.WorkbenchUrl) {
                 this.setComponentState('emails/failure/custom-message', { msg: 'WorkbenchUrl not provided', silent });
                 return;
@@ -512,110 +445,92 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 this.setComponentState('emails/loading', { silent });
             }
 
-            this.searchReqObs$[this.currentTab]().subscribe({
-                next: (res: any) => {
-                    if (res.status === 'SUCCESS') {
-                        const mails = res.result.map((x: any, idx) => {
-                            const mailRes = typeof x.data === 'string' ? JSON.parse(x.data) : x;
-                            if (x.addedTime) {
-                                mailRes.addedTime = x.addedTime;
-                            }
-                            if (!mailRes.uiId) {
-                                mailRes.uiId = mailRes.SessionId;
-                            }
-                            mailRes.Subject = this.appUiService.sanitizeEmailBody(mailRes.Subject || '')['changingThisBreaksApplicationSecurity'];
-                            mailRes.body = this.appUiService.sanitizeEmailBody(mailRes.body || '')['changingThisBreaksApplicationSecurity'];
-                            return mailRes;
-                        });
-                        this.sortEmailsByKey(mails);
-                        this.emailBodies = {};
-                        this.setComponentState('emails/success', { silent });
-                    } else {
-                        this.setComponentState('emails/failure', { silent });
-                    }
-                },
-                error: () => {
-                    this.setComponentState('emails/failure', { silent });
-                },
-                complete: () => {
-                    this.setComponentState('email/polling/inactive', { silent });
+            const currentSearchFilters = this.advancedSearch.data[this.currentTab];
+            const searchFields = this.parseDateFromSearchParams(currentSearchFilters.data);
+            let searchParams: any;
+            const requests: Observable<any>[] = [];
+            const globalKey = this.globalSearch.data[this.currentTab];
+            if (globalKey) {
+                searchParams = {
+                    startDate: searchFields.startDate,
+                    endDate: searchFields.endDate,
+                    email: globalKey,
+                    subject: globalKey,
+                    content: globalKey,
+                    skills: [globalKey],
+                    agent: globalKey,
+                    insessionid: '',
+                    assignedTo: globalKey,
+                    global: 'GLOBAL',
+                    listOfMailboxes: this._workbenchService.globalEmailWorkbenchState$.searchParams.value.listOfMailboxes.join(','),
+                    hasAttachments: 2,
+                    replied: 2,
+                    closed: 2,
+                    assigned: 2
+                };
+                requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
+            }
+            if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
+                searchParams = {
+                    global: '',
+                    skills: searchFields.skills ? [searchFields.skills] : [],
+                    email: searchFields.email,
+                    agent: searchFields.agent || '',
+                    startDate: searchFields.startDate,
+                    endDate: searchFields.endDate,
+                    subject: searchFields.subject,
+                    content: searchFields.content
+                };
+                if (this.currentTab === 'inbox') {
+                    searchParams.assignedTo = searchFields.assignedTo;
+                    searchParams.hasAttachments = searchFields.hasAttachments;
+                    searchParams.replied = searchFields.replied;
+                    searchParams.closed = searchFields.closed;
+                    searchParams.assigned = searchFields.assigned;
                 }
-            });
-        } catch (e) {
-            console.error(e);
-            this.setComponentState('emails/failure', { silent });
-        }
-    }
-
-    /**
-     * To do global search
-     */
-    doGlobalSearch(silent = false): void {
-        try {
-            if (!this.data.Data.WorkbenchUrl) {
-                this.setComponentState('emails/failure/custom-message', { msg: 'WorkbenchUrl not provided', silent });
-                return;
+                if (this.currentTab !== 'queue') {
+                    searchParams.insessionid = searchFields.inSessionId;
+                    searchParams.listOfMailboxes = searchFields.listOfMailboxes.join(',');
+                }
+                requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
             }
 
-            if (silent) {
-                this.setComponentState('email/polling/active');
-            } else {
-                this.setComponentState('emails/loading', { silent });
-            }
-
-            const today = new Date();
-            const yesterday = new Date();
-            yesterday.setDate(today.getDate() - 1);
-
-            const globalKey = this.globalSearchControl.value;
-
-            const searchParams = {
-                fromDate: yesterday,
-                fromTime: `00:00`,
-                toDate: today,
-                toTime: `${'23'}:${'59'}`,
-                email: globalKey,
-                subject: globalKey,
-                content: globalKey,
-                skills: globalKey,
-                agent: globalKey,
-                inSessionid: '',
-                deviceid: globalKey,
-                assignedTo: globalKey,
-                sesisonid: '',
-                global: 'GLOBAL',
-                listOfMailboxes: this._workbenchService.globalEmailWorkbenchState$.searchParams.value.listOfMailboxes,
-                hasAttachments: 2,
-                replied: 2,
-                closed: 2,
-                assigned: 2
+            const maps: Record<AvailableTabs, any> = {
+                inbox: this.mapInboxEmails,
+                queue: this.mapQueuedEmails,
+                sentitem: this.mapSentItemsEmails,
+                draft: this.mapDraftEmails
             };
-            this.searchReqObs$[this.currentTab](searchParams, silent).subscribe({
-                next: (res: any) => {
-                    if (res.status === 'SUCCESS') {
-                        const mails = res.result.map((x: any) => {
-                            const mailRes = typeof x.data === 'string' ? JSON.parse(x.data) : x;
-                            if (x.addedTime) {
-                                mailRes.addedTime = x.addedTime;
-                            }
-                            mailRes.id = Date.now();
-                            mailRes.body = this.appUiService.sanitizeEmailBody(mailRes.body || '')['changingThisBreaksApplicationSecurity'];
+
+            forkJoin(requests)
+                .pipe(
+                    map((res: any) => {
+                        if (res.find((x: any) => x.status !== 'SUCCESS')) {
+                            throwADError(`Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`);
+                        }
+                        const mails = res.map((x) => x.result || []).flat();
+                        return maps[this.currentTab](mails);
+                    })
+                )
+                .subscribe({
+                    next: (res: Mail[]) => {
+                        const uniqMails = uniqBy(res, 'InSessionId');
+                        const mails = uniqMails.map((mailRes) => {
+                            mailRes.Subject = this.appUiService.sanitizeEmailBody(mailRes.Subject || '')['changingThisBreaksApplicationSecurity'];
                             return mailRes;
                         });
-                        this.sortEmailsByKey(mails);
+                        this.sortEmailsByKey(mails || []);
                         this.emailBodies = {};
                         this.setComponentState('emails/success', { silent });
-                    } else {
+                    },
+                    error: (e) => {
+                        console.error(e);
                         this.setComponentState('emails/failure', { silent });
+                    },
+                    complete: () => {
+                        this.setComponentState('email/polling/inactive', { silent });
                     }
-                },
-                error: () => {
-                    this.setComponentState('emails/failure', { silent });
-                },
-                complete: () => {
-                    this.setComponentState('email/polling/inactive');
-                }
-            });
+                });
         } catch (e) {
             console.error(e);
             this.setComponentState('emails/failure', { silent });
@@ -639,7 +554,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Deletes emails via workbench
      * @param emails email items list
      */
-    async deleteEmails(emails: any[]): Promise<void> {
+    async deleteEmails(emails: Mail[]): Promise<void> {
         const loader = this.appUiService.showSnackbar('Deleting emails', 'loading');
         try {
             const sessionKey = this.getCurrentSessionKey();
@@ -669,7 +584,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         items: emails.map((e) => ({
                             sessionId: e[sessionKey],
                             routeId: e.RouteId || '',
-                            conversationId: e.conversationID || ''
+                            conversationId: e.ConversationID || ''
                         }))
                     })
                     .pipe(takeUntil(this.unsubscribeAll));
@@ -692,7 +607,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Closes emails in bulk
      * @param {any} emails email list
      */
-    async closeEmails(emails: any[]): Promise<void> {
+    async closeEmails(emails: Mail[]): Promise<void> {
         const loader = this.appUiService.showSnackbar('Closing emails', 'loading');
         try {
             const { routeIds, uiIds } = emails.reduce(
@@ -718,7 +633,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Pull email
      * @method pullEmail
      */
-    pullEmails(emails: any[]): void {
+    pullEmails(emails: Mail[]): void {
         const loader = this.appUiService.showSnackbar('Pulling email', 'loading');
         try {
             const { agentId, tmacServer } = SDKClient.getAgentData();
@@ -727,9 +642,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     acc.items.push({
                         routeId: curr.RouteId || '',
                         sessionId: this.currentTab === 'draft' ? curr.OutSessionId : curr.InSessionId,
-                        conversationId: curr.conversationID || '',
+                        conversationId: curr.ConversationID || '',
                         inSessionId: curr.InSessionId,
-                        mailbox: curr.mailbox
+                        mailbox: curr.Mailbox
                     });
                     acc.uiIds.push(curr.uiId);
                     return acc;
@@ -768,304 +683,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     }
 
     /**
-     * Searched through queued emails
-     */
-    advanceSearchQueuedEmail = (searchParams?: any): Observable<any> => {
-        const searchFields = this.advancedSearchForm.value;
-
-        let startDate: any = '';
-        let endDate: any = '';
-
-        if (searchFields.fromDate) {
-            startDate = new Date(searchFields.fromDate);
-            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
-            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
-            startDate.setSeconds(0);
-            startDate = moment(startDate).format('YYYYMMDDHHmmss');
-        }
-
-        if (searchFields.toDate) {
-            endDate = new Date(searchFields.toDate);
-            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
-            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
-            endDate.setSeconds(0);
-            endDate = moment(endDate).format('YYYYMMDDHHmmss');
-        }
-
-        return this.http
-            .post(this.data.Data.WorkbenchUrl + '/queue/search', {
-                skills: searchFields.skills ? [searchFields.skills] : [],
-                email: searchFields.email,
-                agent: searchFields.agent || '',
-                startDate,
-                endDate,
-                subject: searchFields.subject,
-                content: searchFields.content
-            })
-            .pipe(
-                map((res: any) => ({
-                    ...res,
-                    result: res.result.map((x: any) => {
-                        const data = typeof x.data === 'string' ? JSON.parse(x.data) : x;
-                        data.Skill = x.skillName || x.skillId;
-                        data.ToList = data.To;
-                        data.InSessionId = data.SessionId;
-                        data.OutSessionId = data.OutSessionId;
-                        data.uiId = `${data.SessionId}|${data.OutSessionID}`;
-                        data.addedTime = new Date(x.addedTime);
-                        return data;
-                    })
-                }))
-            );
-    };
-
-    /**
-     * Searched through inbox emails
-     */
-    advanceSearchInboxEmail = (searchParams?: any): Observable<any> => {
-        // const { agentId } = SDKClient.getAgentData();
-
-        const searchFields = searchParams || this.advancedSearchForm.value;
-
-        let startDate: any = '';
-        let endDate: any = '';
-
-        if (searchFields.fromDate) {
-            startDate = new Date(searchFields.fromDate);
-            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
-            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
-            startDate.setSeconds(0);
-            startDate = moment(startDate).format('YYYYMMDDHHmmss');
-        }
-
-        if (searchFields.toDate) {
-            endDate = new Date(searchFields.toDate);
-            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
-            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
-            endDate.setSeconds(0);
-            endDate = moment(endDate).format('YYYYMMDDHHmmss');
-        }
-
-        const response = this.http
-            .post(this.data.Data.WorkbenchUrl + '/inbox/search', {
-                skills: searchFields.skills ? [searchFields.skills] : [],
-                email: searchFields.email,
-                agent: searchFields.agent || '',
-                startDate,
-                endDate,
-                subject: searchFields.subject,
-                content: searchFields.content,
-                deviceid: searchFields.deviceId,
-                assignedTo: searchFields.assignedTo,
-                insessionid: searchFields.sesisonid,
-                global: searchFields.global,
-                listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                hasAttachments: searchFields.hasAttachments,
-                replied: searchFields.replied,
-                closed: searchFields.closed,
-                assigned: searchFields.assigned
-            })
-            .pipe(
-                map((res: any) => ({
-                    ...res,
-                    result: res.result.map((x: any) => {
-                        const addedTime = new Date(x.receivedDate);
-                        const time = x.receivedTime.split(':');
-                        addedTime.setHours(time[0]);
-                        addedTime.setMinutes(time[1]);
-                        return {
-                            ...formatJsonData(x, {
-                                To: 'mailbox',
-                                ToList: 'toList',
-                                Skill: 'makerSkillName',
-                                Subject: 'subject',
-                                From: 'from',
-                                SessionId: 'sessionID',
-                                RouteId: 'routeId',
-                                RouteReason: 'RouteReason',
-                                InSessionId: 'sessionID'
-                            }),
-                            addedTime,
-                            uiId: x.sessionID
-                        };
-                    })
-                }))
-            );
-
-        return response;
-    };
-
-    /**
-     * Searches through draft emails
-     */
-    advanceSearchDraftEmail = (searchParams?: any): Observable<any> => {
-        // const { agentId } = SDKClient.getAgentData();
-
-        const searchFields = searchParams || this.advancedSearchForm.value;
-
-        let startDate: any = '';
-        let endDate: any = '';
-
-        if (searchFields.fromDate) {
-            startDate = new Date(searchFields.fromDate);
-            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
-            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
-            startDate.setSeconds(0);
-            startDate = moment(startDate).format('YYYYMMDDHHmmss');
-        }
-
-        if (searchFields.toDate) {
-            endDate = new Date(searchFields.toDate);
-            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
-            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
-            endDate.setSeconds(0);
-            endDate = moment(endDate).format('YYYYMMDDHHmmss');
-        }
-
-        return this.http
-            .post(this.data.Data.WorkbenchUrl + '/draft/search', {
-                skills: searchFields.skills ? [searchFields.skills] : [],
-                email: searchFields.email,
-                agent: searchFields.agent || '',
-                startDate,
-                endDate,
-                subject: searchFields.subject,
-                content: searchFields.content,
-                inSessionid: searchFields.inSessionid,
-                listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                global: searchFields.global
-            })
-            .pipe(
-                map((res: any) => ({
-                    ...res,
-                    result: res.result.map((x: any) => {
-                        const addedTime = new Date(x.currentStatusDate);
-                        const time = x.currentStatusTime.split(':');
-                        addedTime.setHours(time[0]);
-                        addedTime.setMinutes(time[1]);
-                        return {
-                            ...x,
-                            To: x.mailbox,
-                            ToList: x.toList,
-                            Skill: x.makerSkillName || x.cmSkill,
-                            Subject: x.subject,
-                            From: x.from,
-                            addedTime,
-                            SessionId: x.sessionID,
-                            OutSessionId: x.sessionID,
-                            InSessionId: x.inSessionID,
-                            uiId: `${x.inSessionID}|${x.sessionID}`,
-                            RouteId: x.routeId
-                        };
-                    })
-                }))
-            );
-    };
-
-    /**
-     * Advanced searches emails
-     */
-    advanceSearchSentEmail = (searchParams?: any): Observable<any> => {
-        // const { agentId } = SDKClient.getAgentData();
-
-        const searchFields = searchParams || this.advancedSearchForm.value;
-
-        let startDate: any = '';
-        let endDate: any = '';
-
-        if (searchFields.fromDate) {
-            startDate = new Date(searchFields.fromDate);
-            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
-            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
-            startDate.setSeconds(0);
-            startDate = moment(startDate).format('YYYYMMDDHHmmss');
-        }
-
-        if (searchFields.toDate) {
-            endDate = new Date(searchFields.toDate);
-            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
-            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
-            endDate.setSeconds(0);
-            endDate = moment(endDate).format('YYYYMMDDHHmmss');
-        }
-
-        return this.http
-            .post(this.data.Data.WorkbenchUrl + '/sentitem/search', {
-                skills: searchFields.skills ? [searchFields.skills] : [],
-                email: searchFields.email,
-                agent: '',
-                startDate,
-                endDate,
-                subject: searchFields.subject,
-                content: searchFields.content,
-                listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                InSessionid: searchFields.inSessionid,
-                global: searchFields.global
-            })
-            .pipe(
-                map((res: any) => ({
-                    ...res,
-                    result: res.result.map((x: any) => {
-                        const addedTime = new Date(x.sendDate);
-                        const time = x.sendTime.split(':');
-                        addedTime.setHours(time[0]);
-                        addedTime.setMinutes(time[1]);
-                        return {
-                            ...x,
-                            To: x.mailbox,
-                            ToList: x.toList,
-                            Skill: x.makerSkillName || x.cmSkill,
-                            Subject: x.subject,
-                            From: x.mailbox,
-                            addedTime,
-                            // SessionId: x.inSessionID,
-                            OutSessionId: x.sessionID,
-                            InSessionId: x.inSessionID,
-                            uiId: `${x.inSessionID}|${x.sessionID}`,
-                            RouteId: x.routeId
-                        };
-                    })
-                }))
-            );
-    };
-
-    /**
-     * Select emails
-     */
-    selectEmail(node: any, checked: boolean): void {
-        if (checked) {
-            this.selectedMails.push(node);
-            this.selectedMailIds.push(node.uiId);
-        } else {
-            this.selectedMails = this.selectedMails.filter((x) => x.uiId !== node.uiId);
-            this.selectedMailIds = this.selectedMails.map((x) => x.uiId) || [];
-        }
-        const allEmails = this.getAllEmailNodes()?.length || 0;
-        if (this.selectedMailIds.length === allEmails && !this.allEmailsSelected) {
-            this.allEmailsSelected = true;
-        }
-        if (this.selectedMailIds.length !== allEmails && this.allEmailsSelected) {
-            this.allEmailsSelected = false;
-        }
-    }
-
-    /**
-     * Selects all emails
-     */
-    selectAllEmails(checked: boolean): void {
-        const nodes = this.getAllEmailNodes();
-        for (const n of nodes) {
-            this.selectEmail(n, checked);
-        }
-    }
-
-    /**
      * opens email for preview
      */
-    async openEmail(email: any): Promise<void> {
+    async openEmail(email: Mail): Promise<void> {
         try {
             this.setComponentState('emails/loading');
-            // const fetchFromOutbox = [...this.OutboxReasons, ...this.DraftReasons].includes(email.RouteReason);
             const fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
             const requestedSession = fetchFromOutbox ? email.OutSessionId : email.InSessionId;
             if (!this.emailBodies[requestedSession]) {
@@ -1100,16 +722,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 }
 
                 this.emailBodies[requestedSession] = {
-                    body: this.appUiService.sanitizeEmailBody(res.Body || '')['changingThisBreaksApplicationSecurity'],
-                    attachmentList: res?.Attachments || [],
-                    agentName: res?.AgentName,
-                    repliedStatus: (res as any)?.RepliedStatus,
-                    conversationID: res.ConversationID,
-                    currentStatus: res.CurrentStatus,
-                    closedBy: (res as any).ClosedBy,
-                    ccList: res?.CCList,
-                    priority: (res as any).Priority,
-                    From: res.From
+                    Body: this.appUiService.sanitizeEmailBody(res.Body || '')['changingThisBreaksApplicationSecurity'],
+                    Attachments: res.Attachments || [],
+                    AgentName: res.AgentName,
+                    Intent: (res as EmailInboxModel).Intent,
+                    RepliedStatus: (res as any).RepliedStatus,
+                    ConversationID: res.ConversationID,
+                    CurrentStatus: res.CurrentStatus,
+                    ClosedBy: (res as any).ClosedBy,
+                    CCList: res.CCList,
+                    Priority: (res as any).Priority,
+                    From: res.From,
+                    ToList: res.ToList
                 };
             }
             this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
@@ -1125,17 +749,30 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {AvailableTabs} tab tab key passed as argument
      */
     switchTab(tab: AvailableTabs): void {
-        this.currentTab = tab;
+        this.advancedSearch.show = false;
+        this.dataSource.data = [];
         this.removeEmailsfromView('all');
-        this.allEmailsSelected = false;
         this.emailBodies = {};
+        this.currentTab = tab;
+        if (this.advancedSearch.data[tab]) {
+            this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
+            this.globalSearch.form.setValue(this.globalSearch.data[tab]);
+        } else {
+            this.resetForm();
+            this.advancedSearch.data[tab] = {
+                data: this.advancedSearch.form.value,
+                changed: false
+            };
+            this.globalSearch.form.setValue('');
+            this.globalSearch.data[tab] = this.globalSearch.form.value;
+        }
         this.doAdvancedSearch();
     }
 
     /**
      * Marks currently selected email as spam
      */
-    async markAsSpam(email: any): Promise<void> {
+    async markAsSpam(email: Mail): Promise<void> {
         let loader;
         try {
             const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Confirm Spam', 'Are you sure to mark this email as spam?');
@@ -1166,8 +803,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Transfers email
      * @param {any} email
      */
-    transferEmail(emails: any[]): void {
-        // const config = this.data.Data.Channels.filter((f: any) => f.Type === 'Email')?.[0];
+    transferEmail(emails: Mail[]): void {
         const config = this.channelConf?.Config || {};
         const agentConfig = config?.Transfer?.Agent || {};
         const skillConfig = config?.Transfer?.Skill || {};
@@ -1177,17 +813,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             type: 'transferEmail',
             agent: {
                 allowed: agentConfig.Allowed,
-                allowedStates: agentConfig.AllowedStates,
+                consult: agentConfig.Consult,
                 blind: agentConfig.Blind,
+                comments: agentConfig.Comments,
                 source: agentConfig.Source,
+                allowedStates: agentConfig.AllowedStates,
                 columns: agentConfig.Columns,
                 teamFilter: agentConfig.TeamFilter
             },
             skill: {
                 allowed: skillConfig.Allowed,
-                blind: false,
-                channelPrfix: skillConfig.ChannelPrefix,
+                consult: skillConfig.Consult,
+                blind: skillConfig.Blind,
+                comments: skillConfig.Comments,
                 source: skillConfig.Source,
+                channelPrfix: skillConfig.ChannelPrefix,
                 columns: skillConfig.Columns
             },
             callback: ({ success }) => {
@@ -1201,7 +841,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.matDialog.open(AgentSkillListComponent, {
             data: {
                 ...data,
-                // interactionId: email.InteractionId,
                 otherData: {
                     type: 'transfer',
                     emails: emails.map((e) => ({
@@ -1222,10 +861,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Closes emails in bulk
      * @param {any} emails email list
      */
-    replyToSelectedEmails(emails: any[]): void {
+    replyToSelectedEmails(emails: Mail[]): void {
         try {
             const widget = new TwWidgetModel('Reply All', 'tw-panel');
-            // this.editorState.id = TUtils.Generic.uuid();
             widget.Config.Anchor = true;
             widget.Config.Position.W = 800;
             widget.Config.Position.H = 500;
@@ -1248,8 +886,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 body: reply,
                                 routeIdList: routeIds.join(',')
                             });
-                            this.selectedMails = [];
-                            this.selectedMailIds = [];
                             if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
                                 this.emailSearchRes.data.selected = null;
                             }
@@ -1268,53 +904,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 templateRef: this.ReplyEditorDialog
             };
             widget.Data = this.replyEditorModal;
-            // widget.OnDestroy = () => {
-            //     tinymce.editors.forEach((e) => {
-            //         if (e.id === `textarea#${this.editorState.id}`) {
-            //             e.destroy();
-            //         }
-            //     });
-            //     return true;
-            // };
             this._aotWidgetService.addWidget(widget);
-            // this.editorState.loading = true;
-            // setTimeout(() => {
-            //     tinymce
-            //         .init({
-            //             selector: `textarea#${this.editorState.id}`,
-            //             min_height: 200,
-            //             height: '100%',
-            //             menubar: false,
-            //             fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
-            //             forced_root_block: false,
-            //             branding: false,
-            //             base_url: `${this.baseHref}assets/tinymce/`,
-            //             content_css: `${this.baseHref}assets/tinymce/editor.css`,
-            //             plugins: [
-            //                 'advlist autolink lists link image charmap print preview anchor',
-            //                 'searchreplace visualblocks code fullscreen',
-            //                 'insertdatetime media table paste code wordcount'
-            //             ],
-            //             toolbar:
-            //                 'undo redo | formatselect | ' +
-            //                 'bold italic backcolor | alignleft aligncenter ' +
-            //                 'alignright alignjustify | bullist numlist outdent indent | ' +
-            //                 'removeformat | help',
-            //             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            //             setup: (editor) => {
-            //                 editor.on('init', () => {
-            //                     this.editorState.loading = false;
-            //                 });
-            //             }
-            //         })
-            //         .then(() => {
-            //             console.log('Email editor loaded succesfully');
-            //         })
-            //         .catch((err) => {
-            //             console.error('Unable to load editor');
-            //             console.error(err);
-            //         });
-            // }, 0);
         } catch (e) {
             console.error(e);
             this.setComponentState('email/reply/failure');
@@ -1322,15 +912,22 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     }
 
     /**
-     * Resets form
+     * Resets advance search form
      */
     resetForm(): void {
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-
         this._workbenchService.resetEmailState();
-        // this.advancedSearchForm.setValue({});
+        this.advancedSearch.data[this.currentTab] = {
+            data: this.advancedSearch.form.value,
+            changed: false
+        };
+    }
+
+    /**
+     * Resets global search key
+     */
+    resetGlobalSearchForm(): void {
+        this.globalSearch.form.setValue('');
+        this.globalSearch.data[this.currentTab] = '';
     }
 
     /**
@@ -1343,14 +940,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             return;
         }
         tinymce.activeEditor.setContent((html || '').replaceAll('<a', '<a target="_blank"'));
-    }
-
-    /**
-     * Opens a selected attachment file
-     * @param {String} fileUrl
-     */
-    openFile(fileUrl: string): void {
-        window.open(fileUrl);
     }
 
     /**
@@ -1374,6 +963,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             case 'emails/failure':
                 this.emailSearchRes.loading = false;
                 this.emailSearchRes.error = true;
+                this.polling.active = false;
                 this.emailSearchRes.msg = 'Error occured while fetching emails';
                 break;
 
@@ -1416,7 +1006,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 break;
         }
         if (!payload?.silent) {
-            this.showAdvancedSearchForm = false;
+            this.advancedSearch.show = false;
         }
     }
 
@@ -1426,8 +1016,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param email
      * @returns
      */
-    trackBy = (_index: number, email: any): string => {
-        return this.currentTab + email.uiId;
+    trackBy = (_index: number, email: Mail): string => {
+        return email.uiId;
     };
 
     /**
@@ -1436,18 +1026,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     removeEmailsfromView(type: 'opened' | 'selected' | 'all', ids?: string[]): void {
         if (ids) {
-            if (['all', 'selected'].includes(type)) {
-                this.selectedMails = this.selectedMails.filter((m) => !ids.includes(m.uiId));
-                this.selectedMailIds = this.selectedMails.filter((m) => m.uiId) || [];
-            }
             if (['all', 'opened'].includes(type) && ids.includes(this.emailSearchRes.data.selected?.uiId)) {
                 this.emailSearchRes.data.selected = null;
             }
         } else {
-            if (['all', 'selected'].includes(type)) {
-                this.selectedMails = [];
-                this.selectedMailIds = [];
-            }
             if (['all', 'opened'].includes(type)) {
                 this.emailSearchRes.data.selected = null;
             }
@@ -1459,10 +1041,222 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param iframe
      */
     loadEmailInIframe(iframe: HTMLIFrameElement): void {
-        const frag = document.createRange().createContextualFragment(this.emailSearchRes.data.selected.body);
+        const frag = document.createRange().createContextualFragment(this.emailSearchRes.data.selected.Body);
         const doc = iframe.contentDocument || iframe.contentWindow;
         (doc as any).body.appendChild(frag);
     }
+
+    /**
+     * This method is used to formate the email list reponse from the queue search
+     * @param {any} result This is the response form the queue search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
+    mapQueuedEmails = (result: any): Mail[] => {
+        if (!result || !result.length) {
+            return [];
+        }
+        return result.map((x: any): Mail => {
+            const data = typeof x.data === 'string' ? JSON.parse(x.data) : x;
+            return {
+                Mailbox: data.To,
+                Subject: data.Subject,
+                From: data.From,
+                RouteId: data.RouteId,
+                Skill: x.skillName || x.skillId,
+                ToList: data.To,
+                InSessionId: data.SessionId,
+                OutSessionId: data.OutSessionId,
+                HasAttachment: data.HasAttachment,
+                IsEmailProbableSpam: data.IsEmailProbableSpam,
+                AddedTime: new Date(x.addedTime),
+                uiId: `${data.SessionId}|${data.OutSessionID}`,
+                ConversationID: x.conversationID
+            };
+        });
+    };
+
+    /**
+     * This method is used to formate the email list reponse from the inbox search
+     * @param {any} result This is the response form the inbox search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
+    mapInboxEmails = (result: any): Mail[] => {
+        if (!result || !result.length) {
+            return [];
+        }
+        return result.map((x: any): Mail => {
+            const AddedTime = new Date(x.receivedDate);
+            if (!x.receivedTime) {
+                console.log('Unable to split x.receivedTime', x);
+            }
+            const time = x.receivedTime.split(':');
+            AddedTime.setHours(time[0]);
+            AddedTime.setMinutes(time[1]);
+            return {
+                Mailbox: x.mailbox,
+                ToList: x.toList,
+                Skill: x.makerSkillName,
+                Subject: x.subject,
+                From: x.from,
+                RouteId: x.routeId,
+                InSessionId: x.sessionID,
+                AddedTime,
+                uiId: x.sessionID,
+                OutSessionId: '',
+                HasAttachment: x.hasAttachments,
+                ConversationID: x.conversationID,
+                // not available in inbox search
+                IsEmailProbableSpam: x.IsEmailProbableSpam
+            };
+        });
+    };
+
+    /**
+     * This method is used to formate the email list reponse from the draft search
+     * @param {any} result This is the response form the draft search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
+    mapDraftEmails = (result: any): Mail[] => {
+        if (!result || !result.length) {
+            return [];
+        }
+        return result.map((x: any): Mail => {
+            const AddedTime = new Date(x.currentStatusDate);
+            if (!x.currentStatusTime) {
+                console.log('Unable to split x.currentStatusTime', x);
+            }
+            const time = x.currentStatusTime.split(':');
+            AddedTime.setHours(time[0]);
+            AddedTime.setMinutes(time[1]);
+            return {
+                Mailbox: x.mailbox,
+                ToList: x.toList,
+                Skill: x.makerSkillName || x.cmSkill,
+                Subject: x.subject,
+                From: x.from,
+                AddedTime,
+                OutSessionId: x.sessionID,
+                InSessionId: x.inSessionID,
+                uiId: `${x.inSessionID}|${x.sessionID}`,
+                RouteId: x.routeId,
+                HasAttachment: x.HasAttachment,
+                ConversationID: x.conversationID,
+                // not available in drafts search
+                IsEmailProbableSpam: x.IsEmailProbableSpam
+            };
+        });
+    };
+
+    /**
+     * This method is used to formate the email list reponse from the sent items search
+     * @param {any} result This is the response form the sent items search
+     * @returns {Mail[]} returns mapped emails parsed into Mail type
+     */
+    mapSentItemsEmails = (result: any): Mail[] => {
+        if (!result || !result.length) {
+            return [];
+        }
+        return result.map((x: any): Mail => {
+            const AddedTime = new Date(x.sendDate);
+            if (!x.sendTime) {
+                console.log('Unable to split x.sendTime', x);
+            }
+            const time = x.sendTime.split(':');
+            AddedTime.setHours(time[0]);
+            AddedTime.setMinutes(time[1]);
+            return {
+                Mailbox: x.mailbox,
+                ToList: x.toList,
+                Skill: x.makerSkillName || x.cmSkill,
+                Subject: x.subject,
+                From: x.mailbox,
+                AddedTime,
+                OutSessionId: x.sessionID,
+                InSessionId: x.inSessionID,
+                uiId: `${x.inSessionID}|${x.sessionID}`,
+                RouteId: x.routeId,
+                HasAttachment: x.HasAttachment,
+                ConversationID: x.conversationID,
+                // not available in inbox search
+                IsEmailProbableSpam: x.IsEmailProbableSpam
+            };
+        });
+    };
+
+    /**
+     * This method is used to parse the date from the search params
+     * @param {any} searchParams
+     * @returns {any} returns the search params for the advanced search
+     */
+    parseDateFromSearchParams(searchParams: any): any {
+        const searchFields = searchParams;
+
+        let startDate: any = '';
+        let endDate: any = '';
+
+        if (searchFields.fromDate) {
+            startDate = new Date(searchFields.fromDate);
+            startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
+            startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
+            startDate.setSeconds(0);
+            startDate = moment(startDate).format('YYYYMMDDHHmmss');
+        }
+
+        if (searchFields.toDate) {
+            endDate = new Date(searchFields.toDate);
+            endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
+            endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
+            endDate.setSeconds(0);
+            endDate = moment(endDate).format('YYYYMMDDHHmmss');
+        }
+
+        return { ...searchParams, endDate, startDate };
+    }
+
+    /**
+     * This method returns a list of selected emails
+     * @returns Emails that are selected or checked
+     */
+    getSelectedEmails = () => this.getAllEmailNodes().filter((n) => n.checked);
+
+    /**
+     * This method is used to fill the checked and indeterminate inputs to checkbox,
+     * which is used for bulk selection
+     * @param {Mail[]} mails if this isnt passed, all the emails across all folders are used for this check
+     * @returns {{all :boolean , some : boolean}} all when all emails selected under the folder or some when some selected
+     */
+    getEmailChecks = (
+        mails?: Mail[]
+    ): {
+        /**
+         * flag if all emails selected
+         */
+        all: boolean;
+        /**
+         * flag if some emails selected
+         */
+        some: boolean;
+    } => {
+        const allEmails = mails ?? this.getAllEmailNodes();
+        const checks = { all: false, some: false };
+        if (allEmails.length) {
+            checks.all = allEmails.every((n) => n.checked);
+            checks.some = allEmails.some((n) => n.checked) && !checks.all;
+        }
+        return checks;
+    };
+
+    /**
+     * Selects emails for folders
+     * @param {boolean} checked state of the checkbox
+     * @param {Mail[]} emails if this isnt passed, all the emails across all folders are used for this check
+     */
+    selectEmails = (checked: boolean, emails?: Mail[]) => {
+        const mails = emails ?? this.getAllEmailNodes();
+        for (const n of mails) {
+            n.checked = checked;
+        }
+    };
 }
 
 // for more info visit - https://angular.io/api/core

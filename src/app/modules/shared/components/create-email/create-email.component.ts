@@ -18,7 +18,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, TUtils } from '@tmac/sdk';
 import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
-import { maticonByExtension } from 'app/utils';
+import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import tinymce, { Editor } from 'tinymce';
@@ -163,11 +163,12 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                 debounceTime(200),
                 map((val) => val.toLowerCase())
             )
-            .subscribe((val) => {
-                if (val) {
-                    this.suggestedUsers = this.allUsers.filter((x) => x.toLowerCase().includes(val));
-                    if (!this.suggestedUsers.length && emailRegex.test(val)) {
-                        this.suggestedUsers = [val];
+            .subscribe((val = '') => {
+                const key = val.trim();
+                if (key) {
+                    this.suggestedUsers = this.allUsers.filter((x) => x.toLowerCase().includes(key));
+                    if (!this.suggestedUsers.length && emailRegex.test(key)) {
+                        this.suggestedUsers = [key];
                     }
                 } else {
                     this.suggestedUsers = this.allUsers;
@@ -268,10 +269,16 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     addUserSuggestions(): void {
         SDKClient.getFrequentEmailAddressList()
             .then((res) => {
+                if (!res.response) {
+                    throwADError('Unexpected response from server');
+                }
                 this.allUsers = res.response;
             })
             .catch((e) => {
                 console.error(e);
+                if (e instanceof ADError) {
+                    this.appUiService.showSnackbar('Unable to fetch frequently used email addresses', 'failure');
+                }
             });
     }
 

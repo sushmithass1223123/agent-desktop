@@ -210,9 +210,13 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     loading: boolean;
     /**
-     * Show comments flag
+     * Comments allowed flag
      */
-    showComments: boolean;
+    commentsAllowed: boolean;
+    /**
+     * Consult allowed
+     */
+    consultAllowed: boolean;
     /**
      * Blind allowed
      */
@@ -292,7 +296,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         this.selectedItem = '';
         this.loading = true;
-        this.showComments = false;
+        this.commentsAllowed = false;
         this.comments = '';
 
         // check if dynamic list is there, then add it
@@ -338,7 +342,6 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
             case 'transferCall':
                 this.icon = 'phone_forwarded';
-                this.showComments = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'conferenceCall':
@@ -348,19 +351,16 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             case 'transferChat':
                 this.disableInput = true;
                 this.icon = 'forward';
-                this.showComments = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'pushChat':
                 this.disableInput = true;
                 this.icon = 'forward';
-                this.showComments = false;
                 this.actionTooltip = 'Push';
                 break;
             case 'conferenceChat':
                 this.disableInput = true;
                 this.icon = 'group_add';
-                this.showComments = true;
                 this.actionTooltip = 'Consult';
                 break;
             case 'transferEmail':
@@ -400,8 +400,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             this.loadSkillList();
         }
 
-        // check for blind
-        this.checkForBlind();
+        // check for action
+        this.checkForActions();
 
         this.setNewColumns();
     }
@@ -474,15 +474,21 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To check blind button is allowed
+     * To check actions buttons
      */
-    private checkForBlind(): void {
+    private checkForActions(): void {
         if (this.activeSwitcher === 'dynamicList') {
-            this.blindAllowed = this.data?.otherData.dynamicList.blindAllowed;
+            this.consultAllowed = this.data?.otherData?.dynamicList?.consultAllowed ?? true;
+            this.blindAllowed = this.data?.otherData?.dynamicList?.blindAllowed;
+            this.commentsAllowed = this.data?.otherData?.dynamicList?.commentsAllowed ?? false;
         } else if (this.activeSwitcher === 'agentList') {
+            this.consultAllowed = this.data?.agent?.consult ?? true;
             this.blindAllowed = this.data?.agent.blind;
+            this.commentsAllowed = this.data?.agent?.comments ?? false;
         } else {
+            this.consultAllowed = this.data?.skill?.consult ?? true;
             this.blindAllowed = this.data?.skill.blind;
+            this.commentsAllowed = this.data?.skill?.comments ?? false;
         }
     }
 
@@ -528,9 +534,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             let result: IResponseData<CommandResultEvent>;
             const freeTextConf = this.freeTextConf[this.activeSwitcher];
             const transferTo = freeTextConf.enabled ? freeTextConf.value : this.selectedItem;
+
+            // [MS: Jun 24, '21] commenting to call transferBlind instead of transferCall for PBX calls
             // for MS call blind transfer use method 'transferBlind'
             // if (!this.isConsult) {
-            if (!this.isConsult && this.data.otherData.isMSCall) {
+            // if (!this.isConsult && this.data.otherData.isMSCall) {
+            if (!this.isConsult) {
                 result = await SDKClient.transferBlind({
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
@@ -804,8 +813,8 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // get the main label dynamically
         this.mainLabel = this.switcherList.filter((f) => f.key === item.key)?.[0].textLabel || '';
 
-        // check for blind
-        this.checkForBlind();
+        // check for action
+        this.checkForActions();
 
         // clear the selection
         this.selectedItem = '';
@@ -815,7 +824,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
 
         // check for comments, if dynamicList
         if (this.activeSwitcher === 'dynamicList') {
-            this.showComments = this.data.otherData.dynamicList.showComments;
+            this.commentsAllowed = this.data.otherData.dynamicList.commentsAllowed;
         }
     }
 

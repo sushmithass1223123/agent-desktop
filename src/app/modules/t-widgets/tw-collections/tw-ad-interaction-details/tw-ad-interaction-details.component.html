@@ -153,79 +153,10 @@
     </div>
     <div *ngIf="maximized" fxLayout fxLayoutAlign="space-between">
         <div fxLayout fxLayoutAlign="center center">
-            <button
-                cdkOverlayOrigin
-                #advancedSearchOverlay="cdkOverlayOrigin"
-                (click)="showAdvancedSearchOverlay = !showAdvancedSearchOverlay"
-                mat-button
-                color="primary"
-            >
+            <button (click)="showAdvanceSearchModal()" mat-button color="primary">
                 <mat-icon>search</mat-icon>
                 Advanced Search
             </button>
-
-            <ng-template
-                cdkConnectedOverlay
-                [cdkConnectedOverlayOrigin]="advancedSearchOverlay"
-                [cdkConnectedOverlayOpen]="showAdvancedSearchOverlay"
-                cdkConnectedOverlayHasBackdrop
-                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                (backdropClick)="showAdvancedSearchOverlay = false"
-            >
-                <div class="mat-elevation-z1 p-12 advanced-search-form">
-                    <form fxLayout="column" [formGroup]="advancedSearchForm" novalidate>
-                        <mat-form-field fxFlex="25">
-                            <mat-label>Channel</mat-label>
-                            <input matInput type="text" formControlName="Channel" />
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>Sub Channel</mat-label>
-                            <input matInput type="text" formControlName="SubChannel" />
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>Direction</mat-label>
-                            <input matInput type="text" formControlName="Direction" />
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>User</mat-label>
-                            <input matInput type="text" formControlName="User" />
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>DNIS</mat-label>
-                            <input matInput type="text" formControlName="Dnis" />
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>Created Time</mat-label>
-                            <mat-date-range-input [rangePicker]="createdTimePicker">
-                                <input matStartDate placeholder="Start date" formControlName="CreatedTimeStart" />
-                                <input matEndDate placeholder="End date" formControlName="CreatedTimeEnd" />
-                            </mat-date-range-input>
-                            <mat-datepicker-toggle matSuffix [for]="createdTimePicker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #createdTimePicker></mat-date-range-picker>
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>Closed Time</mat-label>
-                            <mat-date-range-input [rangePicker]="closedTimePicker">
-                                <input matStartDate placeholder="Start date" formControlName="ClosedTimeStart" />
-                                <input matEndDate placeholder="End date" formControlName="ClosedTimeEnd" />
-                            </mat-date-range-input>
-                            <mat-datepicker-toggle matSuffix [for]="closedTimePicker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #closedTimePicker></mat-date-range-picker>
-                        </mat-form-field>
-
-                        <mat-form-field fxFlex="25">
-                            <mat-label>Comments</mat-label>
-                            <input matInput type="text" formControlName="AgentComment" />
-                        </mat-form-field>
-                    </form>
-                </div>
-            </ng-template>
         </div>
         <mat-paginator
             *ngIf="interactionDetailsTable.source.data.length > 0"
@@ -236,3 +167,81 @@
         </mat-paginator>
     </div>
 </tw-wrapper>
+
+<ng-template #advanceSearchModal>
+    <div
+        *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse$"
+        class="mat-elevation-z1 p-12"
+    >
+        {{ interactionDetailsTable.source.filter | json }}
+        <p class="twd-text-xl twd-my-1">Advanced Search</p>
+        <form
+            class="twd-grid twd-grid-cols-2 twd-gap-2"
+            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+            (ngSubmit)="doAdvancedSearch()"
+            [formGroup]="advancedSearchForm"
+            novalidate
+        >
+            <mat-form-field class="flex-1">
+                <mat-label>Channel</mat-label>
+                <input matInput type="text" formControlName="Channel" />
+            </mat-form-field>
+            <mat-form-field class="flex-1">
+                <mat-label>Channel</mat-label>
+                <input matInput type="text" formControlName="Channel" />
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>Sub Channel</mat-label>
+                <input matInput type="text" formControlName="SubChannel" />
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>Direction</mat-label>
+                <input matInput type="text" formControlName="Direction" />
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>User</mat-label>
+                <input matInput type="text" formControlName="User" />
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>DNIS</mat-label>
+                <input matInput type="text" formControlName="Dnis" />
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>Created Time</mat-label>
+                <mat-date-range-input [rangePicker]="createdTimePicker">
+                    <input matStartDate placeholder="Start date" formControlName="CreatedTimeStart" />
+                    <input matEndDate placeholder="End date" formControlName="CreatedTimeEnd" />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="createdTimePicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #createdTimePicker></mat-date-range-picker>
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>Closed Time</mat-label>
+                <mat-date-range-input [rangePicker]="closedTimePicker">
+                    <input matStartDate placeholder="Start date" formControlName="ClosedTimeStart" />
+                    <input matEndDate placeholder="End date" formControlName="ClosedTimeEnd" />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="closedTimePicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #closedTimePicker></mat-date-range-picker>
+            </mat-form-field>
+
+            <mat-form-field class="flex-1">
+                <mat-label>Comments</mat-label>
+                <input matInput type="text" formControlName="AgentComment" />
+            </mat-form-field>
+
+            <div class="twd-col-span-2 twd-flex twd-justify-center">
+                <button mat-raised-button class="twd-w-4/12" color="primary">Search</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

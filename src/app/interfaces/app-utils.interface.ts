@@ -199,9 +199,22 @@ export interface ChatTranscripts {
         name: string;
     };
     /**
-     * Message from server
+     * Divider message
      */
-    serverMessage?: boolean;
+    dividerMessage?: boolean;
+    /**
+     * Message to server
+     */
+    messageToServer?: {
+        /**
+         * Message to send
+         */
+        message: string;
+        /**
+         * Message template id
+         */
+        templateId: string;
+    };
 }
 
 export interface AppNotification {
@@ -390,6 +403,14 @@ export interface CustomDialogOtherData {
      * Message Classes
      */
     messageClasses?: string;
+    /**
+     * Button's custom msg for confirm button
+     */
+    yesMessage?: string;
+    /**
+     * Button's custom msg for cancel button
+     */
+    noMessage?: string;
 }
 
 export type AgentSkillListAgentSources = 'station' | 'agentId';
@@ -436,7 +457,15 @@ export interface AgentSkillListData {
          */
         allowed: boolean;
         /**
-         * BlindD allowed flag
+         * Consult allowed flag
+         */
+        consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        comments: boolean;
+        /**
+         * Blind allowed flag
          */
         blind: boolean;
         /**
@@ -464,6 +493,14 @@ export interface AgentSkillListData {
          * Agent allowed flag
          */
         allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        comments: boolean;
         /**
          * Blind allowed flag
          */
@@ -600,4 +637,92 @@ export interface CustomerInfo {
      * To mask value
      */
     MaskData?: IMaskData | boolean;
+}
+
+export interface AgentSkillRef {
+    /**
+     * Allowed flag
+     */
+    Allowed: boolean;
+    /**
+     * Agent ref
+     */
+    Agent: {
+        /**
+         * Agent allowed flag
+         */
+        Allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        Consult: boolean;
+        /**
+         * Blind allowed flag
+         */
+        Blind: boolean;
+        /**
+         * Comments allowed flag
+         */
+        Comments: boolean;
+        /**
+         * Source for agent actions
+         */
+        Source: AgentSkillListSourceObject;
+        /**
+         * Allowed state for action
+         */
+        AllowedStates: [];
+        /**
+         * Team filter enabled flag
+         */
+        TeamFilter: boolean;
+        /**
+         * Columns to show
+         */
+        Columns: [];
+    };
+    /**
+     * Skill ref
+     */
+    Skill: {
+        /**
+         * Agent allowed flag
+         */
+        Allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        Consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        Comments: boolean;
+        /**
+         * Blind allowed flag
+         */
+        Blind: boolean;
+        /**
+         * Source for skill actions
+         */
+        Source: AgentSkillListSourceObject;
+        /**
+         * Channel prefix to filter
+         */
+        ChannelPrefix: [];
+        /**
+         * Columns to show
+         */
+        Columns: [];
+    };
+}
+
+export interface CommonWidgetData {
+    /**
+     * Path of route
+     */
+    Path: string;
+    /**
+     * Route on interaction flag
+     */
+    RouteOnInteraction: boolean;
 }

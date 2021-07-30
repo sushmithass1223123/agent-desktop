@@ -1,4 +1,4 @@
-import { SelectionModel } from '@angular/cdk/collections';
+// import { SelectionModel } from '@angular/cdk/collections';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,8 +22,8 @@ import {
     SDKClient
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { ChatTranscripts, IWidget, ResData } from 'app/interfaces';
-import { maticonByExtension } from 'app/utils';
+import { ChatTranscripts, CreateEmailInput, IWidget, ResData } from 'app/interfaces';
+import { maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
 import * as moment from 'moment';
@@ -92,7 +92,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Interaction notes ref
      */
-    emailThreadReq: ResData<any> = {
+    emailThreadReq: ResData<Partial<CreateEmailInput>> = {
         error: false,
         loading: false,
         data: null
@@ -215,10 +215,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
              */
             columns: string[];
             /**
-             * Table selection
-             */
-            selection: SelectionModel<InteractionHistory>;
-            /**
              * Size of the pages in table
              */
             pageSizes: number[];
@@ -313,7 +309,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     'OverallSentiment',
                     'Actions'
                 ],
-                selection: new SelectionModel<InteractionHistory>(false, []),
                 source: new MatTableDataSource([]),
                 pageSizes: [],
                 sortDisabled: false
@@ -495,11 +490,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         const tableData = {};
         let transcripts: Record<string, ChatTranscripts[]> = {};
         let sortedTabledata = [];
+
         // try {
         //     console.log(this.groupTable(historyData, 'GroupID', 'InteractionDate', 'SessionID', 'InteractionDate'));
         // } catch (e) {
         //     console.error(e);
         // }
+
         if (update) {
             sortedTabledata = sortBy(this.customerJourneyTable.tableData.source.data.concat(historyData), 'ItemID').reverse();
         } else {
@@ -587,6 +584,15 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.customerJourneyTable.tableData.source.data = [];
         }
         const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']) as InteractionHistory[];
+
+        // const newRecords = this.groupTable(
+        //     (this.customerJourneyTable.tableData.source.data || []).concat(historyData),
+        //     'GroupID',
+        //     'InteractionDate',
+        //     'SessionID',
+        //     'InteractionDate'
+        // );
+
         this.customerJourneyTable.tableData.source.data = newRecords;
         const lastEl = sortedTabledata.slice(-1) || [];
         this.customerJourneyTable.lastId = lastEl[0]?.LastID?.toString();
@@ -651,18 +657,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     /**
-     * Sets iframe for selected session
-     */
-    setIframe(row: InteractionHistory): void {
-        if (!this.maximized) {
-            this.maximized = true;
-            this.wrapperComponent.maximize();
-        }
-        this.customerJourneyTable.tableData.selection.toggle(row);
-        this.customerJourneyTable.iframeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
-    }
-
-    /**
      * Material table pagination event
      */
     pageEvent(_evt: any): void {
@@ -723,7 +717,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         this.maximizeEvent.emit(max);
         if (max) {
             setTimeout(() => {
-                this.customerJourneyTable.tableData.source.sort.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
+                this.customerJourneyTable.tableData.source?.sort?.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
             }, 0);
         }
     }
@@ -790,7 +784,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     async showEmailThread(interaction?: InteractionHistory): Promise<void> {
         if (!interaction) {
-            interaction = this.customerJourneyTable.tableData.selection.selected[0];
+            interaction = this.customerJourneyTable.tableData.source.data.find((x: any) => x.expanded);
         }
 
         this.emailThreadReq.error = false;
@@ -802,19 +796,22 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         const onSuccess = (res: any) => {
             if (!res.response) {
                 this._appUIService.showSnackbar('Unable to fetch email', 'failure');
+                throwADError('Unable to load Email');
                 return;
             }
             // check if attachements are there
             if (res.response.Attachments && res.response.Attachments.length) {
-                res.response.Attachments.forEach((item: any) => {
+                res.response.Files = res.response.Attachments.map((item: any) => {
                     // get the file name from URL
                     let name = item.URL.split('/').pop();
                     name = name.replace(item.SessionID, '');
                     item.Name = name;
                     item.Ext = name.split('.').pop();
                     item.Icon = maticonByExtension(item.Ext);
+                    return item;
                 });
             }
+            delete res.response.Attachments;
 
             if (res.response.Body) {
                 res.response.Body = this._appUIService.sanitizeEmailBody(res.response.Body)['changingThisBreaksApplicationSecurity'];
@@ -893,14 +890,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
         }
     }
-
-    /**
-     * Opens a selected attachment file
-     * @param {String} fileUrl
-     */
-    openFile(fileUrl: string): void {
-        window.open(fileUrl);
-    }
+    //  this.groupTable(historyData, 'GroupID', 'InteractionDate', 'SessionID', 'InteractionDate')
 
     /**
      * Groups table data

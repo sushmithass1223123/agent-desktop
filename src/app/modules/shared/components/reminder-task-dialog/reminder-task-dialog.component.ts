@@ -18,6 +18,10 @@ export class ReminderTaskDialogComponent implements OnInit {
      */
     type: ReminderTaskDialogTypes;
     /**
+     * Snooze timer types
+     */
+    snoozeTimerTypes = ['reminder', 'makecall', 'meeting', 'changestate'];
+    /**
      * Snooze time
      */
     snoozeTime: number;

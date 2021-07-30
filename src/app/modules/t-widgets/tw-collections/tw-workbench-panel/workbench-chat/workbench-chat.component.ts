@@ -178,10 +178,9 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
      * To start polling
      */
     private startPolling(): void {
-        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000)
-            .subscribe(() => {
-                this.doAdvancedSearch();
-            });
+        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval || 5000).subscribe(() => {
+            this.doAdvancedSearch();
+        });
     }
 
     /**
@@ -377,13 +376,17 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                 type: 'pushChat',
                 agent: {
                     allowed: true,
-                    allowedStates: [],
+                    consult: true,
                     blind: false,
-                    source: 'agentId'
+                    comments: false,
+                    source: 'agentId',
+                    allowedStates: []
                 },
                 skill: {
                     allowed: false,
+                    consult: false,
                     blind: false,
+                    comments: false,
                     channelPrfix: [],
                     source: 'skill'
                 }
@@ -429,7 +432,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * To open push dialog
      */
-    openPushDialog(): void { }
+    openPushDialog(): void {}
 
     /**
      * resets form

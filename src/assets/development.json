@@ -1186,7 +1186,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "station",
                                                                 "Display": "${LastName}, ${FirstName}",
@@ -1198,7 +1200,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1214,7 +1218,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "station",
                                                                 "Display": "agentName",
@@ -1226,7 +1232,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1261,7 +1269,8 @@
                                                     "DialpadAllowed": true,
                                                     "InteractionCommentAllowed": true,
                                                     "MakeCallAllowed": true,
-                                                    "SendSMSAllowed": true
+                                                    "SendSMSAllowed": true,
+                                                    "CloseInteractionOnEnd": false
                                                 }
                                             },
                                             {
@@ -1548,7 +1557,7 @@
                                     "Data": {
                                         "Role": "interaction",
                                         "ByTeam": false,
-                                        "ByGroup": false
+                                        "ByGroup": true
                                     }
                                 },
                                 {
@@ -1827,7 +1836,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -1839,7 +1850,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
-                                                            "Blind": false,
+                                                            "Consult": false,
+                                                            "Blind": true,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1853,7 +1866,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -1865,7 +1880,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -1891,7 +1908,6 @@
                                                         "Allowed": true,
                                                         "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html"
                                                     },
-                                                    "AskForScreenshareAllowed": false,
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "remote",
@@ -1903,23 +1919,6 @@
                                                         "Filter": "startswith",
                                                         "FilterByTime": false
                                                     },
-                                                    "InteractionConversion": {
-                                                        "Allowed": true,
-                                                        "Channels": [
-                                                            {
-                                                                "Name": "Generic",
-                                                                "Label": "Generic"
-                                                            },
-                                                            {
-                                                                "Name": "AudioVideo",
-                                                                "Label": "Audio Video"
-                                                            }
-                                                        ],
-                                                        "On": [
-                                                            "oncall",
-                                                            "afterdisconnect"
-                                                        ]
-                                                    },
                                                     "WebRTCTest": {
                                                         "Allowed": true,
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
@@ -1929,7 +1928,9 @@
                                                         "Url": "",
                                                         "Limit": 50
                                                     },
-                                                    "ReplyAllowed": false
+                                                    "ReplyAllowed": true,
+                                                    "EndInteractionOnAVEnd": false,
+                                                    "CloseInteractionOnEnd": false
                                                 }
                                             },
                                             {
@@ -2447,7 +2448,9 @@
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -2459,7 +2462,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -2473,7 +2478,8 @@
                                                     },
                                                     "ForwardAllowed": true,
                                                     "ReplyAllAllowed": true,
-                                                    "InteractionCommentAllowed": true
+                                                    "InteractionCommentAllowed": true,
+                                                    "DraftPollingInterval": 10000
                                                 }
                                             },
                                             {
@@ -3196,18 +3202,21 @@
                                     },
                                     "Data": {
                                         "General": {
-                                            "WorkbenchUrl": "https://dice.tetherfi.cloud:55015/api/workbench"
+                                            "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
                                         },
                                         "Channels": [
                                             {
                                                 "Type": "Email",
+                                                "Enabled": true,
                                                 "Icon": "email",
                                                 "Config": {
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
@@ -3219,7 +3228,9 @@
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
+                                                            "Consult": true,
                                                             "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
@@ -3231,11 +3242,13 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "SearchPollingInterval": 5000
+                                                    "SearchPollingInterval": 10000,
+                                                    "QueueTransferForAgent": false
                                                 }
                                             },
                                             {
                                                 "Type": "Chat",
+                                                "Enabled": true,
                                                 "Icon": "chat",
                                                 "Config": {
                                                     "PullAllowed": true,
@@ -3720,37 +3733,39 @@
             "sendACK": false
         },
         "SDK": {
-            "Proxy": {
-                "Urls": [
+            "proxy": {
+                "urls": [
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
+                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx",
                     "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
                 ],
-                "Type": "soap",
-                "Timeout": 60
+                "type": "soap",
+                "timeout": 60
             },
-            "SignalRProxy": {
-                "Logging": true,
-                "Protocol": "webSockets",
-                "Timeout": 10,
-                "Fallback": true
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true
             },
-            "Logging": {
-                "Enabled": true,
-                "Level": {
-                    "Debug": true,
-                    "Info": true,
-                    "Warn": true,
-                    "Error": true
+            "logging": {
+                "enabled": true,
+                "level": {
+                    "debug": true,
+                    "info": true,
+                    "warn": true,
+                    "error": true
                 },
-                "Remote": {
-                    "Enabled": true,
-                    "Timeout": 30,
-                    "Count": 30
+                "remote": {
+                    "enabled": true,
+                    "timeout": 30,
+                    "count": 30
                 },
-                "SDKMethods": true,
-                "SDKEvents": true
+                "sdkMethods": true,
+                "sdkEvents": true
             },
-            "CustomSripts": [
+            "customScripts": [
                 "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
                 "https://dice.tetherfi.cloud/tmaclibs/livechat_video.min.js",
                 "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"

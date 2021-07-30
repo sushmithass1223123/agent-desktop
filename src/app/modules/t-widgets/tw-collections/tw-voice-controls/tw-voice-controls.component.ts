@@ -41,7 +41,7 @@ import {
     UUIDataEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { AgentSkillListData, AgentSkillRef, CommonWidgetData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -60,7 +60,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Daat from App config
      */
-    @Input() data: IWidget<IncomingCallEvent | OutgoingCallEvent>;
+    @Input() data: IWidget<IncomingCallEvent | OutgoingCallEvent, IWidgetData>;
+    /**
+     * Widget data
+     */
+    widgetData: IWidgetData;
     /**
      * Maximise event emitter
      */
@@ -131,24 +135,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * IVR menus
      */
-    ivrMenus: {
-        /**
-         * Menu text
-         */
-        Text: string;
-        /**
-         * Menu type
-         */
-        Type: string;
-        /**
-         * Menu value
-         */
-        Value: string;
-        /**
-         * Menu icon
-         */
-        Icon: string;
-    }[] = [];
+    ivrMenus: IIVRTransferOption[] = [];
     /**
      * Interaction status
      */
@@ -336,6 +323,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this.widgetData = this.data.Data;
+
         // get the user info
         this.user = SDKClient.getAgentData() || null;
 
@@ -373,7 +362,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // set the status
                 this.status = 'incoming';
                 // assign the last 4 IVR, if default is configured
-                this.last4IVR = this.data.Data.IVR?.DefaultMenu || [];
+                this.last4IVR = this.widgetData.IVR?.DefaultMenu || [];
                 this._appUIService.showDesktopAlert('Incoming Call', `You have a new incoming call from ${this.interaction.PhoneNumber}`, false);
                 // add the subtype
                 this.subType = this.interaction.SubType?.toLowerCase();
@@ -385,8 +374,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.status = 'outgoing';
             }
             // assign the IVR menus if enabled
-            if (this.data.Data.IVR?.Transfer?.Allowed) {
-                this.ivrMenus = this.data.Data.IVR?.Transfer?.Menu || [];
+            if (this.widgetData.IVR?.Transfer?.Allowed) {
+                this.ivrMenus = this.widgetData.IVR?.Transfer?.Menu || [];
             }
         } else {
             console.warn('Interaction details are not available for voice');
@@ -437,14 +426,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         }
 
         // check if the current page is voice page
-        if (route || (this.data.Data.RouteOnInteraction && this._interactionManagerService.getInteractionCount().active <= 1)) {
+        if (route || (this.widgetData.RouteOnInteraction && this._interactionManagerService.getInteractionCount().active <= 1)) {
             setTimeout(
                 (r) => {
                     let inPage = true;
                     // navigate if not same page
-                    if (this._contentPageService.getCurrentMode() !== this.data.Data.Path) {
+                    if (this._contentPageService.getCurrentMode() !== this.widgetData.Path) {
                         inPage = false;
-                        this._contentPageService.mode = this.data.Data.Path;
+                        this._contentPageService.mode = this.widgetData.Path;
                     }
 
                     // if we do outgoing/no active we need to select that particular interaction
@@ -710,6 +699,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // check for the response
                 if (dt.response && dt.response.ResultCode === 0) {
                     // disconnect call success
+                    if (this.widgetData.CloseInteractionOnEnd) {
+                        this.closeInteraction(null);
+                    }
                 } else {
                     this.toggleButton(false, btn);
                     this._appUIService.showSnackbar('Disconnect call failed', 'failure');
@@ -869,10 +861,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             type: 'transfer'
         };
 
-        // for blind transfer to agent, we need to call transfer complete manually
-        if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
-            this.confirmCallFn(true, null);
-        }
+        // [MS: Jun 24, '21] commenting since we are calling transferBlind now
+        // // for blind transfer to agent
+        // if (!this.tempCallRef?.isConsult && this.tempCallRef?.source === 'agent') {
+        //     this.confirmCallFn(true, null);
+        // }
     }
 
     /**
@@ -1503,13 +1496,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     openTransferConferenceDialog(type: string): void {
         const transferConfig = {
-            agent: this.data.Data.Transfer?.Agent || {},
-            skill: this.data.Data.Transfer?.Skill || {}
+            agent: this.widgetData.Transfer?.Agent ?? null,
+            skill: this.widgetData.Transfer?.Skill ?? null
         };
 
         const conferenceConfig = {
-            agent: this.data.Data.Conference?.Agent || {},
-            skill: this.data.Data.Conference?.Skill || {}
+            agent: this.widgetData.Conference?.Agent ?? null,
+            skill: this.widgetData.Conference?.Skill ?? null
         };
 
         // get data based on type
@@ -1519,38 +1512,46 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                       title: 'Transfer Call',
                       type: 'transferCall',
                       agent: {
-                          allowed: transferConfig.agent.Allowed,
-                          blind: transferConfig.agent.Allowed,
-                          source: transferConfig.agent.Source,
-                          allowedStates: transferConfig.agent.AllowedStates,
-                          columns: transferConfig.agent.Columns,
-                          teamFilter: transferConfig.agent.TeamFilter
+                          allowed: transferConfig?.agent?.Allowed,
+                          consult: transferConfig?.agent?.Consult,
+                          blind: transferConfig?.agent?.Blind,
+                          comments: transferConfig?.agent?.Comments,
+                          source: transferConfig?.agent?.Source,
+                          allowedStates: transferConfig?.agent?.AllowedStates,
+                          columns: transferConfig?.agent?.Columns,
+                          teamFilter: transferConfig?.agent?.TeamFilter
                       },
                       skill: {
-                          allowed: transferConfig.skill.Allowed,
-                          blind: transferConfig.skill.Allowed,
-                          source: transferConfig.skill.Source,
-                          channelPrfix: transferConfig.skill.ChannelPrefix,
-                          columns: transferConfig.skill.Columns
+                          allowed: transferConfig?.skill?.Allowed,
+                          consult: transferConfig?.skill?.Consult,
+                          blind: transferConfig?.skill?.Blind,
+                          comments: transferConfig?.skill?.Comments,
+                          source: transferConfig?.skill?.Source,
+                          channelPrfix: transferConfig?.skill?.ChannelPrefix,
+                          columns: transferConfig?.skill?.Columns
                       }
                   }
                 : {
                       title: 'Conference Call',
                       type: 'conferenceCall',
                       agent: {
-                          allowed: conferenceConfig.agent.Allowed,
-                          blind: conferenceConfig.agent.Allowed,
-                          source: conferenceConfig.agent.Source,
-                          allowedStates: conferenceConfig.agent.AllowedStates,
-                          columns: conferenceConfig.agent.Columns,
-                          teamFilter: conferenceConfig.agent.TeamFilter
+                          allowed: conferenceConfig?.agent?.Allowed,
+                          consult: conferenceConfig?.agent?.Consult,
+                          blind: conferenceConfig?.agent?.Blind,
+                          comments: conferenceConfig?.agent?.Comments,
+                          source: conferenceConfig?.agent?.Source,
+                          allowedStates: conferenceConfig?.agent?.AllowedStates,
+                          columns: conferenceConfig?.agent?.Columns,
+                          teamFilter: conferenceConfig?.agent?.TeamFilter
                       },
                       skill: {
-                          allowed: conferenceConfig.skill.Allowed,
-                          blind: conferenceConfig.skill.Allowed,
-                          source: conferenceConfig.skill.Source,
-                          channelPrfix: conferenceConfig.skill.ChannelPrefix,
-                          columns: conferenceConfig.skill.Columns
+                          allowed: conferenceConfig?.skill?.Allowed,
+                          consult: conferenceConfig?.skill?.Consult,
+                          blind: conferenceConfig?.skill?.Blind,
+                          comments: conferenceConfig?.skill?.Comments,
+                          source: conferenceConfig?.skill?.Source,
+                          channelPrfix: conferenceConfig?.skill?.ChannelPrefix,
+                          columns: conferenceConfig?.skill?.Columns
                       }
                   };
 
@@ -1849,4 +1850,80 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         dialogRef.componentInstance.data = widget;
     }
+}
+
+interface IIVRTransferOption {
+    /**
+     * Menu text
+     */
+    Text: string;
+    /**
+     * Menu type
+     */
+    Type: string;
+    /**
+     * Menu value
+     */
+    Value: string;
+    /**
+     * Menu icon
+     */
+    Icon: string;
+}
+
+interface IWidgetData extends CommonWidgetData {
+    /**
+     * Transfer ref
+     */
+    Transfer: AgentSkillRef;
+    /**
+     * Conference ref
+     */
+    Conference: AgentSkillRef;
+    /**
+     * IVR ref
+     */
+    IVR: {
+        /**
+         * Menu enabled flag
+         */
+        MenuEnabled: boolean;
+        /**
+         * Default IVR menus
+         */
+        DefaultMenu: string[];
+        /**
+         * IVR Transfer ref
+         */
+        Transfer: {
+            /**
+             * IVR transfer allowed flag
+             */
+            Allowed: boolean;
+            /**
+             * IVR transfer menu ref
+             */
+            Menu: IIVRTransferOption[];
+        };
+    };
+    /**
+     * Dialpad allowed flag
+     */
+    DialpadAllowed: boolean;
+    /**
+     * Interaction comment allowed flag
+     */
+    InteractionCommentAllowed: boolean;
+    /**
+     * Make call allowed flag
+     */
+    MakeCallAllowed: boolean;
+    /**
+     * Send SMS allowed flag
+     */
+    SendSMSAllowed: boolean;
+    /**
+     * Close interaction on call end flag
+     */
+    CloseInteractionOnEnd: boolean;
 }

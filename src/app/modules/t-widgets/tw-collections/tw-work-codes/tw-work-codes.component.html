@@ -62,20 +62,22 @@
 </tw-wrapper>
 
 <ng-template #addWorkcodeModalRef>
-    <p class="mat-title">Select Work Codes</p>
-    <mat-form-field class="w-100-p" appearance="outline">
-        <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
-            <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
-                <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                {{ workCode.Name }}
-                <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-            <input #workCodeInput placeholder="Search Workcodes..." [formControl]="workCodeCtrl" [matChipInputFor]="selectedWorkCodesRef" />
-        </mat-chip-list>
-    </mat-form-field>
+    <div class="twd-sticky twd-top-0 twd-left-0">
+        <p class="mat-title">Select Work Codes</p>
+        <mat-form-field class="w-100-p" appearance="outline">
+            <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
+                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
+                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
+                    {{ workCode.Name }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input #workCodeInput placeholder="Search Workcodes..." [formControl]="workCodeCtrl" [matChipInputFor]="selectedWorkCodesRef" />
+            </mat-chip-list>
+        </mat-form-field>
+    </div>
 
     <ng-container *ngFor="let group of filteredOptions | async | keyvalue">
-        <p class="mat-title">{{ group.key }}</p>
+        <p class="mat-title" *ngIf="group.value && group.value.length">{{ group.key }}</p>
         <mat-chip-list aria-label="WorkCodes">
             <mat-chip *ngFor="let workCode of group.value" class="bg-secondary" (click)="setWorkCode(workCode, group.key)">
                 <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>

@@ -19,7 +19,7 @@ export const initEmailSearchState = {
 
     agent: '',
 
-    inSessionid: '',
+    inSessionId: '',
 
     deviceid: '',
     hasAttachments: 2,
@@ -29,8 +29,6 @@ export const initEmailSearchState = {
     closed: 2,
     assigned: 2,
 
-    sesisonid: '',
-    global: '',
     listOfMailboxes: []
 };
 
@@ -46,7 +44,7 @@ const searchParams = new FormGroup({
 
     agent: new FormControl(initEmailSearchState.agent),
 
-    inSessionid: new FormControl(initEmailSearchState.inSessionid),
+    inSessionId: new FormControl(initEmailSearchState.inSessionId),
 
     deviceid: new FormControl(initEmailSearchState.deviceid),
     hasAttachments: new FormControl(initEmailSearchState.hasAttachments),
@@ -56,9 +54,7 @@ const searchParams = new FormGroup({
     closed: new FormControl(initEmailSearchState.closed),
     assigned: new FormControl(initEmailSearchState.assigned),
 
-    sesisonid: new FormControl(initEmailSearchState.sesisonid),
-    global: new FormControl(initEmailSearchState.global),
-    listOfMailboxes: new FormControl([], [Validators.required])
+    listOfMailboxes: new FormControl([])
 });
 
 /**
@@ -73,7 +69,6 @@ export class TwWorkBenchService {
      */
     private readonly _internal$ = {
         email: {
-            // initialized: false,
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
@@ -105,7 +100,6 @@ export class TwWorkBenchService {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }
             if (res.response.length) {
-                // this._internal$.email.initialized = true;
                 const listOfMailboxes =
                     res.response.map((email) => {
                         const [mail] = email.split(',');
@@ -117,16 +111,6 @@ export class TwWorkBenchService {
             }
         } catch (e) {
             console.error(e);
-        }
-    }
-
-    /**
-     * Sets searchParams key in _internal$
-     */
-    setEmailSearchParams(params: Partial<typeof searchParams>, global = ''): void {
-        this._internal$.email.searchParams.patchValue(params);
-        if (global) {
-            this._internal$.email.globalSearchKey.patchValue(global);
         }
     }
 

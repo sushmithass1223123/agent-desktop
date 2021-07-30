@@ -31,7 +31,7 @@
                 </ng-container>
             </div>
             <div
-                class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl twd-p-3 twd-overflow-y-auto"
+                class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl twd-overflow-y-auto twd-p-2"
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             >
                 <div class="twd-flex twd-flex-wrap twd-gap-3 twd-pb-2 twd-justify-end">
@@ -58,7 +58,7 @@
                             mat-raised-button
                             class="border-radius-20"
                             color="warn"
-                            (click)="closeInteraction(closeBtn)"
+                            (click)="closeEditor(closeBtn, true)"
                             #closeBtn
                             matTooltip="Close"
                         >
@@ -120,8 +120,10 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 color="accent"
-                                (click)="closeEditor()"
+                                (click)="closeEditor(closeEditorBtn, true)"
+                                #closeEditorBtn
                                 matTooltip="Close Editor"
+                                [disabled]="sendingEmailAsMaker"
                             >
                                 Cancel
                             </button>
@@ -153,53 +155,59 @@
                 </div>
 
                 <div *ngIf="!replyInfo" class="twd-flex-1 twd-h-full twd-z-10 twd-relative">
-                    <div class="twd-absolute twd-w-full twd-h-full twd-top-0 twd-left-0 twd-overflow-hidden twd-flex twd-flex-col">
-                        <div class="twd-max-h-6/12 twd-overflow-y-auto twd-overflow-x-hidden twd-pb-3 twd-z-10 twd-shadow-md">
-                            <div id="rejectReason" *ngIf="currentInteraction.RejectReason">
-                                <div class="twd-bg-red-500 twd-p-1 twd-text-xl">
-                                    [ REJECTED ] {{ currentInteraction.RejectReason.reasonTags && ':' + currentInteraction.RejectReason.reasonTags }}
+                    <preview-email
+                        [email]="{
+                            Subject: currentInteraction.Subject,
+                            Body: currentInteraction.Body,
+                            Files: currentInteraction.AttachmetList
+                        }"
+                        [loading]="getInboxMessageReq.loading"
+                        [error]="getInboxMessageReq.error"
+                        (retry)="setEmailDetails(true)"
+                    >
+                        <div id="emailInfo" class="twd-flex twd-flex-col twd-gap-y-1">
+                            <div class="twd-flex twd-justify-between">
+                                <div class="twd-flex twd-items-center">
+                                    <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
                                 </div>
-                                <div [ngClass]="{ 'twd-truncate': !smallEmailDescription }">
-                                    Description : {{ currentInteraction.RejectReason.comment }}
+
+                                <div class="twd-flex twd-items-center twd-truncate" matTooltip="Route Type">
+                                    <mat-icon class="s-20">directions</mat-icon>
+                                    <span class="twd-truncate">
+                                        {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
+                                    </span>
                                 </div>
-                                <button mat-button color="primary" class="twd-mb-4" (click)="smallEmailDescription = !smallEmailDescription">
-                                    {{ smallEmailDescription ? 'Show More' : 'Show less' }}
-                                </button>
                             </div>
 
-                            <div id="subject" class="twd-text-xl twd-mb-4 twd-truncate" [innerHtml]="currentInteraction.Subject"></div>
-
-                            <div id="emailInfo" class="twd-grid twd-auto-cols-fr">
-                                <span class="twd-flex twd-items-center">
-                                    <mat-icon matTooltip="Intent">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
-                                </span>
-                                <span class="twd-col-span-2 text-bold twd-flex twd-items-center">
-                                    <mat-icon matTooltip="Mailbox">list_alt</mat-icon>
+                            <div class="twd-flex twd-justify-between">
+                                <div class="twd-flex twd-items-center text-bold twd-truncate" matTooltip="Mailbox">
+                                    <mat-icon class="s-20">list_alt</mat-icon>
                                     <span class="twd-truncate">
                                         {{ currentInteraction.Email_Mailbox || 'NA' }}
                                     </span>
-                                </span>
-                                <div>
-                                    <p class="my-4 twd-truncate">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
                                 </div>
-                                <span matTooltip="Sentiment" class="twd-flex twd-justify-end twd-items-center">
-                                    <mat-icon>person</mat-icon>
+
+                                <div *ngIf="sentiment && sentiment !== 'NA'" class="twd-flex twd-items-center" matTooltip="Sentiment">
                                     <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
                                     <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
                                     <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                                    <ng-container *ngIf="sentiment === 'NA'"> NA </ng-container>
-                                </span>
-                                <span class="twd-flex twd-items-center twd-justify-end" matTooltip="Route type">
-                                    <mat-icon>directions</mat-icon>
-                                    {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
-                                </span>
-                                <div class="twd-text-right">
-                                    <span>{{ currentInteraction.CreatedTime | date: 'mediumDate' }}</span>
-                                    <br />
-                                    <span>{{ currentInteraction.CreatedTime | date: 'shortTime' }}</span>
                                 </div>
                             </div>
 
+                            <div class="twd-flex twd-justify-between">
+                                <div class="twd-flex twd-items-center">
+                                    <p class="my-4 twd-truncate">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
+                                </div>
+
+                                <div class="twd-flex twd-items-end twd-flex-col">
+                                    <span>
+                                        {{ currentInteraction.CreatedTime | date: 'mediumDate' }}
+                                    </span>
+                                    <span>
+                                        {{ currentInteraction.CreatedTime | date: 'shortTime' }}
+                                    </span>
+                                </div>
+                            </div>
                             <a
                                 *ngIf="
                                     OutboxReasons.includes(currentInteraction.RouteReason) && !SentReasons.includes(currentInteraction.RouteReason)
@@ -209,165 +217,86 @@
                             >
                                 {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                             </a>
-
-                            <div
-                                id="attachmentList"
-                                class="twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list"
-                                *ngIf="
-                                    currentInteraction.AttachmetList &&
-                                    currentInteraction.AttachmetList.length &&
-                                    currentInteraction.AttachmetList as attachments
-                                "
-                            >
-                                <button
-                                    *ngFor="let file of attachments | slice: 0:2"
-                                    mat-stroked-button
-                                    class="border-radius-20 m-4 twd-max-w-3/12 lg:twd-max-w-6/12"
-                                    [matTooltip]="file.Ext | uppercase"
-                                    (click)="openFile(file.URL)"
-                                >
-                                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                    <span>{{ file.Name }}</span>
-                                </button>
-
-                                <button
-                                    *ngIf="attachments.length > 2"
-                                    mat-stroked-button
-                                    class="border-radius-20 m-4"
-                                    [matMenuTriggerFor]="attachList"
-                                    matTooltip="Show More"
-                                >
-                                    +{{ attachments.length - 2 }}
-                                </button>
-
-                                <mat-menu class="custom attachment-overlay" #attachList="matMenu">
-                                    <div class="attachment-menu" [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-                                        <div
-                                            *ngFor="let file of attachments | slice: 2:attachments.length"
-                                            class="
-                                                twd-flex
-                                                twd-items-center
-                                                twd-text-base
-                                                twd-font-bold
-                                                twd-p-2
-                                                twd-rounded-full
-                                                twd-overflow-hidden
-                                                twd-cursor-pointer
-                                                mx-8
-                                                my-4
-                                                border
-                                            "
-                                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                                            [matTooltip]="file.Ext | uppercase"
-                                            (click)="openFile(file.URL)"
-                                        >
-                                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                            <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
-                                        </div>
-                                    </div>
-                                </mat-menu>
-                            </div>
-
-                            <div
-                                id="emailControlButtons"
-                                class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
-                                *ngIf="
-                                    InboxReasons.includes(currentInteraction.RouteReason) ||
-                                    DraftReasons.includes(currentInteraction.RouteReason) ||
-                                    SentReasons.includes(currentInteraction.RouteReason)
-                                "
-                            >
-                                <button
-                                    *ngIf="data.Data?.InteractionCommentAllowed"
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    matTooltip="Interaction Comment"
-                                    (click)="saveInteractionComments()"
-                                >
-                                    <mat-icon>comment</mat-icon>
-                                </button>
-                                <button
-                                    *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    (click)="markAsSpam()"
-                                    matTooltip="Mark As Spam"
-                                >
-                                    <mat-icon>report</mat-icon>
-                                </button>
-                                <button
-                                    *ngIf="data.Data.Transfer.Allowed"
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    [disabled]="getInboxMessageReq.error"
-                                    (click)="transferEmail(currentInteraction)"
-                                    matTooltip="Transfer"
-                                >
-                                    <mat-icon>forward_to_inbox</mat-icon>
-                                </button>
-                                <button
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    (click)="showReplyEditor()"
-                                    [disabled]="getInboxMessageReq.error"
-                                    matTooltip="Reply"
-                                >
-                                    <mat-icon>reply</mat-icon>
-                                </button>
-                                <button
-                                    *ngIf="data.Data.ReplyAllAllowed"
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    (click)="showReplyAllEmailEditor()"
-                                    [disabled]="getInboxMessageReq.error"
-                                    matTooltip="Reply All"
-                                >
-                                    <mat-icon>reply_all</mat-icon>
-                                </button>
-                                <button
-                                    *ngIf="data.Data.ForwardAllowed"
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    (click)="showForwardEmailEditor()"
-                                    [disabled]="getInboxMessageReq.error"
-                                    matTooltip="Forward"
-                                >
-                                    <mat-icon>forward</mat-icon>
-                                </button>
-                                <button
-                                    *ngIf="!replyInfo"
-                                    mat-raised-button
-                                    class="border-radius-20"
-                                    color="warn"
-                                    #closeBtn
-                                    (click)="closeEmail(closeBtn)"
-                                    matTooltip="Close Interaction"
-                                >
-                                    Close
-                                </button>
-                            </div>
                         </div>
-
-                        <div class="twd-relative twd-flex-1 twd-overflow-auto">
-                            <div
-                                *ngIf="!getInboxMessageReq.loading && !getInboxMessageReq.error"
-                                class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1"
+                        <div
+                            id="emailControlButtons"
+                            class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
+                            *ngIf="
+                                InboxReasons.includes(currentInteraction.RouteReason) ||
+                                DraftReasons.includes(currentInteraction.RouteReason) ||
+                                SentReasons.includes(currentInteraction.RouteReason)
+                            "
+                        >
+                            <button
+                                *ngIf="data.Data?.InteractionCommentAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                matTooltip="Interaction Comment"
+                                (click)="saveInteractionComments()"
                             >
-                                <!-- <div [innerHtml]="currentInteraction.Body"></div> -->
-                                <iframe *ngIf="isInteractionActive" #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
-                            </div>
-
-                            <div class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
-                                <ng-container *ngIf="getInboxMessageReq.loading">
-                                    <mat-spinner></mat-spinner>
-                                </ng-container>
-                                <div *ngIf="getInboxMessageReq.error" class="twd-text-center">
-                                    <p class="twd-font-bold twd-mb-3 twd-text-lg">{{ getInboxMessageReq.msg }}</p>
-                                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="setEmailDetails(true)">Retry</button>
-                                </div>
-                            </div>
+                                <mat-icon>comment</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="markAsSpam()"
+                                matTooltip="Mark As Spam"
+                            >
+                                <mat-icon>report</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.Transfer.Allowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                [disabled]="getInboxMessageReq.error"
+                                (click)="transferEmail(currentInteraction)"
+                                matTooltip="Transfer"
+                            >
+                                <mat-icon>forward_to_inbox</mat-icon>
+                            </button>
+                            <button
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="showReplyEditor()"
+                                [disabled]="getInboxMessageReq.error"
+                                matTooltip="Reply"
+                            >
+                                <mat-icon>reply</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.ReplyAllAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="showReplyAllEmailEditor()"
+                                [disabled]="getInboxMessageReq.error"
+                                matTooltip="Reply All"
+                            >
+                                <mat-icon>reply_all</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.ForwardAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="showForwardEmailEditor()"
+                                [disabled]="getInboxMessageReq.error"
+                                matTooltip="Forward"
+                            >
+                                <mat-icon>forward</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="!replyInfo"
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="warn"
+                                #closeBtn
+                                (click)="closeEmail(closeBtn)"
+                                matTooltip="Close Interaction"
+                            >
+                                Close
+                            </button>
                         </div>
-                    </div>
+                    </preview-email>
                 </div>
             </div>
         </div>
@@ -417,7 +346,7 @@
                     Cancel
                 </button>
 
-                <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20" [disabled]="!rejectReason.comment" >Submit</button>
+                <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20" [disabled]="!rejectReason.comment">Submit</button>
             </form>
         </div>
     </ng-template>
