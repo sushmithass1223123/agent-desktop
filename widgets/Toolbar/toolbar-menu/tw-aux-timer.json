@@ -1,0 +1,9 @@
+{
+    "Name": "Aux Timer",
+    "Description": "",
+    "Type": "tw-aux-timer",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {}
+}

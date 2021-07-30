@@ -1,0 +1,57 @@
+{
+    "Name": "Create Interaction",
+    "Description": "",
+    "Type": "tw-create-interaction",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {
+        "Channels": [
+            {
+                "Name": "Send SMS",
+                "Enabled": true,
+                "EnableState": "",
+                "Type": "text",
+                "SubType": "sms",
+                "Icon": "sms",
+                "Data": {}
+            },
+            {
+                "Name": "Make Call",
+                "Enabled": true,
+                "EnableState": "calloutbound",
+                "Type": "voice",
+                "SubType": "voice",
+                "Icon": "call",
+                "Data": {
+                    "Source": {
+                        "Use": "station",
+                        "Display": "${LastName}, ${FirstName}",
+                        "FreeTextAllowed": false
+                    },
+                    "AllowedStates": [],
+                    "TeamFilter": false,
+                    "Columns": []
+                }
+            },
+            {
+                "Name": "Send WhatsApp",
+                "Enabled": true,
+                "EnableState": "",
+                "Type": "text",
+                "SubType": "whatsapp",
+                "Icon": "custom-whatsapp",
+                "Data": {}
+            },
+            {
+                "Name": "Send Email",
+                "Enabled": true,
+                "EnableState": "",
+                "Type": "email",
+                "SubType": "email",
+                "Icon": "email",
+                "Data": {}
+            }
+        ]
+    }
+}

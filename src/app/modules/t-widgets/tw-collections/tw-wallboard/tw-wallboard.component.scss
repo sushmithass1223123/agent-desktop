@@ -1,103 +1,20 @@
 tw-wallboard {
-    .record {
-        display: block;
-        width: 55%;
-        &:nth-child(odd) {
-            margin-left: auto;
-            .card {
-                .record-details {
-                    position: relative;
-                    .indicators {
-                        position: absolute;
-                        top: calc(50% - 16px);
-                        left: -16px;
-                    }
-                }
-            }
-        }
-        &:nth-child(even) {
-            margin-right: auto;
-            .card {
-                flex-direction: row-reverse;
-                .record-details {
-                    display: block;
-                    position: relative;
-                    .indicators {
-                        position: absolute;
-                        top: calc(50% - 16px);
-                        right: -16px;
-                    }
-                }
-            }
-        }
-        .card {
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            mat-icon {
-                border-radius: 50%;
-                background: coral;
-            }
-            .connector {
-                border-radius: 5px;
-                height: 5px;
-                flex: 1;
-                background: coral;
-            }
-            .record-details {
-                padding: 10px 20px;
-            }
-            .date-circle {
-                width: 70px;
-                height: 70px;
-                border-radius: 50%;
-                background: radial-gradient(darken(lightcoral, 10), lightcoral);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                .date {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background: radial-gradient(lightgray, white);
-                }
-            }
+    position: relative;
+
+    ad-table {
+        mat-cell.mat-column-SkillName {
+            justify-content: start;
         }
     }
 
-    tw-wrapper {
-        mat-card-content {
-            &.mat-card-content {
-                position: relative;
-
-                .vector-image {
-                    position: absolute;
-                    left: 0;
-                    bottom: 4rem;
-                    width: 100%;
-                    max-height: 100%;
-                    z-index: 1;
-                    opacity: 0.4;
-                    filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
-                }
-
-                .mat-table-container {
-                    .mat-table {
-                        th {
-                            &.mat-header-cell:first-of-type {
-                                width: 40%;
-                            }
-                        }
-
-                        mat-cell:first-of-type {
-                            justify-content: start;
-                        }
-                    }
-                }
-            }
-        }
+    .vector-image {
+        position: absolute;
+        left: 5%;
+        bottom: 4rem;
+        width: 90%;
+        max-height: 100%;
+        z-index: 1;
+        opacity: 0.4;
+        filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
     }
 }

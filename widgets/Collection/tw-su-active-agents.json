@@ -1,0 +1,26 @@
+{
+    "Name": "Active Agents",
+    "Description": "",
+    "Type": "tw-su-active-agents",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "vertical_split",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 3
+        },
+        "Actions": [],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "TASUrl": ""
+    }
+}

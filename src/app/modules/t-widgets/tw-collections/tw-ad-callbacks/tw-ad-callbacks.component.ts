@@ -21,12 +21,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
-
-    /**
-     * Data Config
-     */
-    dataConfig: WidgetData;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Get Dashboard data res
@@ -82,10 +77,6 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         super();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
     /**
      * On Init
      */
@@ -93,9 +84,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.dataConfig = this.data.Data;
-
-        let url = this.dataConfig.TCMProxyUrl;
+        let url = this.data.Data.TCMProxyUrl;
         if (!url) {
             this.getDashboardDataRes = {
                 error: true,
@@ -143,10 +132,6 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             }
         ]);
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * CallbackDataReceivedForAgent Handler

@@ -200,26 +200,36 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * @param {'agent' | 'interaction'} type Type of feature
      * @param {string} subType Subtype of feature
      */
-    public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', subType: string): boolean {
-        // if not allow supervisor or in map the item is not found return false
-        if (!feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
-            return false;
-        }
+    public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', element: InteractionDataModel): boolean {
+        try {
+            // if not allow supervisor or in map the item is not found return false
+            if (element.LastStatus.includes('Disconnected') || !feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
+                return false;
+            }
 
-        // check for the type and subtype
-        if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
-            return false;
-        }
+            const subType = element.Channel.toLowerCase();
 
-        // check if agent action
-        if (type === 'agent') {
-            return feature.IsEnabled;
-        }
-        // check if interaction action
-        else if (type === 'interaction' && this.featureMap[feature.Feature].Type === type && this.featureMap[feature.Feature].SubType === subType) {
-            return feature.IsEnabled;
-        } else {
-            return false;
+            // check for the type and subtype
+            if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
+                return false;
+            }
+
+            // check if agent action
+            if (type === 'agent') {
+                return feature.IsEnabled;
+            }
+            // check if interaction action
+            else if (
+                type === 'interaction' &&
+                this.featureMap[feature.Feature].Type === type &&
+                this.featureMap[feature.Feature].SubType === subType
+            ) {
+                return feature.IsEnabled;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            this.logger.error('Error in featureCheck', err, false);
         }
     }
 

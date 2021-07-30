@@ -1,0 +1,24 @@
+{
+    "Name": "Chat",
+    "Description": "",
+    "Type": "twc-textchat",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/textchat",
+        "RouteOnInteraction": true,
+        "Widgets": {
+            "Static": [],
+            "Dynamic": [],
+            "AOT": []
+        }
+    }
+}

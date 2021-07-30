@@ -1,7 +1,7 @@
 import { maskData } from '@tmac/operators';
 import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
-import { get, join, set } from 'lodash';
+import { get, set } from 'lodash';
 
 type Generic = string | number;
 
@@ -127,58 +127,10 @@ export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEve
  * @returns
  */
 export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
-    // get the value source
-    const valueSource = item.ValueSource;
-    let valueSourceSplit = [];
-    // check if we need to parse the json
-    if (valueSource.toLowerCase().includes('jsonparse')) {
-        // expected value = jsonparse(EventName.{...path}).getValue
-        // get the path by taking string between ()
-        const path = valueSource.substring(valueSource.lastIndexOf('(') + 1, valueSource.lastIndexOf(')'));
-        if (path) {
-            // split the value source
-            valueSourceSplit = path.split('.');
-            // check if the value source event name matches with the current event
-            if (valueSourceSplit[0] !== evt.EventName) {
-                return;
-            }
-
-            // get the value from path
-            const jsonStr = getValueFromJson(valueSourceSplit, evt, '');
-            if (jsonStr) {
-                // get the property by taking string between ) and last
-                const prop = valueSource.substring(valueSource.lastIndexOf(')') + 2, valueSource.length);
-                item.Value = maskDataLocal(JSON.parse(jsonStr)[prop] ?? '', item.MaskData);
-            }
-        }
-    } else {
-        valueSourceSplit = item.ValueSource.split('.');
-        // check if the value source event name matches with the current event
-        if (valueSourceSplit[0] !== evt.EventName) {
-            return;
-        }
-        // get the value from path or default value
-        item.Value = maskDataLocal(getValueFromJson(valueSourceSplit, evt, item.DefaultValue), item.MaskData);
-    }
-
+    // get the value from path or default value
+    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.DefaultValue, item.MaskData);
     // return value
     return item.Value;
-};
-
-/**
- * To get property value from event
- *
- * @param {String[]} valueSourceSplit
- * @param {Any} json
- * @param {String} defaultValue
- */
-const getValueFromJson = (valueSourceSplit: string[], json: any, defaultValue: string) => {
-    // remove the event name from the array
-    valueSourceSplit.shift();
-    // map the property and get the value from event property
-    const valueMap = join(valueSourceSplit, '.');
-    // get the value from path or default value
-    return get(json, valueMap, defaultValue);
 };
 
 /**
@@ -225,7 +177,31 @@ export class ADError extends Error {
  *
  * @param msg
  */
-export const throwADError = (msg: string) => {
-    TUtils.Logger.error('AD Error', msg);
-    throw new ADError(msg);
+export const throwADError = (msg: string, error: any) => {
+    TUtils.Logger.error(msg ?? 'Error in AD', error);
+    throw new ADError(error);
+};
+
+export const extractJsonVal = (val: any, path: string) => {
+    return path.split('.').reduce((acc, curr) => {
+        if (!acc) {
+            acc = {};
+        }
+        try {
+            acc = JSON.parse(acc[curr]);
+        } catch (e) {
+            acc = acc[curr];
+        }
+        return acc;
+    }, val);
+};
+
+/**
+ * To check if a string is html
+ *
+ * @param {String} str String to compare
+ * @returns
+ */
+export const checkStringIsHTML = (str: string) => {
+    return /<\/?[a-z][\s\S]*>/i.test(str);
 };

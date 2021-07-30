@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppDataService } from '@services/app-data.service';
-import { IResponse, TUtils } from '@tmac/sdk';
+import { TUtils } from '@tmac/sdk';
 
 /**
  * Widget Preview
@@ -13,7 +14,7 @@ import { IResponse, TUtils } from '@tmac/sdk';
     styleUrls: ['./widget-preview.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class WidgetPreviewComponent implements OnInit {
+export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
     /**
      * Widgets
      */
@@ -40,11 +41,13 @@ export class WidgetPreviewComponent implements OnInit {
     appConfig: any;
 
     constructor(
+        private fuseSplashService: FuseSplashScreenService,
         private _activatedRouter: ActivatedRoute,
         private _router: Router,
-        private fuseSplashService: FuseSplashScreenService,
         private _appDataService: AppDataService
-    ) {}
+    ) {
+        super();
+    }
 
     /**
      * Lifecycle Hook
@@ -60,7 +63,7 @@ export class WidgetPreviewComponent implements OnInit {
             this.appConfig = config;
             // get the query param
             this._activatedRouter.queryParams.subscribe((params) => {
-                TUtils.Logger.console('info', 'WidgetPreviewComponent.queryParams', params);
+                console.log('WidgetPreviewComponent.queryParams', params);
                 // get the template name from the config
                 if (params && params.templateName) {
                     // get the template
@@ -100,7 +103,7 @@ export class WidgetPreviewComponent implements OnInit {
         try {
             // check if local template
             if (templateName === 'local') {
-                TUtils.Logger.console('info', `WidgetPreviewComponent.getTemplateJson load local template @ ${this.localTemplatePath}`);
+                this.logger.info(`getTemplateJson load local template @ ${this.localTemplatePath}`, false);
                 // get the config
                 const templateFetch = await fetch(this.localTemplatePath);
                 if (!templateFetch.ok) {
@@ -115,7 +118,7 @@ export class WidgetPreviewComponent implements OnInit {
             }
 
             // get the template json
-            const result: IResponse = await TUtils.HttpClient.sendRequest({
+            const result = await TUtils.HttpClient.sendRequest({
                 urls: [`${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`],
                 requestArgs: { id: templateName },
                 header: {
@@ -139,7 +142,7 @@ export class WidgetPreviewComponent implements OnInit {
                 result
             );
         } catch (error) {
-            TUtils.Logger.console('error', 'Exception in getTemplateJson', error);
+            this.logger.error('Error in getTemplateJson', error, false);
             this.routeToNotFound('Error in getting template');
         }
     }

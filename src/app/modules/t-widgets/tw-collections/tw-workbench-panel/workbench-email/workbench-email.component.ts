@@ -46,17 +46,26 @@ type ComponentActions =
     | 'emails/loading'
     | 'emails/success'
     | 'emails/failure'
-    | 'emails/failure/custom-message'
     | 'email/reply/loading'
     | 'email/reply/success'
     | 'email/reply/failure'
+    | 'email/open/loading'
+    | 'email/open/success'
+    | 'email/open/failure'
     | 'email/polling/active'
+    | 'email/polling/failed'
     | 'email/polling/inactive';
 
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
 
 type GlobalSearchFormData = { form: FormControl; data: Partial<Record<AvailableTabs, string>> };
-type AdvanceSearchFormData = { form: FormGroup; data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>; show: boolean };
+type AdvanceSearchFormData = {
+    form: FormGroup;
+    data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>;
+    show: boolean;
+    sub$: any;
+    snackbarRef: any;
+};
 
 /**
  * Workbench Email
@@ -124,18 +133,24 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Email Search Stateful request
      */
-    emailSearchRes: ResData<{
-        /**
-         * Selected email
-         */
-        selected: any;
-    }> = {
+    emailSearchRes: ResData = {
+        error: false,
+        loading: false,
+        msg: ''
+    };
+
+    /**
+     * Email Search Stateful request
+     */
+    openEmailRes: ResData<
+        Mail & {
+            Body: string;
+        }
+    > = {
         error: false,
         loading: false,
         msg: '',
-        data: {
-            selected: false
-        }
+        data: null
     };
 
     /**
@@ -152,7 +167,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     advancedSearch: AdvanceSearchFormData = {
         form: this._workbenchService.globalEmailWorkbenchState$.searchParams,
         data: {},
-        show: false
+        show: false,
+        sub$: null,
+        snackbarRef: null
     };
 
     /**
@@ -202,6 +219,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     polling = {
         allowed: false,
         enabled: true,
+        failed: false,
         active: false
     };
 
@@ -209,6 +227,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Flag to allow transfer email button
      */
     allowQueueTransfer = false;
+
+    /**
+     * Intersection observer ref
+     */
+    intersectionObserver: IntersectionObserver;
 
     /**
      * Constructor
@@ -246,7 +269,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     ngAfterViewInit(): void {
         // create an intersection observer to start/stop polling when page is active/inactive
-        const observer = new IntersectionObserver((entries) => {
+        this.intersectionObserver = new IntersectionObserver((entries) => {
             entries.map((entry) => {
                 if (entry.isIntersecting) {
                     this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
@@ -262,7 +285,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             });
         });
         // observe the element
-        observer.observe(this.emailWorkBench.nativeElement);
+        this.intersectionObserver.observe(this.emailWorkBench.nativeElement);
     }
 
     /**
@@ -271,6 +294,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        this.intersectionObserver?.disconnect();
+        this.stopPolling();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -435,7 +460,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     doAdvancedSearch(silent = false): void {
         try {
             if (!this.data.Data.WorkbenchUrl) {
-                this.setComponentState('emails/failure/custom-message', { msg: 'WorkbenchUrl not provided', silent });
+                this.setComponentState('emails/failure', { msg: 'WorkbenchUrl not provided', silent });
                 return;
             }
 
@@ -502,11 +527,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 draft: this.mapDraftEmails
             };
 
-            forkJoin(requests)
+            this.advancedSearch.sub$ = forkJoin(requests)
                 .pipe(
                     map((res: any) => {
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
-                            throwADError(`Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`);
+                            throwADError(
+                                'Error in WorkbenchEmailComponent.doAdvancedSearch',
+                                `Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`
+                            );
                         }
                         const mails = res.map((x) => x.result || []).flat();
                         return maps[this.currentTab](mails);
@@ -514,7 +542,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 )
                 .subscribe({
                     next: (res: Mail[]) => {
-                        const uniqMails = uniqBy(res, 'InSessionId');
+                        const uniqMails = uniqBy(res, ['sentitem', 'draft'].includes(this.currentTab) ? 'OutSessionId' : 'InSessionId');
                         const mails = uniqMails.map((mailRes) => {
                             mailRes.Subject = this.appUiService.sanitizeEmailBody(mailRes.Subject || '')['changingThisBreaksApplicationSecurity'];
                             return mailRes;
@@ -526,6 +554,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     error: (e) => {
                         console.error(e);
                         this.setComponentState('emails/failure', { silent });
+                        this.setComponentState('email/polling/inactive', { silent });
                     },
                     complete: () => {
                         this.setComponentState('email/polling/inactive', { silent });
@@ -593,7 +622,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     throw new Error(`Unable to delete emails ${sessionIds.join(',')}`);
                 }
             }
-            this.removeEmailsfromView('all', uiIds);
+            if (uiIds.includes(this.openEmailRes.data?.uiId)) {
+                this.openEmailRes.data = null;
+            }
             this.doAdvancedSearch(true);
             loader.dismiss();
         } catch (e) {
@@ -619,9 +650,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 { routeIds: [], uiIds: [] }
             );
             await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
-            this.removeEmailsfromView('all', uiIds);
+            if (uiIds.includes(this.openEmailRes.data?.uiId)) {
+                this.openEmailRes.data = null;
+            }
             this.doAdvancedSearch(true);
             loader.dismiss();
+            this.appUiService.showSnackbar('Emails closed successfully', 'success');
         } catch (e) {
             console.error(e);
             loader.dismiss();
@@ -639,13 +673,20 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const { agentId, tmacServer } = SDKClient.getAgentData();
             const { items, uiIds } = emails.reduce(
                 (acc, curr) => {
-                    acc.items.push({
+                    const item = {
                         routeId: curr.RouteId || '',
-                        sessionId: this.currentTab === 'draft' ? curr.OutSessionId : curr.InSessionId,
-                        conversationId: curr.ConversationID || '',
+                        sessionId: curr.InSessionId,
                         inSessionId: curr.InSessionId,
+                        conversationId: curr.ConversationID || '',
                         mailbox: curr.Mailbox
-                    });
+                    };
+                    if (this.currentTab === 'draft') {
+                        item.sessionId = curr.OutSessionId;
+                    } else if (this.currentTab === 'sentitem') {
+                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                        // item.inSessionId = curr.OutSessionId;
+                    }
+                    acc.items.push(item);
                     acc.uiIds.push(curr.uiId);
                     return acc;
                 },
@@ -665,7 +706,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             this.appUiService.showSnackbar('Unable to pull email', 'failure');
                             return;
                         }
-                        this.removeEmailsfromView('all', uiIds);
+                        if (uiIds.includes(this.openEmailRes.data?.uiId)) {
+                            this.openEmailRes.data = null;
+                        }
                         loader.dismiss();
                         this.appUiService.showSnackbar('Emails pulled successfully', 'success');
                     },
@@ -687,24 +730,30 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async openEmail(email: Mail): Promise<void> {
         try {
-            this.setComponentState('emails/loading');
+            this.setComponentState('email/open/loading');
             const fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
             const requestedSession = fetchFromOutbox ? email.OutSessionId : email.InSessionId;
             if (!this.emailBodies[requestedSession]) {
                 let res: OutboxInboxRes;
                 if (fetchFromOutbox) {
                     res = (await SDKClient.getOutboxEmail(requestedSession)).response;
+                    if (!res) {
+                        throwADError('Error in WorkbenchEmailComponent.getOutboxEmail', 'Unexpected Response from server');
+                    }
                     res.InSessionId = res.InSessionID;
                     res.OutSessionId = res.SessionID;
                 } else {
                     res = (await SDKClient.getInboxEmail(requestedSession)).response;
+                    if (!res) {
+                        throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
+                    }
                     res.InSessionId = res.SessionID;
                     res.OutSessionId = '';
                 }
 
                 // check the response
                 if (!res) {
-                    this.setComponentState('emails/failure/custom-message', { msg: 'Something went wrong, Error in email preview', snackbar: true });
+                    this.setComponentState('email/open/failure');
                     return;
                 }
 
@@ -736,11 +785,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     ToList: res.ToList
                 };
             }
-            this.emailSearchRes.data.selected = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
-            this.setComponentState('emails/success');
+            this.openEmailRes.data = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
+            this.setComponentState('email/open/success');
         } catch (e) {
             console.error(e);
-            this.setComponentState('emails/failure/custom-message', { msg: 'Something went wrong, Error in email preview', snackbar: true });
+            this.setComponentState('email/open/failure');
         }
     }
 
@@ -750,8 +799,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     switchTab(tab: AvailableTabs): void {
         this.advancedSearch.show = false;
+        this.advancedSearch.sub$?.unsubscribe();
         this.dataSource.data = [];
-        this.removeEmailsfromView('all');
+        this.openEmailRes.data = null;
         this.emailBodies = {};
         this.currentTab = tab;
         if (this.advancedSearch.data[tab]) {
@@ -788,7 +838,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 if (res.response < 1) {
                     throw new Error('Email spam request failed');
                 }
-                this.removeEmailsfromView('opened');
+                if (email.uiId === this.openEmailRes.data?.uiId) {
+                    this.openEmailRes.data = null;
+                }
                 loader?.dismiss();
                 this.appUiService.showSnackbar('Email marked as spam');
             }
@@ -833,7 +885,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             callback: ({ success }) => {
                 if (success) {
                     this.doAdvancedSearch(true);
-                    this.removeEmailsfromView('all', uiIds);
+                    if (uiIds.includes(this.openEmailRes.data?.uiId)) {
+                        this.openEmailRes.data = null;
+                    }
                 }
             }
         };
@@ -886,8 +940,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 body: reply,
                                 routeIdList: routeIds.join(',')
                             });
-                            if (uiIds.includes(this.emailSearchRes.data.selected.uiId)) {
-                                this.emailSearchRes.data.selected = null;
+                            if (uiIds.includes(this.openEmailRes.data?.uiId)) {
+                                this.openEmailRes.data = null;
                             }
                             this.doAdvancedSearch(true);
                             this.setComponentState('email/reply/success');
@@ -952,29 +1006,24 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             case 'emails/loading':
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
-                this.emailSearchRes.data.selected = false;
+                this.openEmailRes.data = null;
+                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar('Loading emails', 'loading');
                 break;
 
             case 'emails/success':
                 this.emailSearchRes.loading = false;
                 this.emailSearchRes.error = false;
+                this.advancedSearch.snackbarRef?.dismiss();
+                // if (!payload?.silent) {
+                //     this.appUiService.showSnackbar('Emails loaded', 'success', 'top', 'center', 3000);
+                // }
                 break;
 
             case 'emails/failure':
                 this.emailSearchRes.loading = false;
-                this.emailSearchRes.error = true;
-                this.polling.active = false;
                 this.emailSearchRes.msg = 'Error occured while fetching emails';
-                break;
-
-            case 'emails/failure/custom-message':
-                this.emailSearchRes.loading = false;
-                if (payload.snackbar) {
-                    this.appUiService.showSnackbar(payload.msg, 'failure');
-                } else {
-                    this.emailSearchRes.msg = payload.msg;
-                    this.emailSearchRes.error = true;
-                }
+                this.emailSearchRes.error = true;
+                this.appUiService.showSnackbar('Unable to load emails', 'failure');
                 break;
 
             case 'email/reply/loading':
@@ -985,7 +1034,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     this.replyEditorModal.sendingEmail.dismiss();
                     this.replyEditorModal.sendingEmail = null;
                 }
-                // this.replyEditorModal.close();
                 this.appUiService.showSnackbar('Replied to emails');
                 break;
             case 'email/reply/failure':
@@ -996,10 +1044,29 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 this.appUiService.showSnackbar('Unable to reply', 'failure');
                 break;
             case 'email/polling/active':
+                this.polling.failed = false;
                 this.polling.active = true;
                 break;
             case 'email/polling/inactive':
+                this.polling.failed = false;
                 this.polling.active = false;
+                break;
+            case 'email/polling/failed':
+                this.polling.failed = true;
+                this.polling.active = false;
+                break;
+            case 'email/open/success':
+                this.openEmailRes.loading = false;
+                this.openEmailRes.error = false;
+                break;
+            case 'email/open/failure':
+                this.openEmailRes.loading = false;
+                this.openEmailRes.error = true;
+                this.appUiService.showSnackbar('Unable to open email', 'failure');
+                break;
+            case 'email/open/loading':
+                this.openEmailRes.loading = true;
+                this.openEmailRes.error = false;
                 break;
 
             default:
@@ -1021,27 +1088,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     };
 
     /**
-     * Removes opened emails or selected emails
-     * @param ids
-     */
-    removeEmailsfromView(type: 'opened' | 'selected' | 'all', ids?: string[]): void {
-        if (ids) {
-            if (['all', 'opened'].includes(type) && ids.includes(this.emailSearchRes.data.selected?.uiId)) {
-                this.emailSearchRes.data.selected = null;
-            }
-        } else {
-            if (['all', 'opened'].includes(type)) {
-                this.emailSearchRes.data.selected = null;
-            }
-        }
-    }
-
-    /**
      * Iframe event when loaded , loads the email inside it
      * @param iframe
      */
     loadEmailInIframe(iframe: HTMLIFrameElement): void {
-        const frag = document.createRange().createContextualFragment(this.emailSearchRes.data.selected.Body);
+        const frag = document.createRange().createContextualFragment(this.openEmailRes.data.Body);
         const doc = iframe.contentDocument || iframe.contentWindow;
         (doc as any).body.appendChild(frag);
     }

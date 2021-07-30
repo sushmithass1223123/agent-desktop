@@ -1,0 +1,13 @@
+{
+    "Name": "Voice",
+    "Description": "",
+    "Type": "twn-voice",
+    "Config": {
+        "Enabled": true,
+        "Icon": "phone"
+    },
+    "Data": {
+        "Path": "/voice",
+        "Active": false
+    }
+}

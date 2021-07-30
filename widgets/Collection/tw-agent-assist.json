@@ -1,0 +1,40 @@
+{
+    "Name": "Agent Assist",
+    "Description": "",
+    "Key": "AgentAssist",
+    "Type": "tw-agent-assist",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "verified_user",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Confidence": 0.5,
+        "AssistWidgetUrl": "",
+        "Title": "Agent Assist",
+        "Icon": "assistant",
+        "Width": 450,
+        "Height": 800,
+        "Actions": [
+            "collapse",
+            "maximize",
+            "destroy"
+        ],
+        "ViewState": "restore"
+    }
+}

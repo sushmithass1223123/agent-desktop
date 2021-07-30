@@ -2,12 +2,15 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation 
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { appAnimations } from '@modules/shared/animations/app.animation';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AOTWidgetService } from '@services/aot-widget.service';
+import { AppUiService } from '@services/app-ui.service';
 import { DashboardService } from '@services/dashboard.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentAVMessageEvent, AgentNotificaitonEvent, AVControlMessageReceivedEvent, IAgentData, SDKClient, SuAgentModel, TUtils } from '@tmac/sdk';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import { addSeconds, isAfter } from 'date-fns';
 import { groupBy, sortBy, uniqBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -26,10 +29,6 @@ interface Contact {
      */
     id: string;
     /**
-     * Mood
-     */
-    mood: string;
-    /**
      * Name of user
      */
     name: string;
@@ -46,9 +45,9 @@ interface Contact {
      */
     tmacServer: string;
     /**
-     * custom Class
+     * Last update time
      */
-    class: string;
+    lastUpdateDateTime: number;
 }
 
 /**
@@ -75,7 +74,7 @@ interface Chat {
     encapsulation: ViewEncapsulation.None,
     animations: appAnimations
 })
-export class InstantMessagingComponent implements OnInit, OnDestroy {
+export class InstantMessagingComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * contact List
      */
@@ -85,14 +84,6 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * all chats
      */
     allChats: Record<string, Chat> = {};
-
-    /**
-     * agentStatus Classes
-     */
-    agentStatusClasses = {
-        'On Call': 'do-not-disturb',
-        Available: 'online'
-    };
 
     /**
      * Current Chat
@@ -132,6 +123,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      */
     @ViewChild('messages')
     private _chatViewScrollbar: ElementRef<HTMLDivElement>;
+
     /**
      * Unsubscribe all subject
      */
@@ -167,12 +159,12 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         private _tmacEventService: TMACEventService,
         private _dashboardService: DashboardService,
         private _instantMessagingService: InstantMessagingService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _appUIService: AppUiService
     ) {
+        super();
         // Set the defaults
         this.selectedContact = null;
-
-        // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
 
@@ -215,10 +207,10 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             // get user by id
             if (x) {
                 // select the user by id
-                const user = this.contacts.filter((c) => c.id === x)?.[0];
+                const user = this.contacts.filter((c) => c.id === x);
                 // if user found the toggle chat
-                if (user) {
-                    this.toggleChat(user);
+                if (user.length) {
+                    this.toggleChat(user[0]);
                 }
             }
         });
@@ -242,6 +234,12 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
                 });
             }
         });
+
+        // this._instantMessagingService.getActiveAgents.pipe(takeUntil(this._unsubscribeAll)).subscribe((x: boolean) => {
+        //     if (x === false) {
+        //         this.supervisorAgentList = [];
+        //     }
+        // });
     }
 
     /**
@@ -263,15 +261,12 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     private _prepareChatForReplies(): void {
         setTimeout(() => {
             // Focus to the reply input
-            this._replyInput?.nativeElement.focus();
+            this._replyInput?.nativeElement?.focus();
 
             // Scroll to the bottom of the messages list
             if (this._chatViewScrollbar) {
-                // this._chatViewScrollbar.update();
-
                 setTimeout(() => {
                     this._chatViewScrollbar.nativeElement.scrollTop = this._chatViewScrollbar.nativeElement.scrollHeight;
-                    // this._chatViewScrollbar.nativeElement.scrollTo(0, 200);
                 }, 200);
             }
         });
@@ -295,7 +290,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * @param i
      * @returns {boolean}
      */
-    shouldShowContactAvatar(message: AgentNotificaitonEvent, i): boolean {
+    shouldShowContactAvatar(message: AgentNotificaitonEvent, i: number): boolean {
         return (
             message.FromAgentId === this.selectedContact.id &&
             ((this.chat.dialog[i + 1] && this.chat.dialog[i + 1].FromAgentId !== this.selectedContact.id) || !this.chat.dialog[i + 1])
@@ -309,7 +304,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * @param i
      * @returns {boolean}
      */
-    isFirstMessageOfGroup(message: AgentNotificaitonEvent, i): boolean {
+    isFirstMessageOfGroup(message: AgentNotificaitonEvent, i: number): boolean {
         return i === 0 || (this.chat.dialog[i - 1] && this.chat.dialog[i - 1].FromAgentId !== message.FromAgentId);
     }
 
@@ -320,8 +315,33 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      * @param i
      * @returns {boolean}
      */
-    isLastMessageOfGroup(message: AgentNotificaitonEvent, i): boolean {
+    isLastMessageOfGroup(message: AgentNotificaitonEvent, i: number): boolean {
         return i === this.chat.dialog.length - 1 || (this.chat.dialog[i + 1] && this.chat.dialog[i + 1].FromAgentId !== message.FromAgentId);
+    }
+
+    /**
+     * To get agent status
+     *
+     * @param contact
+     * @returns
+     */
+    async getAgentStatus(contact: Contact): Promise<Contact> {
+        try {
+            if (contact.status !== 'Not Logged In' && isAfter(new Date(), addSeconds(contact.lastUpdateDateTime, 10))) {
+                const { response } = await SDKClient.getAgentStatus({
+                    agentId: contact.id,
+                    deviceId: '',
+                    tmacServer: contact.tmacServer
+                });
+
+                return {
+                    ...contact,
+                    status: response ? response.ResultMessage : 'Not Logged In',
+                    lastUpdateDateTime: Date.now()
+                };
+            }
+        } catch (error) {}
+        return contact;
     }
 
     /**
@@ -329,25 +349,33 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
      *
      * @param contact
      */
-    toggleChat(contact): void {
+    async toggleChat(contact: Contact): Promise<void> {
         // If the contact equals to the selectedContact,
-        // that means we will deselect the contact and
-        // unload the chat
-
+        // that means we will deselect the contact and unload the chat
         this.contacts = this.contacts.map((x) => ({ ...x, unread: x.id === contact.id ? 0 : x.unread }));
-        if (this.selectedContact && contact.id === this.selectedContact.id) {
-            // Reset
-            // this.resetChat();
-        }
-        // Otherwise, we will select the contact, open
-        // the sidebar and start the chat
-        else {
-            // Set the selected contact
-            this.selectedContact = contact;
 
-            // Load the chat
-            this.chat = this.allChats[contact.id] || { id: '', dialog: [] };
+        if (!this.selectedContact || contact.id !== this.selectedContact.id) {
+            // check if contact info is there
+            if (!contact.status) {
+                contact = await this.getAgentStatus(contact);
+            }
+
+            // check if the contact in list, if not push it
+            const idx = this.contacts.findIndex((f) => f.id === contact.id);
+            if (idx < 0) {
+                this.contacts.push(contact);
+            } else {
+                // update the status and lastUpdateDateTime only
+                // updating the whole object will reset the unread count
+                // which is cleared in the begining of this method
+                this.contacts[idx].status = contact.status;
+                this.contacts[idx].lastUpdateDateTime = contact.lastUpdateDateTime;
+            }
+
+            this.selectedContact = contact;
+            this.chat = this.allChats[contact.id] || { id: contact.id, dialog: [] };
         }
+
         this._prepareChatForReplies();
     }
 
@@ -365,46 +393,77 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
     /**
      * Reply
      */
-    reply(event): void {
+    async reply(event): Promise<void> {
         event.preventDefault();
-
         if (!this._replyForm.form.value.message) {
             return;
         }
 
-        // Message
+        let state = 0;
+
         const message = {
             FromAgentId: this.user.agentId,
             Message: this._replyForm.form.value.message,
-            CreatedTime: new Date()
+            MessageId: TUtils.Generic.uuid(),
+            CreatedTime: new Date(),
+            Status: state
         };
 
-        // Add the message to the chat
-        if (!this.allChats[this.selectedContact.id]) {
-            this.allChats[this.selectedContact.id] = { dialog: [], id: this.selectedContact.id };
-        }
-
-        this.allChats[this.selectedContact.id].dialog.push(message);
-        this.chat = this.allChats[this.selectedContact.id];
-
-        SDKClient.sendIM({
-            message: message.Message,
-            pop: false,
-            toAgentId: this.selectedContact.id,
-            toInteractionId: '',
-            toTmacServer: this.selectedContact.tmacServer
-        });
-
         // Reset the reply form
-        this._replyForm.reset();
+        this._replyForm?.reset();
         this._prepareChatForReplies();
+
+        try {
+            // Add the message to the chat
+            if (!this.allChats[this.selectedContact.id]) {
+                this.allChats[this.selectedContact.id] = { dialog: [], id: this.selectedContact.id };
+            }
+
+            this.allChats[this.selectedContact.id].dialog.push(message);
+            this.chat = this.allChats[this.selectedContact.id];
+
+            const { response } = await SDKClient.sendIM({
+                message: message.Message,
+                pop: false,
+                toAgentId: this.selectedContact.id,
+                toInteractionId: '',
+                toTmacServer: this.selectedContact.tmacServer
+            });
+
+            if (response === 1) {
+                state = 1;
+            } else {
+                state = -1;
+            }
+
+            if (response === -480) {
+                this._appUIService.showSnackbar(`Message send failed, ${this.selectedContact.name} has logged out!`, 'failure');
+                this.selectedContact.status = 'Not Logged In';
+            }
+        } catch (err) {
+            this.logger.error('Error in sendIM', err, false);
+            this._appUIService.showSnackbar('Error in sending message', 'failure');
+        } finally {
+            let dialog = this.allChats[this.selectedContact.id].dialog;
+            dialog = dialog.map((x) => {
+                if (x.MessageId === message.MessageId) {
+                    x.Status = state;
+                }
+                return x;
+            });
+            this.allChats[this.selectedContact.id].dialog = dialog;
+
+            // // Reset the reply form
+            // this._replyForm.reset();
+            // this._prepareChatForReplies();
+        }
     }
 
     /**
      * AgentNotificaitonEvent handler
      * @param {AgentNotificaitonEvent} evt
      */
-    AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
+    AgentNotificaitonEvent = async (evt: AgentNotificaitonEvent) => {
         if (evt.InteractionID > 0 || evt.Type !== 'IM') {
             return;
         }
@@ -416,22 +475,27 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this.allChats[evt.FromAgentId].dialog.push({
             FromAgentId: evt.FromAgentId,
             Message: evt.Message,
-            CreatedTime: evt.CreatedTime
+            MessageId: TUtils.Generic.uuid(),
+            CreatedTime: evt.CreatedTime,
+            Status: 1
         });
 
         // check if this contact in list
-        if (!this.contacts?.filter((c) => c.id === evt.FromAgentId).length) {
-            // add to the list
-            this.contacts.push({
+        if (!this.contacts.find((c) => c.id === evt.FromAgentId)) {
+            let contact: Contact = {
                 avatar: '',
                 id: evt.FromAgentId,
-                class: '',
-                mood: '',
                 name: evt.FromAgentName,
                 status: '',
                 tmacServer: evt.FromTmacServer,
-                unread: 0
-            });
+                unread: 0,
+                lastUpdateDateTime: 0
+            };
+
+            contact = await this.getAgentStatus(contact);
+
+            // add to the list
+            this.contacts.push(contact);
         }
 
         if (evt.FromAgentId !== this.selectedContact?.id) {
@@ -470,48 +534,92 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
             this.loading = false;
         }
 
-        // get current contact list
-        const curContacts = this.contacts;
-        // group agents by id
-        const agents = groupBy(curContacts, 'id');
-        // create new contact list
-        const newContacts = sortBy(evt.Data, 'AgentName').map((x) => ({
-            avatar: x.ProfilePicture,
-            id: x.AgentLoginID,
-            mood: '',
-            name: x.AgentName,
-            status: x.CurrentAgentStatus,
-            class: this.agentStatusClasses[x.CurrentAgentStatus] || 'away',
-            unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
-            tmacServer: x.TmacServer
-        }));
+        // // get current contact list
+        // const curContacts = this.contacts;
 
-        // create contact list merging both items
-        this.contacts = uniqBy(curContacts.concat(newContacts), 'id');
+        // // group agents by id
+        // const contacts = groupBy(curContacts, 'id');
+
+        // // create new contact list
+        // const newContacts = sortBy(evt.Data, 'AgentName').map((x) => ({
+        //     avatar: x.ProfilePicture,
+        //     id: x.AgentLoginID,
+        //     name: x.AgentName,
+        //     status: x.CurrentAgentStatus,
+        //     unread: contacts[x.AgentLoginID] ? contacts[x.AgentLoginID][0].unread : 0,
+        //     tmacServer: x.TmacServer
+        // }));
+
+        // // create contact list merging both items
+        // this.contacts = uniqBy(newContacts.concat(curContacts), 'id');
+
+        this.processAgentList(evt.Data);
     };
 
     /**
      * To process SupervisorAgentListEvent
      */
     SupervisorAgentListEvent = (evt: CustomSDKEvent): void => {
-        if (evt.Data.length) {
+        if (evt.Data?.length) {
             // filter out local agent
             evt.Data = evt.Data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
         }
 
-        const agents = groupBy(this.contacts, 'id');
-        // add to the list
-        this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
+        // // get contact list grouped by id
+        // const contacts = groupBy(this.contacts, 'id');
+
+        // // add to the list
+        // this.contacts = sortBy(evt.Data, 'AgentName').map((x) => ({
+        //     avatar: x.ProfilePicture,
+        //     id: x.AgentLoginID,
+        //     name: x.AgentName,
+        //     status: x.CurrentAgentStatus,
+        //     unread: contacts[x.AgentLoginID] ? contacts[x.AgentLoginID][0].unread : 0,
+        //     tmacServer: x.TmacServer
+        // }));
+
+        this.processAgentList(evt.Data);
+    };
+
+    /**
+     * To process agent list
+     *
+     * @param { any } data
+     *
+     */
+    async processAgentList(data: any[]): Promise<void> {
+        const contactList = data;
+
+        // get contact list grouped by id
+        const contacts = groupBy(this.contacts, 'id');
+
+        const currContacts = this.contacts;
+
+        // create new contact list
+        const newContacts: Contact[] = contactList.map((x) => ({
             avatar: x.ProfilePicture,
             id: x.AgentLoginID,
-            mood: '',
             name: x.AgentName,
             status: x.CurrentAgentStatus,
-            class: this.agentStatusClasses[x.CurrentAgentStatus] || 'away',
-            unread: agents[x.AgentLoginID] ? agents[x.AgentLoginID][0].unread : 0,
-            tmacServer: x.TmacServer
+            unread: contacts[x.AgentLoginID] ? contacts[x.AgentLoginID][0].unread : 0,
+            tmacServer: x.TmacServer,
+            lastUpdateDateTime: Date.now()
         }));
-    };
+
+        this.contacts = sortBy(uniqBy(newContacts.concat(currContacts), 'id'), 'name');
+
+        // if there is any selected agent, then update the data
+        if (this.selectedContact) {
+            let contact = this.contacts.find((c) => c.id === this.selectedContact.id);
+            contact = await this.getAgentStatus(contact);
+            // if updated, update the same in contacts
+            if (this.selectedContact.lastUpdateDateTime !== contact.lastUpdateDateTime) {
+                this.contacts = this.contacts.map((x) => (x.id === contact.id ? contact : x));
+            }
+            // update the selected contact
+            this.selectedContact = contact;
+        }
+    }
 
     /**
      * Track by for avoiding rerender
@@ -596,6 +704,7 @@ export class InstantMessagingComponent implements OnInit, OnDestroy {
         this.callWidget = null;
     }
 }
+
 interface WidgetData {
     /**
      * Team filter flag

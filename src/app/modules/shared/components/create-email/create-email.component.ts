@@ -21,8 +21,7 @@ import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { fromEvent, merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import tinymce, { Editor } from 'tinymce';
-import tinyMCE from 'tinymce';
+import { default as tinymce, default as tinyMCE, Editor } from 'tinymce';
 
 /**
  * Email creation component view only
@@ -86,8 +85,11 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Flag for disabling send
      */
-    @Input() sendDisabled? = false;
+    @Input() sendDisabled = false;
 
+    /**
+     * Hidden fileds ref
+     */
     @Input() hiddenFields?: Array<'To' | 'Subject'>;
 
     /**
@@ -130,6 +132,16 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
+
+    /**
+     * Top level div's ref used to check if the email is in viewport
+     */
+    @ViewChild('createEmail') createEmail: ElementRef<HTMLDivElement>;
+
+    /**
+     * Intersection observer ref
+     */
+    intersectionObserver: IntersectionObserver;
 
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
@@ -231,6 +243,18 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                     console.error(err);
                 });
         }, 0);
+        // create an intersection observer to start/stop polling when page is active/inactive
+        this.intersectionObserver = new IntersectionObserver((entries) => {
+            entries.map((entry) => {
+                if (entry.isIntersecting) {
+                    this.getCurrentEditor()?.show();
+                } else {
+                    this.getCurrentEditor()?.hide();
+                }
+            });
+        });
+        // observe the element
+        this.intersectionObserver.observe(this.createEmail.nativeElement);
     }
 
     /**
@@ -240,6 +264,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         const e = this.getCurrentEditor();
         e.off('blur');
         e.destroy();
+        this.intersectionObserver?.disconnect();
         // tinyMCE.activeEditor.off('blur');
         // tinyMCE.activeEditor.destroy();
     }
@@ -270,7 +295,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         SDKClient.getFrequentEmailAddressList()
             .then((res) => {
                 if (!res.response) {
-                    throwADError('Unexpected response from server');
+                    throwADError('Error in CreateEmailComponent.addUserSuggestions', 'Unexpected response from server');
                 }
                 this.allUsers = res.response;
             })

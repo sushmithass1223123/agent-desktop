@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TUtils, WallboardRefreshEvent } from '@tmac/sdk';
+import { SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
@@ -30,7 +30,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Wrapper component ref, to detect change in maximize
@@ -77,19 +77,14 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.noDataMessage = 'No Data Available';
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * On Init
      */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
         // get the data from config
-        this.widgetData = this.data.Data || new Object();
+        this.widgetData = this.data.Data;
         // append the chart type, default is pie
         this.chart.type = this.widgetData.ChartType || 'pie';
 
@@ -134,21 +129,17 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         } else {
-            TUtils.Logger.warn(`TwPieChartComponent: unable to get event name to regiser, Source=${this.widgetData.Source}`);
+            this.logger.warn(`Unable to get event name to regiser, Source=${this.widgetData.Source}`);
         }
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * On Destroy
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * To reduce config data limit of restore view
@@ -311,22 +302,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private AgentChannelListEvent(evt: CustomSDKEvent): void {
-        if (this.data.Data.Role === 'supervisor' && this.data.Data.AgentId !== evt.Data.AgentId) {
-            return;
-        }
-
         const datasets = { Count: [] };
         const labels = [];
         sortBy(evt.Data.Channels, 'Total').forEach((c) => {
             datasets.Count.push(c.Total);
             labels.push(`${c.Channel}`);
         });
-
-        // this.chart.datasets = Object.keys(datasets).map((d) => ({
-        //     data: datasets[d],
-        //     label: d
-        // }));
-        // this.chart.labels = labels;
 
         this.showData(datasets, labels);
     }
@@ -344,17 +325,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             datasets.Count.push(c.Total);
             labels.push(`${c.Channel}`);
         });
-
-        // this.chart.datasets = Object.keys(datasets)
-        //     .map((d) => ({
-        //         data: datasets[d],
-        //         label: d
-        //     }))
-        //     .filter((x) => {
-        //         const sum = x.data && x.data.length ? x.data.reduce((a, b) => a + b) : null;
-        //         return !!sum;
-        //     });
-        // this.chart.labels = labels;
 
         datasets.Count =
             Object.keys(datasets)
@@ -381,12 +351,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 datasets.Count.push(c.Total);
                 labels.push(c.Channel);
             });
-
-        // this.chart.datasets = Object.keys(datasets).map((d) => ({
-        //     data: datasets[d],
-        //     label: d
-        // }));
-        // this.chart.labels = labels;
 
         this.showData(datasets, labels);
     }

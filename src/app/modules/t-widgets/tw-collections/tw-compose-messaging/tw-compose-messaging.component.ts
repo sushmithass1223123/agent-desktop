@@ -98,11 +98,7 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
             })
             .catch((err) => {
                 this._appUIService.showSnackbar('Error in fetching SMS templates', 'failure');
-                TUtils.Logger.consoleLog({
-                    type: 'error',
-                    message: 'Error in fetching SMS templates',
-                    err
-                });
+                this.logger.error('Error in fetching SMS templates', err, false);
             })
             .finally(() => {
                 this.loading = false;

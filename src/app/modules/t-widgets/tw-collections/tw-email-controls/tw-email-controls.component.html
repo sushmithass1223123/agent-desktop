@@ -49,6 +49,7 @@
                             *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20"
+                            [disabled]="!(currentInteraction.CurrOutSessionId || draftPollDuration) || sendingEmailAsMaker"
                             (click)="saveEmailAsDraft(true, saveAsDraft)"
                             #saveAsDraft
                         >
@@ -109,6 +110,7 @@
                                 *ngIf="replyInfo"
                                 mat-raised-button
                                 class="border-radius-20"
+                                [disabled]="!(currentInteraction.CurrOutSessionId || draftPollDuration) || sendingEmailAsMaker"
                                 (click)="saveEmailAsDraft(true, saveAsDraft)"
                                 #saveAsDraft
                             >
@@ -120,7 +122,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 color="accent"
-                                (click)="closeEditor(closeEditorBtn, true)"
+                                (click)="closeEditor(closeEditorBtn)"
                                 #closeEditorBtn
                                 matTooltip="Close Editor"
                                 [disabled]="sendingEmailAsMaker"
@@ -218,6 +220,15 @@
                                 {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                             </a>
                         </div>
+
+                        <div
+                            id="emailNotification"
+                            *ngIf="currentInteraction.IsEmailProbableSpam"
+                            class="twd-flex twd-items-center twd-px-2 twd-py-0.5 twd-opacity-80 twd-rounded-3xl twd-mb-2"
+                            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                        >
+                            <mat-icon>report</mat-icon> <small class="twd-pl-2"> This email is possibly a spam </small>
+                        </div>
                         <div
                             id="emailControlButtons"
                             class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
@@ -237,9 +248,10 @@
                                 <mat-icon>comment</mat-icon>
                             </button>
                             <button
-                                *ngIf="!replyInfo && currentInteraction.IsEmailProbableSpam"
+                                *ngIf="!replyInfo"
                                 mat-raised-button
                                 class="border-radius-20"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 (click)="markAsSpam()"
                                 matTooltip="Mark As Spam"
                             >
@@ -249,7 +261,7 @@
                                 *ngIf="data.Data.Transfer.Allowed"
                                 mat-raised-button
                                 class="border-radius-20"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 (click)="transferEmail(currentInteraction)"
                                 matTooltip="Transfer"
                             >
@@ -259,7 +271,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 (click)="showReplyEditor()"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 matTooltip="Reply"
                             >
                                 <mat-icon>reply</mat-icon>
@@ -269,7 +281,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 (click)="showReplyAllEmailEditor()"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 matTooltip="Reply All"
                             >
                                 <mat-icon>reply_all</mat-icon>
@@ -279,7 +291,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 (click)="showForwardEmailEditor()"
-                                [disabled]="getInboxMessageReq.error"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 matTooltip="Forward"
                             >
                                 <mat-icon>forward</mat-icon>

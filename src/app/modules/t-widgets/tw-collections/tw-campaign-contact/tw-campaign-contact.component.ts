@@ -9,7 +9,8 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { GenericInteractionEvent, IAgentData, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
-import { processCustomerDetails } from 'app/utils';
+import { processCustomerDetails, throwADError } from 'app/utils';
+import { uniq } from 'lodash';
 import { take, takeUntil } from 'rxjs/operators';
 
 /**
@@ -152,31 +153,21 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
 
         // check if its an interaction
         if (this.interaction) {
-            // create event names to subscribe
-            const eventNames = [];
-
-            this.customerInfo.forEach((c) => {
-                try {
-                    // get the event name
-                    const eventName = c.ValueSource?.split('.')?.shift();
-                    // push to eventNames
-                    if (eventName && !eventNames.includes(eventName)) {
-                        eventNames.push(eventName);
-                    }
-                } catch (error) {
-                    TUtils.Logger.console('error', 'Error in TwCustomerDetailsComponent', null, error);
-                }
-            });
-
-            // register to tmac events
-            this._tmacEventService
-                .getInteractionEvents(eventNames, this.interaction.InteractionID)
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) =>
-                    evts.forEach((evt) => {
-                        processCustomerDetails(this.customerInfo, evt);
-                    })
-                );
+            try {
+                // create event names to subscribe
+                const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
+                // register to tmac events
+                this._tmacEventService
+                    .getInteractionEvents(eventNames, this.interaction.InteractionID)
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .subscribe((evts) =>
+                        evts.forEach((evt) => {
+                            processCustomerDetails(this.customerInfo, evt);
+                        })
+                    );
+            } catch (error) {
+                throwADError('Error in TwCampaignContactComponent', error);
+            }
         }
 
         // get TCM client web service url from config
@@ -190,7 +181,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
 
         // check if we got the url
         if (!this.tcmClientUrl) {
-            TUtils.Logger.warn('TwCampaignContactComponent: Unable to fetch TCM client url, please check the config!');
+            this.logger.warn('Unable to fetch TCM client url, please check the config!');
             return;
         }
 
@@ -410,7 +401,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             })
             .catch((err) => {
                 this._appUIService.showSnackbar('Make call error', 'failure');
-                TUtils.Logger.error('Error in TwCampaignContactComponent.makeCallToCustomer', err);
+                this.logger.error('Error in makeCallToCustomer', err);
             });
     }
 

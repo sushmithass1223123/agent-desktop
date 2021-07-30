@@ -45,7 +45,12 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
     /**
      * Type of content widget
      */
-    type: string;
+    type: any;
+
+    /**
+     * Temporary AOT widgets
+     */
+    tempAOTs: IWidget[] = [];
 
     constructor(
         public hostElement: ElementRef,
@@ -68,6 +73,17 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         this.type = this.data.Type.replace('twc-', '');
 
         this.subscribeByType();
+
+        this._aotWidgetService.newWidget(this.type).subscribe((x) => {
+            this.tempAOTs.push(x.json);
+            this.interactions.forEach((i) => {
+                x.json.InteractionDetails = i.interactionDetails;
+                i.widgets.aot.push(x.json);
+                if (x.json.Config?.AutoOpen) {
+                    this._aotWidgetService.addWidget(x.json);
+                }
+            });
+        });
     }
 
     /**
@@ -147,7 +163,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
         const staticWidgets = widgets.Static ?? [];
         const dynamicWidgets = ((environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic) ?? [];
-        const aotWidgets = widgets.AOT ?? [];
+        const aotWidgets = [...this.tempAOTs, ...(widgets.AOT ?? [])];
 
         const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);
 
@@ -181,7 +197,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
         // push the interaction details with widgets to the list
         this.interactions.push({
-            interactionId: evt.InteractionID,
+            interactionDetails: evt,
             widgets: {
                 static: staticWidgets,
                 dynamic: dynamicWidgets,
@@ -217,7 +233,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     OutgoingCallEvent(evt: OutgoingCallEvent): void {
         // check if existing interaction and tab exist, then do not create the tab
-        if (evt.IsExistingInteraction && this.interactions.filter((i) => i.interactionId === evt.InteractionID)) {
+        if (evt.IsExistingInteraction && this.interactions.filter((i) => i.interactionDetails.InteractionID === evt.InteractionID)) {
             return;
         }
         this.createWidgetList(evt, 'outgoing', evt.PhoneNumber, true, {});
@@ -268,7 +284,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
     tabCloseEvent(evt: InteractionClosedEvent | AutoCloseTabEvent): void {
         // since we have this widget for all interaction
         // check this interaction id belongs to this widget interaction list
-        const thisInteraction = this.interactions.filter((i) => i.interactionId === evt.InteractionID);
+        const thisInteraction = this.interactions.filter((i) => i.interactionDetails.InteractionID === evt.InteractionID);
         if (!thisInteraction.length) {
             return;
         }
@@ -278,7 +294,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
         // close all the AOTs
         this.interactions.forEach((i) => {
-            if (i.interactionId === evt.InteractionID) {
+            if (i.interactionDetails.InteractionID === evt.InteractionID) {
                 i.widgets.aot.forEach((widget) => {
                     this._aotWidgetService.destroyWidget(widget.ID);
                 });
@@ -286,18 +302,18 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         });
 
         // get previous/next interaction index
-        const currentIndex = this.interactions.findIndex((i) => i.interactionId === evt.InteractionID);
+        const currentIndex = this.interactions.findIndex((i) => i.interactionDetails.InteractionID === evt.InteractionID);
         const prevInteractionIndex = currentIndex - 1;
         const nextInteractionIndex = currentIndex;
 
         // filter out the interaction
-        this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionId !== evt.InteractionID);
+        this.interactions = this.interactions.filter((i: InteractionWidgets) => i.interactionDetails.InteractionID !== evt.InteractionID);
 
         // if there are other item in the list auto select fist interaction after closing current
         if (this.interactions.length > 0) {
             // go to previous or next or first interaction
             const routeInteraction = this.interactions[prevInteractionIndex] ?? this.interactions[nextInteractionIndex] ?? this.interactions[0];
-            this._interactionManagerService.updateInteraction(routeInteraction.interactionId, {
+            this._interactionManagerService.updateInteraction(routeInteraction.interactionDetails.InteractionID, {
                 isActive: true
             });
         } else {

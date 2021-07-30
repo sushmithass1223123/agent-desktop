@@ -1,0 +1,118 @@
+{
+    "Name": "Voice Call",
+    "Description": "",
+    "Type": "tw-voice-controls",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "phone",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "collapse",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Transfer": {
+            "Allowed": true,
+            "Agent": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": true,
+                "Source": {
+                    "Use": "station",
+                    "Display": "${LastName}, ${FirstName}",
+                    "FreeTextAllowed": true
+                },
+                "AllowedStates": [],
+                "TeamFilter": false,
+                "Columns": []
+            },
+            "Skill": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": true,
+                "Source": {
+                    "Use": "vdn",
+                    "Display": "skill",
+                    "FreeTextAllowed": true
+                },
+                "ChannelPrefix": [
+                    "VO"
+                ],
+                "Columns": []
+            }
+        },
+        "Conference": {
+            "Allowed": true,
+            "Agent": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": true,
+                "Source": {
+                    "Use": "station",
+                    "Display": "agentName",
+                    "FreeTextAllowed": true
+                },
+                "AllowedStates": [],
+                "TeamFilter": false,
+                "Columns": []
+            },
+            "Skill": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": true,
+                "Source": {
+                    "Use": "vdn",
+                    "Display": "skill",
+                    "FreeTextAllowed": true
+                },
+                "ChannelPrefix": [
+                    "VO"
+                ],
+                "Columns": []
+            }
+        },
+        "IVR": {
+            "MenuEnabled": true,
+            "DefaultMenu": [
+                "Main Menu",
+                "Products",
+                "Mobile",
+                "Agent"
+            ],
+            "Transfer": {
+                "Allowed": true,
+                "Menu": [
+                    {
+                        "Text": "Accesscode+TPIN",
+                        "Type": "v_nv",
+                        "Value": "tpin",
+                        "Icon": "lock"
+                    }
+                ]
+            }
+        },
+        "DialpadAllowed": true,
+        "InteractionCommentAllowed": true,
+        "MakeCallAllowed": true,
+        "SendSMSAllowed": true,
+        "CloseInteractionOnEnd": false
+    }
+}

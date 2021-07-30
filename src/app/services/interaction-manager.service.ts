@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { SDKClient, TUtils } from '@tmac/sdk';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
+import { SDKClient } from '@tmac/sdk';
 import { InteractionCount, InteractionRef } from 'app/interfaces';
 import { map } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -11,13 +12,15 @@ import { BehaviorSubject, Observable } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
-export class InteractionManagerService {
+export class InteractionManagerService extends SharedWrapper {
     /**
      * Holds all interaction details
      */
     private _interactionsSubject: BehaviorSubject<InteractionRef[]>;
 
-    constructor() {}
+    constructor() {
+        super();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -38,7 +41,7 @@ export class InteractionManagerService {
      * To subscribe to InteractionManagerService service
      */
     public subscribe(): void {
-        TUtils.Logger.console('info', 'InteractionManagerService.subscribe');
+        this.logger.info('subscribe', false);
 
         // intialize the subject
         this._interactionsSubject = new BehaviorSubject([]);
@@ -48,7 +51,7 @@ export class InteractionManagerService {
      * To unsubscribe to InteractionManagerService service
      */
     public unsubscribe(): void {
-        TUtils.Logger.console('info', 'InteractionManagerService.unsubscribe');
+        this.logger.info('unsubscribe', false);
 
         // unsubscribe from the subject
         this._interactionsSubject.next([]);

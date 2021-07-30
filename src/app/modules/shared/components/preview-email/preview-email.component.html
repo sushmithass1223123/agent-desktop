@@ -1,38 +1,50 @@
 <div class="twd-w-full twd-h-full twd-overflow-hidden twd-flex twd-flex-col">
     <div
-        *ngIf="email"
         #emailHeader
         class="email-header twd-max-h-6/12 twd-overflow-x-hidden twd-overflow-y-auto twd-z-10 twd-shadow-md"
         [ngClass]="{ 'twd-overflow-y-hidden': _internal.headerCollapsed, 'twd-pb-2': !_internal.headerCollapsed }"
     >
-        <div
-            id="subject"
-            class="twd-text-xl twd-flex twd-justify-between twd-p-2"
-            mat-ripple
-            (click)="emailHeader.scrollTop = 0; _internal.headerCollapsed = !_internal.headerCollapsed"
-        >
-            <span
-                class="twd-flex-1 twd-max-w-11/12 twd-text-left"
-                [ngClass]="{ 'twd-truncate': _internal.headerCollapsed }"
-                [innerHtml]="email.Subject || 'Subject: NA'"
-            ></span>
-            <span class="twd-p-1">
-                <mat-icon>
-                    {{ _internal.headerCollapsed ? 'expand_more' : 'expand_less' }}
-                </mat-icon>
-            </span>
-        </div>
+        <ng-container>
+            <div
+                id="subject"
+                *ngIf="email?.Subject"
+                class="twd-text-xl twd-flex twd-justify-between twd-p-2"
+                mat-ripple
+                (click)="emailHeader.scrollTop = 0; _internal.headerCollapsed = !_internal.headerCollapsed"
+            >
+                <span
+                    class="twd-flex-1 twd-max-w-11/12 twd-text-left"
+                    [ngClass]="{ 'twd-truncate': _internal.headerCollapsed }"
+                    [innerHtml]="email?.Subject || 'Subject: NA'"
+                ></span>
+                <span class="twd-p-1">
+                    <mat-icon>
+                        {{ _internal.headerCollapsed ? 'expand_more' : 'expand_less' }}
+                    </mat-icon>
+                </span>
+            </div>
+            <ng-container *ngIf="!email?.Subject && loading">
+                <skeleton class="twd-opacity-60 twd-w-6/12 twd-m-3"> </skeleton>
+            </ng-container>
+        </ng-container>
+
         <div class="twd-transform twd-px-1" [ngClass]="{ 'twd-max-h-0 twd-pb-0': _internal.headerCollapsed }">
-            <ng-content select="#emailInfo"></ng-content>
+            <ng-container>
+                <ng-content *ngIf="!loading && !error; else emailInfoRef" select="#emailInfo"></ng-content>
+                <ng-template #emailInfoRef>
+                    <skeleton *ngIf="!error" class="twd-opacity-70 twd-mx-3 twd-w-3/12" [rows]="3"> </skeleton>
+                </ng-template>
+            </ng-container>
+            <ng-content *ngIf="!loading" select="#emailNotification"></ng-content>
             <div
                 id="attachmentList"
                 class="twd-text-left twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list"
-                *ngIf="email.Files && email.Files.length && email.Files as attachments"
+                *ngIf="!loading && email?.Files && email?.Files.length && email?.Files as attachments"
             >
                 <button
                     *ngFor="let file of attachments | slice: 0:2"
                     mat-stroked-button
-                    class="border-radius-20 m-4 twd-max-w-3/12 lg:twd-max-w-6/12"
+                    class="border-radius-20 twd-truncate m-4 twd-max-w-3/12 lg:twd-max-w-6/12"
                     [matTooltip]="file.Ext | uppercase"
                     (click)="openFile(file.URL)"
                 >
@@ -69,7 +81,7 @@
                     </div>
                 </mat-menu>
             </div>
-            <ng-content select="#emailControlButtons"></ng-content>
+            <ng-content *ngIf="!loading" select="#emailControlButtons"></ng-content>
         </div>
     </div>
 
@@ -82,8 +94,12 @@
             <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
         </div>
 
-        <div *ngIf="(loading || _internal.iframeLoading) && !error" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
-            <mat-spinner></mat-spinner>
+        <div *ngIf="(loading || _internal.iframeLoading) && !error" class="twd-h-3/4 twd-ml-3 twd-mt-8 twd-w-10/12">
+            <skeleton class="twd-opacity-70 twd-w-3/12 twd-mb-2"> </skeleton>
+            <skeleton class="twd-opacity-70 twd-w-7/12 twd-mb-2" [rows]="3"> </skeleton>
+            <skeleton class="twd-opacity-70 twd-w-5/12 twd-mb-2" [rows]="2"> </skeleton>
+            <skeleton class="twd-opacity-70 twd-w-3/12 twd-mb-2"> </skeleton>
+            <skeleton class="twd-opacity-70 twd-w-2/12"> </skeleton>
         </div>
 
         <div *ngIf="error" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">

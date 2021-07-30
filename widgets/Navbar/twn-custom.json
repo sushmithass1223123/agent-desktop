@@ -1,0 +1,13 @@
+{
+    "Name": "Custom",
+    "Description": "",
+    "Type": "twn-custom",
+    "Config": {
+        "Enabled": true,
+        "Icon": "widgets"
+    },
+    "Data": {
+        "Path": "/custom",
+        "Active": false
+    }
+}

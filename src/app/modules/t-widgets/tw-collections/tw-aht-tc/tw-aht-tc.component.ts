@@ -1,13 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
+import { TableComponent } from '@modules/shared/components';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TUtils } from '@tmac/sdk';
+import { AgentChannelDataModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { CustomSDKEvent, TwChartConfig } from 'app/interfaces';
+import { ChannelListEvent, CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
+import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -28,38 +27,21 @@ const multiColors: any = {
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * App config json data
      */
-    @Input() data: any;
-
-    /**
-     * Table Sort ref
-     */
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-    /**
-     * Table Paginator ref
-     */
-    @ViewChild(MatPaginator)
-    set paginator(value: MatPaginator) {
-        this.interactionDetailsTable.source.paginator = value;
-    }
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Widget Maximized status
      */
     maximized = false;
+
     /**
      * Interactino list
      */
-    interactionList: any[] = [];
-
-    /**
-     * App data config
-     */
-    widgetData: WidgetData;
+    interactionList: AgentChannelDataModel[] = [];
 
     /**
      * AHT chart config
@@ -82,12 +64,9 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     };
 
     /**
-     * Interaction Details table data
+     * Ad table's component ref
      */
-    interactionDetailsTable = {
-        source: new MatTableDataSource([]),
-        columns: ['Channel', 'AverageHandleTime', 'Transfer', 'Conference']
-    };
+    @ViewChild(TableComponent) table: TableComponent;
 
     constructor(private _tmacEventService: TMACEventService) {
         super();
@@ -102,15 +81,13 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.widgetData = this.data.Data || new Object();
-
         let eventName: any;
-        if (this.widgetData.Role === 'agent') {
+        if (this.data.Data?.Role === 'agent') {
             eventName = 'AgentChannelListEvent';
-        } else if (this.widgetData.Role === 'supervisor') {
+        } else if (this.data.Data?.Role === 'supervisor') {
             eventName = 'TeamChannelListEvent';
         } else {
-            TUtils.Logger.warn(`TwAhtTcComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
+            this.logger.warn(`Unable to get event name to regiser, Role=${this.data.Data?.Role}`);
         }
 
         if (eventName) {
@@ -119,6 +96,15 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
                 .getNonInteractionEvents([eventName])
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        }
+    }
+
+    /**
+     * Life cycle hook
+     */
+    ngAfterViewInit(): void {
+        if (this.data.Data?.Type === 'grid') {
+            this.setupADTable();
         }
     }
 
@@ -132,24 +118,55 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     }
 
     /**
+     * Sets up table data
+     */
+    setupADTable(): void {
+        const iconMap = {
+            voice: 'phone',
+            textchat: 'chat',
+            audiochat: 'wifi_calling_3',
+            videochat: 'duo',
+            sms: 'sms',
+            email: 'email',
+            emc: 'email'
+        };
+        this.table.config = {
+            Channel: {
+                tooltip: true,
+                icon: (el: any) => ({
+                    name: iconMap[el.Channel?.toLowerCase()] || 'feed',
+                    only: true
+                })
+            },
+            AverageHandleTime: {
+                title: 'AHT',
+                value: (element: any) => format((element.AverageActiveTime + element.AverageHoldTime) * 1000, 'hh:mm:ss') || '00:00:00'
+            },
+            Transfer: {},
+            Conference: {}
+        };
+        this.table.columns = ['Channel', 'AverageHandleTime', 'Transfer', 'Conference'];
+        this.table.sort = true;
+        this.table.footer = 'disabled';
+    }
+
+    /**
      * AgentChannelListEvent handler
      * @param {CustomSDKEvent} evt
      */
-    private AgentChannelListEvent(evt: CustomSDKEvent): void {
-        this.interactionList = evt.Data.Channels;
-        this.interactionDetailsTable.source = new MatTableDataSource(this.interactionList);
-        this.interactionDetailsTable.source.sort = this.sort;
-        this.interactionDetailsTable.source.paginator = this.paginator;
+    AgentChannelListEvent(evt: CustomSDKEvent): void {
+        this.interactionList = evt.Data?.Channels || [];
+        this.table.source.data = this.interactionList;
     }
 
     /**
      * TeamChannelListEvent handler
      * @param {CustomSDKEvent} evt
      */
-    private TeamChannelListEvent(evt: CustomSDKEvent): void {
+    TeamChannelListEvent(evt: CustomSDKEvent<ChannelListEvent>): void {
         const datasets = { AHT: [], 'Transfer / Conference': [] };
         const labels = [];
-        evt.Data.Channels.forEach((c: any) => {
+        evt.Data?.Channels.forEach((c) => {
             if (c.AverageActiveTime + c.AverageHoldTime) {
                 datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             }
@@ -174,6 +191,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         this.ahtChart.labels = labels;
     }
 }
+
 interface WidgetData {
     /**
      * Available Roles for this reusable component

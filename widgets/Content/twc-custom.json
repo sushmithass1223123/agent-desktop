@@ -1,0 +1,20 @@
+{
+    "Name": "Custom-1",
+    "Description": "",
+    "Type": "twc-custom",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/custom-1",
+        "Url": "",
+        "Unload": false
+    }
+}

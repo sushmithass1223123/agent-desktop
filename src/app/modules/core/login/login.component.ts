@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
@@ -23,7 +24,7 @@ import { environment } from '../../../../environments/environment';
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Unsubscribe all subject
      */
@@ -334,6 +335,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private fuseSplashService: FuseSplashScreenService
     ) {
+        super();
+
         // Configure the layout
         this._fuseFacadeService.setConfig = {
             layout: {
@@ -848,9 +851,9 @@ export class LoginComponent implements OnInit, OnDestroy {
                         if (environment.production && this.appConfig?.ConfigMode === 'remote' && response.OtherData.ItemTwo) {
                             // assign the agent based config
                             this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
-                            TUtils.Logger.console('debug', 'App config updated!');
+                            this.logger.debug('App config updated!', false);
                         } else {
-                            TUtils.Logger.console('debug', 'Using developement/login config only!');
+                            this.logger.debug('Using developement/login config only!', false);
                         }
                         // get the agent ID
                         const agentId = response.Data.AgentID;
@@ -932,7 +935,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.fuseSplashService.hide();
         } catch (error) {
             this.videoElement?.nativeElement.play();
-            TUtils.Logger.error('Exception in login', error);
+            this.logger.error('Error in login', error);
         }
     }
 

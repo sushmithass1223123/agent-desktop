@@ -1,63 +1,14 @@
-<!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
-<!-- implement following events in your component to access widget wrapper action events -->
-<!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 <tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = $event">
-    <div *ngIf="widgetData.Type === 'grid'" class="w-100-p h-100-p">
-        <div class="w-100-p bg-inherit custom-scroll-adjust" [ngClass]="maximized ? 'h-90-p' : 'h-100-p'">
-            <mat-table [dataSource]="interactionDetailsTable.source" matSort matSortDisableClear>
-                <ng-container matColumnDef="Channel">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Channel</mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <ng-container [ngSwitch]="element.Channel | lowercase">
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'voice'" matTooltip="Voice">phone</mat-icon>
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'textchat'" matTooltip="Chat">chat</mat-icon>
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'audiochat'" matTooltip="Audio">wifi_calling_3</mat-icon>
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'videochat'" matTooltip="Video">duo</mat-icon>
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'sms'" matTooltip="SMS">sms</mat-icon>
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'email'" matTooltip="Email">email</mat-icon>
-                            <mat-icon class="channel-icon" color="primary" *ngSwitchCase="'emc'" matTooltip="Email">email</mat-icon>
-                            <mat-icon color="primary" *ngSwitchDefault [matTooltip]="element.Channel"> feed </mat-icon>
-                        </ng-container>
-                    </mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="AverageHandleTime">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>AHT</mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{ ((element.AverageActiveTime + element.AverageHoldTime) * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
-                    </mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="Transfer">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Transfer</mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{ element.Transfer >= 0 ? element.Transfer : element.Transfer || 'NA' }}
-                    </mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="Conference">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Conference</mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{ element.Conference >= 0 ? element.Conference : element.Conference || 'NA' }}
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="interactionDetailsTable.columns; sticky: true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
-            </mat-table>
-
-            <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
-        </div>
-        <mat-paginator *ngIf="maximized" [pageSize]="20" [pageSizeOptions]="[20, 40, 60, 100]" showFirstLastButtons> </mat-paginator>
+    <div *ngIf="data.Data?.Type === 'grid'" class="twd-w-full twd-h-full">
+        <ad-table></ad-table>
     </div>
 
-    <div *ngIf="widgetData.Type === 'chart'" class="w-100-p h-100-p">
+    <div *ngIf="data.Data?.Type === 'chart'" class="twd-w-full twd-h-full">
         <div
             *ngIf="ahtChart.datasets.length >= 1 && ahtChart.datasets[0].data.length"
-            fxLayout="column"
-            fxLayoutAlign="center center"
-            class="w-100-p h-100-p animate__animated animate__zoomIn animate__faster"
+            class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full animate__animated animate__zoomIn animate__faster"
         >
-            <div class="tw-chart w-100-p h-100-p p-8" #chartContainerRef>
+            <div class="tw-chart twd-w-full twd-h-full twd-p-2" #chartContainerRef>
                 <canvas
                     baseChart
                     class="box-shadow-3d"
@@ -75,11 +26,9 @@
 
         <div
             *ngIf="ahtChart.datasets.length === 0 || (ahtChart.datasets.length >= 1 && !ahtChart.datasets[0].data.length)"
-            class="w-100-p h-100-p text-center"
-            fxLayout="column"
-            fxLayoutAlign="center center"
+            class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center"
         >
-            <img src="assets/images/vectors/no-data-1.svg" class="w-85-p h-85-p box-shadow-3d" />
+            <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
             <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data Available</p>
         </div>
     </div>

@@ -1,0 +1,9 @@
+{
+    "Name": "Notification",
+    "Description": "",
+    "Type": "tw-notifications",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {}
+}

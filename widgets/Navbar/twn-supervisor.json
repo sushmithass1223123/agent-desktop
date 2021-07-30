@@ -1,0 +1,13 @@
+{
+    "Name": "Supervisor",
+    "Description": "",
+    "Type": "twn-supervisor",
+    "Config": {
+        "Enabled": true,
+        "Icon": "supervised_user_circle"
+    },
+    "Data": {
+        "Path": "/supervisor",
+        "Active": false
+    }
+}

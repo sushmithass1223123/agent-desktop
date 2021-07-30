@@ -74,7 +74,9 @@
                                     "Status": true,
                                     "AuxCodes": {
                                         "Enabled": true,
-                                        "ByTeam": true
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
                                     }
                                 }
                             },
@@ -86,7 +88,9 @@
                                     "Enabled": false
                                 },
                                 "Data": {
-                                    "ByTeam": false
+                                    "ByTeam": false,
+                                    "DefaultACW": false,
+                                    "DefaultLogout": false
                                 }
                             },
                             {
@@ -97,7 +101,8 @@
                                     "Enabled": true
                                 },
                                 "Data": {
-                                    "LogoutAux": "logout"
+                                    "LogoutAux": "logout",
+                                    "AllowLogoutOnOpenInteractions": false
                                 }
                             },
                             {
@@ -1429,7 +1434,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -1961,6 +1966,12 @@
                                                 "Data": {
                                                     "CustomerInfo": [
                                                         {
+                                                            "Title": "Channel",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
                                                             "Title": "Queue time",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
                                                             "Unit": "s",
@@ -2132,7 +2143,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -2449,7 +2460,7 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": false,
+                                                            "Blind": true,
                                                             "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
@@ -2463,7 +2474,7 @@
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": false,
+                                                            "Blind": true,
                                                             "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
@@ -2555,7 +2566,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -2861,19 +2872,19 @@
                                                     "CustomerInfo": [
                                                         {
                                                             "Title": "Campaign Name",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).CampaignName",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.CampaignName",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
                                                             "Title": "Customer Name",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).Name",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.Name",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
                                                         {
                                                             "Title": "Phone Number",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).PhoneNumber",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.PhoneNumber",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         },
@@ -2891,7 +2902,7 @@
                                                         },
                                                         {
                                                             "Title": "AutoDial",
-                                                            "ValueSource": "JsonParse(GenericInteractionEvent.Item.Data).AutoDial",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.AutoDial",
                                                             "Unit": "",
                                                             "DefaultValue": "NA"
                                                         }
@@ -2975,7 +2986,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${ucid}",
+                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -3614,10 +3625,28 @@
                         "Hub": "AgentPopUpHub",
                         "Actions": [
                             {
-                                "EventName": "TextChatDisconnectedEvent",
+                                "EventName": "CCLDataEvent",
+                                "Channel": "chat",
                                 "Parameters": [
                                     "TMACEvent.TextChatIncomingEvent.UCID",
                                     "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                    "AgentData.agentId",
+                                    "AgentData.deviceId",
+                                    "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.TextChatIncomingEvent.PhoneNumber}&agentId=${AgentData.agentId}",
+                                    "rawtext"
+                                ],
+                                "Method": "RunCustomApplication",
+                                "ExeName": "AgentPopUp"
+                            },
+                            {
+                                "EventName": "CCLDataEvent",
+                                "Channel": "voice",
+                                "Parameters": [
+                                    "TMACEvent.TextChatIncomingEvent.UCID",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.Intent",
+                                    "TMACEvent.TextChatRemoteUserConnectedEvent.JsonData.pChannel",
                                     "AgentData.agentId",
                                     "AgentData.deviceId",
                                     "https://meet.google.com/kps-shpr-neu?phoneNumber=${TMACEvent.TextChatIncomingEvent.PhoneNumber}&agentId=${AgentData.agentId}",
@@ -3645,7 +3674,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-cyan-orange",
+        "Theme": "theme-teal-red",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
@@ -3678,6 +3707,7 @@
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
+        "AddAOTWidgetEnabled": true,
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,
@@ -3735,9 +3765,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx",
-                    "https://dice.tetherfi.cloud/TMACSDKProxyv5/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "type": "soap",
                 "timeout": 60
@@ -3766,9 +3794,9 @@
                 "sdkEvents": true
             },
             "customScripts": [
-                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/livechat_video.min.js",
-                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
+                "https://dice.tetherfi.cloud/agent-desktop/libs/adapter.js",
+                "https://dice.tetherfi.cloud/agent-desktop/libs/livechat_video.min.js",
+                "https://dice.tetherfi.cloud/agent-desktop/libs/collector.min.js"
             ]
         }
     }

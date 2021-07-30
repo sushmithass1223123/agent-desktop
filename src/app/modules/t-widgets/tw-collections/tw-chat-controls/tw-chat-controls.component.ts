@@ -60,7 +60,7 @@ import {
     SnackbarStateTypes
 } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { urlify } from 'app/utils';
+import { checkStringIsHTML, urlify } from 'app/utils';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -1083,6 +1083,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
+        let templateId = template?.ID ?? '';
         const attachment = template?.Attachment ?? null;
         const type = template?.Type ? 'attachment' : 'text';
 
@@ -1121,7 +1122,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 templateId: template?.ID ?? '',
                 attachment
             };
-
+            // template Id is added to the json so clear it
+            templateId = '';
             // stringy the json
             messageData = JSON.stringify(jsonMessage);
         } else if (attachment && this.isSMM) {
@@ -1133,17 +1135,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 _attachmentPreviewId: '',
                 _attachmentSize: attachment.size
             });
+            // do not send template id for SMM
+            templateId = '';
         }
         this.replyingToMessage = null;
 
-        this.sendTextChat(messageData, messageId, template?.ID ?? '');
+        this.sendTextChat(messageData, messageId, templateId);
 
         // Add the message to the chat
         this.pushToTranscript({
             ...message,
             messageToServer: {
                 message: messageData,
-                templateId: template?.ID ?? ''
+                templateId
             }
         });
 
@@ -1457,19 +1461,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private pushToTranscript(transcript: ChatTranscripts): void {
         // check for message has link
-        if (transcript.message && !this.checkStringIsHTML(transcript.message)) {
+        if (transcript.message && !checkStringIsHTML(transcript.message)) {
             transcript.message = urlify(transcript.message);
         }
         this.chatTranscripts.push(transcript);
-    }
-
-    /**
-     * To check if the string is HTML
-     *
-     * @param {String} str
-     */
-    private checkStringIsHTML(str: string): boolean {
-        return /<\/?[a-z][\s\S]*>/i.test(str);
     }
 
     /**
@@ -1533,7 +1528,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     type: 'text',
                     time: new Date(res.DateTime),
                     attachment: null,
-                    dividerMessage: res.ItemType === 2
+                    dividerMessage: res.ItemType > 2
                 });
 
                 this.asyncChatRef.firstId = res.FirstId;
@@ -2179,7 +2174,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     async AgentNotificaitonEvent(evt: AgentNotificaitonEvent): Promise<void> {
         // check the type
-        if (evt.Type === 'AsyncChatUpdated') {
+        if (evt.Type === 'AsyncChatMessage') {
             // get from event
             // this.chatTranscripts.push({
             //     who: this.customerName,

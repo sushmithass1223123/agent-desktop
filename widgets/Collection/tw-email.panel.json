@@ -1,0 +1,25 @@
+{
+    "Name": "Email-Panel",
+    "Description": "",
+    "Type": "tw-email-panel",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": true,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 3
+        },
+        "Actions": [],
+        "ViewState": "restore",
+        "Header": false
+    },
+    "Data": {
+        "Widgets": []
+    }
+}

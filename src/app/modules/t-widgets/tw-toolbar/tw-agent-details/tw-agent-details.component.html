@@ -9,27 +9,31 @@
         fxLayout="column"
         fxLayoutAlign="center center"
     >
-        <div fxLayout="row" fxLayoutAlign="center center" class="position-relative">
+        <div *ngIf="(agentData.agentStatus | lowercase) ?? 'NA' as status" fxLayout="row" fxLayoutAlign="center center" class="position-relative">
             <img
                 class="avatar mr-0 mat-elevation-z3"
                 [style.backgroundImage]="'url(' + (agentData.profilePicture ? agentData.profilePicture : 'assets/images/avatars/profile.jpg') + ')'"
                 *ngIf="data.Data.ProfilePicture"
                 [ngClass]="
-                    agentData.agentStatus.includes('Available')
+                    status.includes('available')
                         ? 'border-sm-alt-success'
-                        : agentData.agentStatus.includes('On Call')
+                        : status.includes('on call') || status.includes('logout')
                         ? 'border-sm-alt-danger'
-                        : 'border-sm-alt-warning'
+                        : status.includes('acw')
+                        ? 'border-sm-alt-warning'
+                        : 'border-sm-alt-info'
                 "
             />
             <span
                 class="element-status"
                 [ngClass]="
-                    agentData.agentStatus.includes('Available')
+                    status.includes('available')
                         ? 'bg-alt-success'
-                        : agentData.agentStatus.includes('On Call')
+                        : status.includes('on call') || status.includes('logout')
                         ? 'bg-alt-danger'
-                        : 'bg-alt-warning'
+                        : status.includes('acw')
+                        ? 'bg-alt-warning'
+                        : 'bg-alt-info'
                 "
             ></span>
         </div>
@@ -87,16 +91,24 @@
     </div>
 
     <mat-menu class="custom aux-menu" #auxMenu="matMenu" xPosition="before">
-        <button
-            mat-menu-item
-            *ngFor="let item of auxCodesList"
-            (click)="changeStatus(item)"
-            disabled="{{ item.Name === agentData.agentStatus || item.Code === 'nodata' }}"
-        >
-            <mat-icon class="{{ item.Code.toLowerCase() }}">
-                {{ item.Code.toLowerCase() === 'available' ? 'check_circle' : item.Code === 'logout' ? 'settings_power' : 'remove_circle' }}
-            </mat-icon>
-            <span>{{ item.Name }}</span>
-        </button>
+        <ng-container *ngFor="let item of auxCodesList">
+            <button
+                *ngIf="item.Display === 1"
+                mat-menu-item
+                (click)="changeStatus(item)"
+                disabled="{{ item.Name === agentData.agentStatus || item.Code === 'nodata' }}"
+            >
+                <mat-icon class="{{ item.Code.toLowerCase() }}">
+                    {{
+                        (item.Code | lowercase) === 'available'
+                            ? 'check_circle'
+                            : (item.Code | lowercase) === 'logout'
+                            ? 'settings_power'
+                            : 'remove_circle'
+                    }}
+                </mat-icon>
+                <span>{{ item.Name }}</span>
+            </button>
+        </ng-container>
     </mat-menu>
 </div>

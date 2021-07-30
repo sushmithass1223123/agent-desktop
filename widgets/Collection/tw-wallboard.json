@@ -1,0 +1,27 @@
+{
+    "Name": "Wallboard",
+    "Description": "",
+    "Type": "tw-wallboard",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "dvr",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 3
+        },
+        "Actions": [],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Role": "agent",
+        "SLEnabled": false
+    }
+}

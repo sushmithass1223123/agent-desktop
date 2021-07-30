@@ -1,9 +1,9 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { TableComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { DashboardColorCodeModel, SDKClient, TUtils, WallboardRefreshEvent } from '@tmac/sdk';
+import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
@@ -18,16 +18,11 @@ import { takeUntil } from 'rxjs/operators';
     styleUrls: ['./tw-wallboard.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * App config json data
      */
     @Input() data: IWidget;
-
-    /**
-     * Table sort Ref
-     */
-    @ViewChild(MatSort) sort: MatSort;
 
     /**
      * Widget data
@@ -35,19 +30,19 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     widgetData: WidgetData;
 
     /**
-     * Columns displayed in table
-     */
-    displayedColumns: string[] = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
-
-    /**
-     * Table Data source
-     */
-    dataSource = new MatTableDataSource([]);
-
-    /**
      * To store dashboard color codes
      */
     dashboardColors: DashboardColorCodeModel[];
+
+    /**
+     * Table Component's Ref
+     */
+    @ViewChild(TableComponent) table: TableComponent;
+
+    /**
+     * Custom cell ref for 'CustomerServiceLevel'
+     */
+    @ViewChild('customServiceLevelCell') customServiceLevelCell: TemplateRef<HTMLDivElement>;
 
     /**
      * @constructor
@@ -68,7 +63,8 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
 
         if (this.widgetData.SLEnabled) {
             // add service level to column
-            this.displayedColumns.push('ServiceLevel');
+            // this.displayedColumns.push('ServiceLevel');
+            this.table.columns.push('ServiceLevel');
             // get the dashboard color codes for wallboard
             SDKClient.getDashboardColorCodes().then((x) => {
                 if (x.response) {
@@ -83,7 +79,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         } else if (this.widgetData.Role === 'supervisor') {
             eventName = 'TeamWallboardRefreshEvent';
         } else {
-            TUtils.Logger.warn(`TwWallboardComponent: unable to get event name to regiser, Role=${this.widgetData.Role}`);
+            this.logger.warn(`Unable to get event name to regiser, Role=${this.widgetData.Role}`);
         }
 
         // register if only eventname is there
@@ -104,6 +100,32 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     /**
+     * Lifecycle hook
+     */
+    ngAfterViewInit(): void {
+        this.setupAdTable();
+    }
+
+    /**
+     * Sets up the new AD table component
+     */
+    setupAdTable(): void {
+        this.table.config = {
+            SkillName: { title: 'Skill Name', width: '40%' },
+            AgentsStaffed: { title: 'Stf' },
+            AgentAvailable: { title: 'Avl' },
+            CallsInQueue: { title: 'CIQ' },
+            ServiceLevel: { title: 'SL %', custom: this.customServiceLevelCell }
+        };
+        this.table.sort = true;
+        this.table.sortBy = 'CallsInQueue';
+        this.table.footer = 'disabled';
+        this.table.columns = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
+        this.table.sortBy = 'CallsInQueue';
+        this.table.sortDirection = 'desc';
+    }
+
+    /**
      * Wallboard Refresh event handler
      * Updates table data on event
      */
@@ -115,7 +137,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             skillsToShow = evt.Skills.filter((s) => s.AgentsStaffed > 0 || s.CallsInQueue > 0);
         } else if (evt.EventName === 'WallboardRefreshEvent') {
             // check for skill update
-            if (this.dataSource.data.length && this.dataSource.data.length !== skillsToShow.length) {
+            if (this.table.source.data.length && this.table.source.data.length !== skillsToShow.length) {
                 this._appUIService.showAppSnackbar({
                     message: 'Agent skills has been updated!',
                     state: 'success',
@@ -125,11 +147,12 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
 
         // assign the data
-        this.dataSource = new MatTableDataSource(skillsToShow);
+        // this.dataSource = new MatTableDataSource(skillsToShow);
+        this.table.source = new MatTableDataSource(skillsToShow);
         // sorting data accessor for nested object sorting
         // check if the SL is enabled, since we need custom sort for Service Level only!
         if (this.widgetData.SLEnabled) {
-            this.dataSource.sortingDataAccessor = (item, property) => {
+            this.table.source.sortingDataAccessor = (item, property) => {
                 switch (property) {
                     case 'ServiceLevel':
                         return item.BCMSData.SLPercentage;
@@ -139,7 +162,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             };
         }
         // add the sort
-        this.dataSource.sort = this.sort;
+        // this.dataSource.sort = this.sort;
     };
 
     /**

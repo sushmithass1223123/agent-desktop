@@ -12,5 +12,7 @@ export * from './preview-email/preview-email.component';
 export * from './reminder-task-dialog/reminder-task-dialog.component';
 export * from './resource-not-found/resource-not-found.component';
 export * from './shared-wrapper/shared-wrapper.component';
+export * from './skeleton/skeleton.component';
 export * from './snackbar/snackbar.component';
+export * from './table/table.component';
 export * from './widget-fab/widget-fab.component';

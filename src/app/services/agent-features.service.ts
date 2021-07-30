@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AgentFeatures, AgentSettingsUpdatedEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
+import { AgentFeatures, AgentSettingsUpdatedEvent, AgentSnapShotEvent, SDKClient } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
 import { Observable, Subject } from 'rxjs';
 import { AppUiService } from './app-ui.service';
@@ -17,7 +18,7 @@ declare const navigator: Navigator | any;
 @Injectable({
     providedIn: 'root'
 })
-export class AgentFeaturesService {
+export class AgentFeaturesService extends SharedWrapper {
     /**
      * Processed
      * Need More Description
@@ -81,6 +82,7 @@ export class AgentFeaturesService {
     private _featureUpdatedSubject: Subject<boolean>;
 
     constructor(private _appUIService: AppUiService) {
+        super();
         this._featureUpdatedSubject = new Subject();
         this._agentFeatureInfo = {
             permissions: {
@@ -108,7 +110,7 @@ export class AgentFeaturesService {
      * Event to take snapshot
      * @param {any} evt
      */
-    private AgentSnapShotEvent = async (evt: any) => {
+    private AgentSnapShotEvent = async (evt: AgentSnapShotEvent) => {
         // init variables
         let screenshot = '';
         let snapshot = '';
@@ -142,7 +144,8 @@ export class AgentFeaturesService {
             location,
             screenshot,
             screenvideo,
-            snapshot
+            snapshot,
+            tmacServer: evt.TmacServer
         });
     };
 
@@ -204,7 +207,7 @@ export class AgentFeaturesService {
                 };
             } catch (error) {
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.error('Exception in getUrlFromStream', error);
+                this.logger.error('Error in getUrlFromStream', error);
                 reject(error);
             }
         });
@@ -244,7 +247,7 @@ export class AgentFeaturesService {
                     this.captureCameraStream();
                 }, 4000);
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.error('Exception in getUserMedia', error);
+                this.logger.error('Error in getUserMedia', error);
             }
         );
     }
@@ -291,7 +294,7 @@ export class AgentFeaturesService {
                     this.captureDisplayStream();
                 }, 2000);
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.error('Exception in getDisplayMedia', error);
+                this.logger.error('Error in getDisplayMedia', error);
             });
     }
 
@@ -318,7 +321,7 @@ export class AgentFeaturesService {
             (error: GeolocationPositionError) => {
                 this._agentFeatureInfo.permissions.location = false;
                 // log the error to server for troubleshooting purpose
-                TUtils.Logger.error('Exception in getCurrentPosition', error);
+                this.logger.error('Error in getCurrentPosition', error);
             }
         );
     }
@@ -387,7 +390,7 @@ export class AgentFeaturesService {
      * Subscribe to the available features
      */
     public subscribe(): void {
-        TUtils.Logger.console('info', 'AgentFeaturesService.subscribe');
+        this.logger.info('subscribe', false);
 
         // init agent features subject
         this._featureUpdatedSubject = new Subject();
@@ -414,7 +417,7 @@ export class AgentFeaturesService {
 
         // check the list
         if (agentFeatures.length === 0) {
-            TUtils.Logger.debug('AgentFeaturesService.subscribe: agent features are empty!');
+            this.logger.debug('subscribe: agent features are empty!');
             return;
         }
 
@@ -429,7 +432,7 @@ export class AgentFeaturesService {
      * Unsubscribe from all subscriptions
      */
     public unsubscribe(): void {
-        TUtils.Logger.console('info', 'AgentFeaturesService.unsubscribe');
+        this.logger.info('unsubscribe', false);
 
         // unregister from AgentSnapShotEvent
         SDKClient.events.off('AgentSnapShotEvent', this.AgentSnapShotEvent);

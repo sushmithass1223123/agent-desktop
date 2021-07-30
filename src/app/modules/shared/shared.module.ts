@@ -20,7 +20,9 @@ import {
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
     SharedWrapperComponent,
+    SkeletonComponent,
     SnackbarComponent,
+    TableComponent,
     WidgetFabComponent
 } from './components';
 import { TWChartDirective } from './directives';
@@ -65,7 +67,9 @@ const sharedComponents = [
     CreateEmailComponent,
     AgentSkillListComponent,
     PreviewEmailComponent,
-    SharedWrapperComponent
+    SkeletonComponent,
+    SharedWrapperComponent,
+    TableComponent
 ];
 
 /**

@@ -27,10 +27,7 @@ tw-su-active-agents {
                 }
 
                 .agent-list {
-                    gap: 8px;
-
                     .agent-item {
-                        cursor: pointer;
                         avatar {
                             .avatar-content {
                                 width: 54px;
@@ -63,12 +60,6 @@ tw-su-active-agents {
                     transition: opacity 0.3s;
                     opacity: 1;
                     .mat-card-avatar {
-                        cursor: default;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        margin: 0px 12px 8px 0px;
-
                         .mat-badge-content {
                             top: -6px;
                             height: 20px;
@@ -81,7 +72,6 @@ tw-su-active-agents {
 
                 .feature-actions {
                     button {
-                        margin: 0px 8px 8px 0px;
                         background-color: rgba(0, 0, 0, 10%);
                         width: 36px;
                         height: 36px;

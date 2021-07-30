@@ -10,7 +10,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import setStringVars from '@tmac/operators/setStringVars';
 import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from '@tmac/sdk';
 import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
-import { formatJsonData } from 'app/utils';
+import { ADError, formatJsonData, throwADError } from 'app/utils';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -324,7 +324,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.title = this.data?.title || 'Agent Skill List';
         this.activeSwitcher = this.data?.agent.allowed ? 'agentList' : this.data?.skill.allowed ? 'skillList' : '';
         this.showSwitcher = this.data?.agent.allowed && this.data?.skill.allowed;
-        this.interactionId = this.data?.interactionId || 0;
+        this.interactionId = this.data?.interactionId ?? 0;
 
         this.freeTextConf = {
             agentList: { allowed: !!(this.data?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
@@ -400,7 +400,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             this.loadSkillList();
         }
 
-        // check for action
+        // check for actions
         this.checkForActions();
 
         this.setNewColumns();
@@ -474,7 +474,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * To check actions buttons
+     * To check action button is allowed
      */
     private checkForActions(): void {
         if (this.activeSwitcher === 'dynamicList') {
@@ -813,7 +813,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         // get the main label dynamically
         this.mainLabel = this.switcherList.filter((f) => f.key === item.key)?.[0].textLabel || '';
 
-        // check for action
+        // check for actions
         this.checkForActions();
 
         // clear the selection
@@ -1074,6 +1074,11 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         })
             .then((dt: IResponse) => {
                 this.loading = false;
+
+                if (!dt.response) {
+                    this._appUIService.showSnackbar(`Agent '${row.AgentName}' has logged out`, 'failure');
+                    return;
+                }
                 // get the allowed state list
                 const allowedStates = this.data?.agent.allowedStates || [];
                 // source to select

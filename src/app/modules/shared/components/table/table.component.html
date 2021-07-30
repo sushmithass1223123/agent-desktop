@@ -1,0 +1,240 @@
+<div
+    class="twd-w-full twd-h-full twd-max-width twd-max-width-col twd-overflow-auto bg-inherit twd-flex twd-flex-col"
+    *ngIf="{
+        data: !!source.data.length,
+        noFilteredData: !source.filteredData?.length && source.filter
+    } as avl"
+>
+    <div *ngIf="avl.data" class="twd-overflow-y-auto bg-inherit twd-flex-1" [ngClass]="{ 'twd-max-width-1': !avl.noFilteredData }">
+        <!-- 'twd-max-h-11/12': footer === 'disabled' || !pagination || !(config | keyvalue)?.length -->
+        <mat-table
+            [dataSource]="source"
+            matSort
+            [matSortActive]="sortBy"
+            [matSortDirection]="sortDirection"
+            matSortDisableClear
+            [matSortDisabled]="!sort"
+            [matSortActive]="sortBy"
+            [matSortDirection]="sortDirection"
+            multiTemplateDataRows
+            *ngIf="customRow ? ['CustomRow'] : columns as displayedColumns"
+        >
+            <!-- NA Note that these columns can be defined in any order.
+The actual rendered columns are set as a property on the row definition" -->
+
+            <ng-container *ngFor="let conf of config | keyvalue">
+                <ng-container [matColumnDef]="conf.key">
+                    <mat-header-cell
+                        *matHeaderCellDef
+                        mat-sort-header
+                        [disabled]="conf.value?.type === 'controls' || conf.key === 'CustomRow'"
+                        class="twd-break-normal twd-text-center"
+                        [style.max-width]="conf.value?.width"
+                        [ngClass]="{ 'max-flex': conf.value?.width }"
+                    >
+                        {{ conf.value?.title ?? conf.key }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" [style.max-width]="conf.value?.width" [ngClass]="{ 'max-flex': conf.value?.width }">
+                        <ng-container *ngIf="getColumnConfig(conf.key, conf.value, element) as cell">
+                            <ng-container *ngIf="cell.custom; else">
+                                <ng-container *ngTemplateOutlet="cell.custom; context: { record: element }"></ng-container>
+                            </ng-container>
+                            <div
+                                class="twd-px-2 twd-flex twd-items-center"
+                                *ngIf="!cell.custom"
+                                [matTooltip]="cell.value || 'NA'"
+                                [matTooltipDisabled]="!cell.tooltip"
+                                [ngClass]="{ 'twd-truncate': cell.truncate, 'twd-flex twd-items-center': !cell.truncate }"
+                                [ngSwitch]="cell.type"
+                            >
+                                <ng-container *ngSwitchCase="'date'">
+                                    {{ cell.value ? (cell.value | date: 'd/M/yy, hh:mm a') : 'NA' }}
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'controls'">
+                                    <ng-container *ngIf="cell.value?.length; else naRef">
+                                        <ng-container *ngIf="cell.value.length > 2; else actionFlex">
+                                            <ng-container>
+                                                <button
+                                                    mat-icon-button
+                                                    class="w-32 h-32 more-action-btn"
+                                                    matTooltip="Actions"
+                                                    [matMenuTriggerFor]="menu"
+                                                >
+                                                    <mat-icon>more_vert</mat-icon>
+                                                    <mat-menu class="custom" #menu="matMenu">
+                                                        <div class="twd-grid twd-px-2.5">
+                                                            <ng-container *ngFor="let ctrl of cell.value">
+                                                                <button
+                                                                    *ngIf="ctrl.visible ? ctrl.visible(element) : true"
+                                                                    class="twd-text-left twd-flex twd-gap-1.5 twd-items-center"
+                                                                    (click)="triggerAction(ctrl.title, element)"
+                                                                >
+                                                                    <ng-container
+                                                                        *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"
+                                                                    ></ng-container>
+                                                                    <span> {{ ctrl.title }} </span>
+                                                                </button>
+                                                            </ng-container>
+                                                        </div>
+                                                    </mat-menu>
+                                                </button>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-template #actionFlex>
+                                            <div class="twd-flex twd-gap-1">
+                                                <button mat-icon-button *ngFor="let ctrl of cell.value" (click)="triggerAction(ctrl.title, element)">
+                                                    <ng-container *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"></ng-container>
+                                                </button>
+                                            </div>
+                                        </ng-template>
+                                    </ng-container>
+                                    <ng-template #naRef> NA </ng-template>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'sentiment'">
+                                    <img
+                                        *ngIf="cell.value === 'Positive'"
+                                        class="w-24"
+                                        src="assets/images/vectors/positive-score.svg"
+                                        alt="Positive"
+                                        matTooltip="Sentiment Dashboard"
+                                        (click)="openSentimentDashboard(element.SessionID)"
+                                    />
+                                    <img
+                                        *ngIf="cell.value === 'Neutral'"
+                                        class="w-24"
+                                        src="assets/images/vectors/neutral-score.svg"
+                                        alt="Neutral"
+                                        matTooltip="Sentiment Dashboard"
+                                        (click)="openSentimentDashboard(element.SessionID)"
+                                    />
+                                    <img
+                                        *ngIf="cell.value === 'Negative'"
+                                        class="w-24"
+                                        src="assets/images/vectors/negative-score.svg"
+                                        alt="Negative"
+                                        matTooltip="Sentiment Dashboard"
+                                        (click)="openSentimentDashboard(element.SessionID)"
+                                    />
+                                    <ng-container *ngIf="!cell.value"> NA </ng-container>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>
+                                    <span *ngIf="!cell.icon?.only" [ngClass]="{ 'twd-uppercase': cell.uppercase }">
+                                        {{ (cell.value?.toString()).length ? cell.value : 'NA' }}
+                                    </span>
+                                    <ng-container *ngTemplateOutlet="iconRef; context: { icon: cell.icon }"></ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </mat-cell>
+                </ng-container>
+            </ng-container>
+
+            <ng-container matColumnDef="ExpandedDetails">
+                <mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let selectedRow">
+                    <ng-container *ngIf="selectedRow.expanded">
+                        <ng-container *ngTemplateOutlet="expandedRow; context: { record: selectedRow }"></ng-container>
+                    </ng-container>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="CustomRow">
+                <mat-cell [attr.colspan]="displayedColumns.length" class="border-radius-20" *matCellDef="let selectedRow">
+                    <ng-container *ngTemplateOutlet="customRow; context: { record: selectedRow }"></ng-container>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="columns; sticky: true" class="bg-inherit" [ngClass]="{ 'twd-hidden': customRow }"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns" [ngClass]="{ selected: row.expanded }"> </mat-row>
+            <mat-row
+                class="expanded-details-row"
+                *matRowDef="let row; columns: ['ExpandedDetails']"
+                [ngClass]="{ expanded: row.expanded && expandableRows }"
+            >
+            </mat-row>
+        </mat-table>
+    </div>
+
+    <div *ngIf="!avl.data" class="twd-max-width-1 twd-grid twd-items-center twd-flex-1">
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No Data Available</p>
+    </div>
+
+    <div *ngIf="avl.noFilteredData" class="twd-max-width-1 twd-grid twd-items-center twd-flex-1">
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No Data With Applied Filters Available</p>
+    </div>
+
+    <div
+        *ngIf="footer !== 'disabled' && avl.data"
+        class="twd-max-width twd-flex twd-justify-between twd-py-2"
+        [ngClass]="{ 'twd-hidden': !avl.data || footer === 'hide' }"
+    >
+        <div class="twd-max-width twd-flex twd-px-2 twd-gap-3 twd-items-center">
+            <button (click)="showAdvanceSearchModal()" mat-button class="border-radius-20" color="primary">
+                <mat-icon>search</mat-icon>
+                Advanced Search
+            </button>
+            <button
+                mat-raised-button
+                type="button"
+                class="twd-ml-2 border-radius-20"
+                [disabled]="!source.filter"
+                (click)="advancedSearchForm = {}; doAdvancedSearch()"
+            >
+                Reset
+            </button>
+        </div>
+        <div *ngIf="pagination">
+            <mat-paginator [pageSizeOptions]="pageSizeOptions" (page)="emitPageEvent($event)" showFirstLastButtons> </mat-paginator>
+        </div>
+    </div>
+</div>
+
+<ng-template #advanceSearchModal>
+    <div *ngIf="fuseBg$ | async as fuseBg" class="mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.body">
+        <div class="border-radius-20 mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.content">
+            <p class="twd-text-xl twd-font-bold twd-mt-1 twd-mb-6">Advanced Search</p>
+            <form class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-3" (ngSubmit)="doAdvancedSearch($value)" novalidate>
+                <ng-container *ngFor="let item of config | keyvalue">
+                    <ng-container *ngIf="item.value?.searchable">
+                        <mat-form-field *ngIf="item.value.type === 'date'; else textFormRef">
+                            <mat-label>{{ item.value?.title ?? item.key }}</mat-label>
+                            <mat-date-range-input [rangePicker]="timePicker">
+                                <input matStartDate placeholder="Start date" [name]="item.key + '_Start'" />
+                                <input matEndDate placeholder="End date" [name]="item.key + '_End'" />
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #timePicker></mat-date-range-picker>
+                        </mat-form-field>
+                        <ng-template #textFormRef>
+                            <mat-form-field>
+                                <mat-label> {{ item.value?.title ?? item.key }} </mat-label>
+                                <input matInput type="text" [(ngModel)]="advancedSearchForm[item.key]" [name]="item.key" />
+                            </mat-form-field>
+                        </ng-template>
+                    </ng-container>
+                </ng-container>
+
+                <div class="xl:twd-col-span-2 twd-my-1 twd-max-width twd-gap-4 twd-justify-end twd-flex">
+                    <button
+                        mat-raised-button
+                        class="twd-w-2/12 border-radius-20"
+                        type="button"
+                        [disabled]="!source.filter"
+                        (click)="advancedSearchForm = {}; doAdvancedSearch()"
+                    >
+                        Reset
+                    </button>
+                    <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #iconRef let-icon="icon">
+    <ng-container *ngIf="icon && (icon.name || icon) as iconName">
+        <mat-icon [color]="icon.color || 'primary'" *ngIf="iconName.includes('custom-'); else normalIcon" [svgIcon]="iconName"> </mat-icon>
+        <ng-template #normalIcon>
+            <mat-icon [color]="icon.color || 'primary'"> {{ iconName }} </mat-icon>
+        </ng-template>
+    </ng-container>
+</ng-template>

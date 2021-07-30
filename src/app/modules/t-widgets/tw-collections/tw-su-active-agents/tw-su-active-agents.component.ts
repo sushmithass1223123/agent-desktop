@@ -16,8 +16,7 @@ import {
     IResponse,
     SDKClient,
     SuAgentDataModel,
-    SuAgentModel,
-    TUtils
+    SuAgentModel
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
@@ -381,7 +380,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         screenvideo: agent.AgentFeatures.filter((f) => f.Feature === 'IsScreenCaptureEnabled')?.[0].IsEnabled || false,
                         snapshot: agent.AgentFeatures.filter((f) => f.Feature === 'IsCameraCaptureEnabled')?.[0].IsEnabled || false,
                         source: 'supervisor',
-                        sourceId: SDKClient.getAgentData().agentId
+                        sourceId: SDKClient.getAgentData().agentId,
+                        tmacServer: agent.TmacServer
                     },
                     { agent }
                 )
@@ -419,7 +419,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     .catch((error: string) => {
                         this._appUIService.showSnackbar('Unable to get agent activity', 'failure');
                         // log the error to server for troubleshooting purpose
-                        TUtils.Logger.error('Exception in performAgentAction.AgentSnapShotEvent', error);
+                        this.logger.error('Error in performAgentAction.AgentSnapShotEvent', error);
                     });
                 break;
             case AGENT_FEATURES.AllowSupervisorToLogout:
@@ -514,7 +514,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             {
                 deviceId: agent.StationID,
                 type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
-                code: item.Value.toString()
+                code: item.Value.toString(),
+                tmacServer: agent.TmacServer
             },
             item
         )

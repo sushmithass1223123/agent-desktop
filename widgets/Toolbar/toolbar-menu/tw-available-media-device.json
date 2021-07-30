@@ -1,0 +1,9 @@
+{
+    "Name": "Available Media Devices",
+    "Description": "",
+    "Type": "tw-available-media-device",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {}
+}

@@ -3,6 +3,9 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapp
 import { IWidget } from 'app/interfaces';
 import { icon, latLng, marker, tileLayer } from 'leaflet';
 
+/**
+ * User location widget
+ */
 @Component({
     selector: 'tw-user-location',
     templateUrl: './tw-user-location.component.html',
@@ -14,25 +17,45 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
      */
     @Input() data: IWidget;
     // @ViewChild('map') mapRef : ElementRef<Leafl>;
+
+    /**
+     * USer location
+     */
     location: any;
+    /**
+     * Flag to render map
+     */
     loadMap: boolean;
+
+    /**
+     * Error flag
+     */
     error: string;
     constructor() {
         super();
     }
 
-    ngOnInit() {
+    /**
+     * Lifecycle hook
+     */
+    ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
         this.setLocation();
     }
 
+    /**
+     * Lifecycle hook
+     */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    setLocation() {
+    /**
+     * Sets location of the customer
+     */
+    setLocation(): void {
         try {
             const pLocationJson = this.data.InteractionDetails?.RecoveryData?.TextChatData;
             const location = JSON.parse(pLocationJson).pLocation || '';
@@ -58,7 +81,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
             };
             setTimeout(() => {
                 this.loadMap = true;
-            }, 0);
+            }, 1000);
         } catch (e) {
             console.error(e);
             this.error = 'Unable to set location';

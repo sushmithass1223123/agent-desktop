@@ -61,6 +61,10 @@
         background-color: $tw-alt-success !important;
         color: #ffffff !important;
     }
+    &-info {
+        background-color: $tw-alt-info !important;
+        color: #ffffff !important;
+    }
 }
 
 .border {
@@ -98,6 +102,9 @@
         }
         &-alt-danger {
             border#{$exactPos}: #{$width}px solid $tw-alt-danger !important;
+        }
+        &-alt-info {
+            border#{$exactPos}: #{$width}px solid $tw-alt-info !important;
         }
     }
     &-left {
@@ -254,47 +261,11 @@
     &-success {
         color: $tw-alt-success !important;
     }
+    &-info {
+        color: $tw-alt-info !important;
+    }
 }
 
 .mat-ripple {
     cursor: pointer;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-// z-index helper
-@for $zIndex from -10 through 100 {
-    .z-index-#{$zIndex} {
-        z-index: #{$zIndex};
-    }
-}
-
-// top helper
-@for $top from -100 through 100 {
-    .top-#{$top} {
-        top: #{$top}px;
-    }
-}
-
-// left helper
-@for $left from -100 through 100 {
-    .left-#{$left} {
-        left: #{$left}px;
-    }
-}
-
-// right helper
-@for $right from -100 through 100 {
-    .right-#{$right} {
-        right: #{$right}px;
-    }
-}
-
-// bottom helper
-@for $bottom from -100 through 100 {
-    .bottom-#{$bottom} {
-        bottom: #{$bottom}px;
-    }
 }

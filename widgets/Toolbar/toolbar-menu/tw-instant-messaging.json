@@ -1,0 +1,14 @@
+{
+    "Name": "Agent IM",
+    "Description": "",
+    "Type": "tw-instant-messaging",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {
+        "TeamFilter": true,
+        "AudioEscalateAllowed": true,
+        "VideoEscalateAllowed": true,
+        "ScreenShareAllowed": true
+    }
+}

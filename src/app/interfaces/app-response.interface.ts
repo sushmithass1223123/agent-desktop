@@ -1,4 +1,4 @@
-import { WorkCode } from '@tmac/sdk';
+import { AgentChannelDataModel, WorkCode } from '@tmac/sdk';
 
 export interface ResData<T = any> {
     loading: boolean;
@@ -71,7 +71,31 @@ export interface ResCampaign {
     waitTimeBeforeDial: number;
 }
 
-export interface CustomSDKEvent {
+/**
+ * CustomSDKEvent
+ */
+export interface CustomSDKEvent<T = any> {
+    /**
+     * Name of the event
+     */
     EventName: string;
-    Data: any;
+    /**
+     * Event data
+     */
+    Data: T;
+}
+
+export interface ChannelListEvent {
+    /**
+     * Requested agent id
+     */
+    AgentId: string;
+    /**
+     * Requested duration
+     */
+    Duration: number;
+    /**
+     * Channel data list
+     */
+    Channels: AgentChannelDataModel[];
 }

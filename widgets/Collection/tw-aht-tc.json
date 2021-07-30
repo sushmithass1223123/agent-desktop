@@ -1,0 +1,31 @@
+{
+    "Name": "AHT/Transfer/Conference",
+    "Description": "",
+    "Key": "AHT-Trans-Conf-Count",
+    "Type": "tw-aht-tc",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": false,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": [
+            "maximize",
+            "float"
+        ],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {
+        "Type": "grid",
+        "Role": "agent"
+    }
+}

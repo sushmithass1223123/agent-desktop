@@ -1,0 +1,18 @@
+{
+    "Name": "Agent Details",
+    "Description": "",
+    "Type": "tw-agent-details",
+    "Config": {
+        "Enabled": true
+    },
+    "Data": {
+        "ProfilePicture": true,
+        "Status": true,
+        "AuxCodes": {
+            "Enabled": true,
+            "ByTeam": true,
+            "DefaultACW": false,
+            "DefaultLogout": false
+        }
+    }
+}

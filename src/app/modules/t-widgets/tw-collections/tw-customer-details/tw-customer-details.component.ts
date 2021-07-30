@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomerInfo } from 'app/interfaces';
-import { processCustomerDetails } from 'app/utils';
+import { processCustomerDetails, throwADError } from 'app/utils';
+import { uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -63,32 +63,21 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
 
         // get the customer info config
         this.customerInfo = this.data.Data.CustomerInfo ?? [];
-
-        // create event names to subscribe
-        const eventNames = [];
-
-        this.customerInfo.forEach((c) => {
-            try {
-                // get the event name
-                const eventName = c.ValueSource?.split('.')?.shift();
-                // push to eventNames
-                if (eventName && !eventNames.includes(eventName)) {
-                    eventNames.push(eventName);
-                }
-            } catch (error) {
-                TUtils.Logger.console('error', 'Error in TwCustomerDetailsComponent', null, error);
-            }
-        });
-
-        // register to tmac events
-        this._tmacEventService
-            .getInteractionEvents(eventNames, this.interactionId)
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) =>
-                evts.forEach((evt) => {
-                    processCustomerDetails(this.customerInfo, evt);
-                })
-            );
+        try {
+            // create event names to subscribe
+            const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
+            // register to tmac events
+            this._tmacEventService
+                .getInteractionEvents(eventNames, this.interactionId)
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) =>
+                    evts.forEach((evt) => {
+                        processCustomerDetails(this.customerInfo, evt);
+                    })
+                );
+        } catch (error) {
+            throwADError('Error in TwCampaignContactComponent', error);
+        }
     }
 
     /**

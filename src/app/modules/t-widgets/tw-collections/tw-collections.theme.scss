@@ -48,26 +48,18 @@
             .message-row {
                 .bubble {
                     &.left {
-                        @if ($is-dark == true) {
-                            background-color: map-get($background, hover);
-                        } @else {
-                            background-color: map-get($primary, 700);
-                            color: mat-contrast($primary, 700);
-                        }
+                        background-color: map-get($primary, 700);
+                        color: mat-contrast($primary, 700);
 
                         .replied {
-                            @if ($is-dark == true) {
-                                background-color: map-get($background, hover);
-                            } @else {
-                                background-color: map-get($primary, 800);
-                                color: mat-contrast($primary, 800);
-                            }
+                            background-color: map-get($primary, 800);
+                            color: mat-contrast($primary, 800);
                         }
                     }
 
                     &.right {
                         @if ($is-dark == true) {
-                            background-color: map-get($background, hover);
+                            background-color: map-get($background, card);
                         } @else {
                             color: rgba(0, 0, 0, 0.87);
                             background-color: #e0e0e0;
@@ -75,7 +67,7 @@
 
                         .replied {
                             @if ($is-dark == true) {
-                                background-color: map-get($background, hover);
+                                background-color: map-get($background, app-bar);
                             } @else {
                                 color: rgba(0, 0, 0, 0.87);
                                 background-color: #c0c0c0;

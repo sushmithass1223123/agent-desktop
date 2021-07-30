@@ -101,7 +101,7 @@
                         <button
                             #agentActionBtn
                             mat-icon-button
-                            *ngIf="featureCheck(feature, 'interaction', element.Channel.toLowerCase())"
+                            *ngIf="featureCheck(feature, 'interaction', element)"
                             [matTooltip]="featureMap[feature.Feature].Label"
                             (click)="performInteractionAction(element, feature)"
                         >
