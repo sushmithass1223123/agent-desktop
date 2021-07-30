@@ -266,18 +266,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             try {
                 await this.setEmailDetails();
                 if (['AgentDraftPull'].includes(this.currentInteraction.RouteReason)) {
-                    const { Body, Subject, CCList, To, AttachmetList } = this.currentInteraction;
-                    this.replyInfo = {
-                        BCC: '',
-                        CC: CCList,
-                        To: To,
-                        Body,
-                        Subject,
-                        Files: [],
-                        From: this.currentInteraction.Mailbox
-                    };
-                    this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
-                    this.saveEmailAsDraft();
+                    setTimeout(() => {
+                        this.showDraftEditor();
+                    }, 0);
                 }
                 if (OUTBOX_REASONS.includes(this.currentInteraction.RouteReason)) {
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
@@ -310,17 +301,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this._appUIService.playAudio('new-email', 0.5, false);
             this._appUIService.showDesktopAlert('Incoming Email', `You have a new incoming email from ${this.currentInteraction.From}`, false);
         } else {
-            this.replyInfo = {
-                BCC: '',
-                Body: '',
-                CC: '',
-                Files: [],
-                Subject: '',
-                To: '',
-                From: this.currentInteraction.Mailbox
-            };
-            this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
-            this.saveEmailAsDraft();
+            this.showComposeEditor();
         }
 
         // set the user info
@@ -330,6 +311,41 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             .getInteractionEvents(['InteractionDataEvent', 'UpdateEmailEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    }
+
+    /**
+     * Shows the editor for incoming draft emails
+     */
+    showDraftEditor(): void {
+        const { Body, Subject, CCList, To, AttachmetList } = this.currentInteraction;
+        this.replyInfo = {
+            BCC: '',
+            CC: CCList,
+            To: To,
+            Body,
+            Subject,
+            Files: [],
+            From: this.currentInteraction.Mailbox
+        };
+        this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
+        this.saveEmailAsDraft();
+    }
+
+    /**
+     * Shows editor for new compose email
+     */
+    showComposeEditor(): void {
+        this.replyInfo = {
+            BCC: '',
+            Body: '',
+            CC: '',
+            Files: [],
+            Subject: '',
+            To: '',
+            From: this.currentInteraction.Mailbox
+        };
+        this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
+        this.saveEmailAsDraft();
     }
 
     /**
@@ -809,9 +825,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sendingEmailAsMaker = false;
             this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
             this.draftPolling$?.unsubscribe();
-            if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
-                this.deleteDraftEmail();
-            }
+            // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
+            //     this.deleteDraftEmail();
+            // }
         } catch (err) {
             console.error(err);
             let msg = 'Unable to send email';

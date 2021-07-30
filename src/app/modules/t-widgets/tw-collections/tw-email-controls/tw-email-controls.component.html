@@ -49,7 +49,7 @@
                             *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20"
-                            [disabled]="!currentInteraction.CurrOutSessionId || sendingEmailAsMaker"
+                            [disabled]="!(currentInteraction.CurrOutSessionId || draftPollDuration) || sendingEmailAsMaker"
                             (click)="saveEmailAsDraft(true, saveAsDraft)"
                             #saveAsDraft
                         >
@@ -110,7 +110,7 @@
                                 *ngIf="replyInfo"
                                 mat-raised-button
                                 class="border-radius-20"
-                                [disabled]="!currentInteraction.CurrOutSessionId || sendingEmailAsMaker"
+                                [disabled]="!(currentInteraction.CurrOutSessionId || draftPollDuration) || sendingEmailAsMaker"
                                 (click)="saveEmailAsDraft(true, saveAsDraft)"
                                 #saveAsDraft
                             >
