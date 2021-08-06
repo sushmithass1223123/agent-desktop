@@ -111,7 +111,7 @@
                             matInput
                             [type]="hidePassword.agent ? 'password' : 'text'"
                             required
-                            placeholder="Agent Password"
+                            [placeholder]="password.AgentPlaceholder || 'LDAP Password'"
                             formControlName="agentPassword"
                         />
                         <button
@@ -136,7 +136,7 @@
                             matInput
                             [type]="hidePassword.station ? 'password' : 'text'"
                             required
-                            placeholder="Station Password"
+                            [placeholder]="password.StationPlaceholder || 'PBX Password'"
                             formControlName="stationPassword"
                         />
                         <button

@@ -3,7 +3,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { IResponse, IUIEvent, SDKClient, TUtils } from '@tmac/sdk';
+import { IResponse, IUIEvent, SDKClient } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';

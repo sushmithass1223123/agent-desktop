@@ -752,9 +752,12 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         if (res.response > 0) {
                             this._appUIService.showSnackbar(`Email transferred to ${transferTo} successfully`, 'success');
                             this.close(true);
+                        } else if ([-2, -3].includes(res.response)) {
+                            console.error(res);
+                            this._appUIService.showSnackbar(`Agent ${this.selectedRow.row.AgentName} is not in valid state`, 'failure');
                         } else {
                             console.error(res);
-                            this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                            this._appUIService.showSnackbar(`'Email transfer failed'`, 'failure');
                         }
                     })
                     .catch((err) => {

@@ -159,7 +159,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             // check if the data is null
             if (result.response && result.response.length > 0) {
                 // filter and assign the aux codes
-                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1);
+                this.auxCodesList = result.response.filter((a: IAUXCodes) => a.Display === 1 && a.Value !== 110 && a.Value !== 111);
             }
         });
 

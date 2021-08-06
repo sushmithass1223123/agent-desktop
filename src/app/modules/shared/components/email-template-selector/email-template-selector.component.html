@@ -30,12 +30,18 @@
                                             {{ template.value.Name }}
                                         </button>
                                     </ng-container>
-                                    <button mat-menu-item disabled *ngIf="!group.value.templates">No templates for this group</button>
+                                    <button mat-menu-item disabled *ngIf="!group.value.templates && !loading">No templates for this group</button>
+                                    <button mat-menu-item disabled *ngIf="!group.value.templates && loading">
+                                        <skeleton></skeleton>
+                                    </button>
                                 </ng-template>
                             </mat-menu>
                         </button>
                     </ng-container>
-                    <button mat-menu-item disabled *ngIf="!dept.value.groups">No groups for this department</button>
+                    <button mat-menu-item disabled *ngIf="!(dept.value.groups || loading)">No groups for this department</button>
+                    <button mat-menu-item disabled *ngIf="!dept.value.groups && loading">
+                        <skeleton></skeleton>
+                    </button>
                 </ng-template>
             </mat-menu>
         </ng-container>

@@ -69,6 +69,15 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     viewDate: Date;
 
     /**
+     * Task's dot color
+     */
+    taskColor = 'var(--twd-primary-default)';
+    /**
+     * Event's dot color
+     */
+    eventColor = 'var(--twd-accent-default)';
+
+    /**
      * Constructor
      */
     constructor(private _matDialog: MatDialog, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
@@ -226,10 +235,11 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             const task = (item.data = JSON.parse(reminder.Message));
             item.title = this.generateTitle(task);
             item.meta.notes = task.Comment;
+            item.color.primary = this.taskColor;
         } else if (type.toLowerCase() === 'event') {
             const event = (item.data = JSON.parse(reminder.Message));
             item.title = event.Title;
-            item.color.primary = event.Color.Primary;
+            item.color.primary = event.Color.Primary ?? this.eventColor;
             item.color.secondary = event.Color.Secondary;
             item.meta.location = event.Meta.Location;
             item.meta.notes = event.Meta.Notes;
@@ -542,6 +552,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 newEvent = formatted.formValue;
 
                 const alertType = newEvent.type === 'executetask' ? 'Task' : 'Event';
+                newEvent.color.primary = newEvent.type === 'executetask' ? this.taskColor : this.eventColor;
 
                 this._appUIService.showSnackbar(`Adding ${alertType.toLowerCase()}, please wait`, 'loading');
 

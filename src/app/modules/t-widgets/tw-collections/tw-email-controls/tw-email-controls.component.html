@@ -49,7 +49,7 @@
                             *ngIf="replyInfo"
                             mat-raised-button
                             class="border-radius-20"
-                            [disabled]="!(currentInteraction.CurrOutSessionId || draftPollDuration) || sendingEmailAsMaker"
+                            [disabled]="(draftPollDuration && !currentInteraction.CurrOutSessionId) || sendingEmailAsMaker"
                             (click)="saveEmailAsDraft(true, saveAsDraft)"
                             #saveAsDraft
                         >
@@ -110,7 +110,7 @@
                                 *ngIf="replyInfo"
                                 mat-raised-button
                                 class="border-radius-20"
-                                [disabled]="!(currentInteraction.CurrOutSessionId || draftPollDuration) || sendingEmailAsMaker"
+                                [disabled]="(draftPollDuration && !currentInteraction.CurrOutSessionId) || sendingEmailAsMaker"
                                 (click)="saveEmailAsDraft(true, saveAsDraft)"
                                 #saveAsDraft
                             >
@@ -169,15 +169,12 @@
                     >
                         <div id="emailInfo" class="twd-flex twd-flex-col twd-gap-y-1">
                             <div class="twd-flex twd-justify-between">
-                                <div class="twd-flex twd-items-center">
-                                    <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
-                                </div>
-
-                                <div class="twd-flex twd-items-center twd-truncate" matTooltip="Route Type">
-                                    <mat-icon class="s-20">directions</mat-icon>
-                                    <span class="twd-truncate">
-                                        {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
-                                    </span>
+                                <div class="twd-flex">
+                                    <div class="twd-flex twd-items-center" matTooltip="Intent">
+                                        <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
+                                    </div>
+                                    <span class="twd-px-2"> | </span>
+                                    <span class="text-bold" matTooltip="Skill">{{ currentInteraction.Skill || 'NA' }}</span>
                                 </div>
                             </div>
 
@@ -295,6 +292,16 @@
                                 matTooltip="Forward"
                             >
                                 <mat-icon>forward</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.DownloadAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="downloadEmail()"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                matTooltip="Download"
+                            >
+                                <mat-icon>file_download</mat-icon>
                             </button>
                             <button
                                 *ngIf="!replyInfo"

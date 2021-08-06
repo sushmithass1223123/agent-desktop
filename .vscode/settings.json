@@ -10,99 +10,93 @@
     },
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "workbench.colorCustomizations": {
-      "activityBar.activeBackground": "#ab307e",
-      "activityBar.activeBorder": "#25320e",
-      "activityBar.background": "#ab307e",
-      "activityBar.foreground": "#e7e7e7",
-      "activityBar.inactiveForeground": "#e7e7e799",
-      "activityBarBadge.background": "#25320e",
-      "activityBarBadge.foreground": "#e7e7e7",
-      "statusBar.background": "#832561",
-      "statusBar.foreground": "#e7e7e7",
-      "statusBarItem.hoverBackground": "#ab307e",
-      "titleBar.activeBackground": "#832561",
-      "titleBar.activeForeground": "#e7e7e7",
-      "titleBar.inactiveBackground": "#83256199",
-      "titleBar.inactiveForeground": "#e7e7e799"
+        "activityBar.activeBackground": "#ab307e",
+        "activityBar.activeBorder": "#25320e",
+        "activityBar.background": "#ab307e",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#25320e",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "statusBar.background": "#832561",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#ab307e",
+        "titleBar.activeBackground": "#832561",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#83256199",
+        "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.color": "#832561",
     "angular.enable-strict-mode-prompt": false,
-    "commit-message-editor.dynamicTemplate": [
-      "{type}({scope}): {description}",
-      "",
-      "{body}",
-      "",
-      "{breaking_change}{footer}"
-    ],
+    "commit-message-editor.dynamicTemplate": ["{type} ({scope}): {description}", "", "{body}", "", "{breaking_change}{footer}"],
     "commit-message-editor.tokens": [
         {
             "label": "Type",
             "name": "type",
             "type": "enum",
             "options": [
-              {
-                "label": "---",
-                "value": ""
-              },
-              {
-                "label": "⭐ feat",
-                "description": "A new feature",
-                "value" : "⭐ feat"
-              },
-              {
-                "label": "🔨 fix",
-                "description": "A bug fix",
-                "value" : "🔨 fix"
-              },
-              {
-                "label": "🔥 hotfix",
-                "description": "A minor fix",
-                "value": "🔥 hotfix"
-              },
-              {
-                "label": "💻 build",
-                "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
-                "value": "💻 build"
-              },
-              {
-                "label": "⚓ general",
-                "description": "Updating grunt tasks etc; no production code change",
-                "value": "⚓ general"
-              },
-              {
-                "label": "🤖 ci",
-                "description": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
-                "value": "🤖 ci"
-              },
-              {
-                "label": "📝 docs",
-                "description": "Documentation only changes",
-                "value": "📝 docs"
-              },
-              {
-                "label": "🎢 perf",
-                "description": "A code change that improves performance",
-                "value": "🎢 perf"
-              },
-              {
-                "label": "♻️ refactor",
-                "description": "A code change that neither fixes a bug nor adds a feature",
-                "value": "♻️ refactor"
-              },
-              {
-                "label": "❗ revert",
-                "value": "❗ revert"
-              },
-              {
-                "label": "🎨 style",
-                "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
-                "value": "🎨 style"
-              },
-              {
-                "label": "💉 test",
-                "description": "Adding missing tests or correcting existing tests",
-                "value": "💉 test"
-              }
+                {
+                    "label": "---",
+                    "value": ""
+                },
+                {
+                    "label": "⭐ feat",
+                    "description": "A new feature",
+                    "value": "⭐ feat"
+                },
+                {
+                    "label": "🔨 fix",
+                    "description": "A bug fix",
+                    "value": "🔨 fix"
+                },
+                {
+                    "label": "🔥 hotfix",
+                    "description": "A minor fix",
+                    "value": "🔥 hotfix"
+                },
+                {
+                    "label": "💻 build",
+                    "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+                    "value": "💻 build"
+                },
+                {
+                    "label": "⚓ general",
+                    "description": "Updating grunt tasks etc; no production code change",
+                    "value": "⚓ general"
+                },
+                {
+                    "label": "🤖 ci",
+                    "description": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
+                    "value": "🤖 ci"
+                },
+                {
+                    "label": "📝 docs",
+                    "description": "Documentation only changes",
+                    "value": "📝 docs"
+                },
+                {
+                    "label": "🚀 perf",
+                    "description": "A code change that improves performance",
+                    "value": "🚀 perf"
+                },
+                {
+                    "label": "♻️ refactor",
+                    "description": "A code change that neither fixes a bug nor adds a feature",
+                    "value": "♻️ refactor"
+                },
+                {
+                    "label": "❗ revert",
+                    "value": "❗ revert"
+                },
+                {
+                    "label": "🎨 style",
+                    "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
+                    "value": "🎨 style"
+                },
+                {
+                    "label": "💉 test",
+                    "description": "Adding missing tests or correcting existing tests",
+                    "value": "💉 test"
+                }
             ],
             "description": "Type of changes"
         },

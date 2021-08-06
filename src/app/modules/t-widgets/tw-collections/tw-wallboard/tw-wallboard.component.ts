@@ -118,11 +118,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
             ServiceLevel: { title: 'SL %', custom: this.customServiceLevelCell }
         };
         this.table.sort = true;
-        this.table.sortBy = 'CallsInQueue';
         this.table.footer = 'disabled';
         this.table.columns = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
         this.table.sortBy = 'CallsInQueue';
-        this.table.sortDirection = 'desc';
     }
 
     /**
