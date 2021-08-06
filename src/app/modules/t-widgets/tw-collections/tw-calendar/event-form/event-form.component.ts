@@ -78,7 +78,7 @@ export class CalendarEventFormDialogComponent implements OnInit {
                 end: _data.date
             });
         }
-        this.auxCodes = SDKClient.getAgentData().auxCodes;
+        this.auxCodes = SDKClient.getAgentData().auxCodes.filter((aux) => aux.Value !== 110 && aux.Value !== 111);
 
         // check the status of event
         // if (this.event.status.toLowerCase() === 'completed') {

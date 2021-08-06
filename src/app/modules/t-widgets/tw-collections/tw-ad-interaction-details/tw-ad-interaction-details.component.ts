@@ -7,7 +7,6 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
-import { orderBy } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
 
 /**
@@ -46,11 +45,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         'ActiveTime',
         'AgentComment'
     ];
-
-    /**
-     * Maximized state
-     */
-    maximized = false;
 
     /**
      * Fuse custom config
@@ -172,7 +166,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             }
         };
         this.table.sort = true;
-        this.table.sortBy = 'CreatedDateTime';
         this.table.pagination = true;
         this.table.pageSizeOptions = [0, 5, 10].map((r) => r + 10);
         this.table.sortBy = 'CreatedDateTime';
@@ -193,14 +186,12 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * @param {CustomSDKEvent} data
      */
     private AgentInteractionDetailsEvent(evt: CustomSDKEvent): void {
-        let interactionList = [];
+        let interactionDetails = [];
         // check if empty array then reset
         if (evt.Data.length) {
-            interactionList = this.table.source.data.concat(evt.Data);
+            interactionDetails = this.table.source.data.concat(evt.Data);
         }
-        interactionList = orderBy(interactionList, 'CreatedDateTime', ['desc']);
-
-        this.table.source.data = interactionList;
+        this.table.source.data = interactionDetails;
     }
 
     /**
@@ -208,17 +199,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * @param {Boolean} state
      */
     maximizeEvent(state: boolean): void {
-        this.maximized = state;
-
-        if (state) {
-            // this.table.columns = this.maxDisplayedColumns;
-            this.setupAdTable();
-        } else {
+        if (!state) {
             this.table.advancedSearchForm = {};
             this.table.doAdvancedSearch();
-            // this.table.columns = this.minDisplayedColumns;
-            // this.table.source.paginator.pageSize = 20;
-            // this.table.source.paginator.firstPage();
+            this.table.source.paginator.firstPage();
         }
     }
 
@@ -259,7 +243,11 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         });
     }
 
-    handleActions(evt: any): void {
-        console.log(evt);
+    /**
+     * Control events from table
+     * @param {any} evt
+     */
+    tableEvents(evt: any): void {
+        this.showNotes(evt.record.AgentComment);
     }
 }

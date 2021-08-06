@@ -1,5 +1,7 @@
+import { Directive } from '@angular/core';
 import { ILogger, TUtils } from '@tmac/sdk';
 
+@Directive()
 /**
  * Shared wrapper
  */

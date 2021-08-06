@@ -38,6 +38,11 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
      */
     previewDialogRef: MatDialogRef<any>;
 
+    /**
+     * Loading flag for api calls
+     */
+    loading = true;
+
     constructor(private appUiService: AppUiService, private aotService: AOTWidgetService, private matDialog: MatDialog) {}
 
     /**
@@ -51,6 +56,9 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             .catch((err) => {
                 console.error(err);
                 this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
+            })
+            .finally(() => {
+                this.loading = false;
             });
     }
 
@@ -67,6 +75,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
      */
     setGroups(departmentId: string): void {
         if (!this.availableTemplates.departments[departmentId]?.groups) {
+            this.loading = true;
             SDKClient.getEmailTemplateGroups(departmentId)
                 .then((res) => {
                     if (res.response && res.response.length) {
@@ -76,6 +85,9 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 .catch((err) => {
                     console.error(err);
                     this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
+                })
+                .finally(() => {
+                    this.loading = false;
                 });
         }
     }
@@ -88,6 +100,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
     setTemplates(departmentId: string, groupId: string): void {
         const groups = this.availableTemplates.departments[departmentId].groups;
         if (!groups[groupId].templates) {
+            this.loading = true;
             SDKClient.getEmailTemplates({ groupId, type: '' })
                 .then((templateRes) => {
                     if (templateRes.response && templateRes.response.length) {
@@ -97,6 +110,9 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 .catch((err) => {
                     console.error(err);
                     this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+                })
+                .finally(() => {
+                    this.loading = false;
                 });
         }
     }

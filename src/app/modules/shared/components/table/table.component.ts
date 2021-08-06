@@ -51,8 +51,6 @@ export type TableConfig<T = any> =
           type: 'controls';
           width?: string;
           value?: { title: string; icon: string; visible?: (el: T) => boolean }[];
-          tooltip?: boolean;
-          truncate?: boolean;
       };
 
 /**
@@ -126,7 +124,7 @@ export class TableComponent implements OnInit {
      * Table sort ref
      */
     @ViewChild(MatSort) private set sortContent(content: MatSort) {
-        if (content && !this.source.sort && this.sort) {
+        if (content && this.sort) {
             // initially setter gets called with undefined
             this.source.sort = content;
         }
@@ -136,7 +134,7 @@ export class TableComponent implements OnInit {
      * Table Paginator ref
      */
     @ViewChild(MatPaginator) private set paginatorContent(content: MatPaginator) {
-        if (content && !this.source.paginator && this.pagination) {
+        if (content && this.pagination) {
             // initially setter gets called with undefined
             this.source.paginator = content;
         }
@@ -227,7 +225,7 @@ export class TableComponent implements OnInit {
             if (!value) {
                 return true;
             }
-            const dateColKey = this.dateCols[key];
+            const dateColKey = this.isFieldDate(key);
             if (dateColKey) {
                 return this.compareDates(key, filters[key], data[dateColKey]);
             } else {
@@ -236,6 +234,22 @@ export class TableComponent implements OnInit {
         });
         return valid;
     };
+
+    /**
+     * Checks if fields is date
+     * @param {String} key
+     */
+    private isFieldDate(key: string): string {
+        if (key.includes('_Start') || key.includes('_End')) {
+            const start = key.replace('_Start', '');
+            const end = key.replace('_End', '');
+            if (this.config[start]) {
+                return start;
+            } else if (this.config[end]) {
+                return end;
+            }
+        }
+    }
 
     /**
      * Checks if the date is in given range
@@ -282,7 +296,7 @@ export class TableComponent implements OnInit {
     triggerAction(action: string, record: any): void {
         if (this.selected) {
             this.selected = null;
-            // this.collapseExpanded();
+            this.collapseExpanded();
         }
         record.expanded = true;
         const payload = { action, record };
@@ -331,4 +345,14 @@ export class TableComponent implements OnInit {
     isExpanded = (_: number, row: any): boolean => {
         return this.expandableRows && row.expanded;
     };
+
+    /**
+     * Returns list of controls for row
+     * @param ctrls
+     * @param el
+     * @returns
+     */
+    getCtrls(ctrls: any[], el: any): any[] {
+        return ctrls.filter((c) => (c.visible ? c.visible(el) : true));
+    }
 }

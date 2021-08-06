@@ -27,6 +27,7 @@ import {
     IncomingEmailEvent,
     InteractionDataEvent,
     IResponse,
+    ISaveEmailAsEml,
     OutgoingEmailEvent,
     SDKClient,
     UpdateEmailEvent
@@ -422,7 +423,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private InteractionDataEvent(evt: InteractionDataEvent): void {
         // check the channel
-        if (evt.Channel !== 'Voice') {
+        if (evt.Channel !== 'Email') {
             return;
         }
         // check if interaction comments available
@@ -1195,14 +1196,29 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Uelifies the subject
-     * @param subject
-     * @returns
+     * Downloads email
      */
-    urlify(subject: string): string {
-        if (subject) {
-            return `<span class='twd-text-truncate'> ${urlify(subject)} </span>`;
+    downloadEmail(): void {
+        const loader = this._appUIService.showSnackbar('Downloading email', 'loading');
+        let requestArgs: ISaveEmailAsEml;
+        if (INBOX_REASONS.includes(this.currentInteraction.RouteReason)) {
+            requestArgs = {
+                direction: 'In',
+                sessionId: this.currentInteraction.InSessionId
+            };
+        } else {
+            requestArgs = {
+                direction: 'Out',
+                sessionId: this.currentInteraction.OutSessionId
+            };
         }
-        return 'NA';
+        SDKClient.saveEmailAsEml(requestArgs)
+            .then((res) => {
+                window.open(res.response);
+                loader.dismiss();
+            })
+            .catch((err) => {
+                this._appUIService.showSnackbar('Unable to download email', 'failure');
+            });
     }
 }

@@ -5,7 +5,7 @@
         noFilteredData: !source.filteredData?.length && source.filter
     } as avl"
 >
-    <div *ngIf="avl.data" class="twd-overflow-y-auto bg-inherit twd-flex-1" [ngClass]="{ 'twd-max-width-1': !avl.noFilteredData }">
+    <div *ngIf="avl.data" class="twd-overflow-y-auto bg-inherit" [ngClass]="{ 'twd-max-width-1 twd-flex-1': !avl.noFilteredData }">
         <!-- 'twd-max-h-11/12': footer === 'disabled' || !pagination || !(config | keyvalue)?.length -->
         <mat-table
             [dataSource]="source"
@@ -51,42 +51,49 @@ The actual rendered columns are set as a property on the row definition" -->
                                     {{ cell.value ? (cell.value | date: 'd/M/yy, hh:mm a') : 'NA' }}
                                 </ng-container>
                                 <ng-container *ngSwitchCase="'controls'">
-                                    <ng-container *ngIf="cell.value?.length; else naRef">
-                                        <ng-container *ngIf="cell.value.length > 2; else actionFlex">
-                                            <ng-container>
-                                                <button
-                                                    mat-icon-button
-                                                    class="w-32 h-32 more-action-btn"
-                                                    matTooltip="Actions"
-                                                    [matMenuTriggerFor]="menu"
-                                                >
-                                                    <mat-icon>more_vert</mat-icon>
-                                                    <mat-menu class="custom" #menu="matMenu">
-                                                        <div class="twd-grid twd-px-2.5">
-                                                            <ng-container *ngFor="let ctrl of cell.value">
-                                                                <button
-                                                                    *ngIf="ctrl.visible ? ctrl.visible(element) : true"
-                                                                    class="twd-text-left twd-flex twd-gap-1.5 twd-items-center"
-                                                                    (click)="triggerAction(ctrl.title, element)"
-                                                                >
-                                                                    <ng-container
-                                                                        *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"
-                                                                    ></ng-container>
-                                                                    <span> {{ ctrl.title }} </span>
-                                                                </button>
-                                                            </ng-container>
-                                                        </div>
-                                                    </mat-menu>
-                                                </button>
+                                    <ng-container *ngIf="getCtrls(cell.value, element) as ctrls">
+                                        <ng-container *ngIf="ctrls?.length; else naRef">
+                                            <ng-container *ngIf="ctrls.length > 2; else actionFlex">
+                                                <ng-container>
+                                                    <button
+                                                        mat-icon-button
+                                                        class="w-32 h-32 more-action-btn"
+                                                        matTooltip="Actions"
+                                                        [matMenuTriggerFor]="menu"
+                                                    >
+                                                        <mat-icon>more_vert</mat-icon>
+                                                        <mat-menu class="custom" #menu="matMenu">
+                                                            <div class="twd-grid twd-px-2.5">
+                                                                <ng-container *ngFor="let ctrl of ctrls">
+                                                                    <button
+                                                                        class="twd-text-left twd-flex twd-gap-1.5 twd-items-center"
+                                                                        (click)="triggerAction(ctrl.title, element)"
+                                                                    >
+                                                                        <ng-container
+                                                                            *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"
+                                                                        ></ng-container>
+                                                                        <span> {{ ctrl.title }} </span>
+                                                                    </button>
+                                                                </ng-container>
+                                                            </div>
+                                                        </mat-menu>
+                                                    </button>
+                                                </ng-container>
                                             </ng-container>
+                                            <ng-template #actionFlex>
+                                                <div class="twd-flex twd-gap-1">
+                                                    <ng-container *ngFor="let ctrl of ctrls">
+                                                        <button
+                                                            mat-icon-button
+                                                            [matTooltip]="ctrl.title"
+                                                            (click)="triggerAction(ctrl.title, element)"
+                                                        >
+                                                            <ng-container *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"></ng-container>
+                                                        </button>
+                                                    </ng-container>
+                                                </div>
+                                            </ng-template>
                                         </ng-container>
-                                        <ng-template #actionFlex>
-                                            <div class="twd-flex twd-gap-1">
-                                                <button mat-icon-button *ngFor="let ctrl of cell.value" (click)="triggerAction(ctrl.title, element)">
-                                                    <ng-container *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"></ng-container>
-                                                </button>
-                                            </div>
-                                        </ng-template>
                                     </ng-container>
                                     <ng-template #naRef> NA </ng-template>
                                 </ng-container>
@@ -193,23 +200,32 @@ The actual rendered columns are set as a property on the row definition" -->
         <div class="border-radius-20 mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.content">
             <p class="twd-text-xl twd-font-bold twd-mt-1 twd-mb-6">Advanced Search</p>
             <form class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-3" (ngSubmit)="doAdvancedSearch($value)" novalidate>
-                <ng-container *ngFor="let item of config | keyvalue">
-                    <ng-container *ngIf="item.value?.searchable">
-                        <mat-form-field *ngIf="item.value.type === 'date'; else textFormRef">
-                            <mat-label>{{ item.value?.title ?? item.key }}</mat-label>
-                            <mat-date-range-input [rangePicker]="timePicker">
-                                <input matStartDate placeholder="Start date" [name]="item.key + '_Start'" />
-                                <input matEndDate placeholder="End date" [name]="item.key + '_End'" />
-                            </mat-date-range-input>
-                            <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #timePicker></mat-date-range-picker>
-                        </mat-form-field>
-                        <ng-template #textFormRef>
-                            <mat-form-field>
-                                <mat-label> {{ item.value?.title ?? item.key }} </mat-label>
-                                <input matInput type="text" [(ngModel)]="advancedSearchForm[item.key]" [name]="item.key" />
+                <ng-container *ngFor="let col of columns">
+                    <ng-container *ngIf="config[col] as item">
+                        <ng-container *ngIf="item.searchable">
+                            <mat-form-field *ngIf="item.type === 'date'; else textFormRef">
+                                <mat-label>{{ item.title || col }}</mat-label>
+                                <mat-date-range-input [rangePicker]="timePicker">
+                                    <input
+                                        matStartDate
+                                        placeholder="Start date"
+                                        [(ngModel)]="advancedSearchForm[col + '_Start']"
+                                        [name]="col + '_Start'"
+                                    />
+                                    <input matEndDate placeholder="End date" [(ngModel)]="advancedSearchForm[col + '_End']" [name]="col + '_End'" />
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #timePicker></mat-date-range-picker>
                             </mat-form-field>
-                        </ng-template>
+                            <ng-template #textFormRef>
+                                <mat-form-field>
+                                    <mat-label>
+                                        {{ item.title || col }}
+                                    </mat-label>
+                                    <input matInput type="text" [(ngModel)]="advancedSearchForm[col]" [name]="col" />
+                                </mat-form-field>
+                            </ng-template>
+                        </ng-container>
                     </ng-container>
                 </ng-container>
 
