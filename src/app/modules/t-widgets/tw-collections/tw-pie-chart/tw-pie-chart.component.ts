@@ -7,6 +7,7 @@ import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
 import { intervalToDuration } from 'date-fns';
 import { orderBy, sortBy } from 'lodash';
+import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -68,6 +69,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * No data message
      */
     noDataMessage: string;
+
+    /**
+     * Subscription for maximize event of tw-wrapper
+     */
+    wrapperMaxSub$: Subscription;
 
     /**
      * Constructor
@@ -170,23 +176,25 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         }));
         allDataSets.labels = labels;
 
-        if (!this.wrapperComponent.maximized) {
-            this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
-            this.chart.labels = allDataSets.labels.slice(0, limit);
-        }
+        const callback = (maximized) => {
+            if (maximized) {
+                this.chart.datasets = allDataSets.datasets;
+                this.chart.labels = allDataSets.labels;
+            } else {
+                this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
+                this.chart.labels = allDataSets.labels.slice(0, limit);
+            }
+        };
 
-        this.wrapperComponent.maximizeEvent
+        callback(this.wrapperComponent.maximized);
+
+        if (this.wrapperMaxSub$) {
+            this.wrapperMaxSub$.unsubscribe();
+        }
+        this.wrapperMaxSub$ = this.wrapperComponent.maximizeEvent
             .asObservable()
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((maximized) => {
-                if (maximized) {
-                    this.chart.datasets = allDataSets.datasets;
-                    this.chart.labels = allDataSets.labels;
-                } else {
-                    this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
-                    this.chart.labels = allDataSets.labels.slice(0, limit);
-                }
-            });
+            .subscribe((maximized) => callback(maximized));
     }
 
     /**
@@ -232,12 +240,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 );
             });
 
-        // this.chart.datasets = Object.keys(datasets).map((d) => ({
-        //     data: datasets[d],
-        //     label: d
-        // }));
-        // this.chart.labels = labels;
-
         this.showData(datasets, labels);
     }
 
@@ -258,14 +260,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 datasets['Calls In Queue'].push(c.CallsInQueue);
                 labels.push(c.SkillName);
             });
-
-        // this.chart.datasets = Object.keys(datasets).map((d) => {
-        //     if (datasets[d].every((x: number) => x === 0)) {
-        //         datasets[d] = [];
-        //     }
-        //     return { data: datasets[d], label: d };
-        // });
-        // this.chart.labels = labels;
 
         datasets['Calls In Queue'] =
             Object.keys(datasets).map((d) => {

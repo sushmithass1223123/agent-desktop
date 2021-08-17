@@ -22,6 +22,7 @@ import { TwCustomComponent } from './tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from './tw-customer-details/tw-customer-details.component';
 import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-customer-sentiment.component';
+import { TwDeflectToDigitalComponent } from './tw-deflect-to-digital/tw-deflect-to-digital.component';
 import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
 import { TwEmailTemplatePreviewComponent } from './tw-email-template-preview/tw-email-template-preview.component';
@@ -102,7 +103,8 @@ const collectionComponents = [
     TwGenericControlsComponent,
     TwAudioVideoControlsComponent,
     TwCampaignContactComponent,
-    TwComposeMessagingComponent
+    TwComposeMessagingComponent,
+    TwDeflectToDigitalComponent
 ];
 
 /**

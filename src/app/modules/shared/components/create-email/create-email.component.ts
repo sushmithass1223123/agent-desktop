@@ -146,9 +146,9 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
     intersectionObserver: IntersectionObserver;
 
     /**
-     * Maximum file size
+     * Maximum file size default 20mbs
      */
-    maxFileSize = 20000;
+    maxFileSize = 20971520;
 
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
