@@ -795,6 +795,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         );
     }
 
+    /**
+     * Handles actions from ad-table
+     * @param {any} evt
+     */
     handleActions(evt: any): void {
         this.switchMaximizedViewMode(evt.action, evt.record);
         // this.selected = evt;

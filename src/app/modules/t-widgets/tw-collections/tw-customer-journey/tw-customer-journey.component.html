@@ -34,7 +34,7 @@
                     {{ s.InteractionDate | date: 'dd/MM/yyyy, hh:mm:ss a' }}
                 </small>
             </div>
-            <div class="twd-flex-1 twd-pl-3 twd-flex twd-justify-between twd-items-center">
+            <div class="twd-w-9/12 twd-pl-3 twd-flex twd-justify-between twd-items-center">
                 <div class="twd-flex-1 twd-flex twd-items-center twd-px-1 twd-truncate">
                     <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
                         <mat-icon color="primary" [matTooltip]="s.Channel">
@@ -232,7 +232,7 @@
                                     <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
                                     <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
                                     <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
-                                    <p matTooltip="Intent">
+                                    <p *ngIf="emailInfo.Intent" matTooltip="Intent">
                                         <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
                                     </p>
                                     <p class="my-4 text-bold">Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}</p>

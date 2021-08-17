@@ -176,6 +176,13 @@
                                     <span class="twd-px-2"> | </span>
                                     <span class="text-bold" matTooltip="Skill">{{ currentInteraction.Skill || 'NA' }}</span>
                                 </div>
+
+                                <div class="twd-flex twd-items-center twd-truncate" matTooltip="Route Type">
+                                    <mat-icon class="s-20">directions</mat-icon>
+                                    <span class="twd-truncate">
+                                        {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="twd-flex twd-justify-between">
@@ -195,7 +202,13 @@
 
                             <div class="twd-flex twd-justify-between">
                                 <div class="twd-flex twd-items-center">
-                                    <p class="my-4 twd-truncate">{{ currentInteraction.AgentName }} ({{ currentInteraction.From }})</p>
+                                    <p class="my-4 twd-truncate">
+                                        {{ currentInteraction.AgentName }} ({{
+                                            SentReasons.concat(DraftReasons).includes(currentInteraction.RouteReason)
+                                                ? currentInteraction.To
+                                                : currentInteraction.From
+                                        }})
+                                    </p>
                                 </div>
 
                                 <div class="twd-flex twd-items-end twd-flex-col">
