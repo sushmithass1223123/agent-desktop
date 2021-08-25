@@ -16,6 +16,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
+type Tabs = 'agentList' | 'skillList' | 'dynamicList';
 type AgentType = Partial<AgentModel>;
 type SkillType = Partial<FavouriteSkill>;
 type FreeTextConf = {
@@ -64,32 +65,32 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     /**
-     * Label for text field
-     */
-    mainLabel = 'Agent ID/Station';
-    /**
-     * Active switcher
-     */
-    activeSwitcher = '';
-    /**
-     * Show switcher flag
-     */
-    showSwitcher: boolean;
-    /**
      * Grid list switcher
      */
     switcherList = [
         {
             key: 'agentList',
             label: 'Agent List',
-            textLabel: 'Agent ID/Station'
+            placeholder: 'Agent'
         },
         {
             key: 'skillList',
             label: 'Skill List',
-            textLabel: 'Skill/VDN'
+            placeholder: 'Skill/VDN'
         }
     ];
+    /**
+     * Label for text field
+     */
+    placeholder = '';
+    /**
+     * Active switcher
+     */
+    activeSwitcher: Tabs;
+    /**
+     * Show switcher flag
+     */
+    showSwitcher: boolean;
     /**
      * Agent list table ref
      */
@@ -322,7 +323,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         this.title = this.data?.title || 'Agent Skill List';
-        this.activeSwitcher = this.data?.agent.allowed ? 'agentList' : this.data?.skill.allowed ? 'skillList' : '';
+        this.activeSwitcher = this.data?.agent.allowed ? 'agentList' : this.data?.skill.allowed ? 'skillList' : null;
         this.showSwitcher = this.data?.agent.allowed && this.data?.skill.allowed;
         this.interactionId = this.data?.interactionId ?? 0;
 
@@ -339,14 +340,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             case 'makeCall':
                 this.icon = 'add_ic_call';
                 this.actionTooltip = 'Call';
+                this.switcherList[0].placeholder = 'Agent/Station/Number';
                 break;
             case 'transferCall':
                 this.icon = 'phone_forwarded';
                 this.actionTooltip = 'Consult';
+                this.switcherList[0].placeholder = 'Agent/Station/Number';
                 break;
             case 'conferenceCall':
                 this.icon = 'group_add';
                 this.actionTooltip = 'Consult';
+                this.switcherList[0].placeholder = 'Agent/Station/Number';
                 break;
             case 'transferChat':
                 this.disableInput = true;
@@ -377,6 +381,14 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 this.icon = 'list_alt';
                 this.actionTooltip = '';
                 break;
+        }
+
+        if (this.activeSwitcher === 'agentList') {
+            this.placeholder = this.switcherList[0].placeholder;
+        } else if (this.activeSwitcher === 'skillList') {
+            this.placeholder = this.switcherList[1].placeholder;
+        } else if (this.activeSwitcher === 'dynamicList') {
+            this.placeholder = this.data.otherData.dynamicList.placeholder;
         }
 
         // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
@@ -807,14 +819,14 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         /**
          * Key
          */
-        key: string;
+        key: Tabs;
     }): void {
         this.searchKey.setValue('');
         // assign active switcher
         this.activeSwitcher = item.key;
 
         // get the main label dynamically
-        this.mainLabel = this.switcherList.filter((f) => f.key === item.key)?.[0].textLabel || '';
+        this.placeholder = this.switcherList.filter((f) => f.key === item.key)?.[0].placeholder || '';
 
         // check for actions
         this.checkForActions();

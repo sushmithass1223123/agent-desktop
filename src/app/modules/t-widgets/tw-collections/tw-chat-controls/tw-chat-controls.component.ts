@@ -2594,7 +2594,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 dynamicList: {
                     key: 'dynamicList',
                     label: 'Bot Conference',
-                    textLabel: 'Destination',
+                    placeholder: 'Destination',
                     data: this.selfServiceDestinations,
                     type: 'dynamic_botConference',
                     columns: ['Name', 'Value'],
