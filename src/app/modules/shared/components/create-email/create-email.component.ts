@@ -219,16 +219,17 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
                     branding: false,
                     base_url: `${this.baseHref}assets/tinymce/`,
                     content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code wordcount'
-                    ],
-                    toolbar:
-                        'undo redo | formatselect | ' +
-                        'bold italic backcolor | alignleft aligncenter ' +
-                        'alignright alignjustify | bullist numlist outdent indent | ' +
-                        'removeformat',
+                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
+                    //     'advlist autolink lists link image charmap print preview anchor',
+                    //     'searchreplace visualblocks code fullscreen',
+                    //     'insertdatetime media table paste code wordcount'
+                    // ],
+                    toolbar: `
+                        undo redo | formatselect | table | 
+                        bold italic backcolor | alignleft aligncenter 
+                        alignright alignjustify | bullist numlist outdent indent |  
+                        removeformat
+                        `,
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
                         editor.on('init', () => {

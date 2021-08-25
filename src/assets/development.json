@@ -1949,7 +1949,7 @@
                                                         "Direction",
                                                         "InteractionText",
                                                         "Intent",
-                                                        "AgentName",
+                                                        "LastServicedAgentName",
                                                         "CIF",
                                                         "NRIC",
                                                         "PhoneNumber",
@@ -2028,6 +2028,34 @@
                                     "Description": "",
                                     "Key": "TexCannedResponses",
                                     "Type": "tw-canned-responses",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
+                                },
+                                {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,

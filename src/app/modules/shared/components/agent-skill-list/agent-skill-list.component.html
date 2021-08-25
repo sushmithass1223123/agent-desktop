@@ -14,9 +14,8 @@
                     <div class="w-100-p px-16 pt-0 pb-12 border-radius-20" fxLayout="row" [ngClass]="customFuse?.content">
                         <div fxFlex fxLayout="column">
                             <div fxLayout>
-                                <!-- <p fxFlex="20" fxLayoutAlign=" center" class="px-8">{{ mainLabel }}</p> -->
                                 <mat-form-field *ngIf="!currentFreeTextConf.enabled" fxFlex appearance="outline" class="custom with-bg">
-                                    <input matInput readonly required [placeholder]="mainLabel" [(ngModel)]="selectedItemDisplayName" />
+                                    <input matInput readonly required [placeholder]="placeholder" [(ngModel)]="selectedItemDisplayName" />
                                     <button
                                         *ngIf="currentFreeTextConf.allowed"
                                         mat-button
@@ -44,7 +43,7 @@
                                     </button>
                                 </mat-form-field>
                                 <mat-form-field *ngIf="currentFreeTextConf.enabled" fxFlex appearance="outline" class="custom with-bg">
-                                    <input matInput required [placeholder]="'Enter ' + mainLabel" [(ngModel)]="currentFreeTextConf.value" />
+                                    <input matInput required [placeholder]="'Enter ' + placeholder" [(ngModel)]="currentFreeTextConf.value" />
                                     <button
                                         mat-button
                                         matSuffix

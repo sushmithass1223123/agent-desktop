@@ -515,7 +515,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
         this.emailBodies[requestedSession] = {
             CCList: res.CCList,
-            Body: this._appUIService.sanitizeEmailBody(res.Body)['changingThisBreaksApplicationSecurity'],
+            Body: res.Body,
             AttachmetList: res?.Attachments || [],
             To: res.ToList,
             From: res.From

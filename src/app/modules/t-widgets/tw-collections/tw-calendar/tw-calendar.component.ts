@@ -466,11 +466,15 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     formatMessage(formValue: any): any {
         let message = formValue.title;
+        const aux = {
+            111: 'acw',
+            112: 'available'
+        };
         // check the type and format
         if (formValue.type === 'executetask') {
             const json = {
                 Action: formValue.taskType,
-                Data: formValue.taskType === 'changestate' ? `aux,${formValue.taskData}` : formValue.taskData,
+                Data: formValue.taskType === 'changestate' ? `${aux[formValue.taskData] || aux},${formValue.taskData}` : formValue.taskData,
                 Comment: formValue.meta.notes
             };
             formValue.data = json;
