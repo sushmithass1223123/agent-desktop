@@ -223,7 +223,7 @@
                             <mat-icon>phonelink_ring</mat-icon>
 
                             <mat-menu class="custom" #ivrMenu="matMenu" xPosition="before">
-                                <button mat-menu-item *ngFor="let item of ivrMenus" (click)="transferToIVR(item.Type)">
+                                <button mat-menu-item *ngFor="let item of ivrMenus" (click)="transferToIVR(item.Value)">
                                     <mat-icon>{{ item.Icon }}</mat-icon>
                                     <span>{{ item.Text }}</span>
                                 </button>
@@ -349,9 +349,9 @@
                             Confirm
                         </button>
 
+                        <!-- [disabled]="tempCallRef.status !== 'connected'" -->
                         <button
                             *ngIf="tempCallRef?.isConsult"
-                            [disabled]="tempCallRef.status !== 'connected'"
                             mat-raised-button
                             class="border-radius-20"
                             color="warn"
