@@ -523,11 +523,29 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 if (dt.response.EventName === 'AgentStatusChangeEvent') {
                     // parse the result to AgentStatusChangeEvent
                     const response = dt.response as AgentStatusChangeEvent;
+                    // notification to the agent
+                    let notification = `Supervisor ${this.user.agentName} has changed your status to ${response.Status}`;
+                    // snackbar message
                     let message = 'Agent status changed successfully';
+                    // check if the agent is on call
                     if (agent.CurrentAgentStatus.includes('On Call')) {
-                        message = 'Agent is on call, status change request sent successfully';
+                        message = `${agent.AgentName} is on call, status change request sent successfully`;
+                        notification += ', will be reflecting after the interaction';
                     }
+
+                    SDKClient.sendNotification({
+                        agentIds: [agent.AgentLoginID],
+                        informAllTmac: false,
+                        message: notification,
+                        supervisorId: '',
+                        teamId: '',
+                        type: 'notify',
+                        tmacServer: agent.TmacServer
+                    });
+
                     this._appUIService.showSnackbar(message, 'success');
+
+                    // change the status on active list immediatly, since the dashboard refresh may be delayed
                     this.filteredAgents = map(this.filteredAgents, (agt: SuAgentModel) => {
                         if (agt.StationID === agent.StationID) {
                             agt.CurrentAgentStatus = response.Status;
@@ -541,7 +559,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             })
             .catch(() => {
                 // logout error
-                this._appUIService.showSnackbar('Error in status change, please try again', 'failure');
+                this._appUIService.showSnackbar('Error in changing status, please try again', 'failure');
             });
     }
 

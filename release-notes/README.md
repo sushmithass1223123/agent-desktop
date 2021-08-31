@@ -8,7 +8,7 @@
 
 ## Additional Information
 
-#### AD Theming
+### AD Theming
 
 AD provides a set of ready-to-use themes for convenience. You can apply them by changing the value of `Theme` under the `AppConfigs` section of AD config. Available themes are listed below:
 
@@ -27,7 +27,7 @@ AD provides a set of ready-to-use font styles for convenience. You can apply the
 -   wf-montserrat
 -   wf-source-sans-pro
 
-#### AD Widget config definition
+### AD Widget config definition
 
 Agent Desktop is developed based on widget configuration. Each widget is unique by its `Type` property. Following is the basic structure of a widget where the `Data` property will have the configuration data particular to a widget.
 
@@ -91,7 +91,7 @@ AD provides set of custom icons apart from [Material Icons](https://fonts.google
 -   `custom-we` (WeChat icon)
 -   `custom-whatsapp` (WhatsApp icon)
 
-#### To send Post message to AD
+### To send Post message to AD
 
 Post messages can be sent to AD to handle multiple functionalities like the close tab or to emit a custom event.
 Sample post message:
@@ -146,7 +146,7 @@ window.addEventListener("message", (res) => {
 });
 ```
 
-#### AD-TMC installer integration
+### AD-TMC installer integration
 
 TMC related files are added to support the TCM installer. Added files are:
 
@@ -156,7 +156,7 @@ TMC related files are added to support the TCM installer. Added files are:
 
 > **NOTE**: These files are a must to support the TMC installer, so please make sure these files are available when using the TMC installer to install AD
 
-#### AD windows authentication
+### AD windows authentication
 
 AD is now compatible to support window authentication. AD root has a file named `auth.aspx` which will fetch the windows user identity name and route to the AD login page.
 

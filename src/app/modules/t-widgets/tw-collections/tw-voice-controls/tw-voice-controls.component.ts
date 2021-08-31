@@ -822,6 +822,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     CallHoldEvent(evt: CallHoldEvent): void {
         // set the status
         this.status = 'hold';
+
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'hold'
@@ -859,6 +860,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'init',
             type: 'transfer'
         };
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
+            otherData: {
+                tempCallRef: this.tempCallRef
+            }
+        });
 
         // [MS: Jun 24, '21] commenting since we are calling transferBlind now
         // // for blind transfer to agent
@@ -913,6 +921,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'init',
             type: 'conference'
         };
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
+            otherData: {
+                tempCallRef: this.tempCallRef
+            }
+        });
     }
 
     /**
@@ -1168,7 +1183,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // check if language is provided
         if (evt.Language) {
             // check for english
-            if (['1', 'e'].includes(evt.Language.toLowerCase())) {
+            if (['1', 'e'].includes(evt.Language.toLowerCase().trim())) {
                 this.language = 'English';
             } else {
                 this.language = 'Mandarin';
@@ -1760,12 +1775,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      *
      * @param {String} type
      */
-    async transferToIVR(type: string): Promise<void> {
+    async transferToIVR(value: string): Promise<void> {
         try {
             const { response } = await SDKClient.transferToIVR({
                 interactionId: this.interaction.InteractionID.toString(),
                 languageId: this.language,
-                type
+                type: value
             });
 
             // check the response
