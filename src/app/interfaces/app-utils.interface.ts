@@ -519,6 +519,39 @@ export interface AgentSkillListData {
         columns?: string[];
     };
     /**
+     * speed dial settings
+     */
+    speedDial?: {
+        /**
+         * Agent allowed flag
+         */
+        allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        comments: boolean;
+        /**
+         * Blind allowed flag
+         */
+        blind: boolean;
+        /**
+         * Source to select
+         */
+        source: AgentSkillListSourceObject<'Name' | 'Number', 'Name' | 'Number'>;
+        /**
+         * Allowed Columns
+         */
+        columns?: string[];
+        /**
+         * To filter agent list based on team visibility
+         */
+        teamFilter?: boolean;
+    };
+    /**
      * Interaction Id
      */
     interactionId?: number;
@@ -706,9 +739,47 @@ export interface AgentSkillRef {
          */
         Source: AgentSkillListSourceObject;
         /**
+         * Team filter enabled flag
+         */
+        TeamFilter: boolean;
+        /**
          * Channel prefix to filter
          */
         ChannelPrefix: [];
+        /**
+         * Columns to show
+         */
+        Columns: [];
+    };
+
+    /**
+     * Skill ref
+     */
+    SpeedDial: {
+        /**
+         * Agent allowed flag
+         */
+        Allowed: boolean;
+        /**
+         * Consult allowed flag
+         */
+        Consult: boolean;
+        /**
+         * Comments allowed flag
+         */
+        Comments: boolean;
+        /**
+         * Blind allowed flag
+         */
+        Blind: boolean;
+        /**
+         * Source for skill actions
+         */
+        Source: AgentSkillListSourceObject;
+        /**
+         * Team filter enabled flag
+         */
+        TeamFilter: boolean;
         /**
          * Columns to show
          */

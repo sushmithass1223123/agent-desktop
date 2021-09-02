@@ -829,7 +829,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case 'clientreloaded':
                     this.callWidget?.destroy();
                     this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
-                    break;
+                    return;
                 default:
                     console.log('Unknown App Message');
             }
@@ -1245,6 +1245,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
         widget.Data.SessionID = this.sessionID;
         widget.Data.CallType = param;
+        widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
 
         // open call widget
         this._aotWidgetService.addWidget(widget);

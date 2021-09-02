@@ -104,21 +104,23 @@
         </div>
     </div>
 
-    <div class="twd-flex twd-justify-end twd-gap-2">
-        <button mat-raised-button mat-icon-button color="primary" class="mx-4" matTooltip="Attach file" (click)="attachFileRef.click()">
-            <mat-icon>attach_file</mat-icon>
-            <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
-        </button>
-        <email-template-selector (selectTemplate)="selectTemplate($event)"></email-template-selector>
+    <div class="twd-flex twd-justify-between twd-px-2 twd-pb-2">
+        <div>
+            <email-template-selector (selectTemplate)="selectTemplate($event)"></email-template-selector>
+            <button mat-raised-button mat-icon-button color="primary" class="mx-4" matTooltip="Attach file" (click)="attachFileRef.click()">
+                <mat-icon>attach_file</mat-icon>
+                <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
+            </button>
+        </div>
         <button
             mat-raised-button
-            mat-icon-button
             color="primary"
-            class="mx-4"
+            class="mx-4 border-radius-20"
             matTooltip="Send Email"
             [disabled]="sendDisabled"
             (click)="triggerEmailSend()"
         >
+            <span class="twd-pr-2"> Send </span>
             <mat-icon>send</mat-icon>
         </button>
     </div>

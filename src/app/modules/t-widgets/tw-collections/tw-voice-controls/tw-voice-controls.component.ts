@@ -1185,8 +1185,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // check for english
             if (['1', 'e'].includes(evt.Language.toLowerCase().trim())) {
                 this.language = 'English';
-            } else {
-                this.language = 'Mandarin';
             }
         }
 
@@ -1511,12 +1509,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     openTransferConferenceDialog(type: string): void {
         const transferConfig = {
             agent: this.widgetData.Transfer?.Agent ?? null,
-            skill: this.widgetData.Transfer?.Skill ?? null
+            skill: this.widgetData.Transfer?.Skill ?? null,
+            speedDial: this.widgetData.Transfer?.SpeedDial ?? null
         };
 
         const conferenceConfig = {
             agent: this.widgetData.Conference?.Agent ?? null,
-            skill: this.widgetData.Conference?.Skill ?? null
+            skill: this.widgetData.Conference?.Skill ?? null,
+            speedDial: this.widgetData.Conference?.SpeedDial ?? null
         };
 
         // get data based on type
@@ -1526,46 +1526,64 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                       title: 'Transfer Call',
                       type: 'transferCall',
                       agent: {
-                          allowed: transferConfig?.agent?.Allowed,
-                          consult: transferConfig?.agent?.Consult,
-                          blind: transferConfig?.agent?.Blind,
-                          comments: transferConfig?.agent?.Comments,
-                          source: transferConfig?.agent?.Source,
-                          allowedStates: transferConfig?.agent?.AllowedStates,
-                          columns: transferConfig?.agent?.Columns,
-                          teamFilter: transferConfig?.agent?.TeamFilter
+                          allowed: transferConfig.agent?.Allowed,
+                          consult: transferConfig.agent?.Consult,
+                          blind: transferConfig.agent?.Blind,
+                          comments: transferConfig.agent?.Comments,
+                          source: transferConfig.agent?.Source,
+                          allowedStates: transferConfig.agent?.AllowedStates,
+                          columns: transferConfig.agent?.Columns,
+                          teamFilter: transferConfig.agent?.TeamFilter
                       },
                       skill: {
-                          allowed: transferConfig?.skill?.Allowed,
-                          consult: transferConfig?.skill?.Consult,
-                          blind: transferConfig?.skill?.Blind,
-                          comments: transferConfig?.skill?.Comments,
-                          source: transferConfig?.skill?.Source,
-                          channelPrfix: transferConfig?.skill?.ChannelPrefix,
-                          columns: transferConfig?.skill?.Columns
+                          allowed: transferConfig.skill?.Allowed,
+                          consult: transferConfig.skill?.Consult,
+                          blind: transferConfig.skill?.Blind,
+                          comments: transferConfig.skill?.Comments,
+                          source: transferConfig.skill?.Source,
+                          channelPrfix: transferConfig.skill?.ChannelPrefix,
+                          columns: transferConfig.skill?.Columns
+                      },
+                      speedDial: {
+                          allowed: transferConfig.speedDial?.Allowed,
+                          consult: transferConfig.speedDial?.Consult,
+                          blind: transferConfig.speedDial?.Blind,
+                          comments: transferConfig.speedDial?.Comments,
+                          source: transferConfig.speedDial?.Source,
+                          columns: transferConfig.speedDial?.Columns,
+                          teamFilter: transferConfig.speedDial?.TeamFilter
                       }
                   }
                 : {
                       title: 'Conference Call',
                       type: 'conferenceCall',
                       agent: {
-                          allowed: conferenceConfig?.agent?.Allowed,
-                          consult: conferenceConfig?.agent?.Consult,
-                          blind: conferenceConfig?.agent?.Blind,
-                          comments: conferenceConfig?.agent?.Comments,
-                          source: conferenceConfig?.agent?.Source,
-                          allowedStates: conferenceConfig?.agent?.AllowedStates,
-                          columns: conferenceConfig?.agent?.Columns,
-                          teamFilter: conferenceConfig?.agent?.TeamFilter
+                          allowed: conferenceConfig.agent?.Allowed,
+                          consult: conferenceConfig.agent?.Consult,
+                          blind: conferenceConfig.agent?.Blind,
+                          comments: conferenceConfig.agent?.Comments,
+                          source: conferenceConfig.agent?.Source,
+                          allowedStates: conferenceConfig.agent?.AllowedStates,
+                          columns: conferenceConfig.agent?.Columns,
+                          teamFilter: conferenceConfig.agent?.TeamFilter
                       },
                       skill: {
-                          allowed: conferenceConfig?.skill?.Allowed,
-                          consult: conferenceConfig?.skill?.Consult,
-                          blind: conferenceConfig?.skill?.Blind,
-                          comments: conferenceConfig?.skill?.Comments,
-                          source: conferenceConfig?.skill?.Source,
-                          channelPrfix: conferenceConfig?.skill?.ChannelPrefix,
-                          columns: conferenceConfig?.skill?.Columns
+                          allowed: conferenceConfig.skill?.Allowed,
+                          consult: conferenceConfig.skill?.Consult,
+                          blind: conferenceConfig.skill?.Blind,
+                          comments: conferenceConfig.skill?.Comments,
+                          source: conferenceConfig.skill?.Source,
+                          channelPrfix: conferenceConfig.skill?.ChannelPrefix,
+                          columns: conferenceConfig.skill?.Columns
+                      },
+                      speedDial: {
+                          allowed: conferenceConfig.speedDial?.Allowed,
+                          consult: conferenceConfig.speedDial?.Consult,
+                          blind: conferenceConfig.speedDial?.Blind,
+                          comments: conferenceConfig.speedDial?.Comments,
+                          source: conferenceConfig.speedDial?.Source,
+                          columns: conferenceConfig.speedDial?.Columns,
+                          teamFilter: conferenceConfig.speedDial?.TeamFilter
                       }
                   };
 

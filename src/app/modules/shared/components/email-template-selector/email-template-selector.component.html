@@ -3,13 +3,13 @@
     <mat-icon>description</mat-icon>
 </button>
 
-<mat-menu #departmentMenu="matMenu">
+<mat-menu yPosition="above" #departmentMenu="matMenu">
     <ng-template matMenuContent>
         <ng-container *ngFor="let dept of availableTemplates.departments | keyvalue">
             <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
                 {{ dept.value.Name }}
             </button>
-            <mat-menu #groupMenu="matMenu">
+            <mat-menu yPosition="above" #groupMenu="matMenu">
                 <ng-template matMenuContent>
                     <ng-container *ngIf="dept.value.groups">
                         <button
@@ -19,7 +19,7 @@
                             (menuOpened)="setTemplates(dept.value.ID, group.key)"
                         >
                             {{ group.value.Name }}
-                            <mat-menu #templateMenu="matMenu">
+                            <mat-menu yPosition="above" #templateMenu="matMenu">
                                 <ng-template matMenuContent>
                                     <ng-container *ngIf="group.value.templates">
                                         <button

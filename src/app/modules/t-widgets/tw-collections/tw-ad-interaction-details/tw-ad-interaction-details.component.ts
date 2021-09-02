@@ -160,7 +160,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                 truncate: true,
                 tooltip: true
             },
-            Intent: {},
+            Intent: {
+                searchable : true
+            },
             ActiveTime: {
                 value: (el: any) => el.ActiveTime
             }

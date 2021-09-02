@@ -65,18 +65,6 @@
                         >
                             Close
                         </button>
-                        <button
-                            *ngIf="replyInfo"
-                            mat-raised-button
-                            class="border-radius-20"
-                            color="primary"
-                            #sendEmailBtn
-                            (click)="sendEmailAsMaker(null, sendEmailBtn)"
-                            matTooltip="Send Email"
-                            [disabled]="sendingEmailAsMaker"
-                        >
-                            Send
-                        </button>
                     </ng-container>
 
                     <ng-container *ngIf="currentInteraction.EventName === 'IncomingEmailEvent'">
@@ -129,19 +117,6 @@
                             >
                                 Cancel
                             </button>
-
-                            <button
-                                *ngIf="replyInfo"
-                                mat-raised-button
-                                class="border-radius-20"
-                                color="primary"
-                                (click)="sendEmailAsMaker(null, sendEmailBtn)"
-                                matTooltip="Send Email"
-                                #sendEmailBtn
-                                [disabled]="sendingEmailAsMaker"
-                            >
-                                Send
-                            </button>
                         </ng-container>
                     </ng-container>
                 </div>
@@ -174,7 +149,9 @@
                                         <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
                                     </div>
                                     <span class="twd-px-2"> | </span>
-                                    <span class="text-bold" matTooltip="Skill">{{ currentInteraction.SkillName || currentInteraction.Skill || 'NA' }}</span>
+                                    <span class="text-bold" matTooltip="Skill">{{
+                                        currentInteraction.SkillName || currentInteraction.Skill || 'NA'
+                                    }}</span>
                                 </div>
 
                                 <div class="twd-flex twd-items-center twd-truncate" matTooltip="Route Type">
@@ -193,22 +170,23 @@
                                     </span>
                                 </div>
 
-                                <div *ngIf="sentiment && sentiment !== 'NA'" class="twd-flex twd-items-center" matTooltip="Sentiment">
-                                    <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                                    <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                                    <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                                </div>
+                                <div class="twd-flex twd-items-center" matTooltip="Priority">{{ currentInteraction.Priority || 'NA' }}</div>
                             </div>
 
                             <div class="twd-flex twd-justify-between">
                                 <div class="twd-flex twd-items-center">
-                                    <p class="my-4 twd-truncate">
+                                    <span class="my-4 twd-truncate">
                                         {{ currentInteraction.AgentName }} ({{
                                             SentReasons.concat(DraftReasons).includes(currentInteraction.RouteReason)
                                                 ? currentInteraction.To
                                                 : currentInteraction.From
                                         }})
-                                    </p>
+                                    </span>
+                                    <span *ngIf="sentiment && sentiment !== 'NA'" class="twd-flex twd-items-center twd-ml-4" matTooltip="Sentiment">
+                                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                                    </span>
                                 </div>
 
                                 <div class="twd-flex twd-items-end twd-flex-col">
