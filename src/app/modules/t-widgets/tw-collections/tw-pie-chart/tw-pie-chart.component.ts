@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { TMACEventService } from '@services/tmac-event.service';
-import { SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
+import { WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
-import { intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { orderBy, sortBy } from 'lodash';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -210,10 +210,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
+                const hours = duration.hours + duration.days * 24;
                 labels.push(
-                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
-                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
-                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                    `${c.State} - [${hours < 10 ? '0' : hours}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
+                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
+                    }]`
                 );
             });
 
@@ -233,10 +234,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
+                const hours = duration.hours + duration.days * 24;
                 labels.push(
-                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
-                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
-                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                    `${c.State} - [${hours < 10 ? '0' : hours}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
+                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
+                    }]`
                 );
             });
 

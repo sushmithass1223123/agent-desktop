@@ -3,8 +3,9 @@
         <ng-container *ngIf="customFuse$ | async as customFuse">
             <ng-container
                 *ngIf="
-                    freeTextConf[activeSwitcher] || {
-                        allowed: !!data?.agent?.source?.FreeTextAllowed,
+                    freeTextConf[activeSwitcher] ??
+                    {
+                        allowed: false,
                         enabled: false,
                         value: ''
                     } as currentFreeTextConf
@@ -93,7 +94,7 @@
                                 (click)="executeAction(false)"
                             >
                                 <!-- <mat-icon *ngIf="!loading">double_arrow</mat-icon> -->
-                                <span *ngIf="!loading" class="twd-font-extrabold">BT</span>
+                                <span *ngIf="!loading" class="twd-font-extrabold"> {{ data?.type.includes('transfer') ? 'BT' : 'BC' }}</span>
                                 <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                             </button>
                         </div>
@@ -362,6 +363,65 @@
                                             No Data Available
                                         </p>
                                         <p *ngIf="loading && skillListTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                            Loading Data, Please Wait...
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div [hidden]="activeSwitcher !== 'speedDialList'">
+                                    <!-- Search form field with form control searchKey -->
+                                    <div class="ml-8 twd-w-full">
+                                        <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                            <input matInput [formControl]="searchKey" #skillSearchRef placeholder="Search" />
+                                            <button
+                                                *ngIf="skillSearchRef.value"
+                                                mat-button
+                                                color="primary"
+                                                matSuffix
+                                                mat-icon-button
+                                                aria-label="Clear"
+                                                (click)="searchKey.setValue('')"
+                                            >
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="w-100-p h-100-p">
+                                        <mat-table
+                                            class="h-100-p"
+                                            matSort
+                                            matSortDisableClear
+                                            [dataSource]="speedDialTable.tableData.source"
+                                            matSortActive="Name"
+                                            matSortDirection="asc"
+                                        >
+                                            <ng-container *ngFor="let col of speedDialTable.tableData.columns">
+                                                <ng-container [matColumnDef]="col">
+                                                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                                        <span> {{ col }} </span>
+                                                    </mat-header-cell>
+                                                    <mat-cell *matCellDef="let row">
+                                                        <div class="twd-w-full twd-flex" [ngClass]="{ 'twd-justify-center': col !== 'Name' }">
+                                                            <div class="text-truncate" [matTooltip]="row[col]">
+                                                                {{ row[col] || 'NA' }}
+                                                            </div>
+                                                        </div>
+                                                    </mat-cell>
+                                                </ng-container>
+                                            </ng-container>
+                                            <mat-header-row *matHeaderRowDef="speedDialTable.tableData.columns; sticky: true"> </mat-header-row>
+                                            <mat-row
+                                                *matRowDef="let row; columns: speedDialTable.tableData.columns"
+                                                (click)="selectSpeedDialContact(row)"
+                                                class="selectable"
+                                                [ngClass]="{ selected: !!speedDialTable.tableData.selection.isSelected(row) }"
+                                            >
+                                            </mat-row>
+                                        </mat-table>
+                                        <p *ngIf="!loading && speedDialTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
+                                            No Data Available
+                                        </p>
+                                        <p *ngIf="loading && speedDialTable.tableData.source.data.length === 0" class="text-center m-0 mat-title">
                                             Loading Data, Please Wait...
                                         </p>
                                     </div>

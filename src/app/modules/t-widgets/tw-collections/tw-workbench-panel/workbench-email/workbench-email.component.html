@@ -386,7 +386,7 @@
                                 mat-raised-button
                                 color="accent"
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                *ngIf="currentTab !== 'sentitem' && currentTab !== 'queue'"
+                                *ngIf="deleteAllowed && currentTab !== 'sentitem' && currentTab !== 'queue'"
                                 (click)="deleteEmails(getSelectedEmails())"
                             >
                                 Delete Emails
@@ -448,7 +448,7 @@
                         <button
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            *ngIf="currentTab !== 'sentitem'"
+                            *ngIf="deleteAllowed && currentTab !== 'sentitem'"
                             (click)="deleteEmails([selectedEmail])"
                         >
                             Delete
@@ -500,7 +500,7 @@
                                         </p>
 
                                         <p class="my-4 text-bold">Priority: {{ selectedEmail.Priority || 'NA' }}</p>
-                                        <p class="my-4 text-bold">
+                                        <p class="my-4 text-bold" *ngIf="['inbox','queue'].includes(currentTab)" >
                                             Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
                                         </p>
                                         <p *ngIf="selectedEmail.Intent" class="my-4 text-bold">Intent: {{ selectedEmail.Intent }}</p>

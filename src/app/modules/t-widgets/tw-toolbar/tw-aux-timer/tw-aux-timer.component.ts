@@ -14,7 +14,6 @@ import { takeUntil } from 'rxjs/operators';
     encapsulation: ViewEncapsulation.None
 })
 export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * App config json data
      */
@@ -35,24 +34,34 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
      * Minutes 1
      */
     minutes1 = '0';
-    
+
     /**
      * Need more description
      * Minutes 2
      */
     minutes2 = '0';
-    
+
     /**
      * Need more description
      * Minutes 3
      */
     seconds1 = '0';
-    
+
     /**
      * Need more description
      * Minutes 4
      */
     seconds2 = '0';
+
+    /**
+     * Hours first digit
+     */
+    hours1 = '0';
+
+    /**
+     * Hours second digit
+     */
+    hours2 = '0';
 
     constructor() {
         super();
@@ -65,7 +74,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        
+
         this.initTimer();
 
         // listen to agent status change
@@ -86,7 +95,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
 
     /**
      * Triggered when agent changes status
-     * @param {AgentStatusChangeEvent} evt 
+     * @param {AgentStatusChangeEvent} evt
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         if (!evt.Status.includes('On Call') || !this.lastStatus.includes('On Call')) {
@@ -95,7 +104,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
         }
         // update last status
         this.lastStatus = evt.Status;
-    }
+    };
 
     /**
      * Initialize timer for agent
@@ -105,11 +114,14 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
         // subscribe to the timer
         this.timerSub = timer(1000, 1000)
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe(val => {
+            .subscribe((val) => {
                 const totalSeconds = val + 1;
-                // const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor(totalSeconds % 3600 / 60);
-                const seconds = Math.floor(totalSeconds % 3600 % 60);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = Math.floor((totalSeconds % 3600) % 60);
+
+                this.hours1 = (hours > 9 ? hours.toString().substr(0, 1) : '0').toString();
+                this.hours2 = (hours > 9 ? hours.toString().substr(1, 2) : hours).toString();
 
                 this.minutes1 = (minutes > 9 ? minutes.toString().substr(0, 1) : '0').toString();
                 this.minutes2 = (minutes > 9 ? minutes.toString().substr(1, 2) : minutes).toString();

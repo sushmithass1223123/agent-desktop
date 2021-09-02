@@ -7,16 +7,17 @@ import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { getStringVars } from '@tmac/operators';
 import setStringVars from '@tmac/operators/setStringVars';
-import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient } from '@tmac/sdk';
+import { AgentModel, CommandResultEvent, FavouriteSkill, IResponse, IResponseData, QueueStatusEvent, SDKClient, SpeedDialModel } from '@tmac/sdk';
 import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
-import { ADError, formatJsonData, throwADError } from 'app/utils';
+import { formatJsonData } from 'app/utils';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 
-type Tabs = 'agentList' | 'skillList' | 'dynamicList';
+type Tabs = 'agentList' | 'skillList' | 'dynamicList' | 'speedDialList';
 type AgentType = Partial<AgentModel>;
 type SkillType = Partial<FavouriteSkill>;
 type FreeTextConf = {
@@ -67,18 +68,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Grid list switcher
      */
-    switcherList = [
-        {
-            key: 'agentList',
-            label: 'Agent List',
-            placeholder: 'Agent'
-        },
-        {
-            key: 'skillList',
-            label: 'Skill List',
-            placeholder: 'Skill/VDN'
-        }
-    ];
+    switcherList = [];
     /**
      * Label for text field
      */
@@ -141,6 +131,33 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
              * Selection model
              */
             selection: SelectionModel<SkillType>;
+        };
+    };
+
+    /**
+     * Skill list table ref
+     */
+    speedDialTable: {
+        /**
+         * List of all favourite skills
+         */
+        speedDials: SpeedDialModel[];
+        /**
+         *  Mat table data
+         */
+        tableData: {
+            /**
+             * Data source
+             */
+            source: MatTableDataSource<SpeedDialModel>;
+            /**
+             * Table columns
+             */
+            columns: string[];
+            /**
+             * Selection model
+             */
+            selection: SelectionModel<SpeedDialModel>;
         };
     };
     /**
@@ -257,7 +274,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     /**
      * Free text agent Key
      */
-    freeTextConf: Record<string, FreeTextConf>;
+    freeTextConf: Record<Tabs, FreeTextConf>;
 
     /**
      * Constructor
@@ -281,6 +298,15 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             skillList: [],
             tableData: {
                 columns: ['Name', 'VDN', 'ID', 'Stf', 'Avl', 'CIQ'],
+                selection: new SelectionModel<any>(false, []),
+                source: new MatTableDataSource([])
+            }
+        };
+
+        this.speedDialTable = {
+            speedDials: [],
+            tableData: {
+                columns: ['Name', 'Number'],
                 selection: new SelectionModel<any>(false, []),
                 source: new MatTableDataSource([])
             }
@@ -323,13 +349,37 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         this.title = this.data?.title || 'Agent Skill List';
-        this.activeSwitcher = this.data?.agent.allowed ? 'agentList' : this.data?.skill.allowed ? 'skillList' : null;
-        this.showSwitcher = this.data?.agent.allowed && this.data?.skill.allowed;
+        if (this.data.agent.allowed) {
+            this.switcherList.push({
+                key: 'agentList',
+                label: 'Agent List',
+                placeholder: 'Agent'
+            });
+        }
+        if (this.data.skill.allowed) {
+            this.switcherList.push({
+                key: 'skillList',
+                label: 'Skill List',
+                placeholder: 'Skill/VDN'
+            });
+        }
+
+        if (this.data.speedDial?.allowed) {
+            this.switcherList.push({
+                key: 'speedDialList',
+                label: 'Speed Dial',
+                placeholder: 'Number'
+            });
+        }
+        this.activeSwitcher = this.switcherList[0].key;
+        // this.switcherList
+        this.showSwitcher = this.switcherList.length > 1;
         this.interactionId = this.data?.interactionId ?? 0;
 
         this.freeTextConf = {
             agentList: { allowed: !!(this.data?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
             skillList: { allowed: !!(this.data?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
+            speedDialList: { allowed: !!(this.data?.speedDial?.source as AgentSkillListSourceObject)?.FreeTextAllowed, enabled: false, value: '' },
             dynamicList: { allowed: false, enabled: false, value: '' }
         };
 
@@ -383,17 +433,7 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 break;
         }
 
-        if (this.activeSwitcher === 'agentList') {
-            this.placeholder = this.switcherList[0].placeholder;
-        } else if (this.activeSwitcher === 'skillList') {
-            this.placeholder = this.switcherList[1].placeholder;
-        } else if (this.activeSwitcher === 'dynamicList') {
-            this.placeholder = this.data.otherData.dynamicList.placeholder;
-        }
-
-        // this._fuseConfigService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
-        //     this.fuseConfig = config;
-        // });
+        this.placeholder = this.switcherList.find((s) => s.key === this.activeSwitcher).placeholder;
 
         // get wallboard skills
         SDKClient.getTmacWallboardSkills().then((dt) => {
@@ -412,6 +452,10 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
             this.loadSkillList();
         }
 
+        if (this.data?.speedDial?.allowed) {
+            this.loadSpeedDial();
+        }
+
         // check for actions
         this.checkForActions();
 
@@ -427,6 +471,9 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         }
         if (this.data.skill.columns && this.data.skill.columns.length) {
             this.skillListTable.tableData.columns = this.data.skill.columns;
+        }
+        if (this.data.speedDial?.columns && this.data.speedDial.columns.length) {
+            this.speedDialTable.tableData.columns = this.data.speedDial.columns;
         }
     }
 
@@ -469,6 +516,17 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                         );
                     } else {
                         this.skillListTable.tableData.source.data = this.skillListTable.skillList;
+                    }
+                } else if (this.activeSwitcher === 'speedDialList') {
+                    // check if key not empty to apply the filter
+                    if (key) {
+                        // for skill only apply searchkey filter
+                        this.speedDialTable.tableData.source.data = this.speedDialTable.speedDials.filter((x) =>
+                            // stringify and lowercase for .includes string search
+                            JSON.stringify(x).toLowerCase().includes(key.toLowerCase())
+                        );
+                    } else {
+                        this.speedDialTable.tableData.source.data = this.speedDialTable.speedDials;
                     }
                 } else if (this.activeSwitcher === 'dynamicList') {
                     // check if key not empty to apply the filter
@@ -914,12 +972,23 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
         this.selectedItem = '';
         this.clearDisplayValues();
         // clear grid selection if any
-        if (this.activeSwitcher === 'dynamicList') {
-            this.dynamicListTable.tableData.selection.clear();
-        } else if (this.activeSwitcher === 'agentList') {
-            this.agentListTable.tableData.selection.clear();
-        } else {
-            this.skillListTable.tableData.selection.clear();
+        switch (this.activeSwitcher) {
+            case 'dynamicList': {
+                this.dynamicListTable.tableData.selection.clear();
+                break;
+            }
+            case 'agentList': {
+                this.agentListTable.tableData.selection.clear();
+                break;
+            }
+            case 'skillList': {
+                this.skillListTable.tableData.selection.clear();
+                break;
+            }
+            case 'speedDialList': {
+                this.speedDialTable.tableData.selection.clear();
+                break;
+            }
         }
     }
 
@@ -1063,6 +1132,22 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Load speed dial table
+     */
+    loadSpeedDial(): void {
+        SDKClient.getSpeedDialNumbers(this.data?.speedDial?.teamFilter)
+            .then((res) => {
+                this.speedDialTable.tableData.source.data = res.response;
+                this.speedDialTable.speedDials = res.response;
+                this.speedDialTable.tableData.source.sort = this.sort;
+            })
+            .catch((e) => {
+                console.error(e);
+                this._appUIService.showSnackbar('Error in loading speed dial', 'failure');
+            });
+    }
+
+    /**
      * To process agent selected from list
      */
     selectAgent(row: AgentModel): void {
@@ -1132,6 +1217,34 @@ export class AgentSkillListComponent implements OnInit, OnDestroy {
                 row.CurrentAgentStatus = currentStatus;
                 this.loading = false;
             });
+    }
+
+    /**
+     * Selects speed dial contact
+     * @param {SpeedDialModel} row
+     */
+    selectSpeedDialContact(row: SpeedDialModel): void {
+        const freeTextConf = this.freeTextConf[this.activeSwitcher];
+        this.clearSelected();
+        freeTextConf.enabled = false;
+        // select the row in grid
+        this.speedDialTable.tableData.selection.select(row);
+        const source = this.data?.speedDial.source || 'Name';
+        if (typeof source === 'object') {
+            // assign the selected item
+            this.selectedItem = source.Use === 'Number' ? row.Number : row.Name;
+            if (getStringVars(source.Display)) {
+                this.selectedItemDisplayName = setStringVars(source.Display, row);
+            } else {
+                this.selectedItemDisplayName = row[source.Display];
+            }
+        } else {
+            // assign the selected item
+            this.selectedItem = source === 'Name' ? row.Name : row.Number;
+            this.selectedItemDisplayName = this.selectedItem;
+        }
+        // assign the selected row
+        this.selectedRow = { type: 'speedDial', row };
     }
 
     /**

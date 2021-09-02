@@ -234,6 +234,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     intersectionObserver: IntersectionObserver;
 
     /**
+     * Flag for delete button
+     */
+    deleteAllowed = false;
+
+    /**
      * Constructor
      */
     constructor(
@@ -259,6 +264,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async ngOnInit(): Promise<void> {
         await this.setAvailableMailboxes();
         const { agentProfile } = SDKClient.getAgentData();
+        this.deleteAllowed = this.channelConf.Config.DeleteAllowed && agentProfile === 'S';
         this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : agentProfile === 'S';
         this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
         this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
