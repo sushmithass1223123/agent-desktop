@@ -1,5 +1,205 @@
 # Agent Desktop
 
+## [5.0.8.30](https://git.tetherfi.com:1443/releasenotes/agent-desktop/blob/master/5.0.8.30.md)
+
+## Changelog
+
+### Features
+
+-   **CustomerJourneyWidget:**
+    -   Support for "LastServicedAgentName" column added to the table. `LastServicedAgentName` column added as column option for the table, and will be displayed as `Serviced Agents` in UI [see more](#customer-journey-widget-data-config-changes)
+-   **EmailControlsWidget:**
+    -   Emails are now downloadable [see more](#email-control-widget-data-config-changes)
+    -   Skill name will be displayed instead of skill id
+    -   Email attachments size is limited to max 20MB
+    -   Added ability to show the priority of the email
+-   **AuxStatusWidget/AgentDetailsWidget:**
+    -   AUX/ACW status icons are now colored
+-   **AgentSkillComponent:**
+    -   Added ability to show **Speed Dial** list [see more](#agent-skill-list-component-config-changes)
+    -   Placeholder is changed
+-   **EmailWorkbenchWidget**
+    -   Delete email feature is now configurable and will be available for a supervisor only if enabled [see more](#email-workbench-widget-data-config-changes)
+-   **AuxTimerWidget**
+    -   Added ability to show hours
+-   **EmailTemplateSelector**
+    -   Template selector menu was not shown properly
+
+### Fixes
+
+-   **EmailControlsWidget:**
+    -   **To** and **From** value was exchanged in the email preview
+    -   RouteType was not shown
+    -   Editor was not loading sometimes when email pulled from the draft
+    -   Interaction comments were not displayed as expected
+    -   **SaveAsDraft** button was disabled when polling interval was not provided
+-   **CalendarWidget:**
+    -   **Change Status** task was not working as expected for PBX setup
+    -   Duplicate aux codes were displayed in the dropdown when creating a task for **Change Status**
+    -   Event and task reminders will have different colored dots on the calendar
+-   **ChatControlswidget:**
+    -   Dropdown for more action controls was not working
+-   **CustomerJourneyWidget:**
+    -   Large intent for an item was distorting the restored view
+    -   Intent was "NA" for outbox, and now Intent will be displayed only if it exists as per the latest EMM revision
+-   **InteractionDetailsWidget:**
+    -   Pagination failed when navigating from one tab to another
+-   **WallboardWidget:**
+    -   Alignment was not shown as expected when the widget is maximized
+-   **AgentSkillListComponent:**
+    -   On email transfer, when the selected agent has logged out or is not in a valid state, an appropriate error message is shown
+    -   Blind conference button was shown as **BT** instead of **BC**
+-   **TableComponent:**
+    -   Advanced search was not working as expected
+-   **CreateEmailComponent:**
+    -   Emails did not load tables properly
+-   **PieChartComponent:**
+    -   Data was not updating when the widget was maximized
+-   **EmailTemplateSelectorComponent:**
+    -   Loader added for template selection dropdown to indicate that network call is being made to fetch the templates
+    -   Skeleton loader was not removed when no longer loading
+    -   Template selector menu was not shown properly
+-   **SharedWrapper:**
+    -   Logger was giving the component name as "t"
+
+### Refactor
+
+-   **VoiceControlsWidget**
+    -   Default fallback language **Mandarin** for IVR transfer is removed
+
+### General
+
+-   **Angular:** Updated to version 12.2.1
+
+## Application Configuration Changes
+
+The application configuration (developement.json/login.json/default.json) has some changes. We have added/updated few configs for different widgets/sections.
+
+### Main section changes
+
+#### Customer Journey Widget Data config changes
+
+-   Added a new option `LastServicedAgentName` under **Columns** list property
+
+```json
+    "Data": {
+        "Columns": [
+            "LastServicedAgentName"
+        ]
+    }
+```
+
+#### Email Control Widget Data config changes
+
+-   Added a new config `DownloadAllowed` to allow/not allow the user to download the email
+
+```json
+    "Data": {
+        "DownloadAllowed": false
+    }
+```
+
+-   Config definitions:
+    -   **DownloadAllowed** - [NEW] Accepts boolean value true or false, default is false
+
+#### Email Workbench Widget Data config changes
+
+-   Added a new config `DeleteAllowed` to allow/not allow user (supervisor) to delete the emails
+
+```json
+    "Data": {
+        "DeleteAllowed": false
+    }
+```
+
+-   Config definitions:
+    -   **DeleteAllowed** - [NEW] Accepts boolean value true or false, default is false
+
+#### Agent Skill List Component config changes
+
+-   Added ability to configure **Speed Dial** list for make call/transfer/conference
+-   Today **Speed Dial** list will be supported only for Make Call and Voice Transfer/Conference
+
+##### Create Interaction Widget Data config changes
+
+In Create Interaction Widget for **Make Call** section we used to support only **Agent** before. Now **Speed Dial** list can be configured as given below.
+
+```json
+    "Data": {
+        "Channels":[
+            {
+                "Name": "Make Call",
+                "Enabled": true,
+                "EnableState": "calloutbound",
+                "Type": "voice",
+                "SubType": "voice",
+                "Icon": "call",
+                "Data": {
+                    "Agent": {
+                        "Source": {
+                            "Use": "station",
+                            "Display": "${LastName}, ${FirstName}",
+                            "FreeTextAllowed": true
+                        },
+                        "AllowedStates": [],
+                        "TeamFilter": false,
+                        "Columns": []
+                    },
+                    "SpeedDial": {
+                        "Allowed": true,
+                        "Source": {
+                            "Use": "Number",
+                            "Display": "${Name} - ${Number}",
+                            "FreeTextAllowed": true
+
+                        "Columns": [],
+                        "TeamFilter": true
+                    }
+                }
+            },
+        ]
+    }
+```
+
+> **NOTE:** Previously we used to have only "Agent" section, so the **Data** section was having whatever inside the `Agent` section now. There is a change in JSON structure to support `Speed Dial`, However previous JSON structure is still supported and will have only the `Agent` section in **Make Call** popup
+
+##### Voice Control Widget Data config changes
+
+```json
+    "Data": {
+        "Transfer":{
+            "Agent": {},
+            "Skill": {},
+            "SpeedDial": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": false,
+                "Source": {
+                    "Use": "Number",
+                    "Display": "Number",
+                    "FreeTextAllowed": true
+                },
+                "Columns": []
+            },
+        }
+    }
+```
+
+-   Same section will be followed for **Conference** section as well
+-   Config definitions:
+    -   **Allowed:** Speed Dial list allowed flag, Accepts boolean value true or false
+    -   **Consult:** Consult Transfer/Conference allowed flag [Applicable only for Transfer and Conference], Accepts boolean value true or false
+    -   **Blind:** Blind Transfer/Conference allowed flag [Applicable only for Transfer and Conference], Accepts boolean value true or false
+    -   **Comments:** Comments allowed for Transfer/Conference [Applicable only for Transfer and Conference], Accepts boolean value true or false
+    -   **Use:** Property to use to take action. Since Speed Dial list has only "Number" only number will be used when selected from the grid
+    -   **Display:** Display in textbox when selected from the grid, this can be changed however the user wants
+    -   **FreeTextAllowed:** Free text allowed flag, Accepts boolean value true or false
+    -   **Columns:** Columns to show, If empty all the columns will be showed. "Name" | "Number" are the expected values
+    -   **TeamFilter:** Team filter flag, If true the Speed Dial List will be loaded for the user's team only which is configured in OCM, Accepts boolean value true or false
+
+> **NOTE:** We have moved the additional information and other sections to [README](https://git.tetherfi.com:1443/releasenotes/agent-desktop/blob/master/README.md).
+
 ## [5.0.7.30](https://git.tetherfi.com:1443/releasenotes/agent-desktop/blob/master/5.0.7.30.md)
 
 ## Changelog
