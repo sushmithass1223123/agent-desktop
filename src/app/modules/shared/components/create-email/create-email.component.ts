@@ -6,9 +6,11 @@ import {
     EventEmitter,
     Inject,
     Input,
+    OnChanges,
     OnDestroy,
     OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
@@ -32,7 +34,7 @@ import { default as tinymce, default as tinyMCE, Editor } from 'tinymce';
     styleUrls: ['./create-email.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
     /**
      * Send email event emitter
      */
@@ -143,6 +145,11 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     intersectionObserver: IntersectionObserver;
 
+    /**
+     * Maximum file size default 20mbs
+     */
+    maxFileSize = 20971520;
+
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**
@@ -150,18 +157,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     ngOnInit(): void {
         this.replyTag = this.emailInfo?.Replying ? (this.emailInfo.Subject ? (this.emailInfo.Subject.startsWith('RE:') ? '' : 'RE:') : '') : '';
-        if (this.emailInfo?.To) {
-            this.email.To = this.emailInfo?.To.split(',').filter((x) => !!x);
-        }
-        if (this.emailInfo?.CC) {
-            this.email.CC = this.emailInfo?.CC.split(',').filter((x) => !!x);
-        }
-        if (this.emailInfo?.BCC) {
-            this.email.BCC = this.emailInfo?.BCC.split(',').filter((x) => !!x);
-        }
-        this.email.Subject = this.emailInfo?.Subject || '';
-        this.email.Body = this.emailInfo?.Body || '';
-        this.email.Files = this.emailInfo?.Files || [];
+        this.setEmailDetails(this.emailInfo);
         const emailRegex =
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         this.addUserSuggestions();
@@ -191,6 +187,22 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * Lifecycle hook
+     * @param {SimpleChanges} changes
+     */
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.emailInfo) {
+            this.setEmailDetails(changes.emailInfo.currentValue);
+            const editor = this.getCurrentEditor();
+            if (editor) {
+                editor.setContent(this.emailInfo.Body);
+            } else {
+                console.error('Editor not loaded yet');
+            }
+        }
+    }
+
+    /**
+     * Lifecycle hook
      */
     ngAfterViewInit(): void {
         setTimeout(() => {
@@ -207,21 +219,21 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                     branding: false,
                     base_url: `${this.baseHref}assets/tinymce/`,
                     content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code wordcount'
-                    ],
-                    toolbar:
-                        'undo redo | formatselect | ' +
-                        'bold italic backcolor | alignleft aligncenter ' +
-                        'alignright alignjustify | bullist numlist outdent indent | ' +
-                        'removeformat',
+                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
+                    //     'advlist autolink lists link image charmap print preview anchor',
+                    //     'searchreplace visualblocks code fullscreen',
+                    //     'insertdatetime media table paste code wordcount'
+                    // ],
+                    toolbar: `
+                        undo redo | formatselect | table | 
+                        bold italic backcolor | alignleft aligncenter 
+                        alignright alignjustify | bullist numlist outdent indent |  
+                        removeformat
+                        `,
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
                         editor.on('init', () => {
                             this.editorState.loading = false;
-                            editor.setContent(this.email.Body || '');
                             fromEvent(editor, 'blur')
                                 .pipe(takeUntil(this.unsubscribeAll$))
                                 .subscribe({
@@ -229,32 +241,29 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
                                         this.email.Body = editor.getContent();
                                     }
                                 });
-                            // editor.on('blur', () => {
-                            //     this.email.Body = editor.getContent();
-                            // });
                         });
                     }
                 })
                 .then(() => {
-                    console.log('Email editor loaded succesfully');
+                    this.getCurrentEditor().setContent(this.emailInfo.Body);
                 })
                 .catch((err) => {
                     console.error('Unable to load editor');
                     console.error(err);
                 });
-        }, 0);
-        // create an intersection observer to start/stop polling when page is active/inactive
-        this.intersectionObserver = new IntersectionObserver((entries) => {
-            entries.map((entry) => {
-                if (entry.isIntersecting) {
-                    this.getCurrentEditor()?.show();
-                } else {
-                    this.getCurrentEditor()?.hide();
-                }
+            // create an intersection observer to start/stop polling when page is active/inactive
+            this.intersectionObserver = new IntersectionObserver((entries) => {
+                entries.map((entry) => {
+                    if (entry.isIntersecting) {
+                        this.getCurrentEditor()?.show();
+                    } else {
+                        this.getCurrentEditor()?.hide();
+                    }
+                });
             });
-        });
-        // observe the element
-        this.intersectionObserver.observe(this.createEmail.nativeElement);
+            // observe the element
+            this.intersectionObserver.observe(this.createEmail.nativeElement);
+        }, 0);
     }
 
     /**
@@ -267,6 +276,24 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         this.intersectionObserver?.disconnect();
         // tinyMCE.activeEditor.off('blur');
         // tinyMCE.activeEditor.destroy();
+    }
+
+    /**
+     * Formats user's emailInfo to this.email
+     */
+    setEmailDetails(emailInfo: CreateEmailInput): void {
+        if (emailInfo?.To) {
+            this.email.To = emailInfo?.To.split(',').filter((x) => !!x);
+        }
+        if (emailInfo?.CC) {
+            this.email.CC = emailInfo?.CC.split(',').filter((x) => !!x);
+        }
+        if (emailInfo?.BCC) {
+            this.email.BCC = emailInfo?.BCC.split(',').filter((x) => !!x);
+        }
+        this.email.Subject = emailInfo?.Subject || '';
+        this.email.Body = emailInfo?.Body || '';
+        this.email.Files = emailInfo?.Files || [];
     }
 
     /**
@@ -315,15 +342,20 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
-                const ref = this.appUiService.showSnackbar(`Uploading ${input.files[0].name || 'File'}`, 'loading');
+                const f = input.files[0];
+                if (f.size > this.maxFileSize) {
+                    this.appUiService.showSnackbar('File too large', 'failure');
+                    return;
+                }
+                const ref = this.appUiService.showSnackbar(`Uploading ${f.name || 'File'}`, 'loading');
                 // this.uploadingFiles = true;
-                // this.uploadingFiles.push(input.files[0].name);
-                const Base64 = await this.convertToBase64(input.files[0]);
+                // this.uploadingFiles.push(f.name);
+                const Base64 = await this.convertToBase64(f);
                 const { response } = await SDKClient.uploadFiles({
                     files: [
                         {
                             Base64,
-                            FileName: input.files[0].name,
+                            FileName: f.name,
                             RelativePath: '',
                             Status: 0,
                             Type: '',

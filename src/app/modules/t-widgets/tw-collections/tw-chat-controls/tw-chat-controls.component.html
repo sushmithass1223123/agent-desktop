@@ -310,10 +310,10 @@
 
                         <div class="fab-container" *ngIf="moreActions.length">
                             <button
-                                *ngIf="!asyncChatRef.isAsync"
                                 mat-icon-button
                                 [disabled]="status !== 'connected'"
-                                [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                                [class]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
+                                [ngClass]="{ 'twd-hidden': asyncChatRef.isAsync }"
                                 cdkOverlayOrigin
                                 #actionList="cdkOverlayOrigin"
                                 (click)="openMoreActions = !openMoreActions"

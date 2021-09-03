@@ -163,14 +163,26 @@
                                             "SubType": "voice",
                                             "Icon": "call",
                                             "Data": {
-                                                "Source": {
-                                                    "Use": "station",
-                                                    "Display": "${LastName}, ${FirstName}",
-                                                    "FreeTextAllowed": true
+                                                "Agent": {
+                                                    "Source": {
+                                                        "Use": "station",
+                                                        "Display": "${LastName}, ${FirstName}",
+                                                        "FreeTextAllowed": true
+                                                    },
+                                                    "AllowedStates": [],
+                                                    "TeamFilter": false,
+                                                    "Columns": []
                                                 },
-                                                "AllowedStates": [],
-                                                "TeamFilter": false,
-                                                "Columns": []
+                                                "SpeedDial": {
+                                                    "Allowed": true,
+                                                    "Source": {
+                                                        "Use": "Number",
+                                                        "Display": "${Name} - ${Number}",
+                                                        "FreeTextAllowed": true
+                                                    },
+                                                    "Columns": [],
+                                                    "TeamFilter": true
+                                                }
                                             }
                                         },
                                         {
@@ -1217,6 +1229,18 @@
                                                                 "VO"
                                                             ],
                                                             "Columns": []
+                                                        },
+                                                        "SpeedDial": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "Number",
+                                                                "Display": "Number",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "Conference": {
@@ -2073,7 +2097,7 @@
                                                         "Direction",
                                                         "InteractionText",
                                                         "Intent",
-                                                        "AgentName",
+                                                        "LastServicedAgentName",
                                                         "CIF",
                                                         "NRIC",
                                                         "PhoneNumber",
@@ -2161,6 +2185,68 @@
                                     "Description": "",
                                     "Key": "TexCannedResponses",
                                     "Type": "tw-canned-responses",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
+                                },
+                                {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
+                                },
+                                {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2487,6 +2573,7 @@
                                                             "Columns": []
                                                         }
                                                     },
+                                                    "DownloadAllowed": true,
                                                     "ForwardAllowed": true,
                                                     "ReplyAllAllowed": true,
                                                     "InteractionCommentAllowed": true,
@@ -3254,6 +3341,7 @@
                                                         }
                                                     },
                                                     "SearchPollingInterval": 10000,
+                                                    "DeleteAllowed": false,
                                                     "QueueTransferForAgent": false
                                                 }
                                             },
@@ -3765,7 +3853,8 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx"
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
+                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "type": "soap",
                 "timeout": 60

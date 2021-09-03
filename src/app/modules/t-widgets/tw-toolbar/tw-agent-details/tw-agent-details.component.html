@@ -21,7 +21,7 @@
                         ? 'border-sm-alt-danger'
                         : status.includes('acw')
                         ? 'border-sm-alt-warning'
-                        : 'border-sm-alt-info'
+                        : 'border-sm-alt-warning'
                 "
             />
             <span
@@ -33,7 +33,7 @@
                         ? 'bg-alt-danger'
                         : status.includes('acw')
                         ? 'bg-alt-warning'
-                        : 'bg-alt-info'
+                        : 'bg-alt-warning'
                 "
             ></span>
         </div>
@@ -98,7 +98,18 @@
                 (click)="changeStatus(item)"
                 disabled="{{ item.Name === agentData.agentStatus || item.Code === 'nodata' }}"
             >
-                <mat-icon class="{{ item.Code.toLowerCase() }}">
+                <mat-icon
+                    *ngIf="item.Code.toLowerCase() as status"
+                    [ngClass]="
+                        status.includes('available')
+                            ? 'text-alt-success'
+                            : status.includes('on call') || status.includes('logout')
+                            ? 'text-alt-danger'
+                            : status.includes('acw')
+                            ? 'text-alt-warning'
+                            : 'text-alt-warning'
+                    "
+                >
                     {{
                         (item.Code | lowercase) === 'available'
                             ? 'check_circle'

@@ -1,0 +1,29 @@
+.select-box {
+    border-radius: 20px;
+    background-color: rgb(0 0 0 / 0.1);
+    min-width: auto !important;
+    max-height: 44px;
+
+    .mat-form-field-wrapper {
+        .mat-form-field-flex {
+            padding: 0px 15px !important;
+
+            .mat-form-field-infix {
+                padding: 0px !important;
+                border: none;
+                margin-top: 12px;
+
+                .mat-form-field-label-wrapper {
+                    top: 0px !important;
+
+                    .mat-form-field-label {
+                        top: 0 !important;
+                    }
+                }
+            }
+        }
+    }
+    // .mat-form-field-underline {
+    //     display: none;
+    // }
+}

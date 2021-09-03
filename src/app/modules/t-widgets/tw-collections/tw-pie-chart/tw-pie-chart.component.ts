@@ -1,12 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { TMACEventService } from '@services/tmac-event.service';
-import { SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
+import { WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
-import { intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { orderBy, sortBy } from 'lodash';
+import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -68,6 +69,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * No data message
      */
     noDataMessage: string;
+
+    /**
+     * Subscription for maximize event of tw-wrapper
+     */
+    wrapperMaxSub$: Subscription;
 
     /**
      * Constructor
@@ -170,23 +176,25 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         }));
         allDataSets.labels = labels;
 
-        if (!this.wrapperComponent.maximized) {
-            this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
-            this.chart.labels = allDataSets.labels.slice(0, limit);
-        }
+        const callback = (maximized) => {
+            if (maximized) {
+                this.chart.datasets = allDataSets.datasets;
+                this.chart.labels = allDataSets.labels;
+            } else {
+                this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
+                this.chart.labels = allDataSets.labels.slice(0, limit);
+            }
+        };
 
-        this.wrapperComponent.maximizeEvent
+        callback(this.wrapperComponent.maximized);
+
+        if (this.wrapperMaxSub$) {
+            this.wrapperMaxSub$.unsubscribe();
+        }
+        this.wrapperMaxSub$ = this.wrapperComponent.maximizeEvent
             .asObservable()
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((maximized) => {
-                if (maximized) {
-                    this.chart.datasets = allDataSets.datasets;
-                    this.chart.labels = allDataSets.labels;
-                } else {
-                    this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
-                    this.chart.labels = allDataSets.labels.slice(0, limit);
-                }
-            });
+            .subscribe((maximized) => callback(maximized));
     }
 
     /**
@@ -202,10 +210,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
+                const hours = duration.hours + duration.days * 24;
                 labels.push(
-                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
-                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
-                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                    `${c.State} - [${hours < 10 ? '0' : hours}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
+                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
+                    }]`
                 );
             });
 
@@ -225,18 +234,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .forEach((c) => {
                 const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
                 datasets.Duration.push(c.Duration);
+                const hours = duration.hours + duration.days * 24;
                 labels.push(
-                    `${c.State} - [${duration.hours < 10 ? '0' + duration.hours : duration.hours}:${
-                        duration.minutes < 10 ? '0' + duration.minutes : duration.minutes
-                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`
+                    `${c.State} - [${hours < 10 ? '0' : hours}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
+                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
+                    }]`
                 );
             });
-
-        // this.chart.datasets = Object.keys(datasets).map((d) => ({
-        //     data: datasets[d],
-        //     label: d
-        // }));
-        // this.chart.labels = labels;
 
         this.showData(datasets, labels);
     }
@@ -258,14 +262,6 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 datasets['Calls In Queue'].push(c.CallsInQueue);
                 labels.push(c.SkillName);
             });
-
-        // this.chart.datasets = Object.keys(datasets).map((d) => {
-        //     if (datasets[d].every((x: number) => x === 0)) {
-        //         datasets[d] = [];
-        //     }
-        //     return { data: datasets[d], label: d };
-        // });
-        // this.chart.labels = labels;
 
         datasets['Calls In Queue'] =
             Object.keys(datasets).map((d) => {

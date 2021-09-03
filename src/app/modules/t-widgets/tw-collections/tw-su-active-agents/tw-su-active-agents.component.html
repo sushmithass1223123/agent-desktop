@@ -216,7 +216,16 @@
                                         (click)="changeAgentStatus(item, auxCode)"
                                         disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
                                     >
-                                        <mat-icon class="{{ auxCode.Code.toLowerCase() }}">
+                                        <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
+                                        <mat-icon
+                                            [ngClass]="
+                                                auxCode.Code.includes('Available')
+                                                    ? 'text-alt-success'
+                                                    : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                    ? 'text-alt-danger'
+                                                    : 'text-alt-warning'
+                                            "
+                                        >
                                             {{
                                                 auxCode.Code.toLowerCase() === 'available'
                                                     ? 'check_circle'

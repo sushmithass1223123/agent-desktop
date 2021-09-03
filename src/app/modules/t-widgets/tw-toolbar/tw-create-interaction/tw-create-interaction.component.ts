@@ -156,18 +156,42 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 break;
 
             case 'voice':
+                let config = data.Data;
+                if (config.SpeedDial) {
+                    config = {
+                        speedDial: {
+                            allowed: config.SpeedDial?.Allowed,
+                            consult: config.SpeedDial?.Consult,
+                            blind: config.SpeedDial?.Blind,
+                            comments: config.SpeedDial?.Comments,
+                            source: config.SpeedDial?.Source,
+                            teamFilter: config.SpeedDial?.TeamFilter,
+                            columns: config.SpeedDial?.Columns
+                        },
+                        agent: {
+                            allowed: true,
+                            consult: true,
+                            source: config.Agent.Source,
+                            allowedStates: config.Agent.AllowedStates,
+                            columns: config.Agent.Columns,
+                            teamFilter: config.Agent.TeamFilter
+                        }
+                    };
+                } else {
+                    config = {
+                        allowed: true,
+                        consult: true,
+                        source: config.Source,
+                        allowedStates: config.AllowedStates,
+                        columns: config.Columns,
+                        teamFilter: config.TeamFilter
+                    };
+                }
                 this._matDialog.open(AgentSkillListComponent, {
                     data: {
                         title: 'Make Call',
                         type: 'makeCall',
-                        agent: {
-                            allowed: true,
-                            consult: true,
-                            source: data.Data.Source,
-                            allowedStates: data.Data.AllowedStates,
-                            columns: data.Data.Columns,
-                            teamFilter: data.Data.TeamFilter
-                        },
+                        ...config,
                         skill: {
                             allowed: false,
                             blind: false,

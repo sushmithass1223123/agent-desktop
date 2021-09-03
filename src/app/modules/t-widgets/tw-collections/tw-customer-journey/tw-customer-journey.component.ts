@@ -32,6 +32,7 @@ type IHRecord = {
     Channel: string;
     Intent: string;
     AgentName: string;
+    LastServicedAgentName: string;
     CIF: string;
     EmailID: string;
     NRIC: string;
@@ -198,20 +199,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (this.data.Data.Columns && this.data.Data.Columns.length) {
             this.table.columns = this.data.Data.Columns;
         } else {
-            this.table.columns = [
-                'InteractionDate',
-                'Channel',
-                'Direction',
-                'InteractionText',
-                'Intent',
-                'AgentName',
-                'CIF',
-                'NRIC',
-                'PhoneNumber',
-                'EmailID',
-                'OverallSentiment',
-                'Actions'
-            ];
+            this.table.columns = Object.keys(this.table.config);
         }
 
         const iconMap = {
@@ -273,7 +261,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             Intent: {},
             AgentName: {
                 title: 'Agent Name',
+                width: '12%',
                 searchable: true,
+                tooltip: true,
+                truncate: true
+            },
+            LastServicedAgentName: {
+                title: 'Serviced Agents',
+                width: '12%',
+                searchable: true,
+                tooltip: true,
                 truncate: true
             },
             CIF: {
@@ -381,6 +378,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     Channel: data.Channel,
                     Intent: data.Intent,
                     AgentName: data.AgentName,
+                    LastServicedAgentName: Array.from(new Set((data.LastServicedAgentName || '').split(','))).join(', '),
                     CIF: data.CIF,
                     EmailID: data.EmailID,
                     NRIC: data.NRIC,
@@ -405,6 +403,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     Channel: data.Channel,
                     Intent: data.Intent,
                     AgentName: data.AgentName,
+                    LastServicedAgentName: Array.from(new Set((data.LastServicedAgentName || '').split(','))).join(', '),
                     CIF: data.CIF,
                     EmailID: data.EmailID,
                     NRIC: data.NRIC,
@@ -795,6 +794,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         );
     }
 
+    /**
+     * Handles actions from ad-table
+     * @param {any} evt
+     */
     handleActions(evt: any): void {
         this.switchMaximizedViewMode(evt.action, evt.record);
         // this.selected = evt;

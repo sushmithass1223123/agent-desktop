@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -38,7 +38,17 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
      */
     previewDialogRef: MatDialogRef<any>;
 
-    constructor(private appUiService: AppUiService, private aotService: AOTWidgetService, private matDialog: MatDialog) {}
+    /**
+     * Loading flag for api calls
+     */
+    loading = true;
+
+    constructor(
+        private appUiService: AppUiService,
+        private ref: ChangeDetectorRef,
+        private aotService: AOTWidgetService,
+        private matDialog: MatDialog
+    ) {}
 
     /**
      * Lifecycle hook
@@ -51,6 +61,10 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             .catch((err) => {
                 console.error(err);
                 this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
+            })
+            .finally(() => {
+                this.loading = false;
+                this.ref.detectChanges();
             });
     }
 
@@ -67,6 +81,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
      */
     setGroups(departmentId: string): void {
         if (!this.availableTemplates.departments[departmentId]?.groups) {
+            this.loading = true;
             SDKClient.getEmailTemplateGroups(departmentId)
                 .then((res) => {
                     if (res.response && res.response.length) {
@@ -76,6 +91,10 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 .catch((err) => {
                     console.error(err);
                     this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
+                })
+                .finally(() => {
+                    this.loading = false;
+                    this.ref.detectChanges();
                 });
         }
     }
@@ -88,6 +107,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
     setTemplates(departmentId: string, groupId: string): void {
         const groups = this.availableTemplates.departments[departmentId].groups;
         if (!groups[groupId].templates) {
+            this.loading = true;
             SDKClient.getEmailTemplates({ groupId, type: '' })
                 .then((templateRes) => {
                     if (templateRes.response && templateRes.response.length) {
@@ -97,6 +117,10 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 .catch((err) => {
                     console.error(err);
                     this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+                })
+                .finally(() => {
+                    this.loading = false;
+                    this.ref.detectChanges();
                 });
         }
     }
