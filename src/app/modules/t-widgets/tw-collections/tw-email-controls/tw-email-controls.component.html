@@ -94,6 +94,8 @@
                                 SentReasons.includes(currentInteraction.RouteReason)
                             "
                         >
+                            <!-- matTooltip="Unable to save drafts at the moment" -->
+                            <!-- [matTooltipDisabled]="!(draftPollDuration && !currentInteraction.CurrOutSessionId)" -->
                             <button
                                 *ngIf="replyInfo"
                                 mat-raised-button

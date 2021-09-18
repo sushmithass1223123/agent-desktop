@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { TableComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
@@ -58,6 +58,12 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      * Table component ref
      */
     @ViewChild(TableComponent) table: TableComponent;
+
+    /**
+     * Agent comment ref
+     */
+    @ViewChild('agentCommentRef')
+    agentCommentRef: TemplateRef<any>;
 
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
         super();
@@ -140,14 +146,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             },
             AgentComment: {
                 title: 'Comments',
-                type: 'controls',
-                value: [
-                    {
-                        title: 'View Comments',
-                        icon: 'notes',
-                        visible: (el: any) => el.AgentComment?.trim()
-                    }
-                ]
+                searchable: true,
+                custom: this.agentCommentRef
             },
             User: {
                 searchable: true,
@@ -161,7 +161,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
                 tooltip: true
             },
             Intent: {
-                searchable : true
+                searchable: true
             },
             ActiveTime: {
                 value: (el: any) => el.ActiveTime

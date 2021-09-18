@@ -5,6 +5,9 @@
         width: 100px;
         display: inline-block;
     }
+    .email-body {
+        max-height: 50vh;
+    }
 }
 
 .email-template-dialog__Form {
