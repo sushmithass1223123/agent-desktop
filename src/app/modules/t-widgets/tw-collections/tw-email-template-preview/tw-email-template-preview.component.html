@@ -7,7 +7,7 @@
 </ng-container>
 <ng-container *ngIf="templateInfo.Type === 'Form'">
     <tw-wrapper [data]="data">
-        <div class="p-8">
+        <div class="p-8 twd-overflow-auto email-body">
             <div [innerHTML]="safeHtml"></div>
             <div class="w-100-p" fxLayout fxLayoutAlign="end center">
                 <button mat-raised-button color="primary" (click)="processFormTemplate()">Use</button>

@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
-import { AgentSkillListComponent, SnackbarComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, PreviewEmailComponent, SnackbarComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -16,14 +16,11 @@ import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/
 import { AgentSkillListData, CreateEmailOutput, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
+import { format as formatDate } from 'date-fns';
 import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
-import * as moment from 'moment';
 import { forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
-import tinymce from 'tinymce';
 import { initEmailSearchState, TwWorkBenchService } from '../tw-workbench-panel.service';
-
-type OutboxInboxRes = (EmailOutboxModel | EmailInboxModel) & { InSessionId?: string; OutSessionId?: string };
 
 type Mail = {
     Mailbox: string;
@@ -239,6 +236,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     deleteAllowed = false;
 
     /**
+     * Replied email shown
+     */
+    latestEmailPreview = false;
+
+    /**
+     * Preview email ref
+     */
+    @ViewChild(PreviewEmailComponent)
+    previewEmailRef: PreviewEmailComponent;
+
+    /**
      * Constructor
      */
     constructor(
@@ -308,7 +316,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
 
-    private async setAvailableMailboxes() {
+    /**
+     * Sets available mailboxes
+     */
+    private async setAvailableMailboxes(): Promise<void> {
         if (!this._workbenchService.globalEmailWorkbenchState$.availableMailboxes.value?.length) {
             await this._workbenchService.init();
         }
@@ -554,7 +565,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             return mailRes;
                         });
                         this.sortEmailsByKey(mails || []);
-                        this.emailBodies = {};
+                        if (!this.openEmailRes?.data) {
+                            this.emailBodies = {};
+                        }
                         this.setComponentState('emails/success', { silent });
                     },
                     error: (e) => {
@@ -737,61 +750,86 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async openEmail(email: Mail): Promise<void> {
         try {
             this.setComponentState('email/open/loading');
-            const fetchFromOutbox = this.currentTab === 'draft' || this.currentTab === 'sentitem';
+            const fetchFromOutbox = (this.currentTab === 'draft' || this.currentTab === 'sentitem') && this.latestEmailPreview;
             const requestedSession = fetchFromOutbox ? email.OutSessionId : email.InSessionId;
-            if (!this.emailBodies[requestedSession]) {
-                let res: OutboxInboxRes;
-                if (fetchFromOutbox) {
-                    res = (await SDKClient.getOutboxEmail(requestedSession)).response;
-                    if (!res) {
-                        throwADError('Error in WorkbenchEmailComponent.getOutboxEmail', 'Unexpected Response from server');
-                    }
-                    res.InSessionId = res.InSessionID;
-                    res.OutSessionId = res.SessionID;
-                } else {
-                    res = (await SDKClient.getInboxEmail(requestedSession)).response;
-                    if (!res) {
-                        throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
-                    }
-                    res.InSessionId = res.SessionID;
-                    res.OutSessionId = '';
-                }
+            let inboxRes: EmailInboxModel;
+            let outboxRes: EmailOutboxModel;
 
-                // check the response
-                if (!res) {
-                    this.setComponentState('email/open/failure');
-                    return;
-                }
-
+            const getAttachments = (attachments: any[]): any[] => {
                 // check if attachements are there
-                if (res.Attachments && res.Attachments.length) {
-                    res.Attachments.forEach((item: any) => {
+                if (attachments && attachments.length) {
+                    return attachments.map((item: any) => {
                         // get the file name from URL
                         let name = item.URL.split('/').pop();
-                        const sessionKey = this.getCurrentSessionKey();
-                        name = name.replace(res[sessionKey], '');
+                        name = name.replace(requestedSession, '');
                         item.Name = name;
                         item.Ext = name.split('.').pop();
                         item.Icon = maticonByExtension(item.Ext);
+                        return item;
                     });
                 }
+                return [];
+            };
 
-                this.emailBodies[requestedSession] = {
-                    Body: this.appUiService.sanitizeEmailBody(res.Body || '')['changingThisBreaksApplicationSecurity'],
-                    Attachments: res.Attachments || [],
-                    AgentName: res.AgentName,
-                    Intent: (res as EmailInboxModel).Intent,
-                    RepliedStatus: (res as any).RepliedStatus,
-                    ConversationID: res.ConversationID,
-                    CurrentStatus: res.CurrentStatus,
-                    ClosedBy: (res as any).ClosedBy,
-                    CCList: res.CCList,
-                    Priority: (res as any).Priority,
-                    From: res.From,
-                    ToList: res.ToList
-                };
+            if (!this.emailBodies[email.InSessionId]) {
+                inboxRes = (await SDKClient.getInboxEmail(email.InSessionId)).response;
+                if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
+                    if (!fetchFromOutbox) {
+                        throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
+                    }
+                } else {
+                    this.emailBodies = Object.assign(this.emailBodies, {
+                        [email.InSessionId]: {
+                            Attachments: getAttachments(inboxRes.Attachments),
+                            AgentName: inboxRes.AgentName,
+                            Intent: inboxRes.Intent,
+                            RepliedStatus: inboxRes.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
+                            ConversationID: inboxRes.ConversationID,
+                            CurrentStatus: inboxRes.CurrentStatus,
+                            ClosedBy: inboxRes.ClosedBy,
+                            CCList: inboxRes.CCList,
+                            From: inboxRes.From,
+                            Priority: inboxRes.Priority,
+                            ToList: inboxRes.ToList,
+                            Body: this.appUiService.sanitizeEmailBody(inboxRes.Body || '')['changingThisBreaksApplicationSecurity'],
+
+                            InSessionId: email.InSessionId,
+                            OutSessionId: email.OutSessionId
+                        }
+                    });
+                }
             }
-            this.openEmailRes.data = { ...email, ...this.emailBodies[requestedSession], currentTab: this.currentTab };
+
+            if (fetchFromOutbox && !this.emailBodies[email.OutSessionId]) {
+                outboxRes = (await SDKClient.getOutboxEmail(email.OutSessionId)).response;
+                if (!outboxRes) {
+                    throwADError('Error in WorkbenchEmailComponent.getOutboxEmail', 'Unexpected Response from server');
+                }
+
+                this.emailBodies = Object.assign(this.emailBodies, {
+                    [email.OutSessionId]: {
+                        Attachments: getAttachments(outboxRes.Attachments),
+                        AgentName: outboxRes.AgentName,
+                        ConversationID: outboxRes.ConversationID,
+                        CurrentStatus: outboxRes.CurrentStatus,
+                        ClosedBy: (inboxRes as any)?.ClosedBy,
+                        CCList: outboxRes.CCList,
+                        From: outboxRes.From,
+                        ToList: outboxRes.ToList,
+                        Body: this.appUiService.sanitizeEmailBody(outboxRes.Body || '')['changingThisBreaksApplicationSecurity'],
+
+                        InSessionId: email.InSessionId,
+                        OutSessionId: email.OutSessionId,
+
+                        Priority: inboxRes?.Priority,
+                        RepliedStatus: inboxRes?.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
+                        Intent: inboxRes?.Intent
+                    }
+                });
+            }
+
+            this.openEmailRes.data = Object.assign(email, this.emailBodies[requestedSession], { currentTab: this.currentTab });
+            // this.previewEmailRef.setEmailBody(this.emailBodies[requestedSession].Body);
             this.setComponentState('email/open/success');
         } catch (e) {
             console.error(e);
@@ -810,6 +848,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.openEmailRes.data = null;
         this.emailBodies = {};
         this.currentTab = tab;
+        this.latestEmailPreview = tab === 'draft' || tab === 'sentitem';
         if (this.advancedSearch.data[tab]) {
             this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
             this.globalSearch.form.setValue(this.globalSearch.data[tab]);
@@ -988,18 +1027,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     resetGlobalSearchForm(): void {
         this.globalSearch.form.setValue('');
         this.globalSearch.data[this.currentTab] = '';
-    }
-
-    /**
-     * Selects Emailtemplate
-     * @param {String} html
-     */
-    selectEmailTemplate(html: string): void {
-        if (!html) {
-            this.appUiService.showSnackbar('Sorry, there is something wrong with this template', 'failure');
-            return;
-        }
-        tinymce.activeEditor.setContent((html || '').replaceAll('<a', '<a target="_blank"'));
     }
 
     /**
@@ -1256,7 +1283,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             startDate.setHours(searchFields.fromTime?.split(':')[0] || '00');
             startDate.setMinutes(searchFields.fromTime?.split(':')[1] || '00');
             startDate.setSeconds(0);
-            startDate = moment(startDate).format('YYYYMMDDHHmmss');
+            startDate = formatDate(startDate, 'yyyyMMddHHmmss');
         }
 
         if (searchFields.toDate) {
@@ -1264,7 +1291,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             endDate.setHours(searchFields.toTime?.split(':')[0] || '00');
             endDate.setMinutes(searchFields.toTime?.split(':')[1] || '00');
             endDate.setSeconds(0);
-            endDate = moment(endDate).format('YYYYMMDDHHmmss');
+            endDate = formatDate(endDate, 'yyyyMMddHHmmss');
         }
 
         return { ...searchParams, endDate, startDate };

@@ -216,7 +216,7 @@
                                                     [ngClass]="{ 'twd-hidden': !show.onlyForInBox }"
                                                     appearance="outline"
                                                 >
-                                                    <mat-label> Assigned To </mat-label>
+                                                    <mat-label> Assigned To (by agentID) </mat-label>
                                                     <input matInput formControlName="assignedTo" type="text" />
                                                 </mat-form-field>
 
@@ -486,8 +486,8 @@
                             [loading]="openEmailRes.loading"
                             [error]="openEmailRes.error"
                         >
-                            <div id="emailInfo" class="px-28">
-                                <div class="twd-flex twd-justify-between">
+                            <div id="emailInfo">
+                                <div class="twd-flex twd-justify-between twd-px-7">
                                     <div fxFlex="80">
                                         <p class="text-bold my-4">To: {{ selectedEmail.ToList }}</p>
                                         <p class="text-bold my-4" *ngIf="selectedEmail.CCList">Cc : {{ selectedEmail.CCList }}</p>
@@ -499,16 +499,36 @@
                                             Closed Status: {{ selectedEmail.ClosedBy ? 'Closed by ' + selectedEmail.ClosedBy : 'Open' }}
                                         </p>
 
-                                        <p class="my-4 text-bold">Priority: {{ selectedEmail.Priority || 'NA' }}</p>
-                                        <p class="my-4 text-bold" *ngIf="['inbox','queue'].includes(currentTab)" >
-                                            Replied Status: {{ selectedEmail.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                        <p class="my-4 text-bold" *ngIf="selectedEmail.Priority">Priority: {{ selectedEmail.Priority }}</p>
+                                        <p class="my-4 text-bold" *ngIf="selectedEmail.RepliedStatus">
+                                            Replied Status: {{ selectedEmail.RepliedStatus }}
                                         </p>
-                                        <p *ngIf="selectedEmail.Intent" class="my-4 text-bold">Intent: {{ selectedEmail.Intent }}</p>
+                                        <p class="my-4 text-bold" *ngIf="selectedEmail.Intent">Intent: {{ selectedEmail.Intent }}</p>
                                     </div>
                                     <div fxFlex="15">
                                         <p class="my-4">{{ selectedEmail.AddedTime | date: 'longDate' }}</p>
                                         <p class="my-4">{{ selectedEmail.AddedTime | date: 'shortTime' }}</p>
                                     </div>
+                                </div>
+
+                                <div
+                                    *ngIf="['draft', 'sentitem'].includes(currentTab) && this.emailBodies[selectedEmail.InSessionId]"
+                                    class="twd-p-3 twd-mt-1"
+                                >
+                                    <a
+                                        *ngIf="latestEmailPreview"
+                                        class="twd-cursor-pointer"
+                                        (click)="latestEmailPreview = !latestEmailPreview; openEmail(selectedEmail)"
+                                    >
+                                        View original
+                                    </a>
+                                    <a
+                                        *ngIf="!latestEmailPreview"
+                                        class="twd-cursor-pointer"
+                                        (click)="latestEmailPreview = !latestEmailPreview; openEmail(selectedEmail)"
+                                    >
+                                        View Checker Email
+                                    </a>
                                 </div>
                             </div>
                         </preview-email>
@@ -567,7 +587,7 @@
                         <div
                             mat-ripple
                             class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-p-3 twd-overflow-hidden"
-                            (click)="openEmail(node)"
+                            (click)="latestEmailPreview = true; openEmail(node)"
                         >
                             <div class="twd-w-full 2xl:twd-max-w-9/12">
                                 <p class="font-weight-600 my-4 twd-truncate">

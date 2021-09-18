@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CreateEmailInput } from 'app/interfaces';
 import { checkStringIsHTML } from 'app/utils';
 
@@ -10,7 +10,7 @@ import { checkStringIsHTML } from 'app/utils';
     templateUrl: './preview-email.component.html',
     styleUrls: ['./preview-email.component.scss']
 })
-export class PreviewEmailComponent {
+export class PreviewEmailComponent implements OnChanges {
     /**
      * Required Email details
      */
@@ -35,17 +35,42 @@ export class PreviewEmailComponent {
         iframeLoading: true
     };
 
+    /**
+     * Iframe element
+     */
+    @ViewChild('emailBodyIframe')
+    emailBodyIframe: ElementRef<HTMLIFrameElement>;
+
     constructor() {}
 
     /**
-     * Iframe event when loaded , loads the email inside it
-     * @param {HTMLIFrameElement} iframe
+     * lifecycle hook
+     * @param {SimpleChanges} changes
      */
-    loadEmailInIframe(iframe: HTMLIFrameElement): void {
-        const frag = document.createRange().createContextualFragment(this.email.Body);
-        const doc: any = iframe.contentDocument || iframe.contentWindow;
-        doc.body.innerHTML = `
-        ${doc.body.innerHTML} 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.email && changes.email?.currentValue.Body) {
+            this.setEmailBody(changes.email.currentValue.Body);
+        }
+    }
+
+    /**
+     * Iframe event when loaded , loads the email inside it
+     */
+    loadEmailInIframe(iframe?: HTMLIFrameElement): void {
+        this.setEmailBody(this.email.Body, iframe);
+        this._internal.iframeLoading = false;
+    }
+
+    /**
+     * Sets email body
+     * @param {string} body
+     */
+    setEmailBody(body: string, iframe?: HTMLIFrameElement): void {
+        const ref = iframe || this.emailBodyIframe?.nativeElement;
+        if (ref) {
+            const frag = document.createRange().createContextualFragment(body);
+            const doc: any = ref.contentDocument || this.emailBodyIframe.nativeElement.contentWindow;
+            doc.body.innerHTML = `
         <style>
             ::-webkit-scrollbar{width:4px !important;height:4px !important;}
             ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
@@ -57,8 +82,8 @@ export class PreviewEmailComponent {
                     : ''
             }
         </style>`;
-        doc.body.appendChild(frag);
-        this._internal.iframeLoading = false;
+            doc.body.appendChild(frag);
+        }
     }
 
     /**

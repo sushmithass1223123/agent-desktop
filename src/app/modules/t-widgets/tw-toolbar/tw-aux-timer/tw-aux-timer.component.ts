@@ -3,7 +3,8 @@ import { TWidgetWrapper } from '@twidgets/utils';
 import { Subscription, timer } from 'rxjs';
 import { SDKClient, AgentStatusChangeEvent } from '@tmac/sdk';
 import { takeUntil } from 'rxjs/operators';
-
+import { Subject } from 'rxjs';
+import { intervalToDuration } from 'date-fns';
 /**
  * Aux timer component
  */
@@ -63,6 +64,11 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     hours2 = '0';
 
+    /**
+     * Triggers restart of timer with new time
+     */
+    restartTimer$ = new Subject();
+
     constructor() {
         super();
     }
@@ -76,6 +82,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
         this.initWrapper(this.data);
 
         this.initTimer();
+        this.restartTimer$.next(Date.now());
 
         // listen to agent status change
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
@@ -98,9 +105,9 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
      * @param {AgentStatusChangeEvent} evt
      */
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
+        // check if on call isn't sent again before restarting timer
         if (!evt.Status.includes('On Call') || !this.lastStatus.includes('On Call')) {
-            // rest the timer
-            this.restartTimer();
+            this.restartTimer$.next(evt.CreatedTime);
         }
         // update last status
         this.lastStatus = evt.Status;
@@ -111,36 +118,27 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private initTimer(): void {
+        const convertToDoubleDigit = (unit: number) => {
+            const unitStr = unit.toString();
+            if (unitStr.length === 1) {
+                return `0${unitStr}`.split('');
+            }
+            return unitStr.split('');
+        };
+
         // subscribe to the timer
-        this.timerSub = timer(1000, 1000)
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((val) => {
-                const totalSeconds = val + 1;
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = Math.floor((totalSeconds % 3600) % 60);
-
-                this.hours1 = (hours > 9 ? hours.toString().substr(0, 1) : '0').toString();
-                this.hours2 = (hours > 9 ? hours.toString().substr(1, 2) : hours).toString();
-
-                this.minutes1 = (minutes > 9 ? minutes.toString().substr(0, 1) : '0').toString();
-                this.minutes2 = (minutes > 9 ? minutes.toString().substr(1, 2) : minutes).toString();
-
-                this.seconds1 = (seconds > 9 ? seconds.toString().substr(0, 1) : '0').toString();
-                this.seconds2 = (seconds > 9 ? seconds.toString().substr(1, 2) : seconds).toString();
-            });
-    }
-
-    /**
-     * Restart timer for agent
-     */
-    private restartTimer(): void {
-        this.minutes1 = '0';
-        this.minutes2 = '0';
-        this.seconds1 = '0';
-        this.seconds2 = '0';
-        this.timerSub.unsubscribe();
-        this.timerSub = null;
-        this.initTimer();
+        this.timerSub = this.restartTimer$.pipe(takeUntil(this.unsubscribeAll)).subscribe((startTime: string) => {
+            timer(1000, 1000)
+                .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.restartTimer$))
+                .subscribe(() => {
+                    const diff = intervalToDuration({
+                        start: new Date(startTime),
+                        end: Date.now()
+                    });
+                    [this.hours1, this.hours2] = convertToDoubleDigit(diff.hours);
+                    [this.minutes1, this.minutes2] = convertToDoubleDigit(diff.minutes);
+                    [this.seconds1, this.seconds2] = convertToDoubleDigit(diff.seconds);
+                });
+        });
     }
 }

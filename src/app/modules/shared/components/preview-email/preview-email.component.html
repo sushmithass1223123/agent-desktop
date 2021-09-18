@@ -91,7 +91,7 @@
             [ngClass]="{ 'twd-hidden': _internal.iframeLoading }"
             class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-pt-1"
         >
-            <iframe #iframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(iframe)"></iframe>
+            <iframe #emailBodyIframe class="twd-w-full twd-h-full" (load)="loadEmailInIframe(emailBodyIframe)"></iframe>
         </div>
 
         <div *ngIf="(loading || _internal.iframeLoading) && !error" class="twd-h-3/4 twd-ml-3 twd-mt-8 twd-w-10/12">

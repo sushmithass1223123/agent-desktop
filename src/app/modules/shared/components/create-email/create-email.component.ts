@@ -21,9 +21,8 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, TUtils } from '@tmac/sdk';
 import { CreateEmailInput, CreateEmailOutput } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
-import { fromEvent, merge, Subject } from 'rxjs';
+import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { default as tinymce, default as tinyMCE, Editor } from 'tinymce';
 
 /**
  * Email creation component view only
@@ -182,7 +181,7 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
                     this.suggestedUsers = this.allUsers;
                 }
             });
-        this.editorState.loading = true;
+        // this.editorState.loading = true;
     }
 
     /**
@@ -192,12 +191,12 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.emailInfo) {
             this.setEmailDetails(changes.emailInfo.currentValue);
-            const editor = this.getCurrentEditor();
-            if (editor) {
-                editor.setContent(this.emailInfo.Body);
-            } else {
-                console.error('Editor not loaded yet');
-            }
+            // const editor = this.getCurrentEditor();
+            // if (editor) {
+            //     editor.setContent(this.emailInfo.Body);
+            // } else {
+            //     console.error('Editor not loaded yet');
+            // }
         }
     }
 
@@ -205,75 +204,76 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
      * Lifecycle hook
      */
     ngAfterViewInit(): void {
-        setTimeout(() => {
-            tinyMCE
-                .init({
-                    selector: `textarea#${this.editorState.id}`,
-                    min_height: 200,
-                    height: '100%',
-                    menubar: false,
-                    fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
-                    forced_root_block: false,
-                    // force_br_newlines: true,
-                    // force_p_newlines: false,
-                    branding: false,
-                    base_url: `${this.baseHref}assets/tinymce/`,
-                    content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
-                    //     'advlist autolink lists link image charmap print preview anchor',
-                    //     'searchreplace visualblocks code fullscreen',
-                    //     'insertdatetime media table paste code wordcount'
-                    // ],
-                    toolbar: `
-                        undo redo | formatselect | table | 
-                        bold italic backcolor | alignleft aligncenter 
-                        alignright alignjustify | bullist numlist outdent indent |  
-                        removeformat
-                        `,
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                    setup: (editor) => {
-                        editor.on('init', () => {
-                            this.editorState.loading = false;
-                            fromEvent(editor, 'blur')
-                                .pipe(takeUntil(this.unsubscribeAll$))
-                                .subscribe({
-                                    next: () => {
-                                        this.email.Body = editor.getContent();
-                                    }
-                                });
-                        });
-                    }
-                })
-                .then(() => {
-                    this.getCurrentEditor().setContent(this.emailInfo.Body);
-                })
-                .catch((err) => {
-                    console.error('Unable to load editor');
-                    console.error(err);
-                });
-            // create an intersection observer to start/stop polling when page is active/inactive
-            this.intersectionObserver = new IntersectionObserver((entries) => {
-                entries.map((entry) => {
-                    if (entry.isIntersecting) {
-                        this.getCurrentEditor()?.show();
-                    } else {
-                        this.getCurrentEditor()?.hide();
-                    }
-                });
-            });
-            // observe the element
-            this.intersectionObserver.observe(this.createEmail.nativeElement);
-        }, 0);
+        // setTimeout(() => {
+        //     tinyMCE
+        //         .init({
+        //             selector: `textarea#${this.editorState.id}`,
+        //             min_height: 200,
+        //             height: '100%',
+        //             menubar: false,
+        //             fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
+        //             forced_root_block: false,
+        //             // force_br_newlines: true,
+        //             // force_p_newlines: false,
+        //             branding: false,
+        //             base_url: `${this.baseHref}assets/tinymce/`,
+        //             content_css: `${this.baseHref}assets/tinymce/editor.css`,
+        //             plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
+        //             //     'advlist autolink lists link image charmap print preview anchor',
+        //             //     'searchreplace visualblocks code fullscreen',
+        //             //     'insertdatetime media table paste code wordcount'
+        //             // ],
+        //             toolbar: `
+        //                 undo redo | formatselect | table |
+        //                 bold italic backcolor | alignleft aligncenter
+        //                 alignright alignjustify | bullist numlist outdent indent |
+        //                 removeformat
+        //                 `,
+        //             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+        //             setup: (editor) => {
+        //                 editor.on('init', () => {
+        //                     this.editorState.loading = false;
+        //                     fromEvent(editor, 'blur')
+        //                         .pipe(takeUntil(this.unsubscribeAll$))
+        //                         .subscribe({
+        //                             next: () => {
+        //                                 this.email.Body = editor.getContent();
+        //                             }
+        //                         });
+        //                 });
+        //             }
+        //         })
+        //         .then(() => {
+        //             this.getCurrentEditor().setContent(this.emailInfo.Body);
+        //         })
+        //         .catch((err) => {
+        //             console.error('Unable to load editor');
+        //             console.error(err);
+        //         });
+        //     // create an intersection observer to start/stop polling when page is active/inactive
+        //     this.intersectionObserver = new IntersectionObserver((entries) => {
+        //         entries.map((entry) => {
+        //             if (entry.isIntersecting) {
+        //                 this.getCurrentEditor()?.show();
+        //             } else {
+        //                 this.getCurrentEditor()?.hide();
+        //             }
+        //         });
+        //     });
+        //     // observe the element
+        //     this.intersectionObserver.observe(this.createEmail.nativeElement);
+        // }, 0);
+        // this.intersectionObserver.observe(this.createEmail.nativeElement);
     }
 
     /**
      * Lifecycle hook
      */
     ngOnDestroy(): void {
-        const e = this.getCurrentEditor();
-        e.off('blur');
-        e.destroy();
-        this.intersectionObserver?.disconnect();
+        // const e = this.getCurrentEditor();
+        // e.off('blur');
+        // e.destroy();
+        // this.intersectionObserver?.disconnect();
         // tinyMCE.activeEditor.off('blur');
         // tinyMCE.activeEditor.destroy();
     }
@@ -412,8 +412,8 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
      */
     selectTemplate(html: string): void {
         this.email.Body = `${html} ${this.email.Body}`;
-        const e = this.getCurrentEditor();
-        e.setContent(this.email.Body);
+        // const e = this.getCurrentEditor();
+        // e.setContent(this.email.Body);
         // tinyMCE.activeEditor.setContent(this.email.Body);
     }
     /**
@@ -445,15 +445,15 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
      * Gets email from the editor
      */
     getEmail(): CreateEmailOutput {
-        const e = this.getCurrentEditor();
-        this.email.Body = e.getContent();
+        // const e = this.getCurrentEditor();
+        // this.email.Body = e.getContent();
         return this.email;
     }
 
     /**
      * gets the current editor
      */
-    getCurrentEditor(): Editor {
-        return tinymce.editors.find((e) => e.id === this.editorState.id);
-    }
+    // getCurrentEditor(): Editor {
+    //     return tinymce.editors.find((e) => e.id === this.editorState.id);
+    // }
 }

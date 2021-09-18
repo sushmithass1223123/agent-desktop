@@ -518,7 +518,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Body: res.Body,
             AttachmetList: res?.Attachments || [],
             To: res.ToList,
-            From: res.From
+            From: res.From,
+
+            AgentName: res.AgentName,
+            Intent: (res as EmailInboxModel).Intent,
+            RepliedStatus: (res as any).RepliedStatus,
+            ConversationID: res.ConversationID,
+            CurrentStatus: res.CurrentStatus,
+            ClosedBy: (res as any).ClosedBy,
+            Priority: (res as any).Priority
         };
 
         this.getInboxMessageReq = { error: false, loading: false };
@@ -673,16 +681,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         const preBody = RejectReason
             ? ''
             : `
-        <p></p>
+        <style>
+            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+        </style>
         <br/>
-        <div style='border-top: 1px solid gray;'>
-            <br/>
-            <p style='border-left: 3px solid gray;'>
+        <div style='border-top: 1px solid gray; padding-top : 5px;'>
+            <div style='border-left: 3px solid gray;padding-left: 5px'>
                 <div> <strong> From: </strong> <span> ${From} </span> </div>
                 <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
                 <div> <strong> To: </strong> <span> ${To} </span> </div>
                 <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-            </p>
+            </div>
         </div>
         <br />`;
         // const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
@@ -713,14 +723,19 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
                 : `
-        <p></p>
+        <style>
+            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+        </style>
         <br/>
-        <div style='border-top: 1px solid gray;'>
-            <br/>
-            <div> <strong> From: </strong> <span> ${From} </span> </div>
-            <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-            <div> <strong> To: </strong> <span> ${To} </span> </div>
-            <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+        <div style='border-top: 1px solid gray; padding-top : 5px;'>
+            <div style='border-left: 3px solid gray;padding-left: 5px'>
+                <div> <strong> From: </strong> <span> ${From} </span> </div>
+                    <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
+                    <div> <strong> To: </strong> <span> ${To} </span> </div>
+                    <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
+                </div>
+            </div>
         </div>
         <br />`;
         const ToList = To + ',' + Array.from(new Set((From || '').replaceAll(this.currentInteraction.Email_Mailbox, '').split(','))).join(',');
@@ -751,6 +766,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             RejectReason || this.DraftReasons.includes(RouteReason)
                 ? ''
                 : `
+        <style>
+            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+        </style>
         <div> <strong> From: </strong> <span> ${From} </span> </div>
         <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
         <div> <strong> To: </strong> <span> ${To} </span> </div>
