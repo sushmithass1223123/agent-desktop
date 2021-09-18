@@ -6,6 +6,18 @@
         *ngIf="wrapper.maximized ? { footer: 'show', columns: maxDisplayedColumns } : { footer: 'hide', columns: minDisplayedColumns } as tableConf"
         [footer]="tableConf.footer"
         [columns]="tableConf.columns"
-        (actionReducer)="tableEvents($event)"
     ></ad-table>
 </tw-wrapper>
+
+<ng-template #agentCommentRef let-record="record">
+    <button
+        class="border-radius-20"
+        mat-button
+        color="primary"
+        matTooltip="View Comments"
+        *ngIf="record.AgentComment"
+        (click)="showNotes(record.AgentComment)"
+    >
+        <mat-icon>notes</mat-icon>
+    </button>
+</ng-template>

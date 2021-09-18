@@ -5,13 +5,14 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper [data]="data" class="active-agent-wrapper">
-    <ng-container
+    <div
+        class="twd-h-full twd-w-full twd-absolute twd-left-0 twd-top-0"
         *ngIf="{
             anchor: (customFuse.anchor$ | async),
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="twd-flex twd-flex-full twd-flex-col twd-w-full twd-h-full">
+        <div class="twd-flex twd-flex-col twd-w-full twd-h-full twd-max-h-full">
             <div class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-1 twd-mb-2">
                 <button mat-icon-button [matMenuTriggerFor]="sortMenu">
                     <mat-icon>sort</mat-icon>
@@ -68,11 +69,8 @@
                     <mat-icon>campaign</mat-icon>
                 </button>
             </div>
-            <p *ngIf="filteredAgents.length" class="m-0 text-center position-absolute twd-inset-x-0 twd-bottom-0">
-                Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
-            </p>
             <div
-                class="agent-list twd-flex twd-flex-col twd-flex-full twd-gap-2 twd-px-1 twd-pb-2 twd-mb-5 custom-scroll-adjust"
+                class="agent-list twd-flex twd-flex-1 twd-flex-col twd-gap-2 twd-px-1 twd-pb-2 twd-overflow-y-auto"
                 [@animateStagger]="{ value: '50' }"
             >
                 <div
@@ -317,8 +315,12 @@
                     <span class="mat-title m-0"> No agents found!</span>
                 </div>
             </div>
+
+            <p *ngIf="filteredAgents.length" class="text-center twd-inset-x-0 twd-pt-2">
+                Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
+            </p>
         </div>
-    </ng-container>
+    </div>
 </tw-wrapper>
 
 <tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget"> </tw-su-agent-activity-details>

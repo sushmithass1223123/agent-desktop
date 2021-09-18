@@ -1,3 +1,15 @@
+kendo-popup .k-popup {
+    width: auto !important;
+    max-height: 50vh;
+}
+
+kendo-editor {
+    background-color: transparent !important;
+    kendo-toolbar {
+        background-color: rgba(whitesmoke, 0.4) !important;
+    }
+}
+
 .attachment-overlay {
     .attachment-menu {
         width: 97%;
