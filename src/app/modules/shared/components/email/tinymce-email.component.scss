@@ -1,0 +1,25 @@
+::ng-deep .tox-tinymce {
+    .tox-editor-header {
+        box-shadow: 0px 0px 5px grey !important;
+    }
+    .tox-toolbar__primary,
+    .tox-toolbar-overlord,
+    .tox-statusbar {
+        background: transparent !important;
+    }
+    .tox-statusbar {
+        box-shadow: 0 0 1px grey;
+    }
+}
+
+::ng-deep .tox-statusbar__path {
+    visibility: hidden !important;
+}
+
+::ng-deep .tox-toolbar__overflow {
+    max-width: none !important;
+}
+
+::ng-deep .tox .tox-edit-area__iframe {
+    background-color: transparent !important;
+}

@@ -71,7 +71,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                                     args = this.reduceParams(action.Parameters, evt);
                                 }
                                 // execute action
-                                this.executeAction(action.Method, action.ExeName, (args || ',').slice(1));
+                                this.executeAction(action.Method, action.ExeName, args);
                             }
                         }
                     });
@@ -141,39 +141,44 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     private reduceParams(params: string[], evt: IUIEvent): string {
         try {
             const AgentData = SDKClient.getAgentData();
-            return params.reduce((acc, curr) => {
-                const [prefix, tmacEvtName] = curr.split('.');
+            if (!params.length) {
+                return '';
+            }
+            return params
+                .reduce((acc, curr) => {
+                    const [prefix, tmacEvtName] = curr.split('.');
 
-                if (prefix === 'AgentData') {
-                    const val = get({ AgentData }, curr, '');
-                    acc += `,${val}`;
-                } else if (prefix === 'TMACEvent') {
-                    const TMACEvent = {
-                        [tmacEvtName]: this._tmacEventService
-                            .getInteractionEventsArray(evt.InteractionID)
-                            .reverse()
-                            .find((e) => e.EventName === tmacEvtName)
-                    };
-                    const val = extractJsonVal({ TMACEvent }, curr);
-                    acc += `,${val}`;
-                } else {
-                    const newParams = getStringVars(curr);
-                    if (newParams) {
-                        const newParamVals = this.reduceParams(
-                            newParams.map((p) => p.replaceAll('${', '').replaceAll('}', '')),
-                            evt
-                        )
-                            ?.slice(1)
-                            ?.split(',');
-                        acc += `,${newParams.reduce((subAcc, subCurr, i) => {
-                            return subAcc.replaceAll(subCurr, newParamVals[i]);
-                        }, curr)}`;
+                    if (prefix === 'AgentData') {
+                        const val = get({ AgentData }, curr, '');
+                        acc += `,${val}`;
+                    } else if (prefix === 'TMACEvent') {
+                        const TMACEvent = {
+                            [tmacEvtName]: this._tmacEventService
+                                .getInteractionEventsArray(evt.InteractionID)
+                                .reverse()
+                                .find((e) => e.EventName === tmacEvtName)
+                        };
+                        const val = extractJsonVal({ TMACEvent }, curr);
+                        acc += `,${val}`;
                     } else {
-                        acc += `,${curr}`;
+                        const newParams = getStringVars(curr);
+                        if (newParams) {
+                            const newParamVals = this.reduceParams(
+                                newParams.map((p) => p.replaceAll('${', '').replaceAll('}', '')),
+                                evt
+                            )
+                                ?.slice(1)
+                                ?.split(',');
+                            acc += `,${newParams.reduce((subAcc, subCurr, i) => {
+                                return subAcc.replaceAll(subCurr, newParamVals[i]);
+                            }, curr)}`;
+                        } else {
+                            acc += `,${curr}`;
+                        }
                     }
-                }
-                return acc;
-            }, '');
+                    return acc;
+                }, '')
+                .slice(1);
         } catch (error) {
             this.logger.error('Error in reduceParams', error);
         }

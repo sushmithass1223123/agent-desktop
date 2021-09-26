@@ -246,6 +246,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     @ViewChild(PreviewEmailComponent)
     previewEmailRef: PreviewEmailComponent;
 
+    availableTabs = [
+        { label: 'Queue', icon: 'queue', key: 'queue' },
+        { label: 'Inbox', icon: 'mail', key: 'inbox' },
+        { label: 'Sent', icon: 'mark_email_read', key: 'sentitem' },
+        { label: 'Drafts', icon: 'drafts', key: 'draft' }
+    ];
+
     /**
      * Constructor
      */

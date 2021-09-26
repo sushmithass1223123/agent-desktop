@@ -14,7 +14,6 @@ import {
     AvatarComponent,
     CreateEmailComponent,
     CustomDialogComponent,
-    EmailTemplateSelectorComponent,
     MailboxSettingsComponent,
     NoDataAvailableComponent,
     PreviewEmailComponent,
@@ -24,8 +23,10 @@ import {
     SkeletonComponent,
     SnackbarComponent,
     TableComponent,
+    TextTemplatesComponent,
     WidgetFabComponent
 } from './components';
+import { EmailModule } from './components/email/email.module';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
 
@@ -45,7 +46,7 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, PickerModule, EditorModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, PickerModule, EditorModule, EmailModule];
 
 /**
  * Shared components
@@ -53,7 +54,6 @@ const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsMo
 const sharedComponents = [
     MailboxSettingsComponent,
     ResourceNotFoundComponent,
-    EmailTemplateSelectorComponent,
     CustomDialogComponent,
     AvatarComponent,
     TWChartDirective,
@@ -70,7 +70,8 @@ const sharedComponents = [
     PreviewEmailComponent,
     SkeletonComponent,
     SharedWrapperComponent,
-    TableComponent
+    TableComponent,
+    TextTemplatesComponent
 ];
 
 /**

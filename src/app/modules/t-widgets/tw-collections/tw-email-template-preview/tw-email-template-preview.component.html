@@ -1,6 +1,8 @@
 <ng-container *ngIf="templateInfo.Type !== 'Form'">
-    <div [innerHTML]="templateInfo.BodyHTML"></div>
-    <div class="w-100-p" fxLayout fxLayoutAlign="end center">
+    <div class="email-body twd-overflow-auto">
+        <div [innerHTML]="templateInfo.BodyHTML"></div>
+    </div>
+    <div class="twd-flex twd-justify-end twd-sticky twd-bottom-0 twd-pt-2">
         <button mat-raised-button color="primary" (click)="use(templateInfo)">Use</button>
         <button mat-button color="accent" (click)="close()">Cancel</button>
     </div>
@@ -9,7 +11,7 @@
     <tw-wrapper [data]="data">
         <div class="p-8 twd-overflow-auto email-body">
             <div [innerHTML]="safeHtml"></div>
-            <div class="w-100-p" fxLayout fxLayoutAlign="end center">
+            <div class="twd-flex twd-justify-end twd-sticky twd-bottom-0 twd-pt-2">
                 <button mat-raised-button color="primary" (click)="processFormTemplate()">Use</button>
                 <button mat-button color="accent" (click)="close()">Cancel</button>
             </div>

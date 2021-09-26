@@ -286,9 +286,19 @@ export class DashboardService extends SharedWrapper {
         this._subscribed = true;
         this._serviceStarted = false;
 
-        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(async (config: any) => {
+            const serverUrls = await SDKClient.getDataServerSignalRNatUrls({
+                currentUrlList: config.Main.Urls?.DashboardServerUrls || [],
+                reason: ''
+            }).catch((err) => {
+                console.error(err);
+            });
             // check whether the Urls are provided in config
-            this._serviceUrls = config.Main.Urls?.DashboardServerUrls || [];
+            if (serverUrls) {
+                this._serviceUrls = serverUrls?.response || config.Main.Urls?.DashboardServerUrls || [];
+            } else {
+                this._serviceUrls = config.Main.Urls?.DashboardServerUrls || [];
+            }
             // if urls are there then start service
             if (this._serviceUrls.length > 0 && !this._serviceStarted) {
                 this.startService();

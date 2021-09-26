@@ -62,9 +62,6 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.widgetData = this.data.Data || new Object();
 
         if (this.widgetData.SLEnabled) {
-            // add service level to column
-            // this.displayedColumns.push('ServiceLevel');
-            this.table.columns.push('ServiceLevel');
             // get the dashboard color codes for wallboard
             SDKClient.getDashboardColorCodes().then((x) => {
                 if (x.response) {
@@ -121,6 +118,12 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.table.footer = 'disabled';
         this.table.columns = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
         this.table.sortBy = 'CallsInQueue';
+
+        if (this.widgetData.SLEnabled) {
+            // add service level to column
+            // this.displayedColumns.push('ServiceLevel');
+            this.table.columns.push('ServiceLevel');
+        }
     }
 
     /**
