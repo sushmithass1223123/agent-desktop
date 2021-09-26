@@ -444,7 +444,7 @@
                                     },
                                     "Data": {
                                         "Role": "agent",
-                                        "SLEnabled": false
+                                        "SLEnabled": true
                                     }
                                 }
                             ],
@@ -1369,6 +1369,44 @@
                             ],
                             "Dynamic": [
                                 {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false,
+                                        "Number": "OutgoingCallEvent.PhoneNumber",
+                                        "DeflectExpiry": 1,
+                                        "DeflectIntent": "devtest",
+                                        "DestChannel": "textchat",
+                                        "DestSubChannel": "text",
+                                        "DisconnectTimeout": -1,
+                                        "FallbackSkillId": 42001,
+                                        "NextStatusName": "ACW",
+                                        "StatusLockTimeout": 1,
+                                        "ReservedStatusCode": 2
+                                    }
+                                },
+                                {
                                     "Name": "Agent Assist",
                                     "Description": "",
                                     "Key": "AgentAssist",
@@ -2079,93 +2117,6 @@
                                             "Y": 1
                                         },
                                         "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "ResponseMode": "manual",
-                                        "EditAllowed": false
-                                    }
-                                },
-                                {
-                                    "Name": "Deflect To Digital",
-                                    "Description": "",
-                                    "Key": "TWDeflectToDigital",
-                                    "Type": "tw-deflect-to-digital",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "ResponseMode": "manual",
-                                        "EditAllowed": false
-                                    }
-                                },
-                                {
-                                    "Name": "Deflect To Digital",
-                                    "Description": "",
-                                    "Key": "TWDeflectToDigital",
-                                    "Type": "tw-deflect-to-digital",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "ResponseMode": "manual",
-                                        "EditAllowed": false
-                                    }
-                                },
-                                {
-                                    "Name": "Deflect To Digital",
-                                    "Description": "",
-                                    "Key": "TWDeflectToDigital",
-                                    "Type": "tw-deflect-to-digital",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": {
-                                            "X": 2,
-                                            "Y": 1
-                                        },
-                                        "Actions": [
-                                            "maximize",
-                                            "float"
-                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false

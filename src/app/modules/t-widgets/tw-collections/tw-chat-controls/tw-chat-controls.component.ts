@@ -879,18 +879,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     data.replyId = json.replyId;
                     data.attachment = json.attachment ? json.attachment : null;
 
-                    // get the file upload url
-                    const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
+                    if (json.uploader === 'MediaStreamer') {
+                        // do not modify use as is
+                    } else {
+                        // get the file upload url
+                        const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
 
-                    // check if we need to get full path of attachment
-                    if (
-                        data.attachment && // check if attachment is there
-                        !data.attachment.src && // check if src is not found
-                        data.attachment.name && // check if name is provided
-                        fileServerUrl // check if file server URL is configured
-                    ) {
-                        // get the attachment src
-                        data.attachment.src = `${fileServerUrl}/${this.sessionID}/${data.attachment.name}`;
+                        // check if we need to get full path of attachment
+                        if (
+                            data.attachment && // check if attachment is there
+                            !data.attachment.src && // check if src is not found
+                            data.attachment.name && // check if name is provided
+                            fileServerUrl // check if file server URL is configured
+                        ) {
+                            // get the attachment src
+                            data.attachment.src = `${fileServerUrl}/${this.sessionID}/${data.attachment.name}`;
+                        }
                     }
                 }
             }

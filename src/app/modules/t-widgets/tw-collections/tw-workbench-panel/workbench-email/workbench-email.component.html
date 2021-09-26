@@ -4,74 +4,43 @@
         widget: (customFuse.widget$ | async)
     } as customFuse"
 >
-    <ng-container *ngIf="{ bulkSelection: !['sentitem'].includes(currentTab) } as conf">
+    <ng-container
+        *ngIf="{
+            bulkSelection: !['sentitem'].includes(currentTab) && (state?.allowQueueTransfer || state?.deleteAllowed || currentTab === 'queue'),
+            deleteAllowed: deleteAllowed && currentTab !== 'sentitem' && currentTab !== 'queue',
+            hideCategoryMenu: false,
+            allowQueueTransfer: currentTab === 'queue' && allowQueueTransfer,
+            showEmailSwitcher: ['draft', 'sentitem'].includes(currentTab),
+            search: {
+                global: {
+                    empty: !globalSearch.form.value,
+                    edited: globalSearch.data[currentTab] !== globalSearch.form.value
+                },
+                form: advancedSearch.data[currentTab]?.changed
+            }
+        } as state"
+    >
         <div
             #emailWorkBench
             class="email-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
         >
-            <div *ngIf="!hideCategoryMenu" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
+            <div *ngIf="!state.hideCategoryMenu" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
                 <div class="h-100-p py-20 twd-flex twd-flex-col twd-justify-between">
                     <div class="tab-menu twd-flex twd-flex-col twd-gap-4">
                         <button
                             class="twd-mb-3 pb-20"
                             mat-button
-                            matTooltip="Queue"
-                            (click)="switchTab('queue')"
+                            *ngFor="let tab of availableTabs"
+                            [matTooltip]="tab.label"
+                            (click)="switchTab(tab.key)"
                             [disabled]="emailSearchRes.loading"
                             matTooltipPosition="right"
-                            [ngClass]="{
-                                'mat-raised-button': currentTab === 'queue'
-                            }"
-                            [color]="currentTab === 'queue' && 'accent'"
+                            [ngClass]="{ 'mat-raised-button': currentTab === tab.key }"
+                            [color]="currentTab === tab.key && 'accent'"
                         >
-                            <mat-icon>queue</mat-icon>
-                            <div>Queued</div>
-                        </button>
-                        <button
-                            class="twd-mb-3 pb-20"
-                            mat-button
-                            (click)="switchTab('inbox')"
-                            matTooltip="Inbox"
-                            [disabled]="emailSearchRes.loading"
-                            matTooltipPosition="right"
-                            [ngClass]="{
-                                'mat-raised-button': currentTab === 'inbox'
-                            }"
-                            [color]="currentTab === 'inbox' && 'accent'"
-                        >
-                            <mat-icon>mail</mat-icon>
-                            <div>Inbox</div>
-                        </button>
-                        <button
-                            class="twd-mb-3 pb-20"
-                            mat-button
-                            (click)="switchTab('sentitem')"
-                            matTooltip="Sent"
-                            [disabled]="emailSearchRes.loading"
-                            matTooltipPosition="right"
-                            [ngClass]="{
-                                'mat-raised-button': currentTab === 'sentitem'
-                            }"
-                            [color]="currentTab === 'sentitem' && 'accent'"
-                        >
-                            <mat-icon>mark_email_read</mat-icon>
-                            <div>Sent</div>
-                        </button>
-                        <button
-                            class="twd-mb-3 pb-20"
-                            mat-button
-                            matTooltip="Drafts"
-                            (click)="switchTab('draft')"
-                            [disabled]="emailSearchRes.loading"
-                            matTooltipPosition="right"
-                            [ngClass]="{
-                                'mat-raised-button': currentTab === 'draft'
-                            }"
-                            [color]="currentTab === 'draft' && 'accent'"
-                        >
-                            <mat-icon>drafts</mat-icon>
-                            <div>Drafts</div>
+                            <mat-icon>{{ tab.icon }}</mat-icon>
+                            <div>{{ tab.label }}</div>
                         </button>
                     </div>
                 </div>
@@ -84,29 +53,22 @@
                         *ngIf="getEmailChecks() as selectedMails"
                     >
                         <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
-                            <button class="lg:twd-hidden" #expandableButton (click)="hideCategoryMenu = !hideCategoryMenu">
-                                <mat-icon>{{ hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
+                            <button class="lg:twd-hidden" #expandableButton (click)="state.hideCategoryMenu = !state.hideCategoryMenu">
+                                <mat-icon>{{ state.hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
                             </button>
                             <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1" (ngSubmit)="submitGlobalSearchForm()">
-                                <mat-form-field
-                                    class="custom with-border form-field w-100-p"
-                                    appearance="outline"
-                                    *ngIf="{
-                                        empty: !globalSearch.form.value,
-                                        unequal: globalSearch.data[currentTab] !== globalSearch.form.value
-                                    } as conditions"
-                                >
+                                <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
                                     <input
                                         class="login-input"
                                         matInput
                                         [placeholder]="currentTab === 'queue' ? 'Search by Subject' : 'Search'"
                                         [formControl]="globalSearch.form"
                                     />
-                                    <button *ngIf="conditions.empty" mat-icon-button matSuffix disabled type="button">
+                                    <button *ngIf="state.search.global.empty" mat-icon-button matSuffix disabled type="button">
                                         <mat-icon matSuffix>search</mat-icon>
                                     </button>
                                     <button
-                                        *ngIf="conditions.unequal"
+                                        *ngIf="state.search.global.edited"
                                         mat-button
                                         color="primary"
                                         matSuffix
@@ -117,7 +79,7 @@
                                         <mat-icon>east</mat-icon>
                                     </button>
                                     <button
-                                        *ngIf="!conditions.empty && !conditions.unequal"
+                                        *ngIf="!state.search.global.empty && !state.search.global.edited"
                                         type="button"
                                         mat-button
                                         color="accent"
@@ -149,7 +111,7 @@
                                 matTooltip="Advance Search"
                             >
                                 <span
-                                    *ngIf="advancedSearch.data[currentTab]?.changed"
+                                    *ngIf="state.search.form"
                                     class="twd-absolute twd-h-2 twd-w-2 twd-top-1.5 twd-right-1.5 twd-rounded-full twd-bg-primary-default"
                                 ></span>
                                 <mat-icon> more_vert </mat-icon>
@@ -171,7 +133,7 @@
                                             novalidate
                                         >
                                             <mat-form-field class="twd-text-sm twd-col-span-2" appearance="outline">
-                                                <mat-label> Email </mat-label>
+                                                <mat-label> Email ID </mat-label>
                                                 <input matInput formControlName="email" type="text" />
                                             </mat-form-field>
                                             <mat-form-field class="twd-text-sm" appearance="outline">
@@ -205,97 +167,90 @@
                                                 <input matInput formControlName="content" type="text" />
                                             </mat-form-field>
 
-                                            <ng-container
-                                                *ngIf="{
-                                                    onlyForInBox: currentTab === 'inbox',
-                                                    notInQueue: currentTab !== 'queue'
-                                                } as show"
+                                            <mat-form-field
+                                                class="twd-text-sm"
+                                                [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }"
+                                                appearance="outline"
                                             >
-                                                <mat-form-field
-                                                    class="twd-text-sm"
-                                                    [ngClass]="{ 'twd-hidden': !show.onlyForInBox }"
-                                                    appearance="outline"
-                                                >
-                                                    <mat-label> Assigned To (by agentID) </mat-label>
-                                                    <input matInput formControlName="assignedTo" type="text" />
-                                                </mat-form-field>
+                                                <mat-label> Assigned To (by agentID) </mat-label>
+                                                <input matInput formControlName="assignedTo" type="text" />
+                                            </mat-form-field>
 
-                                                <mat-form-field
-                                                    class="twd-text-sm"
-                                                    appearance="outline"
-                                                    [ngClass]="{ 'twd-hidden': !show.notInQueue }"
-                                                >
-                                                    <mat-label> Session Id </mat-label>
-                                                    <input matInput formControlName="inSessionId" type="text" />
-                                                </mat-form-field>
+                                            <mat-form-field
+                                                class="twd-text-sm"
+                                                appearance="outline"
+                                                [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
+                                            >
+                                                <mat-label> Session Id </mat-label>
+                                                <input matInput formControlName="inSessionId" type="text" />
+                                            </mat-form-field>
 
-                                                <mat-form-field
-                                                    appearance="outline"
-                                                    class="twd-text-sm twd-col-span-2"
-                                                    [ngClass]="{ 'twd-hidden': !show.notInQueue }"
-                                                >
-                                                    <ng-container *ngIf="advancedSearch.form.controls.listOfMailboxes?.value as selectedMailboxes">
-                                                        <mat-label>
-                                                            {{
-                                                                selectedMailboxes && selectedMailboxes.length
-                                                                    ? 'List of mailboxes'
-                                                                    : 'No mailboxes available'
-                                                            }}
-                                                        </mat-label>
-                                                        <mat-select formControlName="listOfMailboxes" multiple>
-                                                            <mat-select-trigger>
-                                                                {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
-                                                                <span *ngIf="selectedMailboxes?.length > 1">
-                                                                    (+{{ selectedMailboxes.length - 1 }}
-                                                                    {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
-                                                                </span>
-                                                            </mat-select-trigger>
-                                                            <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{
-                                                                mailbox
-                                                            }}</mat-option>
-                                                        </mat-select>
-                                                    </ng-container>
-                                                </mat-form-field>
+                                            <mat-form-field
+                                                appearance="outline"
+                                                class="twd-text-sm twd-col-span-2"
+                                                [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
+                                            >
+                                                <ng-container *ngIf="advancedSearch.form.controls.listOfMailboxes?.value as selectedMailboxes">
+                                                    <mat-label>
+                                                        {{
+                                                            selectedMailboxes && selectedMailboxes.length
+                                                                ? 'List of mailboxes'
+                                                                : 'No mailboxes available'
+                                                        }}
+                                                    </mat-label>
+                                                    <mat-select formControlName="listOfMailboxes" multiple>
+                                                        <mat-select-trigger>
+                                                            {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
+                                                            <span *ngIf="selectedMailboxes?.length > 1">
+                                                                (+{{ selectedMailboxes.length - 1 }}
+                                                                {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
+                                                            </span>
+                                                        </mat-select-trigger>
+                                                        <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{
+                                                            mailbox
+                                                        }}</mat-option>
+                                                    </mat-select>
+                                                </ng-container>
+                                            </mat-form-field>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"> Attachments : </span>
-                                                    <input matInput placeholder="Input" class="twd-hidden" />
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="hasAttachments">
-                                                        <mat-radio-button [value]="2">Any</mat-radio-button>
-                                                        <mat-radio-button [value]="1">Yes</mat-radio-button>
-                                                        <mat-radio-button [value]="0">No</mat-radio-button>
-                                                    </mat-radio-group>
-                                                </div>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Attachments : </span>
+                                                <input matInput placeholder="Input" class="twd-hidden" />
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="hasAttachments">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"> Replied : </span>
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="replied">
-                                                        <mat-radio-button [value]="2">Any</mat-radio-button>
-                                                        <mat-radio-button [value]="1">Yes</mat-radio-button>
-                                                        <mat-radio-button [value]="0">No</mat-radio-button>
-                                                    </mat-radio-group>
-                                                </div>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Replied : </span>
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="replied">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"> Closed : </span>
-                                                    <input matInput placeholder="Input" class="twd-hidden" />
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="closed">
-                                                        <mat-radio-button [value]="2">Any</mat-radio-button>
-                                                        <mat-radio-button [value]="1">Yes</mat-radio-button>
-                                                        <mat-radio-button [value]="0">No</mat-radio-button>
-                                                    </mat-radio-group>
-                                                </div>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Closed : </span>
+                                                <input matInput placeholder="Input" class="twd-hidden" />
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="closed">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': !show.onlyForInBox }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"> Assigned : </span>
-                                                    <input matInput placeholder="Input" class="twd-hidden" />
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="assigned">
-                                                        <mat-radio-button [value]="2">Any</mat-radio-button>
-                                                        <mat-radio-button [value]="1">Yes</mat-radio-button>
-                                                        <mat-radio-button [value]="0">No</mat-radio-button>
-                                                    </mat-radio-group>
-                                                </div>
-                                            </ng-container>
+                                            <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                <span class="mat-subheading-2 m-0 twd-w-4/12"> Assigned : </span>
+                                                <input matInput placeholder="Input" class="twd-hidden" />
+                                                <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="assigned">
+                                                    <mat-radio-button [value]="2">Any</mat-radio-button>
+                                                    <mat-radio-button [value]="1">Yes</mat-radio-button>
+                                                    <mat-radio-button [value]="0">No</mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
                                             <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
                                                 <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20">Search</button>
                                                 <button
@@ -313,7 +268,7 @@
                             </button>
                         </div>
 
-                        <div id="sortControls" class="twd-flex twd-items-center twd-justify-between twd-px-2 twd-pt-2" *ngIf="conf.bulkSelection">
+                        <div id="sortControls" class="twd-flex twd-items-center twd-justify-between twd-px-2 twd-pt-2" *ngIf="state.bulkSelection">
                             <mat-checkbox
                                 id="selectAllCtrl"
                                 (change)="selectEmails($event.checked)"
@@ -368,7 +323,7 @@
                             <button
                                 mat-raised-button
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                *ngIf="currentTab === 'queue' && allowQueueTransfer"
+                                *ngIf="state.allowQueueTransfer"
                                 (click)="transferEmail(getSelectedEmails())"
                             >
                                 Transfer All
@@ -386,7 +341,7 @@
                                 mat-raised-button
                                 color="accent"
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                *ngIf="deleteAllowed && currentTab !== 'sentitem' && currentTab !== 'queue'"
+                                *ngIf="state.deleteAllowed"
                                 (click)="deleteEmails(getSelectedEmails())"
                             >
                                 Delete Emails
@@ -437,7 +392,7 @@
                         <button
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            *ngIf="selectedEmail.currentTab === 'queue' && allowQueueTransfer"
+                            *ngIf="state.allowQueueTransfer"
                             (click)="transferEmail([selectedEmail])"
                         >
                             Transfer
@@ -448,7 +403,7 @@
                         <button
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            *ngIf="deleteAllowed && currentTab !== 'sentitem'"
+                            *ngIf="state.deleteAllowed"
                             (click)="deleteEmails([selectedEmail])"
                         >
                             Delete
@@ -457,7 +412,7 @@
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
                             color="accent"
-                            *ngIf="selectedEmail.currentTab === 'inbox'"
+                            *ngIf="currentTab === 'inbox'"
                             (click)="markAsSpam(selectedEmail)"
                         >
                             Mark As Spam
@@ -511,10 +466,7 @@
                                     </div>
                                 </div>
 
-                                <div
-                                    *ngIf="['draft', 'sentitem'].includes(currentTab) && this.emailBodies[selectedEmail.InSessionId]"
-                                    class="twd-p-3 twd-mt-1"
-                                >
+                                <div *ngIf="state.showEmailSwitcher && this.emailBodies[selectedEmail.InSessionId]" class="twd-p-3 twd-mt-1">
                                     <a
                                         *ngIf="latestEmailPreview"
                                         class="twd-cursor-pointer"
@@ -581,7 +533,7 @@
                                 : ' theme-bg'
                         "
                     >
-                        <div class="twd-p-3" *ngIf="conf.bulkSelection">
+                        <div class="twd-p-3" *ngIf="state.bulkSelection">
                             <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
                         </div>
                         <div
@@ -626,7 +578,7 @@
                         "
                     >
                         <div class="twd-flex twd-items-center">
-                            <div *ngIf="conf.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected">
+                            <div *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected">
                                 <mat-checkbox
                                     [indeterminate]="selected.some"
                                     [checked]="selected.all"

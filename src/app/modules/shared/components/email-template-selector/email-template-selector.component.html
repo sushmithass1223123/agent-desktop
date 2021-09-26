@@ -1,4 +1,12 @@
-<button mat-raised-button mat-icon-button color="primary" matTooltip="Templates" [matMenuTriggerFor]="departmentMenu" class="mx-4">
+<button
+    mat-raised-button
+    mat-icon-button
+    color="primary"
+    matTooltip="Templates"
+    [disabled]="disabled"
+    [matMenuTriggerFor]="departmentMenu"
+    class="mx-4"
+>
     <!-- <span class="mr-4"> Choose Template </span> -->
     <mat-icon>description</mat-icon>
 </button>
