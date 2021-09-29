@@ -756,6 +756,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async openEmail(email: Mail): Promise<void> {
         try {
+            this.openEmailRes.data = Object.assign(email, { Body: '' }, { currentTab: this.currentTab });
             this.setComponentState('email/open/loading');
             const fetchFromOutbox = (this.currentTab === 'draft' || this.currentTab === 'sentitem') && this.latestEmailPreview;
             const requestedSession = fetchFromOutbox ? email.OutSessionId : email.InSessionId;
@@ -778,8 +779,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 return [];
             };
 
+            // checking if email has been cached for the currentTab
             if (!this.emailBodies[email.InSessionId]) {
+                // inbox call is always made no matter which tab
+                // because if we're in inbox its necessary and if we're not then
+                // the customer might want to view the original inbox email
                 inboxRes = (await SDKClient.getInboxEmail(email.InSessionId)).response;
+                // a dummy emailtype means that the email was composed by server for server use only
+                // checking if user is trying to open a dummy email in a one of the non outbox tabs
+                // and if so , logging an error since the UI is requiesting dummy email which is "server user only"
+                //  and try to fetch the email from outbox
                 if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
                     if (!fetchFromOutbox) {
                         throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
@@ -1348,6 +1357,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             n.checked = checked;
         }
     };
+
+    /**
+     * Returns selected email info for rerender between switcher view
+     * @returns {any}
+     */
+    getSelectedEmailInfo(): any {
+        return Object.assign({}, this.openEmailRes.data);
+    }
 }
 
 // for more info visit - https://angular.io/api/core

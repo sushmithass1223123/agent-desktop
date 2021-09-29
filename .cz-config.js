@@ -44,7 +44,7 @@ module.exports = {
     allowCustomScopes: true,
     allowBreakingChanges: ['feat', 'fix'],
     // skip any questions you want
-    skipQuestions: ['body', 'footer', 'breaking'],
+    skipQuestions: ['footer', 'breaking'],
     subjectLimit: 100,
     upperCaseSubject: true
 };

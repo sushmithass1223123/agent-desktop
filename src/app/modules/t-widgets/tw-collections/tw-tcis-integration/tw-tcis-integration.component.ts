@@ -4,7 +4,7 @@ import { getStringVars } from '@tmac/operators';
 import { IUIEvent, SDKClient, SignalRWrapper, TMACEventTypes, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { extractJsonVal } from 'app/utils';
+import { extractJsonVal } from '@tmac/operators';
 import { get, uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 

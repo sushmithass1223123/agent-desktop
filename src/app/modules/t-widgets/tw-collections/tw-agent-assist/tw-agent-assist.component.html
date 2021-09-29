@@ -7,7 +7,7 @@
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" class="p-8">
-        <mat-chip-list *ngIf="nlpData.length > 0; else noData">
+        <mat-chip-list class="twd-w-full twd-h-full twd-overflow-y-auto" *ngIf="nlpData.length > 0; else noData">
             <mat-chip
                 *ngFor="let item of nlpData"
                 (click)="openAssitWidget(item.Name, false, item.Url, item.Width, item.Height)"

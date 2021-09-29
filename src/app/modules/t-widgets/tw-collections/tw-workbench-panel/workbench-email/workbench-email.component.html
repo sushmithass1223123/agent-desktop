@@ -433,13 +433,10 @@
                         [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <preview-email
-                            [email]="{
-                                Subject: selectedEmail.Subject,
-                                Body: selectedEmail.Body,
-                                Files: selectedEmail.Attachments
-                            }"
+                            [email]="getSelectedEmailInfo()"
                             [loading]="openEmailRes.loading"
                             [error]="openEmailRes.error"
+                            (retry)="openEmail(selectedEmail)"
                         >
                             <div id="emailInfo">
                                 <div class="twd-flex twd-justify-between twd-px-7">

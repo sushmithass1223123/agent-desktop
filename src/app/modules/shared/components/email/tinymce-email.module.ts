@@ -1,5 +1,19 @@
 import { APP_BASE_HREF, CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Inject, Input, NgModule, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    NgModule,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import { MaterialModule } from '@modules/shared/material.module';
 import { TUtils } from '@tmac/sdk';
 import { fromEvent, Subject } from 'rxjs';
@@ -12,7 +26,7 @@ import tinymce, { Editor } from 'tinymce';
 @Component({
     selector: 'email-editor',
     template: `
-        <div class="twd-w-full twd-h-full twd-relative">
+        <div #hostEl class="twd-w-full twd-h-full twd-relative">
             <div *ngIf="loading" class="twd-z-10 twd-absolute twd-w-full mat-title twd-h-full twd-bg-white/40 twd-grid twd-place-content-center">
                 <p>Loading Editor ...</p>
             </div>
@@ -48,6 +62,17 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      */
     @Output()
     bodyChange = new EventEmitter();
+
+    /**
+     * Top Most elemet
+     */
+    @ViewChild('hostEl')
+    host: ElementRef<HTMLDivElement>;
+
+    /**
+     * Intersection observer's instance
+     */
+    _intersection: IntersectionObserver;
 
     /**
      * Loadin flag
@@ -106,6 +131,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
     ngOnDestroy(): void {
         this.unsubscribeAll$.unsubscribe();
         this._editor?.destroy();
+        this._intersection.disconnect();
     }
 
     /**
@@ -179,6 +205,17 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     this.error = true;
                 });
         });
+
+        this._intersection = new IntersectionObserver((e) => {
+            e.forEach((el) => {
+                if (el.isIntersecting) {
+                    this._editor?.show();
+                } else {
+                    this._editor?.hide();
+                }
+            });
+        });
+        this._intersection.observe(this.host.nativeElement);
     }
 }
 
