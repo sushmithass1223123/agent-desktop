@@ -60,7 +60,7 @@ import {
     SnackbarStateTypes
 } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { checkStringIsHTML, urlify } from 'app/utils';
+import { isStringHtml, urlify } from '@tmac/operators';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -1466,7 +1466,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private pushToTranscript(transcript: ChatTranscripts): void {
         // check for message has link
-        if (transcript.message && !checkStringIsHTML(transcript.message)) {
+        if (transcript.message && !isStringHtml(transcript.message)) {
             transcript.message = urlify(transcript.message);
         }
         this.chatTranscripts.push(transcript);

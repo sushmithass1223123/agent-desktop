@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CreateEmailInput } from 'app/interfaces';
-import { checkStringIsHTML } from 'app/utils';
+import { isStringHtml } from '@tmac/operators';
 
 /**
  * Previews emails
@@ -48,7 +48,7 @@ export class PreviewEmailComponent implements OnChanges {
      * @param {SimpleChanges} changes
      */
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.email && changes.email?.currentValue.Body) {
+        if (changes.email && changes.email?.currentValue?.Body) {
             this.setEmailBody(changes.email.currentValue.Body);
         }
     }
@@ -75,7 +75,7 @@ export class PreviewEmailComponent implements OnChanges {
             ::-webkit-scrollbar{width:4px !important;height:4px !important;}
             ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
             ${
-                !checkStringIsHTML(this.email.Body)
+                !isStringHtml(this.email.Body)
                     ? `body {
                 white-space: pre-wrap;
             }`

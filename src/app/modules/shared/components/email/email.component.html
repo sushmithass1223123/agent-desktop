@@ -22,73 +22,36 @@
                 </mat-icon>
             </span>
         </div>
-        <ng-container *ngIf="!_email.Subject && state.loading">
+        <ng-container *ngIf="!email.Subject && state === 'loading'">
             <skeleton class="twd-opacity-60 twd-w-6/12 twd-m-3"> </skeleton>
         </ng-container>
 
         <div class="twd-transform twd-px-1" [ngClass]="{ 'twd-max-h-0 twd-pb-0': headerCollapsed }">
             <ng-container>
-                <ng-content *ngIf="!state.loading && !state.error; else emailInfoRef" select="#emailInfo"></ng-content>
+                <ng-content *ngIf="state === 'loaded'; else emailInfoRef" select="#emailInfo"></ng-content>
                 <ng-template #emailInfoRef>
-                    <skeleton *ngIf="!state.error" class="twd-opacity-70 twd-mx-3 twd-w-3/12" [rows]="3"> </skeleton>
+                    <skeleton *ngIf="state !== 'error'" class="twd-opacity-70 twd-mx-3 twd-w-3/12" [rows]="2"> </skeleton>
                 </ng-template>
             </ng-container>
-            <ng-content *ngIf="!state.loading" select="#emailNotification"></ng-content>
+            <ng-content *ngIf="state !== 'loading'" select="#emailNotification"></ng-content>
             <div
                 id="attachmentList"
-                class="twd-text-left twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list"
-                *ngIf="!state.loading && _email?.Files && _email.Files.length && _email.Files as attachments"
+                class="twd-text-left twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list twd-pb-1.5"
+                *ngIf="state !== 'loading' && email?.Files && email.Files.length && email.Files as attachments"
             >
-                <button
-                    *ngFor="let file of attachments | slice: 0:2"
-                    mat-stroked-button
-                    class="border-radius-20 twd-truncate m-4 twd-max-w-3/12 lg:twd-max-w-6/12"
-                    [matTooltip]="file.Ext | uppercase"
-                    (click)="openFile(file.URL)"
-                >
-                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                    <span>{{ file.Name }}</span>
-                </button>
-
-                <button
-                    *ngIf="attachments.length > 2"
-                    mat-stroked-button
-                    class="border-radius-20 m-4"
-                    [matMenuTriggerFor]="attachList"
-                    matTooltip="Show More"
-                >
-                    +{{ attachments.length - 2 }}
-                </button>
-
-                <mat-menu class="custom attachment-overlay" #attachList="matMenu">
-                    <div class="attachment-menu">
-                        <div
-                            *ngFor="let file of attachments | slice: 2:attachments.length"
-                            class="
-                                twd-flex twd-items-center twd-text-base twd-font-bold twd-p-2 twd-rounded-full twd-overflow-hidden twd-cursor-pointer
-                                mx-8
-                                my-4
-                                border
-                            "
-                            [matTooltip]="file.Ext | uppercase"
-                            (click)="openFile(file.URL)"
-                        >
-                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                            <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
-                        </div>
-                    </div>
-                </mat-menu>
+                <ng-template *ngTemplateOutlet="attachmentsRef; context: { attachments: attachments, removable: false }"> </ng-template>
             </div>
-            <ng-content *ngIf="!state.loading" select="#emailControlButtons"></ng-content>
+            <ng-content *ngIf="state !== 'loading'" select="#emailControlButtons"></ng-content>
         </div>
     </div>
 
     <div class="twd-relative twd-flex-1 twd-overflow-auto">
-        <div *ngIf="!state.loading && !state.error" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-p-1">
-            <email-previewer [body]="_email.Body"></email-previewer>
+        <div *ngIf="state === 'loaded'" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-p-1">
+            <!-- <email-previewer [body]="_email.Body"></email-previewer> -->
+            <div #emailRef class="twd-w-full twd-h-full"></div>
         </div>
 
-        <div *ngIf="state.loading && !state.error" class="twd-h-3/4 twd-ml-3 twd-mt-8 twd-w-10/12">
+        <div *ngIf="state === 'loading'" class="twd-h-3/4 twd-ml-3 twd-mt-8 twd-w-10/12">
             <skeleton class="twd-opacity-70 twd-w-3/12 twd-mb-2"> </skeleton>
             <skeleton class="twd-opacity-70 twd-w-7/12 twd-mb-2" [rows]="3"> </skeleton>
             <skeleton class="twd-opacity-70 twd-w-5/12 twd-mb-2" [rows]="2"> </skeleton>
@@ -96,7 +59,7 @@
             <skeleton class="twd-opacity-70 twd-w-2/12"> </skeleton>
         </div>
 
-        <div *ngIf="state.error" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+        <div *ngIf="state === 'error'" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
             <div class="twd-text-center">
                 <p class="twd-font-bold twd-mb-3 twd-text-lg">Unable to load email</p>
                 <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry.emit()">Retry</button>
@@ -106,10 +69,10 @@
 </div>
 
 <div *ngIf="mode !== 'preview'" class="twd-w-full twd-h-full twd-flex twd-flex-col twd-relative">
-    <ng-container *ngIf="!state.error">
-        <div *ngIf="state.loading" class="twd-absolute twd-h-full twd-w-full twd-grid twd-place-content-center">
+    <ng-container *ngIf="state !== 'error'">
+        <!-- <div *ngIf="state === 'loading'" class="twd-absolute twd-h-full twd-w-full twd-grid twd-place-content-center">
             <p class="mat-title">Loading ...</p>
-        </div>
+        </div> -->
         <form class="twd-mb-2" novalidate>
             <div class="border-primary border-radius-20 w-100-p p-12">
                 <div [formGroup]="_addressFG">
@@ -127,18 +90,14 @@
                         </label>
                         <div class="twd-flex-1 twd-flex twd-items-center">
                             <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
-                            <span
-                                mat-ripple
-                                class="twd-cursor-pointer twd-text-xs twd-font-bold twd-pt-1"
-                                (click)="state.showCcBcc = !state.showCcBcc"
-                            >
+                            <span mat-ripple class="twd-cursor-pointer twd-text-xs twd-font-bold twd-pt-1" (click)="showCcBcc = !showCcBcc">
                                 CC/BCC
                             </span>
                         </div>
                     </div>
                     <small *ngIf="_addressFG.controls.To.errors" class="twd-text-red-600"> To Email Address required </small>
 
-                    <ng-container *ngIf="state.showCcBcc">
+                    <ng-container *ngIf="showCcBcc">
                         <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
                             <label for="ccField" class="font-weight-700 twd-pt-1 twd-flex twd-justify-between">
                                 <span>CC</span>
@@ -172,8 +131,8 @@
             </div>
         </form>
 
-        <div *ngIf="_email.Files?.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list">
-            <mat-chip-list>
+        <div *ngIf="_email.Files?.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list twd-pb-1.5">
+            <!-- <mat-chip-list>
                 <mat-chip
                     *ngFor="let file of _email.Files | slice: 0:2"
                     removable
@@ -196,9 +155,9 @@
                 >
                     +{{ _email.Files.length - 2 }}
                 </mat-chip>
-            </mat-chip-list>
+            </mat-chip-list> -->
 
-            <mat-menu class="custom attachment-overlay" #attachList="matMenu">
+            <!-- <mat-menu class="custom attachment-overlay" #attachList="matMenu">
                 <div class="attachment-menu">
                     <mat-chip-list class="mat-chip-list-stacked">
                         <mat-chip
@@ -217,13 +176,15 @@
                         </mat-chip>
                     </mat-chip-list>
                 </div>
-            </mat-menu>
+            </mat-menu> -->
+
+            <ng-template *ngTemplateOutlet="attachmentsRef; context: { attachments: _email.Files, removable: true }"></ng-template>
         </div>
 
         <email-editor class="border-primary twd-flex-1 border-radius-20 twd-mb-2 twd-overflow-hidden" [(body)]="_email.Body"></email-editor>
     </ng-container>
 
-    <div *ngIf="state.error" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
+    <div *ngIf="state === 'error'" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
         <div class="twd-text-center">
             <p class="twd-font-bold twd-mb-3 twd-text-lg">Unable to load email</p>
             <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry.emit()">Retry</button>
@@ -232,12 +193,12 @@
 
     <div class="twd-flex twd-justify-between twd-px-2 twd-pb-2">
         <div>
-            <email-template-selector [disabled]="state.loading || state.error" (selectTemplate)="selectTemplate($event)"></email-template-selector>
+            <email-template-selector [disabled]="state !== 'loaded'" (selectTemplate)="selectTemplate($event)"></email-template-selector>
             <button
                 mat-raised-button
                 mat-icon-button
                 color="primary"
-                [disabled]="state.loading || state.error"
+                [disabled]="state !== 'loaded'"
                 class="mx-4"
                 matTooltip="Attach file"
                 (click)="attachFileRef.click()"
@@ -250,7 +211,7 @@
             mat-raised-button
             color="primary"
             class="mx-4 border-radius-20"
-            [disabled]="state.loading || state.error"
+            [disabled]="state !== 'loaded'"
             matTooltip="Send Email"
             (click)="sendEmail.emit(_email)"
         >
@@ -267,7 +228,7 @@
             [matTooltip]="emailId"
             selectable
             removable
-            (removed)="remove(key, emailId)"
+            (removed)="removeEmail(key, emailId)"
         >
             <span class="twd-truncate">
                 {{ emailId }}
@@ -281,4 +242,52 @@
             {{ user }}
         </mat-option>
     </mat-autocomplete>
+</ng-template>
+
+<ng-template #attachmentsRef let-attachments="attachments" let-removable="removable">
+    <mat-chip-list class="attachments-summary">
+        <mat-chip
+            *ngFor="let file of attachments | slice: 0:2"
+            [removable]="removable"
+            class="border-radius-20 twd-flex twd-items-center twd-justify-between"
+            [matTooltip]="file.Ext | uppercase"
+            (click)="openFile(file.URL)"
+            (removed)="removeFiles(file.Id)"
+        >
+            <span class="twd-max-w-10/12 twd-flex-1 twd-truncate twd-flex twd-items-center">
+                <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
+            </span>
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+        <mat-chip
+            *ngIf="attachments.length > 2"
+            class="border-radius-20 m-4 twd-cursor-pointer"
+            [matMenuTriggerFor]="attachList"
+            matTooltip="Show More"
+        >
+            +{{ attachments.length - 2 }}
+        </mat-chip>
+    </mat-chip-list>
+
+    <mat-menu class="custom attachment-overlay" #attachList="matMenu">
+        <div class="attachment-menu">
+            <mat-chip-list class="mat-chip-list-stacked">
+                <mat-chip
+                    *ngFor="let file of attachments | slice: 2:attachments.length"
+                    class="border-radius-20 twd-flex twd-items-center twd-justify-between"
+                    [matTooltip]="file.Ext | uppercase"
+                    (click)="openFile(file.URL)"
+                    [removable]="removable"
+                    (removed)="removeFiles(file.Id)"
+                >
+                    <div class="twd-max-w-10/12 twd-flex-1 twd-flex twd-items-center">
+                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                        <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
+                    </div>
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+    </mat-menu>
 </ng-template>

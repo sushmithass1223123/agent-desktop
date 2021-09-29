@@ -4,7 +4,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { AppNotification } from 'app/interfaces';
-import { urlify } from 'app/utils';
+import { urlify } from '@tmac/operators';
 import { orderBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 

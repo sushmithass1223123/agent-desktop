@@ -20,7 +20,6 @@ import {
     ReminderTaskDialogComponent,
     ResourceNotFoundComponent,
     SharedWrapperComponent,
-    SkeletonComponent,
     SnackbarComponent,
     TableComponent,
     TextTemplatesComponent,
@@ -68,7 +67,6 @@ const sharedComponents = [
     CreateEmailComponent,
     AgentSkillListComponent,
     PreviewEmailComponent,
-    SkeletonComponent,
     SharedWrapperComponent,
     TableComponent,
     TextTemplatesComponent

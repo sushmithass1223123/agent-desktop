@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { AppUiService } from '@services/app-ui.service';
 import { SDKClient } from '@tmac/sdk';
-import { CreateEmailOutput, EmailComponentInputs, EmailComponentMode } from 'app/interfaces';
+import { EmailComponentInputs, EmailComponentMode } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -45,11 +45,7 @@ export class EmailComponent implements OnInit, OnChanges {
     };
 
     @Input()
-    state = {
-        loading: false,
-        error: false,
-        showCcBcc: false
-    };
+    state: 'loading' | 'error' | 'loaded' = 'loaded';
 
     /**
      * Maximum file size default 20mbs
@@ -66,6 +62,21 @@ export class EmailComponent implements OnInit, OnChanges {
      */
     @Output() retry = new EventEmitter();
 
+    /**
+     * Email Ref
+     */
+    @ViewChild('emailRef') private set ref(content: ElementRef<HTMLDivElement>) {
+        if (content && this.mode === 'preview') {
+            this.emailRef = content;
+            this.setEmailBody();
+        }
+    }
+
+    /**
+     * Email Ref
+     */
+    emailRef: ElementRef<HTMLDivElement>;
+
     constructor(private _appUiService: AppUiService) {}
 
     /**
@@ -73,7 +84,6 @@ export class EmailComponent implements OnInit, OnChanges {
      */
     ngOnInit(): void {
         this.addUserSuggestions();
-        this._setEditForm();
     }
 
     /**
@@ -83,15 +93,22 @@ export class EmailComponent implements OnInit, OnChanges {
         if (changes.mode && changes.mode.currentValue) {
             this._setEditForm();
         }
-        if (changes.email) {
-            if (!this._email) {
-                this._email = {};
+        if (changes.email && changes.email.currentValue && this.mode === 'preview') {
+            this.setEmailBody();
+        }
+    }
+
+    /**
+     * Sets up email preview
+     * @param {HTMLDivElement} el
+     */
+    setEmailBody(): void {
+        if (this.emailRef) {
+            const el = this.emailRef.nativeElement;
+            if (!el.shadowRoot) {
+                el.attachShadow({ mode: 'open' });
             }
-            const prevValue: EmailComponentInputs = changes.email.previousValue;
-            const currValue: EmailComponentInputs = changes.email.currentValue;
-            if (prevValue?.Body !== currValue?.Body) {
-                this._email.Body = currValue.Body;
-            }
+            el.shadowRoot.innerHTML = this.email.Body;
         }
     }
 
@@ -137,8 +154,9 @@ export class EmailComponent implements OnInit, OnChanges {
      * Sets edit form
      */
     _setEditForm(): void {
-        const { Body, CC, Files, Subject: subject, To, From, CreatedTime } = this.email;
-        const prelude = `
+        if (this.email) {
+            const { Body, CC, Files, Subject: subject, To, From, CreatedTime } = this.email;
+            const prelude = `
         <style>
             ::-webkit-scrollbar{width:4px !important;height:4px !important;}
             ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
@@ -153,61 +171,65 @@ export class EmailComponent implements OnInit, OnChanges {
                 </div>
             </div>
         </div>
-        <br />`;
-        const BCC = [];
-        switch (this.mode) {
-            case 'preview':
-                this._email = this.email;
-                break;
-            case 'compose':
-                this._email = {
-                    BCC: [],
-                    Body: '',
-                    CC: [],
-                    Files: [],
-                    From: this.email.mailbox,
-                    Subject: '',
-                    To: []
-                };
-                break;
-            case 'forward':
-                this._email = {
-                    BCC,
-                    Body: Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
-                    To: [],
-                    From: this.email.mailbox,
-                    Subject: subject,
-                    Files,
-                    CC
-                };
-                break;
-            case 'reply':
-                this._email = {
-                    BCC,
-                    Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
-                    To: [From],
-                    From: this.email.mailbox,
-                    Subject: subject,
-                    Files: [],
-                    CC
-                };
-                break;
-            case 'reply-all':
-                const ToList = To.concat(Array.from(new Set((From || '').split(',')))).filter((e) => e && e !== this.email.mailbox);
-                this._email = {
-                    BCC,
-                    Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
-                    To: [From].concat(ToList),
-                    From: this.email.mailbox,
-                    Subject: subject,
-                    Files: [],
-                    CC
-                };
-                break;
-            case 'draft':
-                this.email.Body = Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
-                this._email = this.email;
-                break;
+                            <br />`;
+            const BCC = [];
+            switch (this.mode) {
+                case 'preview':
+                    this._email = this.email;
+                    break;
+                case 'compose':
+                    this._email = {
+                        BCC: [],
+                        Body: '',
+                        CC: [],
+                        Files: [],
+                        From: this.email.mailbox,
+                        Subject: '',
+                        To: []
+                    };
+                    break;
+                case 'forward':
+                    this._email = {
+                        BCC,
+                        Body: Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        To: [],
+                        From: this.email.mailbox,
+                        Subject: subject,
+                        Files,
+                        CC
+                    };
+                    break;
+                case 'reply':
+                    this._email = {
+                        BCC,
+                        Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        To: [From],
+                        From: this.email.mailbox,
+                        Subject: subject,
+                        Files: [],
+                        CC
+                    };
+                    break;
+                case 'reply-all':
+                    const ToList = To.concat(Array.from(new Set((From || '').split(',')))).filter((e) => e && e !== this.email.mailbox);
+                    this._email = {
+                        BCC,
+                        Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        To: Array.from(new Set([From].concat(ToList))),
+                        From: this.email.mailbox,
+                        Subject: subject,
+                        Files: [],
+                        CC
+                    };
+                    break;
+                case 'draft':
+                    this.email.Body = Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
+                    this._email = this.email;
+                    break;
+            }
+            if (this.mode === 'preview') {
+                this.setEmailBody();
+            }
         }
     }
 
@@ -306,28 +328,28 @@ export class EmailComponent implements OnInit, OnChanges {
         this._addressFG.patchValue({ [key]: '' });
     }
 
+    /**
+     * Used by host elements to return email
+     * @returns {EmailComponentInputs}
+     */
     getEmail(): Partial<EmailComponentInputs> {
         return this._email;
     }
-}
 
-@Component({
-    selector: 'email-previewer',
-    template: ` <div #emailRef class="twd-w-full twd-h-full"></div> `
-})
-export class EmailPreviewerComponent implements OnInit, AfterViewInit {
-    @Input()
-    body: string;
+    /**
+     * Removes user chip
+     * @param key
+     * @param value
+     */
+    removeEmail(key: string, value: string): void {
+        this._email[key] = this._email[key].filter((x) => x !== value);
+    }
 
-    @ViewChild('emailRef')
-    emailRef: ElementRef<HTMLDivElement>;
-
-    constructor() {}
-
-    ngOnInit(): void {}
-
-    ngAfterViewInit(): void {
-        this.emailRef.nativeElement.attachShadow({ mode: 'open' });
-        this.emailRef.nativeElement.shadowRoot.innerHTML = this.body;
+    /**
+     * Opens a selected attachment file
+     * @param {String} fileUrl
+     */
+    openFile(fileUrl: string): void {
+        window.open(fileUrl);
     }
 }

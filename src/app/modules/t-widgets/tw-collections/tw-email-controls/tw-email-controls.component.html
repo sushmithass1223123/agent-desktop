@@ -80,14 +80,21 @@
                             <mat-icon>comment</mat-icon>
                         </button>
 
-                        <ng-container *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
+                        <div class="twd-p-2 twd-flex twd-justify-end twd-gap-2" *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
                             <button mat-raised-button class="border-radius-20" color="warn" (click)="rejectEmail(rejectBtn)" #rejectBtn>
                                 Reject
                             </button>
-                            <button mat-raised-button class="border-radius-20" (click)="sendEmailAsChecker(approveBtn)" #approveBtn color="primary">
+                            <button
+                                mat-raised-button
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                class="border-radius-20"
+                                (click)="sendEmailAsChecker(approveBtn)"
+                                #approveBtn
+                                color="primary"
+                            >
                                 Approve
                             </button>
-                        </ng-container>
+                        </div>
 
                         <ng-container
                             *ngIf="
@@ -129,15 +136,16 @@
                     #emailRef
                     class="twd-flex-1"
                     [mode]="emailComponentMode"
-                    [email]="replyInfo"
-                    [state]="{
-                        loading: getInboxMessageReq.loading || sendingEmailAsMaker,
-                        error: getInboxMessageReq.error
-                    }"
+                    [email]="replyInfo$ | async"
+                    [state]="getInboxMessageReq.error ? 'error' : getInboxMessageReq.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"
                     (sendEmail)="sendEmailAsMaker($event)"
                     (retry)="setEmailDetails(true)"
                 >
                     <div id="emailInfo" class="twd-flex twd-flex-col twd-gap-y-1">
+                        <div *ngIf="currentInteraction.RejectReason" class="twd-text-lg twd-text-accent-default">
+                            <span class="twd-pr-1 twd-mb-1"> [REJECTED] : </span>
+                            {{ currentInteraction.RejectReason?.comment }}
+                        </div>
                         <div class="twd-flex twd-justify-between">
                             <div class="twd-flex">
                                 <div class="twd-flex twd-items-center" matTooltip="Intent">
@@ -203,11 +211,8 @@
                                 </span>
                             </div>
                         </div>
-                        <a
-                            *ngIf="OutboxReasons.includes(currentInteraction.RouteReason) && !SentReasons.includes(currentInteraction.RouteReason)"
-                            class="twd-cursor-pointer"
-                            (click)="switchEmailView()"
-                        >
+
+                        <a *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)" class="twd-cursor-pointer" (click)="switchEmailView()">
                             {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                         </a>
                     </div>
