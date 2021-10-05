@@ -212,7 +212,7 @@
                             </div>
                         </div>
 
-                        <a *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)" class="twd-cursor-pointer" (click)="switchEmailView()">
+                        <a *ngIf="showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
                             {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                         </a>
                     </div>

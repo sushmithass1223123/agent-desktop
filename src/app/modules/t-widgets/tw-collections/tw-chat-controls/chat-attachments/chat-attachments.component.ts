@@ -276,14 +276,19 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             this._fuseProgressBarService.show();
 
             // check if SMM
-            if (this.isSMM) {
+            // check if MediaStreamer is configured, then use MediaStreamer for upload
+            if (this.isSMM || this.fileUploadUrl.MediaStreamer) {
                 // check if the URL is configured
-                if (!this.fileUploadUrl.SMM) {
-                    this._appUIService.showSnackbar('SMM file upload failed, URL not found!', 'failure');
+                // added new file upload url MediaStreamer
+                // keeping "SMM" for backward compatibility
+                if (!this.fileUploadUrl.SMM && !this.fileUploadUrl.MediaStreamer) {
+                    this._appUIService.showSnackbar('File upload failed, URL [MediaStreamer] not found, Please contact the administrator', 'failure');
                     this.attachPreviewMode = '';
                     this.uploadingFiles = [];
                     return;
                 }
+
+                const uploadURLs = this.fileUploadUrl.SMM || this.fileUploadUrl.MediaStreamer;
 
                 // get the files and upload
                 this.uploadingFiles.forEach(async (file) => {
@@ -293,12 +298,12 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         formData.append('interaction_id', TUtils.Generic.uuid());
                         formData.append('organization_id', 'prod');
                         formData.append('conv_id', this.sessionID);
-                        formData.append('uploaded_by', 'system');
+                        formData.append('uploaded_by', SDKClient.getAgentData().agentId);
                         formData.append('other', '');
 
                         // upload the file
                         const { response } = await TUtils.HttpClient.sendRequest({
-                            urls: [this.fileUploadUrl.SMM],
+                            urls: [uploadURLs],
                             method: 'POST',
                             responseType: 'json',
                             formData
@@ -309,6 +314,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                             const type = this.getAttachTypeByFileType(file.type);
                             this.sendAttachments.emit({
                                 type,
+                                contentType: response.result.contentType,
                                 fileName: file.fileName,
                                 src: response.result.streamURL,
                                 size: response.result.size,

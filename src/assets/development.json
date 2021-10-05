@@ -1179,18 +1179,6 @@
                                                             },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": []
-                                                        },
-                                                        "SpeedDial": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": false,
-                                                            "Source": {
-                                                                "Use": "Number",
-                                                                "Display": "Number",
-                                                                "FreeTextAllowed": true
-                                                            },
-                                                            "Columns": []
                                                         }
                                                     },
                                                     "Conference": {
@@ -3506,7 +3494,7 @@
         "Urls": {
             "DashboardServerUrls": ["https://dice.tetherfi.cloud/SignalRDashboard2", "https://dice.tetherfi.cloud:443/SignalRDashboardSup"],
             "FileServerUrl": {
-                "SMM": "https://dice.tetherfi.cloud:13019/upload",
+                "MediaStreamer": "https://dice.tetherfi.cloud:13019/upload",
                 "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
