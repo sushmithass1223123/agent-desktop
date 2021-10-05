@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { AppUiService } from '@services/app-ui.service';
@@ -13,11 +13,16 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
     templateUrl: './email.component.html',
     styleUrls: ['./email.component.scss']
 })
-export class EmailComponent implements OnInit, OnChanges {
+export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
+
+    /**
+     * Shows CC / BCC form inputs
+     */
+    showCcBcc = false;
 
     @Input()
     email: EmailComponentInputs;
@@ -99,6 +104,13 @@ export class EmailComponent implements OnInit, OnChanges {
     }
 
     /**
+     * Lifecycle hook
+     */
+    ngOnDestroy(): void {
+        // this._email = Object.assign(this.email);
+    }
+
+    /**
      * Sets up email preview
      * @param {HTMLDivElement} el
      */
@@ -155,7 +167,8 @@ export class EmailComponent implements OnInit, OnChanges {
      */
     _setEditForm(): void {
         if (this.email) {
-            const { Body, CC, Files, Subject: subject, To, From, CreatedTime } = this.email;
+            const email = JSON.parse(JSON.stringify(this.email));
+            const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox } = email;
             const prelude = `
         <style>
             ::-webkit-scrollbar{width:4px !important;height:4px !important;}
@@ -175,7 +188,7 @@ export class EmailComponent implements OnInit, OnChanges {
             const BCC = [];
             switch (this.mode) {
                 case 'preview':
-                    this._email = this.email;
+                    this._email = email;
                     break;
                 case 'compose':
                     this._email = {
@@ -183,7 +196,7 @@ export class EmailComponent implements OnInit, OnChanges {
                         Body: '',
                         CC: [],
                         Files: [],
-                        From: this.email.mailbox,
+                        From: mailbox,
                         Subject: '',
                         To: []
                     };
@@ -191,10 +204,10 @@ export class EmailComponent implements OnInit, OnChanges {
                 case 'forward':
                     this._email = {
                         BCC,
-                        Body: Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: [],
-                        From: this.email.mailbox,
-                        Subject: subject,
+                        From: mailbox,
+                        Subject: `FW: ${subject}`,
                         Files,
                         CC
                     };
@@ -211,12 +224,12 @@ export class EmailComponent implements OnInit, OnChanges {
                     };
                     break;
                 case 'reply-all':
-                    const ToList = To.concat(Array.from(new Set((From || '').split(',')))).filter((e) => e && e !== this.email.mailbox);
+                    const ToList = To.concat(Array.from(new Set((From || '').split(',')))).filter((e) => e && e !== mailbox);
                     this._email = {
                         BCC,
                         Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.from(new Set([From].concat(ToList))),
-                        From: this.email.mailbox,
+                        From: mailbox,
                         Subject: subject,
                         Files: [],
                         CC
@@ -224,9 +237,10 @@ export class EmailComponent implements OnInit, OnChanges {
                     break;
                 case 'draft':
                     this.email.Body = Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
-                    this._email = this.email;
+                    this._email = email;
                     break;
             }
+            this.showCcBcc = false;
             if (this.mode === 'preview') {
                 this.setEmailBody();
             }

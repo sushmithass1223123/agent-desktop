@@ -132,52 +132,6 @@
         </form>
 
         <div *ngIf="_email.Files?.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list twd-pb-1.5">
-            <!-- <mat-chip-list>
-                <mat-chip
-                    *ngFor="let file of _email.Files | slice: 0:2"
-                    removable
-                    class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                    [matTooltip]="file.Ext | uppercase"
-                    (click)="openFile(file.URL)"
-                    (removed)="removeFiles(file.Id)"
-                >
-                    <span class="twd-max-w-10/12 twd-flex-1 twd-truncate twd-flex twd-items-center">
-                        <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                        <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
-                    </span>
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip>
-                <mat-chip
-                    *ngIf="_email.Files.length > 2"
-                    class="border-radius-20 m-4 twd-cursor-pointer"
-                    [matMenuTriggerFor]="attachList"
-                    matTooltip="Show More"
-                >
-                    +{{ _email.Files.length - 2 }}
-                </mat-chip>
-            </mat-chip-list> -->
-
-            <!-- <mat-menu class="custom attachment-overlay" #attachList="matMenu">
-                <div class="attachment-menu">
-                    <mat-chip-list class="mat-chip-list-stacked">
-                        <mat-chip
-                            *ngFor="let file of _email.Files | slice: 2:_email.Files.length"
-                            removable
-                            class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                            [matTooltip]="file.Ext | uppercase"
-                            (click)="openFile(file.URL)"
-                            (removed)="removeFiles(file.Id)"
-                        >
-                            <div class="twd-max-w-10/12 twd-flex-1 twd-flex twd-items-center">
-                                <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                                <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
-                            </div>
-                            <mat-icon matChipRemove>cancel</mat-icon>
-                        </mat-chip>
-                    </mat-chip-list>
-                </div>
-            </mat-menu> -->
-
             <ng-template *ngTemplateOutlet="attachmentsRef; context: { attachments: _email.Files, removable: true }"></ng-template>
         </div>
 
@@ -258,7 +212,7 @@
                 <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                 <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
             </span>
-            <mat-icon matChipRemove>cancel</mat-icon>
+            <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
         </mat-chip>
         <mat-chip
             *ngIf="attachments.length > 2"
@@ -285,7 +239,7 @@
                         <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                         <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
                     </div>
-                    <mat-icon matChipRemove>cancel</mat-icon>
+                    <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                 </mat-chip>
             </mat-chip-list>
         </div>

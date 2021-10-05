@@ -464,81 +464,88 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     async setEmailDetails(retry = false): Promise<void> {
         const interaction = this.currentInteraction;
         this.initEmailComponent();
-        // Deciding to fetch from Inbox or Outbox
         const fetchFromOutbox =
-            [...this.OutboxReasons, ...this.DraftReasons, ...this.SentReasons].includes(interaction.RouteReason) && this.emailInView === 'replied';
-
+            OUTBOX_REASONS.concat(DRAFT_REASONS).concat(SENT_REASONS).includes(interaction.RouteReason) && this.emailInView === 'replied';
         this.getInboxMessageReq = { error: false, loading: true };
 
-        let apiCall: any;
-        let requestedSession;
+        let inboxRes: EmailInboxModel;
+        let outboxRes: EmailOutboxModel;
 
-        if (fetchFromOutbox) {
-            requestedSession = interaction.OutSessionId;
-            apiCall = (session: string) => SDKClient.getOutboxEmail(session);
-        } else {
-            requestedSession = interaction.InSessionId;
-            apiCall = (session: string) => SDKClient.getInboxEmail(session);
-        }
         const errCallback = () => {
             const msg = 'Unexpected response from server';
             if (retry) {
                 this._appUIService.showSnackbar(msg, 'failure');
-                this.getInboxMessageReq.error = true;
-                this.getInboxMessageReq.loading = false;
+                this.getInboxMessageReq = { error: true, loading: false };
             } else {
                 throwADError('Error in TwEmailControlsComponent.setEmailDetails', msg);
             }
         };
-        const data = await apiCall(requestedSession).catch((err) => {
+
+        const successCallback = (res: any, sessionId: string): void => {
+            if (res.Attachments && res.Attachments.length) {
+                res.Attachments.forEach((item: any) => {
+                    // get the file name from URL
+                    let name = item.URL.split('/').pop();
+                    name = name.replace(item.SessionID, '');
+                    item.Name = name;
+                    item.Ext = name.split('.').pop();
+                    item.Icon = maticonByExtension(item.Ext);
+                });
+            }
+
+            // Adding email body to the cache
+            // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
+            this.emailBodies[sessionId] = {
+                CCList: res.CCList,
+                Body: res.Body,
+                AttachmetList: res?.Attachments || [],
+                To: res.ToList,
+                From: res.From,
+
+                AgentName: res.AgentName,
+                ConversationID: res.ConversationID,
+                CurrentStatus: res.CurrentStatus,
+                ClosedBy: (res as any).ClosedBy,
+
+                Priority: inboxRes?.Priority,
+                RepliedStatus: inboxRes?.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
+                Intent: inboxRes?.Intent
+            };
+        };
+
+        const res1 = await SDKClient.getInboxEmail(interaction.InSessionId).catch((err) => {
             console.error(err);
             errCallback();
             return;
         });
 
-        // Check for Response validity
-        if (!data?.response) {
-            errCallback();
-            return;
+        this.currentInteraction.showReplyEmailEnabled = fetchFromOutbox;
+
+        if (res1) {
+            inboxRes = res1.response;
+            if (inboxRes.EmailType !== 'Dummy') {
+                successCallback(inboxRes, this.currentInteraction.InSessionId);
+            } else {
+                this.currentInteraction.showReplyEmailEnabled = false;
+            }
         }
 
-        const res: EmailOutboxModel | EmailInboxModel = data.response;
-
-        // Changing how attachment list is received, because it needs to be sent in a different way
-        // check if attachements are there
-        if (res.Attachments && res.Attachments.length) {
-            res.Attachments.forEach((item: any) => {
-                // get the file name from URL
-                let name = item.URL.split('/').pop();
-                name = name.replace(item.SessionID, '');
-                item.Name = name;
-                item.Ext = name.split('.').pop();
-                item.Icon = maticonByExtension(item.Ext);
+        if (fetchFromOutbox) {
+            const res2 = await SDKClient.getOutboxEmail(interaction.OutSessionId).catch((err) => {
+                console.error(err);
+                errCallback();
+                return;
             });
+            if (res2) {
+                outboxRes = res2.response;
+                successCallback(outboxRes, this.currentInteraction.OutSessionId);
+            }
         }
-
-        // Adding email body to the cache
-        // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
-        this.emailBodies[requestedSession] = {
-            CCList: res.CCList,
-            Body: res.Body,
-            AttachmetList: res?.Attachments || [],
-            To: res.ToList,
-            From: res.From,
-
-            AgentName: res.AgentName,
-            Intent: (res as EmailInboxModel).Intent,
-            RepliedStatus: (res as any).RepliedStatus,
-            ConversationID: res.ConversationID,
-            CurrentStatus: res.CurrentStatus,
-            ClosedBy: (res as any).ClosedBy,
-            Priority: (res as any).Priority
-        };
 
         this.getInboxMessageReq = { error: false, loading: false };
         const emailInteractionDetails = {
             ...this.currentInteraction,
-            ...this.emailBodies[requestedSession]
+            ...this.emailBodies[fetchFromOutbox ? this.currentInteraction.OutSessionId : this.currentInteraction.InSessionId]
         };
         this.currentInteraction = emailInteractionDetails;
         this.initEmailComponent();
@@ -1182,7 +1189,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Subject: subject,
             Files,
             From: From,
-            mailbox: this.currentInteraction.Email_Mailbox,
+            mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
             CreatedTime
         };
     }

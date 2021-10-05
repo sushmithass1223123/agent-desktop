@@ -10,7 +10,7 @@
             deleteAllowed: deleteAllowed && currentTab !== 'sentitem' && currentTab !== 'queue',
             hideCategoryMenu: false,
             allowQueueTransfer: currentTab === 'queue' && allowQueueTransfer,
-            showEmailSwitcher: ['draft', 'sentitem'].includes(currentTab),
+            showEmailSwitcher: ['draft', 'sentitem' , 'queue'].includes(currentTab),
             search: {
                 global: {
                     empty: !globalSearch.form.value,
