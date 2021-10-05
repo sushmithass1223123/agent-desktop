@@ -75,31 +75,3 @@ input[type='time']::-webkit-calendar-picker-indicator {
     height: 20px;
     opacity: 0.8;
 }
-
-.editor-container {
-    min-height: 200px;
-    border: none !important;
-    height: auto;
-    overflow: auto;
-}
-
-.tox-statusbar__path {
-    visibility: hidden !important;
-}
-
-.tox-toolbar__overflow {
-    max-width: none !important;
-}
-
-iframe.app-scroll {
-    ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
-        background-color: rgba(0, 0, 0, 0);
-    }
-    ::-webkit-scrollbar-thumb {
-        border: 2px solid transparent;
-        box-shadow: inset 0 0 0 12px rgb(0 0 0 / 37%);
-        border-radius: 12px;
-    }
-}

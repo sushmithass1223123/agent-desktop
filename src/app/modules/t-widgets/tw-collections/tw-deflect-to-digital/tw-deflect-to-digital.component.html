@@ -1,109 +1,32 @@
 <tw-wrapper [data]="data">
-    <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
-    <!-- your code goes here -->
-    <div class="twd-flex twd-gap-4">
-        <div class="twd-max-w-5/12">
-            <div class="twd-flex twd-items-center twd-justify-center">
-                <mat-form-field fxFill class="custom select-box" appearance="outline">
-                    <mat-select placeholder="Groups" [(ngModel)]="selectedGroup" color="primary" (selectionChange)="onSelectGroups($event)">
-                        <mat-option>None</mat-option>
-                        <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>
-                    </mat-select>
-                    <mat-error> Groups is required </mat-error>
-                </mat-form-field>
-            </div>
-            <div>
-                <mat-form-field
-                    [fxFlex]="templates.length > 0 ? 60 : 100"
-                    floatLabel="never"
-                    appearance="outline"
-                    class="custom selected-template with-bg"
-                >
-                    <textarea
-                        fxFlex
-                        [readonly]="!data.Data?.EditAllowed"
-                        matInput
-                        matAutosizeMinRows="1"
-                        matTextareaAutosize
-                        placeholder="Please select a template..."
-                        [(ngModel)]="templateText"
-                        [disabled]="!selectedTemplate"
-                    ></textarea>
-                    <button
-                        mat-raised-button
-                        color="accent"
-                        class="border-radius-20"
-                        [disabled]="!selectedTemplate"
-                        (click)="sendTemplate(selectedTemplate)"
-                    >
-                        Select
-                    </button>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="twd-flex-1">
-            <div class="twd-flex twd-gap-4 twd-items-center twd-justify-center">
-                <mat-form-field fxFill class="custom select-box" appearance="outline">
-                    <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
-                        <mat-option>None</mat-option>
-                        <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
-                    </mat-select>
-                    <mat-error> Department is required </mat-error>
-                </mat-form-field>
-                <mat-form-field fxFill class="custom select-box" appearance="outline">
-                    <mat-select placeholder="Groups" [(ngModel)]="selectedGroup" (selectionChange)="onSelectGroups($event)">
-                        <mat-option>None</mat-option>
-                        <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>
-                    </mat-select>
-                    <mat-error> Groups is required </mat-error>
-                </mat-form-field>
-            </div>
-            <div>
-                <!-- <div
-                *ngIf="templates.length > 0"
-                fxFlex="40"
-                fxLayout="column"
-                class="animate__animated animate__faster animate__slideInLeft custom-scroll-adjust"
-            >
-                <button
-                    mat-flat-button
-                    class="w-90-p mb-8 border-radius-10 template"
-                    [color]="template === selectedTemplate ? 'primary' : ''"
-                    *ngFor="let template of templates"
-                    (click)="onTemplateSelect(template)"
-                    [matTooltip]="template.Name"
-                >
-                    {{ template.Name }}
+    <mat-progress-bar class="twd-absolute twd-w-full twd-top-0 twd-left-0" *ngIf="loading || !!templatesRef?.loading" mode="query"></mat-progress-bar>
+    <div class="twd-flex twd-gap-x-2 twd-h-full twd-p-2">
+        <div class="twd-w-5/12 twd-flex twd-flex-col">
+            <mat-form-field class="custom custom-matfield with-border" appearance="outline">
+                <input matInput placeholder="To Number" type="number" [(ngModel)]="toNumber" [disabled]="loading" autocomplete="off" />
+                <button *ngIf="!toNumber; else clearBtn" mat-icon-button matSuffix disabled>
+                    <mat-icon matSuffix>smartphone</mat-icon>
                 </button>
-            </div> -->
-                <mat-form-field
-                    [fxFlex]="templates.length > 0 ? 60 : 100"
-                    floatLabel="never"
-                    appearance="outline"
-                    class="custom selected-template with-bg"
-                >
-                    <textarea
-                        fxFlex
-                        [readonly]="!data.Data?.EditAllowed"
-                        matInput
-                        matAutosizeMinRows="1"
-                        matTextareaAutosize
-                        placeholder="Please select a template..."
-                        [(ngModel)]="templateText"
-                        [disabled]="!selectedTemplate"
-                    ></textarea>
-                    <button
-                        mat-raised-button
-                        color="accent"
-                        class="border-radius-20"
-                        [disabled]="!selectedTemplate"
-                        (click)="sendTemplate(selectedTemplate)"
-                    >
-                        Select
+                <ng-template #clearBtn>
+                    <button mat-button color="primary" matSuffix mat-icon-button aria-label="Clear" (click)="toNumber = ''">
+                        <mat-icon>close</mat-icon>
                     </button>
-                </mat-form-field>
+                </ng-template>
+            </mat-form-field>
+            <div class="twd-flex-1 twd-relative">
+                <div class="twd-absolute twd-h-full twd-w-full">
+                    <mat-form-field class="twd-h-full twd-w-full custom-textarea custom border-radius-20 with-border" appearance="outline">
+                        <textarea
+                            matInput
+                            matAutosizeMinRows="1"
+                            placeholder="Please select a template or enter message..."
+                            [(ngModel)]="comment"
+                            [disabled]="loading"
+                        ></textarea>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
+        <text-templates #templatesRef class="twd-w-7/12 twd-pt-1" (sendTemplate)="sendTemplate($event)"></text-templates>
     </div>
-    <!-- your code goes here -->
 </tw-wrapper>

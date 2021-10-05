@@ -37,6 +37,7 @@ type Mail = {
     ConversationID: string;
     IsEmailProbableSpam: boolean;
     checked?: boolean;
+    RouteReason?: string;
 };
 
 type ComponentActions =
@@ -245,6 +246,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     @ViewChild(PreviewEmailComponent)
     previewEmailRef: PreviewEmailComponent;
+
+    availableTabs = [
+        { label: 'Queue', icon: 'queue', key: 'queue' },
+        { label: 'Inbox', icon: 'mail', key: 'inbox' },
+        { label: 'Sent', icon: 'mark_email_read', key: 'sentitem' },
+        { label: 'Drafts', icon: 'drafts', key: 'draft' }
+    ];
 
     /**
      * Constructor
@@ -749,11 +757,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async openEmail(email: Mail): Promise<void> {
         try {
+            this.openEmailRes.data = Object.assign(email, { Body: '' }, { currentTab: this.currentTab });
             this.setComponentState('email/open/loading');
-            const fetchFromOutbox = (this.currentTab === 'draft' || this.currentTab === 'sentitem') && this.latestEmailPreview;
-            const requestedSession = fetchFromOutbox ? email.OutSessionId : email.InSessionId;
+            let fetchFromOutbox =
+                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue') && this.latestEmailPreview;
             let inboxRes: EmailInboxModel;
             let outboxRes: EmailOutboxModel;
+
+            const getRequestedSession = () => (fetchFromOutbox ? email.OutSessionId : email.InSessionId);
 
             const getAttachments = (attachments: any[]): any[] => {
                 // check if attachements are there
@@ -761,7 +772,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     return attachments.map((item: any) => {
                         // get the file name from URL
                         let name = item.URL.split('/').pop();
-                        name = name.replace(requestedSession, '');
+                        name = name.replace(getRequestedSession(), '');
                         item.Name = name;
                         item.Ext = name.split('.').pop();
                         item.Icon = maticonByExtension(item.Ext);
@@ -771,16 +782,26 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 return [];
             };
 
+            // checking if email has been cached for the currentTab
             if (!this.emailBodies[email.InSessionId]) {
+                // inbox call is always made no matter which tab
+                // because if we're in inbox its necessary and if we're not then
+                // the customer might want to view the original inbox email
                 inboxRes = (await SDKClient.getInboxEmail(email.InSessionId)).response;
+                // a dummy emailtype means that the email was composed by server for server use only
+                // checking if user is trying to open a dummy email in a one of the non outbox tabs
+                // and if so, logging an error since the UI is requiesting dummy email which is "server user only"
+                //  and try to fetch the email from outbox
                 if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
-                    if (!fetchFromOutbox) {
+                    if (this.currentTab === 'queue') {
+                        fetchFromOutbox = true;
+                    } else if (!fetchFromOutbox) {
                         throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
                     }
                 } else {
                     this.emailBodies = Object.assign(this.emailBodies, {
                         [email.InSessionId]: {
-                            Attachments: getAttachments(inboxRes.Attachments),
+                            Files: getAttachments(inboxRes.Attachments),
                             AgentName: inboxRes.AgentName,
                             Intent: inboxRes.Intent,
                             RepliedStatus: inboxRes.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
@@ -808,7 +829,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
                 this.emailBodies = Object.assign(this.emailBodies, {
                     [email.OutSessionId]: {
-                        Attachments: getAttachments(outboxRes.Attachments),
+                        Files: getAttachments(outboxRes.Attachments),
                         AgentName: outboxRes.AgentName,
                         ConversationID: outboxRes.ConversationID,
                         CurrentStatus: outboxRes.CurrentStatus,
@@ -828,7 +849,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 });
             }
 
-            this.openEmailRes.data = Object.assign(email, this.emailBodies[requestedSession], { currentTab: this.currentTab });
+            this.openEmailRes.data = Object.assign(email, this.emailBodies[getRequestedSession()], { currentTab: this.currentTab });
             // this.previewEmailRef.setEmailBody(this.emailBodies[requestedSession].Body);
             this.setComponentState('email/open/success');
         } catch (e) {
@@ -1154,7 +1175,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 IsEmailProbableSpam: data.IsEmailProbableSpam,
                 AddedTime: new Date(x.addedTime),
                 uiId: `${data.SessionId}|${data.OutSessionID}`,
-                ConversationID: x.conversationID
+                ConversationID: x.conversationID,
+                RouteReason: data.RouteReason
             };
         });
     };
@@ -1341,6 +1363,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             n.checked = checked;
         }
     };
+
+    /**
+     * Returns selected email info for rerender between switcher view
+     * @returns {any}
+     */
+    getSelectedEmailInfo(): any {
+        return Object.assign({}, this.openEmailRes.data);
+    }
 }
 
 // for more info visit - https://angular.io/api/core

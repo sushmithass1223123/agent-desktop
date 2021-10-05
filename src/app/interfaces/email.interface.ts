@@ -29,3 +29,11 @@ export interface CreateEmailOutput {
     Subject: string;
     Files: EmailFile[];
 }
+
+export interface EmailComponentInputs extends CreateEmailOutput {
+    From: string;
+    mailbox: string;
+    CreatedTime: string;
+}
+
+export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft';

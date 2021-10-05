@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -18,6 +18,12 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
      */
     @Output()
     selectTemplate = new EventEmitter();
+
+    /**
+     * Disable flag
+     */
+    @Input()
+    disabled = false;
 
     /**
      * Available templates
@@ -60,7 +66,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             })
             .catch((err) => {
                 console.error(err);
-                this.appUiService.showSnackbar('Something went wrong while fetching departments', 'failure');
+                this.appUiService.showSnackbar('Unable to fetch departments', 'failure');
             })
             .finally(() => {
                 this.loading = false;
@@ -90,7 +96,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 })
                 .catch((err) => {
                     console.error(err);
-                    this.appUiService.showSnackbar('Something went wrong while fetching groups', 'failure');
+                    this.appUiService.showSnackbar('Unable to fetch groups', 'failure');
                 })
                 .finally(() => {
                     this.loading = false;
@@ -116,7 +122,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 })
                 .catch((err) => {
                     console.error(err);
-                    this.appUiService.showSnackbar('Something went wrong while fetching templates', 'failure');
+                    this.appUiService.showSnackbar('Unable to fetch templates', 'failure');
                 })
                 .finally(() => {
                     this.loading = false;

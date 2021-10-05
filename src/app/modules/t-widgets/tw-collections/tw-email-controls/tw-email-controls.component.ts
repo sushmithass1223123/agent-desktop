@@ -1,20 +1,9 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { AgentSkillListComponent, CreateEmailComponent } from '@modules/shared/components';
+import { AgentSkillListComponent } from '@modules/shared/components';
+import { EmailComponent } from '@modules/shared/components/email/email.component';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
@@ -34,10 +23,19 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
-import { AgentSkillListData, CreateEmailInput, CreateEmailOutput, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
-import { ADError, formatJsonData, maticonByExtension, throwADError, urlify } from 'app/utils';
+import {
+    AgentSkillListData,
+    CreateEmailOutput,
+    EmailComponentInputs,
+    EmailComponentMode,
+    InteractionComment,
+    InteractionRef,
+    IWidget,
+    ResData
+} from 'app/interfaces';
+import { ADError, formatJsonData, maticonByExtension, throwADError } from 'app/utils';
 import { format } from 'date-fns';
-import { interval, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
@@ -176,7 +174,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Reply info for create email component
      */
-    replyInfo?: CreateEmailInput;
+    replyInfo$: BehaviorSubject<EmailComponentInputs>;
+
+    /**
+     * Email component;s mode
+     */
+    emailComponentMode: EmailComponentMode = 'preview';
 
     /**
      * A map of reply infos , saved for when interaction is switched
@@ -187,11 +190,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Saved interaction comments
      */
     savedComments: InteractionComment[] = [];
-
-    /**
-     * Create email compopnnet ref
-     */
-    @ViewChild('createEmailRef') createEmailRef: CreateEmailComponent;
 
     /**
      * Draft pollling subscription
@@ -222,6 +220,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Flag to check if interaction is active
      */
     isInteractionActive = false;
+
+    @ViewChild(EmailComponent)
+    emailRef: EmailComponent;
 
     constructor(
         private _interactionManagerService: InteractionManagerService,
@@ -327,19 +328,21 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
+     * Sets email component's input
+     */
+    initEmailComponent(): void {
+        if (!this.replyInfo$) {
+            this.replyInfo$ = new BehaviorSubject(this.getReplyInfo());
+            return;
+        }
+        this.replyInfo$.next(this.getReplyInfo());
+    }
+
+    /**
      * Shows the editor for incoming draft emails
      */
     showDraftEditor(): void {
-        const { Body, Subject, CCList, To, AttachmetList } = this.currentInteraction;
-        this.replyInfo = {
-            BCC: '',
-            CC: CCList,
-            To: To,
-            Body,
-            Subject,
-            Files: [],
-            From: this.currentInteraction.Mailbox
-        };
+        this.emailComponentMode = 'draft';
         this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
         this.saveEmailAsDraft();
     }
@@ -348,15 +351,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Shows editor for new compose email
      */
     showComposeEditor(): void {
-        this.replyInfo = {
-            BCC: '',
-            Body: '',
-            CC: '',
-            Files: [],
-            Subject: '',
-            To: '',
-            From: this.currentInteraction.Mailbox
-        };
+        this.initEmailComponent();
+        this.emailComponentMode = 'compose';
         this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
         this.saveEmailAsDraft();
     }
@@ -456,6 +452,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ...this.currentInteraction,
                 ...this.emailBodies[requestedSession]
             };
+            this.initEmailComponent();
         } else {
             this.setEmailDetails();
         }
@@ -466,75 +463,92 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async setEmailDetails(retry = false): Promise<void> {
         const interaction = this.currentInteraction;
-        // Deciding to fetch from Inbox or Outbox
+        this.initEmailComponent();
         const fetchFromOutbox =
-            [...this.OutboxReasons, ...this.DraftReasons, ...this.SentReasons].includes(interaction.RouteReason) && this.emailInView === 'replied';
-
+            OUTBOX_REASONS.concat(DRAFT_REASONS).concat(SENT_REASONS).includes(interaction.RouteReason) && this.emailInView === 'replied';
         this.getInboxMessageReq = { error: false, loading: true };
 
-        let apiCall: any;
-        let requestedSession;
+        let inboxRes: EmailInboxModel;
+        let outboxRes: EmailOutboxModel;
 
-        if (fetchFromOutbox) {
-            requestedSession = interaction.OutSessionId;
-            apiCall = (session: string) => SDKClient.getOutboxEmail(session);
-        } else {
-            requestedSession = interaction.InSessionId;
-            apiCall = (session: string) => SDKClient.getInboxEmail(session);
-        }
-
-        const res: EmailOutboxModel | EmailInboxModel = (await apiCall(requestedSession)).response;
-
-        // Check for Response validity
-        if (!res) {
+        const errCallback = () => {
             const msg = 'Unexpected response from server';
             if (retry) {
                 this._appUIService.showSnackbar(msg, 'failure');
-                this.getInboxMessageReq.error = true;
-                this.getInboxMessageReq.loading = false;
-                return;
+                this.getInboxMessageReq = { error: true, loading: false };
             } else {
                 throwADError('Error in TwEmailControlsComponent.setEmailDetails', msg);
             }
-        }
-
-        // Changing how attachment list is received, because it needs to be sent in a different way
-        // check if attachements are there
-        if (res.Attachments && res.Attachments.length) {
-            res.Attachments.forEach((item: any) => {
-                // get the file name from URL
-                let name = item.URL.split('/').pop();
-                name = name.replace(item.SessionID, '');
-                item.Name = name;
-                item.Ext = name.split('.').pop();
-                item.Icon = maticonByExtension(item.Ext);
-            });
-        }
-
-        // Adding email body to the cache
-        // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
-        this.emailBodies[requestedSession] = {
-            CCList: res.CCList,
-            Body: res.Body,
-            AttachmetList: res?.Attachments || [],
-            To: res.ToList,
-            From: res.From,
-
-            AgentName: res.AgentName,
-            Intent: (res as EmailInboxModel).Intent,
-            RepliedStatus: (res as any).RepliedStatus,
-            ConversationID: res.ConversationID,
-            CurrentStatus: res.CurrentStatus,
-            ClosedBy: (res as any).ClosedBy,
-            Priority: (res as any).Priority
         };
+
+        const successCallback = (res: any, sessionId: string): void => {
+            if (res.Attachments && res.Attachments.length) {
+                res.Attachments.forEach((item: any) => {
+                    // get the file name from URL
+                    let name = item.URL.split('/').pop();
+                    name = name.replace(item.SessionID, '');
+                    item.Name = name;
+                    item.Ext = name.split('.').pop();
+                    item.Icon = maticonByExtension(item.Ext);
+                });
+            }
+
+            // Adding email body to the cache
+            // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
+            this.emailBodies[sessionId] = {
+                CCList: res.CCList,
+                Body: res.Body,
+                AttachmetList: res?.Attachments || [],
+                To: res.ToList,
+                From: res.From,
+
+                AgentName: res.AgentName,
+                ConversationID: res.ConversationID,
+                CurrentStatus: res.CurrentStatus,
+                ClosedBy: (res as any).ClosedBy,
+
+                Priority: inboxRes?.Priority,
+                RepliedStatus: inboxRes?.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
+                Intent: inboxRes?.Intent
+            };
+        };
+
+        const res1 = await SDKClient.getInboxEmail(interaction.InSessionId).catch((err) => {
+            console.error(err);
+            errCallback();
+            return;
+        });
+
+        this.currentInteraction.showReplyEmailEnabled = fetchFromOutbox;
+
+        if (res1) {
+            inboxRes = res1.response;
+            if (inboxRes.EmailType !== 'Dummy') {
+                successCallback(inboxRes, this.currentInteraction.InSessionId);
+            } else {
+                this.currentInteraction.showReplyEmailEnabled = false;
+            }
+        }
+
+        if (fetchFromOutbox) {
+            const res2 = await SDKClient.getOutboxEmail(interaction.OutSessionId).catch((err) => {
+                console.error(err);
+                errCallback();
+                return;
+            });
+            if (res2) {
+                outboxRes = res2.response;
+                successCallback(outboxRes, this.currentInteraction.OutSessionId);
+            }
+        }
 
         this.getInboxMessageReq = { error: false, loading: false };
         const emailInteractionDetails = {
             ...this.currentInteraction,
-            ...this.emailBodies[requestedSession]
+            ...this.emailBodies[fetchFromOutbox ? this.currentInteraction.OutSessionId : this.currentInteraction.InSessionId]
         };
         this.currentInteraction = emailInteractionDetails;
+        this.initEmailComponent();
     }
 
     /**
@@ -645,7 +659,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         try {
             const { InSessionId, CurrOutSessionId } = this.currentInteraction;
             if (CurrOutSessionId || this.draftPollDuration) {
-                await SDKClient.deleteBulkEmailsInDraft(`${InSessionId}|${CurrOutSessionId}`);
+                await SDKClient.deleteBulkEmailsInDraft(`${InSessionId}|${CurrOutSessionId}`).catch((err) =>
+                    throwADError('Unable to delete emails', '')
+                );
             }
         } catch (e) {
             console.error('Unable to delete the draft copy of the email');
@@ -675,39 +691,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Show reply email form
      */
     showReplyEditor(): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Body, Subject, From, To, CreatedTime, RejectReason, RouteReason, ParsedJsonData, Mailbox } = currentInteraction;
-        const preBody = RejectReason
-            ? ''
-            : `
-        <style>
-            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
-            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
-        </style>
-        <br/>
-        <div style='border-top: 1px solid gray; padding-top : 5px;'>
-            <div style='border-left: 3px solid gray;padding-left: 5px'>
-                <div> <strong> From: </strong> <span> ${From} </span> </div>
-                <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-                <div> <strong> To: </strong> <span> ${To} </span> </div>
-                <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-            </div>
-        </div>
-        <br />`;
-        // const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
-        this.replyInfo = {
-            BCC: '',
-            CC: '',
-            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? To : From) || '',
-            Body: `
-            ${preBody} 
-            ${(Body || '').replaceAll(/(?:\r\n|\r|\n)/g, '<br />')}`,
-            Subject,
-            Files: [],
-            From: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? From : Mailbox) || '',
-            Replying: true
-        };
+        this.emailComponentMode = 'reply';
         this.saveEmailAsDraft();
     }
 
@@ -715,43 +699,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Show reply all email editor
      */
     showReplyAllEmailEditor(): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
-        const { Body, Subject, From, RejectReason, CCList, CreatedTime, RouteReason, To, AttachmetList } = currentInteraction;
-        // const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
-        const preBody =
-            RejectReason || this.DraftReasons.includes(RouteReason)
-                ? ''
-                : `
-        <style>
-            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
-            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
-        </style>
-        <br/>
-        <div style='border-top: 1px solid gray; padding-top : 5px;'>
-            <div style='border-left: 3px solid gray;padding-left: 5px'>
-                <div> <strong> From: </strong> <span> ${From} </span> </div>
-                    <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-                    <div> <strong> To: </strong> <span> ${To} </span> </div>
-                    <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-                </div>
-            </div>
-        </div>
-        <br />`;
-        const ToList = To + ',' + Array.from(new Set((From || '').replaceAll(this.currentInteraction.Email_Mailbox, '').split(','))).join(',');
-        const FromList = From + ',' + Array.from(new Set((To || '').replaceAll(this.currentInteraction.Email_Mailbox, '').split(','))).join(',');
-        this.replyInfo = {
-            BCC: '',
-            CC: CCList || '',
-            To: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? ToList : FromList) || '',
-            Body: `
-                ${preBody}
-                ${(Body || '').replaceAll(/(?:\r\n|\r|\n)/g, '<br />')}`,
-            Subject,
-            Files: [],
-            From: (this.SentReasons.concat(this.DraftReasons).includes(RouteReason) ? From : this.currentInteraction.Mailbox) || '',
-            Replying: true
-        };
+        this.emailComponentMode = 'reply-all';
         this.saveEmailAsDraft();
     }
 
@@ -759,34 +707,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Show forward email editor
      */
     showForwardEmailEditor(): void {
-        // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
-        const currentInteraction = this.currentInteraction;
-        const { AttachmetList, Subject, Body, From, RejectReason, CreatedTime, To, RouteReason } = currentInteraction;
-        const preBody =
-            RejectReason || this.DraftReasons.includes(RouteReason)
-                ? ''
-                : `
-        <style>
-            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
-            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
-        </style>
-        <div> <strong> From: </strong> <span> ${From} </span> </div>
-        <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-        <div> <strong> To: </strong> <span> ${To} </span> </div>
-        <div> <strong> Subject: </strong> <span> ${Subject} </span> </div>
-        <br />`;
-        const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
-        this.replyInfo = {
-            BCC: '',
-            CC: '',
-            To: '',
-            Body: `
-                ${preBody}
-                ${(Body || '').replaceAll(/(?:\r\n|\r|\n)/g, '<br />')}`,
-            Subject: `FW: ${Subject}`,
-            Files,
-            From: this.currentInteraction.Mailbox
-        };
+        this.emailComponentMode = 'forward';
         this.saveEmailAsDraft();
     }
 
@@ -794,9 +715,22 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Sends Email as Maker
      */
     async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
+        const errCallback = (err) => {
+            console.error(err);
+            let msg = 'Unable to send email';
+            if (btn) {
+                btn.disabled = false;
+            }
+            if (err instanceof ADError) {
+                msg = err.message;
+            }
+            this.sendingEmailAsMaker = false;
+            this._fuseProgressBarService.hide();
+            this._appUIService.showSnackbar(msg, 'failure');
+        };
         try {
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
-            const { BCC, CC, To, Subject, Files, Body } = email || this.createEmailRef.getEmail();
+            const { BCC, CC, To, Subject, Files, Body } = email || this.emailRef.getEmail();
 
             let confirmSend = true;
             if (!Subject) {
@@ -832,11 +766,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 routeId: RouteId || '',
                 subject: Subject,
                 typeOfResponse: ''
-            });
+            }).catch((e) => errCallback(e));
             // this._fuseProgressBarService.hide();
             ref.dismiss();
-            if (!res.response) {
+            if (!res || !res.response) {
                 throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
+                return;
             }
             // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
             // Display the message in snackbar accordingly
@@ -857,21 +792,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sendingEmailAsMaker = false;
             this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
             this.draftPolling$?.unsubscribe();
+            this.emailRef.mode = 'preview';
             // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
             //     this.deleteDraftEmail();
             // }
         } catch (err) {
-            console.error(err);
-            let msg = 'Unable to send email';
-            if (btn) {
-                btn.disabled = false;
-            }
-            if (err instanceof ADError) {
-                msg = err.message;
-            }
-            this.sendingEmailAsMaker = false;
-            this._fuseProgressBarService.hide();
-            this._appUIService.showSnackbar(msg, 'failure');
+            errCallback(err);
         }
     }
 
@@ -879,6 +805,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Sends email as Checker
      */
     async sendEmailAsChecker(btn: MatButton): Promise<void> {
+        const errCallback = (err) => {
+            console.error(err);
+            const msg = 'Unable to approve email';
+            sendLoader?.dismiss();
+            this._appUIService.showSnackbar(msg, 'failure');
+            btn.disabled = false;
+        };
         let sendLoader;
         try {
             btn.disabled = true;
@@ -901,7 +834,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         subject: Subject,
                         toList: From,
                         typeOfResponse: 'approve'
-                    });
+                    }).catch((e) => errCallback(e));
+                    // this._fuseProgressBarService.hide();
+                    if (!res || !res.response) {
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unexpected response from Server');
+                        return;
+                    }
 
                     // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
                     // Display the message in snackbar accordingly
@@ -925,14 +863,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             });
         } catch (err) {
-            console.error(err);
-            const msg = 'Unable to send email';
-            // if (err instanceof ADError) {
-            //     msg = err.message;
-            // }
-            sendLoader?.dismiss();
-            this._appUIService.showSnackbar(msg, 'failure');
-            btn.disabled = false;
+            errCallback(err);
         }
     }
 
@@ -940,9 +871,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Save email as Draft
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
-        if (this.draftPollDuration || btn) {
+        const callback = () => {
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
-            const email = this.createEmailRef?.getEmail();
+            const email = this.emailRef?.getEmail();
             // @TODO Files not sent as draft arg
             let { BCC, CC, To, Subject, Body, Files } = formatJsonData(this.currentInteraction, {
                 BCC: 'BCC',
@@ -987,13 +918,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 .catch((err) => {
                     console.error(err);
                 });
-            if (!this.draftPolling$ && this.draftPollDuration) {
+        };
+        const poll = () => {
+            if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
                 const polling = interval(this.draftPollDuration);
                 this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-                    this.saveEmailAsDraft();
+                    callback();
                 });
             }
-        }
+        };
+        poll();
+        callback();
+        // return { force: callback };
     }
 
     /**
@@ -1015,12 +951,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         );
         confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
             if (dialogResult) {
-                this.saveEmailAsDraft();
-                if (closeEmail) {
-                    this.closeInteraction(null, true);
-                    return;
-                }
-                this.replyInfo = null;
+                this.saveEmailAsDraft(closeEmail, btn);
+                // this.replyInfo = null;
+                this.emailComponentMode = 'preview';
             } else {
                 // this checks if the user clicked on cancel, or on the overlay
                 // if the user clicks on cancel, this will be boolean false. Else it will be undefined
@@ -1030,7 +963,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this.closeInteraction(null, true);
                         return;
                     }
-                    this.replyInfo = null;
+                    // this.replyInfo = null;
+                    this.emailComponentMode = 'preview';
                 }
                 if (btn) {
                     btn.disabled = false;
@@ -1239,5 +1173,24 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             .catch((err) => {
                 this._appUIService.showSnackbar('Unable to download email', 'failure');
             });
+    }
+
+    /**
+     * Returns email info
+     */
+    getReplyInfo(): EmailComponentInputs {
+        const { Body, Subject: subject, From, CCList, CreatedTime, To, AttachmetList } = this.currentInteraction;
+        const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
+        return {
+            BCC: [],
+            CC: (CCList ? CCList.split(',') : []).filter(Boolean),
+            To: (To ? To.split(',') : []).filter(Boolean),
+            Body,
+            Subject: subject,
+            Files,
+            From: From,
+            mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
+            CreatedTime
+        };
     }
 }

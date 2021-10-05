@@ -1,73 +1,51 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { TextTemplatesComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { CallerIntentEvent, IResponse, OnNLPDataEvent, SDKClient, WorkCodeAddedEvent } from '@tmac/sdk';
+import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { sortBy, uniqBy } from 'lodash';
-import { merge, Observable, Subscription } from 'rxjs';
+import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
     styleUrls: ['./tw-deflect-to-digital.component.scss']
+    // encapsulation: ViewEncapsulation.None
 })
-export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget<any, WidgetData>;
 
     /**
+     * Application state
+     */
+    loading = false;
+
+    /**
      * Interaction Id
      */
     interactionId: number;
+
     /**
-     * Departments
+     * Number to be sent to
      */
-    departments = [];
+    toNumber = '';
+
     /**
-     * Selected Departments
+     * Agents comment
      */
-    selectedDepartment: any;
+    comment = '';
+
     /**
-     * Groups
+     * Text template componet ref
      */
-    groups = [];
-    /**
-     * Selected Groups
-     */
-    selectedGroup: any;
-    /**
-     * Template list
-     */
-    templates = [];
-    /**
-     * Selected Templates
-     */
-    selectedTemplate: any;
-    /**
-     * Template text
-     */
-    templateText: string;
-    /**
-     * Type of response 'auto' or 'manual'
-     */
-    responseMode: 'auto' | 'manual';
-    /**
-     * Loading flag
-     */
-    loading: boolean;
-    /**
-     * TMAC event observable
-     */
-    private _tmacEvents$: Observable<any[]>;
-    /**
-     * TMAC event subscription
-     */
-    private _tmacEventSub$: Subscription;
+    @ViewChild(TextTemplatesComponent)
+    textTemplatesRef: TextTemplatesComponent;
+
     /**
      * Constructor
      */
@@ -76,47 +54,57 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     }
 
     /**
-     * On Init
+     * Lifecycle hook
      */
     ngOnInit(): void {
-        // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.responseMode = this.data.Data.ResponseMode ?? 'auto';
+        this.interactionId = this.data.InteractionDetails.InteractionID;
 
-        // assign the interaction id
-        this.interactionId = this.data.InteractionDetails?.InteractionID;
+        // check if number to be taken from TMAC event
+        if (!this.data.Data.Number?.toLowerCase().includes('event')) {
+            return;
+        }
 
-        this.loading = true;
-        SDKClient.getTextTemplateDepartments()
-            .then((result) => {
-                this.departments = result.response.filter((d) => d.Channel.toLowerCase().includes('chat'));
-            })
-            .catch((err) => {
-                this._appUIService.showSnackbar('Error in fetching chat templates', 'failure');
-                this.logger.error('Error in fetching chat templates', err, false);
-            })
-            .finally(() => {
-                this.loading = false;
-            });
+        const eventName = this.data.Data.Number?.split('.')?.shift() as any;
 
-        const stream1$ = this._tmacEventService.getInteractionEvents(['CallerIntentEvent', 'WorkCodeAddedEvent'], this.interactionId);
-
-        // NLPDataEvent is an interaction event but it does not have InteractionID so we get from 'getNonInteractionEvents'
-        // TODO:: Need server side changes to get from 'getInteractionEvents'
-        const stream2$ = this._tmacEventService.getNonInteractionEvents(['OnNLPDataEvent']);
-
-        // merge two streams
-        this._tmacEvents$ = merge(stream1$, stream2$).pipe(takeUntil(this.unsubscribeAll));
-
-        // check the response mode
-        if (this.responseMode === 'auto') {
-            this._tmacEventSub$ = this._tmacEvents$.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        // register to tmac events
+        if (eventName) {
+            this._tmacEventService
+                .getInteractionEvents([eventName], this.data.InteractionDetails.InteractionID)
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) =>
+                    evts.forEach((evt) => {
+                        this.toNumber = getValueFromEvent(
+                            {
+                                DefaultValue: '',
+                                Title: '',
+                                ValueSource: this.data.Data.Number,
+                                MaskData: null
+                            },
+                            evt
+                        );
+                    })
+                );
         }
     }
 
     /**
-     * On Destroy
+     * Lifecycle hook
+     */
+    ngAfterViewInit(): void {
+        const clearData = this.textTemplatesRef.clearAllData;
+
+        this.textTemplatesRef.clearAllData = () => {
+            this.comment = '';
+            this.toNumber = '';
+            clearData();
+        };
+    }
+
+    /**
+     * Lifecycle hook
+     * @method
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
@@ -124,204 +112,61 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     }
 
     /**
-     * Reset form
-     * @method clearAllData
-     *
-     * @param source
-     */
-    private clearAllData(source?: string): void {
-        if (source !== 'group') {
-            this.selectedDepartment = null;
-            this.groups = [];
-        }
-        this.selectedGroup = null;
-        this.clearTemplates();
-    }
-
-    /**
-     * To clear templates
-     */
-    private clearTemplates(): void {
-        this.templates = [];
-        this.selectedTemplate = null;
-        this.templateText = '';
-    }
-
-    /**
-     * WorkCodeAddedEvent Handler
-     *
-     * @param {WorkCodeAddedEvent} evt
-     */
-    WorkCodeAddedEvent(evt: WorkCodeAddedEvent): void {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
-        const newGroups = sortBy(uniqBy([...this.groups, evt], 'Name'), 'Name');
-        this.groups = newGroups;
-    }
-
-    /**
-     * CallerIntentEvent Handler
-     *
-     * @param {CallerIntentEvent} evt
-     */
-    CallerIntentEvent(evt: CallerIntentEvent): void {
-        // check for the interaction
-        if (this.interactionId !== evt.InteractionID) {
-            return;
-        }
-
-        const newGroup = { ...evt, Name: evt.IntentName };
-        const newGroups = sortBy(uniqBy([...this.groups, newGroup], 'Name'), 'Name');
-        this.groups = newGroups;
-    }
-
-    /**
-     * OnNLPDataEvent Handler
-     *
-     * @param {OnNLPDataEvent} evt
-     */
-    OnNLPDataEvent(evt: OnNLPDataEvent): void {
-        const parsedJson = JSON.parse(evt.JsonData);
-
-        // check for the interaction
-        if (this.interactionId.toString() !== parsedJson.interactionID) {
-            return;
-        }
-
-        const newGroup = JSON.parse(parsedJson.nluResult);
-        this.onSelectGroups({ value: newGroup.intent.name });
-    }
-
-    /**
-     * Select Department
-     *
-     * @param {any} event
-     */
-    onSelectDepartment(event: any): void {
-        const value = event.value;
-        // check if value is there
-        if (!value) {
-            // clear all data
-            this.clearAllData('dept');
-            return;
-        } else {
-            this.clearTemplates();
-        }
-
-        this.loading = true;
-        // get the groups for the department
-        SDKClient.getTextTemplateGroups(value, null)
-            .then((result: IResponse) => {
-                this.groups = sortBy(result.response, 'Name');
-            })
-            .finally(() => {
-                this.loading = false;
-            });
-    }
-
-    /**
-     * Slect Groups
-     *
-     * @param {any} event
-     */
-    onSelectGroups(event: any): void {
-        const value = event.value;
-        // check if value is there
-        if (!value) {
-            // clear all data
-            this.clearAllData('group');
-            return;
-        } else {
-            this.clearTemplates();
-        }
-
-        this.loading = true;
-        // get the templates for the group
-        SDKClient.getTextTemplates(value, null)
-            .then((result: IResponse) => {
-                if (this.responseMode === 'auto') {
-                    this.templates = [...result.response, ...this.templates];
-                } else {
-                    this.templates = result.response;
-                }
-            })
-            .finally(() => {
-                this.loading = false;
-            });
-    }
-
-    /**
-     * Template Selct
-     *
-     * @param template
-     */
-    onTemplateSelect(template: any): void {
-        this.selectedTemplate = template;
-        this.templateText = template.Text;
-    }
-
-    /**
      * Send selected template
-     *
      * @param {sendTemplate} template
      */
-    sendTemplate(template: any): void {
-        // check if any interaction is present
-        if (!this.interactionId) {
-            return;
+    async sendTemplate(template: string): Promise<void> {
+        try {
+            // check if any interaction is present
+            if (!this.interactionId) {
+                return;
+            }
+
+            this._appUIService.showSnackbar('Deflecting', 'loading');
+            const res = await SDKClient.deflectToDigital({
+                interactionId: this.interactionId.toString(),
+                customerContact: this.toNumber,
+                templateMessage: template,
+                comment: this.comment,
+                additionalParams: JSON.stringify({}),
+                deflectExpiry: this.data.Data.DeflectExpiry,
+                deflectIntent: this.data.Data.DeflectIntent,
+                destChannel: this.data.Data.DestChannel,
+                destSubChannel: this.data.Data.DestSubChannel,
+                disconnectTimeout: this.data.Data.DisconnectTimeout,
+                fallbackSkillId: this.data.Data.FallbackSkillId,
+                nextStatusName: this.data.Data.NextStatusName,
+                statusLockTimeout: this.data.Data.StatusLockTimeout,
+                reservedStatusCode: this.data.Data.ReservedStatusCode
+            });
+
+            if (res.response.ResultCode !== 0) {
+                throwADError('SDKClient.deflectToDigital failed', res.response);
+            }
+            this.textTemplatesRef.clearAllData();
+            this._appUIService.showSnackbar('Deflected Successfully');
+        } catch (e) {
+            console.error(e);
+            if (e instanceof ADError) {
+                this._appUIService.showSnackbar('Unable to Deflect', 'failure');
+            } else {
+                this._appUIService.showSnackbar('Deflecting failed', 'failure');
+            }
         }
-
-        // modify the tmplate text with typed value
-        template.Text = this.templateText;
-
-        // send an event out for the listner to send
-        const customEvent = {
-            EventName: 'CannedResposeEvent',
-            InteractionID: this.interactionId,
-            Data: { Template: template }
-        };
-
-        this._tmacEventService.emitSDKEvent({
-            event: customEvent,
-            isInteractionEvent: true,
-            log: true
-        });
-
-        if (this.responseMode !== 'auto') {
-            // clear all data
-            this.clearAllData();
-        }
-    }
-
-    /**
-     * Change Mode
-     *
-     * @param {MatSelectChange} event
-     */
-    changeMode(event: MatSelectChange): void {
-        if (event.value === 'manual') {
-            // unsubscribe
-            this._tmacEventSub$?.unsubscribe();
-        } else {
-            // subscribe
-            this._tmacEventSub$ = this._tmacEvents$.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
-        }
-        this.clearAllData();
     }
 }
 
 interface WidgetData {
-    /**
-     * Template editable
-     */
-    EditAllowed: boolean;
-    /**
-     * Response mode for tempalate selection
-     */
-    ResponseMode: 'auto' | 'manual';
+    DeflectExpiry: number;
+    DeflectIntent: string;
+    DestChannel: string;
+    DestSubChannel: string;
+    DisconnectTimeout: number;
+    FallbackSkillId: string;
+    NextStatusName: string;
+    StatusLockTimeout: number;
+    ReservedStatusCode: string;
+    Number: string;
 }
 
 // for more info visit - https://angular.io/api/core

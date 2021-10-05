@@ -2,45 +2,9 @@ import { maskData } from '@tmac/operators';
 import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
 import { get, set } from 'lodash';
+import { extractJsonVal } from '@tmac/operators';
 
 type Generic = string | number;
-
-/**
- * Return json in a format specfied in formatConfig
- * @param {Record<Generic, any>} data
- * @param {Record<Generic, Generic | Generic[]>} formatConfig
- * @returns {Record<Generic, Generic | Generic[]>}
- */
-export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, any>, formatConfig: Record<Generic, Generic | Generic[]>): T => {
-    return Object.keys(formatConfig).reduce((acc, cur) => {
-        if (typeof formatConfig[cur] === 'string') {
-            set(acc, cur, get(data, formatConfig[cur] as string));
-        } else if (Array.isArray(formatConfig[cur])) {
-            const value = (formatConfig[cur] as Generic[]).reduce((subAcc, subCur) => {
-                if (!subAcc) {
-                    subAcc = data[subCur];
-                } else {
-                    subAcc = subAcc ? subAcc[subCur] : null;
-                }
-                return subAcc;
-            }, null);
-            set(acc, cur, value);
-        }
-        return acc;
-    }, {}) as any;
-};
-
-/**
- * To convert link to a tag
- *
- * @param {String} text
- */
-export const urlify = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, (url: string) => {
-        return '<a target="_blank" href="' + url + '">' + url + '</a>';
-    });
-};
 
 export const maticonByExtension = (ext: string) => {
     let icon = '';
@@ -97,6 +61,31 @@ export const maticonByExtension = (ext: string) => {
             icon = 'custom-file-default';
     }
     return icon;
+};
+
+/**
+ * Return json in a format specfied in formatConfig
+ * @param {Record<Generic, any>} data
+ * @param {Record<Generic, Generic | Generic[]>} formatConfig
+ * @returns {Record<Generic, Generic | Generic[]>}
+ */
+export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, any>, formatConfig: Record<Generic, Generic | Generic[]>): T => {
+    return Object.keys(formatConfig).reduce((acc, cur) => {
+        if (typeof formatConfig[cur] === 'string') {
+            set(acc, cur, get(data, formatConfig[cur] as string));
+        } else if (Array.isArray(formatConfig[cur])) {
+            const value = (formatConfig[cur] as Generic[]).reduce((subAcc, subCur) => {
+                if (!subAcc) {
+                    subAcc = data[subCur];
+                } else {
+                    subAcc = subAcc ? subAcc[subCur] : null;
+                }
+                return subAcc;
+            }, null);
+            set(acc, cur, value);
+        }
+        return acc;
+    }, {}) as any;
 };
 
 /**
@@ -180,28 +169,4 @@ export class ADError extends Error {
 export const throwADError = (msg: string, error: any) => {
     TUtils.Logger.error(msg ?? 'Error in AD', error);
     throw new ADError(error);
-};
-
-export const extractJsonVal = (val: any, path: string) => {
-    return path.split('.').reduce((acc, curr) => {
-        if (!acc) {
-            acc = {};
-        }
-        try {
-            acc = JSON.parse(acc[curr]);
-        } catch (e) {
-            acc = acc[curr];
-        }
-        return acc;
-    }, val);
-};
-
-/**
- * To check if a string is html
- *
- * @param {String} str String to compare
- * @returns
- */
-export const checkStringIsHTML = (str: string) => {
-    return /<\/?[a-z][\s\S]*>/i.test(str);
 };
