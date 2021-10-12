@@ -184,7 +184,7 @@
                                     </span>
                                     <div
                                         *ngIf="
-                                            SentReasons.concat(DraftReasons).includes(currentInteraction.RouteReason)
+                                            SentReasons.concat(DraftReasons).concat(OutboxReasons).includes(currentInteraction.RouteReason)
                                                 ? currentInteraction.To
                                                 : currentInteraction.From as emailIDs
                                         "

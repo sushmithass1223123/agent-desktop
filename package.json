@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.0.930",
+    "version": "5.0.93001",
     "license": "",
     "scripts": {
         "ng": "nx",
