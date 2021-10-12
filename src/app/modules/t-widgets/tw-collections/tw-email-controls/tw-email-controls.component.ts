@@ -821,7 +821,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 if (dialogResult) {
                     // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
                     const currentInteraction = this.currentInteraction;
-                    const { AttachmetList, Body, From, CC, Subject } = currentInteraction;
+                    const { AttachmetList, Body, To, CC, Subject } = currentInteraction;
                     sendLoader = this._appUIService.showSnackbar('Approving email', 'loading');
                     const res = await SDKClient.sendEmail({
                         attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
@@ -832,7 +832,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         outboxSessionId: CurrOutSessionId || '',
                         routeId: RouteId || '',
                         subject: Subject,
-                        toList: From,
+                        toList: To,
                         typeOfResponse: 'approve'
                     }).catch((e) => errCallback(e));
                     // this._fuseProgressBarService.hide();
