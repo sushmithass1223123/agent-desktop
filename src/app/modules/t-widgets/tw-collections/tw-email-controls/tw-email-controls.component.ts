@@ -497,6 +497,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
             this.emailBodies[sessionId] = {
                 CCList: res.CCList,
+                BCCList: res.BCCList,
                 Body: res.Body,
                 AttachmetList: res?.Attachments || [],
                 To: res.ToList,
@@ -1179,10 +1180,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Returns email info
      */
     getReplyInfo(): EmailComponentInputs {
-        const { Body, Subject: subject, From, CCList, CreatedTime, To, AttachmetList } = this.currentInteraction;
+        const { Body, Subject: subject, From, CCList, BCCList, CreatedTime, To, AttachmetList } = this.currentInteraction;
         const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
         return {
-            BCC: [],
+            BCC: (BCCList ? BCCList.split(',') : []).filter(Boolean),
             CC: (CCList ? CCList.split(',') : []).filter(Boolean),
             To: (To ? To.split(',') : []).filter(Boolean),
             Body,
