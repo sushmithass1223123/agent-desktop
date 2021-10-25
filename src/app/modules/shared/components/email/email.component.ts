@@ -1,9 +1,11 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
-import { SDKClient } from '@tmac/sdk';
-import { EmailComponentInputs, EmailComponentMode } from 'app/interfaces';
+import { isStringHtml } from '@tmac/operators';
+import { SDKClient, TUtils } from '@tmac/sdk';
+import { EmailComponentInputs, EmailComponentMode, EmailFile } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -82,13 +84,21 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     emailRef: ElementRef<HTMLDivElement>;
 
-    constructor(private _appUiService: AppUiService) {}
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
+
+    constructor(private _appUiService: AppUiService, private _appDataService: AppDataService) {}
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
         this.addUserSuggestions();
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
     }
 
     /**
@@ -117,10 +127,17 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     setEmailBody(): void {
         if (this.emailRef) {
             const el = this.emailRef.nativeElement;
+            el.style.whiteSpace = isStringHtml(this.email.Body) ? 'normal' : 'pre-line';
             if (!el.shadowRoot) {
                 el.attachShadow({ mode: 'open' });
             }
-            el.shadowRoot.innerHTML = this.email.Body;
+            el.shadowRoot.innerHTML = `
+            <style>
+                ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+                ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+            </style>
+            ${this.email.Body}
+            `;
         }
     }
 
@@ -171,8 +188,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox } = email;
             const prelude = `
         <style>
-            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
-            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+        ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+        ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
         </style>
         <br/>
         <div style='border-top: 1px solid gray; padding-top : 5px;'>
@@ -184,7 +201,18 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 </div>
             </div>
         </div>
-                            <br />`;
+        <br />`;
+            const bodyBreak = `
+            <style>
+            ${
+                !isStringHtml(this.email.Body)
+                    ? `body {
+                white-space: pre-wrap;
+            }`
+                    : ''
+            }
+            </style>
+            `;
             const BCC = [];
             switch (this.mode) {
                 case 'preview':
@@ -204,7 +232,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'forward':
                     this._email = {
                         BCC,
-                        Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: [],
                         From: mailbox,
                         Subject: `FW: ${subject}`,
@@ -215,7 +243,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'reply':
                     this._email = {
                         BCC,
-                        Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: [From],
                         From: this.email.mailbox,
                         Subject: subject,
@@ -227,7 +255,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     const ToList = To.concat(Array.from(new Set((From || '').split(',')))).filter((e) => e && e !== mailbox);
                     this._email = {
                         BCC,
-                        Body: `${prelude} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.from(new Set([From].concat(ToList))),
                         From: mailbox,
                         Subject: subject,
@@ -236,7 +264,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     };
                     break;
                 case 'draft':
-                    this.email.Body = Body.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
+                    this.email.Body = `${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
                     this._email = email;
                     break;
             }
@@ -261,6 +289,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     async onFileInput(evt: Event): Promise<void> {
         try {
             const input = evt.target as HTMLInputElement;
+            let resVal: Partial<EmailFile>;
             if (input.files && input.files.length) {
                 const f = input.files[0];
                 const ref = this._appUiService.showSnackbar(`Uploading ${f.name || 'File'}`, 'loading');
@@ -269,33 +298,60 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
-                const { response } = await SDKClient.uploadFiles({
-                    files: [
-                        {
-                            Base64,
-                            FileName: f.name,
-                            RelativePath: '',
-                            Status: 0,
-                            Type: '',
-                            Url: ''
-                        }
-                    ]
-                });
+                if (this.fileUploadUrl?.MediaStreamer) {
+                    const formData = new FormData();
+                    formData.append('file', f);
+                    formData.append('interaction_id', TUtils.Generic.uuid());
+                    formData.append('organization_id', 'prod');
+                    formData.append('conv_id', this.email.SessionID);
+                    formData.append('uploaded_by', SDKClient.getAgentData().agentId);
+                    formData.append('other', '');
 
-                const ext = response[0].FileName.split('.').pop();
-                const icon = maticonByExtension(ext);
+                    // upload the file
+                    const { response } = await TUtils.HttpClient.sendRequest({
+                        urls: [this.fileUploadUrl.MediaStreamer],
+                        method: 'POST',
+                        responseType: 'json',
+                        formData
+                    });
+
+                    // check the response from file server
+                    if (response?.isSuccess) {
+                        resVal = { Name: response.result.original_name, URL: response.result.downloadURL, Source: 'mediastreamer' };
+                    } else {
+                        throwADError('File not created at server', response);
+                    }
+                } else {
+                    const {
+                        response: [res]
+                    } = await SDKClient.uploadFiles({
+                        files: [
+                            {
+                                Base64,
+                                FileName: f.name,
+                                RelativePath: '',
+                                Status: 0,
+                                Type: '',
+                                Url: ''
+                            }
+                        ]
+                    });
+                    resVal = { Name: res.FileName, URL: res.Url, Source: 'tmacproxy' };
+                }
+
+                const ext = resVal.Name.split('.').pop();
 
                 this._email.Files.push({
-                    Id: Date.now().toString(),
+                    Id: TUtils.Generic.uuid(),
+                    SessionID: this.email.SessionID,
                     Direction: 'OUT',
-                    Name: response[0].FileName,
-                    URL: response[0].Url,
-                    Ext: ext,
-                    Icon: icon
+                    Icon: maticonByExtension(ext),
+                    Ext: f.type,
+                    Name: resVal.Name,
+                    Source: resVal.Source,
+                    URL: resVal.URL
                 });
                 ref.dismiss();
-                // this.uploadingFiles = false;
-                // this.uploadingFiles.pop();
             }
         } catch (e) {
             console.error(e);
@@ -357,13 +413,5 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     removeEmail(key: string, value: string): void {
         this._email[key] = this._email[key].filter((x) => x !== value);
-    }
-
-    /**
-     * Opens a selected attachment file
-     * @param {String} fileUrl
-     */
-    openFile(fileUrl: string): void {
-        window.open(fileUrl);
     }
 }

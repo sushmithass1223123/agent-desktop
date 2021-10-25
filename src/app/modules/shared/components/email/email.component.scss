@@ -17,8 +17,6 @@ label {
 
 input {
     border-bottom: 1px solid var(--twd-primary-default) !important;
-    // min-width: 200px !important;
-    // width: auto !important;
     padding: 4px !important;
 }
 
@@ -37,15 +35,6 @@ mat-form-field.custom .mat-form-field-wrapper .mat-form-field-infix {
     padding: 5px;
 }
 
-// .attachment-list {
-//     button {
-//         // max-width: 150px;
-
-//         .mat-button-wrapper {
-//             display: block;
-//             white-space: nowrap;
-//             overflow: hidden;
-//             text-overflow: ellipsis;
-//         }
-//     }
-// .attachments-summary}
+email-editor {
+    min-height: 250px;
+}
