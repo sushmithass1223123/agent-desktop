@@ -10,14 +10,15 @@
             deleteAllowed: deleteAllowed && currentTab !== 'sentitem' && currentTab !== 'queue',
             hideCategoryMenu: false,
             allowQueueTransfer: currentTab === 'queue' && allowQueueTransfer,
-            showEmailSwitcher: ['draft', 'sentitem' , 'queue'].includes(currentTab),
+            showEmailSwitcher: ['draft', 'sentitem', 'queue'].includes(currentTab),
             search: {
                 global: {
                     empty: !globalSearch.form.value,
                     edited: globalSearch.data[currentTab] !== globalSearch.form.value
                 },
                 form: advancedSearch.data[currentTab]?.changed
-            }
+            },
+            openEmailResData: openEmailRes.data | async
         } as state"
     >
         <div
@@ -312,14 +313,14 @@
                             </div>
                         </div>
                         <div *ngIf="selectedMails.some || selectedMails.all" class="bulk-operations twd-mt-3 twd-mb-2 twd-flex twd-gap-1">
-                            <button
+                            <!-- <button
                                 mat-raised-button
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                                 *ngIf="currentTab === 'queue'"
                                 (click)="replyToSelectedEmails(getSelectedEmails())"
                             >
                                 Reply All
-                            </button>
+                            </button> -->
                             <button
                                 mat-raised-button
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
@@ -380,7 +381,7 @@
                 </div>
 
                 <div
-                    *ngIf="openEmailRes.loading || openEmailRes.data as selectedEmail"
+                    *ngIf="openEmailRes.loading || state.openEmailResData as selectedEmail"
                     class="
                         email-open
                         border-radius-20
@@ -417,7 +418,7 @@
                         >
                             Mark As Spam
                         </button>
-                        <button mat-icon-button (click)="openEmailRes.data = null">
+                        <button mat-icon-button (click)="openEmailRes.data.next(null)">
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
@@ -433,7 +434,7 @@
                         [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <preview-email
-                            [email]="getSelectedEmailInfo()"
+                            [email]="state.openEmailResData"
                             [loading]="openEmailRes.loading"
                             [error]="openEmailRes.error"
                             (retry)="openEmail(selectedEmail)"
@@ -463,7 +464,14 @@
                                     </div>
                                 </div>
 
-                                <div *ngIf="state.showEmailSwitcher && this.emailBodies[selectedEmail.InSessionId]" class="twd-p-3 twd-mt-1">
+                                <div
+                                    *ngIf="
+                                        state.showEmailSwitcher &&
+                                        this.emailBodies[selectedEmail.InSessionId] &&
+                                        this.emailBodies[selectedEmail.OutSessionId]
+                                    "
+                                    class="twd-p-3 twd-mt-1"
+                                >
                                     <a
                                         *ngIf="latestEmailPreview"
                                         class="twd-cursor-pointer"
@@ -485,7 +493,7 @@
                 </div>
 
                 <div
-                    *ngIf="!openEmailRes.data && !openEmailRes.loading"
+                    *ngIf="!state.openEmailResData && !openEmailRes.loading"
                     class="
                         email-open
                         twd-h-auto
@@ -525,7 +533,7 @@
                     <div
                         class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0"
                         [ngClass]="
-                            openEmailRes.data?.uiId === node.uiId
+                            state.openEmailResData?.uiId === node.uiId
                                 ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
                                 : ' theme-bg'
                         "
@@ -563,10 +571,10 @@
                             customFuse.anchor?.body ||
                             customFuse.widget?.body +
                                 ' ' +
-                                (openEmailRes.data
-                                    ? openEmailRes.data.Mailbox === node.Mailbox
+                                (state.openEmailResData
+                                    ? state.openEmailResData.Mailbox === node.Mailbox
                                         ? node.Skill
-                                            ? openEmailRes.data.Skill === node.Skill
+                                            ? state.openEmailResData.Skill === node.Skill
                                                 ? ' twd-text-primary-default'
                                                 : ''
                                             : ' twd-text-primary-default'

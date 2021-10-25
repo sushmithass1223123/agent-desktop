@@ -1,12 +1,13 @@
-import { SafeHtml } from '@angular/platform-browser';
-
+type EmailFileSources = 'mediastreamer' | 'tmacproxy';
+type EmailFileDirection = 'IN' | 'OUT';
 export interface EmailFile {
-    Id?: string;
+    Id: string;
     SessionID?: string;
-    Direction: 'IN' | 'OUT';
+    Direction: EmailFileDirection;
     Name: string;
     URL: string;
     Ext: string;
+    Source?: EmailFileSources;
     Icon: string;
 }
 
@@ -30,10 +31,17 @@ export interface CreateEmailOutput {
     Files: EmailFile[];
 }
 
-export interface EmailComponentInputs extends CreateEmailOutput {
+export interface EmailComponentInputs {
     From: string;
     mailbox: string;
     CreatedTime: string;
+    SessionID: string;
+    To: string[];
+    CC: string[];
+    BCC: string[];
+    Body: string;
+    Subject: string;
+    Files: EmailFile[];
 }
 
 export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft';
