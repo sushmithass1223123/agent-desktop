@@ -19,15 +19,16 @@ import {
     ISaveEmailAsEml,
     OutgoingEmailEvent,
     SDKClient,
+    TUtils,
     UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import {
     AgentSkillListData,
-    CreateEmailOutput,
     EmailComponentInputs,
     EmailComponentMode,
+    EmailFile,
     InteractionComment,
     InteractionRef,
     IWidget,
@@ -490,7 +491,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         uploadedName = uploadedName.replace(item.SessionID, '');
                         item.Name = uploadedName;
                     }
-                    item.Ext = uploadedName.split('.').pop();
+                    item.Ext = item.Name.split('.').pop();
                     item.Icon = maticonByExtension(item.Ext);
                 });
             }
@@ -717,7 +718,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Sends Email as Maker
      */
-    async sendEmailAsMaker(email?: CreateEmailOutput, btn?: MatButton): Promise<void> {
+    async sendEmailAsMaker(email?: EmailComponentInputs, btn?: MatButton): Promise<void> {
         const errCallback = (err) => {
             console.error(err);
             let msg = 'Unable to send email';
@@ -759,7 +760,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             // this._fuseProgressBarService.show();
             const ref = this._appUIService.showSnackbar('Sending Email', 'loading');
             const res = await SDKClient.sendEmail({
-                attachmentFileList: Files && Files.length ? JSON.stringify(Files.map((x) => ({ ...x, SessionID: InSessionId }))) : '',
+                attachmentFileList: Files && Files.length ? JSON.stringify(Files) : '',
                 bccList: BCC.join(','),
                 toList: To.join(','),
                 ccList: CC.join(','),
@@ -1182,8 +1183,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Returns email info
      */
     getReplyInfo(): EmailComponentInputs {
-        const { Body, Subject: subject, From, CCList, BCCList, CreatedTime, To, AttachmetList } = this.currentInteraction;
-        const Files = AttachmetList?.map((x, i) => ({ ...x, Id: `${x.SessionID}_${i}` })) || [];
+        const { Body, Subject: subject, From, CCList, BCCList, CreatedTime, To, AttachmetList, InSessionId, OutSessionId } = this.currentInteraction;
+        const SessionID = INBOX_REASONS.includes(this.currentInteraction.RouteReason) ? InSessionId : OutSessionId;
+        const Files: EmailFile[] =
+            AttachmetList?.map((x) => ({
+                ...x,
+                Id: TUtils.Generic.uuid(),
+                SessionID
+            })) || [];
         return {
             BCC: (BCCList ? BCCList.split(',') : []).filter(Boolean),
             CC: (CCList ? CCList.split(',') : []).filter(Boolean),
@@ -1193,7 +1200,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Files,
             From: From,
             mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
-            CreatedTime
+            CreatedTime,
+            SessionID
         };
     }
 }
