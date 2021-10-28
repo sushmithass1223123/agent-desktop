@@ -426,25 +426,25 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * Opens a selected attachment file
      * @param {any} fileUrl
      */
-    openFile(file: any): void {
+    async openFile(file: any): Promise<void> {
         this._fuseProgressBarService.show();
-        fetch(file.Url)
-            .then((res: any) => res.blob())
-            .then((res: any) => {
-                const url = window.URL.createObjectURL(res);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = file.Name;
-                document.body.appendChild(a);
-                a.click();
-                setTimeout((_) => {
-                    window.URL.revokeObjectURL(url);
+        await fetch(file.URL)
+            .then((response) => response.blob())
+            .then((blob) => {
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.setAttribute('download', file.Name);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(blobUrl);
                 }, 60000);
-                a.remove();
+                link.remove();
             })
-            .catch((err) => {
-                console.error(err);
-                this._appUiService.showSnackbar(`${file.Name} download failed`, 'failure');
+            .catch((e) => {
+                console.error(e);
             })
             .finally(() => {
                 this._fuseProgressBarService.hide();
