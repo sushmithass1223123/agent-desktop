@@ -855,7 +855,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
 
             this.openEmailRes.data.next(Object.assign(email, this.emailBodies[getRequestedSession()], { currentTab: this.currentTab }));
-            this.previewEmailRef.setEmailBody(this.openEmailRes.data?.value?.Body);
+            this.previewEmailRef?.setEmailBody(this.openEmailRes.data?.value?.Body);
             // this.previewEmailRef.setEmailBody(this.emailBodies[requestedSession].Body);
             this.setComponentState('email/open/success');
         } catch (e) {

@@ -3,7 +3,6 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { CreateEmailInput } from 'app/interfaces';
-
 /**
  * Previews emails
  */
@@ -101,25 +100,25 @@ export class PreviewEmailComponent implements OnChanges {
      * Opens a selected attachment file
      * @param {any} fileUrl
      */
-    openFile(file: any): void {
+    async openFile(file: any): Promise<void> {
         this._fuseProgressBarService.show();
-        fetch(file.Url)
-            .then((res: any) => res.blob())
-            .then((res: any) => {
-                const url = window.URL.createObjectURL(res);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = file.Name;
-                document.body.appendChild(a);
-                a.click();
-                setTimeout((_) => {
-                    window.URL.revokeObjectURL(url);
+        await fetch(file.URL)
+            .then((response) => response.blob())
+            .then((blob) => {
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.setAttribute('download', file.Name);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(blobUrl);
                 }, 60000);
-                a.remove();
+                link.remove();
             })
-            .catch((err) => {
-                console.error(err);
-                this._appUiservice.showSnackbar(`${file.Name} download failed`, 'failure');
+            .catch((e) => {
+                console.error(e);
             })
             .finally(() => {
                 this._fuseProgressBarService.hide();
