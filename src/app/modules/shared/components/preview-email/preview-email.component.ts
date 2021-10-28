@@ -1,6 +1,8 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { CreateEmailInput } from 'app/interfaces';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
+import { CreateEmailInput } from 'app/interfaces';
 
 /**
  * Previews emails
@@ -41,7 +43,7 @@ export class PreviewEmailComponent implements OnChanges {
     @ViewChild('emailBodyIframe')
     emailBodyIframe: ElementRef<HTMLIFrameElement>;
 
-    constructor() {}
+    constructor(private _fuseProgressBarService: FuseProgressBarService, private _appUiservice: AppUiService) {}
 
     /**
      * lifecycle hook
@@ -49,7 +51,7 @@ export class PreviewEmailComponent implements OnChanges {
      */
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.email && changes.email?.currentValue?.Body) {
-            this.setEmailBody(changes.email.currentValue.Body);
+            this.setEmailBody(this.email.Body);
         }
     }
 
@@ -66,6 +68,7 @@ export class PreviewEmailComponent implements OnChanges {
      * @param {string} body
      */
     setEmailBody(body: string, iframe?: HTMLIFrameElement): void {
+        this.loading = true;
         const ref = iframe || this.emailBodyIframe?.nativeElement;
         if (ref) {
             const frag = document.createRange().createContextualFragment(body);
@@ -84,6 +87,7 @@ export class PreviewEmailComponent implements OnChanges {
         </style>`;
             doc.body.appendChild(frag);
         }
+        this.loading = false;
     }
 
     /**
@@ -95,9 +99,30 @@ export class PreviewEmailComponent implements OnChanges {
 
     /**
      * Opens a selected attachment file
-     * @param {String} fileUrl
+     * @param {any} fileUrl
      */
-    openFile(fileUrl: string): void {
-        window.open(fileUrl);
+    openFile(file: any): void {
+        this._fuseProgressBarService.show();
+        fetch(file.Url)
+            .then((res: any) => res.blob())
+            .then((res: any) => {
+                const url = window.URL.createObjectURL(res);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.Name;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout((_) => {
+                    window.URL.revokeObjectURL(url);
+                }, 60000);
+                a.remove();
+            })
+            .catch((err) => {
+                console.error(err);
+                this._appUiservice.showSnackbar(`${file.Name} download failed`, 'failure');
+            })
+            .finally(() => {
+                this._fuseProgressBarService.hide();
+            });
     }
 }

@@ -286,6 +286,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     }, 0);
                 }
                 if (OUTBOX_REASONS.includes(this.currentInteraction.RouteReason)) {
+                    this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
                     this.rejectReason.allReasons = this.currentInteraction.JsonData?.split(',') || [];
                 } else if (this.currentInteraction.JsonData) {
                     try {
@@ -1191,14 +1192,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 Id: TUtils.Generic.uuid(),
                 SessionID
             })) || [];
+        const isSentEmail = SENT_REASONS.includes(this.currentInteraction.RouteReason);
         return {
             BCC: (BCCList ? BCCList.split(',') : []).filter(Boolean),
             CC: (CCList ? CCList.split(',') : []).filter(Boolean),
-            To: (To ? To.split(',') : []).filter(Boolean),
+            To: isSentEmail ? From : (To ? To.split(',') : []).filter(Boolean),
             Body,
             Subject: subject,
             Files,
-            From: From,
+            From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
             mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
             CreatedTime,
             SessionID
