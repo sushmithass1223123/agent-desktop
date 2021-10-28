@@ -48,7 +48,7 @@
                 *ngFor="let file of email.Files | slice: 0:2"
                 removable
                 class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                [matTooltip]="file.Ext | uppercase"
+                [matTooltip]="file.Name"
                 (click)="openFile(file.URL)"
                 (removed)="removeFiles(file.Id)"
             >
@@ -75,7 +75,7 @@
                         *ngFor="let file of email.Files | slice: 2:email.Files.length"
                         removable
                         class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                        [matTooltip]="file.Ext | uppercase"
+                        [matTooltip]="file.Name"
                         (click)="openFile(file.URL)"
                         (removed)="removeFiles(file.Id)"
                     >

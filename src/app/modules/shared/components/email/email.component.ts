@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
@@ -89,7 +91,12 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     fileUploadUrl: any;
 
-    constructor(private _appUiService: AppUiService, private _appDataService: AppDataService) {}
+    constructor(
+        private _appUiService: AppUiService,
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _appDataService: AppDataService,
+        private httpClient: HttpClient
+    ) {}
 
     /**
      * Lifecycle hook
@@ -244,7 +251,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     this._email = {
                         BCC,
                         Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
-                        To: [From],
+                        To: Array.isArray(From) ? From : [From],
                         From: this.email.mailbox,
                         Subject: subject,
                         Files: [],
@@ -413,5 +420,34 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     removeEmail(key: string, value: string): void {
         this._email[key] = this._email[key].filter((x) => x !== value);
+    }
+
+    /**
+     * Opens a selected attachment file
+     * @param {any} fileUrl
+     */
+    openFile(file: any): void {
+        this._fuseProgressBarService.show();
+        fetch(file.Url)
+            .then((res: any) => res.blob())
+            .then((res: any) => {
+                const url = window.URL.createObjectURL(res);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.Name;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout((_) => {
+                    window.URL.revokeObjectURL(url);
+                }, 60000);
+                a.remove();
+            })
+            .catch((err) => {
+                console.error(err);
+                this._appUiService.showSnackbar(`${file.Name} download failed`, 'failure');
+            })
+            .finally(() => {
+                this._fuseProgressBarService.hide();
+            });
     }
 }

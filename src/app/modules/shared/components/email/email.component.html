@@ -204,21 +204,15 @@
             *ngFor="let file of attachments | slice: 0:2"
             [removable]="removable"
             class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-            [matTooltip]="file.Ext | uppercase"
-            (click)="downloadRef.click()"
+            [matTooltip]="file.Name"
+            (click)="openFile(file)"
             (removed)="removeFiles(file.Id)"
         >
-            <a
-                [href]="file.URL"
-                #downloadRef
-                (click)="$event.stopPropagation()"
-                [download]="file.Name"
-                class="twd-max-w-10/12 twd-flex-1 twd-truncate twd-flex twd-items-center"
-            >
+            <div class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
                 <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
-            </a>
-            <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+                <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
+                <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+            </div>
         </mat-chip>
         <mat-chip
             *ngIf="attachments.length > 2"
@@ -231,27 +225,21 @@
     </mat-chip-list>
 
     <mat-menu class="custom attachment-overlay" #attachList="matMenu">
-        <div class="attachment-menu">
+        <div class="attachment-menu twd-mx-2">
             <mat-chip-list class="mat-chip-list-stacked">
                 <mat-chip
                     *ngFor="let file of attachments | slice: 2:attachments.length"
-                    class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                    [matTooltip]="file.Ext | uppercase"
-                    (click)="downloadRef.click()"
                     [removable]="removable"
+                    class="border-radius-20 twd-flex twd-items-center twd-justify-between"
+                    [matTooltip]="file.Name"
+                    (click)="openFile(file)"
                     (removed)="removeFiles(file.Id)"
                 >
-                    <a
-                        [href]="file.URL"
-                        #downloadRef
-                        (click)="$event.stopPropagation()"
-                        [download]="file.Name"
-                        class="twd-max-w-10/12 twd-flex-1 twd-flex twd-items-center"
-                    >
+                    <div class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
                         <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
-                        <span class="twd-truncate twd-ml-2"> {{ file.Name }} </span>
-                    </a>
-                    <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+                        <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
+                        <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+                    </div>
                 </mat-chip>
             </mat-chip-list>
         </div>
