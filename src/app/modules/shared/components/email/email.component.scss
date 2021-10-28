@@ -1,6 +1,7 @@
 .mat-chip {
     @apply twd-text-xs;
     cursor: pointer !important;
+    max-width: 300px;
 }
 .attachments-summary .mat-chip {
     max-width: 40%;

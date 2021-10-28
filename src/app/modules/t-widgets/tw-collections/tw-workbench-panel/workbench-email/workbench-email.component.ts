@@ -38,6 +38,7 @@ type Mail = {
     IsEmailProbableSpam: boolean;
     checked?: boolean;
     RouteReason?: string;
+    EmailType?: string;
 };
 
 type ComponentActions =
@@ -111,6 +112,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     @ViewChild('replyDialog')
     ReplyEditorDialog: TemplateRef<any>;
+
+    @ViewChild(PreviewEmailComponent)
+    previewEmailRef: PreviewEmailComponent;
 
     /**
      * Reply editor Modal
@@ -242,12 +246,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Replied email shown
      */
     latestEmailPreview = false;
-
-    /**
-     * Preview email ref
-     */
-    @ViewChild(PreviewEmailComponent)
-    previewEmailRef: PreviewEmailComponent;
 
     availableTabs = [
         { label: 'Queue', icon: 'queue', key: 'queue' },
@@ -711,6 +709,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     };
                     if (this.currentTab === 'draft') {
                         item.sessionId = curr.OutSessionId;
+                    } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
+                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
                     } else if (this.currentTab === 'sentitem') {
                         item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
                         // item.inSessionId = curr.OutSessionId;
@@ -819,7 +819,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             Body: this.appUiService.sanitizeEmailBody(inboxRes.Body || '')['changingThisBreaksApplicationSecurity'],
 
                             InSessionId: email.InSessionId,
-                            OutSessionId: email.OutSessionId
+                            OutSessionId: email.OutSessionId,
+                            EmailType: inboxRes?.EmailType
                         }
                     });
                 }
@@ -854,6 +855,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
 
             this.openEmailRes.data.next(Object.assign(email, this.emailBodies[getRequestedSession()], { currentTab: this.currentTab }));
+            this.previewEmailRef.setEmailBody(this.openEmailRes.data?.value?.Body);
             // this.previewEmailRef.setEmailBody(this.emailBodies[requestedSession].Body);
             this.setComponentState('email/open/success');
         } catch (e) {
@@ -1167,7 +1169,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         return result.map((x: any): Mail => {
             const data = typeof x.data === 'string' ? JSON.parse(x.data) : x;
             return {
-                Mailbox: data.To,
+                Mailbox: this.availableMailboxes.find((x) => x.includes(data.To) || data.To.includes(x)) || data.To,
                 Subject: data.Subject,
                 From: data.From,
                 RouteId: data.RouteId,
