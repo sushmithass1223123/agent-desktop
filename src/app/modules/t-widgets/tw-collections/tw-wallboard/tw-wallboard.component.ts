@@ -7,6 +7,7 @@ import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { TwWallboard } from '@ad/types';
 
 /**
  * Wallboard componet

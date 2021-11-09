@@ -5,7 +5,6 @@ import { MainComponent } from '@modules/core/main/main.component';
 import { WidgetPreviewComponent } from '@modules/core/widget-preview/widget-preview.component';
 import { ResourceNotFoundComponent } from '@modules/shared/components';
 
-
 const appRoutes: Routes = [
     {
         path: '',
@@ -55,4 +54,4 @@ const appRoutes: Routes = [
     imports: [RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' })],
     exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

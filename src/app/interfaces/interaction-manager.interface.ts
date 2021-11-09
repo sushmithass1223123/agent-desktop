@@ -15,7 +15,7 @@ export interface InteractionRef extends ActiveInteraction {
      */
     isActive: boolean;
     /**
-     * Interaction status 
+     * Interaction status
      */
     status: string;
     /**

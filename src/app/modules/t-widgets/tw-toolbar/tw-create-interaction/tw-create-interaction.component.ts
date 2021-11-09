@@ -159,6 +159,14 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 let config = data.Data;
                 if (config.SpeedDial) {
                     config = {
+                        agent: {
+                            allowed: true,
+                            consult: true,
+                            source: config.Agent.Source,
+                            allowedStates: config.Agent.AllowedStates,
+                            columns: config.Agent.Columns,
+                            teamFilter: config.Agent.TeamFilter
+                        },
                         speedDial: {
                             allowed: config.SpeedDial?.Allowed,
                             consult: config.SpeedDial?.Consult,
@@ -167,24 +175,18 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                             source: config.SpeedDial?.Source,
                             teamFilter: config.SpeedDial?.TeamFilter,
                             columns: config.SpeedDial?.Columns
-                        },
-                        agent: {
-                            allowed: true,
-                            consult: true,
-                            source: config.Agent.Source,
-                            allowedStates: config.Agent.AllowedStates,
-                            columns: config.Agent.Columns,
-                            teamFilter: config.Agent.TeamFilter
                         }
                     };
                 } else {
                     config = {
-                        allowed: true,
-                        consult: true,
-                        source: config.Source,
-                        allowedStates: config.AllowedStates,
-                        columns: config.Columns,
-                        teamFilter: config.TeamFilter
+                        agent: {
+                            allowed: true,
+                            consult: true,
+                            source: config.Source,
+                            allowedStates: config.AllowedStates,
+                            columns: config.Columns,
+                            teamFilter: config.TeamFilter
+                        }
                     };
                 }
                 this._matDialog.open(AgentSkillListComponent, {

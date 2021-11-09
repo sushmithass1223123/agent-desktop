@@ -19,6 +19,7 @@ import { TUtils } from '@tmac/sdk';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import tinymce, { Editor } from 'tinymce';
+import { IEmailEditor } from './email-editor.interface';
 
 /**
  * Email editor component
@@ -40,7 +41,7 @@ import tinymce, { Editor } from 'tinymce';
     `,
     styleUrls: ['./tinymce-email.component.scss']
 })
-export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy, IEmailEditor {
     /**
      * ID for tinymce's textare selector
      */
@@ -186,7 +187,9 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                             fromEvent(editor, 'change')
                                 .pipe(
                                     takeUntil(this.unsubscribeAll$),
-                                    map(() => (this._editorContentChanged = true)),
+                                    map(() => {
+                                        this._editorContentChanged = !!this.body;
+                                    }),
                                     debounceTime(this.debounce.duration)
                                 )
                                 .subscribe(setEmailbody);

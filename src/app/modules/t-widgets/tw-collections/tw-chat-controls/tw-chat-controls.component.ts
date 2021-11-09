@@ -66,6 +66,7 @@ import { map } from 'lodash';
 import * as moment from 'moment';
 import { from, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
+import { TwChatControls } from '@ad/types';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -2600,25 +2601,25 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check if the type is conference and self destination list is there
         if (type === 'conference' && this.selfServiceDestinations.length) {
             data.otherData = {
-                ...data.otherData,
-                dynamicList: {
-                    key: 'dynamicList',
+                ...data.otherData
+            };
+            data.dynamicLists = [
+                {
                     label: 'Bot Conference',
                     placeholder: 'Destination',
                     data: this.selfServiceDestinations,
-                    type: 'dynamic_botConference',
                     columns: ['Name', 'Value'],
                     selection: 'Value',
-                    consultAllowed: true,
-                    blindAllowed: false,
-                    commentsAllowed: false
+                    consult: true,
+                    blind: false,
+                    comments: false
                 }
-            };
+            ];
         }
 
         data.callback = (callbackData) => {
             // check the source
-            if (callbackData.source === 'dynamic_botConference') {
+            if (callbackData.source === 'Bot Conference') {
                 this.conferenceWithBot(callbackData.selectedRow.Value);
             }
         };

@@ -5,6 +5,7 @@ import { CustomerInfo } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { TwCustomerDetails } from '@ad/types';
 
 /**
  * Custommer details widget
@@ -19,7 +20,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     /**
      * App config data
      */
-    @Input() data: any;
+    @Input() data: TwCustomerDetails;
 
     /**
      * Current interaction data
@@ -66,13 +67,15 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         try {
             // create event names to subscribe
             const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
+            const processInfo = processCustomerDetails(this.customerInfo);
             // register to tmac events
             this._tmacEventService
                 .getInteractionEvents(eventNames, this.interactionId)
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) =>
                     evts.forEach((evt) => {
-                        processCustomerDetails(this.customerInfo, evt);
+                        // processCustomerDetails(this.customerInfo, evt);
+                        processInfo.exec(evt);
                     })
                 );
         } catch (error) {

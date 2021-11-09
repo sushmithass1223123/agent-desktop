@@ -14,11 +14,11 @@ export class NoDataAvailableComponent implements OnInit {
      */
     @Input() msg = 'No Data Available';
 
-    constructor() { }
+    constructor() {}
 
     /**
      * Llifecycle hoook
      * @method
      */
-    ngOnInit(): void { }
+    ngOnInit(): void {}
 }

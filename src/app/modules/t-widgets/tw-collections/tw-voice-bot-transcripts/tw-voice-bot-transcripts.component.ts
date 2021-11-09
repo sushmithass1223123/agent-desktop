@@ -6,6 +6,7 @@ import { IAgentData, VoiceBotTranscriptEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ChatTranscripts } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TwVoiceBotTranscripts } from '@ad/types';
 
 /**
  * Voice Bot Transcript Component
@@ -20,7 +21,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     /**
      * Holds all the data related to this widget from the config
      */
-    @Input() data: any;
+    @Input() data: TwVoiceBotTranscripts;
 
     /**
      * Perfect scroll bar directive ref
@@ -55,7 +56,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
 
     /**
      * Constructor
-     * 
+     *
      * @param {TMACEventService} _tmacEventService
      * @param {AppUiService} _appUIService
      */
@@ -106,8 +107,8 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
 
     /**
      * To process VoiceBotTranscriptEvent
-     * 
-     * @param {VoiceBotTranscriptEvent} evt 
+     *
+     * @param {VoiceBotTranscriptEvent} evt
      */
     private VoiceBotTranscriptEvent(evt: VoiceBotTranscriptEvent): void {
         // check for the interaction
@@ -119,8 +120,8 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         if (evt.Transcript) {
             // add to the chat transcripts ref
             this.chatTranscripts = JSON.parse(evt.Transcript)
-                .map((m:
-                    {
+                .map(
+                    (m: {
                         /**
                          * Bot transcript
                          */
@@ -128,36 +129,33 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
                         /**
                          * User transcript
                          */
-                        userTranscription: string
+                        userTranscription: string;
+                    }) => {
+                        const message: ChatTranscripts[] = [];
+                        if (m.botTranscription) {
+                            message.push({
+                                who: 'VoiceBot',
+                                message: m.botTranscription
+                            });
+                        }
+                        if (m.userTranscription) {
+                            message.push({
+                                who: 'Customer',
+                                message: m.userTranscription
+                            });
+                        }
+                        return message;
                     }
-                ) => {
-                    const message: ChatTranscripts[] = [];
-                    if (m.botTranscription) {
-                        message.push({
-                            who: 'VoiceBot',
-                            message: m.botTranscription
-                        });
-                    }
-                    if (m.userTranscription) {
-                        message.push({
-                            who: 'Customer',
-                            message: m.userTranscription
-                        });
-                    }
-                    return message;
-                })
+                )
                 .flat();
         }
 
         // add the customer speech
         if (evt.CustomerSpeech) {
-            this.chatTranscripts.push(
-                {
-                    who: 'Customer',
-                    message: evt.CustomerSpeech
-
-                }
-            );
+            this.chatTranscripts.push({
+                who: 'Customer',
+                message: evt.CustomerSpeech
+            });
             this._appUIService.playAudio('message', 0.5, false);
         }
 
@@ -184,7 +182,6 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
-
 }
 
 // for more info visit - https://angular.io/api/core

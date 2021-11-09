@@ -15,11 +15,7 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": [
-            "maximize",
-            "collapse",
-            "float"
-        ],
+        "Actions": ["maximize", "collapse", "float"],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false
@@ -81,9 +77,7 @@
                     "Display": "skill",
                     "FreeTextAllowed": false
                 },
-                "ChannelPrefix": [
-                    "CH"
-                ],
+                "ChannelPrefix": ["CH"],
                 "Columns": []
             }
         },

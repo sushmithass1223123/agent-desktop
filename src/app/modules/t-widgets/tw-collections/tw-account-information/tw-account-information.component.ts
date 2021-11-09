@@ -1,9 +1,9 @@
+import { TwAccountInformation } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
 import { GenericEvent, SDKClient } from '@tmac/sdk';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
 @Component({
     selector: 'tw-account-information',
@@ -15,7 +15,7 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
     /**
      * Holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwAccountInformation;
     /**
      * Maximized flag
      */
@@ -107,14 +107,11 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
 
     /**
      * Constructor
-     * 
+     *
      * @param {AppUiService} _appUIService
      * @param {FuseProgressBarService} _fuseProgressBarService
      */
-    constructor(
-        private _appUIService: AppUiService,
-        private _fuseProgressBarService: FuseProgressBarService
-    ) {
+    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
         super();
     }
 
@@ -159,7 +156,7 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
     // -----------------------------------------------------------------------------------------------------
     /**
      * To process VBStatusEvent
-     * @param {GenericEvent} evt 
+     * @param {GenericEvent} evt
      */
     private VBStatusEvent = (evt: GenericEvent) => {
         // process the event
@@ -170,18 +167,16 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
 
         if (jsonData < 50) {
             this.audioStatus = 'collecting';
-        }
-        else if (jsonData >= 50 && jsonData < 60) {
+        } else if (jsonData >= 50 && jsonData < 60) {
             this.audioStatus = 'enough';
             this.disable.reject = false;
             this.disable.thirdParty = false;
-        }
-        else {
-            // show verified 
+        } else {
+            // show verified
             this._appUIService.showSnackbar('Customer verified successfully');
             this.isAuthenticated = true;
         }
-    }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
@@ -196,21 +191,18 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
         dialogRef.afterClosed().subscribe((resp1) => {
             if (resp1) {
                 this._fuseProgressBarService.show();
-                SDKClient.externalConnectGenericCommand(
-                    {
-                        className: '',
-                        functionName: 'UpdateNric',
-                        moduleName: '',
-                        parameters: [SDKClient.getAgentData().deviceId, this.interactionId, resp1]
-                    }
-                )
+                SDKClient.externalConnectGenericCommand({
+                    className: '',
+                    functionName: 'UpdateNric',
+                    moduleName: '',
+                    parameters: [SDKClient.getAgentData().deviceId, this.interactionId, resp1]
+                })
                     .then((resp2) => {
                         if (resp2.response === '1') {
                             this._appUIService.showSnackbar('NRIC updated successfully');
                             // update the NRIC
                             this.NRIC = resp1;
-                        }
-                        else {
+                        } else {
                             this._appUIService.showSnackbar('NRIC update failed', 'failure');
                         }
 

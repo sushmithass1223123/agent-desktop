@@ -3,23 +3,24 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TwSuActiveAgentsComponent } from './tw-su-active-agents.component';
 
 describe('TwSuActiveAgentsComponent', () => {
-  let component: TwSuActiveAgentsComponent;
-  let fixture: ComponentFixture<TwSuActiveAgentsComponent>;
+    let component: TwSuActiveAgentsComponent;
+    let fixture: ComponentFixture<TwSuActiveAgentsComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TwSuActiveAgentsComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [TwSuActiveAgentsComponent]
+            }).compileComponents();
+        })
+    );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TwSuActiveAgentsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(TwSuActiveAgentsComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

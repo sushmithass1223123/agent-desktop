@@ -23,7 +23,7 @@ export class AppConfirmDialogComponent implements OnInit {
      */
     vector: string;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: AppConfirmDialogData) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: AppConfirmDialogData) {}
 
     /**
      * OnInit

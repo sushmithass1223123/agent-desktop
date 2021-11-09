@@ -202,12 +202,20 @@ export class TableComponent implements OnInit {
      */
     @Input() sortDirection: SortDirection = 'desc';
 
+    /**
+     * Flag for whether row is selectable
+     */
+    @Input() selectable = false;
+
     constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
         this.source = new MatTableDataSource([]);
+        if (!this.columns?.length && this.source.data.length) {
+            this.columns = Object.keys(this.source.data[0]);
+        }
         this.source.filterPredicate = this.filterPredicate;
     }
 
@@ -354,5 +362,15 @@ export class TableComponent implements OnInit {
      */
     getCtrls(ctrls: any[], el: any): any[] {
         return ctrls.filter((c) => (c.visible ? c.visible(el) : true));
+    }
+
+    /**
+     * Selects row
+     * @param {any} row
+     */
+    selectRow(row: any): void {
+        if (this.selectable) {
+            this.triggerAction('row-selected', row);
+        }
     }
 }

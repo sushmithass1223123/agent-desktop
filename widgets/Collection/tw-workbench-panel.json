@@ -56,9 +56,7 @@
                                 "Display": "skill",
                                 "FreeTextAllowed": false
                             },
-                            "ChannelPrefix": [
-                                "EM"
-                            ],
+                            "ChannelPrefix": ["EM"],
                             "Columns": []
                         }
                     },

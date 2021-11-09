@@ -3,23 +3,24 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TwAdFeedbackComponent } from './tw-ad-feedback.component';
 
 describe('TwAdFeedbackComponent', () => {
-  let component: TwAdFeedbackComponent;
-  let fixture: ComponentFixture<TwAdFeedbackComponent>;
+    let component: TwAdFeedbackComponent;
+    let fixture: ComponentFixture<TwAdFeedbackComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TwAdFeedbackComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [TwAdFeedbackComponent]
+            }).compileComponents();
+        })
+    );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TwAdFeedbackComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(TwAdFeedbackComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

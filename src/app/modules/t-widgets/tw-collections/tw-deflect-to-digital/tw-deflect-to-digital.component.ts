@@ -7,6 +7,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
+import { TwDeflectToDigital } from '@ad/types';
 
 @Component({
     selector: 'tw-deflect-to-digital',

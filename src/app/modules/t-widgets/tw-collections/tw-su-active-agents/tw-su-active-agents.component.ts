@@ -25,6 +25,7 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TwSuActiveAgents } from '@ad/types';
 
 /**
  * Active agents component widget
@@ -40,7 +41,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: any;
+    @Input() data: TwSuActiveAgents;
 
     /**
      * Fuse Config

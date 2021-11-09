@@ -1,4 +1,4 @@
-import { AnyMxRecord } from "dns";
+import { AnyMxRecord } from 'dns';
 
 export interface EventColor {
     primary: string;
@@ -9,10 +9,7 @@ export interface CustomEventAction {
     label: string;
     cssClass?: string;
     a11yLabel?: string;
-    onClick({ event, sourceEvent, }: {
-        event: CustomCalendarEvent;
-        sourceEvent: MouseEvent | KeyboardEvent;
-    }): any;
+    onClick({ event, sourceEvent }: { event: CustomCalendarEvent; sourceEvent: MouseEvent | KeyboardEvent }): any;
 }
 export interface CustomCalendarEvent<MetaType = any> {
     id?: string | number;

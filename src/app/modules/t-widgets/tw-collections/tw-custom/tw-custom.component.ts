@@ -11,6 +11,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes, IPostMessage, IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TwCustom } from '@ad/types';
 
 /**
  * TwCustomComponent

@@ -298,6 +298,681 @@
                         </div>
                     </div>
                 </div>
+                <div
+                    *ngFor="let item of filteredAgents; trackBy: trackByID"
+                    class="twd-w-full p-12 border-radius-20 agent-item mat-elevation-z1"
+                    [ngClass]="
+                        (customFuse.anchor?.content || customFuse.widget?.content) +
+                        ' ' +
+                        (item.AgentLoginID === selectedAgent ? 'border-lg-success' : '')
+                    "
+                >
+                    <div
+                        class="tw-accordion twd-w-full twd-flex twd-flex-row twd-justify-between twd-items-center"
+                        (click)="selectAgent(item)"
+                        [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
+                    >
+                        <div
+                            class="twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-full"
+                            [ngClass]="{
+                                'twd-max-w-5/12': item.AgentLoginID !== selectedAgent,
+                                'twd-max-h-10/12': item.AgentLoginID === selectedAgent
+                            }"
+                        >
+                            <div class="position-relative">
+                                <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
+                                <span
+                                    class="element-status"
+                                    [ngClass]="
+                                        item.CurrentAgentStatus.includes('Available')
+                                            ? 'bg-alt-success'
+                                            : item.CurrentAgentStatus.includes('On Call')
+                                            ? 'bg-alt-danger'
+                                            : 'bg-alt-warning'
+                                    "
+                                >
+                                </span>
+                            </div>
+                            <div class="twd-ml-4 twd-flex twd-flex-col">
+                                <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
+                                    <span matTooltip="First Name">{{ item.FirstName }}</span>
+                                    /
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                </span>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent Name"> {{ item.AgentName }}</span>
+                                    (<span matTooltip="Lan ID">{{ item.AgentLANID }}</span
+                                    >)
+                                </div>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                    /
+                                    <span matTooltip="Station">{{ item.StationID }}</span>
+                                </div>
+                                <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
+                                <span
+                                    matTooltip="Status Duration"
+                                    [ngClass]="{
+                                        'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                        'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                        'text-alt-danger': item.CurrentStatusDuration > 120
+                                    }"
+                                    >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                >
+                            </div>
+                        </div>
+
+                        <div
+                            class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                            *ngIf="item.AgentLoginID !== selectedAgent"
+                        >
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+
+                        <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR"> supervised_user_circle</mat-icon>
+                            <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
+                            <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
+                                {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
+                            </mat-icon>
+                        </div>
+                    </div>
+
+                    <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
+                        <div
+                            class="
+                                feature-actions
+                                border-right-primary
+                                twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12
+                            "
+                        >
+                            <ng-container *ngFor="let feature of item.AgentFeatures">
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    mat-raised-button
+                                    *ngIf="featureCheck(feature, 'agent', '')"
+                                    (click)="performAgentAction(item, feature)"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    mat-raised-button
+                                    [matMenuTriggerFor]="menu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <mat-menu class="custom aux-menu" #menu="matMenu" xPosition="after">
+                                    <button
+                                        mat-menu-item
+                                        *ngFor="let auxCode of auxCodesList"
+                                        (click)="changeAgentStatus(item, auxCode)"
+                                        disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                    >
+                                        <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
+                                        <mat-icon
+                                            [ngClass]="
+                                                auxCode.Code.includes('Available')
+                                                    ? 'text-alt-success'
+                                                    : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                    ? 'text-alt-danger'
+                                                    : 'text-alt-warning'
+                                            "
+                                        >
+                                            {{
+                                                auxCode.Code.toLowerCase() === 'available'
+                                                    ? 'check_circle'
+                                                    : auxCode.Code === 'logout'
+                                                    ? 'settings_power'
+                                                    : 'remove_circle'
+                                            }}
+                                        </mat-icon>
+                                        <span>{{ auxCode.Name }}</span>
+                                    </button>
+                                </mat-menu>
+
+                                <button
+                                    mat-icon-button
+                                    mat-raised-button
+                                    matTooltip="Send Quiz"
+                                    [matMenuTriggerFor]="quizIntentMenu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                                >
+                                    <mat-icon>rule</mat-icon>
+                                </button>
+
+                                <mat-menu #quizIntentMenu="matMenu" class="custom">
+                                    <button
+                                        mat-menu-item
+                                        class="custom"
+                                        *ngFor="let intent of availableQuizIntents"
+                                        (click)="sendQuizIntent(intent.intent, item)"
+                                    >
+                                        <mat-icon>grading</mat-icon>
+                                        <span>{{ intent.name }}</span>
+                                    </button>
+                                </mat-menu>
+                            </ng-container>
+                            <button
+                                mat-icon-button
+                                mat-raised-button
+                                *ngIf="checkForActiveInteraction(item.ChannelCount)"
+                                matTooltip="View Interactions"
+                                (click)="viewInteractions(item)"
+                            >
+                                <mat-icon>preview</mat-icon>
+                            </button>
+                        </div>
+                        <div
+                            class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                        >
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount"
+                                class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    *ngFor="let item of filteredAgents; trackBy: trackByID"
+                    class="twd-w-full p-12 border-radius-20 agent-item mat-elevation-z1"
+                    [ngClass]="
+                        (customFuse.anchor?.content || customFuse.widget?.content) +
+                        ' ' +
+                        (item.AgentLoginID === selectedAgent ? 'border-lg-success' : '')
+                    "
+                >
+                    <div
+                        class="tw-accordion twd-w-full twd-flex twd-flex-row twd-justify-between twd-items-center"
+                        (click)="selectAgent(item)"
+                        [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
+                    >
+                        <div
+                            class="twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-full"
+                            [ngClass]="{
+                                'twd-max-w-5/12': item.AgentLoginID !== selectedAgent,
+                                'twd-max-h-10/12': item.AgentLoginID === selectedAgent
+                            }"
+                        >
+                            <div class="position-relative">
+                                <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
+                                <span
+                                    class="element-status"
+                                    [ngClass]="
+                                        item.CurrentAgentStatus.includes('Available')
+                                            ? 'bg-alt-success'
+                                            : item.CurrentAgentStatus.includes('On Call')
+                                            ? 'bg-alt-danger'
+                                            : 'bg-alt-warning'
+                                    "
+                                >
+                                </span>
+                            </div>
+                            <div class="twd-ml-4 twd-flex twd-flex-col">
+                                <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
+                                    <span matTooltip="First Name">{{ item.FirstName }}</span>
+                                    /
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                </span>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent Name"> {{ item.AgentName }}</span>
+                                    (<span matTooltip="Lan ID">{{ item.AgentLANID }}</span
+                                    >)
+                                </div>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                    /
+                                    <span matTooltip="Station">{{ item.StationID }}</span>
+                                </div>
+                                <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
+                                <span
+                                    matTooltip="Status Duration"
+                                    [ngClass]="{
+                                        'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                        'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                        'text-alt-danger': item.CurrentStatusDuration > 120
+                                    }"
+                                    >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                >
+                            </div>
+                        </div>
+
+                        <div
+                            class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                            *ngIf="item.AgentLoginID !== selectedAgent"
+                        >
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+
+                        <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR"> supervised_user_circle</mat-icon>
+                            <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
+                            <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
+                                {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
+                            </mat-icon>
+                        </div>
+                    </div>
+
+                    <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
+                        <div
+                            class="
+                                feature-actions
+                                border-right-primary
+                                twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12
+                            "
+                        >
+                            <ng-container *ngFor="let feature of item.AgentFeatures">
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    mat-raised-button
+                                    *ngIf="featureCheck(feature, 'agent', '')"
+                                    (click)="performAgentAction(item, feature)"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    mat-raised-button
+                                    [matMenuTriggerFor]="menu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <mat-menu class="custom aux-menu" #menu="matMenu" xPosition="after">
+                                    <button
+                                        mat-menu-item
+                                        *ngFor="let auxCode of auxCodesList"
+                                        (click)="changeAgentStatus(item, auxCode)"
+                                        disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                    >
+                                        <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
+                                        <mat-icon
+                                            [ngClass]="
+                                                auxCode.Code.includes('Available')
+                                                    ? 'text-alt-success'
+                                                    : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                    ? 'text-alt-danger'
+                                                    : 'text-alt-warning'
+                                            "
+                                        >
+                                            {{
+                                                auxCode.Code.toLowerCase() === 'available'
+                                                    ? 'check_circle'
+                                                    : auxCode.Code === 'logout'
+                                                    ? 'settings_power'
+                                                    : 'remove_circle'
+                                            }}
+                                        </mat-icon>
+                                        <span>{{ auxCode.Name }}</span>
+                                    </button>
+                                </mat-menu>
+
+                                <button
+                                    mat-icon-button
+                                    mat-raised-button
+                                    matTooltip="Send Quiz"
+                                    [matMenuTriggerFor]="quizIntentMenu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                                >
+                                    <mat-icon>rule</mat-icon>
+                                </button>
+
+                                <mat-menu #quizIntentMenu="matMenu" class="custom">
+                                    <button
+                                        mat-menu-item
+                                        class="custom"
+                                        *ngFor="let intent of availableQuizIntents"
+                                        (click)="sendQuizIntent(intent.intent, item)"
+                                    >
+                                        <mat-icon>grading</mat-icon>
+                                        <span>{{ intent.name }}</span>
+                                    </button>
+                                </mat-menu>
+                            </ng-container>
+                            <button
+                                mat-icon-button
+                                mat-raised-button
+                                *ngIf="checkForActiveInteraction(item.ChannelCount)"
+                                matTooltip="View Interactions"
+                                (click)="viewInteractions(item)"
+                            >
+                                <mat-icon>preview</mat-icon>
+                            </button>
+                        </div>
+                        <div
+                            class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                        >
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount"
+                                class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    *ngFor="let item of filteredAgents; trackBy: trackByID"
+                    class="twd-w-full p-12 border-radius-20 agent-item mat-elevation-z1"
+                    [ngClass]="
+                        (customFuse.anchor?.content || customFuse.widget?.content) +
+                        ' ' +
+                        (item.AgentLoginID === selectedAgent ? 'border-lg-success' : '')
+                    "
+                >
+                    <div
+                        class="tw-accordion twd-w-full twd-flex twd-flex-row twd-justify-between twd-items-center"
+                        (click)="selectAgent(item)"
+                        [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
+                    >
+                        <div
+                            class="twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-full"
+                            [ngClass]="{
+                                'twd-max-w-5/12': item.AgentLoginID !== selectedAgent,
+                                'twd-max-h-10/12': item.AgentLoginID === selectedAgent
+                            }"
+                        >
+                            <div class="position-relative">
+                                <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
+                                <span
+                                    class="element-status"
+                                    [ngClass]="
+                                        item.CurrentAgentStatus.includes('Available')
+                                            ? 'bg-alt-success'
+                                            : item.CurrentAgentStatus.includes('On Call')
+                                            ? 'bg-alt-danger'
+                                            : 'bg-alt-warning'
+                                    "
+                                >
+                                </span>
+                            </div>
+                            <div class="twd-ml-4 twd-flex twd-flex-col">
+                                <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
+                                    <span matTooltip="First Name">{{ item.FirstName }}</span>
+                                    /
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                </span>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent Name"> {{ item.AgentName }}</span>
+                                    (<span matTooltip="Lan ID">{{ item.AgentLANID }}</span
+                                    >)
+                                </div>
+                                <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                    <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                    /
+                                    <span matTooltip="Station">{{ item.StationID }}</span>
+                                </div>
+                                <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
+                                <span
+                                    matTooltip="Status Duration"
+                                    [ngClass]="{
+                                        'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                        'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                        'text-alt-danger': item.CurrentStatusDuration > 120
+                                    }"
+                                    >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                >
+                            </div>
+                        </div>
+
+                        <div
+                            class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                            *ngIf="item.AgentLoginID !== selectedAgent"
+                        >
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+
+                        <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR"> supervised_user_circle</mat-icon>
+                            <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
+                            <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
+                                {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
+                            </mat-icon>
+                        </div>
+                    </div>
+
+                    <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
+                        <div
+                            class="
+                                feature-actions
+                                border-right-primary
+                                twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12
+                            "
+                        >
+                            <ng-container *ngFor="let feature of item.AgentFeatures">
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    mat-raised-button
+                                    *ngIf="featureCheck(feature, 'agent', '')"
+                                    (click)="performAgentAction(item, feature)"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <button
+                                    #agentActionBtn
+                                    mat-icon-button
+                                    mat-raised-button
+                                    [matMenuTriggerFor]="menu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
+                                    [matTooltip]="featureMap[feature.Feature].Label"
+                                >
+                                    <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                </button>
+
+                                <mat-menu class="custom aux-menu" #menu="matMenu" xPosition="after">
+                                    <button
+                                        mat-menu-item
+                                        *ngFor="let auxCode of auxCodesList"
+                                        (click)="changeAgentStatus(item, auxCode)"
+                                        disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                    >
+                                        <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
+                                        <mat-icon
+                                            [ngClass]="
+                                                auxCode.Code.includes('Available')
+                                                    ? 'text-alt-success'
+                                                    : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                    ? 'text-alt-danger'
+                                                    : 'text-alt-warning'
+                                            "
+                                        >
+                                            {{
+                                                auxCode.Code.toLowerCase() === 'available'
+                                                    ? 'check_circle'
+                                                    : auxCode.Code === 'logout'
+                                                    ? 'settings_power'
+                                                    : 'remove_circle'
+                                            }}
+                                        </mat-icon>
+                                        <span>{{ auxCode.Name }}</span>
+                                    </button>
+                                </mat-menu>
+
+                                <button
+                                    mat-icon-button
+                                    mat-raised-button
+                                    matTooltip="Send Quiz"
+                                    [matMenuTriggerFor]="quizIntentMenu"
+                                    *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                                >
+                                    <mat-icon>rule</mat-icon>
+                                </button>
+
+                                <mat-menu #quizIntentMenu="matMenu" class="custom">
+                                    <button
+                                        mat-menu-item
+                                        class="custom"
+                                        *ngFor="let intent of availableQuizIntents"
+                                        (click)="sendQuizIntent(intent.intent, item)"
+                                    >
+                                        <mat-icon>grading</mat-icon>
+                                        <span>{{ intent.name }}</span>
+                                    </button>
+                                </mat-menu>
+                            </ng-container>
+                            <button
+                                mat-icon-button
+                                mat-raised-button
+                                *ngIf="checkForActiveInteraction(item.ChannelCount)"
+                                matTooltip="View Interactions"
+                                (click)="viewInteractions(item)"
+                            >
+                                <mat-icon>preview</mat-icon>
+                            </button>
+                        </div>
+                        <div
+                            class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                        >
+                            <div
+                                mat-card-avatar
+                                *ngFor="let channelItem of item.ChannelCount"
+                                class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                [matBadge]="channelItem.CurrentCount || ''"
+                                matBadgePosition="after"
+                            >
+                                <mat-icon>{{
+                                    channelItem.Channel === 'voice'
+                                        ? 'phone'
+                                        : channelItem.Channel === 'textchat'
+                                        ? 'chat'
+                                        : channelItem.Channel.includes('audio')
+                                        ? 'settings_phone'
+                                        : channelItem.Channel.includes('video')
+                                        ? 'duo'
+                                        : channelItem.Channel.includes('sms')
+                                        ? 'textsms'
+                                        : channelItem.Channel.includes('email')
+                                        ? 'email'
+                                        : 'receipt'
+                                }}</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div
                     *ngIf="!filteredAgents.length"

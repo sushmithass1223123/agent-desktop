@@ -6,6 +6,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { TwVoiceCannedResponses } from '@ad/types';
 
 /**
  * TwVoiceCannedResponsesComponent

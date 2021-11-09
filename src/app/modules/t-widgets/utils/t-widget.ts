@@ -7,10 +7,10 @@ import { IWidget } from 'app/interfaces';
  */
 export class TWidget {
     /**
-     * 
+     *
      * @constructor
-     * @param {any} component 
-     * @param {IWidget} data 
+     * @param {any} component
+     * @param {IWidget} data
      */
-    constructor(public component: Type<any>, public data: IWidget) { }
+    constructor(public component: Type<any>, public data: IWidget) {}
 }

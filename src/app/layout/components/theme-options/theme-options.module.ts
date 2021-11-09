@@ -5,17 +5,8 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { AppThemeOptionsComponent } from './theme-options.component';
 
 @NgModule({
-    declarations: [
-        AppThemeOptionsComponent
-    ],
-    imports: [
-        SharedModule,
-        FuseMaterialColorPickerModule,
-        FuseSidebarModule
-    ],
-    exports: [
-        AppThemeOptionsComponent
-    ]
+    declarations: [AppThemeOptionsComponent],
+    imports: [SharedModule, FuseMaterialColorPickerModule, FuseSidebarModule],
+    exports: [AppThemeOptionsComponent]
 })
-export class AppThemeOptionsModule {
-}
+export class AppThemeOptionsModule {}

@@ -10,6 +10,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TwGenericControls } from '@ad/types';
 
 /**
  * Generic Controls Components

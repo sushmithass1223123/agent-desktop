@@ -1,6 +1,6 @@
 {
-	"version": "2.0.0",
-	"tasks": [
+    "version": "2.0.0",
+    "tasks": [
         {
             "type": "npm",
             "script": "start",
@@ -18,20 +18,20 @@
             "detail": "ng build --baseHref=/agent-desktop/"
         },
         {
-			"type": "npm",
-			"script": "build:prod",
-			"group": "build",
-			"problemMatcher": [],
-			"label": "ng: build:prod",
-			"detail": "ng build --prod --baseHref=/agent-desktop/"
+            "type": "npm",
+            "script": "build:prod",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "ng: build:prod",
+            "detail": "ng build --prod --baseHref=/agent-desktop/"
         },
         {
-			"type": "npm",
-			"script": "build:prod:stats",
-			"group": "build",
-			"problemMatcher": [],
-			"label": "ng: build:prod:stats",
-			"detail": "ng build --prod --baseHref=/agent-desktop/ --stats-json"
+            "type": "npm",
+            "script": "build:prod:stats",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "ng: build:prod:stats",
+            "detail": "ng build --prod --baseHref=/agent-desktop/ --stats-json"
         }
     ]
 }
