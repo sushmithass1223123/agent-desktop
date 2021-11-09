@@ -150,6 +150,14 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
                 .flat();
         }
 
+        // add the agent speech
+        if (evt.AgentSpeech) {
+            this.chatTranscripts.push({
+                who: 'VoiceBot',
+                message: evt.AgentSpeech
+            });
+        }
+
         // add the customer speech
         if (evt.CustomerSpeech) {
             this.chatTranscripts.push({

@@ -197,6 +197,10 @@ export interface ChatTranscripts {
          * Name
          */
         name: string;
+        /**
+         * Angle of view
+         */
+        angle: number;
     };
     /**
      * Divider message
@@ -808,4 +812,67 @@ export interface CommonWidgetData {
      * Route on interaction flag
      */
     RouteOnInteraction: boolean;
+}
+
+/**
+ * Bookmark data
+ * Each node has a name and an optional list of children.
+ */
+export interface BookmarkItem {
+    /**
+     * Id of bookmark
+     */
+    id: string;
+    /**
+     *  Id of a bookmark of type "folder"
+     */
+    parentId: string;
+    /**
+     * Id of user
+     */
+    userId: string;
+    /**
+     * Type of user (agent, customer, etc.)
+     */
+    userType: string;
+    /**
+     * Name of bookmark
+     */
+    bookmarkName: string;
+    /**
+     * Type of bookmark
+     */
+    bookmarkType: 'folder' | 'url';
+    /**
+     * Url link if the bookmarkType is "url". Keep it empty for the bookmarkType is "folder"
+     */
+    bookmarkData: string;
+    /**
+     * Status of bookmark. 0=disabled, 1=enabled
+     */
+    bookmarkStatus: number;
+    /**
+     * Bookmark created by user
+     */
+    createdBy: string;
+    /**
+     * Created on date
+     */
+    createdOn: Date;
+    /**
+     * Updated on date
+     */
+    updatedBy: string;
+    /**
+     * Updated on date
+     */
+    updatedOn: Date;
+    /**
+     * Any other JSON string
+     */
+    otherData: string;
+    /**
+     * Children node
+     */
+    children?: BookmarkItem[];
 }

@@ -19,6 +19,21 @@ export const appAnimations = [
         ),
         transition('* <=> *', animate('200ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
     ]),
+    trigger('fabToggler45', [
+        state(
+            'inactive',
+            style({
+                transform: 'rotate(0deg)'
+            })
+        ),
+        state(
+            'active',
+            style({
+                transform: 'rotate(45deg)'
+            })
+        ),
+        transition('* <=> *', animate('200ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
+    ]),
     trigger('fabToggler90', [
         state(
             'inactive',

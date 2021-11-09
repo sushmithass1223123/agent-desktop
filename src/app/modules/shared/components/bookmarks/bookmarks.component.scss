@@ -1,0 +1,46 @@
+bookmarks {
+    .mat-tree {
+        background-color: inherit !important;
+        .mat-tree-node {
+            min-height: 36px;
+            button {
+                height: 36px;
+
+                &.more-menu {
+                    display: none;
+                }
+            }
+
+            &:hover,
+            &:focus,
+            &:active {
+                .more-menu {
+                    display: block;
+                }
+            }
+
+            .mat-checkbox {
+                .mat-checkbox-label {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .mat-checkbox-inner-container {
+                    display: none;
+                }
+
+                &.editable {
+                    .mat-checkbox-inner-container {
+                        display: inline-block;
+                    }
+                }
+
+                &.mat-checkbox-disabled {
+                    .mat-checkbox-label {
+                        color: inherit;
+                    }
+                }
+            }
+        }
+    }
+}

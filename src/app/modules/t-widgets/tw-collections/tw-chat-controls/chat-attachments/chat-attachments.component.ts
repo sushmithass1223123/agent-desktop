@@ -316,7 +316,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 type,
                                 contentType: response.result.contentType,
                                 fileName: file.fileName,
-                                src: response.result.streamURL,
+                                src: response.result.downloadURL,
                                 size: response.result.size,
                                 interactionId: response.result.interaction_id
                             });

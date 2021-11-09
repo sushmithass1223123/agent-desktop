@@ -229,22 +229,29 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @param {Any} data
      */
     private sendDataToWindow(fn: string, data: any): void {
-        const iframe = document.getElementById('tw_frame_' + this.data.ID);
-        // get the element
-        const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
-        // check if the element is present
-        if (element) {
-            // send post message to the element
-            element.postMessage(
-                {
-                    function: fn,
-                    callback: null,
-                    data,
-                    source: 'tmac',
-                    userObject: null
-                },
-                '*'
-            );
+        try {
+            const iframe = document.getElementById('tw_frame_' + this.data.ID);
+            // get the element
+            const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
+            // check if the element is present
+            if (element) {
+                // send post message to the element
+                element.postMessage(
+                    {
+                        function: fn,
+                        callback: null,
+                        data,
+                        source: 'tmac',
+                        userObject: null
+                    },
+                    '*'
+                );
+            }
+        } catch (error) {
+            console.error({
+                error,
+                data
+            });
         }
     }
 

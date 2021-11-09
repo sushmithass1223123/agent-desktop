@@ -5,4 +5,12 @@
     $accent: map-get($theme, accent);
     $is-dark: map-get($theme, is-dark);
     $mat-warn: map-get($theme, warn);
+
+    bookmarks {
+        .mat-tree-node {
+            &:hover {
+                background-color: map-get($background, hover);
+            }
+        }
+    }
 }
