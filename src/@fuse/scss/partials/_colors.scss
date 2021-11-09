@@ -85,19 +85,19 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 
             &.secondary-text,
             .secondary-text {
-                color: rgba(0, 0, 0, 0.54) !important;
+                color: rgba(0, 0, 0, 0.54);
             }
 
             &.hint-text,
             .hint-text,
             &.disabled-text,
             .disabled-text {
-                color: rgba(0, 0, 0, 0.38) !important;
+                color: rgba(0, 0, 0, 0.38);
             }
 
             &.divider,
             .divider {
-                color: rgba(0, 0, 0, 0.12) !important;
+                color: rgba(0, 0, 0, 0.12);
             }
 
             .mat-ripple-element {
@@ -120,19 +120,19 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 
             &.secondary-text,
             .secondary-text {
-                color: rgba(255, 255, 255, 0.7) !important;
+                color: rgba(255, 255, 255, 0.7);
             }
 
             &.hint-text,
             .hint-text,
             &.disabled-text,
             .disabled-text {
-                color: rgba(255, 255, 255, 0.5) !important;
+                color: rgba(255, 255, 255, 0.5);
             }
 
             &.divider,
             .divider {
-                color: rgba(255, 255, 255, 0.12) !important;
+                color: rgba(255, 255, 255, 0.12);
             }
 
             .mat-ripple-element {

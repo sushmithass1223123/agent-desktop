@@ -30,7 +30,12 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": true, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": false,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
+                                    }
                                 }
                             },
                             {
@@ -191,41 +196,6 @@
                         "Data": { "Path": "/tmeet", "Active": false }
                     },
                     {
-                        "Name": "Dashboard",
-                        "Description": "",
-                        "Type": "twn-custom",
-                        "Config": { "Enabled": true, "Icon": "dashboard" },
-                        "Data": { "Path": "/dashboard", "Active": false }
-                    },
-                    {
-                        "Name": "Sentiment Dashboard",
-                        "Description": "",
-                        "Type": "twn-custom",
-                        "Config": { "Enabled": true, "Icon": "sentiment_satisfied_alt" },
-                        "Data": { "Path": "/sentimentdashboard", "Active": false }
-                    },
-                    {
-                        "Name": "KPI Dashboard",
-                        "Description": "",
-                        "Type": "twn-custom",
-                        "Config": { "Enabled": true, "Icon": "signal_cellular_alt" },
-                        "Data": { "Path": "/kpidashboard", "Active": false }
-                    },
-                    {
-                        "Name": "Session Dashboard",
-                        "Description": "",
-                        "Type": "twn-custom",
-                        "Config": { "Enabled": true, "Icon": "format_list_bulleted" },
-                        "Data": { "Path": "/sessiondashboard", "Active": false }
-                    },
-                    {
-                        "Name": "Realtime Stats",
-                        "Description": "",
-                        "Type": "twn-custom",
-                        "Config": { "Enabled": true, "Icon": "analytics" },
-                        "Data": { "Path": "/realtimestats", "Active": false }
-                    },
-                    {
                         "Name": "Docker",
                         "Description": "",
                         "Type": "twn-docker",
@@ -284,7 +254,10 @@
                                         "AutoOpen": false,
                                         "Icon": "dvr",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -306,7 +279,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -328,7 +304,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "duo",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -350,7 +329,10 @@
                                         "AutoOpen": false,
                                         "Icon": "format_list_bulleted",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -372,7 +354,10 @@
                                         "AutoOpen": false,
                                         "Icon": "today",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -400,7 +385,10 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -424,7 +412,12 @@
                                         "AutoOpen": false,
                                         "Icon": "event_note",
                                         "Class": "",
-                                        "Position": { "X": 4, "Y": 4, "W": 1200, "H": 700 },
+                                        "Position": {
+                                            "X": 4,
+                                            "Y": 4,
+                                            "W": 1200,
+                                            "H": 700
+                                        },
                                         "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -449,7 +442,12 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
                                         "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -477,7 +475,12 @@
                                         "AutoOpen": false,
                                         "Icon": "extension",
                                         "Class": "",
-                                        "Position": { "X": 4, "Y": 2, "W": 1200, "H": 700 },
+                                        "Position": {
+                                            "X": 4,
+                                            "Y": 2,
+                                            "W": 1200,
+                                            "H": 700
+                                        },
                                         "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -540,7 +543,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -562,7 +568,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -582,7 +591,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -604,7 +616,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -624,7 +639,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -646,7 +664,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -668,7 +689,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -688,7 +712,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -713,7 +740,12 @@
                                         "AutoOpen": false,
                                         "Icon": "extension",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1, "W": 500, "H": "300" },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1,
+                                            "W": 500,
+                                            "H": "300"
+                                        },
                                         "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -735,7 +767,12 @@
                                         "AutoOpen": false,
                                         "Icon": "store",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1, "W": 1200, "H": 800 },
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1,
+                                            "W": 1200,
+                                            "H": 800
+                                        },
                                         "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -790,7 +827,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "phone",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -818,7 +858,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["VO"],
                                                             "Columns": []
                                                         },
@@ -827,7 +871,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": false,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "Number",
+                                                                "Display": "Number",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": []
                                                         }
@@ -849,7 +897,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["VO"],
                                                             "Columns": []
                                                         }
@@ -882,7 +934,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "person",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -935,7 +990,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -980,7 +1038,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1015,7 +1076,10 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1046,7 +1110,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1068,7 +1135,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1090,7 +1160,10 @@
                                         "AutoOpen": false,
                                         "Icon": "sentiment_satisfied_alt",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1112,7 +1185,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1134,7 +1210,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1158,7 +1237,12 @@
                                         "AutoOpen": false,
                                         "Icon": "mic",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1, "W": 700, "H": 600 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1,
+                                            "W": 700,
+                                            "H": 600
+                                        },
                                         "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1180,7 +1264,12 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
                                         "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1208,7 +1297,12 @@
                                         "AutoOpen": false,
                                         "Icon": "pending_actions",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 700, "H": 300 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 700,
+                                            "H": 300
+                                        },
                                         "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1230,7 +1324,12 @@
                                         "AutoOpen": false,
                                         "Icon": "audiotrack",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
                                         "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1252,7 +1351,12 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
                                         "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1311,7 +1415,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "chat",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1357,7 +1464,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": ["CH"],
                                                             "Columns": []
                                                         }
@@ -1400,7 +1511,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "person",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1476,7 +1590,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "collapse",
                                                     "Header": true,
@@ -1521,7 +1638,10 @@
                                         "AutoOpen": false,
                                         "Icon": "location_on",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["float", "maximize"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1543,7 +1663,10 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1574,7 +1697,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1618,7 +1744,35 @@
                                         "AutoOpen": false,
                                         "Icon": "sentiment_satisfied_alt",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Speech Transcripts",
+                                    "Description": "",
+                                    "Key": "SpeechTranscript",
+                                    "Type": "tw-voice-bot-transcripts",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1640,35 +1794,20 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": true }
-                                },
-                                {
-                                    "Name": "AMDOC-BCC",
-                                    "Description": "",
-                                    "Key": "AmdocBCC",
-                                    "Type": "tw-amdocs-bcc",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
+                                    "Data": {
+                                        "Role": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": true
+                                    }
                                 }
                             ],
                             "AOT": [
@@ -1686,7 +1825,12 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
                                         "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1711,7 +1855,12 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
                                         "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1745,7 +1894,12 @@
                                         "AutoOpen": false,
                                         "Icon": "sms",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2, "W": 500, "H": 350 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2,
+                                            "W": 500,
+                                            "H": 350
+                                        },
                                         "Actions": ["destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1800,7 +1954,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "chat",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1823,8 +1980,12 @@
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": []
                                                         }
@@ -1850,7 +2011,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -1891,7 +2055,10 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1922,7 +2089,10 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1944,7 +2114,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1966,7 +2139,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -1988,7 +2164,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2010,7 +2189,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2034,7 +2216,12 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
                                         "Actions": ["collapse", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2101,7 +2288,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "widgets",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -2122,7 +2312,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "person",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -2182,7 +2375,10 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
                                                     "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
@@ -2227,7 +2423,10 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2258,7 +2457,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2280,7 +2482,10 @@
                                         "AutoOpen": false,
                                         "Icon": "contact_page",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2317,7 +2522,10 @@
                                         "AutoOpen": false,
                                         "Icon": "contact_page",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2344,7 +2552,12 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
                                         "Actions": ["minimize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2412,7 +2625,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": []
                                                         }
@@ -2449,56 +2666,6 @@
                     "Data": { "Path": "/tmeet", "Url": "https://dice.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
                 },
                 {
-                    "Name": "Dashboard",
-                    "Description": "",
-                    "Type": "twc-custom",
-                    "Config": {
-                        "Enabled": true,
-                        "Class": "",
-                        "Position": { "X": 1, "Y": 1 },
-                        "Actions": ["refresh"],
-                        "Header": true,
-                        "Pinned": false
-                    },
-                    "Data": { "Path": "/dashboard", "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/", "Unload": true, "AutoRefresh": 0 }
-                },
-                {
-                    "Name": "Dashboard",
-                    "Description": "",
-                    "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": true, "Pinned": false },
-                    "Data": {
-                        "Path": "/sentimentdashboard",
-                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=${AgentData.agentId}",
-                        "Unload": true
-                    }
-                },
-                {
-                    "Name": "Dashboard",
-                    "Description": "",
-                    "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": true, "Pinned": false },
-                    "Data": { "Path": "/kpidashboard", "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi", "Unload": true }
-                },
-                {
-                    "Name": "Dashboard",
-                    "Description": "",
-                    "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": true, "Pinned": false },
-                    "Data": { "Path": "/sessiondashboard", "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session", "Unload": true }
-                },
-                {
-                    "Name": "Dashboard",
-                    "Description": "",
-                    "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": true, "Pinned": false },
-                    "Data": {
-                        "Path": "/realtimestats",
-                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr",
-                        "Unload": false
-                    }
-                },
-                {
                     "Name": "Docker",
                     "Description": "",
                     "Type": "twc-docker",
@@ -2522,7 +2689,10 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2544,7 +2714,10 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2566,7 +2739,10 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2588,7 +2764,10 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
@@ -2618,7 +2797,12 @@
                         "AutoOpen": false,
                         "Icon": "dvr",
                         "Class": "",
-                        "Position": { "X": 0, "Y": 1, "W": 325, "H": 740 },
+                        "Position": {
+                            "X": 0,
+                            "Y": 1,
+                            "W": 325,
+                            "H": 740
+                        },
                         "Actions": ["collapse", "destroy", "pin"],
                         "ViewState": "restore",
                         "Header": true,
@@ -2640,7 +2824,12 @@
                         "AutoOpen": true,
                         "Icon": "",
                         "Class": "",
-                        "Position": { "X": 0, "Y": 1, "W": 325, "H": 325 },
+                        "Position": {
+                            "X": 0,
+                            "Y": 1,
+                            "W": 325,
+                            "H": 325
+                        },
                         "Actions": ["collapse", "destroy"],
                         "ViewState": "restore",
                         "Header": true,
@@ -2734,7 +2923,11 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx", "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": [
+                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
+                    "https://localhost:55443/TMACSDKProxySC/TmacProxy.asmx",
+                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"
+                ],
                 "type": "soap",
                 "timeout": 60
             },
@@ -2747,11 +2940,11 @@
                 "sdkEvents": true
             },
             "customScripts": [
-                "https://dice.tetherfi.cloud/agent-desktop/libs/adapter.js",
-                "https://dice.tetherfi.cloud/agent-desktop/libs/livechat_video.min.js",
-                "https://dice.tetherfi.cloud/agent-desktop/libs/collector.min.js"
+                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
+                "https://dice.tetherfi.cloud/tmaclibs/RecordRTC.js",
+                "https://dice.tetherfi.cloud/tmaclibs/livechat_video_debug.js",
+                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
-    },
-    "Version": "5.0.1030-beta.1"
+    }
 }

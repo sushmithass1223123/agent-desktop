@@ -17,4 +17,4 @@ export * from './skeleton/skeleton.component';
 export * from './snackbar/snackbar.component';
 export * from './table/table.component';
 export * from './text-templates/text-templates.component';
-export * from './widget-fab/widget-fab.component';
+export * from './bookmarks/bookmarks.component';

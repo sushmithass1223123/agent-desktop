@@ -1,4 +1,16 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -13,6 +25,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { isStringHtml, urlify } from '@tmac/operators';
 import {
     ActionMessageReceivedEvent,
     AgentNotificaitonEvent,
@@ -60,11 +73,10 @@ import {
     SnackbarStateTypes
 } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { isStringHtml, urlify } from '@tmac/operators';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
-import { from, Subject, timer } from 'rxjs';
+import { from, fromEvent, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
 import { TwChatControls } from '@ad/types';
 
@@ -502,6 +514,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
         requestSent: boolean;
     };
+    /**
+     * Preview media dialog
+     */
+    @ViewChild('previewMediaDialog')
+    previewMediaDialog: TemplateRef<any>;
+
+    /**
+     * Preview media dialog ref
+     */
+    previewMediaDialogRef: MatDialogRef<any>;
+
+    /**
+     * Preview media dialog data
+     */
+    previewMediaDialogData: any;
 
     /**
      * Constructor
@@ -924,7 +951,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             message: data.message,
             type: data.attachment?.type || 'text',
             time: new Date(),
-            attachment: data.attachment,
+            attachment: {
+                ...data.attachment,
+                angle: 0
+            },
             repliedToMessage: repliedMsg
         });
 
@@ -1017,7 +1047,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     message,
                     type,
                     time: new Date(Date.parse(evt.CreatedTime.toString())) || new Date(),
-                    attachment,
+                    attachment: {
+                        ...attachment,
+                        angle: 0
+                    },
                     dividerMessage,
                     repliedToMessage: repliedMsg
                 });
@@ -1102,7 +1135,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             message: inputMessage,
             time: moment(new Date()),
             type: attachment ? attachment.type : 'text',
-            attachment: { ...attachment },
+            attachment: { ...attachment, angle: 0 },
             repliedToMessage: this.replyingToMessage
         };
 
@@ -1745,7 +1778,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         message,
                         type,
                         time: moment(item.DateTime, 'dd/MM/yyyy HH:mm:ss'),
-                        attachment,
+                        attachment: {
+                            ...attachment,
+                            angle: 0
+                        },
                         repliedToMessage: repliedMsg
                     });
                 } else {
@@ -2140,7 +2176,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         // send the selected template
-        this.sendMessage(evt.Data.Template);
+        this.sendMessage({ ...evt.Data.Template, Type: '' });
     }
 
     /**
@@ -2391,16 +2427,24 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {ChatTranscripts} previewData Chat transcript data
      */
     public previewMedia(previewData: ChatTranscripts): void {
-        // get the message to display
-        let message = '';
-
+        let otherData = null;
         if (previewData.attachment.type === 'image') {
-            message = `<img src ="${previewData.attachment.src}" width = "100%" width = "100%" /> `;
-        } else if (previewData.attachment.type === 'video') {
-            message = `<video controls autoplay src ="${previewData.attachment.src}" width = "100%" width = "100%"> </video>`;
+            otherData = {
+                scale: 1
+            };
         }
-        // show the custom dialog box
-        this.confirmDialogRef = this._appUIService.showCustomDialog('alert', message, 'Preview');
+
+        this.previewMediaDialogData = {
+            user: previewData.who,
+            timestamp: previewData.time,
+            attachment: previewData.attachment,
+
+            otherData
+        };
+
+        this.previewMediaDialogRef = this._matDialog.open(this.previewMediaDialog, {
+            panelClass: 'preview-media-dialog'
+        });
     }
 
     /**
@@ -2947,6 +2991,38 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const messageToServer = transcript[0].messageToServer;
             transcript[0].status = 'init';
             this.sendTextChat(messageToServer.message, messageId, messageToServer.templateId);
+        }
+    }
+
+    /**
+     * To rotate an image
+     * @param attachment
+     */
+    rotateImage(attachment: any): void {
+        attachment.angle++;
+        if (attachment.angle === 4) {
+            attachment.angle = 0;
+        }
+    }
+
+    /**
+     * To download an attachment
+     * @param src
+     */
+    downloadAttachment(src: string): void {
+        if (src) {
+            window.open(src);
+        }
+    }
+
+    /**
+     * To zoom in or zoom out
+     */
+    zoomInOut(zoomIn: boolean): void {
+        if (zoomIn) {
+            this.previewMediaDialogData.otherData.scale += 0.25;
+        } else {
+            this.previewMediaDialogData.otherData.scale -= 0.25;
         }
     }
 }

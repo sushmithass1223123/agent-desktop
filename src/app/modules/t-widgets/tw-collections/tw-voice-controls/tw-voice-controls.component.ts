@@ -30,6 +30,7 @@ import {
     HoldTimerEvent,
     IAgentData,
     IncomingCallEvent,
+    IncomingCallUpdateEvent,
     InteractionDataEvent,
     IResponse,
     IVRDataEvent,
@@ -43,7 +44,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AgentSkillListData, AgentSkillRef, CommonWidgetData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControls } from '@ad/types';
 
@@ -123,7 +124,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Interaction duration
      */
-    duration: any;
+    duration: number;
     /**
      * Subject to stop duration timer
      */
@@ -291,6 +292,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     @ViewChild('makeCallDialog')
     MakeCallDialog: TemplateRef<any>;
+    /**
+     * Flag to identify if the call is updated
+     */
+    callUpdated: boolean;
 
     /**
      * Make call dialog ref
@@ -343,7 +348,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         this.interaction = this.data.InteractionDetails;
 
-        if (this.data.InteractionDetails) {
+        if (this.interaction) {
             // set the start time
             this.startTime = new Date(this.data.InteractionDetails.CreatedTime) ?? new Date();
             // assign the caller id
@@ -358,7 +363,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // set the manual anser flag
                 this.isManualAnswer = this.interaction.IsManualAnswer || false;
                 // set the direction
-                this.direction = 'In';
+                this.direction = this.interaction.Direction ?? 'In';
                 // set the status
                 this.status = 'incoming';
                 // assign the last 4 IVR, if default is configured
@@ -382,10 +387,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
 
+        // set duration to 0 initially
+        this.duration = 0;
+
         // listen to TMAC events
         this._tmacEventService
             .getInteractionEvents(
                 [
+                    'IncomingCallUpdateEvent',
                     'OutgoingCallEvent',
                     'CallConnectedEvent',
                     'CallDisconnectedEvent',
@@ -736,6 +745,26 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
 
     /**
+     * IncomingCallUpdateEvent handler
+     * @param {IncomingCallUpdateEvent} evt
+     */
+    IncomingCallUpdateEvent(evt: IncomingCallUpdateEvent): void {
+        // set the status
+        this.status = 'incoming';
+
+        // update the interaction status and user
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            status: 'incoming',
+            user: this.callerID
+        });
+
+        /**
+         * Set call updated to true
+         */
+        this.callUpdated = true;
+    }
+
+    /**
      * OutgoingCallEvent handler
      * @param {OutgoingCallEvent} evt
      */
@@ -766,9 +795,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // subscribe to the timer
         timer(1000, 1000)
-            .pipe(takeUntil(this.stopTimer))
+            .pipe(
+                takeUntil(this.stopTimer),
+                map(() => this.duration + 1)
+            )
             .subscribe((val) => {
-                this.duration = (val + 1) * 1000;
+                this.duration = val;
             });
 
         // set the status
@@ -814,6 +846,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // close all confirm dialogs
         this.dialogRef?.close();
+
+        // set the call updated to false
+        this.callUpdated = false;
     }
 
     /**
