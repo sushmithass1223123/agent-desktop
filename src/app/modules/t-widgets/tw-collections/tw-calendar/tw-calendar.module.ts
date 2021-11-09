@@ -12,10 +12,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
  * Tw Calendar Module
  */
 @NgModule({
-    declarations: [
-        TwCalendarComponent,
-        CalendarEventFormDialogComponent
-    ],
+    declarations: [TwCalendarComponent, CalendarEventFormDialogComponent],
     imports: [
         CommonModule,
         TwWrapperModule,
@@ -23,11 +20,9 @@ import { ColorPickerModule } from 'ngx-color-picker';
         ColorPickerModule,
         CalendarModule.forRoot({
             provide: DateAdapter,
-            useFactory: adapterFactory,
+            useFactory: adapterFactory
         })
     ],
-    exports: [
-        TwCalendarComponent
-    ]
+    exports: [TwCalendarComponent]
 })
-export class TwCalendarModule { }
+export class TwCalendarModule {}

@@ -151,7 +151,12 @@ The actual rendered columns are set as a property on the row definition" -->
             </ng-container>
 
             <mat-header-row *matHeaderRowDef="columns; sticky: true" class="bg-inherit" [ngClass]="{ 'twd-hidden': customRow }"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns" [ngClass]="{ selected: row.expanded }"> </mat-row>
+            <mat-row
+                *matRowDef="let row; columns: displayedColumns"
+                (click)="selectRow(row)"
+                [ngClass]="{ selected: row.expanded, 'twd-cursor-pointer': selectable }"
+            >
+            </mat-row>
             <mat-row
                 class="expanded-details-row"
                 *matRowDef="let row; columns: ['ExpandedDetails']"

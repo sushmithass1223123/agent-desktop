@@ -8,6 +8,7 @@ import { CHART_COLORS } from 'app/constants';
 import { ChannelListEvent, CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
 import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
+import { TwAhtTc } from '@ad/types';
 
 /**
  * Colors for chart

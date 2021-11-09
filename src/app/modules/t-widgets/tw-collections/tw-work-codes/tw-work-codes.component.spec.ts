@@ -6,12 +6,13 @@ describe('TwSuWorkCodesComponent', () => {
     let component: TwWorkCodesComponent;
     let fixture: ComponentFixture<TwWorkCodesComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [TwWorkCodesComponent]
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [TwWorkCodesComponent]
+            }).compileComponents();
         })
-            .compileComponents();
-    }));
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(TwWorkCodesComponent);

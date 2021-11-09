@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { icon, latLng, marker, tileLayer } from 'leaflet';
+import { TwUserLocation } from '@ad/types';
 
 /**
  * User location widget

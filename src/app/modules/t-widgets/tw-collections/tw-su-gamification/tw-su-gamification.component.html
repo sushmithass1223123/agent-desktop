@@ -62,11 +62,7 @@
                         >
                             + {{ element.TotalBadges.length - 10 }} more
                         </span>
-                        <mat-menu
-                            backdropClass="badges-menu"
-                            #badgesMenu
-                            class="custom-scroll-adjust"
-                        >
+                        <mat-menu backdropClass="badges-menu" #badgesMenu class="custom-scroll-adjust">
                             <div fxLayout="row wrap" flexLayoutAlign="space-evenly" class="p-4">
                                 <div fxFlex="20" *ngFor="let badge of element.TotalBadges | slice: 10">
                                     <img [src]="badge.BadgeUrl" [title]="badge.BadgeName" class="p-8" style="border-radius: 50%" />

@@ -213,7 +213,7 @@
                             </div>
                         </div>
 
-                        <a *ngIf="showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
+                        <a *ngIf="currentInteraction.showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
                             {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                         </a>
                     </div>

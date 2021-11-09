@@ -9,17 +9,8 @@ import { TwChatControlsComponent } from './tw-chat-controls.component';
  * Chat control widget module
  */
 @NgModule({
-    declarations: [
-        TwChatControlsComponent,
-        ChatAttachmentsComponent
-    ],
-    imports: [
-        CommonModule,
-        TwWrapperModule,
-        SharedModule
-    ],
-    exports: [
-        TwChatControlsComponent
-    ]
+    declarations: [TwChatControlsComponent, ChatAttachmentsComponent],
+    imports: [CommonModule, TwWrapperModule, SharedModule],
+    exports: [TwChatControlsComponent]
 })
-export class TwChatControlsModule { }
+export class TwChatControlsModule {}

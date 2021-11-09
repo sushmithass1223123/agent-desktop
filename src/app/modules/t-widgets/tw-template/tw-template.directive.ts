@@ -6,8 +6,8 @@ import { Directive, ViewContainerRef } from '@angular/core';
  * Tw template directive
  */
 @Directive({
-    selector: '[widgetTemplate]',
+    selector: '[widgetTemplate]'
 })
 export class TwTemplateDirective {
-    constructor(public viewContainerRef: ViewContainerRef) { }
+    constructor(public viewContainerRef: ViewContainerRef) {}
 }

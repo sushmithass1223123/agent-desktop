@@ -551,6 +551,18 @@ export interface AgentSkillListData {
          */
         teamFilter?: boolean;
     };
+
+    dynamicLists?: {
+        label: string;
+        placeholder: string;
+        data: any[];
+        columns: string[];
+        selection: string;
+        consult: boolean;
+        blind: boolean;
+        comments: boolean;
+    }[];
+
     /**
      * Interaction Id
      */

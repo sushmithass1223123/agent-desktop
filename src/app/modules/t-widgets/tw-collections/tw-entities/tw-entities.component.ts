@@ -1,8 +1,9 @@
+import { TwEntities } from '@ad/types';
 import { Component, Input, OnInit } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AVAILABLE_ENTITIES } from 'app/constants';
 import { from, Observable } from 'rxjs';
-import { catchError, filter, map, tap } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 
 /**
  * Tw Entities component
@@ -16,7 +17,7 @@ export class TwEntitiesComponent extends TWidgetWrapper implements OnInit {
     /**
      * App config data
      */
-    @Input() data: any;
+    @Input() data: TwEntities;
 
     /**
      * Current interaction data

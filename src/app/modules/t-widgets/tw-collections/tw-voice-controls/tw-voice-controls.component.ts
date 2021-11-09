@@ -45,6 +45,7 @@ import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
+import { TwVoiceControls } from '@ad/types';
 
 /**
  * Voice Controls Component

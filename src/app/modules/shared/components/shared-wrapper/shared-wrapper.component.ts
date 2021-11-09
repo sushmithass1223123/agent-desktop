@@ -40,15 +40,12 @@ export class SharedWrapperComponent implements OnInit, OnDestroy {
      */
     customFuse$ = this._fuseFacadeService.anchorOrWidgetBgClasses$;
 
-    constructor(
-        private _fuseFacadeService: FuseFacadeService
-    ) { }
+    constructor(private _fuseFacadeService: FuseFacadeService) {}
 
     /**
      * OnInit
      */
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     /**
      * OnDestroy

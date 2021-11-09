@@ -2,20 +2,15 @@
 // @ Theming
 // -----------------------------------------------------------------------------------------------------
 @mixin page-layouts-theme($theme) {
-
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
 
     .page-layout {
-
         // Carded layout
         &.carded {
-
             // Fullwidth
             &.fullwidth {
-
                 > .center {
-
                     > .content-card {
                         background: map-get($background, card);
                         border-radius: 8px 8px 0 0;
@@ -30,9 +25,7 @@
             // Left / Right sidebar
             &.left-sidebar,
             &.right-sidebar {
-
                 > .center {
-
                     > .content-card {
                         background: map-get($background, card);
                         border-radius: 8px 8px 0 0;
@@ -47,13 +40,10 @@
 
         // Simple layout
         &.simple {
-
             // Left / Right sidebar
             &.left-sidebar,
             &.right-sidebar {
-
                 > .center {
-
                     > .content {
                         background: map-get($background, card);
                     }
@@ -61,11 +51,8 @@
 
                 // Inner sidebar
                 &.inner-sidebar {
-
                     > .content {
-
                         > .center {
-
                             > .content {
                                 background: map-get($background, card);
                             }
@@ -111,7 +98,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
         // Fullwidth
         &.fullwidth {
-
             // Center
             > .center {
                 display: flex;
@@ -157,7 +143,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
             // Tabbed
             &.tabbed {
-
                 > .center {
                     width: 100%;
                     min-width: 0;
@@ -167,7 +152,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     }
 
                     > .content-card {
-
                         > .content {
                             display: flex;
 
@@ -176,7 +160,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                                 width: 100%;
 
                                 .mat-tab-header {
-
                                     .mat-tab-label {
                                         height: 64px;
                                     }
@@ -221,19 +204,12 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
                 // Tabbed
                 &.tabbed {
-
                     > .center {
-
                         > .content-card {
-
                             > .content {
-
                                 > .mat-tab-group {
-
                                     .mat-tab-body {
-
                                         .mat-tab-body-content {
-
                                             .tab-content {
                                                 overflow: auto;
                                                 -webkit-overflow-scrolling: touch;
@@ -274,14 +250,12 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     }
 
                     &.left-positioned {
-
                         + .center {
                             margin-left: 0;
                         }
                     }
 
                     &.right-positioned {
-
                         + .center {
                             margin-right: 0;
                         }
@@ -351,7 +325,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
             // Tabbed
             &.tabbed {
-
                 > .center {
                     width: calc(100% - 32px);
                     min-width: 0;
@@ -365,7 +338,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     }
 
                     > .content-card {
-
                         > .content {
                             display: flex;
 
@@ -373,7 +345,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                                 overflow: hidden;
 
                                 .mat-tab-header {
-
                                     .mat-tab-label {
                                         height: 64px;
                                     }
@@ -403,7 +374,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                 flex: 1 1 auto;
 
                 > .sidebar {
-
                     .content {
                         overflow: auto;
                         -webkit-overflow-scrolling: touch;
@@ -426,19 +396,12 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
                 // Tabbed
                 &.tabbed {
-
                     > .center {
-
                         > .content-card {
-
                             > .content {
-
                                 > .mat-tab-group {
-
                                     .mat-tab-body {
-
                                         .mat-tab-body-content {
-
                                             .tab-content {
                                                 overflow: auto;
                                                 -webkit-overflow-scrolling: touch;
@@ -455,7 +418,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
         // Right sidebar specific
         &.right-sidebar {
-
             > .sidebar {
                 order: 2;
             }
@@ -476,7 +438,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
         // Fullwidth
         &.fullwidth {
-
             > .content {
                 flex: 1 1 auto;
                 min-width: 0;
@@ -485,7 +446,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
         &.fullwidth,
         &.inner-sidebar {
-
             > .header {
                 height: $header-height;
                 min-height: $header-height;
@@ -515,14 +475,12 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     }
 
                     &.left-positioned {
-
                         + .center {
                             margin-left: 0;
                         }
                     }
 
                     &.right-positioned {
-
                         + .center {
                             margin-right: 0;
                         }
@@ -561,7 +519,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                 flex: 1 1 auto;
 
                 > .sidebar {
-
                     .content {
                         overflow: auto;
                         -webkit-overflow-scrolling: touch;
@@ -586,7 +543,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     min-height: 0;
 
                     > .sidebar {
-
                         &.locked-open {
                             background: none;
                             box-shadow: none;
@@ -614,7 +570,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
         // Right sidebar specific
         &.right-sidebar {
-
             > .sidebar {
                 order: 2;
             }
@@ -625,9 +580,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
             // Inner sidebar
             &.inner-sidebar {
-
                 > .content {
-
                     > .sidebar {
                         order: 2;
                     }
@@ -650,9 +603,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
             }
 
             > .content {
-
                 > .mat-tab-group {
-
                     .mat-tab-labels {
                         padding: 0 24px;
                     }
@@ -668,12 +619,9 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
     }
 
     @include media-breakpoint('xs') {
-
         // Smaller margins
         &.carded {
-
             &.fullwidth {
-
                 > .center {
                     padding: 0 16px;
                 }
@@ -681,7 +629,6 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
             &.left-sidebar,
             &.right-sidebar {
-
                 > .center {
                     margin: 0 16px;
                 }
@@ -690,5 +637,3 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
         // End - Smaller margins
     }
 }
-
-

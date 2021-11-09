@@ -11,15 +11,7 @@ import { LoginComponent } from './login.component';
  */
 @NgModule({
     declarations: [LoginComponent],
-    providers: [
-        AppUiService
-    ],
-    imports: [
-        FuseProgressBarModule,
-        FuseSharedModule,
-        FuseSidebarModule,
-        CommonModule,
-        SharedModule
-    ]
+    providers: [AppUiService],
+    imports: [FuseProgressBarModule, FuseSharedModule, FuseSidebarModule, CommonModule, SharedModule]
 })
-export class LoginModule { }
+export class LoginModule {}

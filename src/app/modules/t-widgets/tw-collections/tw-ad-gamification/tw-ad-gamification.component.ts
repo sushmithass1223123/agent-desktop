@@ -5,7 +5,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-
+import { TwGamification } from '@ad/types';
 /**
  * Agent dashboard gamification widget
  */
@@ -17,7 +17,7 @@ import { map, takeUntil } from 'rxjs/operators';
 })
 export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: any;
+    @Input() data: TwGamification;
 
     gamificationReqStatus: ResData<{ TotalBadges: any[]; GoldCoins: number; SilverCoins: number; BronzeCoins: number }> = {
         error: false,

@@ -28,4 +28,4 @@ import { MainComponent } from './main.component';
         TWidgetsModule
     ]
 })
-export class MainModule { }
+export class MainModule {}

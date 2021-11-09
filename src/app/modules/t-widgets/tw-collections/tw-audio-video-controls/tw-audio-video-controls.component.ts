@@ -29,6 +29,7 @@ import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
+import { TwAudioVideoControls } from '@ad/types';
 
 /**
  * Audio Video Controls

@@ -12,6 +12,7 @@ import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { take, takeUntil } from 'rxjs/operators';
+import { TwCampaignContact } from '@ad/types';
 
 /**
  * Campaign Contact Component
@@ -156,13 +157,14 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             try {
                 // create event names to subscribe
                 const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
+                const processInfo = processCustomerDetails(this.customerInfo);
                 // register to tmac events
                 this._tmacEventService
                     .getInteractionEvents(eventNames, this.interaction.InteractionID)
                     .pipe(takeUntil(this.unsubscribeAll))
                     .subscribe((evts) =>
                         evts.forEach((evt) => {
-                            processCustomerDetails(this.customerInfo, evt);
+                            processInfo.exec(evt);
                         })
                     );
             } catch (error) {
@@ -282,7 +284,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             log: true
         });
 
-        processCustomerDetails(this.customerInfo, {
+        processCustomerDetails(this.customerInfo).exec({
             EventName: 'ContactData',
             ...this.contactData.data
         });

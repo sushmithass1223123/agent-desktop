@@ -3,6 +3,7 @@ import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
 import { get, set } from 'lodash';
 import { extractJsonVal } from '@tmac/operators';
+import { eventNames } from 'process';
 
 type Generic = string | number;
 
@@ -96,16 +97,23 @@ export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, a
  *
  * @returns {CustomerInfo[]}
  */
-export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEvent): void => {
+export const processCustomerDetails = (customerInfo: CustomerInfo[]): { exec: (evt: IUIEvent) => void } => {
     // check if customer info map is available in this event
-    customerInfo.forEach((item: CustomerInfo) => {
-        // check if value is added, then ignore
-        if (item.Value) {
-            return;
+    const relevantInfo: Record<string, CustomerInfo[]> = customerInfo.reduce((acc, curr) => {
+        const evetName = curr.ValueSource.split('.')[0];
+        if (acc[evetName]) {
+            acc[evetName].push(curr);
+        } else {
+            acc[evetName] = [curr];
         }
-        // get value from event
-        getValueFromEvent(item, evt);
-    });
+        return acc;
+    }, {});
+
+    const exec = (evt: IUIEvent) => {
+        relevantInfo[evt.EventName].forEach((item) => getValueFromEvent(item, evt));
+    };
+
+    return { exec };
 };
 
 /**
@@ -117,7 +125,7 @@ export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEve
  */
 export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
     // get the value from path or default value
-    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.DefaultValue, item.MaskData);
+    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.Value ?? item.DefaultValue, item.MaskData);
     // return value
     return item.Value;
 };

@@ -15,11 +15,7 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": [
-            "maximize",
-            "collapse",
-            "float"
-        ],
+        "Actions": ["maximize", "collapse", "float"],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false
@@ -51,9 +47,7 @@
                     "Display": "skill",
                     "FreeTextAllowed": true
                 },
-                "ChannelPrefix": [
-                    "VO"
-                ],
+                "ChannelPrefix": ["VO"],
                 "Columns": []
             }
         },
@@ -83,20 +77,13 @@
                     "Display": "skill",
                     "FreeTextAllowed": true
                 },
-                "ChannelPrefix": [
-                    "VO"
-                ],
+                "ChannelPrefix": ["VO"],
                 "Columns": []
             }
         },
         "IVR": {
             "MenuEnabled": true,
-            "DefaultMenu": [
-                "Main Menu",
-                "Products",
-                "Mobile",
-                "Agent"
-            ],
+            "DefaultMenu": ["Main Menu", "Products", "Mobile", "Agent"],
             "Transfer": {
                 "Allowed": true,
                 "Menu": [

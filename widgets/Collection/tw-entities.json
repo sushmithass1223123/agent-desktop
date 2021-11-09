@@ -16,9 +16,7 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": [
-            "float"
-        ],
+        "Actions": ["float"],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

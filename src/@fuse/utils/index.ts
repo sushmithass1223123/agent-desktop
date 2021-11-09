@@ -13,7 +13,7 @@ export class FuseUtils {
 
         searchText = searchText.toLowerCase();
 
-        return mainArr.filter(itemObj => {
+        return mainArr.filter((itemObj) => {
             return this.searchInObj(itemObj, searchText);
         });
     }
@@ -37,9 +37,7 @@ export class FuseUtils {
                 if (this.searchInString(value, searchText)) {
                     return true;
                 }
-            }
-
-            else if (Array.isArray(value)) {
+            } else if (Array.isArray(value)) {
                 if (this.searchInArray(value, searchText)) {
                     return true;
                 }
@@ -111,8 +109,7 @@ export class FuseUtils {
     public static toggleInArray(item, array): void {
         if (array.indexOf(item) === -1) {
             array.push(item);
-        }
-        else {
+        } else {
             array.splice(array.indexOf(item), 1);
         }
     }
@@ -124,11 +121,13 @@ export class FuseUtils {
      * @returns {string}
      */
     public static handleize(text): string {
-        return text.toString().toLowerCase()
-            .replace(/\s+/g, '-')           // Replace spaces with -
-            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-            .replace(/^-+/, '')             // Trim - from start of text
-            .replace(/-+$/, '');            // Trim - from end of text
+        return text
+            .toString()
+            .toLowerCase()
+            .replace(/\s+/g, '-') // Replace spaces with -
+            .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+            .replace(/\-\-+/g, '-') // Replace multiple - with single -
+            .replace(/^-+/, '') // Trim - from start of text
+            .replace(/-+$/, ''); // Trim - from end of text
     }
 }

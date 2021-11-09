@@ -13,12 +13,7 @@ import { QuickPanelComponent } from 'app/layout/components/quick-panel/quick-pan
          */
         QuickPanelComponent
     ],
-    imports: [
-        SharedModule
-    ],
-    exports: [
-        QuickPanelComponent
-    ]
+    imports: [SharedModule],
+    exports: [QuickPanelComponent]
 })
-export class QuickPanelModule {
-}
+export class QuickPanelModule {}

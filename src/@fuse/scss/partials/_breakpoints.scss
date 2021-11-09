@@ -25,14 +25,13 @@ $helper-breakpoints: (
 );
 
 @mixin media-breakpoint($breakpointName) {
-
     $mediaQuery: map-get($breakpoints, $breakpointName);
 
     @if ($mediaQuery == null) {
-        @content
+        @content;
     } @else {
         @media #{$mediaQuery} {
-            @content
+            @content;
         }
     }
 }

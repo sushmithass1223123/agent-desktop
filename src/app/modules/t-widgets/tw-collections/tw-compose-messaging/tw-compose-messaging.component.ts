@@ -8,6 +8,7 @@ import { IWidget } from 'app/interfaces';
 import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { TwComposeMessaging } from '@ad/types';
 
 /**
  * Tw Compose Messaging Component

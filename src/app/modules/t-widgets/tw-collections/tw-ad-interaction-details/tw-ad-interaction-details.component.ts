@@ -8,6 +8,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TwAdInteractionDetails } from '@ad/types';
 
 /**
  * Agent Interactions details Table widget
@@ -23,7 +24,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     /**
      * app config data
      */
-    @Input() data: any;
+    @Input() data: TwAdInteractionDetails;
 
     /**
      * Minimized displayed columns

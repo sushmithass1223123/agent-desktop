@@ -6,6 +6,7 @@ import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
 import { IWidget, TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
+import { TwCustomerSentiment } from '@ad/types';
 
 /**
  * Neutral image

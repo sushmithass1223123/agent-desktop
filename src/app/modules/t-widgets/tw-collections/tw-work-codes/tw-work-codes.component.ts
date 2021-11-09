@@ -11,6 +11,7 @@ import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
+import { TwWorkCodes } from '@ad/types';
 
 /**
  * Work codes Component

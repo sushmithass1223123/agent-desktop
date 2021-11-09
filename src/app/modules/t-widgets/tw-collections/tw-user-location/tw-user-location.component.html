@@ -5,14 +5,14 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper [data]="data">
-  <ng-container *ngIf="location && !error; else noData">
-    <div class="w-100-p h-100-p" *ngIf='location && loadMap' leaflet [leafletOptions]="location"> </div>
-  </ng-container>
-  <ng-template #noData>
-    <div class="mt-20">
-      <p class="text-center mat-title">
-        {{error}}
-      </p>
-    </div>
-  </ng-template>
+    <ng-container *ngIf="location && !error; else noData">
+        <div class="w-100-p h-100-p" *ngIf="location && loadMap" leaflet [leafletOptions]="location"></div>
+    </ng-container>
+    <ng-template #noData>
+        <div class="mt-20">
+            <p class="text-center mat-title">
+                {{ error }}
+            </p>
+        </div>
+    </ng-template>
 </tw-wrapper>

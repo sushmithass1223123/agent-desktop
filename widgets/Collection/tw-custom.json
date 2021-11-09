@@ -16,10 +16,7 @@
             "X": 1,
             "Y": 1
         },
-        "Actions": [
-            "maximize",
-            "destroy"
-        ],
+        "Actions": ["maximize", "destroy"],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

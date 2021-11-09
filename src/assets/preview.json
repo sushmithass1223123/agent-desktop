@@ -17,10 +17,7 @@
                 "X": 2,
                 "Y": 2
             },
-            "Actions": [
-                "maximize",
-                "float"
-            ],
+            "Actions": ["maximize", "float"],
             "ViewState": "restore",
             "Header": true,
             "Pinned": false
@@ -48,10 +45,7 @@
                 "X": 2,
                 "Y": 2
             },
-            "Actions": [
-                "maximize",
-                "float"
-            ],
+            "Actions": ["maximize", "float"],
             "ViewState": "restore",
             "Header": true,
             "Pinned": false

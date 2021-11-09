@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { random } from 'lodash';
+import { TwFeedback } from '@ad/types';
 
 /**
  * Feedback compnent
@@ -20,7 +21,7 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: any;
+    @Input() data: TwFeedback;
 
     /**
      * Mat sort ref
@@ -44,16 +45,6 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
      * feedback date
      */
     date: number;
-
-    /**
-     * Data config
-     */
-    dataConfig: {
-        /**
-         * Source for reusability
-         */
-        Source: 'dashboard' | 'supervisor';
-    };
 
     /**
      * Feedback details table
@@ -91,7 +82,6 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.dataConfig = this.data.Data;
         this.feedbackDetailsTable.source.sort = this.sort;
         this.feedbackDetailsTable.source.paginator = this.paginator;
 

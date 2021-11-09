@@ -24,6 +24,7 @@ import { format, parse } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
+import { TwCustomerJourney } from '@ad/types';
 
 type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
@@ -196,12 +197,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Sets up the new AD table component
      */
     setupAdTable(): void {
-        if (this.data.Data.Columns && this.data.Data.Columns.length) {
-            this.table.columns = this.data.Data.Columns;
-        } else {
-            this.table.columns = Object.keys(this.table.config);
-        }
-
         const iconMap = {
             default: 'feed',
             textchat: 'chat',
@@ -321,6 +316,12 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 ]
             }
         };
+
+        if (this.data.Data.Columns && this.data.Data.Columns.length) {
+            this.table.columns = this.data.Data.Columns;
+        } else {
+            this.table.columns = Object.keys(this.table.config);
+        }
 
         this.table.pageSizeOptions = [0, 5, 10].map((r) => r + noOfRecords);
     }
