@@ -8,14 +8,6 @@
         ".eslintrc.json": "*",
         "nx.json": "*"
     },
-    "projects": {
-        "agent-desktop": {
-            "tags": []
-        },
-        "types": {
-            "tags": []
-        }
-    },
     "tasksRunnerOptions": {
         "default": {
             "runner": "@nrwl/workspace/tasks-runners/default",
@@ -23,5 +15,17 @@
                 "cacheableOperations": ["lint", "test", "e2e"]
             }
         }
+    },
+    "targetDependencies": {
+        "build": [
+            {
+                "target": "build",
+                "projects": "dependencies"
+            }
+        ]
+    },
+    "defaultProject": "agent-desktop",
+    "affected": {
+        "defaultBase": "master"
     }
 }

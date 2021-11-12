@@ -222,6 +222,24 @@
                         >
                             <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
                         </button>
+
+                        <button
+                            *ngIf="userCameraList?.length"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold"
+                            matTooltip="Toggle User Camera"
+                            [matMenuTriggerFor]="userCameraMenu"
+                        >
+                            <mat-icon> cameraswitch </mat-icon>
+
+                            <mat-menu #userCameraMenu="matMenu">
+                                <button mat-menu-item *ngFor="let item of userCameraList" (click)="toggleUserCamera(item)" [disabled]="item.selected">
+                                    <mat-icon>videocam</mat-icon>
+                                    <span>{{ item.label }}</span>
+                                </button>
+                            </mat-menu>
+                        </button>
                     </div>
 
                     <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="actions-2">
