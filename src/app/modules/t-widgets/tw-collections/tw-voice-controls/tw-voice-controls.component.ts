@@ -38,6 +38,7 @@ import {
     OutgoingCallEvent,
     SDKClient,
     TEnums,
+    TMACEventTypes,
     UUIDataEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -132,7 +133,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Last 4 IVR menu ref
      */
-    last4IVR = [];
+    last4IVR = ['NA', 'NA', 'NA', 'NA'];
     /**
      * IVR menus
      */
@@ -296,11 +297,22 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * Flag to identify if the call is updated
      */
     callUpdated: boolean;
-
     /**
      * Make call dialog ref
      */
     makeCallDialogRef: MatDialogRef<any>;
+    /**
+     * Last 4 IVR menu timeline color
+     */
+    timelineItemColors = ['tl-purple', 'tl-blue', 'tl-teal', 'tl-turquoise'];
+    /**
+     * Need More description
+     */
+    mos = '0.00';
+    /**
+     * Call connected flag
+     */
+    callConnected: boolean;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -357,6 +369,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sessionID = this.interaction.UCID || 'NA';
             // set the process media messages flag
             this.processMediaMessages = !this.isManualAnswer;
+
             // check the event name
             if (this.interaction.EventName === 'IncomingCallEvent') {
                 this.interaction = this.data.InteractionDetails as IncomingCallEvent;
@@ -367,7 +380,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // set the status
                 this.status = 'incoming';
                 // assign the last 4 IVR, if default is configured
-                this.last4IVR = this.widgetData.IVR?.DefaultMenu || [];
+                this.last4IVR = this.widgetData.IVR?.DefaultMenu || this.last4IVR;
                 this._appUIService.showDesktopAlert('Incoming Call', `You have a new incoming call from ${this.interaction.PhoneNumber}`, false);
                 // add the subtype
                 this.subType = this.interaction.SubType?.toLowerCase();
@@ -377,7 +390,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.direction = 'Out';
                 // set status
                 this.status = 'outgoing';
+                // set the callflow
+                this.setCallflow('OutgoingCallEvent');
             }
+
             // assign the IVR menus if enabled
             if (this.widgetData.IVR?.Transfer?.Allowed) {
                 this.ivrMenus = this.widgetData.IVR?.Transfer?.Menu || [];
@@ -389,6 +405,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set duration to 0 initially
         this.duration = 0;
+
+        // set call connected to false initially
+        this.callConnected = false;
 
         // listen to TMAC events
         this._tmacEventService
@@ -567,7 +586,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this._appUIService.clearAudio();
                 break;
             case 'onCollectorStats':
-                // TODO:: handle MOS
+                // update the mos value
+                this.mos = evt.data.stats.audio.local.mos.toFixed(2);
                 break;
             case 'onRemoteVideoAdded':
                 // add the stream to reference
@@ -740,6 +760,31 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         mainLine.addConference(conferenceLine.getPeerConnection());
     }
 
+    /**
+     * To set call flow
+     * @param {TMACEventTypes} eventName
+     */
+    private setCallflow(eventName: TMACEventTypes): void {
+        if (this.direction !== 'Out') {
+            return;
+        }
+
+        // set initial callflow for outgoing call event
+        if (eventName === 'OutgoingCallEvent') {
+            this.last4IVR[0] = 'Outbound';
+            this.last4IVR[1] = this.callerID;
+            this.last4IVR[2] = 'Ringing';
+        }
+        // set call connected for the last menu
+        else if (eventName === 'CallConnectedEvent') {
+            this.last4IVR[3] = 'Connected';
+        }
+        // call disconnected without connecting
+        else if (!this.callConnected && eventName === 'CallDisconnectedEvent') {
+            this.last4IVR[3] = 'Disconnected';
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -783,6 +828,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             status: 'outgoing',
             user: this.callerID
         });
+
+        // update the session id
+        this.sessionID = evt.UCID;
+
+        // if the phone number is changed to redial, update the number
+        this.callerID = evt.PhoneNumber;
+
+        // set the callflow
+        this.setCallflow('OutgoingCallEvent');
+
+        // set call connected to false for redial
+        if (this.callConnected) {
+            this.callConnected = false;
+        }
     }
 
     /**
@@ -814,6 +873,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 isMSCall: this.isMSCall
             }
         });
+
+        this.callConnected = true;
+
+        // set the callflow
+        this.setCallflow('CallConnectedEvent');
     }
 
     /**
@@ -849,6 +913,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set the call updated to false
         this.callUpdated = false;
+
+        // set the callflow
+        this.setCallflow('CallDisconnectedEvent');
     }
 
     /**

@@ -53,6 +53,7 @@
                                 </mat-menu>
                             </div>
                         </div>
+
                         <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
                             <div fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon>timer</mat-icon>
@@ -60,8 +61,11 @@
                                     {{ (duration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                                 </div>
                             </div>
+                            <div *ngIf="mos" fxLayout="row" fxLayoutAlign=" center">
+                                <mat-icon>wifi</mat-icon> {{ mos }}
+                            </div>
                             <div fxLayout="row" fxLayoutAlign=" center">
-                                <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
+                                <mat-icon>directions</mat-icon> <span>{{ direction }}</span>
                             </div>
                             <div *ngIf="subType" fxLayout="row" fxLayoutAlign=" center">
                                 <mat-icon>{{ subType === 'camp' ? 'campaign' : '' }}</mat-icon>
@@ -70,6 +74,7 @@
                                 <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                             </div>
                         </div>
+
                         <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
                             <button
                                 *ngIf="audioPlayer._adpState === 'paused'"
@@ -95,14 +100,15 @@
                             <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
                         </div>
                     </div>
+
                     <div
                         *ngIf="widgetData.IVR?.MenuEnabled"
                         fxLayout="row"
                         fxLayoutAlign=" none"
                         class="mt-8 px-12 border-radius-30 position-relative ivr-history"
                     >
-                        <div class="ivr-label">IVR History</div>
-                        <ul class="breadcrumbs">
+                        <div class="ivr-label">{{ direction==='Out' ? 'Call Flow' : 'IVR History' }}</div>
+                        <!-- <ul class="breadcrumbs">
                             <li>
                                 <span>{{ last4IVR[0] || 'NA' }}</span>
                             </li>
@@ -115,7 +121,19 @@
                             <li>
                                 <span>{{ last4IVR[3] || 'NA' }}</span>
                             </li>
-                        </ul>
+                        </ul> -->
+                        <div class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-items-center twd-px-1 twd-py-2 twd-w-full">
+                            <div class="timeline-item twd-flex-1 twd-px-2" [ngClass]="timelineItemColors[i%4]" *ngFor="let menu of last4IVR; let i = index">                           
+                                <div class="timeline-bar">
+                                    <div class="timeline-info-connect-line"></div>
+                                </div>
+                                <div class="timeline-info">
+                                    <div class="timeline-info-title mat-elevation-z1 twd-rounded-full">
+                                        {{ menu }}                                                   
+                                    </div>
+                                </div>                 
+                            </div>  
+                        </div>
                     </div>
                     <div fxLayout="row wrap" fxLayoutAlign=" none" class="call-controls mt-4">
                         <button

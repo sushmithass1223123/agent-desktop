@@ -11,6 +11,20 @@
             @if ($is-dark == true) {
                 background-color: map-get($background, hover);
             }
+
+            .timeline-item {
+                .timeline-bar {
+                    &::after {
+                        border-left-color: inherit !important;
+                    }
+                }
+
+                .timeline-info {
+                    .timeline-info-title {
+                        background: map-get($background, background);
+                    }
+                }
+            }
         }
     }
 

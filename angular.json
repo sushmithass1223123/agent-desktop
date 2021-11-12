@@ -222,7 +222,8 @@
                         }
                     }
                 }
-            }
+            },
+            "tags": []
         },
         "types": {
             "root": "libs/types",
@@ -243,7 +244,8 @@
                     "builder": "@nrwl/linter:eslint",
                     "options": {
                         "lintFilePatterns": ["libs/types/**/*.ts"]
-                    }
+                    },
+                    "outputs": ["{options.outputFile}"]
                 },
                 "test": {
                     "builder": "@nrwl/jest:jest",
@@ -253,8 +255,8 @@
                         "passWithNoTests": true
                     }
                 }
-            }
+            },
+            "tags": []
         }
-    },
-    "defaultProject": "agent-desktop"
+    }
 }

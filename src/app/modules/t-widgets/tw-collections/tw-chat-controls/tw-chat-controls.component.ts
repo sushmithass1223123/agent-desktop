@@ -76,9 +76,8 @@ import { TwWidgetModel } from 'app/models';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
-import { from, fromEvent, Subject, timer } from 'rxjs';
+import { from, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
-import { TwChatControls } from '@ad/types';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -857,10 +856,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case 'clientreloaded':
                     this.callWidget?.destroy();
                     this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
-                    return;
-                default:
-                    console.log('Unknown App Message');
             }
+            return;
         }
 
         // method variables
@@ -1895,19 +1892,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     ActionMessageReceivedEvent(evt: ActionMessageReceivedEvent): void {
         try {
-            // handle snapshot ackknowledgement
             const msg = JSON.parse(evt.Message);
             let message = '';
             let status: SnackbarStateTypes = 'success';
             switch (msg.type.toLowerCase()) {
                 case 'webrtctroubleshoot':
                     if (msg.status === 'accepted') {
-                        message = 'Webrtc troubleshoot request accepted by customer';
+                        message = 'Webrtc troubleshoot request is accepted by customer';
                     } else if (msg.status === 'ack') {
-                        message = 'Webrtc troubleshoot request received by customer';
+                        message = 'Webrtc troubleshoot request is received by customer';
                         status = 'loading';
                     } else {
-                        message = 'Webrtc troubleshoot request rejected by customer';
+                        message = 'Webrtc troubleshoot request is rejected by customer';
                         status = 'failure';
                     }
                     if (message) {
@@ -1946,14 +1942,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this._appUIService.showSnackbar('Whiteboard request rejected by customer', 'failure');
                     }
                     break;
-                default:
-                    console.log('Unknown App Message');
             }
         } catch (e) {
             console.error(e);
         }
-        // TODO:: handle app messages
-        return;
     }
 
     /**

@@ -246,7 +246,7 @@
                                     "Key": "AllInteractions",
                                     "Type": "tw-pie-chart",
                                     "Config": {
-                                        "Enabled": false,
+                                        "Enabled": true,
                                         "Hidden": false,
                                         "Static": false,
                                         "Anchor": false,

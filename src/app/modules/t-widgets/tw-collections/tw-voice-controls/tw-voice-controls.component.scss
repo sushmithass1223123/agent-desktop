@@ -40,6 +40,124 @@ tw-voice-controls {
                         font-size: 12px;
                     }
                 }
+
+                .timeline-item {
+                    text-align: center;
+
+                    .timeline-bar {
+                        position: relative;
+                        height: 16px;
+                        background-color: #6e7b90;
+                        margin-bottom: 15px;
+                        text-align: center;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            left: 0;
+                            bottom: 0;
+                            width: 0;
+                            height: 0;
+                            border-top: 8px solid transparent;
+                            border-bottom: 8px solid transparent;
+                            border-left: 9px solid;
+                        }
+
+                        &::before {
+                            content: '';
+                            position: absolute;
+                            right: -9px;
+                            bottom: 0;
+                            width: 0;
+                            height: 0;
+                            border-left: 9px solid #6e7b90;
+                            border-top: 8px solid transparent;
+                            border-bottom: 8px solid transparent;
+                        }
+                    }
+
+                    .timeline-info-connect-line {
+                        width: 7px;
+                        height: 7px;
+                        background: #fff;
+                        display: inline-block;
+                        position: absolute;
+                        top: 4px;
+                        border-radius: 50%;
+
+                        &::after {
+                            width: 3px;
+                            height: 20px;
+                            background: #6e7b90;
+                            content: '';
+                            position: absolute;
+                            top: 12px;
+                            left: 2px;
+                        }
+                    }
+
+                    .timeline-info {
+                        border-radius: 0.5rem;
+                        padding: 0.5rem 1rem;
+                        text-align: center;
+                    }
+
+                    &.tl-purple {
+                        .timeline-bar,
+                        .timeline-bar::after,
+                        .timeline-info-connect-line::after {
+                            background-color: #782e61 !important;
+                        }
+                    }
+
+                    &.tl-blue {
+                        .timeline-bar,
+                        .timeline-bar::after,
+                        .timeline-info-connect-line::after {
+                            background-color: #2f5a92 !important;
+                        }
+                    }
+
+                    &.tl-teal {
+                        .timeline-bar,
+                        .timeline-bar::after,
+                        .timeline-info-connect-line::after {
+                            background-color: #0b8e9d !important;
+                        }
+                    }
+
+                    &.tl-turquoise {
+                        .timeline-bar,
+                        .timeline-bar::after,
+                        .timeline-info-connect-line::after {
+                            background-color: #1f9bbf !important;
+                        }
+                    }
+
+                    &.tl-purple {
+                        .timeline-bar::before {
+                            border-left: 9px solid #782e61 !important;
+                        }
+                    }
+
+                    &.tl-blue {
+                        .timeline-bar::before {
+                            border-left: 9px solid #2f5a92 !important;
+                        }
+                    }
+
+                    &.tl-teal {
+                        .timeline-bar::before {
+                            border-left: 9px solid #0b8e9d !important;
+                        }
+                    }
+
+                    &.tl-turquoise {
+                        .timeline-bar::before {
+                            border-left: 9px solid #1f9bbf !important;
+                        }
+                    }
+                }
             }
 
             .call-controls {
