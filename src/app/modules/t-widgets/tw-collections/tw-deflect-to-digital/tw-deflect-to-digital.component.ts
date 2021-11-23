@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TextTemplatesComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -12,8 +12,8 @@ import { TwDeflectToDigital } from '@ad/types';
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
-    styleUrls: ['./tw-deflect-to-digital.component.scss']
-    // encapsulation: ViewEncapsulation.None
+    styleUrls: ['./tw-deflect-to-digital.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**

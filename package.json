@@ -17,6 +17,7 @@
         "build:serve": "serve dist -l 5000",
         "test": "ng test",
         "lint": "ng lint",
+        "docs": "npx typedoc libs/types/src/index.ts --out docs --excludeNotDocumented --name Agent-Desktop --readme README.md",
         "e2e": "ng e2e",
         "bundle-report": "webpack-bundle-analyzer dist/agent-desktop/stats.json",
         "prebuild": "node ./scripts/pre-build.js && npm run prettify",
@@ -124,6 +125,7 @@
         "ts-jest": "27.0.5",
         "ts-node": "10.0.0",
         "tslint": "6.1.3",
+        "typedoc": "0.22.8",
         "typescript": "4.3.5",
         "webpack-bundle-analyzer": "4.4.2"
     },

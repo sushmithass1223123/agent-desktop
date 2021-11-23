@@ -139,14 +139,14 @@ The actual rendered columns are set as a property on the row definition" -->
             <ng-container matColumnDef="ExpandedDetails">
                 <mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let selectedRow">
                     <ng-container *ngIf="selectedRow.expanded">
-                        <ng-container *ngTemplateOutlet="expandedRow; context: { record: selectedRow }"></ng-container>
+                        <ng-container *ngTemplateOutlet="expandedRow; context: { record: selectedRow, payload: selected }"></ng-container>
                     </ng-container>
                 </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="CustomRow">
                 <mat-cell [attr.colspan]="displayedColumns.length" class="border-radius-20" *matCellDef="let selectedRow">
-                    <ng-container *ngTemplateOutlet="customRow; context: { record: selectedRow }"></ng-container>
+                    <ng-container *ngTemplateOutlet="customRow; context: { record: selectedRow, mode: action }"></ng-container>
                 </mat-cell>
             </ng-container>
 

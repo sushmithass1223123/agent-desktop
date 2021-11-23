@@ -1,7 +1,7 @@
 <tw-wrapper [data]="data" (maximizeEvent)="maximized = $event; showData()">
     <div class="twd-h-full twd-w-full twd-relative" *ngIf="chartData$ | async as stats; else noData">
         <kendo-chart
-            *ngIf="stats.length && (widgetData.Limit || stats.length); else noData"
+            *ngIf="stats.length && (data.Data.Limit || stats.length); else noData"
             class="twd-h-full"
             [seriesColors]="multiColors.backgroundColor"
             [transitions]="false"
@@ -31,13 +31,13 @@
                             <div>Value: {{ value }}</div>
                         </ng-template>
                     </kendo-chart-series-item-tooltip>
-                    <kendo-chart-series-item-labels *ngIf="widgetData.Label || maximized" align="column" [content]="labelContent">
+                    <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" align="column" [content]="labelContent">
                     </kendo-chart-series-item-labels>
                 </kendo-chart-series-item>
             </kendo-chart-series>
         </kendo-chart>
 
-        <mat-checkbox *ngIf="!maximized && stats.length" class="twd-absolute twd-bottom-2.5 twd-left-2.5 twd-scale-75" [(ngModel)]="widgetData.Label">
+        <mat-checkbox *ngIf="!maximized && stats.length" class="twd-absolute twd-bottom-2.5 twd-left-2.5 twd-scale-75" [(ngModel)]="data.Data.Label">
             Labels
         </mat-checkbox>
     </div>

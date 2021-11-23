@@ -722,6 +722,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
                         // item.inSessionId = curr.OutSessionId;
                     }
+                    delete this.emailBodies[curr.InSessionId];
+                    delete this.emailBodies[curr.OutSessionId];
                     acc.items.push(item);
                     acc.uiIds.push(curr.uiId);
                     return acc;
