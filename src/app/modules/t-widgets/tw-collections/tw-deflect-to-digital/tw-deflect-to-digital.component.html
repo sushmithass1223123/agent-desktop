@@ -1,5 +1,7 @@
 <tw-wrapper [data]="data">
-    <mat-progress-bar class="twd-absolute twd-w-full twd-top-0 twd-left-0" *ngIf="loading || !!templatesRef?.loading" mode="query"></mat-progress-bar>
+    <ng-container *ngIf="loading || !!templatesRef?.loading as widgetLoading">
+        <mat-progress-bar class="twd-absolute twd-w-full twd-top-0 twd-left-0" *ngIf="widgetLoading" mode="query"></mat-progress-bar>
+    </ng-container>
     <div class="twd-flex twd-gap-x-2 twd-h-full twd-p-2">
         <div class="twd-w-5/12 twd-flex twd-flex-col">
             <mat-form-field class="custom custom-matfield with-border" appearance="outline">
@@ -19,7 +21,7 @@
                         <textarea
                             matInput
                             matAutosizeMinRows="1"
-                            placeholder="Please select a template or enter message..."
+                            placeholder="Please enter comment..."
                             [(ngModel)]="comment"
                             [disabled]="loading"
                         ></textarea>

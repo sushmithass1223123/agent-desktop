@@ -222,6 +222,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'preview':
                     this._email = email;
                     break;
+                case 'quick-reply':
                 case 'compose':
                     this._email = {
                         BCC: [],

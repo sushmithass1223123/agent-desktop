@@ -10,10 +10,9 @@
                 [footer]="maximized ? 'show' : 'hide'"
                 [pagination]="true"
                 [sort]="true"
-                (actionReducer)="handleActions($event)"
                 [expandableRows]="true"
                 [customRow]="maximized ? null : customRow"
-                [expandedRow]="expandedRow"
+                [expandedRow]="expandedAction"
                 [loading]="table?.loading"
                 (pageEvent)="pageEvent()"
             >
@@ -63,51 +62,51 @@
         </div>
     </ng-template>
 
-    <ng-template #expandedRow let-record="record">
+    <ng-template #expandedAction let-payload="payload">
         <div
-            *ngIf="expanded && expanded.value as selected"
+            *ngIf="payload && payload.record as selected"
             class="custom-row bg-inherit twd-w-full twd-pb-2 animate__slideInDown"
             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
         >
             <div
                 class="
-                    twd-z-20 twd-text-xl twd-font-bold twd-top-0 twd-shadow-md
+                    twd-z-30 twd-text-xl twd-font-bold twd-top-0 twd-shadow-md
                     bg-inherit
                     twd-flex twd-justify-between twd-p-2 twd-items-center twd-sticky
                 "
             >
-                <span class="twd-flex-1 twd-text-left"> {{ expanded.mode }} </span>
+                <span class="twd-flex-1 twd-text-left"> {{ payload.action }} </span>
                 <div class="twd-relative">
-                    <a *ngIf="expanded.mode === 'Session History'" mat-icon-button [href]="selected" target="_blank" color="primary"
+                    <a *ngIf="payload.action === 'Session History'" mat-icon-button [href]="selected" target="_blank" color="primary"
                         ><mat-icon>open_in_new</mat-icon>
                     </a>
-                    <button mat-icon-button color="warn" class="twd-ml-2" (click)="table.collapseExpanded(); table.selected = null">
+                    <button mat-icon-button color="warn" class="twd-ml-2" (click)="closeExpanded(payload.action)">
                         <mat-icon> close </mat-icon>
                     </button>
                 </div>
             </div>
             <div class="twd-py-2 twd-h-full twd-rounded-3xl">
-                <ng-container *ngIf="expanded.mode === 'Comments'">
-                    <ng-container *ngIf="selected.data | async as iNotes">
-                        <div class="px-12 pb-12" *ngIf="!selected.error && !selected.loading">
-                            <p *ngIf="!iNotes.length" class="text-center mat-headline mt-20">No Comments Available</p>
+                <ng-container *ngIf="payload.action === 'Comments' && selected | async as iNotesReq">
+                    <ng-container *ngIf="iNotesReq.data">
+                        <div class="px-12 pb-12" *ngIf="!iNotesReq.error && !iNotesReq.loading">
+                            <p *ngIf="!iNotesReq.data?.length" class="text-center mat-headline mt-20">No Comments Available</p>
                             <div
                                 class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20 font-size-16 font-weight-600 twd-text-left"
-                                *ngFor="let note of iNotes"
+                                *ngFor="let note of iNotesReq.data"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                 [innerHTML]="note"
                             ></div>
                         </div>
                     </ng-container>
-                    <p class="text-center mat-headline mt-20" *ngIf="selected.loading">Loading...</p>
-                    <p class="text-center mat-headline mt-20" *ngIf="selected.error">Some Error Occured</p>
+                    <p class="text-center mat-headline mt-20" *ngIf="iNotesReq.loading">Loading...</p>
+                    <p class="text-center mat-headline mt-20" *ngIf="iNotesReq.error">Some Error Occured</p>
                 </ng-container>
 
-                <ng-container *ngIf="expanded.mode === 'Actions'">
-                    <div class="actions px-12 pb-12" *ngIf="!selected.error && !selected.loading">
-                        <div *ngIf="!selected.data?.length" class="text-center mt-40 mat-headline">No data available</div>
+                <ng-container *ngIf="payload.action === 'Actions' && selected | async as actionsReq">
+                    <div class="actions px-12 pb-12" *ngIf="!actionsReq.error && !actionsReq.loading">
+                        <div *ngIf="!actionsReq.data?.length" class="text-center mt-40 mat-headline">No data available</div>
                         <div
-                            *ngFor="let action of selected.data"
+                            *ngFor="let action of actionsReq.data"
                             class="
                                 action-item
                                 twd-mb-1 twd-pb-1
@@ -125,25 +124,25 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="selected.loading" fxLayout fxLayoutAlign="center">
+                    <div *ngIf="actionsReq.loading" fxLayout fxLayoutAlign="center">
                         <p class="mt-20">
                             <mat-spinner></mat-spinner>
                         </p>
                     </div>
-                    <div *ngIf="selected.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
+                    <div *ngIf="actionsReq.error" fxLayout="column" fxLayoutAlign="center center" class="text-center">
                         <p>
-                            {{ selected.msg }}
+                            {{ actionsReq.msg }}
                         </p>
                         <!-- <button mat-button color="primary" (click)="selected(element.SessionID)">Retry</button> -->
                     </div>
                 </ng-container>
 
-                <ng-container *ngIf="expanded.mode === 'Session History'">
-                    <iframe *ngIf="!!selected" [src]="selected" class="twd-w-full twd-h-full" frameborder="0" seamless="seamless"></iframe>
+                <ng-container *ngIf="payload.action === 'Session History'">
+                    <iframe *ngIf="!!selected" [src]="selected" class="twd-w-full h-screen/2" frameborder="0" seamless="seamless"></iframe>
                 </ng-container>
 
-                <ng-container *ngIf="expanded.mode === 'Transcripts'">
-                    <ng-container *ngIf="expanded.value as chatTranscripts">
+                <ng-container *ngIf="payload.action === 'Transcripts'">
+                    <ng-container *ngIf="selected as chatTranscripts">
                         <div *ngIf="chatTranscripts.length" fxLayout="row" fxLayoutAlign=" none" class="w-100-p pb-16 chat-container">
                             <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
                                 <!-- CHAT CONTENT -->
@@ -188,10 +187,10 @@
                                                             />
 
                                                             <!-- <img
-                                                        [src]="item.message.attachment.src"
-                                                        class="w-100-p"
-                                                        [alt]="item.message.attachment.name"
-                                                    /> -->
+                                                    [src]="item.message.attachment.src"
+                                                    class="w-100-p"
+                                                    [alt]="item.message.attachment.name"
+                                                /> -->
 
                                                             <span [innerHTML]="item.message.message"></span>
                                                         </div>
@@ -220,10 +219,16 @@
                     </ng-container>
                 </ng-container>
 
-                <ng-container *ngIf="expanded.mode === 'Email Preview'">
-                    <preview-email [email]="selected.data" [loading]="selected.loading" [error]="selected.error" (retry)="showEmailThread()">
+                <ng-container *ngIf="payload.action === 'Email Preview' && selected.state | async as emailReq">
+                    <email
+                        class="twd-h-full"
+                        mode="preview"
+                        [email]="emailReq.data"
+                        [state]="emailReq.error ? 'error' : emailReq.loading ? 'loading' : 'loaded'"
+                        (retry)="selected.retry()"
+                    >
                         <div
-                            *ngIf="selected.data as emailInfo"
+                            *ngIf="emailReq.data as emailInfo"
                             id="emailInfo"
                             class="twd-flex twd-justify-between twd-overflow-hidden twd-transition-all"
                         >
@@ -250,18 +255,31 @@
                                 </div>
                             </div>
                         </div>
-                    </preview-email>
+                    </email>
+                    <!-- <preview-email [email]="selected.data" [loading]="selected.loading" [error]="selected.error" (retry)="selected.retry()">
+                    </preview-email> -->
                 </ng-container>
 
-                <!-- <ng-container *ngIf="expanded.mode === 'Session Emails'">
-                    <ng-container
-                        [ngTemplateOutlet]="table"
-                        [ngTemplateOutletContext]="{
-                            dataSource: selected.Children,
-                            sortDisabled: true
-                        }"
-                    ></ng-container>
-                </ng-container> -->
+                <ng-container *ngIf="payload.action === 'Interactions'">
+                    <div class="twd-w-full twd-p-1 border-radius-20 twd-overflow-hidden">
+                        <div class="twd-w-full twd-h-full" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                            <ad-table
+                                #expandedTable
+                                class="border-radius-20"
+                                [footer]="'disabled'"
+                                [data]="selected.Children"
+                                [sort]="true"
+                                [sortBy]="'InteractionDate'"
+                                [sortDirection]="'asc'"
+                                [config]="selectedRow.conf"
+                                [columns]="selectedRow.columns"
+                                [expandableRows]="true"
+                                [expandedRow]="expandedAction"
+                            >
+                            </ad-table>
+                        </div>
+                    </div>
+                </ng-container>
             </div>
         </div>
     </ng-template>

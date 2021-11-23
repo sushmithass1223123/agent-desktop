@@ -461,6 +461,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     formatJsonData<Partial<AgentModel | any>>(
                         { row },
                         {
+                            AgentID: 'row.ID',
                             FirstName: 'row.FirstName',
                             LastName: 'row.LastName',
                             LoginID: 'row.LoginID',

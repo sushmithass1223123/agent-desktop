@@ -34,12 +34,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<any, WidgetData>;
+    @Input() data: TwPieChart;
 
     /**
      * Widget data
      */
-    widgetData: WidgetData;
+    // widgetData: WidgetData;
 
     /**
      * Stores chart data
@@ -77,19 +77,20 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+        this.data.Data.Label = this.data.Data.Label ?? true;
         // get the data from config
-        this.widgetData = this.data.Data;
+        const widgetData = this.data.Data;
         // append the chart type, default is pie
-        if (this.widgetData.ChartType) {
-            this.chartType = this.widgetData.ChartType;
+        if (widgetData.ChartType) {
+            this.chartType = widgetData.ChartType;
         }
 
         let eventName: any;
-        switch (this.widgetData.Source.toLowerCase()) {
+        switch (widgetData.Source.toLowerCase()) {
             case 'auxstatus':
-                if (this.widgetData.Role === 'agent') {
+                if (widgetData.Role === 'agent') {
                     eventName = 'AgentStatusDetailsEvent';
-                } else if (this.widgetData.Role === 'supervisor') {
+                } else if (widgetData.Role === 'supervisor') {
                     eventName = 'TeamActiveStatusDetailsEvent';
                     this.noDataMessage = 'No Active Agents';
                 }
@@ -105,9 +106,9 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 break;
 
             case 'totalinteractions':
-                if (this.widgetData.Role === 'agent') {
+                if (widgetData.Role === 'agent') {
                     eventName = 'AgentChannelListEvent';
-                } else if (this.widgetData.Role === 'supervisor') {
+                } else if (widgetData.Role === 'supervisor') {
                     eventName = 'TeamChannelListEvent';
                 }
                 break;
@@ -125,12 +126,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         } else {
-            this.logger.warn(`Unable to get event name to regiser, Source=${this.widgetData.Source}`);
+            this.logger.warn(`Unable to get event name to regiser, Source=${widgetData.Source}`);
         }
 
         this.chartData$ = this.allData$.pipe(
             takeUntil(this.unsubscribeAll),
-            map((ds) => (this.maximized ? ds : ds.slice(0, this.widgetData.Limit || 5)))
+            map((ds) => (this.maximized ? ds : ds.slice(0, widgetData.Limit || 5)))
         );
     }
 
@@ -242,7 +243,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 return acc;
             }
             const data: Dataset = {
-                category: `${curr.Intent || 'Unknown'}`,
+                category: `${curr.Intent || 'Unknown'} \n ${curr.Count}`,
                 value: curr.Count
             };
             acc.push(data);
@@ -264,7 +265,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     return acc;
                 }
                 const data: Dataset = {
-                    category: `${curr.Channel || 'Unknown'}`,
+                    category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
                     value: curr.Total
                 };
                 acc.push(data);
@@ -286,7 +287,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     return acc;
                 }
                 const data: Dataset = {
-                    category: `${curr.Channel || 'Unknown'} `,
+                    category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
                     value: curr.Total
                 };
                 acc.push(data);
@@ -308,7 +309,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     return acc;
                 }
                 const data: Dataset = {
-                    category: `${curr.Channel || 'Unknown'} `,
+                    category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
                     value: curr.Total
                 };
                 acc.push(data);
@@ -317,12 +318,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         this.showData(dataset);
     }
 
-    labelContent = (e: any): string => {
-        // if (e.category.length > 5 && !this.maximized) {
-        //     return e.category.substring(0, 5) + '...';
-        // }
-        return ` ${e.category}`;
-    };
+    labelContent = (e: any): string => e.category;
 }
 
 interface WidgetData {

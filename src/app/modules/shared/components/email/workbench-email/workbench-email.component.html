@@ -313,14 +313,14 @@
                             </div>
                         </div>
                         <div *ngIf="selectedMails.some || selectedMails.all" class="bulk-operations twd-mt-3 twd-mb-2 twd-flex twd-gap-1">
-                            <!-- <button
+                            <button
                                 mat-raised-button
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                                 *ngIf="currentTab === 'queue'"
                                 (click)="replyToSelectedEmails(getSelectedEmails())"
                             >
                                 Reply All
-                            </button> -->
+                            </button>
                             <button
                                 mat-raised-button
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
@@ -409,14 +409,14 @@
                         >
                             Delete
                         </button>
-                        <button
+                        <!-- <button
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
                             *ngIf="currentTab === 'queue'"
                             (click)="replyToSelectedEmails([selectedEmail])"
                         >
                             Reply
-                        </button>
+                        </button> -->
                         <button
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
@@ -525,7 +525,7 @@
             <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative twd-p-2">
                 <email
                     class="twd-h-full"
-                    mode="reply"
+                    mode="quick-reply"
                     (sendEmail)="replyEditorModal.sendEmail($event)"
                     [email]="state.openEmailResData"
                     [state]="openEmailRes.error ? 'error' : openEmailRes.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"

@@ -4,29 +4,53 @@ import { Color } from 'ng2-charts';
 /**
  * Chart colors
  */
-export const CHART_COLORS: Color[] = [
+export const CHART_COLORS: any[] = [
     {
-        backgroundColor: 'rgb(138, 124, 207)',
+        backgroundColor: '#67B7DC',
         hoverBackgroundColor: 'rgba(138, 124, 207, 0.6)'
     },
     {
-        backgroundColor: 'rgb(161, 120, 159)',
+        backgroundColor: '#6894DD',
         hoverBackgroundColor: 'rgba(161, 120, 159, 0.6)'
     },
     {
-        backgroundColor: 'rgb(194, 87, 143)',
+        backgroundColor: '#6671DB',
         hoverBackgroundColor: 'rgba(194, 87, 143, 0.6)'
     },
     {
-        backgroundColor: 'rgb(171, 162, 221)',
+        backgroundColor: '#8067DC',
         hoverBackgroundColor: 'rgba(171, 162, 221, 0.2)'
     },
     {
-        backgroundColor: 'rgb(182, 150, 181)',
+        backgroundColor: '#A267DB',
         hoverBackgroundColor: 'rgba(182, 150, 181, 0.2)'
     },
     {
-        backgroundColor: 'rgb(207, 124, 168)',
+        backgroundColor: '#C667DB',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
+    },
+    {
+        backgroundColor: '#DC67CF',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
+    },
+    {
+        backgroundColor: '#DC67AB',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
+    },
+    {
+        backgroundColor: '#DD6789',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
+    },
+    {
+        backgroundColor: '#DC6868',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
+    },
+    {
+        backgroundColor: '#DC8C67',
+        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
+    },
+    {
+        backgroundColor: '#DAAF66',
         hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
     }
 ];

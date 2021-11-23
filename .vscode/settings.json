@@ -146,5 +146,8 @@
             "multiline": true
         }
     ],
-    "commit-message-editor.view.defaultView": "form"
+    "commit-message-editor.view.defaultView": "form",
+    "files.exclude": {
+        "**/.git": false
+    }
 }

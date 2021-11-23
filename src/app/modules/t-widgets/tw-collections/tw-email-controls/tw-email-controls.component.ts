@@ -1202,7 +1202,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Files,
             From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
             mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
-            CreatedTime,
+            CreatedTime: new Date(CreatedTime).toString(),
             SessionID
         };
     }

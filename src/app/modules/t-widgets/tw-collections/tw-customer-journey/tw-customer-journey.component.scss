@@ -8,8 +8,12 @@ tw-customer-journey {
         text-align: start;
     }
 
-    .custom-row {
+    .h-screen\/2 {
         height: 50vh;
+    }
+
+    .custom-row {
+        max-height: 50vh;
         overflow: auto;
     }
 
