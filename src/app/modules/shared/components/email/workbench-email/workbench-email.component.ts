@@ -985,10 +985,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     }))
                 }
             },
-            panelClass: 'agent-skill-dialog',
+            panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
             minWidth: '30%',
             maxWidth: '100%',
-            height: '60%',
             disableClose: true
         });
     }

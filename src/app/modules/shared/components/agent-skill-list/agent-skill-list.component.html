@@ -1,5 +1,5 @@
 <shared-wrapper [icon]="icon" [title]="title" [loading]="loading">
-    <div mat-dialog-content class="h-100-p">
+    <div mat-dialog-content class="twd-h-full !twd-max-h-full !lg:twd-w-6/12">
         <ng-container *ngIf="customFuse$ | async as customFuse">
             <ng-container *ngIf="switcherList[activeSwitcher] as tabConf">
                 <ng-container
@@ -101,8 +101,8 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="twd-flex-1 twd-flex twd-flex-col border-radius-20 twd-p-2" [ngClass]="customFuse?.content">
-                            <div class="twd-flex twd-text-center twd-gap-3" *ngIf="switcherList | keyvalue as tabList">
+                        <div class="twd-flex-1 twd-flex twd-flex-col border-radius-20" [ngClass]="customFuse?.content">
+                            <div class="twd-flex twd-text-center twd-gap-3 border-bottom twd-p-1" *ngIf="switcherList | keyvalue as tabList">
                                 <ng-container *ngIf="tabList.length > 1">
                                     <div
                                         *ngFor="let item of tabList"
@@ -114,7 +114,7 @@
                                     </div>
                                 </ng-container>
                             </div>
-                            <div class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative">
+                            <div class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative border-bottom twd-p-1">
                                 <div class="twd-flex twd-items-center" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }">
                                     <div #skillSelectDropdown class="twd-flex-1">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">

@@ -854,25 +854,73 @@ export interface BookmarkItem {
     /**
      * Bookmark created by user
      */
-    createdBy: string;
+    createdBy?: string;
     /**
      * Created on date
      */
-    createdOn: Date;
+    createdOn?: Date;
     /**
      * Updated on date
      */
-    updatedBy: string;
+    updatedBy?: string;
     /**
      * Updated on date
      */
-    updatedOn: Date;
+    updatedOn?: Date;
     /**
      * Any other JSON string
      */
-    otherData: string;
+    otherData?: string;
     /**
      * Children node
      */
     children?: BookmarkItem[];
+}
+
+export interface MediaStreamerResponse {
+    /**
+     * Success flag
+     */
+    isSuccess: boolean;
+    /**
+     * Result message
+     */
+    message: 'SUCCESS' | 'FAILED';
+    /**
+     * Result object
+     */
+    result?: {
+        /**
+         * Name of the file
+         */
+        original_name: string;
+        /**
+         * Size of the file
+         */
+        size: number;
+        /**
+         * Generic UUID for the upload
+         */
+        interaction_id: string;
+        /**
+         * Session id of the interaction
+         */
+        conv_id: string;
+        /**
+         * File uploaded stream url
+         */
+        streamURL: string;
+        /**
+         * File uploaded file url
+         */
+        fileUrl: string;
+        /**
+         * File uploaded download url
+         */
+        downloadURL: string;
+        /**
+         * Content type of the file
+         */
+        contentType: string;
+    };
 }

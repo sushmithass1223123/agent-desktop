@@ -7,7 +7,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
-import { EmailComponentInputs, EmailComponentMode, EmailFile } from 'app/interfaces';
+import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -313,7 +313,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     formData.append('other', '');
 
                     // upload the file
-                    const { response } = await TUtils.HttpClient.sendRequest({
+                    const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
                         urls: [this.fileUploadUrl.MediaStreamer],
                         method: 'POST',
                         responseType: 'json',

@@ -479,6 +479,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * WebRTC test
          */
         webrtcTest: boolean;
+        /**
+         * Media download
+         */
+        mediaDownload: boolean;
     };
     /**
      * Connected event ref
@@ -632,7 +636,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             snapshot: this.widgetData.Snapshot?.Allowed ?? false,
             voicenote: this.widgetData.VoiceNoteAllowed ?? false,
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
-            webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false
+            webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
+            mediaDownload: false
         };
 
         // set the user info
@@ -830,6 +835,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
                 case AGENT_FEATURES.IsChatScreenshareEnabled:
                     this.agentFeatures.screenshare = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsChatMediaDownloadEnabled:
+                    this.agentFeatures.mediaDownload = f.IsEnabled;
                     break;
                 default:
             }
@@ -1431,7 +1439,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
         // get the customer id
-        const { response } = await TUtils.HttpClient.sendRequest({
+        const { response } = await TUtils.HttpClient.sendRequest<any>({
             urls: [
                 this.conversationService.Url +
                     `user-conversations-timeline/${this.cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`
@@ -2663,10 +2671,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // open agent skill list component in dialog
         this.transferConfDialogRef = this._matDialog.open(AgentSkillListComponent, {
             data,
-            panelClass: 'agent-skill-dialog',
+            panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
             minWidth: '30%',
             maxWidth: '100%',
-            height: '60%',
             disableClose: true
         });
     }

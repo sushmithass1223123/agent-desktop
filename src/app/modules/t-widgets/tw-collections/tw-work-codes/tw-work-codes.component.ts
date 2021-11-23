@@ -214,7 +214,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {any} item
      */
     public trackByID(index: number, item: any): string {
-        return item.Code;
+        return item.WorkCodeName || item.Count;
     }
 
     /**

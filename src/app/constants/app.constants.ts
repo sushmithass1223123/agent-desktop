@@ -272,7 +272,8 @@ export const AGENT_FEATURES = {
     IsSMSOutEnabled: 'issmsoutenabled',
     IsWhatsAppOutEnabled: 'iswhatsappoutenabled',
     IsEmailOutEnabled: 'isemailoutenabled',
-    IsOneWayVideoEnabled: 'isonewayvideoenabled'
+    IsOneWayVideoEnabled: 'isonewayvideoenabled',
+    IsChatMediaDownloadEnabled: 'ischatmediadownloadenabled'
 };
 
 /**
@@ -398,3 +399,21 @@ export const CUSTOM_DATE_FORMATS = {
         monthYearA11yLabel: 'MMMM YYYY'
     }
 };
+
+export const EXCLUDED_TMAC_EVENT = [
+    'WallboardRefreshEvent',
+    'TeamWallboardRefreshEvent',
+    'QuizEvent',
+    'TeamAgentListEvent',
+    'AgentInteractionDetailsEvent',
+    'AgentChannelListEvent',
+    'AgentStatusDetailsEvent',
+    'SupervisorAgentListEvent',
+    'TeamAgentListDataEvent',
+    'TeamChannelListEvent',
+    'TeamIntentListEvent',
+    'TeamActiveStatusDetailsEvent',
+    'TeamActiveChannelListEvent',
+    'TeamAgentInteractionDetailsEvent',
+    'TeamrWorkCodeDetailsEvent'
+];
