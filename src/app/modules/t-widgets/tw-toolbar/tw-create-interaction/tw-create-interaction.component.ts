@@ -138,9 +138,8 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         switch (channel.toLowerCase()) {
             case 'text':
                 const dialogRef = this._matDialog.open(TwComposeMessagingComponent, {
-                    panelClass: 'create-messaging-dialog',
+                    panelClass: ['create-messaging-dialog', 'twd-max-w-11/12'],
                     width: '500px',
-                    maxWidth: '100%',
                     height: '350px',
                     disableClose: true
                 });
@@ -159,6 +158,14 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                 let config = data.Data;
                 if (config.SpeedDial) {
                     config = {
+                        agent: {
+                            allowed: true,
+                            consult: true,
+                            source: config.Agent.Source,
+                            allowedStates: config.Agent.AllowedStates,
+                            columns: config.Agent.Columns,
+                            teamFilter: config.Agent.TeamFilter
+                        },
                         speedDial: {
                             allowed: config.SpeedDial?.Allowed,
                             consult: config.SpeedDial?.Consult,
@@ -167,24 +174,18 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                             source: config.SpeedDial?.Source,
                             teamFilter: config.SpeedDial?.TeamFilter,
                             columns: config.SpeedDial?.Columns
-                        },
-                        agent: {
-                            allowed: true,
-                            consult: true,
-                            source: config.Agent.Source,
-                            allowedStates: config.Agent.AllowedStates,
-                            columns: config.Agent.Columns,
-                            teamFilter: config.Agent.TeamFilter
                         }
                     };
                 } else {
                     config = {
-                        allowed: true,
-                        consult: true,
-                        source: config.Source,
-                        allowedStates: config.AllowedStates,
-                        columns: config.Columns,
-                        teamFilter: config.TeamFilter
+                        agent: {
+                            allowed: true,
+                            consult: true,
+                            source: config.Source,
+                            allowedStates: config.AllowedStates,
+                            columns: config.Columns,
+                            teamFilter: config.TeamFilter
+                        }
                     };
                 }
                 this._matDialog.open(AgentSkillListComponent, {
@@ -198,10 +199,17 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
                             columns: []
                         }
                     },
-                    panelClass: 'agent-skill-dialog',
+                    panelClass: [
+                        'agent-skill-dialog',
+                        'twd-w-11/12',
+                        'twd-h-10/12',
+                        'lg:twd-w-7/12',
+                        'lg:twd-h-8/12',
+                        'xl:twd-w-6/12',
+                        '2xl:twd-w-5/12'
+                    ],
                     minWidth: '30%',
                     maxWidth: '100%',
-                    height: '60%',
                     disableClose: true
                 });
                 break;

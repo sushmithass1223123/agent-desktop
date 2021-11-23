@@ -1,7 +1,6 @@
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { FUSE_CONFIG } from '@fuse/services/config.service';
 
-
 @NgModule()
 export class FuseModule {
     constructor(@Optional() @SkipSelf() parentModule: FuseModule) {

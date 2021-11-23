@@ -14,11 +14,11 @@ export class TWChartDirective {
      */
     @ContentChild(BaseChartDirective) chart: BaseChartDirective;
 
-    constructor() { }
+    constructor() {}
 
     /**
      * Listen to maximized event
-     * @param {Boolean} state 
+     * @param {Boolean} state
      */
     @HostListener('maximizeEvent', ['$event'])
     maximizeEvent(state: boolean): void {

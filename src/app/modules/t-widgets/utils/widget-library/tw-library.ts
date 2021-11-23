@@ -10,6 +10,7 @@ import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-age
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-video-controls/tw-audio-video-controls.component';
+import { TwBookmarksComponent } from '@modules/t-widgets/tw-collections/tw-bookmarks/tw-bookmarks.component';
 import { TwCalendarComponent } from '@modules/t-widgets/tw-collections/tw-calendar/tw-calendar.component';
 import { TwCampaignContactComponent } from '@modules/t-widgets/tw-collections/tw-campaign-contact/tw-campaign-contact.component';
 import { TwCannedResponsesComponent } from '@modules/t-widgets/tw-collections/tw-canned-responses/tw-canned-responses.component';
@@ -126,7 +127,8 @@ export class TWLibrary {
         'tw-panel': TwPanelComponent,
         'tw-campaign-contact': TwCampaignContactComponent,
         'tw-compose-messaging': TwComposeMessagingComponent,
-        'tw-deflect-to-digital': TwDeflectToDigitalComponent
+        'tw-deflect-to-digital': TwDeflectToDigitalComponent,
+        'tw-bookmarks': TwBookmarksComponent
     };
 
     /**

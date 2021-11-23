@@ -9,6 +9,17 @@ type GenericLabel<T, K> = K | ((el: T) => K);
 
 type Icon = { name?: string; only?: boolean; color?: 'warn' | 'primary' | 'accent'; prefixed?: boolean };
 
+export interface SelectedPayload {
+    /**
+     * Action selected of the row
+     */
+    action: string;
+    /**
+     * Selected record
+     */
+    record: any;
+}
+
 export type TableConfig<T = any> =
     | {
           /**
@@ -171,16 +182,7 @@ export class TableComponent implements OnInit {
     /**
      * Selected row config
      */
-    selected: {
-        /**
-         * Action selected of the row
-         */
-        action: string;
-        /**
-         * Selected record
-         */
-        record: any;
-    } = null;
+    selected: SelectedPayload = null;
 
     /**
      * Ref for a custom roe
@@ -202,13 +204,23 @@ export class TableComponent implements OnInit {
      */
     @Input() sortDirection: SortDirection = 'desc';
 
+    /**
+     * Flag for whether row is selectable
+     */
+    @Input() selectable = false;
+    @Input() data: any[] = [];
+
     constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.source = new MatTableDataSource([]);
+        this.source = new MatTableDataSource(this.data ? this.data : []);
+        if (!this.columns?.length && this.source.data.length) {
+            this.columns = Object.keys(this.source.data[0]);
+        }
         this.source.filterPredicate = this.filterPredicate;
+        this.source.data = this.data;
     }
 
     /**
@@ -229,7 +241,8 @@ export class TableComponent implements OnInit {
             if (dateColKey) {
                 return this.compareDates(key, filters[key], data[dateColKey]);
             } else {
-                return data[key] && (data[key].toString().toLowerCase() as string).includes((value as string).toLowerCase());
+                const re = new RegExp(value as string, 'i');
+                return data[key]?.match(re);
             }
         });
         return valid;
@@ -293,15 +306,23 @@ export class TableComponent implements OnInit {
      * @param {string} action
      * @param {any} record
      */
-    triggerAction(action: string, record: any): void {
+    async triggerAction(action: string, record: any): Promise<void> {
         if (this.selected) {
             this.selected = null;
             this.collapseExpanded();
         }
         record.expanded = true;
-        const payload = { action, record };
+        // const payload = { action, record };
+        this.selected = await this.formatPayload({ action, record });
+        this.emitAction(this.selected);
+    }
+
+    async formatPayload(payload: SelectedPayload): Promise<SelectedPayload> {
+        return payload;
+    }
+
+    emitAction(payload: SelectedPayload): void {
         this.actionReducer.emit(payload);
-        this.selected = payload;
     }
 
     /**
@@ -354,5 +375,15 @@ export class TableComponent implements OnInit {
      */
     getCtrls(ctrls: any[], el: any): any[] {
         return ctrls.filter((c) => (c.visible ? c.visible(el) : true));
+    }
+
+    /**
+     * Selects row
+     * @param {any} row
+     */
+    selectRow(row: any): void {
+        if (this.selectable) {
+            this.triggerAction('row-selected', row);
+        }
     }
 }

@@ -44,4 +44,4 @@ export interface EmailComponentInputs {
     Files: EmailFile[];
 }
 
-export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft';
+export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft' | 'quick-reply';

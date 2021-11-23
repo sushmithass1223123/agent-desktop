@@ -6,12 +6,13 @@ describe('TwcWorkbenchPanelComponent', () => {
     let component: TwWorkbenchPanelComponent;
     let fixture: ComponentFixture<TwWorkbenchPanelComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [TwWorkbenchPanelComponent]
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [TwWorkbenchPanelComponent]
+            }).compileComponents();
         })
-            .compileComponents();
-    }));
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(TwWorkbenchPanelComponent);

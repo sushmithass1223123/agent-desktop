@@ -11,6 +11,7 @@ import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
+import { TwWorkCodes } from '@ad/types';
 
 /**
  * Work codes Component
@@ -213,7 +214,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {any} item
      */
     public trackByID(index: number, item: any): string {
-        return item.Code;
+        return item.WorkCodeName || item.Count;
     }
 
     /**

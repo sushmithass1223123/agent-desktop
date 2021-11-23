@@ -65,11 +65,7 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
      */
     private _appConfig: any;
 
-    constructor(
-        private _aotWidgetService: AOTWidgetService,
-        private _appDataService: AppDataService,
-        private _appUIService: AppUiService
-    ) {
+    constructor(private _aotWidgetService: AOTWidgetService, private _appDataService: AppDataService, private _appUIService: AppUiService) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -77,11 +73,9 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
      * Lifecycle hook OnInit
      */
     ngOnInit(): void {
-        this._appDataService.config
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: any) => {
-                this._appConfig = config;
-            });
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            this._appConfig = config;
+        });
     }
 
     /**
@@ -144,12 +138,10 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
                     }
                     return widget;
                 });
-            }
-            else {
+            } else {
                 aots.push(this.data);
             }
-        }
-        else {
+        } else {
             this._appUIService.showSnackbar('Widget removed from pinned list');
             // check widget in AOT list
             if (thisInAOT) {
@@ -159,15 +151,15 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
                     }
                     return widget;
                 });
-            }
-            else {
+            } else {
                 aots = aots.filter((widget: IWidget) => widget.Key !== this.data.Key);
             }
         }
 
         // update the service data
         this._appDataService.config = {
-            ...this._appConfig, ...{
+            ...this._appConfig,
+            ...{
                 Main: {
                     AOT: {
                         Widgets: [...aots]

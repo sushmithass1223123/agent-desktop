@@ -5,6 +5,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget, ResData } from 'app/interfaces';
 import * as moment from 'moment';
+import { TwPendingCallbacks } from '@ad/types';
 
 /**
  * Pending Callbacks widget

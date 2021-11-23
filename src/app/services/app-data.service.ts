@@ -196,7 +196,7 @@ export class AppDataService extends SharedWrapper {
             // set the SDK config
             SDKClient.setConfig({
                 proxy: {
-                    urls: config.AppConfigs.SDK.Proxy.Urls || '',
+                    urls: config.AppConfigs.SDK.Proxy.Urls || [],
                     type: config.AppConfigs.SDK.Proxy.Type || TEnums.ProxyType.SOAP,
                     timeout: config.AppConfigs.SDK.Proxy.Timeout || 30000
                 },

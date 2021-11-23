@@ -6,6 +6,7 @@ import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from '@tmac/sdk';
+import { TwPerformance } from '@ad/types';
 
 /**
  * Performance chart data
@@ -20,7 +21,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: any;
+    @Input() data: TwPerformance;
 
     /**
      * Gamification Metric Label
@@ -51,11 +52,9 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
 
     /**
      * Constructor
-     * @param {HttpClient} _http 
+     * @param {HttpClient} _http
      */
-    constructor(
-        private _http: HttpClient
-    ) {
+    constructor(private _http: HttpClient) {
         super();
     }
 
@@ -89,7 +88,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
             this.pollingSubscription.unsubscribe();
         }
         this.pollingSubscription = interval(10000).pipe(takeUntil(this.unsubscribeAll)).subscribe(this.setChartData);
-    }
+    };
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
@@ -114,7 +113,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
         this._http
             .post<{
                 // tslint:disable-next-line: completed-docs
-                d: string
+                d: string;
             }>(this.data.Data.AgentProgressUrl, { agentId })
             .pipe(map((x) => JSON.parse(x.d)))
             .subscribe(
@@ -145,7 +144,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
                     this.gamificationReqStatus = { loading: false, error: true, msg: 'Something went wrong while fetching progress' };
                 }
             );
-    }
+    };
 }
 
 // for more info visit - https://angular.io/api/core

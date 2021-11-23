@@ -1,7 +1,7 @@
 <div *ngIf="mode === 'preview'" class="twd-w-full twd-h-full twd-flex twd-flex-col">
     <div
         #emailHeader
-        class="email-header twd-max-h-6/12 twd-overflow-x-hidden twd-overflow-y-auto twd-z-10 twd-shadow-md"
+        class="email-header twd-overflow-x-hidden twd-overflow-y-auto twd-z-10 twd-shadow-md"
         [ngClass]="{ 'twd-overflow-y-hidden': headerCollapsed, 'twd-pb-2': !headerCollapsed }"
     >
         <div
@@ -26,7 +26,7 @@
             <skeleton class="twd-opacity-60 twd-w-6/12 twd-m-3"> </skeleton>
         </ng-container>
 
-        <div class="twd-transform twd-px-1" [ngClass]="{ 'twd-max-h-0 twd-pb-0': headerCollapsed }">
+        <div class="twd-transform twd-px-2" [ngClass]="{ 'twd-max-h-0 twd-pb-0': headerCollapsed }">
             <ng-container>
                 <ng-content *ngIf="state === 'loaded'; else emailInfoRef" select="#emailInfo"></ng-content>
                 <ng-template #emailInfoRef>
@@ -45,8 +45,8 @@
         </div>
     </div>
 
-    <div class="twd-relative twd-flex-1 twd-overflow-auto">
-        <div *ngIf="state === 'loaded'" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-p-1">
+    <div class="email-body twd-relative twd-flex-1 twd-overflow-auto">
+        <div *ngIf="state === 'loaded'" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-p-2">
             <!-- <email-previewer [body]="_email.Body"></email-previewer> -->
             <div #emailRef class="twd-w-full twd-h-full"></div>
         </div>
@@ -75,7 +75,7 @@
         </div> -->
         <form class="twd-mb-2" novalidate>
             <div class="border-primary border-radius-20 w-100-p p-12">
-                <div [formGroup]="_addressFG">
+                <div [ngClass]="{ 'twd-hidden': mode === 'quick-reply' }" [formGroup]="_addressFG">
                     <div *ngIf="_email.From" class="twd-flex twd-justify-between">
                         <label class="twd-font-bold twd-mr-1 twd-flex twd-justify-between">
                             <span> From </span>

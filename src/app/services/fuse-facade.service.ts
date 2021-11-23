@@ -91,7 +91,7 @@ export class FuseFacadeService {
         shareReplay()
     );
 
-    constructor(private fuseConfig: FuseConfigService) { }
+    constructor(private fuseConfig: FuseConfigService) {}
 
     /**
      * Gets fuse specific keys from fuse config

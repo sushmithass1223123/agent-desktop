@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { fuseAnimations } from '@fuse/animations';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
@@ -8,6 +9,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
+    ActionMessageReceivedEvent,
     AgentAVMessageEvent,
     AVApiConfig,
     AVChannel,
@@ -18,6 +20,7 @@ import {
     SDKClient,
     TEnums,
     TextChatDisconnectedEvent,
+    TextChatMessageReceivedEvent,
     TUtils,
     WrcCallTypes
 } from '@tmac/sdk';
@@ -25,6 +28,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS } from 'app/constants';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -172,6 +176,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
 
     /**
+     * List of user camera list
+     */
+    userCameraList: CustomMediaDeviceInfo[];
+
+    /**
      * Constructor
      */
     constructor(
@@ -181,7 +190,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
-        private _agentFeaturesService: AgentFeaturesService
+        private _agentFeaturesService: AgentFeaturesService,
+        private _fuseProgressBarService: FuseProgressBarService
     ) {
         super();
     }
@@ -232,6 +242,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
@@ -282,6 +294,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
         this.widgetData.opener?.disposeCallWidget();
     }
 
@@ -560,12 +574,86 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
+     * TextChatMessageReceivedEvent Handler
+     * @param evt
+     */
+    private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
+        try {
+            // we need to catch only app message here to get the list of camera sent from VIVR
+            if (evt.IsAppMessage) {
+                const msg = JSON.parse(evt.Message);
+                if (msg.type?.toLowerCase() === 'camerainfo') {
+                    this.userCameraList = msg.deviceList;
+                }
+            }
+        } catch (error) {
+            throwADError('Error in TwAudioVideoControlsComponent.TextChatMessageReceivedEvent', error);
+        }
+    };
+
+    /**
+     * To handles ActionMessageReceivedEvent
+     * @param evt ActionMessageReceivedEvent evt
+     */
+    ActionMessageReceivedEvent = (evt: ActionMessageReceivedEvent) => {
+        try {
+            // mark the device as selected if VIVR send "camerachange"  with action
+            // or if we get ack from VIVR for the request "togglecamera"
+            const msg = JSON.parse(evt.Message);
+
+            switch (msg.type.toLowerCase()) {
+                case 'camerachange':
+                    if (msg.status === 'action') {
+                        this.setCameraSelected(msg.data.deviceId);
+                    }
+                    break;
+                case 'togglecamera':
+                    switch (msg.status) {
+                        case 'ack':
+                            break;
+                        case 'accepted':
+                            this._appUIService.showSnackbar('Toggle camera request is accepted by customer');
+                            break;
+                        case 'rejected':
+                            this._appUIService.showSnackbar('Toggle camera request is rejected by customer!', 'failure');
+                            break;
+                        case 'success':
+                            this._appUIService.showSnackbar('Customer camera toggled successfully');
+                            this.setCameraSelected(msg.data.deviceId);
+                            break;
+                        case 'failed':
+                            this._appUIService.showSnackbar('Customer camera toggle failed!', 'failure');
+                            break;
+                    }
+                    break;
+            }
+        } catch (error) {
+            throwADError('Error in TwAudioVideoControlsComponent.ActionMessageReceivedEvent', error);
+        }
+    };
+
+    /**
      * Widget Cleanup
      * @method destroyWidget
      */
     private destroyWidget(): void {
         // close the audio call widget
         this._aotWidgetService.destroyWidget(this.data.ID);
+    }
+
+    /**
+     * To set the user camera selected
+     * @param {String} deviceId
+     */
+    private setCameraSelected(deviceId: string): void {
+        // mark all selected as false
+        this.userCameraList.map((c) => (c.selected = false));
+        // select the camera device by deviceId
+        this.userCameraList.map((c) => {
+            if (c.deviceId === deviceId) {
+                c.selected = true;
+            }
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -841,6 +929,61 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         btn.disabled = false;
     }
+
+    /**
+     * To toggle user camera
+     * @param {CustomMediaDeviceInfo} item
+     */
+    public async toggleUserCamera(item: CustomMediaDeviceInfo): Promise<void> {
+        try {
+            this._fuseProgressBarService.show();
+
+            const { response } = await SDKClient.sendActionMessage({
+                interactionId: this.interactionId.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        deviceId: item.deviceId
+                    },
+                    status: 'request',
+                    type: 'togglecamera',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+
+            if (response.ResultCode === 1) {
+                this._appUIService.showSnackbar('Toggle camera request sent successfully');
+            } else {
+                this._appUIService.showSnackbar('Toggle camera request failed!', 'failure');
+            }
+        } catch (error) {
+            this._appUIService.showSnackbar('Toggle camera request error!', 'failure');
+            throwADError('Error in TwAudioVideoControlsComponent.toggleUserCamera', error);
+        } finally {
+            this._fuseProgressBarService.hide();
+        }
+    }
+}
+
+interface CustomMediaDeviceInfo {
+    /**
+     * Id of the device
+     */
+    deviceId: string;
+    /**
+     * Group Id of the device
+     */
+    groupId: string;
+    /**
+     * Name of the device
+     */
+    label: string;
+    /**
+     * To know which media device is selected
+     */
+    selected: boolean;
 }
 
 // for more info visit - https://angular.io/api/core

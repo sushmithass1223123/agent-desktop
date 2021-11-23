@@ -1,29 +1,51 @@
-<tw-wrapper [data]="data" (maximizeEvent)="chart.legend = $event">
-    <div
-        *ngIf="chart.datasets.length >= 1 && chart.datasets[0].data.length"
-        class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full animate__animated animate__zoomIn animate__faster"
-    >
-        <div class="tw-chart twd-w-full twd-h-full twd-p-2" #chartContainerRef>
-            <canvas
-                baseChart
-                class="box-shadow-3d"
-                [colors]="chart.colors"
-                [datasets]="chart.datasets"
-                [options]="chart.options"
-                [labels]="chart.labels"
-                [legend]="chart.legend"
-                [chartType]="chart.type"
-            >
-            </canvas>
-            <!-- <div class="t-pie-chart-value">{{ widget.data[1].value }}</div> -->
-        </div>
-    </div>
+<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event; showData()">
+    <div class="twd-h-full twd-w-full twd-relative" *ngIf="chartData$ | async as stats; else noData">
+        <kendo-chart
+            *ngIf="stats.length && (data.Data.Limit || stats.length); else noData"
+            class="twd-h-full"
+            [seriesColors]="multiColors.backgroundColor"
+            [transitions]="false"
+            field="value"
+            categoryField="category"
+        >
+            <kendo-chart-area background="transparent"></kendo-chart-area>
+            <kendo-chart-legend [visible]="maximized"></kendo-chart-legend>
+            <kendo-chart-series>
+                <kendo-chart-series-item
+                    [border]="{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        width: 2
+                    }"
+                    [highlight]="{
+                        inactiveOpacity: 0.5
+                    }"
+                    type="pie"
+                    [data]="stats"
+                    field="value"
+                    categoryField="category"
+                    [autoFit]="true"
+                >
+                    <kendo-chart-series-item-tooltip>
+                        <ng-template let-category="category" let-value="value">
+                            <p>{{ category }}</p>
+                            <div>Value: {{ value }}</div>
+                        </ng-template>
+                    </kendo-chart-series-item-tooltip>
+                    <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" align="column" [content]="labelContent">
+                    </kendo-chart-series-item-labels>
+                </kendo-chart-series-item>
+            </kendo-chart-series>
+        </kendo-chart>
 
-    <div
-        *ngIf="chart.datasets.length === 0 || (chart.datasets.length >= 1 && !chart.datasets[0].data.length)"
-        class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center"
-    >
-        <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
-        <p class="text-center m-0" [ngClass]="{ 'mat-display-2': chart.legend, ' mat-title': !chart.legend }">{{ noDataMessage }}</p>
+        <mat-checkbox *ngIf="!maximized && stats.length" class="twd-absolute twd-bottom-2.5 twd-left-2.5 twd-scale-75" [(ngModel)]="data.Data.Label">
+            Labels
+        </mat-checkbox>
     </div>
 </tw-wrapper>
+
+<ng-template #noData>
+    <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
+        <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
+        <p class="text-center m-0">No data available</p>
+    </div>
+</ng-template>

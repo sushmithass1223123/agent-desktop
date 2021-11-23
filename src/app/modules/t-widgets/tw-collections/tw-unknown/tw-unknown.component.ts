@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { TwUnknown } from '@ad/types';
 
 /**
  * Unknown / Invalid component placeholder
@@ -11,11 +12,10 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
     encapsulation: ViewEncapsulation.None
 })
 export class TwUnknownComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-
     /**
      * Data from config
      */
-    @Input() data: any;
+    @Input() data: TwUnknown;
 
     constructor() {
         super();
@@ -38,5 +38,4 @@ export class TwUnknownComponent extends TWidgetWrapper implements OnInit, OnDest
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
 }

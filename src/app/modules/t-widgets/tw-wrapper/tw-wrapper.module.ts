@@ -8,17 +8,8 @@ import { TwWrapperComponent } from './tw-wrapper.component';
  * Tw Wrapper Module
  */
 @NgModule({
-    declarations: [
-        TwCardComponent,
-        TwCardHeaderComponent,
-
-        TwWrapperComponent
-    ],
-    imports: [
-        SharedModule
-    ],
-    exports: [
-        TwWrapperComponent
-    ]
+    declarations: [TwCardComponent, TwCardHeaderComponent, TwWrapperComponent],
+    imports: [SharedModule],
+    exports: [TwWrapperComponent]
 })
-export class TwWrapperModule { }
+export class TwWrapperModule {}

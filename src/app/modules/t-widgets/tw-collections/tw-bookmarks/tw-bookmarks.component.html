@@ -1,0 +1,274 @@
+<tw-wrapper [data]="data">
+    <mat-progress-bar *ngIf="progressLoading" mode="query"></mat-progress-bar>
+    <div class="twd-h-full twd-w-full twd-absolute twd-left-0 twd-top-0">
+        <div class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-4 twd-py-2 border-bottom twd-h-[56px]">
+            <mat-form-field class="custom search form-field twd-w-full" appearance="outline">
+                <input matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterBookmarks()" />
+                <button
+                    *ngIf="!searchTerm; else clearBtn"
+                    mat-icon-button
+                    matSuffix
+                    [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                    disabled
+                >
+                    <mat-icon>search</mat-icon>
+                </button>
+                <ng-template #clearBtn>
+                    <button
+                        mat-button
+                        color="primary"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                        (click)="searchTerm = ''; filterBookmarks()"
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </ng-template>
+            </mat-form-field>
+
+            <button *ngIf="!editable" mat-icon-button color="primary" matTooltip="Add Bookmark" (click)="openAddUpdateDataDialog('add', 'url')">
+                <mat-icon>bookmark_add</mat-icon>
+            </button>
+
+            <button *ngIf="!editable" mat-icon-button color="primary" matTooltip="Add Folder" (click)="openAddUpdateDataDialog('add', 'folder')">
+                <mat-icon>create_new_folder</mat-icon>
+            </button>
+
+            <button
+                *ngIf="dataSource.data.length && !editable"
+                mat-icon-button
+                color="primary"
+                matTooltip="Edit Bookmarks"
+                (click)="editBookmarks(true)"
+            >
+                <mat-icon>edit</mat-icon>
+            </button>
+
+            <button *ngIf="deletable" mat-icon-button color="warn" matTooltip="Delete Selected" (click)="deleteSelectedBookmarks()">
+                <mat-icon>delete</mat-icon>
+            </button>
+
+            <button *ngIf="editable" mat-icon-button class="secondary-text" matTooltip="Cancel" (click)="editBookmarks(false)">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </div>
+
+        <div class="twd-w-full twd-h-[calc(100%-56px)]">
+            <div *ngIf="skeltonLoading" class="twd-flex twd-flex-col twd-pr-4">
+                <div class="twd-flex twd-flex-row twd-p-1 twd-h-9" *ngFor="let item of skeletonList">
+                    <mat-icon class="mat-icon-rtl-mirror s-32 secondary-text"> arrow_right </mat-icon>
+                    <skeleton class="twd-w-6 twd-ml-2"></skeleton>
+                    <skeleton class="twd-w-full twd-pl-3"></skeleton>
+                </div>
+            </div>
+
+            <div *ngIf="dataSource.data.length" class="twd-w-full twd-h-full twd-overflow-auto">
+                <mat-tree class="twd-h-full" [dataSource]="dataSource" [treeControl]="treeControl">
+                    <!-- This is the tree node template for leaf nodes -->
+                    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding (click)="openBookmark(node)">
+                        <!-- use a disabled button to provide padding for tree leaf -->
+                        <button mat-icon-button disabled></button>
+
+                        <div class="twd-w-full twd-flex twd-items-center twd-pr-2 twd-cursor-pointer">
+                            <mat-checkbox
+                                class="checklist-leaf-node"
+                                [disabled]="!editable"
+                                [checked]="checklistSelection.isSelected(node)"
+                                (change)="todoLeafItemSelectionToggle(node)"
+                                [ngClass]="{
+                                    editable: editable
+                                }"
+                                [matTooltip]="node.data"
+                                [matTooltipDisabled]="editable"
+                            >
+                                <mat-icon mat-list-icon class="text-warning"> star </mat-icon>
+                                <span class="twd-pl-3"> {{ node.name }} </span>
+                            </mat-checkbox>
+
+                            <div class="twd-flex twd-flex-1 twd-h-9" [matTooltip]="node.url" [matTooltipDisabled]="editable"></div>
+
+                            <div>
+                                <button
+                                    *ngIf="editable && !deletable"
+                                    mat-icon-button
+                                    color="primary"
+                                    matTooltip="Edit Bookmark"
+                                    (click)="openAddUpdateDataDialog('edit', 'url', node)"
+                                >
+                                    <mat-icon class="s-20">edit</mat-icon>
+                                </button>
+
+                                <button
+                                    *ngIf="editable && !deletable"
+                                    mat-icon-button
+                                    color="warn"
+                                    matTooltip="Delete Bookmark"
+                                    (click)="deleteBookmark(node)"
+                                >
+                                    <mat-icon class="s-20">bookmark_remove</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </mat-tree-node>
+
+                    <!-- This is the tree node template for expandable nodes -->
+                    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+                        <button *ngIf="!node.expandable" mat-icon-button disabled></button>
+
+                        <button *ngIf="node.expandable" mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+                            <mat-icon
+                                class="mat-icon-rtl-mirror s-32"
+                                [@fabToggler90]="{ value: treeControl.isExpanded(node) ? 'active' : 'inactive' }"
+                            >
+                                arrow_right
+                            </mat-icon>
+                        </button>
+
+                        <div class="twd-w-full twd-flex twd-items-center twd-pr-2 twd-cursor-pointer">
+                            <mat-checkbox
+                                [disabled]="!editable"
+                                [checked]="descendantsAllSelected(node)"
+                                [indeterminate]="descendantsPartiallySelected(node)"
+                                (change)="todoItemSelectionToggle(node)"
+                                (click)="toggleTreeNode(node)"
+                                [matTooltip]="node.name"
+                                [matTooltipDisabled]="editable"
+                                [ngClass]="{
+                                    editable: editable
+                                }"
+                            >
+                                <mat-icon mat-list-icon class="text-alt-warning">
+                                    {{ treeControl.isExpanded(node) ? 'folder_open' : 'folder' }}</mat-icon
+                                >
+                                <span class="twd-pl-3"> {{ node.name }} </span>
+                            </mat-checkbox>
+
+                            <div
+                                class="twd-flex twd-flex-1 twd-h-9"
+                                [matTooltip]="node.name"
+                                [matTooltipDisabled]="editable"
+                                (click)="toggleTreeNode(node)"
+                            ></div>
+
+                            <button
+                                *ngIf="!editable && !deletable"
+                                mat-icon-button
+                                class="action"
+                                color="primary"
+                                matTooltip="Add Bookmark"
+                                (click)="openAddUpdateDataDialog('add', 'url', node)"
+                            >
+                                <mat-icon class="s-20">bookmark_add</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="!editable && !deletable"
+                                mat-icon-button
+                                class="action"
+                                color="primary"
+                                matTooltip="Add Folder"
+                                (click)="openAddUpdateDataDialog('add', 'folder', node)"
+                            >
+                                <mat-icon class="s-20">create_new_folder</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="editable && !deletable"
+                                mat-icon-button
+                                color="primary"
+                                matTooltip="Rename Folder"
+                                (click)="openAddUpdateDataDialog('edit', 'folder', node)"
+                            >
+                                <mat-icon class="s-20">drive_file_rename_outline</mat-icon>
+                            </button>
+
+                            <button *ngIf="editable && !deletable" mat-icon-button color="warn" matTooltip="Delete Folder">
+                                <mat-icon class="s-20">folder_delete</mat-icon>
+                            </button>
+                        </div>
+                    </mat-tree-node>
+                </mat-tree>
+            </div>
+
+            <div *ngIf="!skeltonLoading && !dataSource.data.length" class="twd-w-full twd-h-full twd-grid twd-place-items-center">
+                <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No Data Available</p>
+            </div>
+        </div>
+    </div>
+</tw-wrapper>
+
+<ng-template #addBookmarkDataDialog class="custom">
+    <div *ngIf="addBookmarkData" class="twd-w-full twd-h-full">
+        <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
+            <p class="mat-title m-0">{{ addBookmarkData.title }}</p>
+            <button mat-icon-button tabindex="-1" mat-dialog-close>
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <div class="twd-flex twd-flex-col twd-px-4 twd-pb-4">
+            <ul *ngIf="addBookmarkData.folderList" class="twd-m-0 twd-p-0 twd-list-none twd-overflow-hidden twd-whitespace-nowrap">
+                <li *ngFor="let item of addBookmarkData.folderList; index as i" class="twd-m-0 twd-p-0 twd-list-none twd-inline-block">
+                    <span
+                        class="twd-relative twd-block twd-text-[12px] twd-leading-6"
+                        [ngClass]="{
+                            'twd-pl-8 before:twd-content-[\'chevron_right\'] before:twd-font-material before:twd-absolute before:twd-top-[50%] before:twd-left-1 before:twd-mt-[-12px] before:twd-text-xl before:twd-block before:twd-text-gray-500':
+                                i > 0
+                        }"
+                        >{{ item }}</span
+                    >
+                </li>
+            </ul>
+            <mat-form-field class="form-field custom" appearance="outline">
+                <input matInput required placeholder="Name" [(ngModel)]="addBookmarkData.name" />
+                <button
+                    *ngIf="addBookmarkData.name"
+                    mat-button
+                    type="button"
+                    color="primary"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="addBookmarkData.name = ''"
+                >
+                    <mat-icon>close</mat-icon>
+                </button>
+                <mat-error> Name is required </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="addBookmarkData.type === 'url'" class="form-field custom" appearance="outline">
+                <input matInput required placeholder="Url" [(ngModel)]="addBookmarkData.data" />
+                <button
+                    *ngIf="addBookmarkData.data"
+                    mat-button
+                    type="button"
+                    color="primary"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="addBookmarkData.data = ''"
+                >
+                    <mat-icon>close</mat-icon>
+                </button>
+                <mat-error> Url is required </mat-error>
+            </mat-form-field>
+
+            <div class="twd-flex twd-flex-row twd-gap-4 twd-pt-2">
+                <button
+                    class="twd-flex-1 !twd-rounded-full"
+                    mat-raised-button
+                    color="primary"
+                    matTooltip="Save"
+                    [disabled]="addBookmarkData.name === '' || addBookmarkData.data === ''"
+                    (click)="addBookmarkData.source === 'add' ? saveBookmark() : updateBookmark()"
+                    mat-dialog-close
+                >
+                    Save
+                </button>
+                <button class="twd-flex-1 !twd-rounded-full" mat-raised-button color="warn" matTooltip="Save" mat-dialog-close>Cancel</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

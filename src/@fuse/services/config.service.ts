@@ -23,11 +23,7 @@ export class FuseConfigService {
      * @param {Router} _router
      * @param _config
      */
-    constructor(
-        private _platform: Platform,
-        private _router: Router,
-        @Inject(FUSE_CONFIG) private _config
-    ) {
+    constructor(private _platform: Platform, private _router: Router, @Inject(FUSE_CONFIG) private _config) {
         // Set the default config from the user provided config (from forRoot)
         this._defaultConfig = _config;
 
@@ -88,20 +84,18 @@ export class FuseConfigService {
 
         // Reload the default layout config on every RoutesRecognized event
         // if the current layout config is different from the default one
-        this._router.events
-            .pipe(filter(event => event instanceof ResolveEnd))
-            .subscribe(() => {
-                if (!_.isEqual(this._configSubject.getValue().layout, this._defaultConfig.layout)) {
-                    // Clone the current config
-                    const config = _.cloneDeep(this._configSubject.getValue());
+        this._router.events.pipe(filter((event) => event instanceof ResolveEnd)).subscribe(() => {
+            if (!_.isEqual(this._configSubject.getValue().layout, this._defaultConfig.layout)) {
+                // Clone the current config
+                const config = _.cloneDeep(this._configSubject.getValue());
 
-                    // Reset the layout from the default config
-                    config.layout = _.cloneDeep(this._defaultConfig.layout);
+                // Reset the layout from the default config
+                config.layout = _.cloneDeep(this._defaultConfig.layout);
 
-                    // Set the config
-                    this._configSubject.next(config);
-                }
-            });
+                // Set the config
+                this._configSubject.next(config);
+            }
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -145,4 +139,3 @@ export class FuseConfigService {
         this._configSubject.next(_.cloneDeep(this._defaultConfig));
     }
 }
-

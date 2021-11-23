@@ -1,6 +1,7 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { TwPanel } from '@ad/types';
 
 /**
  * Need more Description
@@ -16,7 +17,7 @@ export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestro
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: any;
+    @Input() data: TwPanel;
 
     templatePortal: TemplatePortal;
 

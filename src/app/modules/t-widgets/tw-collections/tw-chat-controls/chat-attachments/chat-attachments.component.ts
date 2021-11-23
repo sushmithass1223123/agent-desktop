@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, O
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
+import { MediaStreamerResponse } from 'app/interfaces';
 
 /**
  * Chat attachment module
@@ -302,7 +303,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         formData.append('other', '');
 
                         // upload the file
-                        const { response } = await TUtils.HttpClient.sendRequest({
+                        const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
                             urls: [uploadURLs],
                             method: 'POST',
                             responseType: 'json',
@@ -316,7 +317,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 type,
                                 contentType: response.result.contentType,
                                 fileName: file.fileName,
-                                src: response.result.streamURL,
+                                src: response.result.downloadURL,
                                 size: response.result.size,
                                 interactionId: response.result.interaction_id
                             });
@@ -345,7 +346,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         formData.append('other', '');
 
                         // upload the file
-                        const { response } = await TUtils.HttpClient.sendRequest({
+                        const { response } = await TUtils.HttpClient.sendRequest<any>({
                             urls: [this.fileUploadUrl.MediaProxy + '/api/FileUpload/Post/'],
                             method: 'POST',
                             responseType: 'json',

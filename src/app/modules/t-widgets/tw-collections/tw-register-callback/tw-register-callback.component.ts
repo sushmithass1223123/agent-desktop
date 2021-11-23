@@ -14,6 +14,7 @@ import { extractJsonVal } from '@tmac/operators';
 import { uniq } from 'lodash';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
+import { TwRegisterCallback } from '@ad/types';
 
 /**
  * Register Callback Widget component

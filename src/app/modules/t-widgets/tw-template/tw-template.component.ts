@@ -15,7 +15,6 @@ import { TwTemplateDirective } from './tw-template.directive';
     styleUrls: ['./tw-template.component.scss']
 })
 export class TwTemplateComponent implements AfterContentInit {
-
     /**
      * widget list loader
      */
@@ -33,9 +32,7 @@ export class TwTemplateComponent implements AfterContentInit {
      */
     @ViewChild(TwTemplateDirective, { static: true }) widgetTemplate: TwTemplateDirective;
 
-    constructor(
-        private _componentFactoryResolver: ComponentFactoryResolver
-    ) { }
+    constructor(private _componentFactoryResolver: ComponentFactoryResolver) {}
 
     /**
      * Lifecycle Hook
@@ -63,12 +60,11 @@ export class TwTemplateComponent implements AfterContentInit {
             console.warn('TwTemplateComponent: widget model is null!');
         }
 
-        // get the widget component by type 
+        // get the widget component by type
         if (widgetModel.Type.startsWith('twc-') || widgetModel.Type.startsWith('tw-')) {
             // basic widget
             widget = TWLibrary.getWidget(widgetModel.Type, widgetModel);
-        }
-        else {
+        } else {
             console.warn(`TwTemplateComponent: widget type [${widgetModel.Type}] is not supported!`);
             return;
         }
@@ -86,5 +82,4 @@ export class TwTemplateComponent implements AfterContentInit {
         // with default value inorder to stop app from breaking
         componentRef.instance.data = merge({}, new TwWidgetModel(widgetModel.Name, widgetModel.Type), widgetModel);
     }
-
 }

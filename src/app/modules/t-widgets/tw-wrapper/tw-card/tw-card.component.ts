@@ -10,13 +10,10 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
     encapsulation: ViewEncapsulation.None
 })
 export class TwCardComponent implements OnInit {
-
-    constructor() { }
+    constructor() {}
 
     /**
      * Lifecycle hook on mount of component
      */
-    ngOnInit(): void {
-    }
-
+    ngOnInit(): void {}
 }

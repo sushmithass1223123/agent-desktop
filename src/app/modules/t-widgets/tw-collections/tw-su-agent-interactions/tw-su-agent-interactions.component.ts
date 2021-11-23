@@ -10,6 +10,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { TwSuAgentInteractions } from '@ad/types';
 
 /**
  * Supervisor Agent Interactions Component

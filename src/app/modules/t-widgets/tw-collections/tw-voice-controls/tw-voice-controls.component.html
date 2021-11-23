@@ -10,9 +10,14 @@
         (collapseEvent)="collapseEvent.emit($event)"
         (floatEvent)="floatEvent.emit($event)"
     >
-        <div fxLayout="column" class="w-100-p h-100-p voice-controls">
-            <div fxFlex fxLayout="row" fxLayoutAlign=" none" class="h-75-p">
-                <div fxLayout="column" fxLayoutAlign=" center" class="w-60 h-100-p py-8 mt-8 interactions custom-scroll-adjust">
+        <div class="twd-w-full twd-h-full twd-flex twd-flex-col voice-controls">
+            <div class="twd-flex twd-flex-full twd-flex-row twd-h-9/12">
+                <div
+                    class="
+                        twd-flex twd-flex-col twd-items-center twd-w-[64px] twd-overscroll-y-auto twd-overflow-x-hidden twd-h-full twd-py-2 twd-mt-2
+                        interactions
+                    "
+                >
                     <avatar
                         *ngFor="let item of interactionList"
                         name="{{ item.user }}"
@@ -27,54 +32,54 @@
                         [circleColor]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></avatar>
                 </div>
-                <div
-                    fxFlex
-                    fxLayout="column"
-                    fxLayoutAlign=" none"
-                    class="w-100-p px-12 py-8 border-radius-20 interaction-details"
+                <divD
+                    class="twd-flex twd-flex-full twd-flex-col twd-w-full twd-px-3 twd-py-2 border-radius-20 interaction-details twd-overflow-auto"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div fxFlex fxLayout="column" fxLayoutAlign="start none">
-                        <div fxLayout="row" fxLayoutAlign="space-between none">
-                            <div fxLayout="row" fxLayoutAlign=" center">
+                    <div class="twd-flex twd-flex-full twd-flex-col twd-justify-start">
+                        <div class="twd-flex twd-flex-row twd-justify-between">
+                            <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}
                             </div>
-                            <div fxLayout="row" fxLayoutAlign=" center">
+                            <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon *ngIf="!callLines.length">construction</mat-icon>
                                 <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="twd-cursor-pointer"
                                     >construction</mat-icon
                                 >
                                 {{ sessionID + '|' + (interaction?.InteractionID || 'NA') }}
                                 <mat-menu #sessionsMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
-                                    <div *ngFor="let item of callLines" mat-menu-item fxLayout fxLayoutAlign=" center">
+                                    <div *ngFor="let item of callLines" mat-menu-item class="twd-flex twd-items-center">
                                         <mat-icon>construction</mat-icon>
                                         <span>{{ item }}</span>
                                     </div>
                                 </mat-menu>
                             </div>
                         </div>
-                        <div fxLayout="row" fxLayoutAlign="space-between none" class="mt-4">
-                            <div fxLayout="row" fxLayoutAlign=" center">
+
+                        <div class="twd-flex twd-flex-row twd-justify-between twd-mt-1">
+                            <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon>timer</mat-icon>
                                 <div>
-                                    {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
+                                    {{ (duration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                                 </div>
                             </div>
-                            <div fxLayout="row" fxLayoutAlign=" center">
-                                <mat-icon>directions</mat-icon> <span class="text-bold">{{ direction }}</span>
+                            <div *ngIf="mos" class="twd-flex twd-flex-row twd-items-center"><mat-icon>wifi</mat-icon> {{ mos }}</div>
+                            <div class="twd-flex twd-flex-row twd-items-center">
+                                <mat-icon>directions</mat-icon> <span>{{ direction }}</span>
                             </div>
-                            <div *ngIf="subType" fxLayout="row" fxLayoutAlign=" center">
+                            <div *ngIf="subType" class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon>{{ subType === 'camp' ? 'campaign' : '' }}</mat-icon>
                             </div>
-                            <div fxLayout="row" fxLayoutAlign=" center">
+                            <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                             </div>
                         </div>
-                        <div fxFlex *ngIf="audioPlayer" fxLayout="row" fxLayoutAlign=" center" class="w-100-p">
+
+                        <div *ngIf="audioPlayer" class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center">
                             <button
                                 *ngIf="audioPlayer._adpState === 'paused'"
                                 mat-icon-button
-                                class="mr-4 bg-success custom-btn"
+                                class="!twd-mr-1 bg-success custom-btn"
                                 matTooltip="Play"
                                 (click)="playerAction(1)"
                             >
@@ -83,26 +88,25 @@
                             <button
                                 *ngIf="audioPlayer._adpState === 'playing'"
                                 mat-icon-button
-                                class="mr-4 bg-warning custom-btn"
+                                class="!twd-mr-1 bg-warning custom-btn"
                                 matTooltip="Pause"
                                 (click)="playerAction(2)"
                             >
                                 <mat-icon>pause_circle_outline</mat-icon>
                             </button>
-                            <button mat-icon-button class="mr-4 bg-danger custom-btn" matTooltip="Stop" (click)="playerAction(3)">
+                            <button mat-icon-button class="!twd-mr-1 bg-danger custom-btn" matTooltip="Stop" (click)="playerAction(3)">
                                 <mat-icon>stop</mat-icon>
                             </button>
                             <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
                         </div>
                     </div>
+
                     <div
-                        *ngIf="widgetData.IVR?.MenuEnabled"
-                        fxLayout="row"
-                        fxLayoutAlign=" none"
-                        class="mt-8 px-12 border-radius-30 position-relative ivr-history"
+                        *ngIf="!audioPlayer && widgetData.IVR?.MenuEnabled"
+                        class="twd-flex twd-flex-row twd-flex-full px-12 border-radius-30 position-relative ivr-history"
                     >
-                        <div class="ivr-label">IVR History</div>
-                        <ul class="breadcrumbs">
+                        <div class="ivr-label">{{ direction === 'Out' ? 'Call Flow' : 'IVR History' }}</div>
+                        <!-- <ul class="breadcrumbs">
                             <li>
                                 <span>{{ last4IVR[0] || 'NA' }}</span>
                             </li>
@@ -115,9 +119,58 @@
                             <li>
                                 <span>{{ last4IVR[3] || 'NA' }}</span>
                             </li>
-                        </ul>
+                        </ul> -->
+                        <div class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-items-center twd-px-1 twd-py-2 twd-w-full">
+                            <div
+                                class="timeline-item twd-grid twd-flex-1 twd-px-2"
+                                [ngClass]="timelineItemColors[i % 4]"
+                                *ngFor="let menu of last4IVR; let i = index"
+                            >
+                                <div
+                                    class="
+                                        timeline-bar
+                                        twd-relative twd-h-[16px] twd-mb-4 twd-text-center
+                                        after:twd-absolute
+                                        after:twd-left-0
+                                        after:twd-bottom-0
+                                        after:twd-w-0
+                                        after:twd-h-0
+                                        after:twd-border-solid
+                                        after:twd-border-t-8
+                                        after:twd-border-b-8
+                                        after:twd-border-l-[9px]
+                                        after:twd-border-transparent
+                                        before:twd-absolute
+                                        before:twd-right-[-9px]
+                                        before:twd-bottom-0
+                                        before:twd-w-0
+                                        before:twd-h-0
+                                        before:twd-border-solid
+                                        before:twd-border-t-8
+                                        before:twd-border-b-8
+                                        before:twd-border-l-[9px]
+                                        before:twd-border-transparent
+                                    "
+                                >
+                                    <div
+                                        class="
+                                            timeline-info-connect-line
+                                            twd-w-2 twd-h-2 twd-bg-white twd-inline-block twd-absolute twd-top-1 twd-rounded-full
+                                            after:twd-w-1 after:twd-h-4 after:twd-absolute after:twd-top-3 after:twd-left-[2px]
+                                        "
+                                    ></div>
+                                </div>
+                                <div
+                                    class="timeline-info mat-elevation-z1 twd-rounded-full twd-px-3 twd-py-1 text-truncate twd-text-center"
+                                    [matTooltip]="menu"
+                                >
+                                    {{ menu || 'NA' }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div fxLayout="row wrap" fxLayoutAlign=" none" class="call-controls mt-4">
+
+                    <div class="call-controls twd-mt-1 twd-flex twd-flex-row twd-flex-wrap">
                         <button
                             *ngIf="status !== 'disconnected'"
                             mat-mini-fab
@@ -252,8 +305,14 @@
                                 cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                 (overlayOutsideClick)="openDialpad = false"
                             >
-                                <div class="dialpad-menu mat-elevation-z1 mt-4 p-8 border-radius-20" fxLayout="column">
-                                    <div class="pl-8 pr-4 my-4 mx-4 border border-radius-20" fxLayout="row" fxLayoutAlign="space-between center">
+                                <div class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col">
+                                    <div
+                                        class="
+                                            twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1
+                                            border border-radius-20
+                                            twd-flex twd-flex-row twd-justify-between twd-items-center
+                                        "
+                                    >
                                         <div>
                                             {{ dialedNumbers }}
                                         </div>
@@ -262,7 +321,7 @@
                                         </button>
                                     </div>
 
-                                    <div class="dialpad" fxLayout="row wrap" fxLayoutAlign="center ">
+                                    <div class="dialpad twd-flex twd-flex-row twd-flex-wrap twd-justify-center">
                                         <button *ngFor="let item of dialpadNumbers" mat-icon-button mat-stroked-button (click)="dialpadClick(item)">
                                             {{ item.key }}
                                         </button>
@@ -362,7 +421,7 @@
                             Cancel
                         </button>
                     </div>
-                </div>
+                </divD>
             </div>
         </div>
 
@@ -376,7 +435,7 @@
         <shared-wrapper icon="call" title="Make Call" [loading]="false">
             <div [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                 <form (ngSubmit)="makeCallDialogRef?.close(true)" class="twd-flex twd-items-center twd-gap-2">
-                    <mat-form-field class="form-field custom with-border pb-0" appearance="outline">
+                    <mat-form-field class="form-field custom pb-0 with-border twd-pb-0 twd-flex-1 twd-max-w-9/12" appearance="outline">
                         <input
                             class="login-input"
                             matInput
@@ -400,7 +459,7 @@
                         </button>
                     </mat-form-field>
 
-                    <button fxFlex="30" mat-raised-button color="primary" class="border-radius-20">Call</button>
+                    <button mat-raised-button color="primary" class="border-radius-20 twd-flex-1 twd-max-w-3/12">Call</button>
                 </form>
             </div>
         </shared-wrapper>

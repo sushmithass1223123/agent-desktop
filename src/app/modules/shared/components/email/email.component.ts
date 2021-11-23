@@ -7,7 +7,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
-import { EmailComponentInputs, EmailComponentMode, EmailFile } from 'app/interfaces';
+import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -112,11 +112,9 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * Lifecycle hook
      */
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.mode && changes.mode.currentValue) {
+        if ((changes.mode && changes.mode.currentValue) || (changes.email && changes.email.currentValue && this.mode === 'preview')) {
             this._setEditForm();
-        }
-        if (changes.email && changes.email.currentValue && this.mode === 'preview') {
-            this.setEmailBody();
+            // this.setEmailBody();
         }
     }
 
@@ -192,7 +190,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     _setEditForm(): void {
         if (this.email) {
             const email = JSON.parse(JSON.stringify(this.email));
-            const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox } = email;
+            const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox, BCC } = email;
             const prelude = `
         <style>
         ::-webkit-scrollbar{width:4px !important;height:4px !important;}
@@ -220,11 +218,11 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             }
             </style>
             `;
-            const BCC = [];
             switch (this.mode) {
                 case 'preview':
                     this._email = email;
                     break;
+                case 'quick-reply':
                 case 'compose':
                     this._email = {
                         BCC: [],
@@ -238,7 +236,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     break;
                 case 'forward':
                     this._email = {
-                        BCC,
+                        BCC: [],
                         Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: [],
                         From: mailbox,
@@ -249,7 +247,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     break;
                 case 'reply':
                     this._email = {
-                        BCC,
+                        BCC: [],
                         Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.isArray(From) ? From : [From],
                         From: this.email.mailbox,
@@ -259,11 +257,11 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     };
                     break;
                 case 'reply-all':
-                    const ToList = To.concat(Array.from(new Set((From || '').split(',')))).filter((e) => e && e !== mailbox);
+                    const ToList = (Array.isArray(From) ? From : From.split(',')).concat(To);
                     this._email = {
                         BCC,
                         Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
-                        To: Array.from(new Set([From].concat(ToList))),
+                        To: Array.from(new Set(ToList.filter((e) => e && e !== mailbox))),
                         From: mailbox,
                         Subject: subject,
                         Files: [],
@@ -315,7 +313,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     formData.append('other', '');
 
                     // upload the file
-                    const { response } = await TUtils.HttpClient.sendRequest({
+                    const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
                         urls: [this.fileUploadUrl.MediaStreamer],
                         method: 'POST',
                         responseType: 'json',
@@ -445,6 +443,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             })
             .catch((e) => {
                 console.error(e);
+                this._appUiService.showSnackbar(`Download for ${file.Name} failed`, 'failure');
             })
             .finally(() => {
                 this._fuseProgressBarService.hide();

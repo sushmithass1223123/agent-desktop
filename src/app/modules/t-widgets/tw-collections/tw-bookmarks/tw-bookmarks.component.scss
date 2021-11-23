@@ -1,0 +1,114 @@
+tw-bookmarks {
+    .mat-progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    mat-card-content {
+        &.mat-card-content {
+            position: relative;
+
+            .mat-tree {
+                background-color: inherit !important;
+                .mat-tree-node {
+                    min-height: 36px;
+                    button {
+                        height: 36px;
+
+                        &.action {
+                            display: none;
+                        }
+                    }
+
+                    &:hover,
+                    &:focus,
+                    &:active,
+                    &:focus-visible,
+                    &:focus-within,
+                    &:visited {
+                        button {
+                            &.action {
+                                display: block;
+                            }
+                        }
+                    }
+
+                    .mat-checkbox {
+                        .mat-checkbox-label {
+                            display: flex;
+                            align-items: center;
+                        }
+
+                        .mat-checkbox-inner-container {
+                            display: none;
+                        }
+
+                        &.editable {
+                            .mat-checkbox-inner-container {
+                                display: inline-block;
+                            }
+                        }
+
+                        &.mat-checkbox-disabled {
+                            cursor: inherit;
+                            .mat-checkbox-label {
+                                color: inherit;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.add-bookmark-dialog {
+    .mat-dialog-container {
+        padding: 0;
+
+        mat-form-field {
+            width: 100%;
+
+            .mat-form-field-wrapper {
+                .mat-select-arrow,
+                .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+                .mat-select-placeholder,
+                .mat-select-value {
+                    @apply twd-text-primary-700;
+                }
+
+                .mat-form-field-label {
+                    @apply twd-text-primary-700;
+                }
+
+                .mat-form-field-outline {
+                    @apply twd-text-primary-100;
+                    @apply twd-bg-primary-100;
+                }
+            }
+
+            input {
+                &::-webkit-input-placeholder {
+                    /* Chrome/Opera/Safari */
+                    @apply twd-text-primary-700;
+                }
+
+                &::-moz-placeholder {
+                    /* Firefox 19+ */
+                    @apply twd-text-primary-700;
+                }
+
+                &:-ms-input-placeholder {
+                    /* IE 10+ */
+                    @apply twd-text-primary-700;
+                }
+
+                &:-moz-placeholder {
+                    /* Firefox 18- */
+                    @apply twd-text-primary-700;
+                }
+            }
+        }
+    }
+}

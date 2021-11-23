@@ -1,8 +1,7 @@
 // import { SelectionModel } from '@angular/cdk/collections';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { TableComponent } from '@modules/shared/components';
+import { TableComponent, SelectedPayload } from '@modules/shared/components';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -22,10 +21,10 @@ import { IWidget, ResData } from 'app/interfaces';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
 import { groupBy, orderBy, sortBy } from 'lodash';
-import { from, of } from 'rxjs';
+import { BehaviorSubject, from, of } from 'rxjs';
 import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
 
-type Mode = 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
+type Mode = 'Interactions' | 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
 type IHRecord = {
     InteractionDate: string;
@@ -114,23 +113,19 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     maximized: boolean;
 
     /**
-     * Expanded row configuration
-     */
-    expanded: {
-        /**
-         * Mode of the expanded value
-         */
-        mode: Mode;
-        /**
-         * Value of expanded row
-         */
-        value: SafeResourceUrl | ResData<any>;
-    } = null;
-
-    /**
      * Ad-table's mat table for pagination
      */
     @ViewChild(TableComponent) table: TableComponent;
+
+    expandedTableRef: TableComponent;
+    @ViewChild('expandedTable') set expandedTableRefSet(ref: TableComponent) {
+        if (ref) {
+            this.expandedTableRef = ref;
+            ref.formatPayload = this.switchMaximizedViewMode;
+        }
+    }
+
+    selectedRow: Record<string, any>;
 
     /**
      *
@@ -139,7 +134,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * @param sanitizer
      * @param _appUIService
      * @param _appDataService
-     * @param matDialog
      */
     constructor(
         // private _fuseConfigService: FuseConfigService,
@@ -147,8 +141,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         private _tmacEventService: TMACEventService,
         private sanitizer: DomSanitizer,
         private _appUIService: AppUiService,
-        private _appDataService: AppDataService,
-        private matDialog: MatDialog
+        private _appDataService: AppDataService
     ) {
         super();
     }
@@ -196,12 +189,6 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Sets up the new AD table component
      */
     setupAdTable(): void {
-        if (this.data.Data.Columns && this.data.Data.Columns.length) {
-            this.table.columns = this.data.Data.Columns;
-        } else {
-            this.table.columns = Object.keys(this.table.config);
-        }
-
         const iconMap = {
             default: 'feed',
             textchat: 'chat',
@@ -228,6 +215,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         };
         const iconKey = ['textchat', 'audiochat', 'videochat', 'services'];
         const noOfRecords = this.data.Data.NoOfRecords;
+
+        this.table.formatPayload = this.switchMaximizedViewMode;
 
         this.table.config = {
             Channel: {
@@ -288,6 +277,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 searchable: true,
                 truncate: true
             },
+            GroupID: {
+                searchable: true
+            },
             OverallSentiment: {
                 title: 'Sentiment'
             },
@@ -296,6 +288,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 width: '4%',
                 type: 'controls',
                 value: [
+                    {
+                        title: 'Interactions',
+                        icon: 'forum'
+                    },
                     {
                         title: 'Session History',
                         icon: 'history'
@@ -322,6 +318,49 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
         };
 
+        if (this.data.Data.Columns && this.data.Data.Columns.length) {
+            this.table.columns = this.data.Data.Columns;
+        } else {
+            const columns = Object.keys(this.table.config);
+            this.table.columns = columns.includes('Action') ? columns : columns.concat('Actions');
+        }
+
+        this.selectedRow = {
+            conf: {
+                ...this.table.config,
+                Actions: {
+                    title: '',
+                    width: '4%',
+                    type: 'controls',
+                    value: [
+                        {
+                            title: 'Session History',
+                            icon: 'history'
+                        },
+                        {
+                            title: 'Actions',
+                            icon: 'list_alt'
+                        },
+                        {
+                            title: 'Comments',
+                            icon: 'notes'
+                        },
+                        {
+                            title: 'Transcripts',
+                            icon: 'chat',
+                            visible: (element: any) => (element.Channel || '').toLowerCase().includes('chat')
+                        },
+                        {
+                            title: 'Email Preview',
+                            icon: 'email',
+                            visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
+                        }
+                    ]
+                }
+            },
+            columns: this.table.columns
+        };
+
         this.table.pageSizeOptions = [0, 5, 10].map((r) => r + noOfRecords);
     }
 
@@ -340,6 +379,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         if (!this.historyParams.lastId) {
             this.table.loading = true;
         }
+        // phone: '7012765814'
         SDKClient.getInteractionHistory({ ...this.historyParams, noOfRecords }, null)
             .then((res) => {
                 if (!res.response) {
@@ -365,15 +405,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * @param {Boolean} update
      */
     processHistoryData(historyData: InteractionHistory[], update?: boolean): void {
-        const tableData: Record<string, IHRecord> = {};
-        let sortedTabledata = [];
-        sortedTabledata = sortBy(historyData, 'ItemID').reverse();
-        sortedTabledata.forEach((data) => {
-            if (!(data.InteractionDate instanceof Date)) {
-                data.InteractionDate = parse(data.InteractionDate, 'dd/M/yyyy HH:mm:ss', new Date());
-            }
-            if (!tableData[data.GroupID]) {
-                tableData[data.GroupID] = {
+        // const tableData: Record<string, IHRecord> = groupBy(historyData, 'GroupID');
+        const sourceData = Object.entries(groupBy(historyData.reverse(), 'GroupID')).map((groups) => {
+            let [, interactionRecords] = groups;
+            let records: IHRecord[] = interactionRecords.map((data) => {
+                if (!((data.InteractionDate as any) instanceof Date)) {
+                    (data.InteractionDate as any) = parse(data.InteractionDate, 'dd/M/yyyy HH:mm:ss', new Date());
+                }
+                return {
                     InteractionDate: data.InteractionDate,
                     Channel: data.Channel,
                     Intent: data.Intent,
@@ -381,24 +420,38 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     LastServicedAgentName: Array.from(new Set((data.LastServicedAgentName || '').split(','))).join(', '),
                     CIF: data.CIF,
                     EmailID: data.EmailID,
-                    NRIC: data.NRIC,
+                    NRIC: (data as any).NRIC,
                     PhoneNumber: data.PhoneNumber,
                     OverallSentiment: data.OverallSentiment,
-                    ItemID: data.ItemID,
+                    ItemID: data.ItemID.toString(),
                     SubType: data.SubType,
                     SessionID: data.SessionID,
                     Direction: data.Direction,
                     ID: data.ID,
                     GroupID: data.GroupID,
-                    LastID: data.LastID,
+                    LastID: data.LastID.toString(),
                     InteractionText: data.InteractionText,
                     Children: [],
                     expanded: false
                 };
-            } else {
-                const Children = tableData[data.GroupID].Children;
-                Children.push({ ...tableData[data.GroupID], Children: null });
-                tableData[data.GroupID] = {
+            });
+            if (records.length) {
+                let chatIndex = -1;
+                records = records.reduce((acc, curr, idx) => {
+                    if (curr.Channel.match(/chat/i)) {
+                        if (chatIndex > -1) {
+                            acc[chatIndex].Transcripts.unshift(curr);
+                        } else {
+                            chatIndex = idx;
+                            acc.push({ ...curr, Transcripts: [] });
+                        }
+                    } else {
+                        acc.push(Object.assign(curr));
+                    }
+                    return acc;
+                }, []);
+                const [data] = records.splice(0, 1);
+                return {
                     InteractionDate: data.InteractionDate,
                     Channel: data.Channel,
                     Intent: data.Intent,
@@ -406,30 +459,25 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     LastServicedAgentName: Array.from(new Set((data.LastServicedAgentName || '').split(','))).join(', '),
                     CIF: data.CIF,
                     EmailID: data.EmailID,
-                    NRIC: data.NRIC,
+                    NRIC: (data as any).NRIC,
                     PhoneNumber: data.PhoneNumber,
                     OverallSentiment: data.OverallSentiment,
-                    ItemID: data.ItemID,
+                    ItemID: data.ItemID.toString(),
                     SubType: data.SubType,
                     SessionID: data.SessionID,
                     Direction: data.Direction,
                     ID: data.ID,
                     GroupID: data.GroupID,
-                    LastID: data.LastID,
+                    LastID: data.LastID.toString(),
                     InteractionText: data.InteractionText,
-                    Children,
+                    Children: records as any[],
+                    Transcripts: (data as any).Transcripts,
                     expanded: false
                 };
             }
         });
-        // order table data by received date
-        if (!this.table.source.data) {
-            this.table.source.data = [];
-        }
-
-        const newRecords = orderBy(Object.values(tableData), ['InteractionDate'], ['desc']);
-        this.table.source.data = this.table.source.data.concat(newRecords);
-        const lastEl = sortedTabledata.slice(-1) || [];
+        this.table.source.data = this.table.source.data.concat(sourceData);
+        const lastEl = historyData.slice(0, 1) || [];
         this.historyParams.lastId = lastEl[0]?.LastID?.toString();
         this.table.loading = false;
         const pageOffset = this.table.source.data.length % parseInt(this.historyParams.noOfRecords, 10);
@@ -502,19 +550,22 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Get actions of selected sessionId
      * @param {String} sessionId selected Session Id
      */
-    async getSessionActions(sessionId: string): Promise<void> {
-        try {
-            this.expanded.value = { loading: true, error: false };
-            const res = await SDKClient.getInteractionActions(sessionId);
-            this.expanded.value = {
+    async getSessionActions(sessionId: string): Promise<any> {
+        let state = new BehaviorSubject<any>({ loading: true, error: false });
+        const res = await SDKClient.getInteractionActions(sessionId).catch((e) => {
+            state.next({ loading: false, error: true, msg: 'Unable to fetch session actions' });
+            console.error(e);
+        });
+        if (res) {
+            state.next({
                 loading: false,
                 error: false,
                 data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
-            };
-        } catch (e) {
-            this.expanded.value = { loading: false, error: true, msg: 'Unable to fetch session actions' };
-            console.error(e);
+            });
+        } else {
+            state.next({ loading: false, error: true, msg: 'Unable to fetch session actions' });
         }
+        return state;
     }
 
     /**
@@ -559,81 +610,91 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      * Fetches interaction data and assings to this.interactionNotesReq.data
      * @param {InteractionHistory} record
      */
-    async showInteractionData(record: IHRecord): Promise<void> {
-        this.expanded.value = {
-            loading: true,
-            error: false,
-            data: from(
-                SDKClient.getInteractionData({
-                    count: 10,
-                    fromDate: '',
-                    interactionId: '',
-                    sessionId: record.SessionID,
-                    toDate: '',
-                    agentId: ''
-                })
-            ).pipe(
-                map((res) =>
-                    res.response
-                        .filter((ih) => ih.AgentComment)
-                        .map((ihF) => {
-                            let message = `
+    async showInteractionData(record: IHRecord): Promise<any> {
+        const state = new BehaviorSubject<any>({ loading: true, error: false });
+        const res = await SDKClient.getInteractionData({
+            count: 10,
+            fromDate: '',
+            interactionId: '',
+            sessionId: record.SessionID,
+            toDate: '',
+            agentId: ''
+        }).catch((err) => {
+            console.error(err);
+            state.next({ error: true, loading: false });
+        });
+
+        if (res) {
+            const mapped = res.response
+                .filter((ih) => ih.AgentComment)
+                .map((ihF) => {
+                    let message = `
                         <div class='twd-whitespace-pre-line'>
                         ${ihF.AgentComment}
                         </div>
                         `;
-                            try {
-                                const jsonMessage = JSON.parse(ihF.AgentComment);
-                                message = '';
-                                jsonMessage.forEach((item: any, index: number, array: []) => {
-                                    message += `
+                    try {
+                        const jsonMessage = JSON.parse(ihF.AgentComment);
+                        message = '';
+                        jsonMessage.forEach((item: any, index: number, array: []) => {
+                            message += `
                              <div class="text-primary mat-body-2">${item.Comment.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
                              <span class="time muted-text mat-body-1">${item.User}</span>,
                              <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
                              `;
-                                    // add space if there are multiple items
-                                    if (index !== array.length - 1) {
-                                        message += `
+                            // add space if there are multiple items
+                            if (index !== array.length - 1) {
+                                message += `
                                     <br />
                                     <br />
                                     `;
-                                    }
-                                });
-                            } catch (error) {}
-                            return message;
-                        })
-                ),
-                tap(() => ((this.expanded.value as any).loading = false)),
-                catchError((err) => {
-                    console.error(err);
-                    (this.expanded.value as any).error = true;
-                    return of([]);
-                }),
-                share()
-            )
-        };
+                            }
+                        });
+                    } catch (err) {
+                        console.error(err);
+                        state.next({ error: true });
+                    }
+                    return message;
+                });
+            state.next({ data: mapped, error: false, loading: false });
+        }
+
+        return state;
     }
 
     /**
      * Shows email thread for the session
      * @param record
      */
-    async showEmailThread(interaction?: IHRecord): Promise<void> {
+    async showEmailThread(interaction?: IHRecord): Promise<any> {
+        const state = new BehaviorSubject<any>({ loading: true, error: false, data: {} });
         if (!interaction) {
             interaction = this.table.source.data.find((x) => x.expanded);
         }
-        this.expanded.value = {
-            error: false,
-            data: null,
-            loading: true
-        };
 
         const fetchFromOutbox = interaction.Direction === 'Out';
+        const onFailure = (err: any) => {
+            console.error(err);
+            state.next({
+                data: {},
+                loading: false,
+                error: true
+            });
+        };
 
-        const onSuccess = (res: any) => {
+        let res: any;
+
+        const fetchEmail = async () => {
+            state.next({ loading: true, error: false, data: {} });
+            if (fetchFromOutbox) {
+                res = await SDKClient.getOutboxEmail(interaction.SessionID).catch((err) => onFailure(err));
+            } else {
+                res = await SDKClient.getInboxEmail(interaction.SessionID).catch((err) => onFailure(err));
+            }
+
             if (!res.response) {
                 this._appUIService.showSnackbar('Unable to fetch email', 'failure');
-                throwADError('Error in TwCustomerJourneyComponent.showEmailThread', 'Unable to load Email');
+                onFailure('Error in TwCustomerJourneyComponent.showEmailThread');
                 return;
             }
             // check if attachements are there
@@ -648,78 +709,56 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     return item;
                 });
             }
-            delete res.response.Attachments;
+            // delete res.response.Attachments;
 
             if (res.response.Body) {
                 res.response.Body = this._appUIService.sanitizeEmailBody(res.response.Body)['changingThisBreaksApplicationSecurity'];
             }
 
-            this.expanded.value = {
+            state.next({
                 data: res.response,
                 loading: false,
                 error: false
-            };
+            });
         };
 
-        const onFailure = (err: any) => {
-            console.error(err);
-            this.expanded.value = {
-                msg: err,
-                loading: false,
-                error: true
-            };
-        };
+        fetchEmail();
 
-        if (fetchFromOutbox) {
-            SDKClient.getOutboxEmail(interaction.SessionID)
-                .then((res) => onSuccess(res))
-                .catch((err) => onFailure(err));
-        } else {
-            SDKClient.getInboxEmail(interaction.SessionID)
-                .then((res) => onSuccess(res))
-                .catch((err) => onFailure(err));
-        }
+        return { state, retry: fetchEmail };
     }
 
     /**
      * Switches Maximized View
      * @param {Mode} mode
      */
-    switchMaximizedViewMode(mode: Mode, row: IHRecord): void {
+    switchMaximizedViewMode = async ({ action, record }: SelectedPayload): Promise<SelectedPayload> => {
         if (!this.maximized) {
             this.maximized = true;
             this.wrapperComponent.maximize();
         }
-        if (this.expanded && (this.expanded.value as any)?.ID === row.ID && mode === this.expanded?.mode) {
-            return;
-        }
-        this.expanded = { mode, value: row };
-        switch (mode) {
+        // if (this.expanded && (this.expanded.value as any)?.ID === row.ID && mode === this.expanded?.mode) {
+        //     return;
+        // }
+        switch (action) {
+            case 'Interactions':
+                return { action, record };
             case 'Session History': {
-                this.expanded.value = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${row.SessionID}`);
-                break;
+                return { action, record: this.sanitizer.bypassSecurityTrustResourceUrl(`${this.data.Data.IframeBaseUrl}${record.SessionID}`) };
             }
             case 'Actions': {
-                this.getSessionActions(row.SessionID);
-                break;
+                return { action, record: await this.getSessionActions(record.SessionID) };
             }
             case 'Transcripts': {
-                this.expanded.value = row.Children.map(this.formatTranscript).concat(this.formatTranscript(row)).reverse();
-                break;
+                return { action, record: record.Transcripts.map(this.formatTranscript).concat(this.formatTranscript(record)).reverse() };
             }
             case 'Comments': {
-                this.showInteractionData(row);
-                break;
+                return { action, record: await this.showInteractionData(record) };
             }
             case 'Email Preview': {
-                this.showEmailThread(row);
-                break;
-            }
-            case 'Session Emails': {
-                break;
+                return { action, record: await this.showEmailThread(record) };
             }
         }
-    }
+    };
 
     /**
      * To format transcript
@@ -794,13 +833,23 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         );
     }
 
-    /**
-     * Handles actions from ad-table
-     * @param {any} evt
-     */
-    handleActions(evt: any): void {
-        this.switchMaximizedViewMode(evt.action, evt.record);
-        // this.selected = evt;
+    closeExpanded(mode: Mode): void {
+        if (mode === 'Interactions') {
+            if (this.expandedTableRef?.selected) {
+                this.expandedTableRef.collapseExpanded();
+                this.expandedTableRef.selected = null;
+            }
+            this.table.collapseExpanded();
+            this.table.selected = null;
+        } else {
+            if (this.expandedTableRef?.selected) {
+                this.expandedTableRef.collapseExpanded();
+                this.expandedTableRef.selected = null;
+            } else {
+                this.table.collapseExpanded();
+                this.table.selected = null;
+            }
+        }
     }
 }
 

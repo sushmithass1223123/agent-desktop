@@ -31,13 +31,11 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
 
     /**
      * Constructor
-     * 
+     *
      * @param {ElementRef} hostElement
      * @param {contentPageService} ContentPageService
      */
-    constructor(
-        hostElement: ElementRef,
-        contentPageService: ContentPageService) {
+    constructor(hostElement: ElementRef, contentPageService: ContentPageService) {
         super(hostElement, contentPageService);
     }
 
@@ -71,7 +69,7 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
      */
     onActive = () => {
         // this.loaded = true;
-    }
+    };
 
     /**
      * On page inactive callback
@@ -80,5 +78,5 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
         // if (this.loaded && this.pageActive) {
         //     this.loaded = false;
         // }
-    }
+    };
 }

@@ -35,7 +35,7 @@ export class WidgetFabComponent implements OnInit, OnChanges {
      */
     private _fabDragRef: boolean;
 
-    constructor(private _aotWidgetService: AOTWidgetService) { }
+    constructor(private _aotWidgetService: AOTWidgetService) {}
 
     /**
      * Lifecycle hook
@@ -68,7 +68,7 @@ export class WidgetFabComponent implements OnInit, OnChanges {
 
     /**
      * Open AOT widget
-     * @param {IWidget} widget 
+     * @param {IWidget} widget
      */
     openAOTWidget(widget: IWidget): void {
         // if widget data is there, then open AOT

@@ -31,6 +31,14 @@
     }
 }
 
+.rotate-0 {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
 .rotate-90-inverse {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
@@ -326,6 +334,23 @@ mat-form-field {
                 border-color: transparent;
             }
         }
+
+        &.search {
+            .mat-form-field-wrapper {
+                margin: 0;
+                padding-bottom: 0 !important;
+
+                .mat-form-field-infix {
+                    border: none;
+                    padding: 0.5em 0.5rem !important;
+                }
+
+                .mat-form-field-outline-start,
+                .mat-form-field-outline-end {
+                    border-color: inherit;
+                }
+            }
+        }
     }
 
     &.custom-2 {
@@ -392,9 +417,9 @@ mat-chip {
         border-radius: 10px;
         padding: 10px;
     }
-    mat-icon {
-        color: white !important;
-    }
+    // mat-icon {
+    //     color: white !important;
+    // }
 }
 // mat chip
 
