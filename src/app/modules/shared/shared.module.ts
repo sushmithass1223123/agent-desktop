@@ -14,7 +14,6 @@ import {
     AppConfirmDialogComponent,
     AppSnackbarComponent,
     AvatarComponent,
-    BookmarksComponent,
     CreateEmailComponent,
     CustomDialogComponent,
     NoDataAvailableComponent,
@@ -70,8 +69,7 @@ const sharedComponents = [
     PreviewEmailComponent,
     SharedWrapperComponent,
     TableComponent,
-    TextTemplatesComponent,
-    BookmarksComponent
+    TextTemplatesComponent
 ];
 
 /**

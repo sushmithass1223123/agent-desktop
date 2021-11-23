@@ -914,6 +914,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // set the call updated to false
         this.callUpdated = false;
 
+        // set call connected to false
+        this.callConnected = false;
+
         // set the callflow
         this.setCallflow('CallDisconnectedEvent');
     }
@@ -1201,8 +1204,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.audioPlayer?.stop();
 
         // check the status of call
-        if (this.status !== 'connected') {
-            this._appUIService.showSnackbar(`Cannot play canned audio in ${this.status} state`, 'failure');
+        if (!this.callConnected) {
+            this._appUIService.showSnackbar('Audio cannot be played when call is not connected!', 'failure');
             return;
         }
 
@@ -1729,10 +1732,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         this.dialogRef = this._matDialog.open(AgentSkillListComponent, {
             data,
-            panelClass: 'agent-skill-dialog',
+            panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
             minWidth: '30%',
             maxWidth: '100%',
-            height: '60%',
             disableClose: true
         });
     }

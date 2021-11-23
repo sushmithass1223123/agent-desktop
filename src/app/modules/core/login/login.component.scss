@@ -161,9 +161,9 @@ login {
                     mat-form-field {
                         width: 100%;
 
-                        @include media-breakpoint('xs') {
-                            width: 80%;
-                        }
+                        // @include media-breakpoint('xs') {
+                        //     width: 80%;
+                        // }
 
                         .mat-form-field-wrapper {
                             .mat-select-arrow,

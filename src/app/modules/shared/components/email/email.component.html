@@ -26,7 +26,7 @@
             <skeleton class="twd-opacity-60 twd-w-6/12 twd-m-3"> </skeleton>
         </ng-container>
 
-        <div class="twd-transform twd-px-1" [ngClass]="{ 'twd-max-h-0 twd-pb-0': headerCollapsed }">
+        <div class="twd-transform twd-px-2" [ngClass]="{ 'twd-max-h-0 twd-pb-0': headerCollapsed }">
             <ng-container>
                 <ng-content *ngIf="state === 'loaded'; else emailInfoRef" select="#emailInfo"></ng-content>
                 <ng-template #emailInfoRef>
@@ -46,7 +46,7 @@
     </div>
 
     <div class="email-body twd-relative twd-flex-1 twd-overflow-auto">
-        <div *ngIf="state === 'loaded'" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-p-1">
+        <div *ngIf="state === 'loaded'" class="twd-absolute twd-top-0 twd-left-0 twd-w-full twd-h-full twd-p-2">
             <!-- <email-previewer [body]="_email.Body"></email-previewer> -->
             <div #emailRef class="twd-w-full twd-h-full"></div>
         </div>

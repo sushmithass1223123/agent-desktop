@@ -85,6 +85,9 @@ module.exports = {
             },
             flex: {
                 full: '1 1 100%'
+            },
+            fontFamily: {
+                material: 'Material Icons'
             }
         }
     },

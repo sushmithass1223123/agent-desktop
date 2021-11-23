@@ -12,7 +12,6 @@ import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { take, takeUntil } from 'rxjs/operators';
-import { TwCampaignContact } from '@ad/types';
 
 /**
  * Campaign Contact Component
@@ -343,22 +342,25 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      * @param {Any} requestArgs
      */
     private async restCall(method: string, requestArgs: any): Promise<IResponse> {
-        this.progress = true;
-        let response: IResponse | PromiseLike<IResponse>;
         try {
-            response = await TUtils.HttpClient.sendRequest<IResponse>({
-                urls: [this.tcmClientUrl + method],
-                requestArgs,
-                header: {
-                    'Content-Type': 'application/json'
-                },
-                responseType: 'json',
-                method: 'POST',
-                log: true
-            });
+            this.progress = true;
+            let response: IResponse | PromiseLike<IResponse>;
+            try {
+                response = await TUtils.HttpClient.sendRequest<IResponse>({
+                    urls: [this.tcmClientUrl + method],
+                    requestArgs,
+                    header: {
+                        'Content-Type': 'application/json'
+                    },
+                    responseType: 'json',
+                    method: 'POST',
+                    log: true
+                });
+            } catch (error) {}
+            this.progress = false;
+            return response;
         } catch (error) {}
-        this.progress = false;
-        return response;
+        return null;
     }
 
     /**
