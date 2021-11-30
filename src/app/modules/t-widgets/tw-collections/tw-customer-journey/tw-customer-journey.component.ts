@@ -322,7 +322,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             this.table.columns = this.data.Data.Columns;
         } else {
             const columns = Object.keys(this.table.config);
-            this.table.columns = columns.includes('Action') ? columns : columns.concat('Actions');
+            this.table.columns = columns.includes('Actions') ? columns : columns.concat('Actions');
         }
 
         this.selectedRow = {

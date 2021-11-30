@@ -4,6 +4,7 @@ import { AgentInteractionTemplate, IResponse, SDKClient, TUtils } from '@tmac/sd
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
+import { TwVoiceControlsService } from '../tw-voice-controls/tw-voice-controls.service';
 
 /**
  * TwVoiceCannedResponsesComponent
@@ -35,7 +36,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService) {
+    constructor(private _tmacEventService: TMACEventService, public voiceControlsService: TwVoiceControlsService) {
         super();
     }
 

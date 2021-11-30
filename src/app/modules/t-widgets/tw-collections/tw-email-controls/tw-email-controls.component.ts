@@ -36,7 +36,7 @@ import {
     ResData
 } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
@@ -508,6 +508,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 Body: res.Body,
                 AttachmetList: res?.Attachments || [],
                 To: res.ToList,
+                EmailCreatedTime: parse(inboxRes?.ReceivedDate + inboxRes?.ReceivedTime, 'yyyyMMddHHmmss', new Date()).toString(),
                 From: res.From,
 
                 AgentName: res.AgentName,
@@ -1183,7 +1184,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Returns email info
      */
     getReplyInfo(): EmailComponentInputs {
-        const { Body, Subject: subject, From, CCList, BCCList, CreatedTime, To, AttachmetList, InSessionId, OutSessionId } = this.currentInteraction;
+        const {
+            Body,
+            Subject: subject,
+            From,
+            CCList,
+            BCCList,
+            EmailCreatedTime,
+            To,
+            AttachmetList,
+            InSessionId,
+            OutSessionId
+        } = this.currentInteraction;
         const SessionID = INBOX_REASONS.includes(this.currentInteraction.RouteReason) ? InSessionId : OutSessionId;
         const Files: EmailFile[] =
             AttachmetList?.map((x) => ({
@@ -1201,7 +1213,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Files,
             From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
             mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
-            CreatedTime: new Date(CreatedTime).toString(),
+            CreatedTime: EmailCreatedTime,
             SessionID
         };
     }

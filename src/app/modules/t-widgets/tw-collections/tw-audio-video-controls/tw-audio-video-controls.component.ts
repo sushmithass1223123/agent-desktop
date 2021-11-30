@@ -414,6 +414,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.status = `Error : ${error}`;
                     this._appUIService.showSnackbar(error, 'failure');
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+                    // close the widget
+                    this.destroyWidget();
                     break;
                 case 'onAVStats':
                     this.status = evt.data;

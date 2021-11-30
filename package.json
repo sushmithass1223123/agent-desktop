@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.0.11.15",
+    "version": "5.0.11.30",
     "license": "",
     "scripts": {
         "ng": "nx",
@@ -17,7 +17,8 @@
         "build:serve": "serve dist -l 5000",
         "test": "ng test",
         "lint": "ng lint",
-        "docs": "npx typedoc libs/types/src/index.ts --out docs --excludeNotDocumented --name Agent-Desktop --readme README.md",
+        "docs": "npx typedoc",
+        "docs:serve": "npx typedoc && npx serve docs",
         "e2e": "ng e2e",
         "bundle-report": "webpack-bundle-analyzer dist/agent-desktop/stats.json",
         "prebuild": "node ./scripts/pre-build.js && npm run prettify",
@@ -75,6 +76,7 @@
         "ngx-drag-scroll": "12.0.0-beta.2",
         "rxjs": "6.5.3",
         "tinymce": "5.9.2",
+        "tmac-sdk": "git+https://gitlab+deploy-token-17:abBjHj7fzix3b8nK_o76@git.tetherfi.com/tetherfi_product/products/tmac/ui/tmac-packages/tmac-sdk.git",
         "tslib": "2.3.0",
         "web-animations-js": "2.3.2",
         "zone.js": "0.11.4"

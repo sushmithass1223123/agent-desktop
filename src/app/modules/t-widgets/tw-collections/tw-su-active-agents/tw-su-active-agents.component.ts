@@ -54,7 +54,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
-
     /**
      * Use info
      */

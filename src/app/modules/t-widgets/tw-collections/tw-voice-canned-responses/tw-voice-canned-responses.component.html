@@ -4,22 +4,48 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 <tw-wrapper [data]="data">
-    <div fxLayout="column" fxFill class="px-8 h-256 custom-scroll-adjust">
-        <p *ngIf="!voiceTemplates.length" fxLayout fxLayoutAlign="center center" class="text-center m-0 mat-title h-100-p">No Data Available</p>
-        <mat-list *ngFor="let group of voiceTemplates | keyvalue" class="position-relative w-100-p">
+    <div class="px-8 twd-h-full twd-flex twd-flex-col twd-overflow-y-auto" *ngIf="voiceTemplates | keyvalue as templateList">
+        <mat-list *ngFor="let group of templateList" class="position-relative w-100-p">
             <div mat-subheader class="py-0 h-32">{{ group.key }}</div>
             <mat-list-item *ngFor="let template of group.value" class="mat-elevation-z1 border-radius-16 mb-8">
                 <mat-icon mat-list-icon color="primary">audiotrack</mat-icon>
                 <div mat-line>{{ template.Name }}</div>
-                <!-- <button mat-raised-button mat-icon-button class="mr-12" matTooltip="Play">
-                    <mat-icon>play_arrow</mat-icon>
-                </button> -->
-                <button mat-raised-button mat-icon-button class="" matTooltip="Send" (click)="sendItem(template)">
-                    <mat-icon>done</mat-icon>
-                </button>
-                <!-- <div mat-line>{{ template.CreatedDate | date }}</div> -->
+                <div
+                    *ngIf="
+                        voiceControlsService.cannedAudioPlayer?.fileId == template.Id && voiceControlsService.cannedAudioPlayer as audioPlayer;
+                        else initButton
+                    "
+                >
+                    <button
+                        *ngIf="audioPlayer._adpState === 'paused'"
+                        mat-icon-button
+                        class="!twd-mr-1 bg-success custom-btn"
+                        matTooltip="Play"
+                        (click)="voiceControlsService.playerAction(1)"
+                    >
+                        <mat-icon>play_circle_outline</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="audioPlayer._adpState === 'playing'"
+                        mat-icon-button
+                        class="!twd-mr-1 bg-warning custom-btn"
+                        matTooltip="Pause"
+                        (click)="voiceControlsService.playerAction(2)"
+                    >
+                        <mat-icon>pause_circle_outline</mat-icon>
+                    </button>
+                    <button mat-icon-button class="bg-danger custom-btn" matTooltip="Stop" (click)="voiceControlsService.playerAction(3)">
+                        <mat-icon>stop</mat-icon>
+                    </button>
+                </div>
+                <ng-template #initButton>
+                    <button mat-flat-button mat-icon-button class="" matTooltip="Play" (click)="sendItem(template)">
+                        <mat-icon>play_circle_outline</mat-icon>
+                    </button>
+                </ng-template>
             </mat-list-item>
             <!-- <mat-divider></mat-divider> -->
         </mat-list>
+        <p *ngIf="!templateList.length" fxLayout fxLayoutAlign="center center" class="text-center m-0 mat-title h-100-p">No Data Available</p>
     </div>
 </tw-wrapper>

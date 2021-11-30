@@ -376,7 +376,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         // this.switchTab(this.activeSwitcher);
         await this.presetData();
         this.switchTab(this.activeSwitcher);
-        this.table.filterPredicate = this.filterPredicate;
+        this.table.source.filterPredicate = this.filterPredicate;
     }
 
     /**
@@ -461,7 +461,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     formatJsonData<Partial<AgentModel | any>>(
                         { row },
                         {
-                            AgentID: 'row.ID',
+                            AgentID: 'row.LoginID',
                             FirstName: 'row.FirstName',
                             LastName: 'row.LastName',
                             LoginID: 'row.LoginID',
@@ -616,7 +616,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
+    // @ Private Methods
     // -----------------------------------------------------------------------------------------------------
 
     /**
@@ -632,8 +632,17 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             .subscribe((key: string) => {
                 // check which filter should be applied based on this.activeSwitcher
                 this.table.source.filter = JSON.stringify({ searchKey: key, skill: this.selectedSkill });
-                this.table.doAdvancedSearch();
+                // this.table.doAdvancedSearch();
             });
+    }
+
+    /**
+     * Searches agents based on skill
+     */
+    searchAgentsOnSkill(): void {
+        // check which filter should be applied based on this.activeSwitcher
+        this.table.source.filter = JSON.stringify({ skill: this.selectedSkill });
+        // this.table.doAdvancedSearch();
     }
 
     /**
@@ -969,7 +978,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @returns {boolean}
      */
     filterPredicate = (row: AgentModel, filterStr: string): boolean => {
-        console.log(row, filterStr);
         if (this.table.source.data.length > 0) {
             if (filterStr === '{}') {
                 return true;
@@ -980,7 +988,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     return this.filterAgentList(row, filters);
                 }
                 default: {
-                    return JSON.stringify(row).toLowerCase().includes(filters.searchKey.toLowerCase());
+                    const re = new RegExp(filters.searchKey, 'i');
+                    return !!JSON.stringify(row).match(re);
                 }
             }
         }
@@ -992,14 +1001,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     filterAgentList = (row: AgentModel, filters: any): boolean => {
         if (filters.searchKey && !filters.skill) {
-            return JSON.stringify(row).toLowerCase().includes(filters.searchKey.toLowerCase());
+            const searchRe = new RegExp(filters.searchKey, 'i');
+            return !!JSON.stringify(row).match(searchRe);
         } else if (!filters.searchKey && filters.skill) {
-            return row.AgentVoiceSkillsAsString.toLowerCase().includes(filters.skill.toLowerCase());
+            const skillRe = new RegExp(filters.skill, 'i');
+            return !!row.AgentVoiceSkillsAsString.match(skillRe);
         } else {
-            return (
-                JSON.stringify(row).toLowerCase().includes(filters.searchKey.toLowerCase()) &&
-                row.AgentVoiceSkillsAsString.toLowerCase().includes(filters.skill.toLowerCase())
-            );
+            const searchRe = new RegExp(filters.searchKey, 'i');
+            const skillRe = new RegExp(filters.skill, 'i');
+            return !!(JSON.stringify(row).match(searchRe) && row.AgentVoiceSkillsAsString.match(skillRe));
         }
     };
 
