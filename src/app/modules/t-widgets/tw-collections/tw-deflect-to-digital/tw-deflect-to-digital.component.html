@@ -1,11 +1,11 @@
 <tw-wrapper [data]="data">
-    <ng-container *ngIf="loading || !!templatesRef?.loading as widgetLoading">
-        <mat-progress-bar class="twd-absolute twd-w-full twd-top-0 twd-left-0" *ngIf="widgetLoading" mode="query"></mat-progress-bar>
-    </ng-container>
-    <div class="twd-flex twd-gap-x-2 twd-h-full twd-p-2">
+    <div class="twd-flex twd-gap-x-2 twd-h-full twd-p-2 twd-pb-4 twd-relative">
+        <ng-container *ngIf="!!templatesRef?.loading as widgetLoading">
+            <mat-progress-bar class="!twd-absolute !twd-w-full twd-top-0 twd-left-0" *ngIf="widgetLoading" mode="query"></mat-progress-bar>
+        </ng-container>
         <div class="twd-w-5/12 twd-flex twd-flex-col">
             <mat-form-field class="custom custom-matfield with-border" appearance="outline">
-                <input matInput placeholder="To Number" type="number" [(ngModel)]="toNumber" [disabled]="loading" autocomplete="off" />
+                <input matInput placeholder="To Number" type="number" [(ngModel)]="toNumber" autocomplete="off" />
                 <button *ngIf="!toNumber; else clearBtn" mat-icon-button matSuffix disabled>
                     <mat-icon matSuffix>smartphone</mat-icon>
                 </button>
@@ -17,14 +17,8 @@
             </mat-form-field>
             <div class="twd-flex-1 twd-relative">
                 <div class="twd-absolute twd-h-full twd-w-full">
-                    <mat-form-field class="twd-h-full twd-w-full custom-textarea custom border-radius-20 with-border" appearance="outline">
-                        <textarea
-                            matInput
-                            matAutosizeMinRows="1"
-                            placeholder="Please enter comment..."
-                            [(ngModel)]="comment"
-                            [disabled]="loading"
-                        ></textarea>
+                    <mat-form-field class="twd-h-full twd-w-full custom-textarea custom pb-0 border-radius-20 with-border" appearance="outline">
+                        <textarea matInput matAutosizeMinRows="1" placeholder="Please enter comment..." [(ngModel)]="comment"></textarea>
                     </mat-form-field>
                 </div>
             </div>

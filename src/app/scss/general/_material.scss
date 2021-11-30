@@ -92,47 +92,6 @@
 }
 // mat icon
 
-// mat selection list
-mat-selection-list {
-    .mat-list-option {
-        margin-bottom: 0.25rem;
-        border-top-right-radius: 2rem;
-        border-bottom-left-radius: 2rem;
-    }
-
-    .mat-ripple:not(:empty) {
-        border-top-right-radius: 2rem;
-        border-bottom-left-radius: 2rem;
-    }
-
-    .mat-list-option:hover {
-        border-top-right-radius: 2rem;
-        border-bottom-left-radius: 2rem;
-        background: rgba(0, 0, 0, 0.12);
-    }
-
-    .mat-list-item,
-    .mat-list-option {
-        width: 90% !important;
-        height: 40px !important;
-        margin-top: 4px !important;
-        margin-bottom: 4px !important;
-    }
-
-    .mat-list-single-selected-option,
-    .mat-list-single-selected-option:hover,
-    .mat-list-single-selected-option:focus {
-        border-top-right-radius: 2rem;
-        border-bottom-left-radius: 2rem;
-        box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
-    }
-
-    .mat-list-text {
-        padding: 0 !important;
-    }
-}
-// mat selection list
-
 // mat table
 .mat-table {
     width: 100%;

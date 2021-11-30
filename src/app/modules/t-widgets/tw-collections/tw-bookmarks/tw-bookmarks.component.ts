@@ -1,6 +1,7 @@
+import { TwBookmarks } from '@ad/types';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
@@ -8,7 +9,7 @@ import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AppUiService } from '@services/app-ui.service';
 import { IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { BookmarkItem, IWidget } from 'app/interfaces';
+import { BookmarkItem } from 'app/interfaces';
 import { orderBy } from 'lodash';
 
 /**
@@ -25,7 +26,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwBookmarks;
 
     /**
      * Skelton loading flag
@@ -41,6 +42,11 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
      * User preferences API Urls
      */
     apiUrls: string[];
+
+    /**
+     * Bookmark load data level
+     */
+    dataLevel: 'agent' | 'orgunit' | 'agent_orgunit';
 
     /**
      * Tree control
@@ -93,9 +99,25 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
     searchTerm: string;
 
     /**
+     * Searchable flag
+     */
+    searchable: boolean;
+
+    /**
+     * Search input children ref
+     */
+    @ViewChild('searchField')
+    searchField: ElementRef<HTMLInputElement>;
+
+    /**
      * Bookmark data ref
      */
     bookmarkData: BookmarkItem[];
+
+    /**
+     * Bookmark search data
+     */
+    serachData: BookmarkItem[];
 
     /**
      * Add bookmarks data dialog ref
@@ -112,6 +134,11 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
      * Add bookmark data ref
      */
     addBookmarkData: AddBookmarkData;
+
+    /**
+     * Confirm dialog ref
+     */
+    dialogRef: MatDialogRef<any, any>;
 
     /**
      * Constructor
@@ -134,6 +161,8 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         this.skeletonList = [...Array(30).keys()].slice(1);
 
         this.bookmarkData = [];
+
+        this.serachData = [];
     }
 
     /**
@@ -143,6 +172,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
         this.apiUrls = this.data.Data.BookmarksApiUrls || [];
+        this.dataLevel = this.data.Data.DataLevel || 'agent';
         this.getBookmarks();
     }
 
@@ -166,6 +196,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         flatNode.id = node.id;
         flatNode.type = node.bookmarkType;
         flatNode.data = node.bookmarkData;
+        flatNode.team = node.userType === 'orgunit';
         flatNode.expandable = !!node.children?.length;
         flatNode.context = false;
         flatNode.children = node.children;
@@ -331,12 +362,20 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.skeltonLoading = true;
 
+            let userId = SDKClient.getAgentData().agentId;
+
+            if (this.dataLevel === 'orgunit') {
+                userId = SDKClient.getAgentData().teamId;
+            } else if (this.dataLevel === 'agent_orgunit') {
+                userId += '_' + SDKClient.getAgentData().teamId;
+            }
+
             // get the data from server
             const { response }: IResponse = await TUtils.HttpClient.sendRequest({
                 urls: [...this.apiUrls],
                 requestArgs: {
-                    userId: SDKClient.getAgentData().agentId,
-                    userType: 'agent',
+                    userId,
+                    userType: this.dataLevel,
                     bookmarkName: '',
                     bookmarkType: '',
                     bookmarkStatus: 1
@@ -391,7 +430,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
             bookmarkData.forEach((el: BookmarkItem) => {
                 if (!el.parentId) {
                     roots.push(el);
-                } else {
+                } else if (bookmarkData[arrMap[el.parentId]]) {
                     bookmarkData[arrMap[el.parentId]].children.push(el);
                     bookmarkData[arrMap[el.parentId]].children = orderBy(bookmarkData[arrMap[el.parentId]].children, 'bookmarkType', 'asc');
                 }
@@ -399,7 +438,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.dataSource.data = orderBy(roots, 'bookmarkType', 'asc');
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
@@ -407,13 +446,13 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
      * To open a bookmark
      * @param url
      */
-    openBookmark(node: BookmarkFlatNode): void {
+    openBookmark(node: any): void {
         if (this.editable) {
             return;
         }
 
-        if (node.data) {
-            window.open(node.data);
+        if (node.data || node.bookmarkData) {
+            window.open(node.data || node.bookmarkData);
         } else {
             this._appUIService.showSnackbar('Unable to open the link, Url not found!', 'failure');
         }
@@ -422,7 +461,21 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * To filter bookmarks
      */
-    filterBookmarks(): void {}
+    filterBookmarks(): void {
+        const searchTerm = this.searchTerm.trim();
+
+        if (searchTerm) {
+            this.serachData = this.bookmarkData.filter((f) => {
+                if (f.bookmarkType === 'url') {
+                    const re = new RegExp(searchTerm as string, 'i');
+                    return f.bookmarkName?.match(re);
+                }
+                return false;
+            });
+        } else {
+            this.serachData = [];
+        }
+    }
 
     /**
      * To edit bookmarks
@@ -437,15 +490,83 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     /**
-     * To delete selected bookmarks
-     */
-    deleteSelectedBookmarks(): void {}
-
-    /**
      * To delete bookmark
-     * @param node
+     * @param { 'folder' | 'url' } type
+     * @param { BookmarkFlatNode } node
      */
-    deleteBookmark(node: BookmarkFlatNode): void {}
+    deleteBookmark(type: 'folder' | 'url', node: BookmarkFlatNode): void {
+        try {
+            this.dialogRef = this._appUIService.showAppConfirmDialog(
+                'generic',
+                'Confirm Delete',
+                `Are you sure to delete bookmark ${type} "${node.name}"?`
+            );
+            this.dialogRef.afterClosed().subscribe(async (dialogResult) => {
+                if (dialogResult) {
+                    try {
+                        this.progressLoading = true;
+
+                        // append the node id by default
+                        let ids = [node.id];
+
+                        // if there are children, reccursively get the children ids
+                        if (node.children) {
+                            const getChildrenId = (children: BookmarkItem[]) => {
+                                return children.map((m) => {
+                                    if (m.children) {
+                                        return [m.id, ...getChildrenId(m.children)];
+                                    } else {
+                                        return [m.id];
+                                    }
+                                });
+                            };
+
+                            ids = [node.id, ...getChildrenId(node.children).flat(Infinity)];
+                        }
+
+                        // send the request to server
+                        await TUtils.HttpClient.sendRequest({
+                            urls: [...this.apiUrls].map((m) => `${m}/update`),
+                            requestArgs: {
+                                ids,
+                                userType: 'agent',
+                                bookmarkStatus: 2,
+                                updatedBy: SDKClient.getAgentData().agentId
+                            },
+                            header: {
+                                'Content-Type': 'application/json'
+                            },
+                            responseType: 'json',
+                            method: 'POST',
+                            log: true
+                        });
+
+                        this._appUIService.showSnackbar(`Bookmark ${type} "${node.name}" deleted successfully`);
+
+                        // remove the deleted items from bookmarks data
+                        this.bookmarkData = this.bookmarkData.filter((i) => !ids.includes(i.id));
+
+                        // get the parent node if any
+                        const thisParent = this.getParentNode(node);
+
+                        this.formatBookmarkData();
+
+                        // if the item is bookmark and no children after delete toggle the treenode
+                        if (thisParent) {
+                            if (!thisParent?.children?.length) {
+                                this.treeControl.toggle(thisParent);
+                            }
+                        }
+                    } catch (error) {
+                        this._appUIService.showSnackbar(`Error in deleting bookmark ${type}`, 'failure');
+                    } finally {
+                        this.progressLoading = false;
+                        // this.editable = false;
+                    }
+                }
+            });
+        } catch (error) {}
+    }
 
     /**
      * Add/Update bookmark data dialog
@@ -497,6 +618,15 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
                 return;
             }
 
+            if (this.addBookmarkData.type === 'url') {
+                try {
+                    const url = new URL(this.addBookmarkData.data);
+                } catch (_) {
+                    this._appUIService.showSnackbar(`Unable to add bookmark, please enter a valid URL`, 'failure');
+                    return;
+                }
+            }
+
             const userId = SDKClient.getAgentData().agentId;
 
             this._appUIService.showSnackbar(`Adding bookmark ${this.addBookmarkData.type}, please wait...`, 'loading');
@@ -504,7 +634,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
             this.progressLoading = true;
 
             // get the data from server
-            await TUtils.HttpClient.sendRequest({
+            const { response } = await TUtils.HttpClient.sendRequest<BookmarkResponse>({
                 urls: [...this.apiUrls].map((m) => `${m}/create`),
                 requestArgs: {
                     parentId: this.addBookmarkData?.id ?? null,
@@ -524,12 +654,10 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
                 log: true
             });
 
-            this.progressLoading = false;
-
             // add to the list and format
             this.bookmarkData.push({
-                id: TUtils.Generic.uuid(),
-                parentId: this.addBookmarkData.id ?? '',
+                id: response.data.id,
+                parentId: response.data.parentId,
                 userId,
                 userType: 'agent',
                 bookmarkName: this.addBookmarkData.name,
@@ -604,8 +732,18 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         } finally {
             this.addBookmarkData = null;
             this.progressLoading = false;
-            this.editable = false;
+            // this.editable = false;
         }
+    }
+
+    /**
+     * To enable searchable
+     */
+    enableSearch(): void {
+        this.searchable = true;
+        setTimeout(() => {
+            this.searchField?.nativeElement?.focus();
+        }, 100);
     }
 }
 
@@ -633,6 +771,10 @@ class BookmarkFlatNode {
      * Data of bookmark
      */
     data: string;
+    /**
+     * Bookmark added by team
+     */
+    team: boolean;
     /**
      * Level of item in the tree
      */
@@ -679,4 +821,22 @@ class AddBookmarkData {
      * Source of bookmark data
      */
     source: string;
+}
+
+/**
+ * Bookmark response from server
+ */
+interface BookmarkResponse {
+    /**
+     * Bookmark response status
+     */
+    status: number;
+    /**
+     * Bookmark response
+     */
+    response: number;
+    /**
+     * Bookmark response status data
+     */
+    data?: any;
 }
