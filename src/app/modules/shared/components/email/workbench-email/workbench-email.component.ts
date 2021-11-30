@@ -19,7 +19,7 @@ import { maticonByExtension, throwADError } from 'app/utils';
 import { format as formatDate } from 'date-fns';
 import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
-import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { EmailService, initEmailSearchState } from '../email.service';
 
 type Mail = {
@@ -561,6 +561,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
             this.advancedSearch.sub$ = forkJoin(requests)
                 .pipe(
+                    timeout(50000),
                     map((res: any) => {
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             throwADError(
@@ -864,6 +865,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
 
             this.openEmailRes.data.next(Object.assign(email, this.emailBodies[getRequestedSession()], { currentTab: this.currentTab }));
+            this.emailBodies = {};
             // this.previewEmailRef?.setEmailBody(this.openEmailRes.data?.value?.Body);
             // this.previewEmailRef.setEmailBody(this.emailBodies[requestedSession].Body);
             // this.emailInfo$.next(this.getSelectedEmailInfo());

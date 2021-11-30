@@ -120,7 +120,7 @@
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                             <mat-select #skillSelectRef placeholder="Select Skill..." [(ngModel)]="selectedSkill">
                                                 <mat-option (click)="clearSkillFilter()">None</mat-option>
-                                                <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="filterAgentList()">{{
+                                                <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="searchAgentsOnSkill()">{{
                                                     item.SkillName
                                                 }}</mat-option>
                                             </mat-select>
@@ -209,13 +209,27 @@
                                         </button>
                                     </mat-form-field>
                                 </div>
-                                <!-- <div class="ml-8 twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Speed Dial' }">
-                                    <mat-radio-group [formControl]="operationHoursCtrl">
+                                <div class="ml-8 twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Speed Dial' }">
+                                    <!-- <mat-radio-group [formControl]="operationHoursCtrl">
                                         <mat-radio-button value="all">All</mat-radio-button>
                                         <mat-radio-button value="operating">Operating</mat-radio-button>
                                         <mat-radio-button value="non-operating">Non Operating</mat-radio-button>
-                                    </mat-radio-group>
-                                </div> -->
+                                    </mat-radio-group> -->
+                                    <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
+                                        <input matInput [formControl]="searchKey" #skillSearchRef placeholder="Search" />
+                                        <button
+                                            *ngIf="skillSearchRef.value"
+                                            mat-button
+                                            color="primary"
+                                            matSuffix
+                                            mat-icon-button
+                                            aria-label="Clear"
+                                            (click)="searchKey.setValue('')"
+                                        >
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    </mat-form-field>
+                                </div>
                                 <div class="twd-absolute twd-w-full twd-min-h-8/12 twd-max-h-full" [ngClass]="customFuse?.content">
                                     <ad-table
                                         #adTable

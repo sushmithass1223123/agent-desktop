@@ -75,34 +75,41 @@
                             </div>
                         </div>
 
-                        <div *ngIf="audioPlayer" class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center">
-                            <button
-                                *ngIf="audioPlayer._adpState === 'paused'"
-                                mat-icon-button
-                                class="!twd-mr-1 bg-success custom-btn"
-                                matTooltip="Play"
-                                (click)="playerAction(1)"
-                            >
-                                <mat-icon>play_circle_outline</mat-icon>
-                            </button>
-                            <button
-                                *ngIf="audioPlayer._adpState === 'playing'"
-                                mat-icon-button
-                                class="!twd-mr-1 bg-warning custom-btn"
-                                matTooltip="Pause"
-                                (click)="playerAction(2)"
-                            >
-                                <mat-icon>pause_circle_outline</mat-icon>
-                            </button>
-                            <button mat-icon-button class="!twd-mr-1 bg-danger custom-btn" matTooltip="Stop" (click)="playerAction(3)">
-                                <mat-icon>stop</mat-icon>
-                            </button>
-                            <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
-                        </div>
+                        <ng-container *ngIf="voiceControlsService.cannedAudioPlayer as audioPlayer">
+                            <div *ngIf="audioPlayer" class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center">
+                                <button
+                                    *ngIf="audioPlayer._adpState === 'paused'"
+                                    mat-icon-button
+                                    class="!twd-mr-1 bg-success custom-btn"
+                                    matTooltip="Play"
+                                    (click)="voiceControlsService.playerAction(1)"
+                                >
+                                    <mat-icon>play_circle_outline</mat-icon>
+                                </button>
+                                <button
+                                    *ngIf="audioPlayer._adpState === 'playing'"
+                                    mat-icon-button
+                                    class="!twd-mr-1 bg-warning custom-btn"
+                                    matTooltip="Pause"
+                                    (click)="voiceControlsService.playerAction(2)"
+                                >
+                                    <mat-icon>pause_circle_outline</mat-icon>
+                                </button>
+                                <button
+                                    mat-icon-button
+                                    class="!twd-mr-1 bg-danger custom-btn"
+                                    matTooltip="Stop"
+                                    (click)="voiceControlsService.playerAction(3)"
+                                >
+                                    <mat-icon>stop</mat-icon>
+                                </button>
+                                <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
+                            </div>
+                        </ng-container>
                     </div>
 
                     <div
-                        *ngIf="!audioPlayer && widgetData.IVR?.MenuEnabled"
+                        *ngIf="!voiceControlsService.cannedAudioPlayer && widgetData.IVR?.MenuEnabled"
                         class="twd-flex twd-flex-row twd-flex-full px-12 border-radius-30 position-relative ivr-history"
                     >
                         <div class="ivr-label">{{ direction === 'Out' ? 'Call Flow' : 'IVR History' }}</div>

@@ -3,6 +3,7 @@ export * from './alert-dialog/alert-dialog.component';
 export * from './app-confirm-dialog/app-confirm-dialog.component';
 export * from './app-snackbar/app-snackbar.component';
 export * from './avatar/avatar.component';
+// export * from './bookmarks/bookmarks.component';
 export * from './create-email/create-email.component';
 export * from './custom-dialog/custom-dialog.component';
 export * from './email/mailbox-settings/mailbox-settings.component';
