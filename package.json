@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.0.11.15",
+    "version": "5.0.11.30",
     "license": "",
     "scripts": {
         "ng": "nx",
@@ -76,6 +76,7 @@
         "ngx-drag-scroll": "12.0.0-beta.2",
         "rxjs": "6.5.3",
         "tinymce": "5.9.2",
+        "tmac-sdk": "git+https://gitlab+deploy-token-17:abBjHj7fzix3b8nK_o76@git.tetherfi.com/tetherfi_product/products/tmac/ui/tmac-packages/tmac-sdk.git",
         "tslib": "2.3.0",
         "web-animations-js": "2.3.2",
         "zone.js": "0.11.4"

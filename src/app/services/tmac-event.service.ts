@@ -217,7 +217,7 @@ export class TMACEventService extends SharedWrapper {
                 );
             }
         } catch (error) {
-            throwADError('Error in TMACEventService.sendPostMessageToTheLauncher', error);
+            throwADError(`Error in TMACEventService.sendPostMessageToTheLauncher.${fn}`, error);
         }
     }
 

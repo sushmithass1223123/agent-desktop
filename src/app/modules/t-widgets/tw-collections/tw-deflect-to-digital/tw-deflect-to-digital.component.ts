@@ -22,11 +22,6 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     @Input() data: IWidget<any, WidgetData>;
 
     /**
-     * Application state
-     */
-    loading = false;
-
-    /**
      * Interaction Id
      */
     interactionId: number;

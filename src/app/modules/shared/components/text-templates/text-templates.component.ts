@@ -128,7 +128,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * @param {any} event
      */
     onSelectDepartment(event: any): void {
-        const value = event.value.ID;
+        const value = event?.value?.ID;
 
         // check if value is there
         if (!value) {
@@ -158,7 +158,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * @param {any} event
      */
     onSelectGroups(event: any): void {
-        const value = event.value.Name;
+        const value = event?.value?.Name;
         // check if value is there
         if (!value) {
             // if none selected then clear templates and selected template
