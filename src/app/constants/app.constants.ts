@@ -415,5 +415,6 @@ export const EXCLUDED_TMAC_EVENT = [
     'TeamActiveStatusDetailsEvent',
     'TeamActiveChannelListEvent',
     'TeamAgentInteractionDetailsEvent',
-    'TeamrWorkCodeDetailsEvent'
+    'TeamrWorkCodeDetailsEvent',
+    'VoiceCannedResponseEvent'
 ];

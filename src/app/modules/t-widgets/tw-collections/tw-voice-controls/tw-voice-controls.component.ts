@@ -1,3 +1,4 @@
+import { TwVoiceControlsService } from './tw-voice-controls.service';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -167,10 +168,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     mediaServerMessages = [];
     /**
-     * Audio player for webphone ref
-     */
-    audioPlayer: any;
-    /**
      * MS call muted flag
      */
     muted: boolean;
@@ -323,7 +320,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _matDialog: MatDialog,
-        private _contentPageService: ContentPageService
+        private _contentPageService: ContentPageService,
+        public voiceControlsService: TwVoiceControlsService
     ) {
         super();
     }
@@ -1201,32 +1199,33 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         Item: AgentInteractionTemplate;
     }): void {
         // check if audio is playing already
-        this.audioPlayer?.stop();
+        this.voiceControlsService.cannedAudioPlayer?.stop();
 
         // check the status of call
-        if (!this.callConnected) {
-            this._appUIService.showSnackbar('Audio cannot be played when call is not connected!', 'failure');
-            return;
-        }
+        // if (!this.callConnected) {
+        //     this._appUIService.showSnackbar('Audio cannot be played when call is not connected!', 'failure');
+        //     return;
+        // }
 
         // get the connection based on session id and play the buffer
-        this.audioPlayer = this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
+        this.voiceControlsService.cannedAudioPlayer = this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
 
         // check if played
-        if (!this.audioPlayer) {
+        if (!this.voiceControlsService.cannedAudioPlayer) {
             this._appUIService.showSnackbar(`Error in playing canned audio '${evt.Item.Name}'`, 'failure');
             return;
         }
 
         // append the name to audio player
-        this.audioPlayer.fileName = evt.Item.Name;
+        this.voiceControlsService.cannedAudioPlayer.fileName = evt.Item.Name;
+        this.voiceControlsService.cannedAudioPlayer.fileId = evt.Item.Id;
 
         // set the state to playing
-        this.audioPlayer._adpState = 'playing';
+        this.voiceControlsService.cannedAudioPlayer._adpState = 'playing';
 
         // listen to onEnd
-        this.audioPlayer.onEnd = () => {
-            this.audioPlayer = null;
+        this.voiceControlsService.cannedAudioPlayer.onEnd = () => {
+            this.voiceControlsService.cannedAudioPlayer = null;
         };
 
         // show a success alert
@@ -1234,7 +1233,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // create custom event and send
         // SDKClient.events.emit('VoiceCannedResponseAckEvent', {
-        //     SAudioPlayer: this.audioPlayer,
+        //     SAudioPlayer: this._voiceControlServie.cannedAudioPlayer,
         //     Item: evt.Item
         // });
     }
@@ -1510,28 +1509,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this._appUIService.showSnackbar('Unhold call failed', 'failure');
             }
         });
-    }
-
-    /**
-     * Player Action
-     * Need More Description
-     * @method playerAction
-     * @param {Number} action
-     */
-    playerAction(action: number): void {
-        if (action === 1) {
-            // play
-            this.audioPlayer.resume();
-            this.audioPlayer._adpState = 'playing';
-        } else if (action === 2) {
-            // pause
-            this.audioPlayer.pause();
-            this.audioPlayer._adpState = 'paused';
-        } else {
-            // stop
-            this.audioPlayer.stop();
-            this.audioPlayer = null;
-        }
     }
 
     /**
