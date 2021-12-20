@@ -273,7 +273,12 @@ export const AGENT_FEATURES = {
     IsWhatsAppOutEnabled: 'iswhatsappoutenabled',
     IsEmailOutEnabled: 'isemailoutenabled',
     IsOneWayVideoEnabled: 'isonewayvideoenabled',
-    IsChatMediaDownloadEnabled: 'ischatmediadownloadenabled'
+    IsChatMediaDownloadEnabled: 'ischatmediadownloadenabled',
+    IsAudioToVideoEscalateEnabled: 'isaudiotovideoescalateenabled',
+    IsEmailWorkbenchQueueAllowed: 'isemailworkbenchqueueallowed',
+    IsEmailWorkbenchInboxAllowed: 'isemailworkbenchinboxallowed',
+    IsEmailWorkbenchSentAllowed: 'isemailworkbenchsentallowed',
+    IsEmailWorkbenchDraftsAllowed: 'isemailworkbenchdraftsallowed'
 };
 
 /**

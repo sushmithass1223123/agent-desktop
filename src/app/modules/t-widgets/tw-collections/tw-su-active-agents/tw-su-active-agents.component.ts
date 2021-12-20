@@ -441,7 +441,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         SDKClient.logout(
                             {
                                 deviceId: agent.StationID,
-                                reason: 'SupervisorLogout'
+                                reason: 'SupervisorLogout',
+                                tmacServer: agent.TmacServer
                             },
                             null
                         ).then((dt: IResponse) => {

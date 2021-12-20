@@ -8,15 +8,16 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
 import { AgentSkillListComponent, PreviewEmailComponent, SnackbarComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
-import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { format as formatDate } from 'date-fns';
+import { addHours, format, format as formatDate } from 'date-fns';
 import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
@@ -196,7 +197,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Currently selected tab
      */
-    currentTab: AvailableTabs = 'queue';
+    currentTab: string;
 
     /**
      * Sort controls
@@ -252,12 +253,37 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     latestEmailPreview = false;
 
+    /**
+     * Available tabs ref
+     */
     availableTabs = [
-        { label: 'Queue', icon: 'queue', key: 'queue' },
-        { label: 'Inbox', icon: 'mail', key: 'inbox' },
-        { label: 'Sent', icon: 'mark_email_read', key: 'sentitem' },
-        { label: 'Drafts', icon: 'drafts', key: 'draft' }
+        { label: 'Queue', enabled: true, icon: 'queue', key: 'queue' },
+        { label: 'Inbox', enabled: true, icon: 'mail', key: 'inbox' },
+        { label: 'Sent', enabled: true, icon: 'mark_email_read', key: 'sentitem' },
+        { label: 'Drafts', enabled: true, icon: 'drafts', key: 'draft' }
     ];
+
+    /**
+     * Agent action features
+     */
+    agentFeatures: {
+        /**
+         * Queue tab allowed
+         */
+        queueTabAllowed: boolean;
+        /**
+         * Inbox tab allowed
+         */
+        inboxTabAllowed: boolean;
+        /**
+         * Sent tab allowed
+         */
+        sentTabAllowed: boolean;
+        /**
+         * Draft tab allowed
+         */
+        draftsTabAllowed: boolean;
+    };
 
     /**
      * Constructor
@@ -269,7 +295,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private appUiService: AppUiService,
         private matDialog: MatDialog,
         private _emailService: EmailService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super();
     }
@@ -286,10 +313,34 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         await this.setAvailableMailboxes();
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.channelConf.Config.TemplatesByTeam;
         const { agentProfile } = SDKClient.getAgentData();
+
+        // get the allowed tabs from config
+        const allowedTabs = this.channelConf.Config?.Tabs?.map((m: string) => m.toLowerCase()) ?? [];
+        if (allowedTabs.length) {
+            // filter the allowed tabs given in config
+            this.availableTabs.forEach((f) => {
+                f.enabled = allowedTabs.includes(f.label.toLowerCase());
+            });
+        }
+        // subscribe to agent features to check for the allowed tabs realtime
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                this.checkAgentFeatures();
+            }
+        });
+
+        // check for the agent features
+        this.checkAgentFeatures();
+
         this.deleteAllowed = this.channelConf.Config.DeleteAllowed && agentProfile === 'S';
         this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : agentProfile === 'S';
-        this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
-        this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
+
+        // set the current tab
+        this.currentTab = this.availableTabs.find((f) => f.enabled)?.key ?? '';
+        if (this.currentTab) {
+            this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
+            this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
+        }
     }
 
     /**
@@ -299,17 +350,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // create an intersection observer to start/stop polling when page is active/inactive
         this.intersectionObserver = new IntersectionObserver((entries) => {
             entries.map((entry) => {
-                if (entry.isIntersecting) {
-                    this._emailService.emailTemplatesDepartmentsByTeam = !!this.channelConf.Config.TemplatesByTeam;
-                    this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
-                    if (this.channelConf.Config.SearchPollingInterval) {
-                        this.startPolling();
+                if (this.currentTab) {
+                    if (entry.isIntersecting) {
+                        this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
+                        if (this.channelConf.Config.SearchPollingInterval) {
+                            this.startPolling();
+                        } else {
+                            this.doAdvancedSearch();
+                        }
                     } else {
-                        this.doAdvancedSearch();
+                        this.stopPolling();
+                        this.advancedSearch.show = false;
                     }
-                } else {
-                    this.stopPolling();
-                    this.advancedSearch.show = false;
                 }
             });
         });
@@ -330,6 +382,60 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To check agent features for IsSetBroadcastEnabled
+     */
+    private checkAgentFeatures(): void {
+        try {
+            // check the agent features to enable/disable
+            SDKClient.getAgentData().featuresList.forEach((f) => {
+                // get the featue
+                const feature = f.Feature.toLowerCase();
+
+                // switch the feature
+                switch (feature) {
+                    case AGENT_FEATURES.IsEmailWorkbenchQueueAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Queue') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    case AGENT_FEATURES.IsEmailWorkbenchInboxAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Inbox') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    case AGENT_FEATURES.IsEmailWorkbenchSentAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Sent') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    case AGENT_FEATURES.IsEmailWorkbenchDraftsAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Drafts') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    default:
+                }
+            });
+
+            // check if any selected tab is disabled, switch to first available tab
+            this.availableTabs.forEach((f) => {
+                if (!this.currentTab || (this.currentTab === f.key && !f.enabled)) {
+                    const firstTab = this.availableTabs.find((x) => x.enabled) as any;
+                    this.switchTab(firstTab?.key);
+                }
+            });
+        } catch (error) {}
+    }
 
     /**
      * Sets available mailboxes
@@ -689,9 +795,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
                 this.openEmailRes.data.next(null);
             }
-            this.doAdvancedSearch(true);
-            loader.dismiss();
             this.appUiService.showSnackbar('Emails closed successfully', 'success');
+            // deselect all the emails
+            emails.forEach((f) => (f.checked = false));
+            setTimeout(() => {
+                this.doAdvancedSearch(true);
+                loader.dismiss();
+            }, 1000);
         } catch (e) {
             console.error(e);
             loader.dismiss();
@@ -887,21 +997,23 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.dataSource.data = [];
         this.openEmailRes.data.next(null);
         this.emailBodies = {};
-        this.currentTab = tab;
-        this.latestEmailPreview = tab === 'draft' || tab === 'sentitem';
-        if (this.advancedSearch.data[tab]) {
-            this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
-            this.globalSearch.form.setValue(this.globalSearch.data[tab]);
-        } else {
-            this.resetForm();
-            this.advancedSearch.data[tab] = {
-                data: this.advancedSearch.form.value,
-                changed: false
-            };
-            this.globalSearch.form.setValue('');
-            this.globalSearch.data[tab] = this.globalSearch.form.value;
+        this.currentTab = tab ?? '';
+        if (tab) {
+            this.latestEmailPreview = tab === 'draft' || tab === 'sentitem';
+            if (this.advancedSearch.data[tab]) {
+                this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
+                this.globalSearch.form.setValue(this.globalSearch.data[tab]);
+            } else {
+                this.resetForm();
+                this.advancedSearch.data[tab] = {
+                    data: this.advancedSearch.form.value,
+                    changed: false
+                };
+                this.globalSearch.form.setValue('');
+                this.globalSearch.data[tab] = this.globalSearch.form.value;
+            }
+            this.doAdvancedSearch();
         }
-        this.doAdvancedSearch();
     }
 
     /**
@@ -1027,7 +1139,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
                                 this.openEmailRes.data.next(null);
                             }
-                            this.doAdvancedSearch(true);
+                            // deselect all the emails
+                            emails.forEach((f) => (f.checked = false));
+                            setTimeout(() => {
+                                this.doAdvancedSearch(true);
+                            }, 1000);
                             this.setComponentState('email/reply/success');
                             this._aotWidgetService.destroyWidget(widget.ID);
                         } else {
@@ -1053,7 +1169,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Resets advance search form
      */
     resetForm(): void {
-        this._emailService.resetEmailState();
+        let updateValue = {} as any;
+
+        try {
+            // check if search duration is configured, then patch the from datetime value
+            if (this.channelConf.Config.SearchDuration) {
+                const fromDate = addHours(new Date(), -this.channelConf.Config.SearchDuration);
+                updateValue = {
+                    fromDate,
+                    fromTime: format(fromDate, 'HH:mm')
+                };
+            }
+        } catch (error) {}
+
+        this._emailService.resetEmailState(updateValue);
+
         this.advancedSearch.data[this.currentTab] = {
             data: this.advancedSearch.form.value,
             changed: false

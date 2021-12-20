@@ -1,6 +1,9 @@
 <div class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }" *ngIf="loaded">
     <div *ngIf="staticWidgets?.length" fxFill fxFlex fxLayout="row wrap" fxLayoutAlign=" none">
-        <tw-template class="dynamic-widget-grid h-100-p w-100-p" [widgets]="staticWidgets"></tw-template>
+        <tw-template
+            class="dynamic-widget-grid h-100-p w-100-p twd-absolute twd-overflow-hidden twd-top-0 twd-left-0"
+            [widgets]="staticWidgets"
+        ></tw-template>
 
         <div
             *ngIf="aotWidgets.length"
