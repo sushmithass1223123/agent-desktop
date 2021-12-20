@@ -236,8 +236,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     Name: { searchable: true, width: '33%' },
                     VDN: { searchable: true },
                     ID: { searchable: true },
-                    Stf: { searchable: true },
-                    Avl: { searchable: true },
+                    Staff: { searchable: true, title: 'Stf' },
+                    Avail: { searchable: true, title: 'Avl' },
                     CIQ: { searchable: true }
                 }
             };
@@ -452,29 +452,31 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param {IResponseData<AgentModel[]>} res
      */
     private mapAgents = (res: IResponseData<AgentModel[]>): void => {
-        if (res.response.length > 0) {
-            const currentAgentID = SDKClient.getAgentData().agentId;
-            // filter the same agent and bots from the list
-            const list = res.response
-                .filter((r: AgentModel) => r.LoginID !== currentAgentID && r.AccessRole?.toLowerCase() !== 'chatbot')
-                .map((row) =>
-                    formatJsonData<Partial<AgentModel | any>>(
-                        { row },
-                        {
-                            AgentID: 'row.LoginID',
-                            FirstName: 'row.FirstName',
-                            LastName: 'row.LastName',
-                            LoginID: 'row.LoginID',
-                            CurrentAgentStatus: 'row.CurrentAgentStatus',
-                            InteractionCounts: 'row.InteractionCounts',
-                            AgentVoiceSkillsAsString: 'row.AgentVoiceSkillsAsString',
-                            StationID: 'row.StationID',
-                            TmacServer: 'row.TmacServer'
-                        }
-                    )
-                );
-            this.switcherList['Agent List'].data = list;
+        if (res.response?.length === 0) {
+            this.switcherList['Agent List'].data = [];
+            return;
         }
+        const currentAgentID = SDKClient.getAgentData().agentId;
+        // filter the same agent and bots from the list
+        const list = res.response
+            .filter((r: AgentModel) => r.LoginID !== currentAgentID && r.AccessRole?.toLowerCase() !== 'chatbot')
+            .map((row) =>
+                formatJsonData<Partial<AgentModel | any>>(
+                    { row },
+                    {
+                        AgentID: 'row.LoginID',
+                        FirstName: 'row.FirstName',
+                        LastName: 'row.LastName',
+                        LoginID: 'row.LoginID',
+                        CurrentAgentStatus: 'row.CurrentAgentStatus',
+                        InteractionCounts: 'row.InteractionCounts',
+                        AgentVoiceSkillsAsString: 'row.AgentVoiceSkillsAsString',
+                        StationID: 'row.StationID',
+                        TmacServer: 'row.TmacServer'
+                    }
+                )
+            );
+        this.switcherList['Agent List'].data = list;
     };
 
     /**
@@ -491,52 +493,55 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private mapFavSkills = (res: IResponseData<FavouriteSkill[]>): void => {
         // check if data found
-        if (res.response.length > 0) {
-            // check the prefix list
-            const channelPrefix = this._dialogData?.skill.channelPrfix || [];
-
-            // Filtering skills based on
-            // 1. The prefix passed in Config
-            // 2. Operating hours
-            this.switcherList['Skill List'].data = (res.response as ISkillType[]).reduce((acc, skill) => {
-                const valid = { prefix: false, opHours: false };
-                // Filter 1 : The prefix passed in Config
-                if (channelPrefix.length > 0) {
-                    valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
-                } else {
-                    valid.prefix = true;
-                }
-
-                // Filter 2 : Operating hours
-                //  But before checking , Checking if the prefix condition is satisfied
-                if (valid.prefix) {
-                    if (!skill.OperatingHours || !skill.OperatingHours.length) {
-                        valid.opHours = true;
-                    } else {
-                        valid.opHours = this.isValidOperationHours(skill.OperatingHours);
-                    }
-                }
-
-                // Push to the Acc array if both the conditions are satisfied
-                if (valid.prefix && valid.opHours) {
-                    acc.push(
-                        formatJsonData<Partial<FavouriteSkill | any>>(
-                            { row: skill },
-                            {
-                                CIQ: 'row.CIQ',
-                                Avail: 'row.Avail',
-                                Staff: 'row.Staff',
-                                ID: 'row.ID',
-                                VDN: 'row.VDN',
-                                Name: 'row.Name',
-                                OperatingHours: 'row.OperatingHours'
-                            }
-                        )
-                    );
-                }
-                return acc;
-            }, []);
+        if (res.response?.length === 0) {
+            this.switcherList['Skill List'].data = [];
+            return;
         }
+
+        // check the prefix list
+        const channelPrefix = this._dialogData?.skill.channelPrfix || [];
+
+        // Filtering skills based on
+        // 1. The prefix passed in Config
+        // 2. Operating hours
+        this.switcherList['Skill List'].data = (res.response as ISkillType[]).reduce((acc, skill) => {
+            const valid = { prefix: false, opHours: false };
+            // Filter 1 : The prefix passed in Config
+            if (channelPrefix.length > 0) {
+                valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
+            } else {
+                valid.prefix = true;
+            }
+
+            // Filter 2 : Operating hours
+            //  But before checking , Checking if the prefix condition is satisfied
+            if (valid.prefix) {
+                if (!skill.OperatingHours || !skill.OperatingHours.length) {
+                    valid.opHours = true;
+                } else {
+                    valid.opHours = this.isValidOperationHours(skill.OperatingHours);
+                }
+            }
+
+            // Push to the Acc array if both the conditions are satisfied
+            if (valid.prefix && valid.opHours) {
+                acc.push(
+                    formatJsonData<Partial<FavouriteSkill | any>>(
+                        { row: skill },
+                        {
+                            CIQ: 'row.CIQ',
+                            Avail: 'row.Avail',
+                            Staff: 'row.Staff',
+                            ID: 'row.ID',
+                            VDN: 'row.VDN',
+                            Name: 'row.Name',
+                            OperatingHours: 'row.OperatingHours'
+                        }
+                    )
+                );
+            }
+            return acc;
+        }, []);
     };
 
     /**
@@ -595,7 +600,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             byTeam: this._dialogData.agent.teamFilter ?? false,
             type: ''
         })
-            .then((res) => this.mapAgents(res))
+            .then((res) => {
+                this.mapAgents(res);
+                this.table.source.data = this.switcherList['Agent List'].data;
+            })
             .catch((e) => {
                 console.error(e);
                 this.loading -= 1;

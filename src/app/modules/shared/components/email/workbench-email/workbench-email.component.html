@@ -186,11 +186,7 @@
                                                 <input matInput formControlName="inSessionId" type="text" />
                                             </mat-form-field>
 
-                                            <mat-form-field
-                                                appearance="outline"
-                                                class="twd-text-sm twd-col-span-2"
-                                                [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
-                                            >
+                                            <mat-form-field appearance="outline" class="twd-text-sm twd-col-span-2">
                                                 <ng-container *ngIf="advancedSearch.form.controls.listOfMailboxes?.value as selectedMailboxes">
                                                     <mat-label>
                                                         {{
@@ -621,7 +617,7 @@
                         </div>
                     </div>
                     <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
-                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
+                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: (node.children) }"></ng-container>
                     </div>
                 </div>
             </div>

@@ -814,15 +814,15 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             null
         )
             .then((result: IResponse) => {
-                // set loading to true
-                this.loading = false;
                 // process the login response
                 this.loginResponse(result);
+                // set loading to false
+                this.loading = false;
             })
             .catch((e) => {
                 console.error(e);
                 this.videoElement?.nativeElement.play();
-                // set loading to true
+                // set loading to false
                 this.loading = false;
                 // login error
                 this._appUIService.showSnackbar('Login failed, Please try again', 'failure', 'top', 'right');

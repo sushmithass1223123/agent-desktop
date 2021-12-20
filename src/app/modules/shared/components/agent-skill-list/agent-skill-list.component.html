@@ -96,7 +96,9 @@
                                     [disabled]="controls.transfer"
                                     (click)="executeAction(false)"
                                 >
-                                    <span *ngIf="!loading" class="twd-font-extrabold"> {{ data?.type.includes('transfer') ? 'BT' : 'BC' }}</span>
+                                    <span *ngIf="!loading" class="twd-font-extrabold">
+                                        {{ _dialogData?.type.includes('transfer') ? 'BT' : 'BC' }}</span
+                                    >
                                     <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                                 </button>
                             </div>
