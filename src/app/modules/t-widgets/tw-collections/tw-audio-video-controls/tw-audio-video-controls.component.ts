@@ -163,10 +163,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     remoateScreenshareRef: any;
     /**
-     * Check if OneWayVideo
-     */
-    oneWayVideo: boolean;
-    /**
      * Wrc call type
      */
     wrcCallType: WrcCallTypes;
@@ -174,11 +170,23 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * Remote Video Elements Ref
      */
     @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
-
     /**
      * List of user camera list
      */
     userCameraList: CustomMediaDeviceInfo[];
+    /**
+     * Agent action features
+     */
+    agentFeatures: {
+        /**
+         * One way video
+         */
+        oneWayVideo: boolean;
+        /**
+         * Audio to video escalation
+         */
+        audioToVideo: boolean;
+    };
 
     /**
      * Constructor
@@ -194,6 +202,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _fuseProgressBarService: FuseProgressBarService
     ) {
         super();
+
+        // set defaults
+        this.agentFeatures = {
+            audioToVideo: false,
+            oneWayVideo: false
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -307,10 +321,22 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * To check agent features for One Way Video
      */
     private checkAgentFeatures(): void {
-        // check if the agent has IsOneWayVideoEnabled feature enabled
-        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter(
-            (f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsOneWayVideoEnabled
-        )?.[0]?.IsEnabled;
+        // check the agent features to enable/disable
+        SDKClient.getAgentData().featuresList.forEach((f) => {
+            // get the featue
+            const feature = f.Feature.toLowerCase();
+
+            // switch the feature
+            switch (feature) {
+                case AGENT_FEATURES.IsAudioToVideoEscalateEnabled:
+                    this.agentFeatures.audioToVideo = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsOneWayVideoEnabled:
+                    this.agentFeatures.oneWayVideo = f.IsEnabled;
+                    break;
+                default:
+            }
+        });
     }
 
     /**
@@ -325,7 +351,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         const AV: AVApiConfig = this.appConfig.AppConfigs.AV || {};
 
         // override the av config media constrain
-        if (this.oneWayVideo) {
+        if (this.agentFeatures.oneWayVideo) {
             AV.mediaConstraints.type = 'onewayvideo';
         }
 
@@ -927,7 +953,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         if (!(await this.avConn.upgradeToVideo())) {
             this._appUIService.showSnackbar('Upgrade to Video failed!', 'failure');
         } else {
-            this.oneWayVideo = false;
+            this.agentFeatures.oneWayVideo = false;
         }
         btn.disabled = false;
     }

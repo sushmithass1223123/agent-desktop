@@ -188,7 +188,7 @@
                         </button>
 
                         <button
-                            *ngIf="!oneWayVideo"
+                            *ngIf="!agentFeatures.oneWayVideo"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
@@ -200,7 +200,7 @@
                         </button>
 
                         <button
-                            *ngIf="oneWayVideo"
+                            *ngIf="agentFeatures.oneWayVideo"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
@@ -267,7 +267,7 @@
                     class="border-radius-20 bg-dark self-video"
                     [ngClass]="{ minimize: selfViewSmall }"
                     (dblclick)="minimizeVideo()"
-                    *ngIf="selfVideo && !oneWayVideo"
+                    *ngIf="selfVideo && !agentFeatures.oneWayVideo"
                     [@animate]="{ value: '*', params: { scale: '0.5' } }"
                 >
                     <div class="drag-handle" cdkDragHandle>

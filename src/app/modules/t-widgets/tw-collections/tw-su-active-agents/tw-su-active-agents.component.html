@@ -75,7 +75,7 @@
             >
                 <div
                     *ngFor="let item of filteredAgents; trackBy: trackByID"
-                    class="twd-w-full p-12 border-radius-20 agent-item mat-elevation-z1"
+                    class="twd-w-full p-12 border-radius-20 agent-item twd-cursor-pointer mat-elevation-z1"
                     [ngClass]="
                         (customFuse.anchor?.content || customFuse.widget?.content) +
                         ' ' +
@@ -110,12 +110,12 @@
                             </div>
                             <div class="twd-ml-4 twd-flex twd-flex-col">
                                 <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
-                                    <span matTooltip="First Name">{{ item.FirstName }}</span>
+                                    <span matTooltip="Name">{{ item.FirstName || item.AgentName }}</span>
                                     /
                                     <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
                                 </span>
                                 <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
-                                    <span matTooltip="Agent Name"> {{ item.AgentName }}</span>
+                                    <span matTooltip="Name"> {{ item.AgentName }}</span>
                                     (<span matTooltip="Lan ID">{{ item.AgentLANID }}</span
                                     >)
                                 </div>

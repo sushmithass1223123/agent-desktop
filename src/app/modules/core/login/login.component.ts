@@ -7,8 +7,10 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { IAppConfig } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
@@ -41,7 +43,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * App configuration
      */
-    appConfig: any;
+    appConfig: IAppConfig;
     /**
      * Brand logo
      */
@@ -282,6 +284,10 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      */
     showOtp = false;
     /**
+     * Single sign on type
+     */
+    ssoType = '';
+    /**
      * Lan Id input children ref
      */
     @ViewChild('lanId') lanIdField: ElementRef<HTMLInputElement>;
@@ -335,7 +341,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
         private fuseSplashService: FuseSplashScreenService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _msTeamsAuthSerivce: MsTeamsAuthService
     ) {
         super();
 
@@ -366,12 +373,17 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         this.uiVersion = _appDataService.getAppVersion();
 
         // subscribe to _activatedRoute for loging agent id
-        this._activatedRoute.paramMap.subscribe((paramMap) => {
+        this._activatedRoute.paramMap.subscribe(async (paramMap) => {
             // check if agentId in param
             if (paramMap.has('agentId')) {
-                this.loadConfig(paramMap.get('agentId'));
+                await this.loadConfig(paramMap.get('agentId'));
             } else {
-                this.loadConfig();
+                await this.loadConfig();
+            }
+
+            // check if ssoType in param
+            if (paramMap.has('ssoType')) {
+                this.ssoType = paramMap.get('ssoType').toLowerCase();
             }
         });
     }
@@ -427,7 +439,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     }, {} as Record<string, any>)
                 )
             )
-            .subscribe((params) => {
+            .subscribe(async (params) => {
                 // if there is not user in param then return
                 if (!params.u) {
                     return;
@@ -486,8 +498,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         this.appConfig = config;
         this.configLoaded(config);
-        this.getData();
-        this.checkQueryParams();
+        await this.getTMACVersion();
     }
 
     /**
@@ -702,40 +713,45 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * To get data from server
      */
-    public getData(): void {
-        // get the TMAC server version
-        this.connectionError.retrying = true;
-        SDKClient.getTMACVersion('')
-            .then((dt) => {
-                if (dt.response !== 'NA') {
-                    this.version = dt.response;
-                    if (this.domainListEnabled) {
-                        SDKClient.getUserDomainList(null).then((result: IResponse) => {
-                            this.domainList = result.response || [];
-                        });
-                    }
-                    this.connectionError.errored = false;
-                    this.connectionError.countdown = null;
-                } else {
-                    throw new Error(`Invalid Response : ${JSON.stringify(dt)}`);
+    public async getTMACVersion(): Promise<void> {
+        try {
+            // get the TMAC server version
+            this.connectionError.retrying = true;
+            const { response } = await SDKClient.getTMACVersion('');
+
+            if (response !== 'NA' && response?.split('|')[0]?.trim()) {
+                this.version = response;
+                if (this.domainListEnabled) {
+                    SDKClient.getUserDomainList(null).then((result: IResponse) => {
+                        this.domainList = result.response || [];
+                    });
                 }
-            })
-            .catch((e) => {
-                console.error(e);
-                this.connectionError.errored = true;
-                this.connectionError.countdown = interval(1000).pipe(
-                    take(this.connectionError.pollingInterval + 1),
-                    tap((x) => {
-                        if (x === this.connectionError.pollingInterval) {
-                            this.getData();
-                        }
-                    })
-                );
-            })
-            .finally(() => {
-                this.connectionError.retrying = false;
-                this.loading = false;
-            });
+                this.connectionError.errored = false;
+                this.connectionError.countdown = null;
+
+                // if there is no SSO login, then check query params
+                if (!(await this.ssoLogin())) {
+                    // check query params only if the server is connected
+                    this.checkQueryParams();
+                }
+            } else {
+                throw new Error(`Invalid Response : ${response}`);
+            }
+        } catch (error) {
+            console.error(error);
+            this.connectionError.errored = true;
+            this.connectionError.countdown = interval(1000).pipe(
+                take(this.connectionError.pollingInterval + 1),
+                tap((x) => {
+                    if (x === this.connectionError.pollingInterval) {
+                        this.getTMACVersion();
+                    }
+                })
+            );
+        } finally {
+            this.connectionError.retrying = false;
+            this.loading = false;
+        }
     }
 
     /**
@@ -977,5 +993,52 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      */
     resetField(field: string): void {
         this.loginForm.patchValue({ [field]: '' });
+    }
+
+    /**
+     * For single sign on
+     */
+    async ssoLogin(): Promise<boolean> {
+        if (!this.ssoType) {
+            return false;
+        }
+
+        this.loading = true;
+
+        try {
+            if (this.ssoType === 'msteams') {
+                const response = await this._msTeamsAuthSerivce.signIn();
+                // check if authenticated
+                if (this._msTeamsAuthSerivce.authenticated) {
+                    // check the response
+                    if (response.result?.user?.email) {
+                        // get the agent lanId
+                        const lanId = response.result.user.email.split('@')[0];
+                        if (lanId) {
+                            this.loginForm.patchValue({ lanId: lanId });
+                            this.fuseSplashService.show();
+                            this.login(true);
+                        }
+                    }
+                }
+                return true;
+            } else {
+                this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
+            }
+        } catch (error) {
+            console.error('fail to authenticate', error);
+        } finally {
+            this.loading = false;
+        }
+        return false;
+    }
+
+    /**
+     * For single sign out
+     */
+    public singleSignOut(): void {
+        if (this.ssoType === 'msteams') {
+            this._msTeamsAuthSerivce.signOut();
+        }
     }
 }

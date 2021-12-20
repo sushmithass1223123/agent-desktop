@@ -81,7 +81,8 @@
                             "rxjs",
                             "@mattlewis92/dom-autoscroller",
                             "chartjs-plugin-piechart-outlabels",
-                            "@tmac/operators"
+                            "@tmac/operators",
+                            "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser"
                         ],
                         "customWebpackConfig": {
                             "path": "webpack.config.js"

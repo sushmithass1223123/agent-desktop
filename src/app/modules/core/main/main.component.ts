@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { AfterContentInit, Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { AgentFeaturesService } from '@services/agent-features.service';
@@ -45,6 +45,10 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * Logging agent Id
      */
     agentId: string;
+    /**
+     * Query params
+     */
+    queryParams: Params;
     /**
      * Unsubscribe all subject
      */
@@ -123,15 +127,19 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _titleService: Title,
         private fuseSplashService: FuseSplashScreenService
     ) {
-        // Set the private defaults
+        // set the private defaults
         this._unsubscribeAll = new Subject();
 
         // subscribe to _activatedRouter for loging agent id
         this._activatedRouter.paramMap.subscribe((paramMap) => {
-            // check if agentId in param
             if (paramMap.has('agentId')) {
                 this.agentId = paramMap.get('agentId');
             }
+        });
+
+        // subscribe to _activatedRouter for query params
+        this._activatedRouter.queryParams.subscribe((params) => {
+            this.queryParams = params;
         });
     }
 
@@ -220,7 +228,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
-        if (environment.production && (!route || route !== 'login') && (!opener || opener === window)) {
+        if (!this.queryParams.msTeams && environment.production && (!route || route !== 'login') && (!opener || opener === window)) {
             // we will route to login page
             this.routeToLogin();
             return;
