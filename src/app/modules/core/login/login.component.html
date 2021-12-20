@@ -218,7 +218,7 @@
                     class="submit-button"
                     aria-label="LOGIN"
                     (click)="login(false)"
-                    [disabled]="!loginForm.valid"
+                    [disabled]="!loginForm.valid || loading"
                 >
                     LOGIN
                 </button>

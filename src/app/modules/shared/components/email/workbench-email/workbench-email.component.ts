@@ -530,13 +530,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
                 searchParams = {
                     global: '',
-                    skills: searchFields.skills ? [searchFields.skills] : [],
+                    skills: SDKClient.getAgentData().agentSkills.map((s) => s.SkillID) || [],
                     email: searchFields.email,
                     agent: searchFields.agent || '',
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     subject: searchFields.subject,
-                    content: searchFields.content
+                    content: searchFields.content,
+                    listOfMailboxes: searchFields.listOfMailboxes.join(',')
                 };
                 if (this.currentTab === 'inbox') {
                     searchParams.assignedTo = searchFields.assignedTo;

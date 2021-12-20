@@ -780,7 +780,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 outboxSessionId: CurrOutSessionId || '',
                 routeId: RouteId || '',
                 subject: Subject,
-                typeOfResponse: ''
+                // the replace is done so that if the mode is 'reply-all', the '-all' is removed
+                typeOfResponse: this.emailRef.mode.replace('-all', '')
             }).catch((e) => errCallback(e));
             // this._fuseProgressBarService.hide();
             ref.dismiss();

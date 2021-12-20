@@ -950,7 +950,7 @@
                                     "Name": "Deflect To Digital",
                                     "Description": "",
                                     "Key": "TWDeflectToDigital",
-                                    "Type": "tw-deflect-to-digital",
+                                    "Type": "tw-voice-canned-responses",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2365,7 +2365,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "General": { "WorkbenchUrl": "https://dice.tetherfi.cloud:50005/api/workbench" },
+                                        "General": { "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench" },
                                         "Channels": [
                                             {
                                                 "Type": "Email",
