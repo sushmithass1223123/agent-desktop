@@ -169,16 +169,16 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .reduce((acc, curr) => {
                 // check if the share will be relevant in pie chart and only add that data
                 const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                const share = duration.hours + duration.days * 24 + Math.floor(duration.minutes / 60);
+                const share = duration.hours + duration.days * 24 + Math.round(duration.minutes / 60);
                 if (!curr.Duration) {
                     return acc;
                 }
                 // format the category and push the data to the chart
                 const data: Dataset = {
-                    category: `${curr.State} \n [${share < 10 ? '0' : share}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
-                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
-                    }]`,
-                    value: share
+                    category: `${curr.State} \n [${share < 10 ? `0${share}` : share}:${
+                        duration.minutes < 10 ? `0${duration.minutes}` + duration.minutes : duration.minutes
+                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`,
+                    value: curr.Duration
                 };
                 acc.push(data);
                 return acc;
@@ -198,16 +198,16 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .reduce((acc, curr) => {
                 const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
                 // check if the share will be relevant in pie chart and only add that data
-                const share = duration.hours + duration.days * 24 + Math.floor(duration.minutes / 60);
+                const share = duration.hours + duration.days * 24 + Math.round(duration.minutes / 60);
                 if (!curr.Duration) {
                     return acc;
                 }
                 // format the category and push the data to the chart
                 const data: Dataset = {
-                    category: `${curr.State} \n [${share < 10 ? '0' : share}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
-                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
-                    }]`,
-                    value: share
+                    category: `${curr.State} \n [${share < 10 ? `0${share}` : share}:${
+                        duration.minutes < 10 ? `0${duration.minutes}` : duration.minutes
+                    }:${duration.seconds < 10 ? `0${duration.seconds}` : duration.seconds}]`,
+                    value: curr.Duration
                 };
                 acc.push(data);
                 return acc;
