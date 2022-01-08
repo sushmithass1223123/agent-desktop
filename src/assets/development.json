@@ -1768,11 +1768,11 @@
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": true,
-                                                            "Comments": false,
+                                                            "Comments": true,
                                                             "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
-                                                            "AllowedStates": [],
+                                                            "AllowedStates": ["Available"],
                                                             "TeamFilter": false,
-                                                            "Columns": []
+                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1780,8 +1780,48 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": []
+                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
+                                                            "Columns": ["Stf", "Avl"]
+                                                        },
+                                                        "SpeedDial": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": false,
+                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
+                                                            "ChannelPrefix": ["VO"],
+                                                            "Columns": ["Name"]
+                                                        }
+                                                    },
+                                                    "Conference": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": true },
+                                                            "AllowedStates": ["Available"],
+                                                            "TeamFilter": false,
+                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
+                                                            "Columns": ["Stf"]
+                                                        },
+                                                        "SpeedDial": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": false,
+                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
+                                                            "ChannelPrefix": ["VO"],
+                                                            "Columns": ["Name"]
                                                         }
                                                     },
                                                     "DownloadAllowed": true,
@@ -2669,5 +2709,5 @@
             ]
         }
     },
-    "Version": "5.0.12.30-beta.1"
+    "Version": "5.0.12.30"
 }

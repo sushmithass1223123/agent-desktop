@@ -4,6 +4,7 @@ import { CustomerInfo, IMaskData } from 'app/interfaces';
 import { get, set } from 'lodash';
 import { extractJsonVal } from '@tmac/operators';
 import { eventNames } from 'process';
+import { Duration } from 'date-fns';
 
 type Generic = string | number;
 
@@ -177,4 +178,27 @@ export class ADError extends Error {
 export const throwADError = (msg: string, error: any) => {
     TUtils.Logger.error(msg ?? 'Error in AD', error);
     throw new ADError(error);
+};
+
+export const formatDuration = (duration: Duration) => {
+    let formatted = '';
+    if (duration.hours < 10) {
+        formatted = `0${duration.hours}:`;
+    } else {
+        formatted = `${duration.hours}:`;
+    }
+
+    if (duration.minutes < 10) {
+        formatted = `${formatted}0${duration.minutes}:`;
+    } else {
+        formatted = `${formatted}${duration.minutes}:`;
+    }
+
+    if (duration.seconds < 10) {
+        formatted = `${formatted}0${duration.seconds}`;
+    } else {
+        formatted = `${formatted}${duration.seconds}`;
+    }
+
+    return formatted;
 };

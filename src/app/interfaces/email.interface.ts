@@ -34,6 +34,7 @@ export interface CreateEmailOutput {
 export interface EmailComponentInputs {
     From: string;
     mailbox: string;
+    prelude?: string;
     CreatedTime: string;
     SessionID: string;
     To: string[];

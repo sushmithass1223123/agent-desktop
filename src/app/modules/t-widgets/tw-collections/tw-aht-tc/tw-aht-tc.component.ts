@@ -7,7 +7,8 @@ import { AgentChannelDataModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
 import { ChannelListEvent, CustomSDKEvent } from 'app/interfaces';
-import { format } from 'date-fns';
+import { intervalToDuration } from 'date-fns';
+import { formatDuration } from 'app/utils/';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 type Dataset = { category: string; value: number };
@@ -131,10 +132,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
                     only: true
                 })
             },
-            AverageHandleTime: {
-                title: 'AHT',
-                value: (element: any) => format((element.AverageActiveTime + element.AverageHoldTime) * 1000, 'hh:mm:ss') || '00:00:00'
-            },
+            AverageHandleTime: { title: 'AHT' },
             Transfer: {},
             Conference: {}
         };
@@ -149,7 +147,15 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      */
     AgentChannelListEvent(evt: CustomSDKEvent): void {
         this.interactionList = evt.Data?.Channels || [];
-        this.table.source.data = this.interactionList;
+        // format the incoming evt data
+        this.table.source.data = this.interactionList.map(({ AverageActiveTime, AverageHoldTime, Channel, Transfer, Conference }) => {
+            return {
+                Channel,
+                Transfer,
+                Conference,
+                AverageHandleTime: formatDuration(intervalToDuration({ start: 0, end: (AverageActiveTime + AverageHoldTime) * 1000 }))
+            };
+        });
     }
 
     /**
@@ -157,61 +163,62 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * @param {CustomSDKEvent} evt
      */
     TeamChannelListEvent(evt: CustomSDKEvent<ChannelListEvent>): void {
-        const datasets = { AHT: [], 'Transfer / Conference': [] };
-        const labels = [];
-        evt.Data?.Channels.forEach((c) => {
-            if (c.AverageActiveTime + c.AverageHoldTime) {
-                datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
-            }
-
-            if (c.Transfer + c.Conference) {
-                datasets['Transfer / Conference'].push(c.Transfer + c.Conference);
-            }
-
-            labels.push(c.Channel);
-        });
         const dataset = evt.Data.Channels.reduce((acc, curr) => {
+            const ahtValue = (curr.AverageActiveTime || 0) + (curr.AverageHoldTime || 0);
             const ahtStat = {
-                category: curr.Channel,
-                value: (curr.AverageActiveTime || 0) + (curr.AverageHoldTime || 0)
+                category: `${curr.Channel} [${formatDuration(intervalToDuration({ start: 0, end: ahtValue * 1000 }))}] (AHT)`,
+                value: ahtValue
             };
             const transferStat = {
-                category: curr.Channel,
+                category: `${curr.Channel} (Transfer / Conference)`,
                 value: (curr.Transfer || 0) + (curr.Conference || 0)
             };
+
+            // add aht value only if the value is above zero
             if (ahtStat.value) {
-                if (acc['AHT']) {
-                    acc['AHT'].push(ahtStat);
-                } else {
-                    acc['AHT'] = [ahtStat];
+                if (!acc['AHT']) {
+                    acc['AHT'] = [];
                 }
+                acc['AHT'].push(ahtStat);
             }
 
+            // add transfer value only if the value is above zero
             if (transferStat.value) {
-                if (acc['Transfer / Conference']) {
-                    acc['Transfer / Conference'].push(transferStat);
-                } else {
-                    acc['Transfer / Conference'] = [transferStat];
+                if (!acc['Transfer / Conference']) {
+                    acc['Transfer / Conference'] = [];
                 }
+                acc['Transfer / Conference'].push(transferStat);
             }
             return acc;
         }, {});
 
-        this.allData$.next(
-            Object.entries(dataset).reduce((acc, curr) => {
+        const allData = Object.entries(dataset)
+            // convert list to valid chart json
+            .reduce((acc, curr) => {
                 const [name, data] = curr;
                 acc.push({ name, data });
                 return acc;
             }, [])
-        );
+            // sort data based on the length of the data in dataset so that the dataset with most varied data is in the
+            // outermost part of the chart, so that most of the labels are visible
+            .sort((prev, next) => {
+                return prev.data.length - next.data.length;
+            });
 
-        this.chartData$ = this.allData$.pipe(
-            takeUntil(this.unsubscribeAll),
-            map((ds) => (this.maximized ? ds : ds.map((d) => ({ name: d.name, data: d.data.slice(0, this.data.Data.Limit || 5) }))))
-        );
+        this.allData$.next(allData);
+
+        if (!this.chartData$) {
+            this.chartData$ = this.allData$.pipe(
+                takeUntil(this.unsubscribeAll),
+                map((ds) => (this.maximized ? ds : ds.map((d) => ({ name: d.name, data: d.data.slice(0, this.data.Data.Limit || 5) }))))
+            );
+        }
     }
 
-    labelContent = (e: any): string => e.category;
+    labelContent = (e: { category: string }): string => {
+        // remove (AHT) and (Transfer / Conference) from the labels
+        return e.category.replace(/\(AHT\)|\(Transfer \/ Conference\)/, '');
+    };
 }
 
 interface WidgetData {
