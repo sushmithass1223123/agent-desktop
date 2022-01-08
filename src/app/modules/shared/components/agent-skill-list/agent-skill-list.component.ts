@@ -38,7 +38,7 @@ type ISwitch = {
     comments?: boolean;
 };
 type ITab = 'Agent List' | 'Skill List' | 'Speed Dial';
-type ISkillType = Partial<FavouriteSkill>;
+type ISkillType = Omit<FavouriteSkill, 'Staff' | 'Avail'> & { Stf: string; Avl: string };
 type IFreeTextConf = {
     /**
      * ALlowed flag
@@ -236,8 +236,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     Name: { searchable: true, width: '33%' },
                     VDN: { searchable: true },
                     ID: { searchable: true },
-                    Staff: { searchable: true, title: 'Stf' },
-                    Avail: { searchable: true, title: 'Avl' },
+                    Stf: { searchable: true },
+                    Avl: { searchable: true },
                     CIQ: { searchable: true }
                 }
             };
@@ -504,7 +504,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         // Filtering skills based on
         // 1. The prefix passed in Config
         // 2. Operating hours
-        this.switcherList['Skill List'].data = (res.response as ISkillType[]).reduce((acc, skill) => {
+        this.switcherList['Skill List'].data = res.response.reduce((acc, skill) => {
             const valid = { prefix: false, opHours: false };
             // Filter 1 : The prefix passed in Config
             if (channelPrefix.length > 0) {
@@ -526,12 +526,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             // Push to the Acc array if both the conditions are satisfied
             if (valid.prefix && valid.opHours) {
                 acc.push(
-                    formatJsonData<Partial<FavouriteSkill | any>>(
+                    formatJsonData<ISkillType>(
                         { row: skill },
                         {
                             CIQ: 'row.CIQ',
-                            Avail: 'row.Avail',
-                            Staff: 'row.Staff',
+                            Avl: 'row.Avail',
+                            Stf: 'row.Staff',
                             ID: 'row.ID',
                             VDN: 'row.VDN',
                             Name: 'row.Name',
@@ -550,7 +550,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private mapSpeedDial = (res: IResponseData<SpeedDialModel[]>): void => {
         // Filtering skills based on Operation hours
-        this.switcherList['Speed Dial'].data = (res.response as ISkillType[]).reduce((acc, sDial) => {
+        this.switcherList['Speed Dial'].data = res.response.reduce((acc, sDial) => {
             let validOpHours = false;
             if (!sDial.OperatingHours || !sDial.OperatingHours.length) {
                 validOpHours = true;
@@ -1164,7 +1164,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * To process skill selected from list
      */
-    selectSkill = (row: FavouriteSkill): void => {
+    selectSkill = (row: ISkillType): void => {
         // if already loading then return
         if (this.loading) {
             return;
@@ -1177,8 +1177,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         // this.skillListTable.tableData.selection.clear();
         // this.clearDisplayValues();
         this.loading += 1;
-        row.Staff = 'loading';
-        row.Avail = 'loading';
+        row.Stf = 'loading';
+        row.Avl = 'loading';
         row.CIQ = 'loading';
         // get queue status from server
         SDKClient.getQueueStatus(row.ID)
@@ -1191,8 +1191,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     // cast the response
                     dt.response = dt.response as QueueStatusEvent;
                     // assign the values
-                    row.Staff = dt.response.Skill.AgentsStaffed.toString();
-                    row.Avail = dt.response.Skill.AgentAvailable.toString();
+                    row.Stf = dt.response.Skill.AgentsStaffed.toString();
+                    row.Avl = dt.response.Skill.AgentAvailable.toString();
                     row.CIQ = dt.response.Skill.CallsInQueue.toString();
                     // select the row in grid
                     if (typeof source === 'object') {
@@ -1212,15 +1212,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     this.selectedRow = { type: 'Skill List', row };
                 } else {
                     this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
-                    row.Staff = 'NA';
-                    row.Avail = 'NA';
+                    row.Stf = 'NA';
+                    row.Avl = 'NA';
                     row.CIQ = 'NA';
                 }
             })
             .catch(() => {
                 this._appUIService.showSnackbar(`Error in getting skill ${row.ID} status`, 'failure');
-                row.Staff = 'NA';
-                row.Avail = 'NA';
+                row.Stf = 'NA';
+                row.Avl = 'NA';
                 row.CIQ = 'NA';
                 this.loading -= 1;
             });

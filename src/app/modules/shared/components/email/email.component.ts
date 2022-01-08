@@ -191,22 +191,6 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
         if (this.email) {
             const email = JSON.parse(JSON.stringify(this.email));
             const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox, BCC } = email;
-            const prelude = `
-        <style>
-        ::-webkit-scrollbar{width:4px !important;height:4px !important;}
-        ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
-        </style>
-        <br/>
-        <div style='border-top: 1px solid gray; padding-top : 5px;'>
-            <div style='border-left: 3px solid gray;padding-left: 5px'>
-                <div> <strong> From: </strong> <span> ${From} </span> </div>
-                    <div> <strong> Sent: </strong> <span> ${CreatedTime} </span> </div>
-                    <div> <strong> To: </strong> <span> ${To} </span> </div>
-                    <div> <strong> Subject: </strong> <span> ${subject} </span> </div>
-                </div>
-            </div>
-        </div>
-        <br />`;
             const bodyBreak = `
             <style>
             ${
@@ -237,30 +221,30 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'forward':
                     this._email = {
                         BCC: [],
-                        Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: [],
                         From: mailbox,
                         Subject: `FW: ${subject}`,
                         Files,
-                        CC
+                        CC: []
                     };
                     break;
                 case 'reply':
                     this._email = {
                         BCC: [],
-                        Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.isArray(From) ? From : [From],
                         From: this.email.mailbox,
                         Subject: subject,
                         Files: [],
-                        CC
+                        CC: []
                     };
                     break;
                 case 'reply-all':
                     const ToList = (Array.isArray(From) ? From : From.split(',')).concat(To);
                     this._email = {
                         BCC,
-                        Body: `${prelude} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.from(new Set(ToList.filter((e) => e && e !== mailbox))),
                         From: mailbox,
                         Subject: subject,

@@ -1,3 +1,4 @@
+import { formatDuration } from 'app/utils';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { WallboardRefreshEvent } from '@tmac/sdk';
@@ -169,15 +170,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .reduce((acc, curr) => {
                 // check if the share will be relevant in pie chart and only add that data
                 const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                const share = duration.hours + duration.days * 24 + Math.round(duration.minutes / 60);
                 if (!curr.Duration) {
                     return acc;
                 }
                 // format the category and push the data to the chart
                 const data: Dataset = {
-                    category: `${curr.State} \n [${share < 10 ? `0${share}` : share}:${
-                        duration.minutes < 10 ? `0${duration.minutes}` + duration.minutes : duration.minutes
-                    }:${duration.seconds < 10 ? '0' + duration.seconds : duration.seconds}]`,
+                    category: `${curr.State} \n [${formatDuration(duration)}]`,
                     value: curr.Duration
                 };
                 acc.push(data);
@@ -197,16 +195,12 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
             .reverse()
             .reduce((acc, curr) => {
                 const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                // check if the share will be relevant in pie chart and only add that data
-                const share = duration.hours + duration.days * 24 + Math.round(duration.minutes / 60);
                 if (!curr.Duration) {
                     return acc;
                 }
                 // format the category and push the data to the chart
                 const data: Dataset = {
-                    category: `${curr.State} \n [${share < 10 ? `0${share}` : share}:${
-                        duration.minutes < 10 ? `0${duration.minutes}` : duration.minutes
-                    }:${duration.seconds < 10 ? `0${duration.seconds}` : duration.seconds}]`,
+                    category: `${curr.State} \n [${formatDuration(duration)}]`,
                     value: curr.Duration
                 };
                 acc.push(data);
@@ -255,7 +249,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 return acc;
             }
             const data: Dataset = {
-                category: `${curr.Intent || 'Unknown'} \n ${curr.Count}`,
+                category: `${curr.Intent || 'Default'} \n ${curr.Count}`,
                 value: curr.Count
             };
             // format the category and push the data to the chart

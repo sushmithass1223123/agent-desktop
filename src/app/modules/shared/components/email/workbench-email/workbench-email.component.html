@@ -620,6 +620,8 @@
             <div class="twd-flex twd-items-center">
                 <cdk-virtual-scroll-viewport
                     [itemSize]="64"
+                    [minBufferPx]="488"
+                    [maxBufferPx]="512"
                     class="twd-w-full twd-min-h-[74px] twd-max-h[512px]"
                     [ngStyle]="{ 'height.px': emailList.length * 74 > 512 ? 512 : emailList.length * 76 }"
                 >
