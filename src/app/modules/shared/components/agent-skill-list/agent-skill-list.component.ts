@@ -94,7 +94,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * Active switcher
      */
-    activeSwitcher: ITab | string;
+    activeSwitcher: ITab;
     /**
      * Selected item
      */
@@ -110,7 +110,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         /**
          * Type of table
          */
-        type: ITab | string;
+        type: ITab;
         /**
          * Selected row
          */
@@ -899,8 +899,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
-        // agent transfer/conf
-        if (this.selectedRow?.type === 'Speed Dial') {
+        // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
+        if (this.selectedRow?.type !== 'Skill List') {
             emails.forEach((email) => {
                 const { RouteId, SessionId } = email;
                 SDKClient.transferEmailToAgent({
@@ -962,7 +962,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Switch tab
      * @param item
      */
-    switchTab(tab: string): void {
+    switchTab(tab: ITab): void {
         // this.table.source.data = [];
         this.activeSwitcher = tab;
         this.table.source.data = this.switcherList[this.activeSwitcher].data;

@@ -1770,7 +1770,7 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
-                                                            "AllowedStates": ["Available"],
+                                                            "AllowedStates": ["Available", "Ready"],
                                                             "TeamFilter": false,
                                                             "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
                                                         },
@@ -1781,17 +1781,13 @@
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
                                                             "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
-                                                            "Columns": ["Stf", "Avl"]
+                                                            "Columns": []
                                                         },
-                                                        "SpeedDial": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": false,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
-                                                            "ChannelPrefix": ["VO"],
-                                                            "Columns": ["Name"]
-                                                        }
+                                                        "Blind": true,
+                                                        "Comments": false,
+                                                        "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
+                                                        "ChannelPrefix": ["VO"],
+                                                        "Columns": ["Name"]
                                                     },
                                                     "Conference": {
                                                         "Allowed": true,

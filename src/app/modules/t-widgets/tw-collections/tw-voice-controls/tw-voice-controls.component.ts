@@ -763,7 +763,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {TMACEventTypes} eventName
      */
     private setCallflow(eventName: TMACEventTypes): void {
-        if (this.direction !== 'Out') {
+        // for incoming or updated call ignore
+        if (this.direction !== 'Out' || this.callUpdated) {
             return;
         }
 
@@ -912,11 +913,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // set the call updated to false
         this.callUpdated = false;
 
-        // set call connected to false
-        this.callConnected = false;
-
         // set the callflow
         this.setCallflow('CallDisconnectedEvent');
+
+        // set call connected to false
+        this.callConnected = false;
     }
 
     /**

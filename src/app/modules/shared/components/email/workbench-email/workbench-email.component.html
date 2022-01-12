@@ -52,14 +52,9 @@
                     *ngIf="getEmailChecks() as selectedMails"
                     class="theme-bg twd-pb-5 border-radius-20 twd-h-full twd-col-span-3 lg:twd-col-span-1 twd-overflow-y-auto"
                 >
-                    <div
-                        class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md twd-h-[72px]"
-                        [ngClass]="{
-                            'twd-h-[72px]': !state.bulkSelection,
-                            'twd-h-[116px]': state.bulkSelection,
-                            'twd-h-[172px]': selectedMails.some || selectedMails.all
-                        }"
-                    >
+                    <!-- 'twd-h-[116px]': state.bulkSelection, -->
+                    <!-- 'twd-h-[172px]': selectedMails.some || selectedMails.all -->
+                    <div class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
                         <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
                             <button class="lg:twd-hidden" #expandableButton (click)="state.hideCategoryMenu = !state.hideCategoryMenu">
                                 <mat-icon>{{ state.hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
@@ -273,8 +268,13 @@
                             </button>
                         </div>
 
-                        <div id="sortControls" class="twd-flex twd-items-center twd-justify-between twd-px-2 twd-pt-2" *ngIf="state.bulkSelection">
+                        <div
+                            id="sortControls"
+                            class="twd-flex twd-items-center twd-justify-end twd-px-2 twd-pt-2"
+                            [ngClass]="{ 'twd-justify-between': state.bulkSelection }"
+                        >
                             <mat-checkbox
+                                *ngIf="state.bulkSelection"
                                 id="selectAllCtrl"
                                 (change)="selectEmails($event.checked)"
                                 [indeterminate]="selectedMails.some"
@@ -294,10 +294,10 @@
                                     >
                                         <span> Sort By {{ sortControls.sortBy }} </span>
                                         <mat-menu class="custom" #sortMenu="matMenu">
-                                            <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; sortEmailsByKey()">
+                                            <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; groupNodes()">
                                                 <span>Subject</span>
                                             </button>
-                                            <button mat-menu-item (click)="sortControls.sortBy = 'Date'; sortEmailsByKey()">
+                                            <button mat-menu-item (click)="sortControls.sortBy = 'Date'; groupNodes()">
                                                 <span>Date</span>
                                             </button>
                                         </mat-menu>
@@ -305,7 +305,7 @@
                                     <button
                                         id="sortOrderBtn"
                                         mat-button
-                                        (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                                        (click)="sortControls.ascending = !sortControls.ascending; groupNodes()"
                                         class="twd-max-w-min twd-px-0"
                                         [disabled]="!dataSource.data?.length"
                                     >
@@ -336,11 +336,12 @@
                                 Transfer All
                             </button>
 
+                            <!-- emails now closeable across all tabs since Version 5.0.12.30 -->
+                            <!-- *ngIf="currentTab === 'queue'" -->
                             <button
                                 mat-raised-button
                                 color="primary"
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                *ngIf="currentTab === 'queue'"
                                 (click)="closeEmails(getSelectedEmails())"
                             >
                                 Close Emails
@@ -433,6 +434,9 @@
                             (click)="replyToSelectedEmails([selectedEmail])"
                         >
                             Reply
+                        </button> -->
+                        <!-- <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" (click)="closeEmails([selectedEmail])">
+                            Close
                         </button> -->
                         <button
                             mat-raised-button
