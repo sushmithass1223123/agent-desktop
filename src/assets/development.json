@@ -950,7 +950,7 @@
                                     "Name": "Deflect To Digital",
                                     "Description": "",
                                     "Key": "TWDeflectToDigital",
-                                    "Type": "tw-deflect-to-digital",
+                                    "Type": "tw-voice-canned-responses",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -1560,28 +1560,6 @@
                                     "Data": { "ResponseMode": "manual", "EditAllowed": false }
                                 },
                                 {
-                                    "Name": "Deflect To Digital",
-                                    "Description": "",
-                                    "Key": "TWDeflectToDigital",
-                                    "Type": "tw-deflect-to-digital",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "ResponseMode": "manual", "EditAllowed": false }
-                                },
-                                {
                                     "Name": "Realtime Customer Sentiment",
                                     "Description": "feedback",
                                     "Key": "CustomerSentiment",
@@ -1790,11 +1768,11 @@
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": true,
-                                                            "Comments": false,
+                                                            "Comments": true,
                                                             "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
-                                                            "AllowedStates": [],
+                                                            "AllowedStates": ["Available", "Ready"],
                                                             "TeamFilter": false,
-                                                            "Columns": []
+                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
@@ -1802,8 +1780,44 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["EM"],
+                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
                                                             "Columns": []
+                                                        },
+                                                        "Blind": true,
+                                                        "Comments": false,
+                                                        "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
+                                                        "ChannelPrefix": ["VO"],
+                                                        "Columns": ["Name"]
+                                                    },
+                                                    "Conference": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": true },
+                                                            "AllowedStates": ["Available"],
+                                                            "TeamFilter": false,
+                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
+                                                            "Columns": ["Stf"]
+                                                        },
+                                                        "SpeedDial": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": false,
+                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
+                                                            "ChannelPrefix": ["VO"],
+                                                            "Columns": ["Name"]
                                                         }
                                                     },
                                                     "DownloadAllowed": true,
@@ -2365,7 +2379,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "General": { "WorkbenchUrl": "https://dice.tetherfi.cloud:50005/api/workbench" },
+                                        "General": { "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench" },
                                         "Channels": [
                                             {
                                                 "Type": "Email",
@@ -2394,10 +2408,12 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "SearchPollingInterval": 10000,
+                                                    "SearchPollingInterval": 60000,
                                                     "DeleteAllowed": false,
                                                     "QueueTransferForAgent": false,
-                                                    "TemplatesByTeam": false
+                                                    "TemplatesByTeam": false,
+                                                    "Tabs": ["queue", "inbox", "sent", "drafts"],
+                                                    "SearchDuration": 24
                                                 }
                                             },
                                             {
@@ -2614,7 +2630,11 @@
             ]
         },
         "Urls": {
-            "DashboardServerUrls": ["https://dice.tetherfi.cloud/SignalRDashboard2", "https://dice.tetherfi.cloud:443/SignalRDashboardSup"],
+            "DashboardServerUrls": [
+                "https://dice.tetherfi.cloud/SignalRDashboard2",
+                "http://localhost:55444/SignalRDashboard",
+                "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
+            ],
             "FileServerUrl": {
                 "MediaStreamer": "https://dice.tetherfi.cloud:13019/upload",
                 "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
@@ -2685,5 +2705,5 @@
             ]
         }
     },
-    "Version": "5.0.11.30"
+    "Version": "5.0.12.30"
 }

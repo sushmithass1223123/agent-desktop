@@ -85,7 +85,7 @@
         </button>
     </div>
 
-    <!-- <mat-list>
+    <mat-list *ngIf="pinnedAOTs.length">
         <h3 matSubheader>
             <span>Pinned Widgets</span>
         </h3>
@@ -102,7 +102,8 @@
                     <mat-icon>{{ widget.Config.Icon || 'widget' }}</mat-icon>
                 </button>
             </ng-container>
-            <button
+
+            <!-- <button
                 mat-mini-fab
                 color="primary"
                 class="fab-secondary mr-8 mb-8"
@@ -159,10 +160,10 @@
                         </div>
                     </mat-card>
                 </ng-template>
-            </button>
+            </button> -->
         </div>
     </mat-list>
-    <mat-divider></mat-divider> -->
+    <mat-divider *ngIf="pinnedAOTs.length"></mat-divider>
 </div>
 
 <ng-template #addWidgetDialog>

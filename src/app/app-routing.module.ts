@@ -25,6 +25,15 @@ const appRoutes: Routes = [
         ]
     },
     {
+        path: 'sso',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
+    {
+        path: 'sso/:ssoType',
+        component: LoginComponent
+    },
+    {
         path: 'main',
         children: [
             {

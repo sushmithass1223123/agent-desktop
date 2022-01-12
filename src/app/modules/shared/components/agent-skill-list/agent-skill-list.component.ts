@@ -38,7 +38,7 @@ type ISwitch = {
     comments?: boolean;
 };
 type ITab = 'Agent List' | 'Skill List' | 'Speed Dial';
-type ISkillType = Partial<FavouriteSkill>;
+type ISkillType = Omit<FavouriteSkill, 'Staff' | 'Avail'> & { Stf: string; Avl: string };
 type IFreeTextConf = {
     /**
      * ALlowed flag
@@ -94,7 +94,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * Active switcher
      */
-    activeSwitcher: ITab | string;
+    activeSwitcher: ITab;
     /**
      * Selected item
      */
@@ -110,7 +110,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         /**
          * Type of table
          */
-        type: ITab | string;
+        type: ITab;
         /**
          * Selected row
          */
@@ -452,29 +452,31 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param {IResponseData<AgentModel[]>} res
      */
     private mapAgents = (res: IResponseData<AgentModel[]>): void => {
-        if (res.response.length > 0) {
-            const currentAgentID = SDKClient.getAgentData().agentId;
-            // filter the same agent and bots from the list
-            const list = res.response
-                .filter((r: AgentModel) => r.LoginID !== currentAgentID && r.AccessRole?.toLowerCase() !== 'chatbot')
-                .map((row) =>
-                    formatJsonData<Partial<AgentModel | any>>(
-                        { row },
-                        {
-                            AgentID: 'row.LoginID',
-                            FirstName: 'row.FirstName',
-                            LastName: 'row.LastName',
-                            LoginID: 'row.LoginID',
-                            CurrentAgentStatus: 'row.CurrentAgentStatus',
-                            InteractionCounts: 'row.InteractionCounts',
-                            AgentVoiceSkillsAsString: 'row.AgentVoiceSkillsAsString',
-                            StationID: 'row.StationID',
-                            TmacServer: 'row.TmacServer'
-                        }
-                    )
-                );
-            this.switcherList['Agent List'].data = list;
+        if (res.response?.length === 0) {
+            this.switcherList['Agent List'].data = [];
+            return;
         }
+        const currentAgentID = SDKClient.getAgentData().agentId;
+        // filter the same agent and bots from the list
+        const list = res.response
+            .filter((r: AgentModel) => r.LoginID !== currentAgentID && r.AccessRole?.toLowerCase() !== 'chatbot')
+            .map((row) =>
+                formatJsonData<Partial<AgentModel | any>>(
+                    { row },
+                    {
+                        AgentID: 'row.LoginID',
+                        FirstName: 'row.FirstName',
+                        LastName: 'row.LastName',
+                        LoginID: 'row.LoginID',
+                        CurrentAgentStatus: 'row.CurrentAgentStatus',
+                        InteractionCounts: 'row.InteractionCounts',
+                        AgentVoiceSkillsAsString: 'row.AgentVoiceSkillsAsString',
+                        StationID: 'row.StationID',
+                        TmacServer: 'row.TmacServer'
+                    }
+                )
+            );
+        this.switcherList['Agent List'].data = list;
     };
 
     /**
@@ -491,52 +493,55 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private mapFavSkills = (res: IResponseData<FavouriteSkill[]>): void => {
         // check if data found
-        if (res.response.length > 0) {
-            // check the prefix list
-            const channelPrefix = this._dialogData?.skill.channelPrfix || [];
-
-            // Filtering skills based on
-            // 1. The prefix passed in Config
-            // 2. Operating hours
-            this.switcherList['Skill List'].data = (res.response as ISkillType[]).reduce((acc, skill) => {
-                const valid = { prefix: false, opHours: false };
-                // Filter 1 : The prefix passed in Config
-                if (channelPrefix.length > 0) {
-                    valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
-                } else {
-                    valid.prefix = true;
-                }
-
-                // Filter 2 : Operating hours
-                //  But before checking , Checking if the prefix condition is satisfied
-                if (valid.prefix) {
-                    if (!skill.OperatingHours || !skill.OperatingHours.length) {
-                        valid.opHours = true;
-                    } else {
-                        valid.opHours = this.isValidOperationHours(skill.OperatingHours);
-                    }
-                }
-
-                // Push to the Acc array if both the conditions are satisfied
-                if (valid.prefix && valid.opHours) {
-                    acc.push(
-                        formatJsonData<Partial<FavouriteSkill | any>>(
-                            { row: skill },
-                            {
-                                CIQ: 'row.CIQ',
-                                Avail: 'row.Avail',
-                                Staff: 'row.Staff',
-                                ID: 'row.ID',
-                                VDN: 'row.VDN',
-                                Name: 'row.Name',
-                                OperatingHours: 'row.OperatingHours'
-                            }
-                        )
-                    );
-                }
-                return acc;
-            }, []);
+        if (res.response?.length === 0) {
+            this.switcherList['Skill List'].data = [];
+            return;
         }
+
+        // check the prefix list
+        const channelPrefix = this._dialogData?.skill.channelPrfix || [];
+
+        // Filtering skills based on
+        // 1. The prefix passed in Config
+        // 2. Operating hours
+        this.switcherList['Skill List'].data = res.response.reduce((acc, skill) => {
+            const valid = { prefix: false, opHours: false };
+            // Filter 1 : The prefix passed in Config
+            if (channelPrefix.length > 0) {
+                valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
+            } else {
+                valid.prefix = true;
+            }
+
+            // Filter 2 : Operating hours
+            //  But before checking , Checking if the prefix condition is satisfied
+            if (valid.prefix) {
+                if (!skill.OperatingHours || !skill.OperatingHours.length) {
+                    valid.opHours = true;
+                } else {
+                    valid.opHours = this.isValidOperationHours(skill.OperatingHours);
+                }
+            }
+
+            // Push to the Acc array if both the conditions are satisfied
+            if (valid.prefix && valid.opHours) {
+                acc.push(
+                    formatJsonData<ISkillType>(
+                        { row: skill },
+                        {
+                            CIQ: 'row.CIQ',
+                            Avl: 'row.Avail',
+                            Stf: 'row.Staff',
+                            ID: 'row.ID',
+                            VDN: 'row.VDN',
+                            Name: 'row.Name',
+                            OperatingHours: 'row.OperatingHours'
+                        }
+                    )
+                );
+            }
+            return acc;
+        }, []);
     };
 
     /**
@@ -545,7 +550,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private mapSpeedDial = (res: IResponseData<SpeedDialModel[]>): void => {
         // Filtering skills based on Operation hours
-        this.switcherList['Speed Dial'].data = (res.response as ISkillType[]).reduce((acc, sDial) => {
+        this.switcherList['Speed Dial'].data = res.response.reduce((acc, sDial) => {
             let validOpHours = false;
             if (!sDial.OperatingHours || !sDial.OperatingHours.length) {
                 validOpHours = true;
@@ -595,7 +600,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             byTeam: this._dialogData.agent.teamFilter ?? false,
             type: ''
         })
-            .then((res) => this.mapAgents(res))
+            .then((res) => {
+                this.mapAgents(res);
+                this.table.source.data = this.switcherList['Agent List'].data;
+            })
             .catch((e) => {
                 console.error(e);
                 this.loading -= 1;
@@ -891,8 +899,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
-        // agent transfer/conf
-        if (this.selectedRow?.type === 'Speed Dial') {
+        // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
+        if (this.selectedRow?.type !== 'Skill List') {
             emails.forEach((email) => {
                 const { RouteId, SessionId } = email;
                 SDKClient.transferEmailToAgent({
@@ -954,7 +962,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Switch tab
      * @param item
      */
-    switchTab(tab: string): void {
+    switchTab(tab: ITab): void {
         // this.table.source.data = [];
         this.activeSwitcher = tab;
         this.table.source.data = this.switcherList[this.activeSwitcher].data;
@@ -1156,7 +1164,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * To process skill selected from list
      */
-    selectSkill = (row: FavouriteSkill): void => {
+    selectSkill = (row: ISkillType): void => {
         // if already loading then return
         if (this.loading) {
             return;
@@ -1169,8 +1177,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         // this.skillListTable.tableData.selection.clear();
         // this.clearDisplayValues();
         this.loading += 1;
-        row.Staff = 'loading';
-        row.Avail = 'loading';
+        row.Stf = 'loading';
+        row.Avl = 'loading';
         row.CIQ = 'loading';
         // get queue status from server
         SDKClient.getQueueStatus(row.ID)
@@ -1183,8 +1191,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     // cast the response
                     dt.response = dt.response as QueueStatusEvent;
                     // assign the values
-                    row.Staff = dt.response.Skill.AgentsStaffed.toString();
-                    row.Avail = dt.response.Skill.AgentAvailable.toString();
+                    row.Stf = dt.response.Skill.AgentsStaffed.toString();
+                    row.Avl = dt.response.Skill.AgentAvailable.toString();
                     row.CIQ = dt.response.Skill.CallsInQueue.toString();
                     // select the row in grid
                     if (typeof source === 'object') {
@@ -1204,15 +1212,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     this.selectedRow = { type: 'Skill List', row };
                 } else {
                     this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
-                    row.Staff = 'NA';
-                    row.Avail = 'NA';
+                    row.Stf = 'NA';
+                    row.Avl = 'NA';
                     row.CIQ = 'NA';
                 }
             })
             .catch(() => {
                 this._appUIService.showSnackbar(`Error in getting skill ${row.ID} status`, 'failure');
-                row.Staff = 'NA';
-                row.Avail = 'NA';
+                row.Stf = 'NA';
+                row.Avl = 'NA';
                 row.CIQ = 'NA';
                 this.loading -= 1;
             });

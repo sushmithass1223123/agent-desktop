@@ -17,7 +17,7 @@
                 <kendo-chart-legend [visible]="maximized"></kendo-chart-legend>
                 <kendo-chart-series>
                     <kendo-chart-series-item
-                        *ngFor="let series of stats"
+                        *ngFor="let series of stats; let outermost = last"
                         [border]="{
                             color: 'rgba(255, 255, 255, 0.7)',
                             width: 2
@@ -25,7 +25,7 @@
                         [highlight]="{
                             inactiveOpacity: 0.5
                         }"
-                        type="pie"
+                        type="donut"
                         [name]="series.name"
                         [data]="series.data"
                         field="value"
@@ -35,10 +35,16 @@
                         <kendo-chart-series-item-tooltip>
                             <ng-template let-category="category" let-value="value">
                                 <p>{{ category }}</p>
-                                <div>Value: {{ value }}</div>
+                                <div *ngIf="series.name !== 'AHT'">Value: {{ value }}</div>
                             </ng-template>
                         </kendo-chart-series-item-tooltip>
-                        <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" align="column" [content]="labelContent">
+                        <kendo-chart-series-item-labels
+                            *ngIf="(data.Data.Label || maximized) && outermost"
+                            background="none"
+                            position="outsideEnd"
+                            align="column"
+                            [content]="labelContent"
+                        >
                         </kendo-chart-series-item-labels>
                     </kendo-chart-series-item>
                 </kendo-chart-series>
@@ -56,7 +62,7 @@
         <ng-template #noData>
             <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
                 <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
-                <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized, ' mat-title': !maximized }">No Data Available</p>
+                <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized }">No Data Available</p>
             </div>
         </ng-template>
     </div>

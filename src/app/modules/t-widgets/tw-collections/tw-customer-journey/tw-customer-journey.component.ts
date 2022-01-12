@@ -599,7 +599,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
-        if (max) {
+        // on minimize, always keep the latest record first
+        if (!max) {
             setTimeout(() => {
                 this.table.source?.sort?.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
             }, 0);
@@ -701,10 +702,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             if (res.response.Attachments && res.response.Attachments.length) {
                 res.response.Files = res.response.Attachments.map((item: any) => {
                     // get the file name from URL
-                    let name = item.URL.split('/').pop();
-                    name = name.replace(item.SessionID, '');
-                    item.Name = name;
-                    item.Ext = name.split('.').pop();
+                    let uploadedName = item.URL.split('/').pop();
+                    if (!item.Name) {
+                        // get the file name from URL
+                        uploadedName = uploadedName.replace(item.SessionID, '');
+                        item.Name = uploadedName;
+                    }
+                    item.Ext = item.Name.split('.').pop();
                     item.Icon = maticonByExtension(item.Ext);
                     return item;
                 });

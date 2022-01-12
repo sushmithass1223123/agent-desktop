@@ -2,7 +2,7 @@
     class="twd-w-full twd-h-full twd-max-width twd-max-width-col twd-overflow-auto bg-inherit twd-flex twd-flex-col"
     *ngIf="{
         data: !!source.data.length,
-        noFilteredData: !source.filteredData?.length && source.filter
+        noFilteredData: source.data.length && !source.filteredData?.length && source.filter
     } as avl"
 >
     <div *ngIf="avl.data" class="twd-overflow-y-auto bg-inherit" [ngClass]="{ 'twd-max-width-1 twd-flex-1': !avl.noFilteredData }">
@@ -14,8 +14,6 @@
             [matSortDirection]="sortDirection"
             matSortDisableClear
             [matSortDisabled]="!sort"
-            [matSortActive]="sortBy"
-            [matSortDirection]="sortDirection"
             multiTemplateDataRows
             *ngIf="customRow ? ['CustomRow'] : columns as displayedColumns"
         >

@@ -48,11 +48,13 @@
             </div>
 
             <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
-                <div class="theme-bg twd-pb-5 border-radius-20 twd-h-full twd-overflow-y-auto twd-col-span-3 lg:twd-col-span-1">
-                    <div
-                        class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md"
-                        *ngIf="getEmailChecks() as selectedMails"
-                    >
+                <div
+                    *ngIf="getEmailChecks() as selectedMails"
+                    class="theme-bg twd-pb-5 border-radius-20 twd-h-full twd-col-span-3 lg:twd-col-span-1 twd-overflow-y-auto"
+                >
+                    <!-- 'twd-h-[116px]': state.bulkSelection, -->
+                    <!-- 'twd-h-[172px]': selectedMails.some || selectedMails.all -->
+                    <div class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
                         <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
                             <button class="lg:twd-hidden" #expandableButton (click)="state.hideCategoryMenu = !state.hideCategoryMenu">
                                 <mat-icon>{{ state.hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
@@ -126,10 +128,11 @@
                                     [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
                                 >
                                     <div class="advanced-search-form mat-elevation-z2 border-radius-20">
-                                        <p class="text-center text-bold twd-pt-8">Advanced Search</p>
+                                        <p class="text-center text-bold twd-py-4 twd-h-[52px] border-bottom">Advanced Search</p>
+
                                         <form
                                             [formGroup]="advancedSearch.form"
-                                            class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2"
+                                            class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto"
                                             (ngSubmit)="submitAdvanceSearchForm()"
                                             novalidate
                                         >
@@ -186,11 +189,7 @@
                                                 <input matInput formControlName="inSessionId" type="text" />
                                             </mat-form-field>
 
-                                            <mat-form-field
-                                                appearance="outline"
-                                                class="twd-text-sm twd-col-span-2"
-                                                [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
-                                            >
+                                            <mat-form-field appearance="outline" class="twd-text-sm twd-col-span-2">
                                                 <ng-container *ngIf="advancedSearch.form.controls.listOfMailboxes?.value as selectedMailboxes">
                                                     <mat-label>
                                                         {{
@@ -269,8 +268,13 @@
                             </button>
                         </div>
 
-                        <div id="sortControls" class="twd-flex twd-items-center twd-justify-between twd-px-2 twd-pt-2" *ngIf="state.bulkSelection">
+                        <div
+                            id="sortControls"
+                            class="twd-flex twd-items-center twd-justify-end twd-px-2 twd-pt-2"
+                            [ngClass]="{ 'twd-justify-between': state.bulkSelection }"
+                        >
                             <mat-checkbox
+                                *ngIf="state.bulkSelection"
                                 id="selectAllCtrl"
                                 (change)="selectEmails($event.checked)"
                                 [indeterminate]="selectedMails.some"
@@ -290,10 +294,10 @@
                                     >
                                         <span> Sort By {{ sortControls.sortBy }} </span>
                                         <mat-menu class="custom" #sortMenu="matMenu">
-                                            <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; sortEmailsByKey()">
+                                            <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; groupNodes()">
                                                 <span>Subject</span>
                                             </button>
-                                            <button mat-menu-item (click)="sortControls.sortBy = 'Date'; sortEmailsByKey()">
+                                            <button mat-menu-item (click)="sortControls.sortBy = 'Date'; groupNodes()">
                                                 <span>Date</span>
                                             </button>
                                         </mat-menu>
@@ -301,7 +305,7 @@
                                     <button
                                         id="sortOrderBtn"
                                         mat-button
-                                        (click)="sortControls.ascending = !sortControls.ascending; sortEmailsByOrder()"
+                                        (click)="sortControls.ascending = !sortControls.ascending; groupNodes()"
                                         class="twd-max-w-min twd-px-0"
                                         [disabled]="!dataSource.data?.length"
                                     >
@@ -312,6 +316,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div *ngIf="selectedMails.some || selectedMails.all" class="bulk-operations twd-mt-3 twd-mb-2 twd-flex twd-gap-1">
                             <button
                                 mat-raised-button
@@ -321,6 +326,7 @@
                             >
                                 Reply All
                             </button>
+
                             <button
                                 mat-raised-button
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
@@ -329,15 +335,18 @@
                             >
                                 Transfer All
                             </button>
+
+                            <!-- emails now closeable across all tabs since Version 5.0.12.30 -->
+                            <!-- *ngIf="currentTab === 'queue'" -->
                             <button
                                 mat-raised-button
                                 color="primary"
                                 class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                *ngIf="currentTab === 'queue'"
                                 (click)="closeEmails(getSelectedEmails())"
                             >
                                 Close Emails
                             </button>
+
                             <button
                                 mat-raised-button
                                 color="accent"
@@ -353,15 +362,24 @@
                     <div class="twd-p-3" *ngIf="emailSearchRes.loading && !dataSource.data.length">
                         <div
                             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                            class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full"
+                            class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
                         >
-                            <span class="twd-transform twd-transition-transform twd--rotate-90">
+                            <span class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
                                 <mat-icon> arrow_drop_down </mat-icon>
                             </span>
-                            <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"> </skeleton>
+                            <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
                         </div>
                     </div>
-                    <div class="twd-p-3" *ngIf="!emailSearchRes.error">
+
+                    <div
+                        *ngIf="dataSource.data.length && !emailSearchRes.error"
+                        class="twd-p-3 twd-overflow-y-auto"
+                        [ngClass]="{
+                            'twd-h-[calc(100%-72px)]': !state.bulkSelection,
+                            'twd-h-[calc(100%-116px)]': state.bulkSelection,
+                            'twd-h-[calc(100%-172px)]': selectedMails.some || selectedMails.all
+                        }"
+                    >
                         <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
                     </div>
 
@@ -416,6 +434,9 @@
                             (click)="replyToSelectedEmails([selectedEmail])"
                         >
                             Reply
+                        </button> -->
+                        <!-- <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" (click)="closeEmails([selectedEmail])">
+                            Close
                         </button> -->
                         <button
                             mat-raised-button
@@ -538,92 +559,131 @@
         <ng-template let-treeNode="treeNode" #treeNodeRef>
             <div
                 [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                class="twd-flex twd-rounded-3xl twd-pl-2 twd-mb-2"
+                class="twd-grid twd-w-full twd-rounded-3xl twd-pl-2 twd-mb-2"
                 *ngFor="let node of treeNode; trackBy: trackBy"
             >
-                <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
-                    <div
-                        class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0"
-                        [ngClass]="
-                            state.openEmailResData?.uiId === node.uiId
-                                ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
-                                : ' theme-bg'
-                        "
-                    >
-                        <div class="twd-p-3" *ngIf="state.bulkSelection">
-                            <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                <div
+                    class="border-radius-20 twd-py-2"
+                    [ngClass]="
+                        customFuse.anchor?.body ||
+                        customFuse.widget?.body +
+                            ' ' +
+                            (state.openEmailResData
+                                ? state.openEmailResData.Mailbox === node.Mailbox
+                                    ? node.Skill
+                                        ? state.openEmailResData.Skill === node.Skill
+                                            ? ' twd-text-primary-default'
+                                            : ''
+                                        : ' twd-text-primary-default'
+                                    : ''
+                                : '')
+                    "
+                >
+                    <div class="twd-flex twd-items-center">
+                        <div *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected">
+                            <mat-checkbox
+                                [indeterminate]="selected.some"
+                                [checked]="selected.all"
+                                (change)="selectEmails($event.checked, node.children)"
+                            ></mat-checkbox>
                         </div>
                         <div
-                            mat-ripple
-                            class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-p-3 twd-overflow-hidden"
-                            (click)="latestEmailPreview = true; openEmail(node)"
+                            class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
+                            (click)="
+                                node.expanded = !node.expanded; childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')
+                            "
                         >
-                            <div class="twd-w-full 2xl:twd-max-w-9/12">
-                                <p class="font-weight-600 my-4 twd-truncate">
-                                    {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
-                                </p>
-                                <p class="my-4 twd-truncate">Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span></p>
-                            </div>
-                            <div class="twd-flex-1 twd-flex 2xl:twd-justify-between twd-items-start">
-                                <div class="twd-text-xs twd-font-bold twd-mt-1.5">
-                                    <p>{{ node.AddedTime | date: 'mediumDate' }}</p>
-                                    <span> {{ node.AddedTime | date: 'shortTime' }} </span>
-                                </div>
-                                <div *ngIf="node.HasAttachment" class="twd-transform twd-rotate-90">
-                                    <span><mat-icon>attachment</mat-icon></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="node.children" class="twd-w-full">
-                    <div
-                        class="border-radius-20 twd-py-2"
-                        [ngClass]="
-                            customFuse.anchor?.body ||
-                            customFuse.widget?.body +
-                                ' ' +
-                                (state.openEmailResData
-                                    ? state.openEmailResData.Mailbox === node.Mailbox
-                                        ? node.Skill
-                                            ? state.openEmailResData.Skill === node.Skill
-                                                ? ' twd-text-primary-default'
-                                                : ''
-                                            : ' twd-text-primary-default'
-                                        : ''
-                                    : '')
-                        "
-                    >
-                        <div class="twd-flex twd-items-center">
-                            <div *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected">
-                                <mat-checkbox
-                                    [indeterminate]="selected.some"
-                                    [checked]="selected.all"
-                                    (change)="selectEmails($event.checked, node.children)"
-                                ></mat-checkbox>
-                            </div>
-                            <div
-                                class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
-                                (click)="childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')"
-                            >
-                                <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
-                                    <span class="twd-transform twd-transition-transform twd--rotate-90" #iconRef>
-                                        <mat-icon> arrow_drop_down </mat-icon>
-                                    </span>
-                                    <span class="twd-flex-1 font-weight-700 twd-truncate">
-                                        {{ node.name || 'NA' }}
-                                    </span>
-                                </div>
-                                <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
-                                    ({{ node.grandChildren || node.children.length }})
+                            <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
+                                <span class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center" #iconRef>
+                                    <mat-icon> arrow_drop_down </mat-icon>
+                                </span>
+                                <span class="twd-flex-1 font-weight-700 twd-truncate">
+                                    {{ node.name || 'NA' }}
                                 </span>
                             </div>
+                            <span *ngIf="node.children" class="twd-px-3 twd-font-bold twd-text-sm twd-min-w-max">
+                                ({{ node.grandChildren || node.children.length }})
+                            </span>
                         </div>
                     </div>
-                    <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
-                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
-                    </div>
                 </div>
+
+                <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
+                    <ng-container *ngIf="node.grandChildren">
+                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf="!node.grandChildren">
+                        <ng-container *ngTemplateOutlet="emailListRef; context: { emailList: node.children }"></ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #emailListRef let-emailList="emailList">
+            <div class="twd-flex twd-items-center">
+                <cdk-virtual-scroll-viewport
+                    [itemSize]="64"
+                    [minBufferPx]="488"
+                    [maxBufferPx]="512"
+                    class="twd-w-full twd-min-h-[74px] twd-max-h[512px]"
+                    [ngStyle]="{ 'height.px': emailList.length * 74 > 512 ? 512 : emailList.length * 76 }"
+                >
+                    <div
+                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                        class="twd-flex twd-rounded-3xl twd-pl-2"
+                        [ngClass]="{ 'twd-pb-[1px]': emailList.length === 1 }"
+                        *cdkVirtualFor="let node of emailList"
+                        [cdkVirtualForTrackBy]="trackBy"
+                    >
+                        <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
+                            <div
+                                class="
+                                    twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0
+                                    mat-elevation-z1
+                                "
+                                [ngClass]="
+                                    state.openEmailResData?.uiId === node.uiId
+                                        ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
+                                        : ' theme-bg'
+                                "
+                            >
+                                <div class="twd-p-3" *ngIf="state.bulkSelection">
+                                    <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                                </div>
+
+                                <div
+                                    mat-ripple
+                                    class="
+                                        twd-flex-1 twd-flex twd-flex-wrap
+                                        2xl:twd-flex-nowrap
+                                        twd-justify-between twd-px-2 twd-py-1 twd-overflow-hidden
+                                    "
+                                    (click)="latestEmailPreview = true; openEmail(node)"
+                                >
+                                    <div class="twd-w-full 2xl:twd-max-w-9/12">
+                                        <p class="font-weight-600 my-4 twd-truncate">
+                                            {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
+                                        </p>
+                                        <p class="my-4 twd-truncate twd-max-w-[180px]">
+                                            Subject: <span class="twd-truncate" [innerHtml]="node.Subject"></span>
+                                        </p>
+                                    </div>
+
+                                    <div class="twd-flex-1 twd-flex 2xl:twd-justify-between twd-items-start">
+                                        <div class="twd-text-xs twd-font-bold twd-mt-1.5">
+                                            <p>{{ node.AddedTime | date: 'mediumDate' }}</p>
+                                            <span> {{ node.AddedTime | date: 'shortTime' }} </span>
+                                        </div>
+                                        <div *ngIf="node.HasAttachment" class="twd-transform twd-rotate-90">
+                                            <span><mat-icon>attachment</mat-icon></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </cdk-virtual-scroll-viewport>
             </div>
         </ng-template>
     </ng-container>

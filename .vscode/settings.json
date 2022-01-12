@@ -42,9 +42,9 @@
                     "value": ""
                 },
                 {
-                    "label": "⭐ feat",
+                    "label": "✨ feat",
                     "description": "A new feature",
-                    "value": "⭐ feat"
+                    "value": "✨ feat"
                 },
                 {
                     "label": "🔨 fix",
@@ -52,24 +52,14 @@
                     "value": "🔨 fix"
                 },
                 {
-                    "label": "🔥 hotfix",
-                    "description": "A minor fix",
-                    "value": "🔥 hotfix"
-                },
-                {
                     "label": "💻 build",
-                    "description": "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+                    "description": "New build",
                     "value": "💻 build"
                 },
                 {
-                    "label": "⚓ general",
-                    "description": "Updating grunt tasks etc; no production code change",
-                    "value": "⚓ general"
-                },
-                {
-                    "label": "🤖 ci",
-                    "description": "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
-                    "value": "🤖 ci"
+                    "label": "🚚 chore",
+                    "description": "General changes",
+                    "value": "🚚 chore"
                 },
                 {
                     "label": "📝 docs",
@@ -85,10 +75,6 @@
                     "label": "♻️ refactor",
                     "description": "A code change that neither fixes a bug nor adds a feature",
                     "value": "♻️ refactor"
-                },
-                {
-                    "label": "❗ revert",
-                    "value": "❗ revert"
                 },
                 {
                     "label": "🎨 style",

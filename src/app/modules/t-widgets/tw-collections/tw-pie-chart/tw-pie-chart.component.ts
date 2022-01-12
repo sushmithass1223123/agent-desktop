@@ -1,3 +1,4 @@
+import { formatDuration } from 'app/utils';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { WallboardRefreshEvent } from '@tmac/sdk';
@@ -86,6 +87,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
         }
 
         let eventName: any;
+        // switch between received event to ececute relevant method
         switch (widgetData.Source.toLowerCase()) {
             case 'auxstatus':
                 if (widgetData.Role === 'agent') {
@@ -162,19 +164,19 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private AgentStatusDetailsEvent(evt: CustomSDKEvent): void {
+        // sort received States data based on 'Duration'
         const dataset = sortBy(evt.Data.States, 'Duration')
             .reverse()
             .reduce((acc, curr) => {
+                // check if the share will be relevant in pie chart and only add that data
                 const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                const share = duration.hours + duration.days * 24;
-                if (!share) {
+                if (!curr.Duration) {
                     return acc;
                 }
+                // format the category and push the data to the chart
                 const data: Dataset = {
-                    category: `${curr.State} \n [${share < 10 ? '0' : share}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
-                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
-                    }]`,
-                    value: share
+                    category: `${curr.State} \n [${formatDuration(duration)}]`,
+                    value: curr.Duration
                 };
                 acc.push(data);
                 return acc;
@@ -188,19 +190,18 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamActiveStatusDetailsEvent(evt: CustomSDKEvent): void {
+        // sort received States data based on 'Duration'
         const dataset = sortBy(evt.Data.States, 'Duration')
             .reverse()
             .reduce((acc, curr) => {
                 const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                const share = duration.hours + duration.days * 24;
-                if (!share) {
+                if (!curr.Duration) {
                     return acc;
                 }
+                // format the category and push the data to the chart
                 const data: Dataset = {
-                    category: `${curr.State} \n [${share < 10 ? '0' : share}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
-                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
-                    }]`,
-                    value: share
+                    category: `${curr.State} \n [${formatDuration(duration)}]`,
+                    value: curr.Duration
                 };
                 acc.push(data);
                 return acc;
@@ -214,12 +215,15 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamWallboardRefreshEvent(evt: WallboardRefreshEvent): void {
+        // sort received States data based on 'CallsInQueue'
         const dataset = sortBy(evt.Skills, 'CallsInQueue')
             .reverse()
             .reduce((acc, curr) => {
+                // check if the share will be relevant in pie chart and only add that data
                 if (!curr.CallsInQueue) {
                     return acc;
                 }
+                // format the category and push the data to the chart
                 const data: Dataset = {
                     category: `${curr.SkillName} \n ${curr.CallsInQueue}`,
                     value: curr.CallsInQueue
@@ -238,14 +242,17 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     private TeamIntentListEvent(evt: CustomSDKEvent): void {
         const intents = evt.Data?.Intents || [];
 
+        // sort received States data based on 'Count'
         const dataset = orderBy(intents, ['Count'], ['desc']).reduce((acc, curr) => {
+            // check if the share will be relevant in pie chart and only add that data
             if (!curr.Count) {
                 return acc;
             }
             const data: Dataset = {
-                category: `${curr.Intent || 'Unknown'} \n ${curr.Count}`,
+                category: `${curr.Intent || 'Default'} \n ${curr.Count}`,
                 value: curr.Count
             };
+            // format the category and push the data to the chart
             acc.push(data);
             return acc;
         }, []);
@@ -258,9 +265,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private AgentChannelListEvent(evt: CustomSDKEvent): void {
+        // sort received States data based on 'Total'
         const dataset = sortBy(evt.Data.Channels, 'Total')
             .reverse()
             .reduce((acc, curr) => {
+                // check if the share will be relevant in pie chart and only add that data
                 if (!curr.Total) {
                     return acc;
                 }
@@ -268,6 +277,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
                     value: curr.Total
                 };
+                // format the category and push the data to the chart
                 acc.push(data);
                 return acc;
             }, []);
@@ -280,9 +290,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamChannelListEvent(evt: CustomSDKEvent): void {
+        // sort received States data based on 'Total'
         const dataset = sortBy(evt.Data.Channels, 'Total')
             .reverse()
             .reduce((acc, curr) => {
+                // check if the share will be relevant in pie chart and only add that data
                 if (!curr.Total) {
                     return acc;
                 }
@@ -290,6 +302,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
                     value: curr.Total
                 };
+                // format the category and push the data to the chart
                 acc.push(data);
                 return acc;
             }, []);
@@ -302,9 +315,11 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamActiveChannelListEvent(evt: CustomSDKEvent): void {
+        // sort received States data based on 'Total'
         const dataset = sortBy(evt.Data.Channels, 'Total')
             .reverse()
             .reduce((acc, curr) => {
+                // check if the share will be relevant in pie chart and only add that data
                 if (!curr.Total) {
                     return acc;
                 }
@@ -312,6 +327,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
                     value: curr.Total
                 };
+                // format the category and push the data to the chart
                 acc.push(data);
                 return acc;
             }, []);

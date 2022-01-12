@@ -1,4 +1,16 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -508,7 +520,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 Body: res.Body,
                 AttachmetList: res?.Attachments || [],
                 To: res.ToList,
-                EmailCreatedTime: parse(inboxRes?.ReceivedDate + inboxRes?.ReceivedTime, 'yyyyMMddHHmmss', new Date()).toString(),
+                EmailReceivedTime:
+                    inboxRes?.ReceivedDate && inboxRes.ReceivedTime
+                        ? parse(inboxRes.ReceivedDate + inboxRes.ReceivedTime, 'yyyyMMddHHmmss', new Date()).toString()
+                        : '',
+                EmailSentTime:
+                    outboxRes?.SendDate && outboxRes.SendTime
+                        ? parse(outboxRes.SendDate + outboxRes.SendTime, 'yyyyMMddHHmmss', new Date()).toString()
+                        : '',
                 From: res.From,
 
                 AgentName: res.AgentName,
@@ -780,7 +799,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 outboxSessionId: CurrOutSessionId || '',
                 routeId: RouteId || '',
                 subject: Subject,
-                typeOfResponse: ''
+                // the replace is done so that if the mode is 'reply-all', the '-all' is removed
+                typeOfResponse: this.emailRef.mode.replace('-all', '')
             }).catch((e) => errCallback(e));
             // this._fuseProgressBarService.hide();
             ref.dismiss();
@@ -1190,7 +1210,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             From,
             CCList,
             BCCList,
-            EmailCreatedTime,
+            EmailReceivedTime,
             To,
             AttachmetList,
             InSessionId,
@@ -1204,7 +1224,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 SessionID
             })) || [];
         const isSentEmail = SENT_REASONS.includes(this.currentInteraction.RouteReason);
-        return {
+        const emailcomponentInput: EmailComponentInputs = {
             BCC: (BCCList ? BCCList.split(',') : []).filter(Boolean),
             CC: (CCList ? CCList.split(',') : []).filter(Boolean),
             To: isSentEmail ? From : (To ? To.split(',') : []).filter(Boolean),
@@ -1213,8 +1233,27 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Files,
             From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
             mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
-            CreatedTime: EmailCreatedTime,
+            CreatedTime: EmailReceivedTime,
             SessionID
         };
+        const prelude = `
+        <style>
+        ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+        ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+        </style>
+        <br/>
+        <div style='border-top: 1px solid gray; padding-top : 5px;'>
+            <div style='border-left: 3px solid gray;padding-left: 5px'>
+                <div> <strong> From: </strong> <span> ${isSentEmail ? emailcomponentInput.To : emailcomponentInput.From} </span> </div>
+                    <div> <strong> Sent: </strong> <span> ${emailcomponentInput.CreatedTime} </span> </div>
+                    <div> <strong> To: </strong> <span> ${isSentEmail ? emailcomponentInput.From : emailcomponentInput.To} </span> </div>
+                    <div> <strong> Subject: </strong> <span> ${emailcomponentInput.Subject} </span> </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        `;
+        emailcomponentInput.prelude = prelude;
+        return emailcomponentInput;
     }
 }

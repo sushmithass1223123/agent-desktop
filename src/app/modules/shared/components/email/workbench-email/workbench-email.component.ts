@@ -8,20 +8,24 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
 import { AgentSkillListComponent, PreviewEmailComponent, SnackbarComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
+import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
-import { DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import { AgentSkillListData, EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { format as formatDate } from 'date-fns';
+import { addHours, format, format as formatDate } from 'date-fns';
 import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { EmailService, initEmailSearchState } from '../email.service';
 
+/**
+ * Type of the mail node
+ */
 type Mail = {
     Mailbox: string;
     ToList: string;
@@ -46,6 +50,9 @@ type Mail = {
     EmailType?: string;
 };
 
+/**
+ * Various states of the component
+ */
 type ComponentActions =
     | 'emails/loading'
     | 'emails/success'
@@ -60,9 +67,20 @@ type ComponentActions =
     | 'email/polling/failed'
     | 'email/polling/inactive';
 
+/**
+ * Available tabs of the email workbench
+ */
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
-
+/**
+ * Global search form controls
+ * Global search is the direct search key input present at the top of the emails list
+ */
 type GlobalSearchFormData = { form: FormControl; data: Partial<Record<AvailableTabs, string>> };
+/**
+ * Advanced Search form data
+ * Advanced search fields are displayed when the dropdown is opened in a tab
+ * Under the hood, both global search and normal search / polling use this search only
+ */
 type AdvanceSearchFormData = {
     form: FormGroup;
     data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>;
@@ -118,8 +136,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     @ViewChild('replyDialog')
     ReplyEditorDialog: TemplateRef<any>;
 
-    @ViewChild(PreviewEmailComponent)
-    previewEmailRef: PreviewEmailComponent;
+    // @ViewChild(PreviewEmailComponent)
+    // previewEmailRef: PreviewEmailComponent;
 
     /**
      * Reply editor Modal
@@ -196,7 +214,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Currently selected tab
      */
-    currentTab: AvailableTabs = 'queue';
+    currentTab: string;
 
     /**
      * Sort controls
@@ -252,12 +270,37 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     latestEmailPreview = false;
 
+    /**
+     * Available tabs ref
+     */
     availableTabs = [
-        { label: 'Queue', icon: 'queue', key: 'queue' },
-        { label: 'Inbox', icon: 'mail', key: 'inbox' },
-        { label: 'Sent', icon: 'mark_email_read', key: 'sentitem' },
-        { label: 'Drafts', icon: 'drafts', key: 'draft' }
+        { label: 'Queue', enabled: true, icon: 'queue', key: 'queue' },
+        { label: 'Inbox', enabled: true, icon: 'mail', key: 'inbox' },
+        { label: 'Sent', enabled: true, icon: 'mark_email_read', key: 'sentitem' },
+        { label: 'Drafts', enabled: true, icon: 'drafts', key: 'draft' }
     ];
+
+    /**
+     * Agent action features
+     */
+    agentFeatures: {
+        /**
+         * Queue tab allowed
+         */
+        queueTabAllowed: boolean;
+        /**
+         * Inbox tab allowed
+         */
+        inboxTabAllowed: boolean;
+        /**
+         * Sent tab allowed
+         */
+        sentTabAllowed: boolean;
+        /**
+         * Draft tab allowed
+         */
+        draftsTabAllowed: boolean;
+    };
 
     /**
      * Constructor
@@ -269,7 +312,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private appUiService: AppUiService,
         private matDialog: MatDialog,
         private _emailService: EmailService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super();
     }
@@ -283,13 +327,42 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     async ngOnInit(): Promise<void> {
+        // get and set the list of available mailboxes
         await this.setAvailableMailboxes();
+        // set the flag whether to get the email templates by departments
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.channelConf.Config.TemplatesByTeam;
+
+        // get the allowed tabs from config
+        const allowedTabs = this.channelConf.Config?.Tabs?.map((m: string) => m.toLowerCase()) ?? [];
+        if (allowedTabs.length) {
+            // filter the allowed tabs given in config
+            this.availableTabs.forEach((f) => {
+                f.enabled = allowedTabs.includes(f.label.toLowerCase());
+            });
+        }
+        // subscribe to agent features to check for the allowed tabs realtime
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                this.checkAgentFeatures();
+            }
+        });
+
+        // check for the agent features
+        this.checkAgentFeatures();
+
+        // set the flags to check if delete and queue transfers are allowed for the agent
         const { agentProfile } = SDKClient.getAgentData();
+        // delete is not allowed for agents
         this.deleteAllowed = this.channelConf.Config.DeleteAllowed && agentProfile === 'S';
+        // queue transfer allowed via config or if the user is a supervisor
         this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : agentProfile === 'S';
-        this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
-        this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
+
+        // set the current tab
+        this.currentTab = this.availableTabs.find((f) => f.enabled)?.key ?? '';
+        if (this.currentTab) {
+            this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
+            this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
+        }
     }
 
     /**
@@ -299,17 +372,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // create an intersection observer to start/stop polling when page is active/inactive
         this.intersectionObserver = new IntersectionObserver((entries) => {
             entries.map((entry) => {
-                if (entry.isIntersecting) {
-                    this._emailService.emailTemplatesDepartmentsByTeam = !!this.channelConf.Config.TemplatesByTeam;
-                    this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
-                    if (this.channelConf.Config.SearchPollingInterval) {
-                        this.startPolling();
+                if (this.currentTab) {
+                    if (entry.isIntersecting) {
+                        this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
+                        if (this.channelConf.Config.SearchPollingInterval) {
+                            this.startPolling();
+                        } else {
+                            this.doAdvancedSearch();
+                        }
                     } else {
-                        this.doAdvancedSearch();
+                        this.stopPolling();
+                        this.advancedSearch.show = false;
                     }
-                } else {
-                    this.stopPolling();
-                    this.advancedSearch.show = false;
                 }
             });
         });
@@ -330,6 +404,60 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To check agent features for IsSetBroadcastEnabled
+     */
+    private checkAgentFeatures(): void {
+        try {
+            // check the agent features to enable/disable
+            SDKClient.getAgentData().featuresList.forEach((f) => {
+                // get the featue
+                const feature = f.Feature.toLowerCase();
+
+                // switch the feature
+                switch (feature) {
+                    case AGENT_FEATURES.IsEmailWorkbenchQueueAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Queue') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    case AGENT_FEATURES.IsEmailWorkbenchInboxAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Inbox') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    case AGENT_FEATURES.IsEmailWorkbenchSentAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Sent') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    case AGENT_FEATURES.IsEmailWorkbenchDraftsAllowed:
+                        this.availableTabs.forEach((x) => {
+                            if (x.label === 'Drafts') {
+                                x.enabled = f.IsEnabled;
+                            }
+                        });
+                        break;
+                    default:
+                }
+            });
+
+            // check if any selected tab is disabled, switch to first available tab
+            this.availableTabs.forEach((f) => {
+                if (!this.currentTab || (this.currentTab === f.key && !f.enabled)) {
+                    const firstTab = this.availableTabs.find((x) => x.enabled) as any;
+                    this.switchTab(firstTab?.key);
+                }
+            });
+        } catch (error) {}
+    }
 
     /**
      * Sets available mailboxes
@@ -362,32 +490,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.polling$?.unsubscribe();
     }
 
-    /**
-     * Sort Callback
-     */
-    sortEmailsByKey(childrenNodes?: Mail[]): void {
-        if (!childrenNodes) {
-            childrenNodes = this.getAllEmailNodes();
-        }
+    getSortedEmails = (emails: Mail[]): Mail[] => {
         const sortKey = this.sortControls.sortBy;
-        let sorted;
+        let sorted: Mail[];
         if (sortKey === 'Date') {
-            sorted = sortBy(childrenNodes, (k) => k.AddedTime || '');
+            sorted = sortBy(emails, (k) => k.AddedTime || '');
         } else {
-            sorted = sortBy(childrenNodes, (k) => (k[sortKey] || '').toLowerCase());
+            sorted = sortBy(emails, (k) => (k[sortKey] || '').toLowerCase());
         }
-        const sortedEmails = this.sortControls.ascending ? sorted : sorted.reverse();
-        this.groupNodes(sortedEmails);
-    }
-
-    /**
-     * Sorts by asc / desc
-     */
-    sortEmailsByOrder(): void {
-        const childrenNodes = this.getAllEmailNodes();
-        const sortedEmails = childrenNodes.reverse();
-        this.groupNodes(sortedEmails);
-    }
+        return this.sortControls.ascending ? sorted : sorted.reverse();
+    };
 
     /**
      * Returns all emails nodes
@@ -405,10 +517,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
     /**
      * Groups nodes and assigns to mat-tree
-     * @param sortedEmails
+     * @param mails
      */
-    groupNodes(sortedEmails: Mail[]): void {
-        const byMailList = groupBy(sortedEmails, 'Mailbox');
+    groupNodes(mails?: Mail[]): void {
+        if (!mails) {
+            mails = this.getAllEmailNodes();
+        }
+        const byMailList = groupBy(mails, 'Mailbox');
         const selectedUiIds = this.getSelectedEmails().map((x) => x.uiId);
         let nodes: any;
         if (['sentitem', 'draft'].includes(this.currentTab)) {
@@ -416,10 +531,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 const [name, children] = curr;
                 acc.push({
                     name,
-                    children: children.map((x) => {
-                        x.checked = selectedUiIds.includes(x.uiId);
-                        return x;
-                    }),
+                    children: this.getSortedEmails(
+                        children.map((x) => {
+                            x.checked = selectedUiIds.includes(x.uiId);
+                            return x;
+                        })
+                    ),
                     Mailbox: name,
                     uiId: `${this.currentTab}_${name}`
                 });
@@ -435,10 +552,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     grandChildren += grandChildrenNodes.length;
                     return {
                         name: nodeName,
-                        children: grandChildrenNodes.map((x) => {
-                            x.checked = selectedUiIds.includes(x.uiId);
-                            return x;
-                        }),
+                        children: this.getSortedEmails(
+                            grandChildrenNodes.map((x) => {
+                                x.checked = selectedUiIds.includes(x.uiId);
+                                return x;
+                            })
+                        ),
                         Mailbox: name,
                         Skill: nodeName,
                         uiId: `${this.currentTab}_${name}_${nodeName}`
@@ -530,13 +649,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
                 searchParams = {
                     global: '',
-                    skills: searchFields.skills ? [searchFields.skills] : [],
+                    skills: [],
                     email: searchFields.email,
                     agent: searchFields.agent || '',
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     subject: searchFields.subject,
-                    content: searchFields.content
+                    content: searchFields.content,
+                    listOfMailboxes: searchFields.listOfMailboxes.join(',')
                 };
                 if (this.currentTab === 'inbox') {
                     searchParams.assignedTo = searchFields.assignedTo;
@@ -580,7 +700,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             mailRes.Subject = this.appUiService.sanitizeEmailBody(mailRes.Subject || '')['changingThisBreaksApplicationSecurity'];
                             return mailRes;
                         });
-                        this.sortEmailsByKey(mails || []);
+                        this.groupNodes(mails || []);
                         if (!this.openEmailRes?.data) {
                             this.emailBodies = {};
                         }
@@ -688,9 +808,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
                 this.openEmailRes.data.next(null);
             }
-            this.doAdvancedSearch(true);
-            loader.dismiss();
             this.appUiService.showSnackbar('Emails closed successfully', 'success');
+            // deselect all the emails
+            emails.forEach((f) => (f.checked = false));
+            setTimeout(() => {
+                this.doAdvancedSearch(true);
+                loader.dismiss();
+            }, 1000);
         } catch (e) {
             console.error(e);
             loader.dismiss();
@@ -886,21 +1010,23 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.dataSource.data = [];
         this.openEmailRes.data.next(null);
         this.emailBodies = {};
-        this.currentTab = tab;
-        this.latestEmailPreview = tab === 'draft' || tab === 'sentitem';
-        if (this.advancedSearch.data[tab]) {
-            this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
-            this.globalSearch.form.setValue(this.globalSearch.data[tab]);
-        } else {
-            this.resetForm();
-            this.advancedSearch.data[tab] = {
-                data: this.advancedSearch.form.value,
-                changed: false
-            };
-            this.globalSearch.form.setValue('');
-            this.globalSearch.data[tab] = this.globalSearch.form.value;
+        this.currentTab = tab ?? '';
+        if (tab) {
+            this.latestEmailPreview = tab === 'draft' || tab === 'sentitem';
+            if (this.advancedSearch.data[tab]) {
+                this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
+                this.globalSearch.form.setValue(this.globalSearch.data[tab]);
+            } else {
+                this.resetForm();
+                this.advancedSearch.data[tab] = {
+                    data: this.advancedSearch.form.value,
+                    changed: false
+                };
+                this.globalSearch.form.setValue('');
+                this.globalSearch.data[tab] = this.globalSearch.form.value;
+            }
+            this.doAdvancedSearch();
         }
-        this.doAdvancedSearch();
     }
 
     /**
@@ -1026,7 +1152,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
                                 this.openEmailRes.data.next(null);
                             }
-                            this.doAdvancedSearch(true);
+                            // deselect all the emails
+                            emails.forEach((f) => (f.checked = false));
+                            setTimeout(() => {
+                                this.doAdvancedSearch(true);
+                            }, 1000);
                             this.setComponentState('email/reply/success');
                             this._aotWidgetService.destroyWidget(widget.ID);
                         } else {
@@ -1052,7 +1182,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Resets advance search form
      */
     resetForm(): void {
-        this._emailService.resetEmailState();
+        let updateValue = {} as any;
+
+        try {
+            // check if search duration is configured, then patch the from datetime value
+            if (this.channelConf.Config.SearchDuration) {
+                const fromDate = addHours(new Date(), -this.channelConf.Config.SearchDuration);
+                updateValue = {
+                    fromDate,
+                    fromTime: format(fromDate, 'HH:mm')
+                };
+            }
+        } catch (error) {}
+
+        this._emailService.resetEmailState(updateValue);
+
         this.advancedSearch.data[this.currentTab] = {
             data: this.advancedSearch.form.value,
             changed: false
@@ -1177,25 +1321,38 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         if (!result || !result.length) {
             return [];
         }
-        return result.map((x: any): Mail => {
-            const data = typeof x.data === 'string' ? JSON.parse(x.data) : x;
-            return {
-                Mailbox: this.availableMailboxes.find((x) => x.includes(data.To) || data.To.includes(x)) || data.To,
-                Subject: data.Subject,
-                From: data.From,
-                RouteId: data.RouteId,
-                Skill: x.skillName || x.skillId,
-                ToList: data.To,
-                InSessionId: data.SessionId,
-                OutSessionId: data.OutSessionId,
-                HasAttachment: data.HasAttachment,
-                IsEmailProbableSpam: data.IsEmailProbableSpam,
-                AddedTime: new Date(x.addedTime),
-                uiId: `${data.SessionId}|${data.OutSessionID}`,
-                ConversationID: x.conversationID,
-                RouteReason: data.RouteReason
-            };
-        });
+        return result.reduce((acc, curr): Mail => {
+            let data: any;
+            if (typeof curr.data === 'string') {
+                try {
+                    data = JSON.parse(curr.data);
+                } catch (e) {
+                    this.logger.error('Invalid Queue Data', e);
+                    console.error(e);
+                }
+            } else {
+                data = curr;
+            }
+            if (data) {
+                acc.push({
+                    Mailbox: this.availableMailboxes.find((x) => x.includes(data.To) || data.To.includes(x)) || data.To,
+                    Subject: data.Subject,
+                    From: data.From,
+                    RouteId: data.RouteId,
+                    Skill: curr.skillName || curr.skillId,
+                    ToList: data.To,
+                    InSessionId: data.SessionId,
+                    OutSessionId: data.OutSessionId,
+                    HasAttachment: data.HasAttachment,
+                    IsEmailProbableSpam: data.IsEmailProbableSpam,
+                    AddedTime: new Date(curr.addedTime),
+                    uiId: `${data.SessionId}|${data.OutSessionID}`,
+                    ConversationID: curr.conversationID,
+                    RouteReason: data.RouteReason
+                });
+            }
+            return acc;
+        }, []);
     };
 
     /**

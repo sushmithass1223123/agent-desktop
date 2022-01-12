@@ -63,7 +63,7 @@
                                     {{ (duration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                                 </div>
                             </div>
-                            <div *ngIf="mos" class="twd-flex twd-flex-row twd-items-center"><mat-icon>wifi</mat-icon> {{ mos }}</div>
+                            <div *ngIf="isMSCall && mos" class="twd-flex twd-flex-row twd-items-center"><mat-icon>wifi</mat-icon> {{ mos }}</div>
                             <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon>directions</mat-icon> <span>{{ direction }}</span>
                             </div>

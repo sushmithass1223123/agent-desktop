@@ -11,7 +11,7 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="twd-w-full twd-h-full twd-relative">
+        <div class="tw-static-panel twd-w-full twd-h-full twd-relative">
             <mat-tab-group class="twd-absolute twd-h-full twd-w-full twd-top-0 twd-left-0" animationDuration="0ms">
                 <mat-tab *ngFor="let channel of channels" [label]="channel.Type" #tab>
                     <ng-template mat-tab-label>

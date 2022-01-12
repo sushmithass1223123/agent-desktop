@@ -28,10 +28,10 @@
                     <kendo-chart-series-item-tooltip>
                         <ng-template let-category="category" let-value="value">
                             <p>{{ category }}</p>
-                            <div>Value: {{ value }}</div>
+                            <!-- <div>Value: {{ value }}</div> -->
                         </ng-template>
                     </kendo-chart-series-item-tooltip>
-                    <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" align="column" [content]="labelContent">
+                    <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" background="none" align="column" [content]="labelContent">
                     </kendo-chart-series-item-labels>
                 </kendo-chart-series-item>
             </kendo-chart-series>

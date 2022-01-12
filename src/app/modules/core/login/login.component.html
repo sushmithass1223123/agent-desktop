@@ -31,7 +31,13 @@
                     </p>
                 </mat-card-content>
                 <mat-card-actions fxLayout fxLayoutAlign="end ">
-                    <button mat-raised-button class="border-radius-30" color="primary" (click)="getData(true)" [disabled]="connectionError.retrying">
+                    <button
+                        mat-raised-button
+                        class="border-radius-30"
+                        color="primary"
+                        (click)="getTMACVersion(true)"
+                        [disabled]="connectionError.retrying"
+                    >
                         RETRY NOW
                     </button>
                 </mat-card-actions>
@@ -53,7 +59,13 @@
                 <span class="face-shape"></span>
             </div>
 
-            <form name="loginForm" [formGroup]="loginForm" [@animate]="{ value: '*', params: { delay: '300ms', x: '-25px' } }" novalidate>
+            <form
+                *ngIf="!ssoType"
+                name="loginForm"
+                [formGroup]="loginForm"
+                [@animate]="{ value: '*', params: { delay: '300ms', x: '-25px' } }"
+                novalidate
+            >
                 <ng-container *ngIf="showOtp">
                     <mat-form-field class="form-field custom" appearance="outline">
                         <input class="login-input" matInput required placeholder="OTP" formControlName="otp" #otp />
@@ -215,14 +227,29 @@
                     [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
                     mat-raised-button
                     color="primary"
-                    class="submit-button"
+                    class="twd-w-5/12 !twd-my-8 !twd-mx-auto !twd-block !twd-py-1 !twd-px-10 !twd-rounded-full"
                     aria-label="LOGIN"
                     (click)="login(false)"
-                    [disabled]="!loginForm.valid"
+                    [disabled]="!loginForm.valid || loading"
                 >
                     LOGIN
                 </button>
             </form>
+
+            <div *ngIf="ssoType">
+                <button
+                    [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
+                    mat-raised-button
+                    color="primary"
+                    class="!twd-my-8 !twd-mx-auto !twd-block !twd-py-1 !twd-px-10 !twd-rounded-full"
+                    aria-label="SIGN IN"
+                    (click)="ssoLogin()"
+                    [disabled]="loading"
+                >
+                    SIGN IN
+                </button>
+            </div>
+
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
                 <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>
                 Copyright Tetherfi | UI: {{ uiVersion }} - Server: {{ version }}

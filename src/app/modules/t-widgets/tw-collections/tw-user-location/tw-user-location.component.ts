@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import * as L from 'leaflet';
@@ -65,13 +65,14 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
             }
 
             const [lat, long] = location.split(',');
-            this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 8);
+            // const [lat, long] = [44.36551363472203, 142.43999423723125];
+            this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 13);
             // const latlng = new L.LatLng(lat, long);
             // let center = this.map.project(latlng);
             // center = L.point(center.x - 150, center.y - 100);
             // const target = this.map.unproject(center);
             // this.map.panTo(target);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+            L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(this.map);
             const icon = L.icon({
                 iconUrl: 'assets/images/leaflet/marker-icon.png',
                 shadowUrl: 'assets/images/leaflet/marker-shadow.png',
@@ -79,6 +80,8 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
                 iconAnchor: [13, 41]
             });
             L.marker([lat, long], { icon }).addTo(this.map).openPopup();
+            // this.map.
+            // (L as any).setLocale('en-US');
         } catch (e) {
             console.error(e);
             this.error = 'Unable to set location';

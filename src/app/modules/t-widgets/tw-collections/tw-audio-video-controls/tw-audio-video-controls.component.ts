@@ -15,8 +15,11 @@ import {
     AVChannel,
     AVControlMessageReceivedEvent,
     AVEvent,
+    CallHoldEvent,
+    CallHoldReconnectEvent,
     IAgentData,
     IResponse,
+    IUIEvent,
     SDKClient,
     TEnums,
     TextChatDisconnectedEvent,
@@ -163,10 +166,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     remoateScreenshareRef: any;
     /**
-     * Check if OneWayVideo
-     */
-    oneWayVideo: boolean;
-    /**
      * Wrc call type
      */
     wrcCallType: WrcCallTypes;
@@ -174,11 +173,23 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * Remote Video Elements Ref
      */
     @ViewChildren('remoteVideo') remoteVideoElements: QueryList<ElementRef>;
-
     /**
      * List of user camera list
      */
     userCameraList: CustomMediaDeviceInfo[];
+    /**
+     * Agent action features
+     */
+    agentFeatures: {
+        /**
+         * One way video
+         */
+        oneWayVideo: boolean;
+        /**
+         * Audio to video escalation
+         */
+        audioToVideo: boolean;
+    };
 
     /**
      * Constructor
@@ -194,6 +205,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _fuseProgressBarService: FuseProgressBarService
     ) {
         super();
+
+        // set defaults
+        this.agentFeatures = {
+            audioToVideo: false,
+            oneWayVideo: false
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -244,6 +261,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        SDKClient.events.on('CallHoldEvent', this.CallHoldUnHoldEvent);
+        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldUnHoldEvent);
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
@@ -296,6 +315,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        SDKClient.events.off('CallHoldEvent', this.CallHoldUnHoldEvent);
+        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldUnHoldEvent);
+
         this.widgetData.opener?.disposeCallWidget();
     }
 
@@ -307,10 +329,22 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * To check agent features for One Way Video
      */
     private checkAgentFeatures(): void {
-        // check if the agent has IsOneWayVideoEnabled feature enabled
-        this.oneWayVideo = SDKClient.getAgentData().featuresList.filter(
-            (f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsOneWayVideoEnabled
-        )?.[0]?.IsEnabled;
+        // check the agent features to enable/disable
+        SDKClient.getAgentData().featuresList.forEach((f) => {
+            // get the featue
+            const feature = f.Feature.toLowerCase();
+
+            // switch the feature
+            switch (feature) {
+                case AGENT_FEATURES.IsAudioToVideoEscalateEnabled:
+                    this.agentFeatures.audioToVideo = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsOneWayVideoEnabled:
+                    this.agentFeatures.oneWayVideo = f.IsEnabled;
+                    break;
+                default:
+            }
+        });
     }
 
     /**
@@ -325,7 +359,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         const AV: AVApiConfig = this.appConfig.AppConfigs.AV || {};
 
         // override the av config media constrain
-        if (this.oneWayVideo) {
+        if (this.agentFeatures.oneWayVideo) {
             AV.mediaConstraints.type = 'onewayvideo';
         }
 
@@ -635,6 +669,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
+     * To handles CallHoldEvent/CallHoldReconnectEvent
+     * @param evt IUIEvent evt
+     */
+    CallHoldUnHoldEvent = (evt: IUIEvent) => {
+        this.holdUnholdCall(false);
+    };
+
+    /**
      * Widget Cleanup
      * @method destroyWidget
      */
@@ -835,18 +877,18 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * Hold/Unhold call
      * @method holdCall
      */
-    public holdUnholdCall(): void {
+    public holdUnholdCall(informInteraction = true): void {
         // check the hold flag
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
+            if (informInteraction && typeof this.widgetData.opener.unHoldInteraction === 'function') {
                 this.widgetData.opener.unHoldInteraction();
             }
         } else {
             // hold the call
             this.avConn.hold();
-            if (typeof this.widgetData.opener.holdInteraction === 'function') {
+            if (informInteraction && typeof this.widgetData.opener.holdInteraction === 'function') {
                 this.widgetData.opener.holdInteraction();
             }
         }
@@ -927,7 +969,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         if (!(await this.avConn.upgradeToVideo())) {
             this._appUIService.showSnackbar('Upgrade to Video failed!', 'failure');
         } else {
-            this.oneWayVideo = false;
+            this.agentFeatures.oneWayVideo = false;
         }
         btn.disabled = false;
     }
