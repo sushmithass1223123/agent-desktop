@@ -171,7 +171,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     //     'insertdatetime media table paste code wordcount'
                     // ],
                     toolbar: `
-                        undo redo | formatselect | fontselect  | table | 
+                        undo redo | formatselect | fontsizeselect  | fontselect  | table | 
                         bold italic backcolor | alignleft aligncenter 
                         alignright alignjustify | bullist numlist outdent indent |  
                         removeformat

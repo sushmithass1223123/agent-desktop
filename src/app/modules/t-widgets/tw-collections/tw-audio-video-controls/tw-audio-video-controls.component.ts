@@ -15,8 +15,11 @@ import {
     AVChannel,
     AVControlMessageReceivedEvent,
     AVEvent,
+    CallHoldEvent,
+    CallHoldReconnectEvent,
     IAgentData,
     IResponse,
+    IUIEvent,
     SDKClient,
     TEnums,
     TextChatDisconnectedEvent,
@@ -258,6 +261,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        SDKClient.events.on('CallHoldEvent', this.CallHoldUnHoldEvent);
+        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldUnHoldEvent);
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
@@ -310,6 +315,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        SDKClient.events.off('CallHoldEvent', this.CallHoldUnHoldEvent);
+        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldUnHoldEvent);
+
         this.widgetData.opener?.disposeCallWidget();
     }
 
@@ -661,6 +669,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
+     * To handles CallHoldEvent/CallHoldReconnectEvent
+     * @param evt IUIEvent evt
+     */
+    CallHoldUnHoldEvent = (evt: IUIEvent) => {
+        this.holdUnholdCall(false);
+    };
+
+    /**
      * Widget Cleanup
      * @method destroyWidget
      */
@@ -861,18 +877,18 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * Hold/Unhold call
      * @method holdCall
      */
-    public holdUnholdCall(): void {
+    public holdUnholdCall(informInteraction = true): void {
         // check the hold flag
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
+            if (informInteraction && typeof this.widgetData.opener.unHoldInteraction === 'function') {
                 this.widgetData.opener.unHoldInteraction();
             }
         } else {
             // hold the call
             this.avConn.hold();
-            if (typeof this.widgetData.opener.holdInteraction === 'function') {
+            if (informInteraction && typeof this.widgetData.opener.holdInteraction === 'function') {
                 this.widgetData.opener.holdInteraction();
             }
         }

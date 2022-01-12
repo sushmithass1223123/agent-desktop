@@ -599,7 +599,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     onMaximized(max: boolean): void {
         this.maximized = max;
         this.maximizeEvent.emit(max);
-        if (max) {
+        // on minimize, always keep the latest record first
+        if (!max) {
             setTimeout(() => {
                 this.table.source?.sort?.sort({ id: 'InteractionDate', start: 'desc', disableClear: true });
             }, 0);

@@ -178,7 +178,7 @@
                         </div>
 
                         <div class="twd-flex twd-justify-between">
-                            <div class="twd-flex twd-max-w-8/12 twd-items-center">
+                            <div class="twd-flex twd-max-w-6/12 twd-items-center">
                                 <div class="my-4">
                                     <span>
                                         {{ currentInteraction.AgentName }}
@@ -203,12 +203,27 @@
                                 </span>
                             </div>
 
-                            <div class="twd-flex twd-items-end twd-flex-col">
+                            <div class="twd-flex twd-items-end twd-flex-col" matTooltip="Sent on" *ngIf="currentInteraction.EmailSentTime">
+                                <div class="twd-flex twd-items-center">
+                                    <mat-icon> forward_to_inbox </mat-icon>
+                                    <span class="twd-ml-2">
+                                        {{ currentInteraction.EmailSentTime | date: 'mediumDate' }}
+                                    </span>
+                                </div>
                                 <span>
-                                    {{ currentInteraction.EmailCreatedTime | date: 'mediumDate' }}
+                                    {{ currentInteraction.EmailSentTime | date: 'shortTime' }}
                                 </span>
+                            </div>
+
+                            <div class="twd-flex twd-items-end twd-flex-col" matTooltip="Received on" *ngIf="currentInteraction.EmailReceivedTime">
+                                <div class="twd-flex twd-items-center">
+                                    <mat-icon> move_to_inbox </mat-icon>
+                                    <span class="twd-ml-2">
+                                        {{ currentInteraction.EmailReceivedTime | date: 'mediumDate' }}
+                                    </span>
+                                </div>
                                 <span>
-                                    {{ currentInteraction.EmailCreatedTime | date: 'shortTime' }}
+                                    {{ currentInteraction.EmailReceivedTime | date: 'shortTime' }}
                                 </span>
                             </div>
                         </div>

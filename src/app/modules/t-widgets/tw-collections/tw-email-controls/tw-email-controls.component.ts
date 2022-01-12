@@ -520,7 +520,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 Body: res.Body,
                 AttachmetList: res?.Attachments || [],
                 To: res.ToList,
-                EmailCreatedTime: parse(inboxRes?.ReceivedDate + inboxRes?.ReceivedTime, 'yyyyMMddHHmmss', new Date()).toString(),
+                EmailReceivedTime:
+                    inboxRes?.ReceivedDate && inboxRes.ReceivedTime
+                        ? parse(inboxRes.ReceivedDate + inboxRes.ReceivedTime, 'yyyyMMddHHmmss', new Date()).toString()
+                        : '',
+                EmailSentTime:
+                    outboxRes?.SendDate && outboxRes.SendTime
+                        ? parse(outboxRes.SendDate + outboxRes.SendTime, 'yyyyMMddHHmmss', new Date()).toString()
+                        : '',
                 From: res.From,
 
                 AgentName: res.AgentName,
@@ -1203,7 +1210,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             From,
             CCList,
             BCCList,
-            EmailCreatedTime,
+            EmailReceivedTime,
             To,
             AttachmetList,
             InSessionId,
@@ -1226,7 +1233,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             Files,
             From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
             mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
-            CreatedTime: EmailCreatedTime,
+            CreatedTime: EmailReceivedTime,
             SessionID
         };
         const prelude = `
