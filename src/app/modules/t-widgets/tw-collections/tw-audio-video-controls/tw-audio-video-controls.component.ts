@@ -261,8 +261,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
         SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
-        SDKClient.events.on('CallHoldEvent', this.CallHoldUnHoldEvent);
-        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldUnHoldEvent);
+        SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
+        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
@@ -315,8 +315,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
         SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
-        SDKClient.events.off('CallHoldEvent', this.CallHoldUnHoldEvent);
-        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldUnHoldEvent);
+        SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
+        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
         this.widgetData.opener?.disposeCallWidget();
     }
@@ -591,6 +591,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param {AgentAVMessageEvent} evt
      */
     private AgentAVMessageEvent = (evt: AgentAVMessageEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
     };
@@ -605,6 +610,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
+
         // close the widget
         this.destroyWidget();
     };
@@ -615,6 +621,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     private TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
         try {
+            // check the interaction
+            if (evt.InteractionID !== this.interactionId) {
+                return;
+            }
+
             // we need to catch only app message here to get the list of camera sent from VIVR
             if (evt.IsAppMessage) {
                 const msg = JSON.parse(evt.Message);
@@ -633,6 +644,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     ActionMessageReceivedEvent = (evt: ActionMessageReceivedEvent) => {
         try {
+            // check the interaction
+            if (evt.InteractionID !== this.interactionId) {
+                return;
+            }
+
             // mark the device as selected if VIVR send "camerachange"  with action
             // or if we get ack from VIVR for the request "togglecamera"
             const msg = JSON.parse(evt.Message);
@@ -669,11 +685,33 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
-     * To handles CallHoldEvent/CallHoldReconnectEvent
+     * To handles CallHoldEvent
+     * @param {CallHoldEvent} evt
+     */
+    CallHoldEvent = (evt: CallHoldEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // hold the call
+        this.avConn.hold();
+        this.hold = true;
+    };
+
+    /**
+     * To handles CallHoldReconnectEvent
      * @param evt IUIEvent evt
      */
-    CallHoldUnHoldEvent = (evt: IUIEvent) => {
-        this.holdUnholdCall(false);
+    CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
+        // check the interaction
+        if (evt.InteractionID !== this.interactionId) {
+            return;
+        }
+
+        // un hold the call
+        this.avConn.unHold();
+        this.hold = false;
     };
 
     /**
@@ -877,18 +915,18 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * Hold/Unhold call
      * @method holdCall
      */
-    public holdUnholdCall(informInteraction = true): void {
+    public holdUnholdCall(): void {
         // check the hold flag
         if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-            if (informInteraction && typeof this.widgetData.opener.unHoldInteraction === 'function') {
+            if (typeof this.widgetData.opener.unHoldInteraction === 'function') {
                 this.widgetData.opener.unHoldInteraction();
             }
         } else {
             // hold the call
             this.avConn.hold();
-            if (informInteraction && typeof this.widgetData.opener.holdInteraction === 'function') {
+            if (typeof this.widgetData.opener.holdInteraction === 'function') {
                 this.widgetData.opener.holdInteraction();
             }
         }
