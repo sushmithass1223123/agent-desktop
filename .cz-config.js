@@ -21,8 +21,8 @@ module.exports = {
             name: '💉 test:\tAdding tests cases'
         },
         {
-            value: '💻 build',
-            name: '💻 build:\tNew build'
+            value: '🔖 build',
+            name: '🔖 build:\tNew build'
         }
     ],
     // { name: 'ui' }, { name: 'android' }, { name: 'ios' }, { name: 'home' }, { name: 'planner' }, { name: 'settings' }
