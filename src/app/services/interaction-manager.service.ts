@@ -110,7 +110,7 @@ export class InteractionManagerService extends SharedWrapper {
             // filter for the interaction
             if (item.interactionId === interactionId) {
                 // check the item for isActive and check if its not active already
-                if (Object.keys(value).includes('isActive') && !item.isActive) {
+                if (Object.keys(value).includes('isActive') && value.isActive && !item.isActive) {
                     SDKClient.selectInteraction(interactionId.toString(), null);
                     // for textchat interaction set the unread message count to 0
                     if (item.type === 'textchat') {
