@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { TwAmdocsBcc } from '@ad/types';
 
 @Component({
     selector: 'tw-amdocs-bcc',
@@ -21,7 +20,7 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
     };
 
     /**
-     * Constructor
+     * Constructor 
      */
     constructor() {
         super();

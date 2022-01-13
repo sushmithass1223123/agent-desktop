@@ -149,6 +149,11 @@ export class CreateEmailComponent implements OnInit, AfterViewInit, OnDestroy, O
      */
     maxFileSize = 20971520;
 
+    /**
+     * Quick reply flag
+     */
+    @Input() quickReply = false;
+
     constructor(private appUiService: AppUiService, @Inject(APP_BASE_HREF) private baseHref: string, private _fuseFacadeService: FuseFacadeService) {}
 
     /**

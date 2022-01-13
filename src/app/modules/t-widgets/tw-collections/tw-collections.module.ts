@@ -12,7 +12,6 @@ import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.compon
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
 import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioVideoControlsComponent } from './tw-audio-video-controls/tw-audio-video-controls.component';
-import { TwBookmarksComponent } from './tw-bookmarks/tw-bookmarks.component';
 import { TwCalendarModule } from './tw-calendar/tw-calendar.module';
 import { TwCampaignContactComponent } from './tw-campaign-contact/tw-campaign-contact.component';
 import { TwCannedResponsesComponent } from './tw-canned-responses/tw-canned-responses.component';
@@ -105,8 +104,7 @@ const collectionComponents = [
     TwAudioVideoControlsComponent,
     TwCampaignContactComponent,
     TwComposeMessagingComponent,
-    TwDeflectToDigitalComponent,
-    TwBookmarksComponent
+    TwDeflectToDigitalComponent
 ];
 
 /**

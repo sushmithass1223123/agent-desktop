@@ -34,7 +34,6 @@ export interface CreateEmailOutput {
 export interface EmailComponentInputs {
     From: string;
     mailbox: string;
-    prelude?: string;
     CreatedTime: string;
     SessionID: string;
     To: string[];
@@ -45,4 +44,4 @@ export interface EmailComponentInputs {
     Files: EmailFile[];
 }
 
-export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft' | 'quick-reply';
+export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft';

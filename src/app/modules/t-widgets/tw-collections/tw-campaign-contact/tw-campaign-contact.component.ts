@@ -156,14 +156,13 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             try {
                 // create event names to subscribe
                 const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
-                const processInfo = processCustomerDetails(this.customerInfo);
                 // register to tmac events
                 this._tmacEventService
                     .getInteractionEvents(eventNames, this.interaction.InteractionID)
                     .pipe(takeUntil(this.unsubscribeAll))
                     .subscribe((evts) =>
                         evts.forEach((evt) => {
-                            processInfo.exec(evt);
+                            processCustomerDetails(this.customerInfo, evt);
                         })
                     );
             } catch (error) {
@@ -283,7 +282,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
             log: true
         });
 
-        processCustomerDetails(this.customerInfo).exec({
+        processCustomerDetails(this.customerInfo, {
             EventName: 'ContactData',
             ...this.contactData.data
         });
@@ -342,25 +341,22 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      * @param {Any} requestArgs
      */
     private async restCall(method: string, requestArgs: any): Promise<IResponse> {
+        this.progress = true;
+        let response: IResponse | PromiseLike<IResponse>;
         try {
-            this.progress = true;
-            let response: IResponse | PromiseLike<IResponse>;
-            try {
-                response = await TUtils.HttpClient.sendRequest<IResponse>({
-                    urls: [this.tcmClientUrl + method],
-                    requestArgs,
-                    header: {
-                        'Content-Type': 'application/json'
-                    },
-                    responseType: 'json',
-                    method: 'POST',
-                    log: true
-                });
-            } catch (error) {}
-            this.progress = false;
-            return response;
+            response = await TUtils.HttpClient.sendRequest<IResponse>({
+                urls: [this.tcmClientUrl + method],
+                requestArgs,
+                header: {
+                    'Content-Type': 'application/json'
+                },
+                responseType: 'json',
+                method: 'POST',
+                log: true
+            });
         } catch (error) {}
-        return null;
+        this.progress = false;
+        return response;
     }
 
     /**

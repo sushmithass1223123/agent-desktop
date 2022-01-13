@@ -81,8 +81,7 @@
                             "rxjs",
                             "@mattlewis92/dom-autoscroller",
                             "chartjs-plugin-piechart-outlabels",
-                            "@tmac/operators",
-                            "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser"
+                            "@tmac/operators"
                         ],
                         "customWebpackConfig": {
                             "path": "webpack.config.js"
@@ -118,7 +117,7 @@
                                 {
                                     "type": "initial",
                                     "maximumWarning": "6mb",
-                                    "maximumError": "10mb"
+                                    "maximumError": "9mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",
@@ -223,41 +222,8 @@
                         }
                     }
                 }
-            },
-            "tags": []
-        },
-        "types": {
-            "root": "libs/types",
-            "sourceRoot": "libs/types/src",
-            "projectType": "library",
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/workspace:tsc",
-                    "outputs": ["{options.outputPath}"],
-                    "options": {
-                        "outputPath": "dist/libs/types",
-                        "main": "libs/types/src/index.ts",
-                        "tsConfig": "libs/types/tsconfig.lib.json",
-                        "assets": ["libs/types/*.md"]
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["libs/types/**/*.ts"]
-                    },
-                    "outputs": ["{options.outputFile}"]
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/libs/types"],
-                    "options": {
-                        "jestConfig": "libs/types/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            },
-            "tags": []
+            }
         }
-    }
+    },
+    "defaultProject": "agent-desktop"
 }

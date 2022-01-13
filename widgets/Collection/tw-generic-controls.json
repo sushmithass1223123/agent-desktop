@@ -15,7 +15,9 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": ["collapse"],
+        "Actions": [
+            "collapse"
+        ],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

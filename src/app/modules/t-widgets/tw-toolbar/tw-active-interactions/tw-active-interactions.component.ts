@@ -21,6 +21,7 @@ import { takeUntil } from 'rxjs/operators';
     animations: fuseAnimations
 })
 export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+
     /**
      * App json data
      */
@@ -60,20 +61,25 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         this.initWrapper(this.data);
 
         // subscribe to interactions subject
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // setTimeout(() => {
-            // non email interactions
-            this.interactionList = interactions.filter((i) => i.type !== 'email');
-            // filter email interactions
-            this.emailInteractionList = interactions.filter((i) => i.type === 'email');
-            // }, 500);
-        });
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // setTimeout(() => {
+                // non email interactions
+                this.interactionList = interactions.filter(i => i.type !== 'email');
+                // filter email interactions
+                this.emailInteractionList = interactions.filter(i => i.type === 'email');
+                // }, 500);
+            });
 
         // subscribe to content page subject
-        this._contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((mode: string) => {
-            this.currentViewMode = mode;
-        });
+        this._contentPageService.mode
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((mode: string) => {
+                this.currentViewMode = mode;
+            });
     }
+
 
     /**
      * Lifecycle hook
@@ -86,16 +92,17 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
 
     /**
      * Toggle button
-     * @param {boolean} show
-     * @param {MatButton} btn
+     * @param {boolean} show 
+     * @param {MatButton} btn 
      */
     private toggleButton(show: boolean, btn: MatButton): void {
         if (show) {
-            // show the progress bar
+            // show the progress bar 
             this._fuseProgressBarService.show();
             // disable the button
             btn.disabled = true;
-        } else {
+        }
+        else {
             // enable button after response
             btn.disabled = true;
             // hide the progress bar
@@ -105,7 +112,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
 
     /**
      * Open Interaction
-     * @param {InteractionRef} item
+     * @param {InteractionRef} item 
      */
     public openInteraction(item: InteractionRef): void {
         const data: any = new Object();
@@ -117,7 +124,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
 
         // check the type
         if (item.type === 'textchat') {
-            // reset unread count
+            // reset unread count 
             data.otherData = {
                 unreadCount: 0
             };
@@ -138,8 +145,8 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
 
     /**
      * Hold/Un hold call
-     * @param {InteractionRef} item
-     * @param {MatButton} btn
+     * @param {InteractionRef} item 
+     * @param {MatButton} btn 
      */
     public holdUnHoldCall(type: string, item: InteractionRef, btn: MatButton): void {
         // toggle the button
@@ -155,13 +162,16 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                 if (connection) {
                     if (type === 'hold' && item.status !== 'hold') {
                         connection.hold();
-                    } else if (type === 'unhold' && item.status === 'hold') {
+                    }
+                    else if (type === 'unhold' && item.status === 'hold') {
                         connection.unHold();
-                    } else {
+                    }
+                    else {
                         // toggle the button
                         this.toggleButton(false, btn);
                     }
-                } else {
+                }
+                else {
                     // toggle the button
                     this.toggleButton(false, btn);
                 }
@@ -171,47 +181,54 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
 
         // for PBX calls
         if (type === 'hold') {
-            SDKClient.holdCall(item.interactionId.toString(), null).then((dt: IResponse) => {
-                // toggle the button
-                this.toggleButton(false, btn);
-                // check for the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    // disconnect call success
-                } else {
-                    this._appUIService.showSnackbar('Hold call failed', 'failure');
-                }
-            });
-        } else {
-            SDKClient.unHoldCall(item.interactionId.toString(), null).then((dt: IResponse) => {
-                // toggle the button
-                this.toggleButton(false, btn);
-                // check for the response
-                if (dt.response && dt.response.ResultCode === 0) {
-                    // disconnect call success
-                } else {
-                    this._appUIService.showSnackbar('Unhold call failed', 'failure');
-                }
-            });
+            SDKClient.holdCall(item.interactionId.toString(), null)
+                .then((dt: IResponse) => {
+                    // toggle the button
+                    this.toggleButton(false, btn);
+                    // check for the response
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        // disconnect call success
+                    }
+                    else {
+                        this._appUIService.showSnackbar('Hold call failed', 'failure');
+                    }
+                });
+        }
+        else {
+            SDKClient.unHoldCall(item.interactionId.toString(), null)
+                .then((dt: IResponse) => {
+                    // toggle the button
+                    this.toggleButton(false, btn);
+                    // check for the response
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        // disconnect call success
+                    }
+                    else {
+                        this._appUIService.showSnackbar('Unhold call failed', 'failure');
+                    }
+                });
         }
     }
 
     /**
      * Disconnect Call
-     * @param {InteractionRef} item
-     * @param {MatButton} btn
+     * @param {InteractionRef} item 
+     * @param {MatButton} btn 
      */
     public disconnectCall(item: InteractionRef, btn: MatButton): void {
         // toggle the button
         this.toggleButton(true, btn);
-        SDKClient.disconnectCall(item.interactionId.toString(), null).then((dt: IResponse) => {
-            // toggle the button
-            this.toggleButton(false, btn);
-            // check for the response
-            if (dt.response && dt.response.ResultCode === 0) {
-                // disconnect call success
-            } else {
-                this._appUIService.showSnackbar('Disconnect call failed', 'failure');
-            }
-        });
+        SDKClient.disconnectCall(item.interactionId.toString(), null)
+            .then((dt: IResponse) => {
+                // toggle the button
+                this.toggleButton(false, btn);
+                // check for the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    // disconnect call success
+                }
+                else {
+                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                }
+            });
     }
 }

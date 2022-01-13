@@ -7,7 +7,6 @@ import { IWidget } from 'app/interfaces';
 import { extractJsonVal } from '@tmac/operators';
 import { get, uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { TwTcisIntegration } from '@ad/types';
 
 /**
  * TCIS Integration Component

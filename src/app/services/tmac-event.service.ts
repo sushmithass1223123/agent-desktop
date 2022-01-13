@@ -20,10 +20,8 @@ import {
     TMACEventTypes,
     TmacServerConnectionSuccess
 } from '@tmac/sdk';
-import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IAction, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
-import { throwADError } from 'app/utils';
 import { upperFirst } from 'lodash';
 import { concat, merge, Observable, Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
@@ -159,8 +157,6 @@ export class TMACEventService extends SharedWrapper {
         }
         // notify the observers
         this._interactionEvent$.next([evt]);
-        // emit events to launcher
-        this.emitEventsToLauncher(evt);
     }
 
     /**
@@ -177,48 +173,6 @@ export class TMACEventService extends SharedWrapper {
         }
         // notify the observers
         this._nonInteractionEvent$.next([evt]);
-        // emit events to launcher
-        this.emitEventsToLauncher(evt);
-    }
-
-    /**
-     * To emit events to the launcher
-     * @param {IUIEvent} evt
-     */
-    private emitEventsToLauncher(evt: IUIEvent): void {
-        // if the AD is opened from a laucher emit events to launcher as well
-        if (!EXCLUDED_TMAC_EVENT.includes(evt.EventName)) {
-            this.sendPostMessageToTheLauncher('onTMACEvent', [evt]);
-        }
-    }
-
-    /**
-     * To send post message to the launcher
-     *
-     * @param fn
-     * @param data
-     */
-    private sendPostMessageToTheLauncher(fn: string, data: any): void {
-        try {
-            // get the element
-            const element = opener ?? parent;
-            // check if the element is present
-            if (element) {
-                // send post message to the element
-                element.postMessage(
-                    {
-                        function: fn,
-                        callback: null,
-                        data,
-                        source: 'tmac',
-                        userObject: null
-                    },
-                    '*'
-                );
-            }
-        } catch (error) {
-            throwADError(`Error in TMACEventService.sendPostMessageToTheLauncher.${fn}`, error);
-        }
     }
 
     /**
@@ -808,7 +762,7 @@ export class TMACEventService extends SharedWrapper {
      *
      * @param {MessageEvent} evt
      */
-    private postMessageReceived = async (evt: MessageEvent) => {
+    private postMessageReceived = (evt: MessageEvent) => {
         try {
             // if event data is null then return
             if (!evt.data) {
@@ -874,31 +828,12 @@ export class TMACEventService extends SharedWrapper {
                         }
                     );
                 }
-                // to invoke SDK method for non custom widgets
-                else if (fn === 'invokesdk' && message.source.toLowerCase().includes('launcher')) {
-                    try {
-                        // if no data is there return
-                        if (!message.data?.method) {
-                            return;
-                        }
-
-                        const method = message.data?.method;
-                        const params = message.data?.params ?? '';
-                        // invoke SDK method dynamically
-                        const response = await SDKClient[method](...params);
-                        // send the response to the launcher
-                        this.sendPostMessageToTheLauncher(message.callback || `${method}Done`, response);
-                    } catch (error) {
-                        throw new Error(error);
-                    }
-                    return;
-                }
 
                 // notify the observers
                 this._postMessage$.next(data);
             }
         } catch (error) {
-            this.logger.error('Error in TMACEventService.postMessageReceived', error, false);
+            this.logger.error('Error in postMessageReceived', error, false);
         }
     };
 

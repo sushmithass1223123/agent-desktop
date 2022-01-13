@@ -10,7 +10,6 @@ import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { TwGamification } from '@ad/types';
 
 type Coin = {
     /**

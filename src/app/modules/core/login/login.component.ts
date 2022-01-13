@@ -7,10 +7,7 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
-import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { IAppConfig } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
@@ -43,7 +40,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * App configuration
      */
-    appConfig: IAppConfig;
+    appConfig: any;
     /**
      * Brand logo
      */
@@ -284,10 +281,6 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      */
     showOtp = false;
     /**
-     * Single sign on type
-     */
-    ssoType = '';
-    /**
      * Lan Id input children ref
      */
     @ViewChild('lanId') lanIdField: ElementRef<HTMLInputElement>;
@@ -340,9 +333,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         private _appUIService: AppUiService,
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
-        private fuseSplashService: FuseSplashScreenService,
-        private _tmacEventService: TMACEventService,
-        private _msTeamsAuthSerivce: MsTeamsAuthService
+        private fuseSplashService: FuseSplashScreenService
     ) {
         super();
 
@@ -373,17 +364,12 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         this.uiVersion = _appDataService.getAppVersion();
 
         // subscribe to _activatedRoute for loging agent id
-        this._activatedRoute.paramMap.subscribe(async (paramMap) => {
+        this._activatedRoute.paramMap.subscribe((paramMap) => {
             // check if agentId in param
             if (paramMap.has('agentId')) {
-                await this.loadConfig(paramMap.get('agentId'));
+                this.loadConfig(paramMap.get('agentId'));
             } else {
-                await this.loadConfig();
-            }
-
-            // check if ssoType in param
-            if (paramMap.has('ssoType')) {
-                this.ssoType = paramMap.get('ssoType').toLowerCase();
+                this.loadConfig();
             }
         });
     }
@@ -439,7 +425,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     }, {} as Record<string, any>)
                 )
             )
-            .subscribe(async (params) => {
+            .subscribe((params) => {
                 // if there is not user in param then return
                 if (!params.u) {
                     return;
@@ -498,7 +484,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         this.appConfig = config;
         this.configLoaded(config);
-        await this.getTMACVersion();
+        this.getData();
+        this.checkQueryParams();
     }
 
     /**
@@ -599,97 +586,89 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      * To do face authentication
      */
     private async doFaceAuthentication(): Promise<boolean> {
-        try {
-            // pause the video
-            this.videoElement?.nativeElement.pause();
-            // create a canvas
-            const canvas = document.createElement('canvas');
-            // scale the canvas accordingly
-            canvas.width = this.videoElement?.nativeElement.videoWidth;
-            canvas.height = this.videoElement?.nativeElement.videoHeight;
-            // get the context
-            const ctx = canvas.getContext('2d');
-            // draw the canvas
-            ctx.drawImage(this.videoElement?.nativeElement, 0, 0, canvas.width, canvas.height);
-            // get base64 url
-            const base64 = canvas.toDataURL();
-            let ret: boolean;
+        // pause the video
+        this.videoElement?.nativeElement.pause();
+        // create a canvas
+        const canvas = document.createElement('canvas');
+        // scale the canvas accordingly
+        canvas.width = this.videoElement?.nativeElement.videoWidth;
+        canvas.height = this.videoElement?.nativeElement.videoHeight;
+        // get the context
+        const ctx = canvas.getContext('2d');
+        // draw the canvas
+        ctx.drawImage(this.videoElement?.nativeElement, 0, 0, canvas.width, canvas.height);
+        // get base64 url
+        const base64 = canvas.toDataURL();
+        let ret: boolean;
 
-            if (!base64) {
-                // face authentication failed
-                this._appUIService.showSnackbar('Login failed, Unable to capture image, make sure you provide access to camera', 'failure');
-                return false;
-            }
-
-            this._appUIService.showSnackbar('Please wait, Face authentication in progress', 'loading', 'top', 'right');
-
-            // send request to face auth server
-            // get the login json from proxy
-            const result: IResponse = await TUtils.HttpClient.sendRequest({
-                urls: [this.faceAuthServerUrl],
-                requestArgs: {
-                    snapdata: base64.split(',')[1],
-                    snaptype: 'base64',
-                    pptype: 'url',
-                    agentId: this.loginForm.get('lanId').value,
-                    originator: 'TMACUI',
-                    ppdata: `${this.loginForm.get('lanId').value}.png`,
-                    isrealface: 1
-                },
-                header: {
-                    'Content-Type': 'application/json'
-                },
-                responseType: 'json',
-                method: 'POST',
-                log: true
-            });
-
-            // check for valid response from server
-            if (!result) {
-                this._appUIService.showSnackbar(
-                    'Login failed, Unable to reach face authentication server. Please contact the administrator',
-                    'failure'
-                );
-                ret = false;
-            }
-
-            // check the response
-            if (result.response && result.response.d) {
-                // parse the response
-                const response = JSON.parse(result.response.d);
-                // check if the returned data has face authentication properties
-                if (!response.hasOwnProperty('face_found_in_image') || !response.hasOwnProperty('face_authenticated_percentage')) {
-                    // login error
-                    this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
-                    ret = false;
-                }
-
-                // check if the response
-                if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
-                    // face authentication sucess
-                    this._appUIService.showSnackbar('Face authentication success, trying to login', 'success', 'top', 'right');
-                    ret = true;
-                } else {
-                    // face authentication failed
-                    this._appUIService.showSnackbar('Face authentication failed', 'failure', 'top', 'right');
-                    ret = false;
-                }
-            } else {
-                // login error
-                this._appUIService.showSnackbar('Face authentication: Invalid response from server', 'failure', 'top', 'right');
-                ret = false;
-            }
-
-            if (!ret) {
-                // play the video the video back
-                this.videoElement?.nativeElement.play();
-            }
-
-            return ret;
-        } catch (error) {
-            this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
+        if (!base64) {
+            // face authentication failed
+            this._appUIService.showSnackbar('Login failed, Unable to capture image, make sure you provide access to camera', 'failure');
+            return false;
         }
-        return false;
+
+        this._appUIService.showSnackbar('Please wait, Face authentication in progress', 'loading', 'top', 'right');
+
+        // send request to face auth server
+        // get the login json from proxy
+        const result: IResponse = await TUtils.HttpClient.sendRequest({
+            urls: [this.faceAuthServerUrl],
+            requestArgs: {
+                snapdata: base64.split(',')[1],
+                snaptype: 'base64',
+                pptype: 'url',
+                agentId: this.loginForm.get('lanId').value,
+                originator: 'TMACUI',
+                ppdata: `${this.loginForm.get('lanId').value}.png`,
+                isrealface: 1
+            },
+            header: {
+                'Content-Type': 'application/json'
+            },
+            responseType: 'json',
+            method: 'POST',
+            log: true
+        });
+
+        // check for valid response from server
+        if (!result) {
+            this._appUIService.showSnackbar('Login failed, Unable to reach face authentication server. Please contact the administrator', 'failure');
+            ret = false;
+        }
+
+        // check the response
+        if (result.response && result.response.d) {
+            // parse the response
+            const response = JSON.parse(result.response.d);
+            // check if the returned data has face authentication properties
+            if (!response.hasOwnProperty('face_found_in_image') || !response.hasOwnProperty('face_authenticated_percentage')) {
+                // login error
+                this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
+                ret = false;
+            }
+
+            // check if the response
+            if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
+                // face authentication sucess
+                this._appUIService.showSnackbar('Face authentication success, trying to login', 'success', 'top', 'right');
+                ret = true;
+            } else {
+                // face authentication failed
+                this._appUIService.showSnackbar('Face authentication failed', 'failure', 'top', 'right');
+                ret = false;
+            }
+        } else {
+            // login error
+            this._appUIService.showSnackbar('Face authentication: Invalid response from server', 'failure', 'top', 'right');
+            ret = false;
+        }
+
+        if (!ret) {
+            // play the video the video back
+            this.videoElement?.nativeElement.play();
+        }
+
+        return ret;
     }
 
     /**
@@ -713,45 +692,40 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * To get data from server
      */
-    public async getTMACVersion(): Promise<void> {
-        try {
-            // get the TMAC server version
-            this.connectionError.retrying = true;
-            const { response } = await SDKClient.getTMACVersion('');
-
-            if (response !== 'NA' && response?.split('|')[0]?.trim()) {
-                this.version = response;
-                if (this.domainListEnabled) {
-                    SDKClient.getUserDomainList(null).then((result: IResponse) => {
-                        this.domainList = result.response || [];
-                    });
-                }
-                this.connectionError.errored = false;
-                this.connectionError.countdown = null;
-
-                // if there is no SSO login, then check query params
-                if (!(await this.ssoLogin())) {
-                    // check query params only if the server is connected
-                    this.checkQueryParams();
-                }
-            } else {
-                throw new Error(`Invalid Response : ${response}`);
-            }
-        } catch (error) {
-            console.error(error);
-            this.connectionError.errored = true;
-            this.connectionError.countdown = interval(1000).pipe(
-                take(this.connectionError.pollingInterval + 1),
-                tap((x) => {
-                    if (x === this.connectionError.pollingInterval) {
-                        this.getTMACVersion();
+    public getData(): void {
+        // get the TMAC server version
+        this.connectionError.retrying = true;
+        SDKClient.getTMACVersion('')
+            .then((dt) => {
+                if (dt.response !== 'NA') {
+                    this.version = dt.response;
+                    if (this.domainListEnabled) {
+                        SDKClient.getUserDomainList(null).then((result: IResponse) => {
+                            this.domainList = result.response || [];
+                        });
                     }
-                })
-            );
-        } finally {
-            this.connectionError.retrying = false;
-            this.loading = false;
-        }
+                    this.connectionError.errored = false;
+                    this.connectionError.countdown = null;
+                } else {
+                    throw new Error(`Invalid Response : ${JSON.stringify(dt)}`);
+                }
+            })
+            .catch((e) => {
+                console.error(e);
+                this.connectionError.errored = true;
+                this.connectionError.countdown = interval(1000).pipe(
+                    take(this.connectionError.pollingInterval + 1),
+                    tap((x) => {
+                        if (x === this.connectionError.pollingInterval) {
+                            this.getData();
+                        }
+                    })
+                );
+            })
+            .finally(() => {
+                this.connectionError.retrying = false;
+                this.loading = false;
+            });
     }
 
     /**
@@ -830,15 +804,15 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             null
         )
             .then((result: IResponse) => {
+                // set loading to true
+                this.loading = false;
                 // process the login response
                 this.loginResponse(result);
-                // set loading to false
-                this.loading = false;
             })
             .catch((e) => {
                 console.error(e);
                 this.videoElement?.nativeElement.play();
-                // set loading to false
+                // set loading to true
                 this.loading = false;
                 // login error
                 this._appUIService.showSnackbar('Login failed, Please try again', 'failure', 'top', 'right');
@@ -959,17 +933,6 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 this._appUIService.showSnackbar(this.errorMessage, 'failure', 'top', 'right');
             }
             this.fuseSplashService.hide();
-
-            // emit login event
-            this._tmacEventService.emitSDKEvent({
-                event: {
-                    EventName: 'AgentLoginEvent',
-                    InteractionID: 0,
-                    Data: response
-                },
-                isInteractionEvent: false,
-                log: true
-            });
         } catch (error) {
             this.videoElement?.nativeElement.play();
             this.logger.error('Error in login', error);
@@ -993,52 +956,5 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      */
     resetField(field: string): void {
         this.loginForm.patchValue({ [field]: '' });
-    }
-
-    /**
-     * For single sign on
-     */
-    async ssoLogin(): Promise<boolean> {
-        if (!this.ssoType) {
-            return false;
-        }
-
-        this.loading = true;
-
-        try {
-            if (this.ssoType === 'msteams') {
-                const response = await this._msTeamsAuthSerivce.signIn();
-                // check if authenticated
-                if (this._msTeamsAuthSerivce.authenticated) {
-                    // check the response
-                    if (response.result?.user?.email) {
-                        // get the agent lanId
-                        const lanId = response.result.user.email.split('@')[0];
-                        if (lanId) {
-                            this.loginForm.patchValue({ lanId: lanId });
-                            this.fuseSplashService.show();
-                            this.login(true);
-                        }
-                    }
-                }
-                return true;
-            } else {
-                this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
-            }
-        } catch (error) {
-            console.error('fail to authenticate', error);
-        } finally {
-            this.loading = false;
-        }
-        return false;
-    }
-
-    /**
-     * For single sign out
-     */
-    public singleSignOut(): void {
-        if (this.ssoType === 'msteams') {
-            this._msTeamsAuthSerivce.signOut();
-        }
     }
 }

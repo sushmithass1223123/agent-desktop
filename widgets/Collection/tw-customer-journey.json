@@ -15,7 +15,10 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": ["maximize", "collapse"],
+        "Actions": [
+            "maximize",
+            "collapse"
+        ],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

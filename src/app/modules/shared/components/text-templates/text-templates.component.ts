@@ -13,8 +13,7 @@ import { sortBy } from 'lodash';
     selector: 'text-templates',
     templateUrl: './text-templates.component.html',
     styleUrls: ['./text-templates.component.scss'],
-    animations: fuseAnimations,
-    encapsulation: ViewEncapsulation.None
+    animations: fuseAnimations
 })
 export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -65,8 +64,6 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
 
-    showTemplates = false;
-
     constructor(private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
         super();
     }
@@ -105,13 +102,12 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * Reset form
      * @method clearAllData
      */
-    clearAllData = (): void => {
+    clearAllData(): void {
         this.selectedDepartment = null;
         this.groups = [];
         this.selectedGroup = null;
-        this.showTemplates = false;
         this.clearTemplates();
-    };
+    }
 
     /**
      * To clear selected templates
@@ -128,7 +124,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * @param {any} event
      */
     onSelectDepartment(event: any): void {
-        const value = event?.value?.ID;
+        const value = event.value.ID;
 
         // check if value is there
         if (!value) {
@@ -144,7 +140,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
 
         // get the groups for the department
         SDKClient.getTextTemplateGroups(value, null)
-            .then((result) => {
+            .then((result: IResponse) => {
                 this.groups = sortBy(result.response, 'Name');
             })
             .finally(() => {
@@ -158,7 +154,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * @param {any} event
      */
     onSelectGroups(event: any): void {
-        const value = event?.value?.Name;
+        const value = event.value.Name;
         // check if value is there
         if (!value) {
             // if none selected then clear templates and selected template
@@ -172,7 +168,6 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.getTextTemplates(value, null)
             .then((result: IResponse) => {
                 this.templates = result.response;
-                this.showTemplates = !!this.templates.length;
             })
             .finally(() => {
                 this.loading = false;
@@ -186,7 +181,6 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      */
     onTemplateSelect(template: any): void {
         this.selectedTemplate = template;
-        this.showTemplates = false;
         this.template = template.Text;
     }
 
@@ -195,7 +189,6 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
      * @method sendTemplate
      */
     async emitSendTemplate(): Promise<void> {
-        this.showTemplates = false;
         this.sendTemplate.emit(this.template);
     }
 

@@ -40,64 +40,6 @@ tw-voice-controls {
                         font-size: 12px;
                     }
                 }
-
-                .timeline-item {
-                    &.tl-purple {
-                        .timeline-bar,
-                        .timeline-bar::after,
-                        .timeline-info-connect-line::after {
-                            background-color: #782e61 !important;
-                        }
-                    }
-
-                    &.tl-blue {
-                        .timeline-bar,
-                        .timeline-bar::after,
-                        .timeline-info-connect-line::after {
-                            background-color: #2f5a92 !important;
-                        }
-                    }
-
-                    &.tl-teal {
-                        .timeline-bar,
-                        .timeline-bar::after,
-                        .timeline-info-connect-line::after {
-                            background-color: #0b8e9d !important;
-                        }
-                    }
-
-                    &.tl-turquoise {
-                        .timeline-bar,
-                        .timeline-bar::after,
-                        .timeline-info-connect-line::after {
-                            background-color: #1f9bbf !important;
-                        }
-                    }
-
-                    &.tl-purple {
-                        .timeline-bar::before {
-                            border-left-color: #782e61 !important;
-                        }
-                    }
-
-                    &.tl-blue {
-                        .timeline-bar::before {
-                            border-left-color: #2f5a92 !important;
-                        }
-                    }
-
-                    &.tl-teal {
-                        .timeline-bar::before {
-                            border-left-color: #0b8e9d !important;
-                        }
-                    }
-
-                    &.tl-turquoise {
-                        .timeline-bar::before {
-                            border-left-color: #1f9bbf !important;
-                        }
-                    }
-                }
             }
 
             .call-controls {

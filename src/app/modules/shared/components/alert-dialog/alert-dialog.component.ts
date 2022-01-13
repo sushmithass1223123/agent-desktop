@@ -14,14 +14,14 @@ import { AppAlertDialogData } from 'app/interfaces';
 })
 export class AlertDialogComponent implements OnInit {
     /**
-     * Custom icon
+     * Custom icon 
      */
     icon: string;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: AppAlertDialogData) {}
 
     /**
-     * Lifecycle hook
+     * Lifecycle hook 
      * @method
      */
     ngOnInit(): void {

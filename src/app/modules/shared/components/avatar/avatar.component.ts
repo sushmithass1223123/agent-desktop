@@ -24,7 +24,7 @@ export class AvatarComponent implements OnInit, OnChanges {
     public matIcon: string;
 
     /**
-     * Name of the user
+     * Name of the user 
      */
     @Input()
     public name: string;
@@ -82,7 +82,8 @@ export class AvatarComponent implements OnInit, OnChanges {
         if (changes.photoUrl && changes.photoUrl.currentValue) {
             this.photoUrl = changes.photoUrl.currentValue;
             this.showInitials = false;
-        } else if (changes.name && !this.photoUrl) {
+        }
+        else if (changes.name && !this.photoUrl) {
             this.initials = this.getInitial(this.name);
             this.showInitials = true;
         }

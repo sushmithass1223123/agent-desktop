@@ -1,11 +1,10 @@
-import { TwAdCallbacks } from '@ad/types';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ACTIVE_CALL_STATUSES, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } from 'app/constants';
-import { CustomSDKEvent, ResData } from 'app/interfaces';
+import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
 import { format, isBefore, isMatch, parse } from 'date-fns';
 import { sortBy } from 'lodash';
 
@@ -22,7 +21,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: TwAdCallbacks;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Get Dashboard data res
@@ -274,6 +273,13 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             this.currentFilter = '';
         }
     }
+}
+
+interface WidgetData {
+    /**
+     * TCM Proxy api URL
+     */
+    TCMProxyUrl: string;
 }
 
 // for more info visit - https://angular.io/api/core

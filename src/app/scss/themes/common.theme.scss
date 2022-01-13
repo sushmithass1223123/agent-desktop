@@ -16,11 +16,11 @@
         }
     }
 
-    // .hint-text {
-    //     @if ($is-dark == false) {
-    //         color: rgba(0, 0, 0, 0.38) !important;
-    //     }
-    // }
+    .hint-text {
+        @if ($is-dark == false) {
+            color: rgba(0, 0, 0, 0.38) !important;
+        }
+    }
 
     .advanced-search-form {
         @if ($is-dark == true) {

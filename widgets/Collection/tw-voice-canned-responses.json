@@ -18,7 +18,10 @@
             "W": 300,
             "H": 300
         },
-        "Actions": ["collapse", "destroy"],
+        "Actions": [
+            "collapse",
+            "destroy"
+        ],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

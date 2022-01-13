@@ -560,10 +560,9 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * To process SupervisorAgentListEvent
      */
     SupervisorAgentListEvent = (evt: CustomSDKEvent): void => {
-        let data = [...evt.Data];
         if (evt.Data?.length) {
             // filter out local agent
-            data = data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
+            evt.Data = evt.Data.filter((d: SuAgentModel) => d.AgentLoginID !== SDKClient.getAgentData().agentId);
         }
 
         // // get contact list grouped by id
@@ -579,7 +578,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         //     tmacServer: x.TmacServer
         // }));
 
-        this.processAgentList(data);
+        this.processAgentList(evt.Data);
     };
 
     /**

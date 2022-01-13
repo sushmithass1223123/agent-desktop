@@ -1,15 +1,14 @@
-import { formatDuration } from 'app/utils';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { TMACEventService } from '@services/tmac-event.service';
 import { WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { CustomSDKEvent, IWidget } from 'app/interfaces';
-import { intervalToDuration } from 'date-fns';
+import { CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { orderBy, sortBy } from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { TwPieChart } from '@ad/types';
+import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Colors for chart
@@ -18,8 +17,6 @@ const multiColors: any = {
     backgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.backgroundColor),
     hoverBackgroundColor: [...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS, ...CHART_COLORS].map((c) => c.hoverBackgroundColor)
 };
-
-type Dataset = { category: string; value: number };
 
 /**
  * Common Pie / Doughnut chart component
@@ -31,28 +28,42 @@ type Dataset = { category: string; value: number };
     encapsulation: ViewEncapsulation.None
 })
 export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDestroy {
-    multiColors = multiColors;
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: TwPieChart;
+    @Input() data: IWidget<any, WidgetData>;
+
+    /**
+     * Wrapper component ref, to detect change in maximize
+     */
+    @ViewChild(TwWrapperComponent) wrapperComponent: TwWrapperComponent;
 
     /**
      * Widget data
      */
-    // widgetData: WidgetData;
+    widgetData: WidgetData;
 
     /**
-     * Stores chart data
+     * Chart data
      */
-    chartData$: Observable<Dataset[]>;
-
-    allData$: BehaviorSubject<Dataset[]> = new BehaviorSubject([]);
-
-    /**
-     * Chart type
-     */
-    chartType = 'pie';
+    chart: TwChartConfig = {
+        datasets: [{ data: [] }],
+        options: {
+            showLines: false,
+            tooltips: {
+                callbacks: {
+                    title: (item, data) => {
+                        return data.datasets[item[0].datasetIndex].label;
+                    }
+                }
+            }
+        },
+        colors: Array(20)
+            .fill(1)
+            .map(() => multiColors),
+        labels: [],
+        legend: false
+    };
 
     /**
      * No data message
@@ -62,7 +73,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Subscription for maximize event of tw-wrapper
      */
-    maximized = false;
+    wrapperMaxSub$: Subscription;
 
     /**
      * Constructor
@@ -78,21 +89,17 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-        this.data.Data.Label = this.data.Data.Label ?? true;
         // get the data from config
-        const widgetData = this.data.Data;
+        this.widgetData = this.data.Data;
         // append the chart type, default is pie
-        if (widgetData.ChartType) {
-            this.chartType = widgetData.ChartType;
-        }
+        this.chart.type = this.widgetData.ChartType || 'pie';
 
         let eventName: any;
-        // switch between received event to ececute relevant method
-        switch (widgetData.Source.toLowerCase()) {
+        switch (this.widgetData.Source.toLowerCase()) {
             case 'auxstatus':
-                if (widgetData.Role === 'agent') {
+                if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentStatusDetailsEvent';
-                } else if (widgetData.Role === 'supervisor') {
+                } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamActiveStatusDetailsEvent';
                     this.noDataMessage = 'No Active Agents';
                 }
@@ -108,9 +115,9 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 break;
 
             case 'totalinteractions':
-                if (widgetData.Role === 'agent') {
+                if (this.widgetData.Role === 'agent') {
                     eventName = 'AgentChannelListEvent';
-                } else if (widgetData.Role === 'supervisor') {
+                } else if (this.widgetData.Role === 'supervisor') {
                     eventName = 'TeamChannelListEvent';
                 }
                 break;
@@ -128,13 +135,8 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         } else {
-            this.logger.warn(`Unable to get event name to regiser, Source=${widgetData.Source}`);
+            this.logger.warn(`Unable to get event name to regiser, Source=${this.widgetData.Source}`);
         }
-
-        this.chartData$ = this.allData$.pipe(
-            takeUntil(this.unsubscribeAll),
-            map((ds) => (this.maximized ? ds : ds.slice(0, widgetData.Limit || 5)))
-        );
     }
 
     /**
@@ -151,11 +153,48 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @param datasets
      * @param labels
      */
-    showData(dataset?: Dataset[]): void {
-        if (!dataset) {
-            dataset = this.allData$.value;
+    private showData(datasets: { [x: string]: any }, labels: any[]): void {
+        const limit = this.widgetData.Limit;
+
+        if (!limit) {
+            this.chart.datasets = Object.keys(datasets).map((d) => ({
+                data: datasets[d],
+                label: d
+            }));
+            this.chart.labels = labels;
+            return;
         }
-        this.allData$.next(dataset);
+
+        const allDataSets = {
+            datasets: [],
+            labels: []
+        };
+
+        allDataSets.datasets = Object.keys(datasets).map((d) => ({
+            data: datasets[d],
+            label: d
+        }));
+        allDataSets.labels = labels;
+
+        const callback = (maximized) => {
+            if (maximized) {
+                this.chart.datasets = allDataSets.datasets;
+                this.chart.labels = allDataSets.labels;
+            } else {
+                this.chart.datasets = allDataSets.datasets.map((x) => ({ ...x, data: x.data.slice(0, limit) }));
+                this.chart.labels = allDataSets.labels.slice(0, limit);
+            }
+        };
+
+        callback(this.wrapperComponent.maximized);
+
+        if (this.wrapperMaxSub$) {
+            this.wrapperMaxSub$.unsubscribe();
+        }
+        this.wrapperMaxSub$ = this.wrapperComponent.maximizeEvent
+            .asObservable()
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((maximized) => callback(maximized));
     }
 
     /**
@@ -164,24 +203,22 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private AgentStatusDetailsEvent(evt: CustomSDKEvent): void {
-        // sort received States data based on 'Duration'
-        const dataset = sortBy(evt.Data.States, 'Duration')
+        const datasets = { Duration: [] };
+        const labels = [];
+        sortBy(evt.Data.States, 'Duration')
             .reverse()
-            .reduce((acc, curr) => {
-                // check if the share will be relevant in pie chart and only add that data
-                const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                if (!curr.Duration) {
-                    return acc;
-                }
-                // format the category and push the data to the chart
-                const data: Dataset = {
-                    category: `${curr.State} \n [${formatDuration(duration)}]`,
-                    value: curr.Duration
-                };
-                acc.push(data);
-                return acc;
-            }, []);
-        this.showData(dataset);
+            .forEach((c) => {
+                const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
+                datasets.Duration.push(c.Duration);
+                const hours = duration.hours + duration.days * 24;
+                labels.push(
+                    `${c.State} - [${hours < 10 ? '0' : hours}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
+                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
+                    }]`
+                );
+            });
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -190,23 +227,22 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamActiveStatusDetailsEvent(evt: CustomSDKEvent): void {
-        // sort received States data based on 'Duration'
-        const dataset = sortBy(evt.Data.States, 'Duration')
+        const datasets = { Duration: [] };
+        const labels = [];
+        sortBy(evt.Data.States, 'Duration')
             .reverse()
-            .reduce((acc, curr) => {
-                const duration = intervalToDuration({ start: 0, end: curr.Duration * 1000 });
-                if (!curr.Duration) {
-                    return acc;
-                }
-                // format the category and push the data to the chart
-                const data: Dataset = {
-                    category: `${curr.State} \n [${formatDuration(duration)}]`,
-                    value: curr.Duration
-                };
-                acc.push(data);
-                return acc;
-            }, []);
-        this.showData(dataset);
+            .forEach((c) => {
+                const duration = intervalToDuration({ start: 0, end: c.Duration * 1000 });
+                datasets.Duration.push(c.Duration);
+                const hours = duration.hours + duration.days * 24;
+                labels.push(
+                    `${c.State} - [${hours < 10 ? '0' : hours}:${duration.minutes < 10 ? '0' + duration.minutes : duration.minutes}:${
+                        duration.seconds < 10 ? '0' + duration.seconds : duration.seconds
+                    }]`
+                );
+            });
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -215,23 +251,27 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamWallboardRefreshEvent(evt: WallboardRefreshEvent): void {
-        // sort received States data based on 'CallsInQueue'
-        const dataset = sortBy(evt.Skills, 'CallsInQueue')
+        const datasets = { 'Calls In Queue': [] };
+        const labels = [];
+        // filter only CIQ's greater than 0
+        const skills = evt.Skills.filter((s) => s.CallsInQueue > 0);
+
+        sortBy(skills, 'CallsInQueue')
             .reverse()
-            .reduce((acc, curr) => {
-                // check if the share will be relevant in pie chart and only add that data
-                if (!curr.CallsInQueue) {
-                    return acc;
+            .forEach((c) => {
+                datasets['Calls In Queue'].push(c.CallsInQueue);
+                labels.push(c.SkillName);
+            });
+
+        datasets['Calls In Queue'] =
+            Object.keys(datasets).map((d) => {
+                if (datasets[d].every((x: number) => x === 0)) {
+                    datasets[d] = [];
                 }
-                // format the category and push the data to the chart
-                const data: Dataset = {
-                    category: `${curr.SkillName} \n ${curr.CallsInQueue}`,
-                    value: curr.CallsInQueue
-                };
-                acc.push(data);
-                return acc;
-            }, []);
-        this.showData(dataset);
+                return datasets[d];
+            })[0] || [];
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -240,23 +280,16 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamIntentListEvent(evt: CustomSDKEvent): void {
-        const intents = evt.Data?.Intents || [];
+        const datasets = { Count: [] };
+        const labels = [];
+        let intents = evt.Data?.Intents || [];
+        intents = orderBy(intents, ['Count'], ['desc']);
+        intents.forEach((c: any) => {
+            datasets.Count.push(c.Count);
+            labels.push(c.Intent || 'Unknown');
+        });
 
-        // sort received States data based on 'Count'
-        const dataset = orderBy(intents, ['Count'], ['desc']).reduce((acc, curr) => {
-            // check if the share will be relevant in pie chart and only add that data
-            if (!curr.Count) {
-                return acc;
-            }
-            const data: Dataset = {
-                category: `${curr.Intent || 'Default'} \n ${curr.Count}`,
-                value: curr.Count
-            };
-            // format the category and push the data to the chart
-            acc.push(data);
-            return acc;
-        }, []);
-        this.showData(dataset);
+        this.showData(datasets, labels);
     }
 
     /**
@@ -265,23 +298,14 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private AgentChannelListEvent(evt: CustomSDKEvent): void {
-        // sort received States data based on 'Total'
-        const dataset = sortBy(evt.Data.Channels, 'Total')
-            .reverse()
-            .reduce((acc, curr) => {
-                // check if the share will be relevant in pie chart and only add that data
-                if (!curr.Total) {
-                    return acc;
-                }
-                const data: Dataset = {
-                    category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
-                    value: curr.Total
-                };
-                // format the category and push the data to the chart
-                acc.push(data);
-                return acc;
-            }, []);
-        this.showData(dataset);
+        const datasets = { Count: [] };
+        const labels = [];
+        sortBy(evt.Data.Channels, 'Total').forEach((c) => {
+            datasets.Count.push(c.Total);
+            labels.push(`${c.Channel}`);
+        });
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -290,23 +314,23 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamChannelListEvent(evt: CustomSDKEvent): void {
-        // sort received States data based on 'Total'
-        const dataset = sortBy(evt.Data.Channels, 'Total')
-            .reverse()
-            .reduce((acc, curr) => {
-                // check if the share will be relevant in pie chart and only add that data
-                if (!curr.Total) {
-                    return acc;
-                }
-                const data: Dataset = {
-                    category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
-                    value: curr.Total
-                };
-                // format the category and push the data to the chart
-                acc.push(data);
-                return acc;
-            }, []);
-        this.showData(dataset);
+        const datasets = { Count: [] };
+        const labels = [];
+
+        evt.Data.Channels.forEach((c: any) => {
+            datasets.Count.push(c.Total);
+            labels.push(`${c.Channel}`);
+        });
+
+        datasets.Count =
+            Object.keys(datasets)
+                .map((d) => datasets[d])
+                .filter((x) => {
+                    const sum = x && x.length ? x.reduce((a: number, b: number) => a + b) : null;
+                    return !!sum;
+                })[0] || [];
+
+        this.showData(datasets, labels);
     }
 
     /**
@@ -315,26 +339,17 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      * @method
      */
     private TeamActiveChannelListEvent(evt: CustomSDKEvent): void {
-        // sort received States data based on 'Total'
-        const dataset = sortBy(evt.Data.Channels, 'Total')
+        const datasets = { Count: [] };
+        const labels = [];
+        sortBy(evt.Data.Channels, 'Total')
             .reverse()
-            .reduce((acc, curr) => {
-                // check if the share will be relevant in pie chart and only add that data
-                if (!curr.Total) {
-                    return acc;
-                }
-                const data: Dataset = {
-                    category: `${curr.Channel || 'Unknown'} \n ${curr.Total}`,
-                    value: curr.Total
-                };
-                // format the category and push the data to the chart
-                acc.push(data);
-                return acc;
-            }, []);
-        this.showData(dataset);
-    }
+            .forEach((c) => {
+                datasets.Count.push(c.Total);
+                labels.push(c.Channel);
+            });
 
-    labelContent = (e: any): string => e.category;
+        this.showData(datasets, labels);
+    }
 }
 
 interface WidgetData {

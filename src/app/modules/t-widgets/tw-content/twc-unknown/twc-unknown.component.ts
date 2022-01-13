@@ -12,7 +12,10 @@ import { ContentPageService } from 'app/services/content-page.service';
     encapsulation: ViewEncapsulation.None
 })
 export class TwcUnknownComponent extends TWContentWrapper implements OnInit, OnDestroy {
-    constructor(public hostElement: ElementRef, public contentPageService: ContentPageService) {
+    constructor(
+        public hostElement: ElementRef,
+        public contentPageService: ContentPageService
+    ) {
         super(hostElement, contentPageService);
     }
 

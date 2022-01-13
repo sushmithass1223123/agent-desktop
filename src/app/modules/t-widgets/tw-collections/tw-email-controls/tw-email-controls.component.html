@@ -178,7 +178,7 @@
                         </div>
 
                         <div class="twd-flex twd-justify-between">
-                            <div class="twd-flex twd-max-w-6/12 twd-items-center">
+                            <div class="twd-flex twd-max-w-8/12 twd-items-center">
                                 <div class="my-4">
                                     <span>
                                         {{ currentInteraction.AgentName }}
@@ -203,32 +203,17 @@
                                 </span>
                             </div>
 
-                            <div class="twd-flex twd-items-end twd-flex-col" matTooltip="Sent on" *ngIf="currentInteraction.EmailSentTime">
-                                <div class="twd-flex twd-items-center">
-                                    <mat-icon> forward_to_inbox </mat-icon>
-                                    <span class="twd-ml-2">
-                                        {{ currentInteraction.EmailSentTime | date: 'mediumDate' }}
-                                    </span>
-                                </div>
+                            <div class="twd-flex twd-items-end twd-flex-col">
                                 <span>
-                                    {{ currentInteraction.EmailSentTime | date: 'shortTime' }}
+                                    {{ currentInteraction.CreatedTime | date: 'mediumDate' }}
                                 </span>
-                            </div>
-
-                            <div class="twd-flex twd-items-end twd-flex-col" matTooltip="Received on" *ngIf="currentInteraction.EmailReceivedTime">
-                                <div class="twd-flex twd-items-center">
-                                    <mat-icon> move_to_inbox </mat-icon>
-                                    <span class="twd-ml-2">
-                                        {{ currentInteraction.EmailReceivedTime | date: 'mediumDate' }}
-                                    </span>
-                                </div>
                                 <span>
-                                    {{ currentInteraction.EmailReceivedTime | date: 'shortTime' }}
+                                    {{ currentInteraction.CreatedTime | date: 'shortTime' }}
                                 </span>
                             </div>
                         </div>
 
-                        <a *ngIf="currentInteraction.showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
+                        <a *ngIf="showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
                             {{ emailInView === 'original' ? 'View Checker Email' : 'View original' }}
                         </a>
                     </div>

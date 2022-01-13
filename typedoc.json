@@ -1,8 +1,0 @@
-{
-    "$schema": "https://typedoc.org/schema.json",
-    "name": "Agent Desktop",
-    "entryPoints": ["libs/types/src/index.ts"],
-    "out": "docs",
-    "excludeTags": ["@data"],
-    "readme": "README.md"
-}

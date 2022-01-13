@@ -18,7 +18,6 @@ import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
-import { throwADError } from 'app/utils';
 import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -163,17 +162,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         const widgets = cloneDeep(this.data.Data.Widgets) || [];
 
         const staticWidgets = widgets.Static ?? [];
-
-        // const dynamicWidgets = ((environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic) ?? [];
-        let dynamicWidgets = widgets.Dynamic ?? [];
-        try {
-            if (environment.production && evt.WidgetConfigData) {
-                dynamicWidgets = JSON.parse(evt.WidgetConfigData);
-            }
-        } catch (error) {
-            throwADError('Error in TwcInteractionComponent.createWidgetList', error);
-        }
-
+        const dynamicWidgets = ((environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic) ?? [];
         const aotWidgets = [...this.tempAOTs, ...(widgets.AOT ?? [])];
 
         const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);

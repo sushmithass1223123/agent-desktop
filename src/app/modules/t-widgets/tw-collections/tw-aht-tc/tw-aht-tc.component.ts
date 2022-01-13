@@ -1,4 +1,3 @@
-import { TwAhtTc } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { TableComponent } from '@modules/shared/components';
@@ -6,12 +5,9 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { AgentChannelDataModel } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS } from 'app/constants';
-import { ChannelListEvent, CustomSDKEvent } from 'app/interfaces';
-import { intervalToDuration } from 'date-fns';
-import { formatDuration } from 'app/utils/';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-type Dataset = { category: string; value: number };
+import { ChannelListEvent, CustomSDKEvent, IWidget, TwChartConfig } from 'app/interfaces';
+import { format } from 'date-fns';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Colors for chart
@@ -35,26 +31,37 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     /**
      * App config json data
      */
-    @Input() data: TwAhtTc;
+    @Input() data: IWidget<any, WidgetData>;
 
     /**
      * Widget Maximized status
      */
     maximized = false;
 
-    multiColors = multiColors;
-
     /**
-     * Interaction list
+     * Interactino list
      */
     interactionList: AgentChannelDataModel[] = [];
 
-    allData$: BehaviorSubject<{ name: string; data: Dataset[] }[]> = new BehaviorSubject([]);
-
     /**
-     * Stores chart data
+     * AHT chart config
      */
-    chartData$: Observable<{ name: string; data: Dataset[] }[]>;
+    ahtChart: TwChartConfig = {
+        datasets: [{ data: [] }],
+        options: {
+            showLines: false,
+            tooltips: {
+                callbacks: {
+                    title: (item, data) => {
+                        return data.datasets[item[0].datasetIndex].label;
+                    }
+                }
+            }
+        },
+        colors: [multiColors, multiColors],
+        labels: [],
+        legend: false
+    };
 
     /**
      * Ad table's component ref
@@ -63,6 +70,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
 
     constructor(private _tmacEventService: TMACEventService) {
         super();
+        this.ahtChart.options.plugins = { outlabels: { display: this.ahtChart.legend } };
     }
 
     /**
@@ -72,8 +80,6 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
-        this.data.Data.Label = this.data.Data.Label ?? true;
 
         let eventName: any;
         if (this.data.Data?.Role === 'agent') {
@@ -132,7 +138,10 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
                     only: true
                 })
             },
-            AverageHandleTime: { title: 'AHT' },
+            AverageHandleTime: {
+                title: 'AHT',
+                value: (element: any) => format((element.AverageActiveTime + element.AverageHoldTime) * 1000, 'hh:mm:ss') || '00:00:00'
+            },
             Transfer: {},
             Conference: {}
         };
@@ -147,15 +156,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      */
     AgentChannelListEvent(evt: CustomSDKEvent): void {
         this.interactionList = evt.Data?.Channels || [];
-        // format the incoming evt data
-        this.table.source.data = this.interactionList.map(({ AverageActiveTime, AverageHoldTime, Channel, Transfer, Conference }) => {
-            return {
-                Channel,
-                Transfer,
-                Conference,
-                AverageHandleTime: formatDuration(intervalToDuration({ start: 0, end: (AverageActiveTime + AverageHoldTime) * 1000 }))
-            };
-        });
+        this.table.source.data = this.interactionList;
     }
 
     /**
@@ -163,62 +164,32 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * @param {CustomSDKEvent} evt
      */
     TeamChannelListEvent(evt: CustomSDKEvent<ChannelListEvent>): void {
-        const dataset = evt.Data.Channels.reduce((acc, curr) => {
-            const ahtValue = (curr.AverageActiveTime || 0) + (curr.AverageHoldTime || 0);
-            const ahtStat = {
-                category: `${curr.Channel} [${formatDuration(intervalToDuration({ start: 0, end: ahtValue * 1000 }))}] (AHT)`,
-                value: ahtValue
-            };
-            const transferStat = {
-                category: `${curr.Channel} (Transfer / Conference)`,
-                value: (curr.Transfer || 0) + (curr.Conference || 0)
-            };
-
-            // add aht value only if the value is above zero
-            if (ahtStat.value) {
-                if (!acc['AHT']) {
-                    acc['AHT'] = [];
-                }
-                acc['AHT'].push(ahtStat);
+        const datasets = { AHT: [], 'Transfer / Conference': [] };
+        const labels = [];
+        evt.Data?.Channels.forEach((c) => {
+            if (c.AverageActiveTime + c.AverageHoldTime) {
+                datasets.AHT.push(c.AverageActiveTime + c.AverageHoldTime);
             }
 
-            // add transfer value only if the value is above zero
-            if (transferStat.value) {
-                if (!acc['Transfer / Conference']) {
-                    acc['Transfer / Conference'] = [];
-                }
-                acc['Transfer / Conference'].push(transferStat);
+            if (c.Transfer + c.Conference) {
+                datasets['Transfer / Conference'].push(c.Transfer + c.Conference);
+            }
+
+            labels.push(c.Channel);
+        });
+
+        this.ahtChart.datasets = Object.entries(datasets).reduce((acc, curr) => {
+            const [key, val] = curr;
+            /**
+             * Add dataset only if data exists
+             */
+            if (val.length) {
+                acc.push({ data: val, label: key });
             }
             return acc;
-        }, {});
-
-        const allData = Object.entries(dataset)
-            // convert list to valid chart json
-            .reduce((acc, curr) => {
-                const [name, data] = curr;
-                acc.push({ name, data });
-                return acc;
-            }, [])
-            // sort data based on the length of the data in dataset so that the dataset with most varied data is in the
-            // outermost part of the chart, so that most of the labels are visible
-            .sort((prev, next) => {
-                return prev.data.length - next.data.length;
-            });
-
-        this.allData$.next(allData);
-
-        if (!this.chartData$) {
-            this.chartData$ = this.allData$.pipe(
-                takeUntil(this.unsubscribeAll),
-                map((ds) => (this.maximized ? ds : ds.map((d) => ({ name: d.name, data: d.data.slice(0, this.data.Data.Limit || 5) }))))
-            );
-        }
+        }, []);
+        this.ahtChart.labels = labels;
     }
-
-    labelContent = (e: { category: string }): string => {
-        // remove (AHT) and (Transfer / Conference) from the labels
-        return e.category.replace(/\(AHT\)|\(Transfer \/ Conference\)/, '');
-    };
 }
 
 interface WidgetData {

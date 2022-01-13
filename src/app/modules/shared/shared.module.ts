@@ -1,13 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { APP_BASE_HREF, CommonModule, PlatformLocation } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
-import { ChartsModule } from '@progress/kendo-angular-charts';
 import { EditorModule } from '@progress/kendo-angular-editor';
 import * as Chart from 'chart.js';
-import 'hammerjs';
-import { ChartsModule as ng2Charts } from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts';
 import {
     AgentSkillListComponent,
     AlertDialogComponent,
@@ -16,6 +14,7 @@ import {
     AvatarComponent,
     CreateEmailComponent,
     CustomDialogComponent,
+    MailboxSettingsComponent,
     NoDataAvailableComponent,
     PreviewEmailComponent,
     ReminderTaskDialogComponent,
@@ -46,12 +45,13 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ng2Charts, PickerModule, EditorModule, EmailModule, ChartsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ChartsModule, PickerModule, EditorModule, EmailModule];
 
 /**
  * Shared components
  */
 const sharedComponents = [
+    MailboxSettingsComponent,
     ResourceNotFoundComponent,
     CustomDialogComponent,
     AvatarComponent,
@@ -78,6 +78,13 @@ const sharedComponents = [
 @NgModule({
     declarations: sharedComponents,
     imports: [CommonModule, ...sharedModules],
+    providers: [
+        {
+            provide: APP_BASE_HREF,
+            useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+            deps: [PlatformLocation]
+        }
+    ],
     exports: [...sharedModules, ...sharedComponents]
 })
 export class SharedModule {}

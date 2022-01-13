@@ -5,15 +5,7 @@
         config: (customFuse.config$ | async)
     } as customFuse"
 >
-    <ng-template
-        #messageRef
-        let-message="message"
-        let-showName="showName"
-        let-replyAble="replyAble"
-        let-messageAction="messageAction"
-        let-mode="mode"
-        let-replied="replied"
-    >
+    <ng-template #messageRef let-message="message" let-showName="showName" let-replyAble="replyAble" let-replied="replied">
         <ng-container *ngIf="message">
             <div
                 *ngIf="showName"
@@ -25,8 +17,7 @@
             >
                 {{ message.who }}
             </div>
-
-            <div class="message {{ mode }}" [ngClass]="{ 'm-0': replied }">
+            <div class="message" [ngClass]="{ 'm-0': replied }">
                 <div *ngIf="message.repliedToMessage" class="p-4 mt-4 mb-8 border-radius-8 border-left-lg-secondary replied">
                     <ng-container
                         *ngTemplateOutlet="
@@ -35,52 +26,22 @@
                                 message: message.repliedToMessage,
                                 showName: true,
                                 replyAble: false,
-                                messageAction: false,
-                                replied: true,
-                                mode: 'normal'
+                                replied: true
                             }
                         "
                     >
                     </ng-container>
                 </div>
 
-                <div *ngIf="messageAction" class="actions">
-                    <div class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
-                        <div>
-                            <mat-icon
-                                *ngIf="message?.attachment?.type === 'image'"
-                                class="s-18 twd-cursor-pointer"
-                                (click)="rotateImage(message.attachment)"
-                                matTooltip="Rotate"
-                                >rotate_90_degrees_ccw</mat-icon
-                            >
-                        </div>
-                        <div>
-                            <mat-icon
-                                *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
-                                class="s-18 twd-cursor-pointer"
-                                (click)="setReplyingToMessage(message)"
-                                matTooltip="Reply"
-                                >reply</mat-icon
-                            >
-                        </div>
-
-                        <!-- <button
-                            *ngIf="message?.attachment?.type === 'image'"
-                            mat-icon-button
-                            class="rotate"
-                            (click)="rotateImage(message.attachment)"
-                        >
-                            <mat-icon>rotate_90_degrees_ccw</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
-                            mat-icon-button
-                            (click)="setReplyingToMessage(message)"
-                        >
-                            <mat-icon>reply</mat-icon>
-                        </button> -->
-                    </div>
+                <div
+                    *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
+                    class="reply-to twd-cursor-pointer"
+                    mat-ripple
+                    (click)="setReplyingToMessage(message)"
+                >
+                    <button mat-icon-button>
+                        <mat-icon>reply</mat-icon>
+                    </button>
                 </div>
 
                 <p class="m-0">
@@ -91,18 +52,8 @@
                     <ng-container *ngIf="message.attachment?.src">
                         <div class="attachments">
                             <!-- Images -->
-                            <div *ngIf="message.attachment.type === 'image'" class="image" (click)="previewMedia(message)">
-                                <img
-                                    [ngClass]="{
-                                        'rotate-0': message.attachment?.angle === 0,
-                                        'rotate-90-inverse': message.attachment?.angle === 1,
-                                        'rotate-180': message.attachment?.angle === 2,
-                                        'rotate-90': message.attachment?.angle === 3,
-                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]': mode === 'reply' || replied,
-                                        '!twd-min-h-[64px]': replied
-                                    }"
-                                    [src]="message.attachment.src"
-                                />
+                            <div *ngIf="message.attachment.type === 'image'" (click)="previewMedia(message)">
+                                <img [src]="message.attachment.src" />
                             </div>
 
                             <!-- Videos -->
@@ -112,10 +63,7 @@
                                         <mat-icon>play_arrow</mat-icon>
                                     </button>
                                 </div>
-                                <video
-                                    [ngClass]="{ 'twd-max-w-[64px] twd-max-h-[64px] twd-rounded-[5px]': mode === 'reply' }"
-                                    [src]="message.attachment.src"
-                                ></video>
+                                <video [src]="message.attachment.src"></video>
                             </div>
 
                             <!-- Audios -->
@@ -152,10 +100,7 @@
                                 class="spacer h-16"
                             >
                             </span>
-                            <span
-                                *ngIf="!replied && (message.attachment.type === 'image' || message.attachment.type === 'video')"
-                                class="time-overlay"
-                            ></span>
+                            <span *ngIf="message.attachment.type === 'image' || message.attachment.type === 'video'" class="time-overlay"></span>
                         </div>
                     </ng-container>
                 </p>
@@ -488,9 +433,7 @@
                                                     message: message,
                                                     showName: isFirstMessageOfGroup(message, i),
                                                     replyAble: agentFeatures.chatReply,
-                                                    messageAction: true,
-                                                    replied: false,
-                                                    mode: 'normal'
+                                                    replied: false
                                                 }
                                             "
                                         ></ng-container>
@@ -528,9 +471,7 @@
                                                     message: replyingToMessage,
                                                     showName: true,
                                                     replyAble: false,
-                                                    messageAction: false,
-                                                    replied: false,
-                                                    mode: 'reply'
+                                                    replied: false
                                                 }
                                             "
                                         >
@@ -680,91 +621,4 @@
             </div>
         </div>
     </tw-wrapper>
-
-    <ng-template #previewMediaDialog>
-        <div class="twd-flex twd-justify-between twd-items-center twd-h-16">
-            <div class="twd-flex twd-flex-col twd-gap-1">
-                <span class="twd-font-bold">{{ previewMediaDialogData?.user }}</span>
-                <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
-            </div>
-            <div>
-                <button
-                    *ngIf="previewMediaDialogData?.attachment?.type === 'image'"
-                    [disabled]="previewMediaDialogData?.otherData?.scale === 2"
-                    mat-icon-button
-                    color="primary"
-                    tabindex="-1"
-                    matTooltip="Zoom In"
-                    (click)="zoomInOut(true)"
-                >
-                    <mat-icon>zoom_in</mat-icon>
-                </button>
-                <button
-                    *ngIf="previewMediaDialogData?.attachment?.type === 'image'"
-                    [disabled]="previewMediaDialogData?.otherData?.scale === 1"
-                    mat-icon-button
-                    color="primary"
-                    tabindex="-1"
-                    matTooltip="Zoom Out"
-                    (click)="zoomInOut(false)"
-                >
-                    <mat-icon>zoom_out</mat-icon>
-                </button>
-                <button
-                    *ngIf="previewMediaDialogData?.attachment?.type === 'image'"
-                    mat-icon-button
-                    color="primary"
-                    tabindex="-1"
-                    matTooltip="Rotate"
-                    (click)="rotateImage(previewMediaDialogData?.attachment)"
-                >
-                    <mat-icon>rotate_90_degrees_ccw</mat-icon>
-                </button>
-                <button
-                    *ngIf="agentFeatures.mediaDownload"
-                    mat-icon-button
-                    color="primary"
-                    tabindex="-1"
-                    matTooltip="Download"
-                    (click)="downloadAttachment(previewMediaDialogData?.attachment?.src)"
-                >
-                    <mat-icon>download</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" mat-dialog-close (click)="previewMediaDialogData = null" tabindex="-1" matTooltip="Close">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </div>
-        </div>
-
-        <div mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
-            <drag-scroll scrollbar-hidden>
-                <div
-                    class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
-                    [style.transform]="'scale(' + previewMediaDialogData?.otherData?.scale + ')'"
-                    [ngClass]="{ 'twd-cursor-move': previewMediaDialogData?.otherData?.scale > 1 }"
-                >
-                    <img
-                        *ngIf="previewMediaDialogData?.attachment?.type === 'image'"
-                        [src]="previewMediaDialogData?.attachment?.src"
-                        width="100%"
-                        width="100%"
-                        [ngClass]="{
-                            'rotate-0': previewMediaDialogData?.attachment?.angle === 0,
-                            'rotate-90-inverse': previewMediaDialogData?.attachment?.angle === 1,
-                            'rotate-180': previewMediaDialogData?.attachment?.angle === 2,
-                            'rotate-90': previewMediaDialogData?.attachment?.angle === 3
-                        }"
-                    />
-                </div>
-                <video
-                    *ngIf="previewMediaDialogData?.attachment?.type === 'video'"
-                    controls
-                    autoplay
-                    [src]="previewMediaDialogData?.attachment?.src"
-                    width="100%"
-                    width="100%"
-                ></video>
-            </drag-scroll>
-        </div>
-    </ng-template>
 </ng-container>

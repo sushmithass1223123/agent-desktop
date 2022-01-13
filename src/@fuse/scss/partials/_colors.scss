@@ -2,6 +2,7 @@
 // @ Theming
 // -----------------------------------------------------------------------------------------------------
 @mixin colors-theme($theme) {
+
     $is-dark: map-get($theme, is-dark);
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
@@ -15,7 +16,7 @@
         @if ($is-dark) {
             background: map-get($background, background);
         } @else {
-            background: #f5f5f5;
+            background: #F5F5F5;
         }
     }
 
@@ -74,10 +75,13 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 // @ Text color levels generator
 // -----------------------------------------------------------------------------------------------------
 @mixin generate-text-color-levels($classes, $contrast) {
+
     // If the contrast is dark...
     @if ($contrast == 'dark') {
+
         // Put down the color classes
         #{$classes} {
+
             i,
             .icon {
                 color: rgba(0, 0, 0, 0.54);
@@ -85,19 +89,19 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 
             &.secondary-text,
             .secondary-text {
-                color: rgba(0, 0, 0, 0.54);
+                color: rgba(0, 0, 0, 0.54) !important;
             }
 
             &.hint-text,
             .hint-text,
             &.disabled-text,
             .disabled-text {
-                color: rgba(0, 0, 0, 0.38);
+                color: rgba(0, 0, 0, 0.38) !important;
             }
 
             &.divider,
             .divider {
-                color: rgba(0, 0, 0, 0.12);
+                color: rgba(0, 0, 0, 0.12) !important;
             }
 
             .mat-ripple-element {
@@ -108,11 +112,14 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
                 border-color: rgba(0, 0, 0, 0.12);
             }
         }
+
     }
-    // If the base text color is white...
+        // If the base text color is white...
     @else {
+
         // Put down the color classes
         #{$classes} {
+
             i,
             .icon {
                 color: rgba(255, 255, 255, 1);
@@ -120,19 +127,19 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 
             &.secondary-text,
             .secondary-text {
-                color: rgba(255, 255, 255, 0.7);
+                color: rgba(255, 255, 255, 0.70) !important;
             }
 
             &.hint-text,
             .hint-text,
             &.disabled-text,
             .disabled-text {
-                color: rgba(255, 255, 255, 0.5);
+                color: rgba(255, 255, 255, 0.50) !important;
             }
 
             &.divider,
             .divider {
-                color: rgba(255, 255, 255, 0.12);
+                color: rgba(255, 255, 255, 0.12) !important;
             }
 
             .mat-ripple-element {
@@ -150,27 +157,30 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 // @ Material element colors generator
 // -----------------------------------------------------------------------------------------------------
 @mixin generate-material-element-colors($classes, $contrast) {
+
     // If the contrast color is light...
     $fuseForeground: (
         base: white,
         text: white,
         hint-text: rgba(white, 0.5),
-        divider: rgba(white, 0.12)
+        divider: rgba(white, 0.12),
     );
 
     // If the contrast color is dark...
     @if ($contrast == 'dark') {
+
         $fuseForeground: (
             base: black,
             hint-text: rgba(black, 0.38),
-            divider: rgba(black, 0.12)
+            divider: rgba(black, 0.12),
         );
     }
 
     // Put down the color classes
     #{$classes} {
+
         // Native Input
-        input[type='text'] {
+        input[type="text"] {
             color: map-get($fuseForeground, base);
         }
 
@@ -214,6 +224,7 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 // @ Color classes generator
 // -----------------------------------------------------------------------------------------------------
 @mixin generate-color-classes($colorName, $color, $contrastColor, $hue) {
+
     .#{$colorName}#{$hue}-bg {
         background-color: $color !important;
     }
@@ -223,8 +234,8 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
         color: $contrastColor !important;
 
         &[disabled] {
-            background-color: rgba($color, 0.12) !important;
-            color: rgba($contrastColor, 0.26) !important;
+            background-color: rgba($color, .12) !important;
+            color: rgba($contrastColor, .26) !important;
         }
     }
 
@@ -257,21 +268,25 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
 // @ Fuse color classes
 // -----------------------------------------------------------------------------------------------------
 @mixin fuse-color-classes($palettes) {
+
     // Define contrast lists
     $light-contrasting-classes: ();
     $dark-contrasting-classes: ();
 
     // Generate the color classes...
     @each $paletteName, $palette in $palettes {
+
         // Get the contrasts map
         $contrasts: map-get($palette, 'contrast');
 
         @each $hue in $matHues {
+
             // Get the color and the contrasting color
             $color: map-get($palette, $hue);
             $contrast: map-get($contrasts, $hue);
 
             @if ($color != null and $contrast != null) {
+
                 // Generate color classes
                 @include generate-color-classes($paletteName, $color, $contrast, '-#{$hue}');
 
@@ -279,7 +294,7 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
                 @if (rgba(black, 1) == rgba($contrast, 1)) {
                     $dark-contrasting-classes: append($dark-contrasting-classes, unquote('.#{$paletteName}-#{$hue}'), 'comma');
                 }
-                // if the contrast color is light
+                    // if the contrast color is light
                 @else {
                     $light-contrasting-classes: append($light-contrasting-classes, unquote('.#{$paletteName}-#{$hue}'), 'comma');
                 }
@@ -287,6 +302,7 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
                 // Run the generator one more time for default values (500)
                 // if we are not working with primary, accent or warn palettes
                 @if ($hue == 500 and $paletteName != 'primary' and $paletteName != 'accent' and $paletteName != 'warn') {
+
                     // Generate color classes
                     @include generate-color-classes($paletteName, $color, $contrast, '');
 
@@ -296,7 +312,7 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
                     @if (rgba(black, 1) == rgba($contrast, 1)) {
                         $dark-contrasting-classes: append($dark-contrasting-classes, unquote('.#{$paletteName}'), 'comma');
                     }
-                    // if the contrast color is light
+                        // if the contrast color is light
                     @else {
                         $light-contrasting-classes: append($light-contrasting-classes, unquote('.#{$paletteName}'), 'comma');
                     }
@@ -310,6 +326,7 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
         // We are doing this because the default hue value can be changed
         // by the user when the Material theme being generated.
         @if ($paletteName == 'primary' or $paletteName == 'accent' or $paletteName == 'warn') {
+
             // Get the color and the contrasting color for the selected
             // default hue
             $color: map-get($palette, 'default');
@@ -324,7 +341,7 @@ $matHues: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, A100, A200, A400, A70
             @if (rgba(black, 1) == rgba($contrast, 1)) {
                 $dark-contrasting-classes: append($dark-contrasting-classes, unquote('.#{$paletteName}'), 'comma');
             }
-            // if the contrast color is light
+                // if the contrast color is light
             @else {
                 $light-contrasting-classes: append($light-contrasting-classes, unquote('.#{$paletteName}'), 'comma');
             }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TextTemplatesComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -7,19 +7,23 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { TwDeflectToDigital } from '@ad/types';
 
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
-    styleUrls: ['./tw-deflect-to-digital.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./tw-deflect-to-digital.component.scss']
+    // encapsulation: ViewEncapsulation.None
 })
 export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnInit, OnDestroy, AfterViewInit {
     /**
      * holds all the data related to this widget from the config
      */
     @Input() data: IWidget<any, WidgetData>;
+
+    /**
+     * Application state
+     */
+    loading = false;
 
     /**
      * Interaction Id

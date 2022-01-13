@@ -25,7 +25,6 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TwSuActiveAgents } from '@ad/types';
 
 /**
  * Active agents component widget
@@ -41,7 +40,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: TwSuActiveAgents;
+    @Input() data: any;
 
     /**
      * Fuse Config
@@ -54,6 +53,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
+
     /**
      * Use info
      */
@@ -441,8 +441,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         SDKClient.logout(
                             {
                                 deviceId: agent.StationID,
-                                reason: 'SupervisorLogout',
-                                tmacServer: agent.TmacServer
+                                reason: 'SupervisorLogout'
                             },
                             null
                         ).then((dt: IResponse) => {

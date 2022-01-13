@@ -7,18 +7,27 @@ import { TwContentModule } from './tw-content/tw-content.module';
 import { TwTemplateModule } from './tw-template/tw-template.module';
 import { TwToolbarModule } from './tw-toolbar/tw-toolbar.module';
 
+
 /**
  * Widgts module list
  */
-const widgetModules = [TwToolbarModule, TwContentModule, TwTemplateModule, TwCollectionsModule];
+const widgetModules = [
+    TwToolbarModule,
+    TwContentModule,
+    TwTemplateModule,
+    TwCollectionsModule
+];
 
 /**
  * Widgets Module
  */
 @NgModule({
     declarations: [],
-    providers: [TMACEventService, DashboardService],
+    providers: [
+        TMACEventService,
+        DashboardService
+    ],
     imports: [SharedModule, ...widgetModules],
     exports: [...widgetModules]
 })
-export class TWidgetsModule {}
+export class TWidgetsModule { }

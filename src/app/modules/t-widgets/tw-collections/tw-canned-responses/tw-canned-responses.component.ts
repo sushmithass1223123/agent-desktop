@@ -8,7 +8,6 @@ import { IWidget } from 'app/interfaces';
 import { sortBy, uniqBy } from 'lodash';
 import { merge, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TwCannedResponses } from '@ad/types';
 
 /**
  * TW canned Responses

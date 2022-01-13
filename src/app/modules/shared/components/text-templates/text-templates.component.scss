@@ -1,7 +1,6 @@
-text-templates {
-    // ::ng-deep {
-    mat-form-field {
-        &.custom {
+mat-form-field {
+    &.custom {
+        ::ng-deep {
             .mat-form-field-wrapper,
             .mat-form-field-flex,
             .mat-form-field-infix {
@@ -13,52 +12,50 @@ text-templates {
             .mat-form-field-flex {
                 padding: 0px !important;
             }
-
-            input::-webkit-outer-spin-button,
-            input::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
-            input[type='number'] {
-                -moz-appearance: textfield;
-            }
-
-            textarea {
-                resize: none !important;
-                padding: 10px !important;
-                height: calc(100% - 20px);
-            }
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type='number'] {
+            -moz-appearance: textfield;
         }
 
-        &.select-box {
-            border-radius: 20px;
-            background-color: rgb(0 0 0 / 0.1);
-            padding: 0px 7px;
-            ::ng-deep {
-                .mat-form-field-wrapper {
-                    .mat-form-field-flex {
-                        padding: 0px 15px;
+        textarea {
+            resize: none !important;
+            padding: 10px !important;
+            height: calc(100% - 20px);
+        }
+    }
 
-                        .mat-form-field-infix {
-                            padding: 0px !important;
-                            border: none;
-                            margin-top: 12px;
+    &.select-box {
+        border-radius: 20px;
+        background-color: rgb(0 0 0 / 0.1);
+        padding: 0px 7px;
+        ::ng-deep {
+            .mat-form-field-wrapper {
+                .mat-form-field-flex {
+                    padding: 0px 15px;
 
-                            .mat-form-field-label-wrapper {
-                                top: 0px !important;
+                    .mat-form-field-infix {
+                        padding: 0px !important;
+                        border: none;
+                        margin-top: 12px;
 
-                                .mat-form-field-label {
-                                    top: 0 !important;
-                                }
+                        .mat-form-field-label-wrapper {
+                            top: 0px !important;
+
+                            .mat-form-field-label {
+                                top: 0 !important;
                             }
                         }
                     }
                 }
-                .mat-form-field-underline {
-                    display: none;
-                }
+            }
+            .mat-form-field-underline {
+                display: none;
             }
         }
     }
-    // }
 }

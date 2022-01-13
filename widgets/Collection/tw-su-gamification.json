@@ -18,7 +18,10 @@
             "W": 500,
             "H": 300
         },
-        "Actions": ["maximize", "destroy"],
+        "Actions": [
+            "maximize",
+            "destroy"
+        ],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

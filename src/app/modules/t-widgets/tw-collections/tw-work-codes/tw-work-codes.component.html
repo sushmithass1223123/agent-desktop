@@ -28,7 +28,7 @@
         <div *ngIf="widgetData.Role === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
             <mat-chip-list aria-label="WorkCodes">
                 <mat-chip
-                    *ngFor="let workCode of selectedWorkCodes; trackBy: trackByID"
+                    *ngFor="let workCode of selectedWorkCodes"
                     [ngClass]="{
                         'bg-info': workCode.Count < 10,
                         'bg-secondary': workCode.Count >= 10 && workCode.Count < 20,

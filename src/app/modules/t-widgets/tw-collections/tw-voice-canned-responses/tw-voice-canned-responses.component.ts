@@ -1,10 +1,11 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { AgentInteractionTemplate, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { AgentInteractionTemplate, CallDisconnectedEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
-import { TwVoiceControlsService } from '../tw-voice-controls/tw-voice-controls.service';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * TwVoiceCannedResponsesComponent
@@ -36,7 +37,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService, public voiceControlsService: TwVoiceControlsService) {
+    constructor(private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService) {
         super();
     }
 
@@ -45,7 +46,8 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * On Init
+     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
+     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     ngOnInit(): void {
         // call the wrapper init method
@@ -63,22 +65,43 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
                 this.voiceTemplates = groupBy(response, 'Category');
             }
         });
+
+        this._tmacEventService
+            .getInteractionEvents(['CallDisconnectedEvent'], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
-     * On Destroy
+     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
+    // -----------------------------------------------------------------------------------------------------
+    // @  Private Methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To process CallDisconnectedEvent
+     */
+    private CallDisconnectedEvent(evt: CallDisconnectedEvent): void {
+        // close the widget
+        this._aotWidgetService.destroyWidget(this.data.ID);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @  Public Methods
+    // -----------------------------------------------------------------------------------------------------
+
     /**
      * Send the selected canned response
      */
     public async sendItem(item: AgentInteractionTemplate): Promise<void> {
         // get the audio buffer from wav file
-        const result = await TUtils.HttpClient.sendRequest<IResponse>({
+        const result: IResponse = await TUtils.HttpClient.sendRequest({
             urls: [item.Data],
             responseType: 'arraybuffer'
         });

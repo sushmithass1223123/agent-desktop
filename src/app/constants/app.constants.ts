@@ -4,53 +4,30 @@ import { Color } from 'ng2-charts';
 /**
  * Chart colors
  */
-export const CHART_COLORS: any[] = [
+export const CHART_COLORS: Color[] = [
     {
-        backgroundColor: '#67B7DC',
+        backgroundColor: 'rgb(138, 124, 207)',
         hoverBackgroundColor: 'rgba(138, 124, 207, 0.6)'
     },
     {
-        backgroundColor: '#6894DD',
+        backgroundColor: 'rgb(161, 120, 159)',
         hoverBackgroundColor: 'rgba(161, 120, 159, 0.6)'
     },
     {
-        backgroundColor: '#6671DB',
+        backgroundColor: 'rgb(194, 87, 143)',
         hoverBackgroundColor: 'rgba(194, 87, 143, 0.6)'
     },
+
     {
-        backgroundColor: '#8067DC',
+        backgroundColor: 'rgb(171, 162, 221)',
         hoverBackgroundColor: 'rgba(171, 162, 221, 0.2)'
     },
     {
-        backgroundColor: '#A267DB',
+        backgroundColor: 'rgb(182, 150, 181)',
         hoverBackgroundColor: 'rgba(182, 150, 181, 0.2)'
     },
     {
-        backgroundColor: '#C667DB',
-        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
-    },
-    {
-        backgroundColor: '#DC67CF',
-        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
-    },
-    {
-        backgroundColor: '#DC67AB',
-        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
-    },
-    {
-        backgroundColor: '#DD6789',
-        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
-    },
-    {
-        backgroundColor: '#DC6868',
-        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
-    },
-    {
-        backgroundColor: '#DC8C67',
-        hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
-    },
-    {
-        backgroundColor: '#DAAF66',
+        backgroundColor: 'rgb(207, 124, 168)',
         hoverBackgroundColor: 'rgba(207, 124, 168, 0.2)'
     }
 ];
@@ -273,8 +250,6 @@ export const AGENT_FEATURES = {
     IsWhatsAppOutEnabled: 'iswhatsappoutenabled',
     IsEmailOutEnabled: 'isemailoutenabled',
     IsOneWayVideoEnabled: 'isonewayvideoenabled',
-    IsChatMediaDownloadEnabled: 'ischatmediadownloadenabled',
-    IsAudioToVideoEscalateEnabled: 'isaudiotovideoescalateenabled',
     IsEmailWorkbenchQueueAllowed: 'isemailworkbenchqueueallowed',
     IsEmailWorkbenchInboxAllowed: 'isemailworkbenchinboxallowed',
     IsEmailWorkbenchSentAllowed: 'isemailworkbenchsentallowed',
@@ -404,22 +379,3 @@ export const CUSTOM_DATE_FORMATS = {
         monthYearA11yLabel: 'MMMM YYYY'
     }
 };
-
-export const EXCLUDED_TMAC_EVENT = [
-    'WallboardRefreshEvent',
-    'TeamWallboardRefreshEvent',
-    'QuizEvent',
-    'TeamAgentListEvent',
-    'AgentInteractionDetailsEvent',
-    'AgentChannelListEvent',
-    'AgentStatusDetailsEvent',
-    'SupervisorAgentListEvent',
-    'TeamAgentListDataEvent',
-    'TeamChannelListEvent',
-    'TeamIntentListEvent',
-    'TeamActiveStatusDetailsEvent',
-    'TeamActiveChannelListEvent',
-    'TeamAgentInteractionDetailsEvent',
-    'TeamrWorkCodeDetailsEvent',
-    'VoiceCannedResponseEvent'
-];

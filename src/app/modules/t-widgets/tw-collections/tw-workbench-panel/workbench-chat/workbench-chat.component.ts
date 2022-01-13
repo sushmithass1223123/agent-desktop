@@ -417,9 +417,10 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                     ...data,
                     otherData: node
                 },
-                panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
+                panelClass: 'agent-skill-dialog',
                 minWidth: '30%',
                 maxWidth: '100%',
+                height: '60%',
                 disableClose: true
             });
         } catch (e) {

@@ -32,22 +32,12 @@
                 The actual rendered columns are set as a property on the row definition" -->
 
                 <ng-container matColumnDef="CampaignName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header
-                        ><span
-                            >Campaign <br />
-                            Name</span
-                        ></mat-header-cell
-                    >
+                    <mat-header-cell *matHeaderCellDef mat-sort-header><span>Campaign <br /> Name</span></mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.campName || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="CampaignType">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header
-                        ><span
-                            >Campaign <br />
-                            Type</span
-                        ></mat-header-cell
-                    >
+                    <mat-header-cell *matHeaderCellDef mat-sort-header><span>Campaign <br /> Type</span></mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.campType || 'NA' }}</mat-cell>
                 </ng-container>
 

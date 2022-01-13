@@ -3,24 +3,23 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WidgetFabComponent } from './widget-fab.component';
 
 describe('WidgetFabComponent', () => {
-    let component: WidgetFabComponent;
-    let fixture: ComponentFixture<WidgetFabComponent>;
+  let component: WidgetFabComponent;
+  let fixture: ComponentFixture<WidgetFabComponent>;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [WidgetFabComponent]
-            }).compileComponents();
-        })
-    );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [ WidgetFabComponent ]
+    })
+    .compileComponents();
+  }));
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(WidgetFabComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(WidgetFabComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

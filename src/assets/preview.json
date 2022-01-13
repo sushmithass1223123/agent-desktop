@@ -17,7 +17,10 @@
                 "X": 2,
                 "Y": 2
             },
-            "Actions": ["maximize", "float"],
+            "Actions": [
+                "maximize",
+                "float"
+            ],
             "ViewState": "restore",
             "Header": true,
             "Pinned": false
@@ -33,7 +36,7 @@
         "Key": "CampaignContact",
         "Type": "tw-campaign-contact",
         "Config": {
-            "Enabled": false,
+            "Enabled": true,
             "Hidden": false,
             "Static": false,
             "Anchor": false,
@@ -45,7 +48,10 @@
                 "X": 2,
                 "Y": 2
             },
-            "Actions": ["maximize", "float"],
+            "Actions": [
+                "maximize",
+                "float"
+            ],
             "ViewState": "restore",
             "Header": true,
             "Pinned": false
@@ -95,30 +101,5 @@
                 }
             ]
         }
-    },
-    {
-        "Name": "Bookmarks",
-        "Description": "",
-        "Key": "Bookmarks",
-        "Type": "tw-sample",
-        "Config": {
-            "Enabled": true,
-            "Hidden": false,
-            "Static": false,
-            "Anchor": false,
-            "AOT": false,
-            "AutoOpen": false,
-            "Icon": "sms",
-            "Class": "",
-            "Position": {
-                "X": 2,
-                "Y": 2
-            },
-            "Actions": ["maximize", "float"],
-            "ViewState": "restore",
-            "Header": true,
-            "Pinned": false
-        },
-        "Data": {}
     }
 ]

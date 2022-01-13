@@ -4,7 +4,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { AgentStatusChangeEvent, CommandResultEvent, IResponse, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
-import { TwTrsIntegration } from '@ad/types';
 
 /**
  * TRS Integration Component
@@ -31,7 +30,10 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
      */
     private _signalrWrapper: SignalRWrapper;
 
-    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
+    constructor(
+        private _appUIService: AppUiService,
+        private _fuseProgressBarService: FuseProgressBarService
+    ) {
         super();
     }
 
@@ -69,20 +71,20 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
     private registerHubEvents(): void {
         /**
          * To show alert
-         *
+         * 
          * @param {String} message message to be displayed in tmac ui
          * @param {'Info' | 'Success' | 'Warning' | 'Error'} type red/green/orange/blue
          */
         this._signalrWrapper.hub.on('ShowAlertMessage', (message: string, type: 'Info' | 'Success' | 'Warning' | 'Error') => {
             this._appUIService.showAppSnackbar({
                 message,
-                state: type === 'Error' ? 'danger' : (type.toLowerCase() as 'info' | 'success' | 'warning' | 'danger')
+                state: type === 'Error' ? 'danger' : type.toLowerCase() as 'info' | 'success' | 'warning' | 'danger'
             });
         });
 
         /**
          * To change agent status
-         *
+         * 
          * @param {String}statusName status name to change
          * @param {String} statusCode status code to change
          */
@@ -114,7 +116,7 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
 
         /**
          * To execute action
-         *
+         * 
          * @param {any} data action data json string
          */
         this._signalrWrapper.hub.on('NewAction', (data: any) => {
@@ -129,49 +131,59 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
 
     /**
      * Action to transfer call to another agent
-     *
-     * @param data
+     * 
+     * @param data 
      */
-    private transferCall(data: any): void {}
+    private transferCall(data: any): void {
+
+    }
 
     /**
      * Action to change status of agent
-     *
-     * @param data
+     * 
+     * @param data 
      */
     private changeStatus(data: {
         /**
          * New state to change
          */
-        state: string;
-    }): void {}
+        state: string
+    }): void { }
 
     /**
      * Action to warn the agent
-     *
-     * @param data
+     * 
+     * @param data 
      */
-    private warning(data: any): void {}
+    private warning(data: any): void {
+
+    }
 
     /**
      * Action to logoff agent from AD
-     *
-     * @param data
+     * 
+     * @param data 
      */
-    private logOff(data: any): void {}
+    private logOff(data: any): void {
+
+    }
     /**
      * Action to get supervisor approval
-     *
-     * @param data
+     * 
+     * @param data 
      */
-    private getSupervisorApproval(data: any): void {}
+    private getSupervisorApproval(data: any): void {
+
+    }
 
     /**
      * Action to get release blackout confirmation
-     *
-     * @param data
+     * 
+     * @param data 
      */
-    private getReleaseBlackOutConfirmation(data: any): void {}
+    private getReleaseBlackOutConfirmation(data: any): void {
+
+    }
 }
 
 interface IWidgetData {
@@ -180,3 +192,4 @@ interface IWidgetData {
      */
     Urls: string[];
 }
+

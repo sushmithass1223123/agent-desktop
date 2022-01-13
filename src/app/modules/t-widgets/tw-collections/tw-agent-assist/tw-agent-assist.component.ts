@@ -10,7 +10,6 @@ import { TwWidgetModel } from 'app/models';
 import { orderBy } from 'lodash';
 import { merge } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TwAgentAssist } from '@ad/types';
 
 /**
  * Agent Assist Component

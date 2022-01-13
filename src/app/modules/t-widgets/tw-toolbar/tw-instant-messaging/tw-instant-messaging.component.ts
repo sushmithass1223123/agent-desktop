@@ -69,7 +69,7 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
     /**
      *  AgentNotificaitonEvent Handler
      * @method  AgentNotificaitonEvent
-     * @param { AgentNotificaitonEvent} evt
+     * @param { AgentNotificaitonEvent} evt 
      */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent): void => {
         // check if the interaction id is there then return
@@ -78,19 +78,24 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
         }
 
         if (!this._fuseSidebarService.getSidebar('chatPanel').opened && evt.Type === 'IM') {
-            this._appUIService.showSnackbar(`IM: ${evt.FromAgentName} <br /> ${evt.Message}`, 'close', 'top', 'right', 5000, () => {
-                setTimeout(() => {
-                    this.toggleSidebarOpen();
-
+            this._appUIService.showSnackbar(`IM: ${evt.FromAgentName} <br /> ${evt.Message}`,
+                'close',
+                'top',
+                'right',
+                5000,
+                () => {
                     setTimeout(() => {
-                        this._instantMessagingService.selectUser(evt.FromAgentId);
+                        this.toggleSidebarOpen();
+
+                        setTimeout(() => {
+                            this._instantMessagingService.selectUser(evt.FromAgentId);
+                        });
                     });
                 });
-            });
             this._appUIService.playAudio(undefined, 0.5, false);
             this.unreadMessages += 1;
         }
-    };
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

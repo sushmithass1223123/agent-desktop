@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { SDKClient } from '@tmac/sdk';
 
 const today = new Date();
@@ -117,10 +117,11 @@ export class TwWorkBenchService {
     /**
      * Resets email state
      */
-    resetEmailState(): void {
+    resetEmailState(update?: any): void {
         this.globalEmailWorkbenchState$.globalSearchKey.reset();
         this.globalEmailWorkbenchState$.searchParams.setValue({
             ...initEmailSearchState,
+            ...update,
             listOfMailboxes: this.globalEmailWorkbenchState$.availableMailboxes.value
         });
     }

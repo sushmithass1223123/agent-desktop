@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwWidgetModel } from 'app/models';
-import { TwSuAgentActivity } from '@ad/types';
 
 @Component({
     selector: 'tw-su-agent-activity',
@@ -13,7 +12,7 @@ import { TwSuAgentActivity } from '@ad/types';
 })
 export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: TwSuAgentActivity;
+    @Input() data: any;
 
     activityWidget = [];
 

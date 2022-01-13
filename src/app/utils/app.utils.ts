@@ -3,8 +3,6 @@ import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
 import { get, set } from 'lodash';
 import { extractJsonVal } from '@tmac/operators';
-import { eventNames } from 'process';
-import { Duration } from 'date-fns';
 
 type Generic = string | number;
 
@@ -98,23 +96,16 @@ export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, a
  *
  * @returns {CustomerInfo[]}
  */
-export const processCustomerDetails = (customerInfo: CustomerInfo[]): { exec: (evt: IUIEvent) => void } => {
+export const processCustomerDetails = (customerInfo: CustomerInfo[], evt: IUIEvent): void => {
     // check if customer info map is available in this event
-    const relevantInfo: Record<string, CustomerInfo[]> = customerInfo.reduce((acc, curr) => {
-        const evetName = curr.ValueSource.split('.')[0];
-        if (acc[evetName]) {
-            acc[evetName].push(curr);
-        } else {
-            acc[evetName] = [curr];
+    customerInfo.forEach((item: CustomerInfo) => {
+        // check if value is added, then ignore
+        if (item.Value) {
+            return;
         }
-        return acc;
-    }, {});
-
-    const exec = (evt: IUIEvent) => {
-        relevantInfo[evt.EventName].forEach((item) => getValueFromEvent(item, evt));
-    };
-
-    return { exec };
+        // get value from event
+        getValueFromEvent(item, evt);
+    });
 };
 
 /**
@@ -126,7 +117,7 @@ export const processCustomerDetails = (customerInfo: CustomerInfo[]): { exec: (e
  */
 export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
     // get the value from path or default value
-    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.Value ?? item.DefaultValue, item.MaskData);
+    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.DefaultValue, item.MaskData);
     // return value
     return item.Value;
 };
@@ -178,27 +169,4 @@ export class ADError extends Error {
 export const throwADError = (msg: string, error: any) => {
     TUtils.Logger.error(msg ?? 'Error in AD', error);
     throw new ADError(error);
-};
-
-export const formatDuration = (duration: Duration) => {
-    let formatted = '';
-    if (duration.hours < 10) {
-        formatted = `0${duration.hours}:`;
-    } else {
-        formatted = `${duration.hours}:`;
-    }
-
-    if (duration.minutes < 10) {
-        formatted = `${formatted}0${duration.minutes}:`;
-    } else {
-        formatted = `${formatted}${duration.minutes}:`;
-    }
-
-    if (duration.seconds < 10) {
-        formatted = `${formatted}0${duration.seconds}`;
-    } else {
-        formatted = `${formatted}${duration.seconds}`;
-    }
-
-    return formatted;
 };

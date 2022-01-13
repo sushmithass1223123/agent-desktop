@@ -6,6 +6,11 @@ import { WidgetPreviewModule } from '@modules/core/widget-preview/widget-preview
 
 @NgModule({
     declarations: [],
-    imports: [LoginModule, MainModule, SharedModule, WidgetPreviewModule]
+    imports: [
+        LoginModule,
+        MainModule,
+        SharedModule,
+        WidgetPreviewModule
+    ]
 })
-export class CoreModule {}
+export class CoreModule { }

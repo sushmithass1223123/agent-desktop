@@ -16,7 +16,9 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": ["float"],
+        "Actions": [
+            "float"
+        ],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false
@@ -28,7 +30,11 @@
         "Icon": "assistant",
         "Width": 450,
         "Height": 800,
-        "Actions": ["collapse", "maximize", "destroy"],
+        "Actions": [
+            "collapse",
+            "maximize",
+            "destroy"
+        ],
         "ViewState": "restore"
     }
 }

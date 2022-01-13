@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { TwFaxPanel } from '@ad/types';
 
 /**
  * Fax Panel Component

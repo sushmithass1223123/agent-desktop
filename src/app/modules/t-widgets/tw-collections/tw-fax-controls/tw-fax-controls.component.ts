@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { IWidget } from 'app/interfaces';
-import { TwFaxControls } from '@ad/types';
 
 /**
  * Fax control component
@@ -17,10 +16,12 @@ export class TwFaxControlsComponent implements OnInit {
      */
     @Input() data: IWidget;
 
-    constructor() {}
+    constructor() { }
 
     /**
      * On Init
      */
-    ngOnInit(): void {}
+    ngOnInit(): void {
+    }
+
 }

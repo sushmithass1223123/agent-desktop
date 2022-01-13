@@ -1,10 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { TwScore } from '@ad/types';
 
 /**
  * TW - Score Widget
- * Agent Widget
+ * Agent Widget 
  * Shows the agent's sentiment response score with 3 emojis
  */
 @Component({
@@ -15,10 +14,10 @@ import { TwScore } from '@ad/types';
 })
 export class TwAdScoreComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     // holds all the data related to this widget from the config
-    @Input() data: TwScore;
+    @Input() data: any;
 
     /**
-     * Constructor
+     * Constructor 
      */
     constructor() {
         super();

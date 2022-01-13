@@ -6,8 +6,22 @@ import { HtmlToPlaintextPipe } from './htmlToPlaintext.pipe';
 import { KeysPipe } from './keys.pipe';
 
 @NgModule({
-    declarations: [KeysPipe, GetByIdPipe, HtmlToPlaintextPipe, FilterPipe, CamelCaseToDashPipe],
+    declarations: [
+        KeysPipe,
+        GetByIdPipe,
+        HtmlToPlaintextPipe,
+        FilterPipe,
+        CamelCaseToDashPipe
+    ],
     imports: [],
-    exports: [KeysPipe, GetByIdPipe, HtmlToPlaintextPipe, FilterPipe, CamelCaseToDashPipe]
+    exports: [
+        KeysPipe,
+        GetByIdPipe,
+        HtmlToPlaintextPipe,
+        FilterPipe,
+        CamelCaseToDashPipe
+    ]
 })
-export class FusePipesModule {}
+
+export class FusePipesModule {
+}

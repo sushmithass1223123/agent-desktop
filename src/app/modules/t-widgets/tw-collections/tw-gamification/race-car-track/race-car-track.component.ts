@@ -28,7 +28,7 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
     @ViewChildren('board') boards: any;
 
     /**
-     * Get all names tags
+     * Get all names tags 
      */
     @ViewChildren('name') names: any;
 
@@ -42,16 +42,17 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
      */
     @Input() highest: number;
 
-    constructor() {}
+    constructor() { }
 
     /**
-     * Lifecycle hook
+     * Lifecycle hook 
      * @method
      */
-    ngOnInit(): void {}
+    ngOnInit(): void { }
+
 
     /**
-     * Lifecycle hook
+     * Lifecycle hook 
      * @method
      */
     ngAfterViewInit(): void {
@@ -59,18 +60,18 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
             const percent = (l.TotalPoints * 100) / this.highest;
             if (this.cars?._results[i] && this.boards?._results[i] && this.names?._results[i]) {
                 this.cars._results[i].nativeElement.style.transform = `translate(${percent}px , ${this.yPositions[i]}px)`;
-                this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${
-                    this.yPositions[i]
-                }px)`;
+                this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${this.yPositions[i]
+                    }px)`;
                 this.names._results[i].nativeElement.innerHTML =
-                    (l.AgentName || l.AgentId).length > 6 ? (l.AgentName || l.AgentId).slice(0, 6) + '...' : l.AgentName || l.AgentId;
+                    (l.AgentName || l.AgentId).length > 6 ? (l.AgentName || l.AgentId).slice(0, 6) + '...' : (l.AgentName || l.AgentId);
             }
         });
     }
 
+
     /**
      * Lifecycle hook
-     * @param {SimpleChanges} changes
+     * @param {SimpleChanges} changes 
      * @method
      */
     ngOnChanges(changes: SimpleChanges): void {
@@ -82,9 +83,8 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
                 const percent = (l.TotalPoints * 100) / this.highest;
                 if (this.cars?._results[i] && this.boards?._results[i] && this.names?._results[i]) {
                     this.cars._results[i].nativeElement.style.transform = `translate(${percent}px , ${this.yPositions[i]}px)`;
-                    this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${
-                        this.yPositions[i]
-                    }px)`;
+                    this.boards._results[i].nativeElement.style.transform = `translate(${percent + (percent < 10 ? 100 : 0)}px , ${this.yPositions[i]
+                        }px)`;
                     this.names._results[i].nativeElement.innerHTML = l.AgentName || l.AgentId;
                 }
             });

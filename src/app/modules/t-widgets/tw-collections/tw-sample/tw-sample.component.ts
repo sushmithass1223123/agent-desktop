@@ -5,7 +5,6 @@ import { AppDataService } from '@services/app-data.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TwSample } from '@ad/types';
 
 /**
  * Sample Component for T-widgets
@@ -28,6 +27,7 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
      * --------------------------------------------------
      */
     fuseConfig: FuseConfig;
+
 
     /**
      * --------------------------------------------------
@@ -94,24 +94,30 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     /**
      * On refresh event
-     *
+     * 
      * @param {Boolean} maximized
      */
-    onMaximizeEvent(maximized: boolean): void {}
+    onMaximizeEvent(maximized: boolean): void {
+
+    }
 
     /**
      * On refresh event
-     *
+     * 
      * @param {Boolean} collapsed
      */
-    onCollapseEvent(collapsed: boolean): void {}
+    onCollapseEvent(collapsed: boolean): void {
+
+    }
 
     /**
      * On refresh event
-     *
+     * 
      * @param {Boolean} float
      */
-    onFloatEvent(float: boolean): void {}
+    onFloatEvent(float: boolean): void {
+
+    }
 }
 
 // for more info visit - https://angular.io/api/core

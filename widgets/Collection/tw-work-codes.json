@@ -14,7 +14,10 @@
             "X": 2,
             "Y": 1
         },
-        "Actions": ["maximize", "float"],
+        "Actions": [
+            "maximize",
+            "float"
+        ],
         "ViewState": "restore",
         "Header": true,
         "Pinned": false

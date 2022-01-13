@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
@@ -26,12 +25,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     canLogout: boolean;
 
-    constructor(
-        private _router: Router,
-        private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService,
-        private _tmacEventService: TMACEventService
-    ) {
+    constructor(private _router: Router, private _fuseProgressBarService: FuseProgressBarService, private _appUIService: AppUiService) {
         super();
     }
 
@@ -138,17 +132,6 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                             // logout error
                             this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
                         }
-
-                        // emit login event
-                        this._tmacEventService.emitSDKEvent({
-                            event: {
-                                EventName: 'AgentLogoutEvent',
-                                InteractionID: 0,
-                                Data: dt.response
-                            },
-                            isInteractionEvent: false,
-                            log: true
-                        });
                     })
                     .catch(() => {
                         this._appUIService.showSnackbar('Logout failed, please try again', 'failure');

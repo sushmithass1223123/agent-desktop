@@ -90,11 +90,11 @@ export class CalendarEventModel {
         /**
          * Location
          */
-        location: string;
+        location: string,
         /**
          * Notes
          */
-        notes: string;
+        notes: string
     };
 
     /**
@@ -111,20 +111,20 @@ export class CalendarEventModel {
         this.status = data.status || '';
         this.title = data.title || '';
         this.color = {
-            primary: (data.color && data.color.primary) || '#1e90ff',
-            secondary: (data.color && data.color.secondary) || '#D1E8FF'
+            primary: data.color && data.color.primary || '#1e90ff',
+            secondary: data.color && data.color.secondary || '#D1E8FF'
         };
         this.draggable = data.draggable || false;
         this.resizable = {
-            beforeStart: (data.resizable && data.resizable.beforeStart) || false,
-            afterEnd: (data.resizable && data.resizable.afterEnd) || false
+            beforeStart: data.resizable && data.resizable.beforeStart || false,
+            afterEnd: data.resizable && data.resizable.afterEnd || false
         };
         this.actions = data.actions || [];
         this.allDay = data.allDay || false;
         this.cssClass = data.cssClass || '';
         this.meta = {
-            location: (data.meta && data.meta.location) || '',
-            notes: (data.meta && data.meta.notes) || ''
+            location: data.meta && data.meta.location || '',
+            notes: data.meta && data.meta.notes || ''
         };
     }
 }

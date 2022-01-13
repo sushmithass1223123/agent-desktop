@@ -161,9 +161,9 @@ login {
                     mat-form-field {
                         width: 100%;
 
-                        // @include media-breakpoint('xs') {
-                        //     width: 80%;
-                        // }
+                        @include media-breakpoint('xs') {
+                            width: 80%;
+                        }
 
                         .mat-form-field-wrapper {
                             .mat-select-arrow,
@@ -213,6 +213,14 @@ login {
                                 @apply twd-text-primary-700;
                             }
                         }
+                    }
+
+                    .submit-button {
+                        width: 40%;
+                        margin: 3rem auto;
+                        display: block;
+                        padding: 0.4rem 4rem;
+                        border-radius: 2rem;
                     }
 
                     mat-slide-toggle {

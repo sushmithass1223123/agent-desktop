@@ -3,7 +3,6 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { filter } from 'rxjs/operators';
-import { TwWorkbenchPanel } from '@ad/types';
 
 /**
  * Workbench Panel Component

@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { TwVoicePanel } from '@ad/types';
 
 /**
  * Voice panel component
@@ -16,7 +15,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     /**
      * App config json data
      */
-    @Input() data: TwVoicePanel;
+    @Input() data: any;
 
     /**
      * Voice panel Widget list

@@ -13,8 +13,7 @@ import { SnackbarStateTypes } from 'app/interfaces';
 export class SnackbarComponent {
     constructor(
         private _snackbar: MatSnackBar,
-        @Inject(MAT_SNACK_BAR_DATA)
-        public data: {
+        @Inject(MAT_SNACK_BAR_DATA) public data: {
             /**
              * Snackbar message
              */
@@ -23,7 +22,8 @@ export class SnackbarComponent {
              *
              * Snackbar state icon
              */
-            icon: string;
+            icon:
+            string;
             /**
              * Sncakbar state type of type SnackbarStateTypes
              */
@@ -36,8 +36,7 @@ export class SnackbarComponent {
              * On click function
              */
             onClick?: () => void;
-        }
-    ) {}
+        }) { }
 
     /**
      * To close the snackbar

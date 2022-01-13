@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'keys' })
-export class KeysPipe implements PipeTransform {
+@Pipe({name: 'keys'})
+export class KeysPipe implements PipeTransform
+{
     /**
      * Transform
      *
@@ -9,13 +10,16 @@ export class KeysPipe implements PipeTransform {
      * @param {string[]} args
      * @returns {any}
      */
-    transform(value: any, args: string[]): any {
+    transform(value: any, args: string[]): any
+    {
         const keys: any[] = [];
 
-        for (const key in value) {
-            if (value.hasOwnProperty(key)) {
+        for ( const key in value )
+        {
+            if ( value.hasOwnProperty(key) )
+            {
                 keys.push({
-                    key: key,
+                    key  : key,
                     value: value[key]
                 });
             }

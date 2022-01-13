@@ -3,24 +3,23 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TwVoiceBotTranscriptsComponent } from './tw-voice-bot-transcripts.component';
 
 describe('TwVoiceBotTranscriptsComponent', () => {
-    let component: TwVoiceBotTranscriptsComponent;
-    let fixture: ComponentFixture<TwVoiceBotTranscriptsComponent>;
+  let component: TwVoiceBotTranscriptsComponent;
+  let fixture: ComponentFixture<TwVoiceBotTranscriptsComponent>;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [TwVoiceBotTranscriptsComponent]
-            }).compileComponents();
-        })
-    );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [ TwVoiceBotTranscriptsComponent ]
+    })
+    .compileComponents();
+  }));
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(TwVoiceBotTranscriptsComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TwVoiceBotTranscriptsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

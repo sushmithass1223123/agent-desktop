@@ -8,7 +8,6 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { setStringVars } from '@tmac/operators';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage, IWidget } from 'app/interfaces';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -94,7 +93,23 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     ) {
         super();
 
-        this.excludedEvents = EXCLUDED_TMAC_EVENT as CustomTMACEventTypes[];
+        this.excludedEvents = [
+            'WallboardRefreshEvent',
+            'TeamWallboardRefreshEvent',
+            'QuizEvent',
+            'TeamAgentListEvent',
+            'AgentInteractionDetailsEvent',
+            'AgentChannelListEvent',
+            'AgentStatusDetailsEvent',
+            'SupervisorAgentListEvent',
+            'TeamAgentListDataEvent',
+            'TeamChannelListEvent',
+            'TeamIntentListEvent',
+            'TeamActiveStatusDetailsEvent',
+            'TeamActiveChannelListEvent',
+            'TeamAgentInteractionDetailsEvent',
+            'TeamrWorkCodeDetailsEvent'
+        ];
     }
 
     // tslint:disable-next-line: completed-docs
@@ -112,47 +127,32 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         }
 
         // register to post message subject
-        this._tmacEventService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe(async (message: IPostMessage) => {
-            try {
-                const fn = message.function?.toLowerCase();
-                // check the message from frame
-                if (message.name && message.name !== this.idName) {
-                    // ignore message from different id
-                    return;
-                }
-                switch (fn) {
-                    case 'gettmacevents':
-                        const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents, this.interactionId);
-                        // check event are there
-                        if (events.length) {
-                            // send events to the child
-                            this.sendDataToWindow(message.callback || 'onTMACEvent', events);
-                        }
-                        break;
-                    case 'showconfirmdialog':
-                        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', message.data?.title, message.data?.message);
-                        this.dialogRef.afterClosed().subscribe((dialogResult: boolean) => {
-                            this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult);
-                        });
-                        break;
-                    case 'closeconfirmdialog':
-                        this.dialogRef?.close();
-                        break;
-                    case 'invokesdk':
-                        if (!message.data?.method) {
-                            return;
-                        }
-                        const method = message.data?.method;
-                        const params = message.data?.params;
-                        // invoke SDK method dynamically
-                        const response = await SDKClient[method](...params);
-                        // send the response to the child
-                        this.sendDataToWindow(message.callback || `${method}Done`, response);
-                        break;
-                    default:
-                }
-            } catch (error) {
-                this.logger.error('Error in TwCustomComponent.postMessage', error, false);
+        this._tmacEventService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe((message: IPostMessage) => {
+            const fn = message.function?.toLowerCase();
+            // check the message from frame
+            if (message.name && message.name !== this.idName) {
+                // ignore message from different id
+                return;
+            }
+            switch (fn) {
+                case 'gettmacevents':
+                    const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents, this.interactionId);
+                    // check event are there
+                    if (events.length) {
+                        // send event to the frame/opener
+                        this.sendDataToWindow(message.callback || 'onTMACEvent', events);
+                    }
+                    break;
+                case 'showconfirmdialog':
+                    this.dialogRef = this._appUIService.showAppConfirmDialog('generic', message.data?.title, message.data?.message);
+                    this.dialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+                        this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult);
+                    });
+                    break;
+                case 'closeconfirmdialog':
+                    this.dialogRef?.close();
+                    break;
+                default:
             }
         });
 
@@ -228,29 +228,22 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @param {Any} data
      */
     private sendDataToWindow(fn: string, data: any): void {
-        try {
-            const iframe = document.getElementById('tw_frame_' + this.data.ID);
-            // get the element
-            const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
-            // check if the element is present
-            if (element) {
-                // send post message to the element
-                element.postMessage(
-                    {
-                        function: fn,
-                        callback: null,
-                        data,
-                        source: 'tmac',
-                        userObject: null
-                    },
-                    '*'
-                );
-            }
-        } catch (error) {
-            console.error({
-                error,
-                data
-            });
+        const iframe = document.getElementById('tw_frame_' + this.data.ID);
+        // get the element
+        const element = this.oinWidget ? this.oinWidget : iframe ? (iframe as HTMLIFrameElement).contentWindow : null;
+        // check if the element is present
+        if (element) {
+            // send post message to the element
+            element.postMessage(
+                {
+                    function: fn,
+                    callback: null,
+                    data,
+                    source: 'tmac',
+                    userObject: null
+                },
+                '*'
+            );
         }
     }
 

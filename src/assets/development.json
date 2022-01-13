@@ -1,72 +1,149 @@
 {
     "Login": {
-        "Modes": { "Enabled": true, "Type": "nonpbx" },
-        "FaceAuth": { "Enabled": false, "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages" },
+        "Modes": {
+            "Enabled": true,
+            "Type": "nonpbx"
+        },
+        "FaceAuth": {
+            "Enabled": false,
+            "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
+        },
         "DomainListEnabled": false,
-        "Password": { "Agent": false, "Station": false },
+        "Password": {
+            "Agent": false,
+            "Station": false
+        },
         "StationEnabled": false,
         "DisableLanId": false,
         "PromptAgentIdOnInvalidLanId": false,
-        "MultiWindowMode": { "Enabled": false, "Width": 100, "Height": 100, "PixelDimension": false }
+        "MultiWindowMode": {
+            "Enabled": false,
+            "Width": 100,
+            "Height": 100,
+            "PixelDimension": false
+        }
     },
     "Main": {
         "Toolbar": {
             "Widgets": [
-                { "Name": "Interaction indicators", "Description": "", "Type": "tw-active-interaction", "Config": { "Enabled": true }, "Data": {} },
+                {
+                    "Name": "Interaction indicators",
+                    "Description": "",
+                    "Type": "tw-active-interaction",
+                    "Config": {
+                        "Enabled": true
+                    },
+                    "Data": {}
+                },
                 {
                     "Name": "Toolbar Menu",
                     "Description": "",
                     "Type": "tw-toolbar-menu",
-                    "Config": { "Enabled": true },
+                    "Config": {
+                        "Enabled": true
+                    },
                     "Data": {
                         "Widgets": [
-                            { "Name": "Broadcast Message", "Description": "", "Type": "tw-broadcast", "Config": { "Enabled": true }, "Data": {} },
-                            { "Name": "Aux Timer", "Description": "", "Type": "tw-aux-timer", "Config": { "Enabled": true }, "Data": {} },
+                            {
+                                "Name": "Broadcast Message",
+                                "Description": "",
+                                "Type": "tw-broadcast",
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Aux Timer",
+                                "Description": "",
+                                "Type": "tw-aux-timer",
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {}
+                            },
                             {
                                 "Name": "Agent Details",
                                 "Description": "",
                                 "Type": "tw-agent-details",
-                                "Config": { "Enabled": true },
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": false, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
+                                    }
                                 }
                             },
                             {
                                 "Name": "Aux Codes",
                                 "Description": "",
                                 "Type": "tw-aux-codes",
-                                "Config": { "Enabled": false },
-                                "Data": { "ByTeam": false, "DefaultACW": false, "DefaultLogout": false }
+                                "Config": {
+                                    "Enabled": false
+                                },
+                                "Data": {
+                                    "ByTeam": false,
+                                    "DefaultACW": false,
+                                    "DefaultLogout": false
+                                }
                             },
                             {
                                 "Name": "Logout Button",
                                 "Description": "",
                                 "Type": "tw-logout",
-                                "Config": { "Enabled": true },
-                                "Data": { "LogoutAux": "logout", "AllowLogoutOnOpenInteractions": false }
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {
+                                    "LogoutAux": "logout",
+                                    "AllowLogoutOnOpenInteractions": false
+                                }
                             },
                             {
                                 "Name": "Agent IM",
                                 "Description": "",
                                 "Type": "tw-instant-messaging",
-                                "Config": { "Enabled": true },
-                                "Data": { "TeamFilter": true, "AudioEscalateAllowed": true, "VideoEscalateAllowed": true, "ScreenShareAllowed": true }
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {
+                                    "TeamFilter": true,
+                                    "AudioEscalateAllowed": true,
+                                    "VideoEscalateAllowed": true,
+                                    "ScreenShareAllowed": true
+                                }
                             },
-                            { "Name": "Notification", "Description": "", "Type": "tw-notifications", "Config": { "Enabled": true }, "Data": {} },
+                            {
+                                "Name": "Notification",
+                                "Description": "",
+                                "Type": "tw-notifications",
+                                "Config": {
+                                    "Enabled": true
+                                },
+                                "Data": {}
+                            },
                             {
                                 "Name": "Available Media Devices",
                                 "Description": "",
                                 "Type": "tw-available-media-device",
-                                "Config": { "Enabled": true },
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {}
                             },
                             {
                                 "Name": "Create Interaction",
                                 "Description": "",
                                 "Type": "tw-create-interaction",
-                                "Config": { "Enabled": true },
+                                "Config": {
+                                    "Enabled": true
+                                },
                                 "Data": {
                                     "Channels": [
                                         {
@@ -87,17 +164,22 @@
                                             "Icon": "call",
                                             "Data": {
                                                 "Agent": {
-                                                    "Source": { "Use": "station", "Display": "${LastName}, ${FirstName}", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "station",
+                                                        "Display": "${LastName}, ${FirstName}",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "AllowedStates": [],
                                                     "TeamFilter": false,
                                                     "Columns": []
                                                 },
                                                 "SpeedDial": {
                                                     "Allowed": true,
-                                                    "Consult": true,
-                                                    "Blind": true,
-                                                    "Comments": false,
-                                                    "Source": { "Use": "Number", "Display": "${Name} - ${Number}", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "Number",
+                                                        "Display": "${Name} - ${Number}",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "Columns": [],
                                                     "TeamFilter": true
                                                 }
@@ -136,50 +218,92 @@
                         "Name": "Home",
                         "Description": "",
                         "Type": "twn-home",
-                        "Config": { "Enabled": true, "Icon": "home" },
-                        "Data": { "Path": "/home", "Active": true }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "home"
+                        },
+                        "Data": {
+                            "Path": "/home",
+                            "Active": true
+                        }
                     },
                     {
                         "Name": "Supervisor",
                         "Description": "",
                         "Type": "twn-supervisor",
-                        "Config": { "Enabled": true, "Icon": "supervised_user_circle" },
-                        "Data": { "Path": "/supervisor", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "supervised_user_circle"
+                        },
+                        "Data": {
+                            "Path": "/supervisor",
+                            "Active": false
+                        }
                     },
                     {
                         "Name": "Voice",
                         "Description": "",
                         "Type": "twn-voice",
-                        "Config": { "Enabled": true, "Icon": "phone" },
-                        "Data": { "Path": "/voice", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "phone"
+                        },
+                        "Data": {
+                            "Path": "/voice",
+                            "Active": false
+                        }
                     },
                     {
                         "Name": "TextChat",
                         "Description": "",
                         "Type": "twn-textchat",
-                        "Config": { "Enabled": true, "Icon": "chat" },
-                        "Data": { "Path": "/textchat", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "chat"
+                        },
+                        "Data": {
+                            "Path": "/textchat",
+                            "Active": false
+                        }
                     },
                     {
                         "Name": "Email",
                         "Description": "",
                         "Type": "twn-email",
-                        "Config": { "Enabled": true, "Icon": "email" },
-                        "Data": { "Path": "/email", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "email"
+                        },
+                        "Data": {
+                            "Path": "/email",
+                            "Active": false
+                        }
                     },
                     {
                         "Name": "Generic",
                         "Description": "",
                         "Type": "twn-generic",
-                        "Config": { "Enabled": true, "Icon": "feed" },
-                        "Data": { "Path": "/generic", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "feed"
+                        },
+                        "Data": {
+                            "Path": "/generic",
+                            "Active": false
+                        }
                     },
                     {
                         "Name": "Workbench",
                         "Description": "",
                         "Type": "twc-workbench",
-                        "Config": { "Enabled": true, "Icon": "library_books" },
-                        "Data": { "Path": "/workbench", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "library_books"
+                        },
+                        "Data": {
+                            "Path": "/workbench",
+                            "Active": false
+                        }
                     }
                 ],
                 "Bottom": [
@@ -187,15 +311,92 @@
                         "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
-                        "Config": { "Enabled": true, "Icon": "meeting_room" },
-                        "Data": { "Path": "/tmeet", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "meeting_room"
+                        },
+                        "Data": {
+                            "Path": "/tmeet",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "dashboard"
+                        },
+                        "Data": {
+                            "Path": "/dashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Sentiment Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "sentiment_satisfied_alt"
+                        },
+                        "Data": {
+                            "Path": "/sentimentdashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "KPI Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "signal_cellular_alt"
+                        },
+                        "Data": {
+                            "Path": "/kpidashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Session Dashboard",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "format_list_bulleted"
+                        },
+                        "Data": {
+                            "Path": "/sessiondashboard",
+                            "Active": false
+                        }
+                    },
+                    {
+                        "Name": "Realtime Stats",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "analytics"
+                        },
+                        "Data": {
+                            "Path": "/realtimestats",
+                            "Active": false
+                        }
                     },
                     {
                         "Name": "Docker",
                         "Description": "",
                         "Type": "twn-docker",
-                        "Config": { "Enabled": true, "Icon": "dock" },
-                        "Data": { "Path": "/docker", "Active": false }
+                        "Config": {
+                            "Enabled": true,
+                            "Icon": "dock"
+                        },
+                        "Data": {
+                            "Path": "/docker",
+                            "Active": false
+                        }
                     }
                 ]
             }
@@ -206,7 +407,14 @@
                     "Name": "Home",
                     "Description": "",
                     "Type": "twc-home",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
                     "Data": {
                         "Path": "/home",
                         "Duration": 100,
@@ -225,13 +433,19 @@
                                         "AutoOpen": false,
                                         "Icon": "dvr",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "agent", "SLEnabled": true }
+                                    "Data": {
+                                        "Role": "agent",
+                                        "SLEnabled": true
+                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -249,16 +463,27 @@
                                         "AutoOpen": false,
                                         "Icon": "dvr",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "totalinteractions", "ChartType": "pie", "Role": "agent", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "totalinteractions",
+                                        "ChartType": "pie",
+                                        "Role": "agent",
+                                        "Limit": 0
+                                    }
                                 },
                                 {
-                                    "Name": "AHT/Transfer/Conference",
+                                    "Name": "AHT/Transfer/Conference ",
                                     "Description": "",
                                     "Key": "AHT-Trans-Conf-Count",
                                     "Type": "tw-aht-tc",
@@ -271,13 +496,22 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Type": "grid", "Role": "agent" }
+                                    "Data": {
+                                        "Type": "grid",
+                                        "Role": "agent"
+                                    }
                                 },
                                 {
                                     "Name": "Aux Status",
@@ -293,13 +527,24 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "duo",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "auxstatus", "ChartType": "pie", "Role": "agent", "Limit": 5, "Label": false }
+                                    "Data": {
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "agent",
+                                        "Limit": 10
+                                    }
                                 },
                                 {
                                     "Name": "Interaction Details",
@@ -315,8 +560,14 @@
                                         "AutoOpen": false,
                                         "Icon": "format_list_bulleted",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -337,17 +588,32 @@
                                         "AutoOpen": false,
                                         "Icon": "today",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
                                         "TaskOptions": [
-                                            { "Name": "Change Status", "Value": "changestate" },
-                                            { "Name": "Make Call", "Value": "makecall" },
-                                            { "Name": "Meeting", "Value": "meeting" }
+                                            {
+                                                "Name": "Change Status",
+                                                "Value": "changestate"
+                                            },
+                                            {
+                                                "Name": "Make Call",
+                                                "Value": "makecall"
+                                            },
+                                            {
+                                                "Name": "Meeting",
+                                                "Value": "meeting"
+                                            }
                                         ]
                                     }
                                 },
@@ -365,38 +631,24 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api" }
+                                    "Data": {
+                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api"
+                                    }
                                 }
                             ],
                             "AOT": [
-                                {
-                                    "Name": "CRM Integration",
-                                    "Description": "",
-                                    "Key": "WebRTC",
-                                    "Type": "tw-custom",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": true,
-                                        "AutoOpen": false,
-                                        "Icon": "event_note",
-                                        "Class": "",
-                                        "Position": { "X": 4, "Y": 4, "W": 400, "H": 400 },
-                                        "Actions": ["maximize", "destroy"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "OpenInNew": false, "Url": "http://127.0.0.1:5500/widget.html" }
-                                },
                                 {
                                     "Name": "WebRTC tracker",
                                     "Description": "",
@@ -411,8 +663,16 @@
                                         "AutoOpen": false,
                                         "Icon": "event_note",
                                         "Class": "",
-                                        "Position": { "X": 4, "Y": 4, "W": 1200, "H": 700 },
-                                        "Actions": ["maximize", "destroy"],
+                                        "Position": {
+                                            "X": 4,
+                                            "Y": 4,
+                                            "W": 1200,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -436,8 +696,16 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -445,8 +713,14 @@
                                     "Data": {
                                         "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
-                                            "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "Mr. Tan" },
-                                            "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "6596975347" }
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
                                         }
                                     }
                                 },
@@ -464,8 +738,16 @@
                                         "AutoOpen": false,
                                         "Icon": "extension",
                                         "Class": "",
-                                        "Position": { "X": 4, "Y": 2, "W": 1200, "H": 700 },
-                                        "Actions": ["maximize", "destroy"],
+                                        "Position": {
+                                            "X": 4,
+                                            "Y": 2,
+                                            "W": 1200,
+                                            "H": 700
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -483,7 +765,14 @@
                     "Name": "Supervisor",
                     "Description": "",
                     "Type": "twc-supervisor",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
@@ -503,13 +792,18 @@
                                         "AutoOpen": false,
                                         "Icon": "vertical_split",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TASUrl": "https://dice.tetherfi.cloud/TAS/Quiz/Index" }
+                                    "Data": {
+                                        "TASUrl": "https://dice.tetherfi.cloud/TAS/Quiz/Index"
+                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -527,8 +821,14 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -537,8 +837,7 @@
                                         "Source": "totalinteractions",
                                         "ChartType": "doughnut",
                                         "Role": "supervisor",
-                                        "Limit": 0,
-                                        "Label": false
+                                        "Limit": 0
                                     }
                                 },
                                 {
@@ -555,13 +854,22 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Type": "chart", "Role": "supervisor" }
+                                    "Data": {
+                                        "Type": "chart",
+                                        "Role": "supervisor"
+                                    }
                                 },
                                 {
                                     "Name": "Calls in Queue",
@@ -575,13 +883,24 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "ciq", "ChartType": "doughnut", "Role": "supervisor", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "ciq",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0
+                                    }
                                 },
                                 {
                                     "Name": "Intent List",
@@ -597,13 +916,24 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "intentlist", "ChartType": "pie", "Role": "supervisor", "Limit": 5, "Label": false }
+                                    "Data": {
+                                        "Source": "intentlist",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 5
+                                    }
                                 },
                                 {
                                     "Name": "Skill Dashboard",
@@ -617,13 +947,22 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "supervisor", "SLEnabled": false }
+                                    "Data": {
+                                        "Role": "supervisor",
+                                        "SLEnabled": false
+                                    }
                                 },
                                 {
                                     "Name": "Channels",
@@ -639,13 +978,24 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "activechannels", "ChartType": "doughnut", "Role": "supervisor", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "activechannels",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0
+                                    }
                                 },
                                 {
                                     "Name": "Status",
@@ -661,13 +1011,24 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "auxstatus", "ChartType": "pie", "Role": "supervisor", "Limit": 10, "Label": false }
+                                    "Data": {
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 10
+                                    }
                                 },
                                 {
                                     "Name": "Work Codes",
@@ -681,13 +1042,23 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "supervisor", "ByTeam": true, "ByGroup": false }
+                                    "Data": {
+                                        "Role": "supervisor",
+                                        "ByTeam": true,
+                                        "ByGroup": false
+                                    }
                                 }
                             ],
                             "Agent": [],
@@ -706,13 +1077,23 @@
                                         "AutoOpen": false,
                                         "Icon": "extension",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1, "W": 500, "H": "300" },
-                                        "Actions": ["maximize", "destroy"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1,
+                                            "W": 500,
+                                            "H": "300"
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx" }
+                                    "Data": {
+                                        "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx"
+                                    }
                                 },
                                 {
                                     "Name": "Add Products",
@@ -728,13 +1109,24 @@
                                         "AutoOpen": false,
                                         "Icon": "store",
                                         "Class": "",
-                                        "Position": { "X": 1, "Y": 1, "W": 1200, "H": 800 },
-                                        "Actions": ["maximize", "destroy"],
+                                        "Position": {
+                                            "X": 1,
+                                            "Y": 1,
+                                            "W": 1200,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": true, "Url": "https://dice.tetherfi.cloud/TVirtualStore/product.html" }
+                                    "Data": {
+                                        "OpenInNew": true,
+                                        "Url": "https://dice.tetherfi.cloud/TVirtualStore/product.html"
+                                    }
                                 }
                             ]
                         }
@@ -744,7 +1136,14 @@
                     "Name": "Voice",
                     "Description": "",
                     "Type": "twc-voice",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
                     "Data": {
                         "Path": "/voice",
                         "RouteOnInteraction": true,
@@ -763,7 +1162,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": false
@@ -783,8 +1185,15 @@
                                                     "AutoOpen": false,
                                                     "Icon": "phone",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse",
+                                                        "float"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -811,8 +1220,14 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["VO"],
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": [
+                                                                "VO"
+                                                            ],
                                                             "Columns": []
                                                         },
                                                         "SpeedDial": {
@@ -820,8 +1235,14 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": false,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["EM"],
+                                                            "Source": {
+                                                                "Use": "Number",
+                                                                "Display": "Number",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": [
+                                                                "EM"
+                                                            ],
                                                             "Columns": []
                                                         }
                                                     },
@@ -832,7 +1253,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "station", "Display": "agentName", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "station",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -842,17 +1267,35 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["VO"],
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": [
+                                                                "VO"
+                                                            ],
                                                             "Columns": []
                                                         }
                                                     },
                                                     "IVR": {
                                                         "MenuEnabled": true,
-                                                        "DefaultMenu": ["Main Menu TRPS Way", "Products", "Mobile", "Agent"],
+                                                        "DefaultMenu": [
+                                                            "Main Menu",
+                                                            "Products",
+                                                            "Mobile",
+                                                            "Agent"
+                                                        ],
                                                         "Transfer": {
                                                             "Allowed": true,
-                                                            "Menu": [{ "Text": "Accesscode+TPIN", "Type": "v_nv", "Value": "tpin", "Icon": "lock" }]
+                                                            "Menu": [
+                                                                {
+                                                                    "Text": "Accesscode+TPIN",
+                                                                    "Type": "v_nv",
+                                                                    "Value": "tpin",
+                                                                    "Icon": "lock"
+                                                                }
+                                                            ]
                                                         }
                                                     },
                                                     "DialpadAllowed": true,
@@ -875,8 +1318,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "person",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -890,10 +1339,30 @@
                                                             "DefaultValue": "",
                                                             "MaskData": true
                                                         },
-                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Email", "ValueSource": "CCLDataEvent.Email", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Address", "ValueSource": "CCLDataEvent.Address", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "NRIC", "ValueSource": "CCLDataEvent.NRIC", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
@@ -928,8 +1397,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -938,7 +1413,20 @@
                                                     "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
                                                     "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
-                                                    "Columns": []
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "InteractionText",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "PhoneNumber",
+                                                        "EmailID",
+                                                        "OverallSentiment",
+                                                        "Actions"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -950,7 +1438,7 @@
                                     "Name": "Deflect To Digital",
                                     "Description": "",
                                     "Key": "TWDeflectToDigital",
-                                    "Type": "tw-voice-canned-responses",
+                                    "Type": "tw-deflect-to-digital",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -960,8 +1448,14 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -995,8 +1489,13 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1008,7 +1507,11 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["collapse", "maximize", "destroy"],
+                                        "Actions": [
+                                            "collapse",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -1026,13 +1529,21 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "IsAuthenticated": true }
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
                                 },
                                 {
                                     "Name": "AMDOC-BCC",
@@ -1048,8 +1559,14 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1070,8 +1587,14 @@
                                         "AutoOpen": false,
                                         "Icon": "sentiment_satisfied_alt",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1092,13 +1615,23 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": true }
+                                    "Data": {
+                                        "Role": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": true
+                                    }
                                 },
                                 {
                                     "Name": "Speech Transcripts",
@@ -1114,8 +1647,14 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1138,13 +1677,24 @@
                                         "AutoOpen": false,
                                         "Icon": "mic",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1, "W": 700, "H": 600 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1,
+                                            "W": 700,
+                                            "H": 600
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}" }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}"
+                                    }
                                 },
                                 {
                                     "Name": "Register Callback",
@@ -1160,8 +1710,16 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["collapse", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "collapse",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1169,8 +1727,14 @@
                                     "Data": {
                                         "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
-                                            "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "Mr. Tan" },
-                                            "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "6596975347" }
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
                                         }
                                     }
                                 },
@@ -1188,13 +1752,23 @@
                                         "AutoOpen": false,
                                         "Icon": "pending_actions",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 700, "H": 300 },
-                                        "Actions": ["maximize", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 700,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api" }
+                                    "Data": {
+                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api"
+                                    }
                                 },
                                 {
                                     "Name": "Voice Canned Responses",
@@ -1210,8 +1784,16 @@
                                         "AutoOpen": false,
                                         "Icon": "audiotrack",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["collapse", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "collapse",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1232,8 +1814,16 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1251,7 +1841,14 @@
                     "Name": "TextChat",
                     "Description": "",
                     "Type": "twc-textchat",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
                     "Data": {
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
@@ -1270,7 +1867,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": false,
@@ -1291,8 +1891,15 @@
                                                     "AutoOpen": false,
                                                     "Icon": "chat",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse",
+                                                        "float"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1305,7 +1912,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1315,7 +1926,11 @@
                                                             "Consult": false,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [],
                                                             "Columns": []
                                                         }
@@ -1327,7 +1942,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1337,8 +1956,14 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
-                                                            "ChannelPrefix": ["CH"],
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": [
+                                                                "CH"
+                                                            ],
                                                             "Columns": []
                                                         }
                                                     },
@@ -1352,16 +1977,30 @@
                                                     "ScreenShareAllowed": true,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
-                                                    "Whiteboard": { "Allowed": true, "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html" },
-                                                    "Snapshot": { "Allowed": true, "Source": "remote", "RemoteResponseTimeout": 10 },
+                                                    "Whiteboard": {
+                                                        "Allowed": true,
+                                                        "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html"
+                                                    },
+                                                    "Snapshot": {
+                                                        "Allowed": true,
+                                                        "Source": "remote",
+                                                        "RemoteResponseTimeout": 10
+                                                    },
                                                     "ShowUserLabel": false,
-                                                    "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
+                                                    "ChatTemplate": {
+                                                        "Allowed": true,
+                                                        "Filter": "startswith",
+                                                        "FilterByTime": false
+                                                    },
                                                     "WebRTCTest": {
                                                         "Allowed": true,
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
                                                         "Customer": true
                                                     },
-                                                    "ConversationService": { "Url": "", "Limit": 50, "Label": false },
+                                                    "ConversationService": {
+                                                        "Url": "",
+                                                        "Limit": 50
+                                                    },
                                                     "ReplyAllowed": true,
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false
@@ -1380,8 +2019,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "person",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1406,7 +2051,12 @@
                                                             "Unit": "",
                                                             "DefaultValue": ""
                                                         },
-                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "Auth Type",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
@@ -1419,14 +2069,27 @@
                                                             "Unit": "",
                                                             "DefaultValue": ""
                                                         },
-                                                        { "Title": "Email", "ValueSource": "CCLDataEvent.Email", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Address", "ValueSource": "CCLDataEvent.Address", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "NRIC",
                                                             "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
                                                             "DefaultValue": "",
-                                                            "MaskData": { "UnMaskedStartChars": 2, "UnMaskedEndChars": 2 }
+                                                            "MaskData": {
+                                                                "UnMaskedStartChars": 2,
+                                                                "UnMaskedEndChars": 2
+                                                            }
                                                         },
                                                         {
                                                             "Title": "Account Number",
@@ -1456,8 +2119,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "collapse",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1475,6 +2144,9 @@
                                                         "LastServicedAgentName",
                                                         "CIF",
                                                         "NRIC",
+                                                        "PhoneNumber",
+                                                        "EmailID",
+                                                        "OverallSentiment",
                                                         "Actions"
                                                     ]
                                                 }
@@ -1498,8 +2170,14 @@
                                         "AutoOpen": false,
                                         "Icon": "location_on",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float", "maximize"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float",
+                                            "maximize"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1520,8 +2198,13 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1533,7 +2216,11 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["collapse", "maximize", "destroy"],
+                                        "Actions": [
+                                            "collapse",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -1551,13 +2238,22 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "ResponseMode": "manual", "EditAllowed": false }
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
                                 },
                                 {
                                     "Name": "Realtime Customer Sentiment",
@@ -1573,30 +2269,14 @@
                                         "AutoOpen": false,
                                         "Icon": "sentiment_satisfied_alt",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {}
-                                },
-                                {
-                                    "Name": "Speech Transcripts",
-                                    "Description": "",
-                                    "Key": "SpeechTranscript",
-                                    "Type": "tw-voice-bot-transcripts",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1617,13 +2297,51 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": true }
+                                    "Data": {
+                                        "Role": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": true
+                                    }
+                                },
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Key": "AmdocBCC",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
                                 }
                             ],
                             "AOT": [
@@ -1641,8 +2359,16 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1666,8 +2392,16 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["collapse", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "collapse",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1700,13 +2434,23 @@
                                         "AutoOpen": false,
                                         "Icon": "sms",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2, "W": 500, "H": 350 },
-                                        "Actions": ["destroy"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2,
+                                            "W": 500,
+                                            "H": 350
+                                        },
+                                        "Actions": [
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Type": "sms", "Number": "CCLDataEvent.RegisteredPhone" }
+                                    "Data": {
+                                        "Type": "sms",
+                                        "Number": "CCLDataEvent.RegisteredPhone"
+                                    }
                                 }
                             ]
                         }
@@ -1716,7 +2460,14 @@
                     "Name": "Email",
                     "Description": "",
                     "Type": "twc-email",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
                     "Data": {
                         "Path": "/email",
                         "RouteOnInteraction": true,
@@ -1735,7 +2486,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": false
@@ -1755,8 +2509,15 @@
                                                     "AutoOpen": false,
                                                     "Icon": "chat",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse",
+                                                        "float"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1768,64 +2529,37 @@
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
-                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
                                                             "TeamFilter": false,
-                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
-                                                        },
-                                                        "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
                                                             "Columns": []
                                                         },
-                                                        "Blind": true,
-                                                        "Comments": false,
-                                                        "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
-                                                        "ChannelPrefix": ["VO"],
-                                                        "Columns": ["Name"]
-                                                    },
-                                                    "Conference": {
-                                                        "Allowed": true,
-                                                        "Agent": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": true },
-                                                            "AllowedStates": ["Available"],
-                                                            "TeamFilter": false,
-                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
-                                                        },
                                                         "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
-                                                            "Columns": ["Stf"]
-                                                        },
-                                                        "SpeedDial": {
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": false,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
-                                                            "ChannelPrefix": ["VO"],
-                                                            "Columns": ["Name"]
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": [
+                                                                "EM"
+                                                            ],
+                                                            "Columns": []
                                                         }
                                                     },
                                                     "DownloadAllowed": true,
                                                     "ForwardAllowed": true,
                                                     "ReplyAllAllowed": true,
                                                     "InteractionCommentAllowed": true,
-                                                    "DraftPollingInterval": 10000,
-                                                    "TemplatesByTeam": false
+                                                    "DraftPollingInterval": 10000
                                                 }
                                             },
                                             {
@@ -1841,8 +2575,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -1882,8 +2622,13 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1895,7 +2640,11 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["collapse", "maximize", "destroy"],
+                                        "Actions": [
+                                            "collapse",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -1913,8 +2662,13 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -1935,13 +2689,21 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "IsAuthenticated": true }
+                                    "Data": {
+                                        "IsAuthenticated": true
+                                    }
                                 },
                                 {
                                     "Name": "Canned Responses",
@@ -1957,13 +2719,22 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "ResponseMode": "manual", "EditAllowed": false }
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false
+                                    }
                                 },
                                 {
                                     "Name": "Work Codes",
@@ -1979,13 +2750,23 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": true }
+                                    "Data": {
+                                        "Role": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": true
+                                    }
                                 },
                                 {
                                     "Name": "AMDOC-BCC",
@@ -2001,8 +2782,14 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2025,8 +2812,16 @@
                                         "AutoOpen": false,
                                         "Icon": "phone_callback",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["collapse", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
+                                        },
+                                        "Actions": [
+                                            "collapse",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2053,7 +2848,14 @@
                     "Name": "Generic",
                     "Description": "",
                     "Type": "twc-generic",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        }
+                    },
                     "Data": {
                         "Path": "/generic",
                         "RouteOnInteraction": true,
@@ -2072,7 +2874,10 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": false
@@ -2092,13 +2897,20 @@
                                                     "AutoOpen": false,
                                                     "Icon": "widgets",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
                                                 },
-                                                "Data": { "CloseInteractionAllowed": true }
+                                                "Data": {
+                                                    "CloseInteractionAllowed": true
+                                                }
                                             },
                                             {
                                                 "Name": "Customer Details",
@@ -2113,8 +2925,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "person",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2173,8 +2991,14 @@
                                                     "AutoOpen": false,
                                                     "Icon": "storage",
                                                     "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse"],
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": [
+                                                        "maximize",
+                                                        "collapse"
+                                                    ],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2218,8 +3042,13 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2231,7 +3060,11 @@
                                         "Icon": "assistant",
                                         "Width": 450,
                                         "Height": 800,
-                                        "Actions": ["collapse", "maximize", "destroy"],
+                                        "Actions": [
+                                            "collapse",
+                                            "maximize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore"
                                     }
                                 },
@@ -2249,13 +3082,23 @@
                                         "AutoOpen": false,
                                         "Icon": "",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 1
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": false }
+                                    "Data": {
+                                        "Role": "interaction",
+                                        "ByTeam": false,
+                                        "ByGroup": false
+                                    }
                                 },
                                 {
                                     "Name": "Campaign Contact",
@@ -2271,21 +3114,55 @@
                                         "AutoOpen": false,
                                         "Icon": "contact_page",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
                                         "CustomerInfo": [
-                                            { "Title": "Name", "ValueSource": "ContactData.campaignContact.Name", "DefaultValue": "" },
-                                            { "Title": "PhoneNumber", "ValueSource": "ContactData.campaignContact.PhoneNumber", "DefaultValue": "" },
-                                            { "Title": "NRIC", "ValueSource": "ContactData.campaignContact.nric", "DefaultValue": "" },
-                                            { "Title": "Gender", "ValueSource": "ContactData.campaignContact.Gender", "DefaultValue": "" },
-                                            { "Title": "Age", "ValueSource": "ContactData.campaignContact.Age", "DefaultValue": "" },
-                                            { "Title": "Language", "ValueSource": "ContactData.campaignContact.language", "DefaultValue": "" },
-                                            { "Title": "Email", "ValueSource": "ContactData.campaignContact.Email", "DefaultValue": "" },
+                                            {
+                                                "Title": "Name",
+                                                "ValueSource": "ContactData.campaignContact.Name",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "PhoneNumber",
+                                                "ValueSource": "ContactData.campaignContact.PhoneNumber",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "NRIC",
+                                                "ValueSource": "ContactData.campaignContact.nric",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Gender",
+                                                "ValueSource": "ContactData.campaignContact.Gender",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Age",
+                                                "ValueSource": "ContactData.campaignContact.Age",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Language",
+                                                "ValueSource": "ContactData.campaignContact.language",
+                                                "DefaultValue": ""
+                                            },
+                                            {
+                                                "Title": "Email",
+                                                "ValueSource": "ContactData.campaignContact.Email",
+                                                "DefaultValue": ""
+                                            },
                                             {
                                                 "Title": "Callback DateTime",
                                                 "ValueSource": "ContactData.campaignContact.ScheduleTime",
@@ -2308,8 +3185,14 @@
                                         "AutoOpen": false,
                                         "Icon": "contact_page",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2335,8 +3218,16 @@
                                         "AutoOpen": false,
                                         "Icon": "verified_user",
                                         "Class": "",
-                                        "Position": { "X": 0, "Y": 1, "W": 450, "H": 800 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": [
+                                            "minimize",
+                                            "destroy"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -2354,7 +3245,15 @@
                     "Name": "Workbench",
                     "Description": "",
                     "Type": "twc-workbench",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Header": true
+                    },
                     "Data": {
                         "Path": "/workbench",
                         "Widgets": {
@@ -2372,20 +3271,32 @@
                                         "AutoOpen": false,
                                         "Icon": "dvr",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
                                         "Actions": [],
                                         "ViewState": "restore",
                                         "Header": false,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "General": { "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench" },
+                                        "General": {
+                                            "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench"
+                                        },
                                         "Channels": [
                                             {
                                                 "Type": "Email",
                                                 "Enabled": true,
                                                 "Icon": "email",
                                                 "Config": {
+                                                    "SearchDuration": 24,
+                                                    "Tabs": [
+                                                        "queue",
+                                                        "inbox",
+                                                        "sent",
+                                                        "drafts"
+                                                    ],
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
@@ -2393,7 +3304,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -2403,17 +3318,20 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
-                                                            "ChannelPrefix": ["EM"],
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": [
+                                                                "EM"
+                                                            ],
                                                             "Columns": []
                                                         }
                                                     },
                                                     "SearchPollingInterval": 60000,
                                                     "DeleteAllowed": false,
-                                                    "QueueTransferForAgent": false,
-                                                    "TemplatesByTeam": false,
-                                                    "Tabs": ["queue", "inbox", "sent", "drafts"],
-                                                    "SearchDuration": 24
+                                                    "QueueTransferForAgent": false
                                                 }
                                             },
                                             {
@@ -2438,14 +3356,144 @@
                     "Name": "TMeet",
                     "Description": "",
                     "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
-                    "Data": { "Path": "/tmeet", "Url": "https://dice.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [],
+                        "Header": false
+                    },
+                    "Data": {
+                        "Path": "/tmeet",
+                        "Url": "https://dice.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}",
+                        "Unload": false
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [
+                            "refresh"
+                        ],
+                        "Header": true,
+                        "Pinned": false
+                    },
+                    "Data": {
+                        "Path": "/dashboard",
+                        "Url": "https://dice.tetherfi.cloud/CustomerJourneyDashBoard/",
+                        "Unload": true,
+                        "AutoRefresh": 0
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [],
+                        "Header": true,
+                        "Pinned": false
+                    },
+                    "Data": {
+                        "Path": "/sentimentdashboard",
+                        "Url": "https://dice.tetherfi.cloud/SentimentDashboard/?agentid=${AgentData.agentId}",
+                        "Unload": true
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [],
+                        "Header": true,
+                        "Pinned": false
+                    },
+                    "Data": {
+                        "Path": "/kpidashboard",
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/kpi",
+                        "Unload": true
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [],
+                        "Header": true,
+                        "Pinned": false
+                    },
+                    "Data": {
+                        "Path": "/sessiondashboard",
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/IWDashboard/session",
+                        "Unload": true
+                    }
+                },
+                {
+                    "Name": "Dashboard",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [],
+                        "Header": true,
+                        "Pinned": false
+                    },
+                    "Data": {
+                        "Path": "/realtimestats",
+                        "Url": "https://dice.tetherfi.cloud/IWDashboards/VoiceStatsDashboard/RealTimeInteractionStats?dblb=Ivr",
+                        "Unload": false
+                    }
                 },
                 {
                     "Name": "Docker",
                     "Description": "",
                     "Type": "twc-docker",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": {
+                            "X": 1,
+                            "Y": 1
+                        },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
@@ -2465,13 +3513,23 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2487,13 +3545,23 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2509,13 +3577,23 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2531,13 +3609,23 @@
                                         "AutoOpen": false,
                                         "Icon": "widgets",
                                         "Class": "mx-cover",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
+                                        },
+                                        "Actions": [
+                                            "maximize",
+                                            "float"
+                                        ],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ]
                         }
@@ -2561,13 +3649,25 @@
                         "AutoOpen": false,
                         "Icon": "dvr",
                         "Class": "",
-                        "Position": { "X": 0, "Y": 1, "W": 325, "H": 740 },
-                        "Actions": ["collapse", "destroy", "pin"],
+                        "Position": {
+                            "X": 0,
+                            "Y": 1,
+                            "W": 325,
+                            "H": 740
+                        },
+                        "Actions": [
+                            "collapse",
+                            "destroy",
+                            "pin"
+                        ],
                         "ViewState": "restore",
                         "Header": true,
                         "Pinned": true
                     },
-                    "Data": { "OpenInNew": false, "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=${AgentData.agentId}" }
+                    "Data": {
+                        "OpenInNew": false,
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=${AgentData.agentId}"
+                    }
                 },
                 {
                     "Name": "TCIS",
@@ -2583,8 +3683,16 @@
                         "AutoOpen": true,
                         "Icon": "",
                         "Class": "",
-                        "Position": { "X": 0, "Y": 1, "W": 325, "H": 325 },
-                        "Actions": ["collapse", "destroy"],
+                        "Position": {
+                            "X": 0,
+                            "Y": 1,
+                            "W": 325,
+                            "H": 325
+                        },
+                        "Actions": [
+                            "collapse",
+                            "destroy"
+                        ],
                         "ViewState": "restore",
                         "Header": true,
                         "Pinned": false
@@ -2632,7 +3740,6 @@
         "Urls": {
             "DashboardServerUrls": [
                 "https://dice.tetherfi.cloud/SignalRDashboard2",
-                "http://localhost:55444/SignalRDashboard",
                 "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
             ],
             "FileServerUrl": {
@@ -2649,27 +3756,80 @@
         "Logos": {
             "Favicon": "",
             "Default": {
-                "Large": { "Src": "", "Width": 180, "Height": 90 },
-                "Small": { "Src": "", "Width": null, "Height": null },
+                "Large": {
+                    "Src": "",
+                    "Width": 180,
+                    "Height": 90
+                },
+                "Small": {
+                    "Src": "",
+                    "Width": null,
+                    "Height": null
+                },
                 "Alt": "Tetherfi"
             },
-            "Customer": { "Large": { "Src": "", "Width": 160, "Height": 88 }, "Small": { "Src": "", "Width": 50, "Height": 50 }, "Alt": "Tetherfi" }
+            "Customer": {
+                "Large": {
+                    "Src": "",
+                    "Width": 160,
+                    "Height": 88
+                },
+                "Small": {
+                    "Src": "",
+                    "Width": 50,
+                    "Height": 50
+                },
+                "Alt": "Tetherfi"
+            }
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
         "AddAOTWidgetEnabled": true,
-        "Notifications": { "Sounds": true, "SoundLevel": 1, "DesktopAlerts": true, "DesktopAlertTimeout": 5000, "AppAlertTimeout": 5000 },
+        "Notifications": {
+            "Sounds": true,
+            "SoundLevel": 1,
+            "DesktopAlerts": true,
+            "DesktopAlertTimeout": 5000,
+            "AppAlertTimeout": 5000
+        },
         "AV": {
             "webRTCConfig": {
-                "iceServers": [{ "urls": "turn:dice.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
+                "iceServers": [
+                    {
+                        "urls": "turn:dice.tetherfi.cloud:3585",
+                        "username": "tetherfi",
+                        "credential": "nuwan"
+                    }
+                ],
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },
-            "mediaConstraints": { "type": "", "video": { "width": 640, "height": 480 } },
-            "offerOptions": { "offerToReceiveAudio": true, "offerToReceiveVideo": true, "iceRestart": true },
-            "answerOptions": { "iceRestart": false },
-            "recordingOptions": { "enabled": false, "codec": "vp9", "recordLocal": false, "audioKbps": 32, "videoKbps": 512 },
-            "audioLevelCheck": { "enabled": true, "threshold": 0.3 },
+            "mediaConstraints": {
+                "type": "",
+                "video": {
+                    "width": 640,
+                    "height": 480
+                }
+            },
+            "offerOptions": {
+                "offerToReceiveAudio": true,
+                "offerToReceiveVideo": true,
+                "iceRestart": true
+            },
+            "answerOptions": {
+                "iceRestart": false
+            },
+            "recordingOptions": {
+                "enabled": false,
+                "codec": "vp9",
+                "recordLocal": false,
+                "audioKbps": 32,
+                "videoKbps": 512
+            },
+            "audioLevelCheck": {
+                "enabled": true,
+                "threshold": 0.3
+            },
             "connectionBandwidthUpperLimit": 1024,
             "audioTrackBandwidthUpperLimit": 16,
             "videoTrackBandwidthUpperLimit": 128,
@@ -2683,27 +3843,39 @@
             "proxy": {
                 "urls": [
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://localhost:55443/TMACSDKProxySC/TmacProxy.asmx",
                     "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "type": "soap",
                 "timeout": 60
             },
-            "signalRProxy": { "enabled": true, "logging": true, "protocol": "webSockets", "timeout": 10, "fallback": true },
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true
+            },
             "logging": {
                 "enabled": true,
-                "level": { "debug": true, "info": true, "warn": true, "error": true },
-                "remote": { "enabled": true, "timeout": 30, "count": 30 },
+                "level": {
+                    "debug": true,
+                    "info": true,
+                    "warn": true,
+                    "error": true
+                },
+                "remote": {
+                    "enabled": true,
+                    "timeout": 30,
+                    "count": 30
+                },
                 "sdkMethods": true,
                 "sdkEvents": true
             },
             "customScripts": [
-                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/RecordRTC.js",
-                "https://dice.tetherfi.cloud/tmaclibs/livechat_video_debug.js",
-                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
+                "https://dice.tetherfi.cloud/agent-desktop/libs/adapter.js",
+                "https://dice.tetherfi.cloud/agent-desktop/libs/livechat_video.min.js",
+                "https://dice.tetherfi.cloud/agent-desktop/libs/collector.min.js"
             ]
         }
-    },
-    "Version": "5.0.12.30"
+    }
 }

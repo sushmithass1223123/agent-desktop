@@ -9,6 +9,7 @@ import { filter, shareReplay } from 'rxjs/operators';
     providedIn: 'root'
 })
 export class ContentPageService {
+
     /**
      * View Mode Subject
      * Need More Description
@@ -19,6 +20,7 @@ export class ContentPageService {
         // Set the config from the default config
         this._viewModeSubject = new BehaviorSubject('');
     }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -48,13 +50,14 @@ export class ContentPageService {
 
     /**
      * To get response on all registered view
-     *
+     * 
      * @param {String[]} modes
      */
     getActive(modes: string[]): Observable<string> {
-        return this._viewModeSubject.pipe(
-            filter((f) => modes.includes(f)),
-            shareReplay()
-        );
+        return this._viewModeSubject
+            .pipe(
+                filter(f => modes.includes(f)),
+                shareReplay()
+            );
     }
 }

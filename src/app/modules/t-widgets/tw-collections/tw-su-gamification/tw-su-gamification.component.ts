@@ -6,7 +6,6 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
-import { TwSuGamification } from '@ad/types';
 
 /**
  * Supervisor Gamification Component
@@ -21,7 +20,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: TwSuGamification;
+    @Input() data: any;
 
     /**
      * Gamificartion Request status

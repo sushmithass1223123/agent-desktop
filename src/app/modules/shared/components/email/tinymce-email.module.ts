@@ -12,15 +12,13 @@ import {
     OnInit,
     Output,
     SimpleChanges,
-    ViewChild,
-    ViewEncapsulation
+    ViewChild
 } from '@angular/core';
 import { MaterialModule } from '@modules/shared/material.module';
 import { TUtils } from '@tmac/sdk';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import tinymce, { Editor } from 'tinymce';
-import { IEmailEditor } from './email-editor.interface';
 
 /**
  * Email editor component
@@ -40,10 +38,9 @@ import { IEmailEditor } from './email-editor.interface';
             <textarea [id]="id"></textarea>
         </div>
     `,
-    styleUrls: ['./tinymce-email.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./tinymce-email.component.scss']
 })
-export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy, IEmailEditor {
+export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
     /**
      * ID for tinymce's textare selector
      */
@@ -71,6 +68,11 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      */
     @ViewChild('hostEl')
     host: ElementRef<HTMLDivElement>;
+
+    /**
+     * Intersection observer's instance
+     */
+    _intersection: IntersectionObserver;
 
     /**
      * Loadin flag
@@ -129,6 +131,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
     ngOnDestroy(): void {
         this.unsubscribeAll$.unsubscribe();
         this._editor?.destroy();
+        this._intersection.disconnect();
     }
 
     /**
@@ -150,16 +153,10 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                 .init({
                     selector: `textarea#${this.id}`,
                     min_height: 200,
-                    relative_urls: false,
-                    remove_script_host: false,
-                    document_base_url: window.location.origin,
-                    // convert_urls: false,
                     height: '100%',
                     menubar: false,
                     fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
                     forced_root_block: false,
-                    font_formats:
-                        'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Oswald=oswald; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
                     // force_br_newlines: true,
                     // force_p_newlines: false,
                     branding: false,
@@ -171,12 +168,11 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     //     'insertdatetime media table paste code wordcount'
                     // ],
                     toolbar: `
-                        undo redo | formatselect | fontsizeselect  | fontselect  | table | 
+                        undo redo | formatselect | table | 
                         bold italic backcolor | alignleft aligncenter 
                         alignright alignjustify | bullist numlist outdent indent |  
                         removeformat
                         `,
-                    toolbar_mode: 'sliding',
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
                         editor.on('init', () => {
@@ -190,9 +186,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                             fromEvent(editor, 'change')
                                 .pipe(
                                     takeUntil(this.unsubscribeAll$),
-                                    map(() => {
-                                        this._editorContentChanged = !!this.body;
-                                    }),
+                                    map(() => (this._editorContentChanged = true)),
                                     debounceTime(this.debounce.duration)
                                 )
                                 .subscribe(setEmailbody);
@@ -211,6 +205,17 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     this.error = true;
                 });
         });
+
+        this._intersection = new IntersectionObserver((e) => {
+            e.forEach((el) => {
+                if (el.isIntersecting) {
+                    this._editor?.show();
+                } else {
+                    this._editor?.hide();
+                }
+            });
+        });
+        this._intersection.observe(this.host.nativeElement);
     }
 }
 

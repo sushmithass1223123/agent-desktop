@@ -188,7 +188,7 @@
                         </button>
 
                         <button
-                            *ngIf="!agentFeatures.oneWayVideo"
+                            *ngIf="!oneWayVideo"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
@@ -200,7 +200,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.oneWayVideo"
+                            *ngIf="oneWayVideo"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
@@ -221,24 +221,6 @@
                             (click)="shareScreen()"
                         >
                             <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="userCameraList?.length"
-                            mat-flat-button
-                            mat-icon-button
-                            [disabled]="!connected || hold"
-                            matTooltip="Toggle User Camera"
-                            [matMenuTriggerFor]="userCameraMenu"
-                        >
-                            <mat-icon> cameraswitch </mat-icon>
-
-                            <mat-menu #userCameraMenu="matMenu">
-                                <button mat-menu-item *ngFor="let item of userCameraList" (click)="toggleUserCamera(item)" [disabled]="item.selected">
-                                    <mat-icon>videocam</mat-icon>
-                                    <span>{{ item.label }}</span>
-                                </button>
-                            </mat-menu>
                         </button>
                     </div>
 
@@ -267,7 +249,7 @@
                     class="border-radius-20 bg-dark self-video"
                     [ngClass]="{ minimize: selfViewSmall }"
                     (dblclick)="minimizeVideo()"
-                    *ngIf="selfVideo && !agentFeatures.oneWayVideo"
+                    *ngIf="selfVideo && !oneWayVideo"
                     [@animate]="{ value: '*', params: { scale: '0.5' } }"
                 >
                     <div class="drag-handle" cdkDragHandle>

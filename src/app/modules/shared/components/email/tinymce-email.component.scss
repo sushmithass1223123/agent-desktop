@@ -1,32 +1,25 @@
-email-editor {
-    .tox-tinymce {
-        .tox-editor-header {
-            box-shadow: 0px 0px 5px grey !important;
-        }
-        .tox-statusbar {
-            box-shadow: 0 0 1px grey;
-        }
+::ng-deep .tox-tinymce {
+    .tox-editor-header {
+        box-shadow: 0px 0px 5px grey !important;
     }
-
-    .tox-statusbar__path {
-        visibility: hidden !important;
+    .tox-toolbar__primary,
+    .tox-toolbar-overlord,
+    .tox-statusbar {
+        background: transparent !important;
     }
-
-    .tox .tox-edit-area__iframe {
-        background-color: transparent !important;
+    .tox-statusbar {
+        box-shadow: 0 0 1px grey;
     }
 }
 
-// .tox .tox-toolbar,
-// .tox .tox-toolbar__overflow,
-// .tox .tox-toolbar__primary,
-.tox .tox-toolbar,
-.tox .tox-toolbar__overflow,
-.tox-toolbar-overlord,
-.tox-statusbar,
-.tox .tox-toolbar__primary {
-    background-color: transparent !important;
+::ng-deep .tox-statusbar__path {
+    visibility: hidden !important;
 }
-.tox-toolbar__overflow {
+
+::ng-deep .tox-toolbar__overflow {
     max-width: none !important;
+}
+
+::ng-deep .tox .tox-edit-area__iframe {
+    background-color: transparent !important;
 }

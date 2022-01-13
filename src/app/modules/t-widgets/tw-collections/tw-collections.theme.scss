@@ -11,18 +11,6 @@
             @if ($is-dark == true) {
                 background-color: map-get($background, hover);
             }
-
-            .timeline-item {
-                .timeline-bar {
-                    &::after {
-                        border-left-color: inherit !important;
-                    }
-                }
-
-                .timeline-info {
-                    background: map-get($background, background);
-                }
-            }
         }
     }
 
@@ -600,14 +588,6 @@
                         }
                     }
                 }
-            }
-        }
-    }
-
-    tw-bookmarks {
-        .mat-tree-node {
-            &:hover {
-                background-color: map-get($background, hover);
             }
         }
     }

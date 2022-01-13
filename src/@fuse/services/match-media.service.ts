@@ -15,12 +15,15 @@ export class FuseMatchMediaService {
      *
      * @param {MediaObserver} _mediaObserver
      */
-    constructor(private _mediaObserver: MediaObserver) {
+    constructor(
+        private _mediaObserver: MediaObserver
+    ) {
         // Set the defaults
         this.activeMediaQuery = '';
 
         // Initialize
         this._init();
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -33,11 +36,17 @@ export class FuseMatchMediaService {
      * @private
      */
     private _init(): void {
-        this._mediaObserver.media$.pipe(debounceTime(500), distinctUntilChanged()).subscribe((change: MediaChange) => {
-            if (this.activeMediaQuery !== change.mqAlias) {
-                this.activeMediaQuery = change.mqAlias;
-                this.onMediaChange.next(change.mqAlias);
-            }
-        });
+        this._mediaObserver.media$
+            .pipe(
+                debounceTime(500),
+                distinctUntilChanged()
+            )
+            .subscribe((change: MediaChange) => {
+                if (this.activeMediaQuery !== change.mqAlias) {
+                    this.activeMediaQuery = change.mqAlias;
+                    this.onMediaChange.next(change.mqAlias);
+                }
+            });
     }
+
 }

@@ -1,29 +1,41 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "baseUrl": "./src",
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
-        "declaration": false,
-        "downlevelIteration": true,
-        "experimentalDecorators": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "importHelpers": true,
-        "target": "es2015",
-        "typeRoots": ["node_modules/@types"],
-        "lib": ["esnext", "dom"],
-        "paths": {
-            "@ad/types": ["../libs/types/src/index.ts"],
-            "@fuse": ["@fuse/"],
-            "@modules/*": ["app/modules/*"],
-            "@services/*": ["app/services/*"],
-            "@twidgets/*": ["app/modules/t-widgets/*"]
-        }
-    },
-    "angularCompilerOptions": {
-        "fullTemplateTypeCheck": false,
-        "strictInjectionParameters": false
+  "compileOnSave": false,
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "paths": {
+      "@fuse": [
+        "@fuse/"
+      ],
+      "@modules/*": [
+        "app/modules/*"
+      ],
+      "@services/*": [
+        "app/services/*"
+      ],
+      "@twidgets/*": [
+        "app/modules/t-widgets/*"
+      ]
     }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": false,
+    "strictInjectionParameters": false
+  }
 }

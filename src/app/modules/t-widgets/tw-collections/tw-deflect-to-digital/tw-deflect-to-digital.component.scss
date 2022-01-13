@@ -1,15 +1,15 @@
-tw-deflect-to-digital {
-    mat-form-field.custom {
-        // max-height: 44px;
-        &.custom-matfield {
+mat-form-field.custom {
+    &.custom-matfield {
+        ::ng-deep {
             .mat-form-field-wrapper {
                 padding-bottom: 0 !important;
                 margin: 0;
             }
         }
+    }
 
-        &.custom-textarea {
-            // ::ng-deep {
+    &.custom-textarea {
+        ::ng-deep {
             .mat-form-field-wrapper,
             .mat-form-field-flex,
             .mat-form-field-infix {
@@ -26,16 +26,6 @@ tw-deflect-to-digital {
                 padding: 10px !important;
                 height: calc(100% - 20px);
                 overflow-y: auto;
-            }
-            // }
-        }
-    }
-    text-templates {
-        mat-form-field.select-box {
-            max-height: 44px;
-            .mat-form-field-wrapper .mat-form-field-infix {
-                padding: 0px !important;
-                margin-top: 8px;
             }
         }
     }
