@@ -1,9 +1,11 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { TMACEventService } from '@services/tmac-event.service';
+import { CallHoldEvent, CallHoldReconnectEvent } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * TW Wrapper component
@@ -57,33 +59,52 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     dragPosition: any = '';
 
     /**
-     * Host Class
+     * Host class for floating state
      */
     @HostBinding('class.position-relative')
     /**
      * Floating state
      */
     floating = false;
+
     /**
      * Maximized state
      */
     maximized = false;
+
     /**
      * Collapsed state
      */
     collapsed = false;
+
     /**
      * Hidden
      */
     hidden = false;
+
     /**
      * AOT
      */
     aot = false;
+
     /**
      * Pinned
      */
     pinned = false;
+
+    /**
+     * Resize
+     */
+    resize = false;
+
+    /**
+     * Host class for interaction on hold
+     */
+    @HostBinding('class.hold')
+    /**
+     * Flag to check interaction on hold
+     */
+    interactionHold: boolean;
 
     /**
      * Unsubscribe all subject
@@ -102,10 +123,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      */
-    constructor(
-        // private _fuseConfigService: FuseConfigService,
-        private _fuseFacadeService: FuseFacadeService
-    ) {
+    constructor(private _tmacEventService: TMACEventService, private _fuseFacadeService: FuseFacadeService) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -145,6 +163,14 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
 
         // assign the Pinned config
         this.pinned = this.data.Config.Pinned;
+
+        // register to hold/unhold event for interaction AOT widgets
+        if (this.aot && this.data.InteractionDetails) {
+            this._tmacEventService
+                .getInteractionEvents(['CallHoldEvent', 'CallHoldReconnectEvent'], this.data.InteractionDetails.InteractionID)
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        }
     }
 
     /**
@@ -211,7 +237,19 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
+    /**
+     * To handles CallHoldEvent
+     * @param {CallHoldEvent} evt
+     */
+    CallHoldEvent(evt: CallHoldEvent) {
+        this.interactionHold = true;
+    }
+
+    /**
+     * To handles CallHoldReconnectEvent
+     * @param {CallHoldReconnectEvent} evt
+     */
+    CallHoldReconnectEvent(evt: CallHoldReconnectEvent) {
+        this.interactionHold = false;
+    }
 }
