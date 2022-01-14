@@ -483,6 +483,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Media download
          */
         mediaDownload: boolean;
+        /**
+         * Mute agent audio on interaction hold
+         */
+        muteAgentAudioOnHold: boolean;
+        /**
+         * Mute agent video on interaction hold
+         */
+        muteAgentVideoOnHold: boolean;
+        /**
+         * Mute customer audio on interaction hold
+         */
+        muteCustomerAudioOnHold: boolean;
+        /**
+         * Mute customer video on interaction hold
+         */
+        muteCustomerVideoOnHold: boolean;
     };
     /**
      * Connected event ref
@@ -637,7 +653,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             voicenote: this.widgetData.VoiceNoteAllowed ?? false,
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
             webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
-            mediaDownload: false
+            mediaDownload: false,
+            muteAgentAudioOnHold: this.widgetData.MuteAVOnHold?.AgentAudio ?? false,
+            muteAgentVideoOnHold: this.widgetData.MuteAVOnHold?.AgentVideo ?? false,
+            muteCustomerAudioOnHold: this.widgetData.MuteAVOnHold?.CustomerAudio ?? false,
+            muteCustomerVideoOnHold: this.widgetData.MuteAVOnHold?.CustomerVideo ?? false
         };
 
         // set the user info
@@ -3168,4 +3188,25 @@ interface IWidgetData extends CommonWidgetData {
      * Flag to close interaction on chat end
      */
     CloseInteractionOnEnd: boolean;
+    /**
+     * Flag to mute agent/customer audio/video on interaction hold
+     */
+    MuteAVOnHold: {
+        /**
+         * To mute agent audio
+         */
+        AgentAudio: boolean;
+        /**
+         * To mute agent video
+         */
+        AgentVideo: boolean;
+        /**
+         * To mute customer audio
+         */
+        CustomerAudio: boolean;
+        /**
+         * To mute customer video
+         */
+        CustomerVideo: boolean;
+    };
 }
