@@ -1676,6 +1676,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check for async chat history
             this.checkForAsyncChatHistory('unshift');
         }
+
+        // hold the interaction if connected and not active yet
+        setTimeout(
+            (x: TextChatRemoteUserConnectedEvent) => {
+                const interaction = this.interactionList.find((f) => f.interactionId === x.InteractionID);
+                if (!interaction.isActive) {
+                    this.holdInteraction();
+                }
+            },
+            0,
+            evt
+        );
     }
 
     /**
