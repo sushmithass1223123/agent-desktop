@@ -483,22 +483,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Media download
          */
         mediaDownload: boolean;
-        /**
-         * Mute agent audio on interaction hold
-         */
-        muteAgentAudioOnHold: boolean;
-        /**
-         * Mute agent video on interaction hold
-         */
-        muteAgentVideoOnHold: boolean;
-        /**
-         * Mute customer audio on interaction hold
-         */
-        muteCustomerAudioOnHold: boolean;
-        /**
-         * Mute customer video on interaction hold
-         */
-        muteCustomerVideoOnHold: boolean;
     };
     /**
      * Connected event ref
@@ -653,11 +637,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             voicenote: this.widgetData.VoiceNoteAllowed ?? false,
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
             webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
-            mediaDownload: false,
-            muteAgentAudioOnHold: this.widgetData.MuteAVOnHold?.AgentAudio ?? false,
-            muteAgentVideoOnHold: this.widgetData.MuteAVOnHold?.AgentVideo ?? false,
-            muteCustomerAudioOnHold: this.widgetData.MuteAVOnHold?.CustomerAudio ?? false,
-            muteCustomerVideoOnHold: this.widgetData.MuteAVOnHold?.CustomerVideo ?? false
+            mediaDownload: false
         };
 
         // set the user info
@@ -883,7 +863,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             switch (msg.type?.toLowerCase()) {
                 case 'clientreloaded':
                     this.callWidget?.destroy();
-                    this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
+                    this._appUIService.showSnackbar('Client has refreshed their browser', 'warning');
             }
             return;
         }
@@ -1295,24 +1275,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
-        widget.InteractionDetails = {
-            NRIC: this.remoteUserConnectedEvent.NRIC,
-            RegNo1: this.remoteUserConnectedEvent.RegNo1
-        };
+
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
-        widget.Config.Actions = ['collapse', 'maximize'];
-        widget.Data.EventId = this.data.InteractionDetails.EventId;
-        widget.Data.ConferenceType = this.conferenceType;
-        widget.Data.CustomerName = this.customerName;
-        widget.Data.Direction = direction;
+        widget.Config.Actions = ['collapse', 'maximize', 'resize'];
+
+        widget.InteractionDetails = {
+            NRIC: this.remoteUserConnectedEvent.NRIC,
+            RegNo1: this.remoteUserConnectedEvent.RegNo1,
+            InteractionID: this.data.InteractionDetails?.InteractionID,
+            ConferenceType: this.conferenceType,
+            CustomerName: this.customerName,
+            Direction: direction,
+            SessionID: this.sessionID,
+            CallType: param
+        };
+
+        widget.Data = { ...this.data.Data };
+        widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.AVEvent = avEvent;
-        widget.Data.Config = this.data.Data;
         widget.Data.Opener = this;
-        widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
-        widget.Data.SessionID = this.sessionID;
-        widget.Data.CallType = param;
         widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
 
         // open call widget
@@ -1678,16 +1661,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // hold the interaction if connected and not active yet
-        setTimeout(
-            (x: TextChatRemoteUserConnectedEvent) => {
-                const interaction = this.interactionList.find((f) => f.interactionId === x.InteractionID);
-                if (!interaction.isActive) {
-                    this.holdInteraction();
-                }
-            },
-            0,
-            evt
-        );
+        if (!evt.RecoveryEvent) {
+            setTimeout(
+                (x: TextChatRemoteUserConnectedEvent) => {
+                    const interaction = this.interactionList.find((f) => f.interactionId === x.InteractionID);
+                    if (!interaction.isActive) {
+                        this.holdInteraction();
+                    }
+                },
+                0,
+                evt
+            );
+        }
     }
 
     /**
