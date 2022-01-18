@@ -437,7 +437,7 @@
                                         "Icon": "phone_callback",
                                         "Class": "",
                                         "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": ["minimize", "destroy", "resize"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -950,7 +950,7 @@
                                     "Name": "Deflect To Digital",
                                     "Description": "",
                                     "Key": "TWDeflectToDigital",
-                                    "Type": "tw-voice-canned-responses",
+                                    "Type": "tw-deflect-to-digital",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -969,12 +969,12 @@
                                     "Data": {
                                         "ResponseMode": "manual",
                                         "EditAllowed": false,
-                                        "Number": "OutgoingCallEvent.PhoneNumber",
-                                        "DeflectExpiry": 1,
+                                        "Number": "IncomingCallEvent.PhoneNumber",
+                                        "DeflectExpiry": 5,
                                         "DeflectIntent": "devtest",
                                         "DestChannel": "textchat",
                                         "DestSubChannel": "text",
-                                        "DisconnectTimeout": -1,
+                                        "DisconnectTimeout": 1,
                                         "FallbackSkillId": 42001,
                                         "NextStatusName": "ACW",
                                         "StatusLockTimeout": 1,
@@ -1364,7 +1364,13 @@
                                                     "ConversationService": { "Url": "", "Limit": 50, "Label": false },
                                                     "ReplyAllowed": true,
                                                     "EndInteractionOnAVEnd": false,
-                                                    "CloseInteractionOnEnd": false
+                                                    "CloseInteractionOnEnd": false,
+                                                    "MuteAVOnHold": {
+                                                        "AgentAudio": true,
+                                                        "AgentVideo": true,
+                                                        "CustomerAudio": true,
+                                                        "CustomerVideo": false
+                                                    }
                                                 }
                                             },
                                             {
@@ -2705,5 +2711,5 @@
             ]
         }
     },
-    "Version": "5.0.12.30"
+    "Version": "5.1.1.30-beta.1"
 }
