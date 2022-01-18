@@ -39,12 +39,13 @@
         <div
             *ngIf="showTemplates"
             [ngClass]="customFuse.anchor?.body"
-            class="twd-bg-opacity-30 border-radius-20 twd-absolute twd-overflow-y-auto twd-w-full twd-z-10 twd-h-full twd-mt-2"
+            class="twd-bg-opacity-30 border-radius-20 twd-absolute twd-w-full twd-z-10 twd-h-full twd-mt-2 twd-overflow-y-hidden"
         >
-            <div class="twd-flex twd-flex-col">
+            <div class="twd-flex twd-flex-col twd-gap-1 twd-p-1 twd-overflow-auto twd-h-full twd-overflow-y-auto">
                 <button
                     mat-button
-                    class="border-radius-10 template"
+                    mat-raised-button
+                    class="border-radius-20 template"
                     *ngFor="let template of templates"
                     (click)="onTemplateSelect(template)"
                     [matTooltip]="template.Name"
@@ -53,25 +54,32 @@
                 </button>
             </div>
         </div>
-        <mat-form-field class="twd-h-full twd-w-full custom pb-0 twd-relative border-radius-20 with-border" appearance="outline">
-            <textarea
-                class="twd-resize-none twd-flex-1 twd-p-3"
-                matInput
-                placeholder="Please select a template or enter message..."
-                [(ngModel)]="template"
-                [disabled]="loading"
-            ></textarea>
-        </mat-form-field>
-        <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-3 twd-right-3">
-            <button
-                mat-raised-button
-                color="primary"
-                class="border-radius-20 twd-mr-auto"
-                [disabled]="!template || loading"
-                (click)="emitSendTemplate()"
-            >
-                Send
-            </button>
+
+        <div class="twd-flex twd-h-full twd-w-full">
+            <div *ngIf="templates.length" class="twd-grid twd-place-content-center">
+                <mat-icon class="twd-cursor-pointer" (click)="showTemplates = true" matTooltip="Templates">chevron_left</mat-icon>
+            </div>
+
+            <mat-form-field class="twd-h-full twd-w-full custom pb-0 twd-relative border-radius-20 with-border" appearance="outline">
+                <textarea
+                    class="twd-resize-none twd-flex-1 twd-p-3"
+                    matInput
+                    placeholder="Please select a template or enter message..."
+                    [(ngModel)]="template"
+                    [disabled]="loading"
+                ></textarea>
+            </mat-form-field>
+            <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-3 twd-right-3">
+                <button
+                    mat-raised-button
+                    color="primary"
+                    class="border-radius-20 twd-mr-auto"
+                    [disabled]="!template || loading"
+                    (click)="emitSendTemplate()"
+                >
+                    Send
+                </button>
+            </div>
         </div>
     </div>
 </div>
