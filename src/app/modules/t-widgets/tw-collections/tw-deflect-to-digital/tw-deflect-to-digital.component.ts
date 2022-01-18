@@ -136,8 +136,8 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 reservedStatusCode: this.data.Data.ReservedStatusCode
             });
 
-            if (res.response.ResultCode !== 0) {
-                throwADError('SDKClient.deflectToDigital failed', res.response);
+            if (res.response.ResultCode > 0) {
+                throwADError('SDKClient.deflectToDigital failed', res.response.ResultMessage);
             }
             this.textTemplatesRef.clearAllData();
             this._appUIService.showSnackbar('Deflected Successfully');
