@@ -345,6 +345,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
         SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
+        this.avConn = null;
         this.data.Data.Opener?.disposeCallWidget();
     }
 
