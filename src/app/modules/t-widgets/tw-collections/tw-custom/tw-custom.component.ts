@@ -149,6 +149,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // send the response to the child
                         this.sendDataToWindow(message.callback || `${method}Done`, response, message.userObject);
                         break;
+                    case 'destroywidget':
+                        // destroy the widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
+                        break;
                     default:
                 }
             } catch (error) {
