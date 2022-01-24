@@ -1,13 +1,13 @@
-<div class="header mat-elevation-z4" fxLayout="row" fxLayoutAlign="space-between center">
+<div class="header mat-elevation-z4 twd-flex twd-flex-row twd-justify-between twd-items-center">
     <ng-container *ngIf="!selectedContact">
-        <div class="title ml-16" fxLayout="row" fxLayoutAlign="start center" (click)="toggleSidebarOpen()">
+        <div class="title ml-16 twd-flex twd-flex-row twd-justify-start twd-items-center" (click)="toggleSidebarOpen()">
             <mat-icon class="s-32">chat</mat-icon>
             <h3 class="ml-12">Team Chat</h3>
         </div>
     </ng-container>
 
     <ng-container *ngIf="selectedContact">
-        <div class="title" fxLayout="row" fxLayoutAlign="start center">
+        <div class="title twd-flex twd-flex-row twd-justify-start twd-items-center">
             <img *ngIf="selectedContact.avatar" [src]="selectedContact.avatar" class="avatar mx-16" />
             <avatar
                 *ngIf="!selectedContact.avatar"
@@ -24,7 +24,7 @@
         </div>
     </ng-container>
 
-    <div fxLayout>
+    <div class="twd-flex">
         <div *ngIf="selectedContact" class="fab-container">
             <button
                 [disabled]="actions.length === 0"
@@ -46,7 +46,7 @@
                 cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                 (overlayOutsideClick)="openActions = false"
             >
-                <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="actions.length">
+                <div class="mt-12 create-interaction-buttons twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="actions.length">
                     <button
                         mat-mini-fab
                         color="default"
@@ -61,17 +61,17 @@
             </ng-template>
         </div>
 
-        <button mat-icon-button class="toggle-sidebar-folded mr-8" (click)="toggleSidebarOpen(); resetChat()" fxHide fxShow.gt-md>
+        <button mat-icon-button class="toggle-sidebar-folded mr-8 !twd-hidden xl:!twd-block" (click)="toggleSidebarOpen(); resetChat()">
             <mat-icon class="secondary-text s-20">close</mat-icon>
         </button>
 
-        <button mat-icon-button class="toggle-sidebar-open mr-8" (click)="toggleSidebarOpen(); resetChat()" fxHide.gt-md>
+        <button mat-icon-button class="toggle-sidebar-open mr-8 xl:!twd-hidden" (click)="toggleSidebarOpen(); resetChat()">
             <mat-icon class="secondary-text">close</mat-icon>
         </button>
     </div>
 </div>
 
-<div class="content">
+<div class="content twd-flex twd-flex-row">
     <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
     <!-- Contacts -->
     <div id="contacts-list" class="custom-scroll-adjust">
@@ -114,8 +114,8 @@
     <!-- / Contacts -->
 
     <!-- Chat -->
-    <div id="chat" fxLayout="column" fxFlex="1 1 auto">
-        <div id="messages" #messages class="messages custom-scroll-adjust" fxFlex="1 1 auto">
+    <div id="chat" class="twd-flex twd-flex-col twd-flex-auto">
+        <div id="messages" #messages class="messages custom-scroll-adjust twd-flex-auto">
             <ng-container *ngIf="selectedContact && chat && chat.dialog && chat.dialog.length > 0">
                 <div
                     *ngFor="let message of chat.dialog; let i = index"
@@ -154,11 +154,15 @@
             </ng-container>
         </div>
 
-        <div *ngIf="selectedContact" class="reply-form" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center">
-            <form #replyForm="ngForm" (ngSubmit)="reply($event)" (keydown.enter)="reply($event)" fxFlex fxLayout="row" fxLayoutAlign="start center">
+        <div *ngIf="selectedContact" class="reply-form twd-flex twd-flex-row twd-justify-center twd-items-center twd-flex-initial twd-flex-shrink-0">
+            <form
+                class="twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-1"
+                #replyForm="ngForm"
+                (ngSubmit)="reply($event)"
+                (keydown.enter)="reply($event)"
+            >
                 <mat-form-field
-                    class="message-text"
-                    fxFlex
+                    class="message-text twd-flex-1"
                     floatLabel="never"
                     appearance="standard"
                     [disabled]="selectedContact.status === 'Not Logged In'"

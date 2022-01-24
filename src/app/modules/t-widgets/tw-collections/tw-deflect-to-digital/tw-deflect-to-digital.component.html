@@ -5,7 +5,7 @@
         </ng-container>
         <div class="twd-w-5/12 twd-flex twd-flex-col">
             <mat-form-field class="custom custom-matfield with-border" appearance="outline">
-                <input matInput placeholder="To Number" type="number" [(ngModel)]="toNumber" autocomplete="off" />
+                <input matInput placeholder="To Number" type="tel" [(ngModel)]="toNumber" autocomplete="off" />
                 <button *ngIf="!toNumber; else clearBtn" mat-icon-button matSuffix disabled>
                     <mat-icon matSuffix>smartphone</mat-icon>
                 </button>

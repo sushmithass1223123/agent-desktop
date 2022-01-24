@@ -126,13 +126,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // check event are there
                         if (events.length) {
                             // send events to the child
-                            this.sendDataToWindow(message.callback || 'onTMACEvent', events);
+                            this.sendDataToWindow(message.callback || 'onTMACEvent', events, message.userObject);
                         }
                         break;
                     case 'showconfirmdialog':
                         this.dialogRef = this._appUIService.showAppConfirmDialog('generic', message.data?.title, message.data?.message);
                         this.dialogRef.afterClosed().subscribe((dialogResult: boolean) => {
-                            this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult);
+                            this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult, message.userObject);
                         });
                         break;
                     case 'closeconfirmdialog':
@@ -147,7 +147,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // invoke SDK method dynamically
                         const response = await SDKClient[method](...params);
                         // send the response to the child
-                        this.sendDataToWindow(message.callback || `${method}Done`, response);
+                        this.sendDataToWindow(message.callback || `${method}Done`, response, message.userObject);
+                        break;
+                    case 'destroywidget':
+                        // destroy the widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
                         break;
                     default:
                 }
@@ -226,8 +230,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      *
      * @param {String} fn
      * @param {Any} data
+     * @param {Any} userObject
      */
-    private sendDataToWindow(fn: string, data: any): void {
+    private sendDataToWindow(fn: string, data: any, userObject?: any): void {
         try {
             const iframe = document.getElementById('tw_frame_' + this.data.ID);
             // get the element
@@ -241,7 +246,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         callback: null,
                         data,
                         source: 'tmac',
-                        userObject: null
+                        userObject
                     },
                     '*'
                 );
