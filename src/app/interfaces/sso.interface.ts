@@ -15,6 +15,14 @@ export interface MsTeamAuthSettings {
      */
     redirectUri: string;
     /**
+     * subscription Url - tcm_ms_teams_api service endpoint
+     */
+    subscriptionUri: string;
+    /**
+     * tetherfi Organization - tetherfi side organization, late we can get this from token
+     */
+    tetherfiOrganization: string;
+    /**
      * The permission scopes
      */
     scopes: string[];

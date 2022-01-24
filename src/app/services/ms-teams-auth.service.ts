@@ -5,7 +5,8 @@ import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthCodeMSALBrowserAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 import { MsTeamsOAuthSettings } from 'app/constants';
-
+import * as microsoftTeams from '@microsoft/teams-js';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 /**
  * Microsoft teams authentication service
  */
@@ -13,6 +14,7 @@ import { MsTeamsOAuthSettings } from 'app/constants';
     providedIn: 'root'
 })
 export class MsTeamsAuthService {
+    private _context: microsoftTeams.Context;
     /**
      * Microsoft graph client ref
      */
@@ -30,8 +32,9 @@ export class MsTeamsAuthService {
      */
     authSettings: OAuthSettings;
 
-    constructor(private _msalService: MsalService) {
-        const accounts = this._msalService.instance.getAllAccounts();
+    constructor(private _msalService: MsalService, private httpClient: HttpClient) {
+        this.authSettings = MsTeamsOAuthSettings;
+        /* const accounts = this._msalService.instance.getAllAccounts();
         this.authSettings = MsTeamsOAuthSettings;
         this.authenticated = accounts.length > 0;
         if (this.authenticated) {
@@ -40,7 +43,55 @@ export class MsTeamsAuthService {
 
         this.getUser().then((user) => {
             this.user = user;
-        });
+        }); */
+    }
+
+    /**
+     * To set subscriptions
+     *
+     * @param userId
+     * @param userName
+     *  @param token
+     * @returns
+     */
+    async setSubscriptions(userId: string, userName: string, token: string, organization: string): Promise<Results> {
+        try {
+            console.log(
+                'MS Teams',
+                'MsTeamsAuthService',
+                'setSubscriptions',
+                `------------------------------ userId : ${userId}, userName : ${userName} , organization : ${organization}`
+            );
+            const postData = { userName };
+            const jsonStr = JSON.stringify(postData);
+            const reply = await this.httpClient
+                .post(`${this.authSettings.subscriptionUri}/omini/${organization}/subscribe/user/${userId}`, jsonStr, {
+                    headers: new HttpHeaders({
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    })
+                })
+                .toPromise();
+            console.log(
+                'MS Teams',
+                'MsTeamsAuthService',
+                'setSubscriptions',
+                'added',
+                `------------------------------ userId : ${userId}, userName : ${userName} , organization : ${organization}`,
+                reply
+            );
+            return new Results(true, 'setSubscriptions', reply);
+        } catch (error) {
+            console.error(
+                'MS Teams',
+                'MsTeamsAuthService',
+                'setSubscriptions',
+                'fail',
+                `------------------------------ userId : ${userId}, userName : ${userName} , organization : ${organization} `,
+                error
+            );
+            return new Results(false, 'setSubscriptions');
+        }
     }
 
     /**
@@ -48,25 +99,103 @@ export class MsTeamsAuthService {
      * @returns
      */
     async signIn(): Promise<Results> {
-        try {
-            const authDetails = await this._msalService
-                .loginPopup(this.authSettings)
-                .toPromise()
-                .catch((reason) => {
-                    throw new Error(JSON.stringify(reason, null, 2));
+        console.log('MS Teams', 'MsTeamsAuthService', 'signIn', '------------------------------');
+        return new Promise<Results>((resolve, reject) => {
+            try {
+                console.log('MS Teams', 'MsTeamsAuthService', 'signIn', 'initialize', '------------------------------');
+                microsoftTeams.initialize(() => {
+                    console.log('MS Teams', 'MsTeamsAuthService', 'signIn', 'getContext', '------------------------------');
+                    microsoftTeams.getContext((context: microsoftTeams.Context) => {
+                        console.log(
+                            'MS Teams',
+                            'MsTeamsAuthService',
+                            'signIn',
+                            'initialized',
+                            'getContext',
+                            'getAuthToken',
+                            '------------------------------',
+                            context
+                        );
+                        this._context = context;
+                        const _this = this; // try to haddle this with bindCallback
+                        microsoftTeams.authentication.getAuthToken({
+                            successCallback: (result) => {
+                                console.log(
+                                    'MS Teams',
+                                    'MsTeamsAuthService',
+                                    'signIn',
+                                    'initialized',
+                                    'getContext',
+                                    'getAuthToken',
+                                    'successCallback',
+                                    '------------------------------',
+                                    result
+                                );
+                                const lanId = _this._context?.userPrincipalName?.split('@')[0];
+                                _this
+                                    .setSubscriptions(_this._context.userObjectId ?? '', lanId, result, _this.authSettings.tetherfiOrganization)
+                                    .then((res) => {
+                                        console.log(
+                                            'MS Teams',
+                                            'MsTeamsAuthService',
+                                            'signIn',
+                                            'initialized',
+                                            'getContext',
+                                            'getAuthToken',
+                                            'successCallback',
+                                            'setSubscriptions - added',
+                                            '------------------------------',
+                                            res
+                                        );
+                                    })
+                                    .catch((error) => {
+                                        console.error(
+                                            'MS Teams',
+                                            'MsTeamsAuthService',
+                                            'signIn',
+                                            'initialized',
+                                            'getContext',
+                                            'getAuthToken',
+                                            'successCallback',
+                                            'setSubscriptions - fail',
+                                            '------------------------------',
+                                            error
+                                        );
+                                    });
+                                resolve(
+                                    new Results(true, 'authenticated', {
+                                        user: { email: _this._context.userPrincipalName, ..._this._context },
+                                        token: result
+                                    })
+                                );
+                            },
+                            failureCallback: (error) => {
+                                console.error(
+                                    'MS Teams',
+                                    'MsTeamsAuthService',
+                                    'signIn',
+                                    'initialized',
+                                    'getContext',
+                                    'getAuthToken',
+                                    'failureCallback',
+                                    '------------------------------',
+                                    error
+                                );
+                                reject(
+                                    new Results(false, 'fail to authenticate', {
+                                        user: { email: _this._context.userPrincipalName, ..._this._context },
+                                        error
+                                    })
+                                );
+                            }
+                        });
+                    });
                 });
-
-            if (authDetails) {
-                this._msalService.instance.setActiveAccount(authDetails.account);
-                this.authenticated = true;
-                this.user = await this.getUser();
-
-                return new Results(true, 'authenticated', { authDetails, user: this.user });
+            } catch (error) {
+                console.error('MS Teams', 'MsTeamsAuthService', 'signIn', 'initialize', '------------------------------', error);
+                reject(new Results(false, 'fail to authenticate', error));
             }
-            return new Results(false, 'fail to authenticate');
-        } catch (error) {
-            throw error;
-        }
+        });
     }
 
     /**
@@ -263,6 +392,14 @@ interface OAuthSettings {
      * Redirect Url
      */
     redirectUri: string;
+    /**
+     * subscription Url  - tcm_ms_teams_api service endpoint
+     */
+    subscriptionUri: string;
+    /**
+     * tetherfi Organization - tetherfi side organization, late we can get this from token
+     */
+    tetherfiOrganization: string;
     /**
      * Scropes
      */
