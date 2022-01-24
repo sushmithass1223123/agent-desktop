@@ -24,7 +24,7 @@
             floating: floating,
             hidden: hidden,
             aot: aot,
-            'tw-flat': customFuse.config.flatTheme
+            resize: resize
         }"
         [ngStyle]="{
             'width.px': data.Config.Position.W,
@@ -35,7 +35,7 @@
         <mat-card
             class="widget-card"
             [ngClass]="
-                (customFuse.anchor?.body || customFuse.widget?.body) +
+                (interactionHold ? 'bg-warning' : customFuse.anchor?.body || customFuse.widget?.body) +
                 ' ' +
                 (floating ? 'floating' : '') +
                 ' ' +
@@ -47,7 +47,7 @@
                 <!-- Enabled header if enabled in config -->
                 <tw-card-header
                     [data]="data"
-                    [headerColor]="customFuse.anchor?.header || customFuse.widget?.header"
+                    [headerColor]="interactionHold ? 'bg-warning' : customFuse.anchor?.header || customFuse.widget?.header"
                     *ngIf="data.Config.Header"
                     [widgetState]="{ maximized: maximized, floating: floating, collapsed: collapsed, aot: aot, pinned: pinned }"
                     (refresh)="refresh()"
@@ -55,6 +55,7 @@
                     (float)="float()"
                     (collapse)="collapse()"
                     (destroy)="destroy()"
+                    (resize)="resize = !resize"
                     cdkDragHandle
                 ></tw-card-header>
 

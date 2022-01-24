@@ -738,7 +738,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 throw new Error(`Invalid Response : ${response}`);
             }
         } catch (error) {
-            console.error(error);
+            this.logger.error('getTMACVersion', error, false);
             this.connectionError.errored = true;
             this.connectionError.countdown = interval(1000).pipe(
                 take(this.connectionError.pollingInterval + 1),
@@ -836,7 +836,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 this.loading = false;
             })
             .catch((e) => {
-                console.error(e);
+                this.logger.error('login', e, false);
                 this.videoElement?.nativeElement.play();
                 // set loading to false
                 this.loading = false;
@@ -999,9 +999,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      * For single sign on
      */
     async ssoLogin(): Promise<boolean> {
-        console.log('MS Teams', 'ssoLogin -------------------------- ');
+        this.logger.debug(`ssoLogin: ${this.ssoType}`, false);
         if (!this.ssoType) {
-            console.log('MS Teams', 'ssoType not set', 'ssoLogin -------------------------- ', this.ssoType);
             return false;
         }
 
@@ -1010,38 +1009,32 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         try {
             if (this.ssoType === 'msteams') {
                 const response = await this._msTeamsAuthSerivce.signIn();
-                console.log('MS Teams', 'response from teams  ------------------------------', response);
+                this.logger.debug(`ssoLogin: response=${response?.isSuccess}, ${response?.message}`, false);
                 // check if authenticated
                 if (response.isSuccess == true) {
                     // check the response
                     if (response.result?.user?.email) {
                         // get the agent lanId
                         const lanId = response.result.user.email.split('@')[0];
-                        console.log('MS Teams', 'response from teams  ------------------------------ lanId : ', lanId);
+                        this.logger.debug(`ssoLogin: lanId=${lanId}`, false);
+
                         if (lanId) {
                             this.loginForm.patchValue({ lanId: lanId });
                             this.fuseSplashService.show();
-                            console.log('MS Teams', 'from teams  ------------------------------ login', response);
                             this.login(true);
                         }
                     }
                 }
-                console.log('MS Teams', 'from teams  ------------------------------ login return - true', response);
                 return true;
             } else {
-                console.log(
-                    'MS Teams',
-                    'from teams  ------------------------------ login',
-                    `SSO type "${this.ssoType}" is not a valid, please contact the administrator!`
-                );
+                this.logger.warn(`ssoLogin: SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, false);
                 this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
             }
         } catch (error) {
-            console.error('MS Teams', 'fail to authenticate', error);
+            this.logger.error(`ssoLogin: Fail to authenticate`, error, false);
         } finally {
             this.loading = false;
         }
-        console.log('MS Teams', 'ssoLogin', 'from teams  ------------------------------ login return - false');
         return false;
     }
 

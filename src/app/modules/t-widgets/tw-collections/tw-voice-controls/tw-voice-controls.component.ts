@@ -918,6 +918,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         // set call connected to false
         this.callConnected = false;
+
+        // close the av connections
+        if (this.avConns?.length) {
+            this.avConns.forEach((a) => {
+                a.close();
+            });
+            this.avConns = [];
+        }
     }
 
     /**

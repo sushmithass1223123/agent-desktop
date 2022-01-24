@@ -29,7 +29,6 @@ import { isStringHtml, urlify } from '@tmac/operators';
 import {
     ActionMessageReceivedEvent,
     AgentNotificaitonEvent,
-    AVChannel,
     AVControlMessageReceivedEvent,
     CallHoldEvent,
     CallHoldReconnectEvent,
@@ -215,10 +214,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     cif: string;
     /**
-     * AV channel ref
-     */
-    avConn: AVChannel;
-    /**
      * AV call widget ref
      */
     callWidget: IWidget;
@@ -311,10 +306,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Type of attachment previw
      */
     attachPreviewMode = '';
-    /**
-     * Self media stream
-     */
-    selfVideo: MediaStream;
     /**
      * Transfer/conference dialog ref
      */
@@ -863,7 +854,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             switch (msg.type?.toLowerCase()) {
                 case 'clientreloaded':
                     this.callWidget?.destroy();
-                    this._appUIService.showSnackbar('Client has refreshed their browser', 'failure');
+                    this._appUIService.showSnackbar('Client has refreshed their browser', 'warning');
             }
             return;
         }
@@ -1275,24 +1266,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
-        widget.InteractionDetails = {
-            NRIC: this.remoteUserConnectedEvent.NRIC,
-            RegNo1: this.remoteUserConnectedEvent.RegNo1
-        };
+
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
-        widget.Config.Actions = ['collapse', 'maximize'];
-        widget.Data.EventId = this.data.InteractionDetails.EventId;
-        widget.Data.ConferenceType = this.conferenceType;
-        widget.Data.CustomerName = this.customerName;
-        widget.Data.Direction = direction;
+        widget.Config.Actions = ['collapse', 'maximize', 'resize'];
+
+        widget.InteractionDetails = {
+            NRIC: this.remoteUserConnectedEvent.NRIC,
+            RegNo1: this.remoteUserConnectedEvent.RegNo1,
+            InteractionID: this.data.InteractionDetails?.InteractionID,
+            ConferenceType: this.conferenceType,
+            CustomerName: this.customerName,
+            Direction: direction,
+            SessionID: this.sessionID,
+            CallType: param
+        };
+
+        widget.Data = { ...this.data.Data };
+        widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.AVEvent = avEvent;
-        widget.Data.Config = this.data.Data;
         widget.Data.Opener = this;
-        widget.Data.InteractionID = this.data.InteractionDetails?.InteractionID;
-        widget.Data.SessionID = this.sessionID;
-        widget.Data.CallType = param;
         widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
 
         // open call widget
@@ -1655,6 +1649,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (this.asyncChatRef.isAsync) {
             // check for async chat history
             this.checkForAsyncChatHistory('unshift');
+        }
+
+        // hold the interaction if connected and not active yet
+        if (!evt.RecoveryEvent) {
+            setTimeout(
+                (x: TextChatRemoteUserConnectedEvent) => {
+                    const interaction = this.interactionList.find((f) => f.interactionId === x.InteractionID);
+                    if (!interaction.isActive) {
+                        this.holdInteraction();
+                    }
+                },
+                0,
+                evt
+            );
         }
     }
 
@@ -2061,9 +2069,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // open the call widget
             this.openCallWidget(type, 'in', evt);
         }
-
-        // forward the av messages to av channel
-        this.avConn?.onMessage(evt.Message);
     }
 
     /**
@@ -2083,8 +2088,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
         // stop the duration timer
         this.stopTimer.next(null);
-        // close if there is any any AV
-        this.avConn?.close();
         // hide auto response if enabled
         this.showAutoFreeze = false;
         // get the alert message by reason
@@ -3168,4 +3171,25 @@ interface IWidgetData extends CommonWidgetData {
      * Flag to close interaction on chat end
      */
     CloseInteractionOnEnd: boolean;
+    /**
+     * Flag to mute agent/customer audio/video on interaction hold
+     */
+    MuteAVOnHold: {
+        /**
+         * To mute agent audio
+         */
+        AgentAudio: boolean;
+        /**
+         * To mute agent video
+         */
+        AgentVideo: boolean;
+        /**
+         * To mute customer audio
+         */
+        CustomerAudio: boolean;
+        /**
+         * To mute customer video
+         */
+        CustomerVideo: boolean;
+    };
 }

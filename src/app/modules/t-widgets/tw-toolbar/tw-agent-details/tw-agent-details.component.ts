@@ -173,6 +173,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
     changeStatus(item: IAUXCodes): void {
         // show the progress bar
         this._fuseProgressBarService.show();
+        const oldStatus = this.agentData.agentStatus;
         this.agentData.agentStatus = 'Please wait...';
         // change the status
         SDKClient.changeStatus({
@@ -187,10 +188,12 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                     this.agentData.agentStatus = dt.response.Status;
                 } else {
                     this._appUIService.showSnackbar('Change status failed, please try again!', 'failure');
+                    this.agentData.agentStatus = oldStatus;
                 }
             })
             .catch(() => {
                 this._appUIService.showSnackbar('Change status error, please try again!', 'failure');
+                this.agentData.agentStatus = oldStatus;
             })
             .finally(() => this._fuseProgressBarService.hide());
     }

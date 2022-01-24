@@ -5,7 +5,7 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div *ngIf="widgetData.callType === 'audio'" fxFill class="audio">
+        <div *ngIf="data.InteractionDetails.CallType === 'audio'" fxFill class="audio">
             <div fxFill fxLayout="column" fxLayoutAlign="space-between none" class="px-12">
                 <div *ngIf="userList.length" fxFlex fxLayout="row wrap" fxLayoutAlign=" center">
                     <ng-container *ngFor="let item of userList">
@@ -67,10 +67,10 @@
                         </button>
 
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.screenshare"
+                            *ngIf="data.Data.Opener.agentFeatures.screenshare"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold || remoteScreenSharing"
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
                             [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
@@ -81,8 +81,8 @@
 
                     <div fxLayout="row" fxLayoutAlign="start center" class="actions-2">
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.hold"
-                            [disabled]="!connected"
+                            *ngIf="data.Data.Opener.agentFeatures.hold"
+                            [disabled]="!connected || (onCallHoldEvent && !manualHold)"
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"
@@ -113,7 +113,7 @@
             </div>
         </div>
 
-        <div *ngIf="widgetData.callType === 'video'" fxFill fxFlex class="video">
+        <div *ngIf="data.InteractionDetails.CallType === 'video'" fxFill fxFlex class="video">
             <div fxFill fxFlex fxLayout="column" fxLayoutAlign="space-between none" class="position-relative video-controls">
                 <div
                     fxFlex
@@ -133,7 +133,7 @@
 
                         <div class="button-group">
                             <button
-                                *ngIf="widgetData.opener.agentFeatures.snapshot"
+                                *ngIf="data.Data.Opener.agentFeatures.snapshot"
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold"
@@ -144,7 +144,7 @@
                             </button>
 
                             <button
-                                *ngIf="widgetData.opener.agentFeatures.webrtcTest"
+                                *ngIf="data.Data.Opener.agentFeatures.webrtcTest"
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold"
@@ -204,7 +204,7 @@
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold"
+                            [disabled]="!connected || hold || onCallHoldEvent"
                             matTooltip="Change to Video"
                             (click)="changeToVideo(upgradeToVideoBtn)"
                         >
@@ -212,10 +212,10 @@
                         </button>
 
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.screenshare"
+                            *ngIf="data.Data.Opener.agentFeatures.screenshare"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold || remoteScreenSharing"
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
                             [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
@@ -227,7 +227,7 @@
                             *ngIf="userCameraList?.length"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold"
+                            [disabled]="!connected || hold || onCallHoldEvent"
                             matTooltip="Toggle User Camera"
                             [matMenuTriggerFor]="userCameraMenu"
                         >
@@ -244,8 +244,8 @@
 
                     <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="actions-2">
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.hold"
-                            [disabled]="!connected"
+                            *ngIf="data.Data.Opener.agentFeatures.hold"
+                            [disabled]="!connected || (onCallHoldEvent && !manualHold)"
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"
