@@ -374,16 +374,16 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         // subscribe to _activatedRoute for loging agent id
         this._activatedRoute.paramMap.subscribe(async (paramMap) => {
+            // check if ssoType in param
+            if (paramMap.has('ssoType')) {
+                this.ssoType = paramMap.get('ssoType').toLowerCase();
+            }
+
             // check if agentId in param
             if (paramMap.has('agentId')) {
                 await this.loadConfig(paramMap.get('agentId'));
             } else {
                 await this.loadConfig();
-            }
-
-            // check if ssoType in param
-            if (paramMap.has('ssoType')) {
-                this.ssoType = paramMap.get('ssoType').toLowerCase();
             }
         });
     }
@@ -999,7 +999,9 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      * For single sign on
      */
     async ssoLogin(): Promise<boolean> {
+        console.log('MS Teams', 'ssoLogin -------------------------- ');
         if (!this.ssoType) {
+            console.log('MS Teams', 'ssoType not set', 'ssoLogin -------------------------- ', this.ssoType);
             return false;
         }
 
@@ -1008,28 +1010,38 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         try {
             if (this.ssoType === 'msteams') {
                 const response = await this._msTeamsAuthSerivce.signIn();
+                console.log('MS Teams', 'response from teams  ------------------------------', response);
                 // check if authenticated
-                if (this._msTeamsAuthSerivce.authenticated) {
+                if (response.isSuccess == true) {
                     // check the response
                     if (response.result?.user?.email) {
                         // get the agent lanId
                         const lanId = response.result.user.email.split('@')[0];
+                        console.log('MS Teams', 'response from teams  ------------------------------ lanId : ', lanId);
                         if (lanId) {
                             this.loginForm.patchValue({ lanId: lanId });
                             this.fuseSplashService.show();
+                            console.log('MS Teams', 'from teams  ------------------------------ login', response);
                             this.login(true);
                         }
                     }
                 }
+                console.log('MS Teams', 'from teams  ------------------------------ login return - true', response);
                 return true;
             } else {
+                console.log(
+                    'MS Teams',
+                    'from teams  ------------------------------ login',
+                    `SSO type "${this.ssoType}" is not a valid, please contact the administrator!`
+                );
                 this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
             }
         } catch (error) {
-            console.error('fail to authenticate', error);
+            console.error('MS Teams', 'fail to authenticate', error);
         } finally {
             this.loading = false;
         }
+        console.log('MS Teams', 'ssoLogin', 'from teams  ------------------------------ login return - false');
         return false;
     }
 

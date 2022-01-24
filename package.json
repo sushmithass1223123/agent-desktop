@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.0.12.30",
+    "version": "5.0.01.19",
     "license": "",
     "scripts": {
         "ng": "nx",
@@ -49,6 +49,7 @@
         "@ctrl/ngx-emoji-mart": "6.0.0",
         "@microsoft/microsoft-graph-client": "3.0.1",
         "@microsoft/microsoft-graph-types": "2.10.0",
+        "@microsoft/teams-js": "1.11.0",
         "@ngneat/tailwind": "7.0.3",
         "@progress/kendo-angular-buttons": "^6.0.0",
         "@progress/kendo-angular-charts": "5.3.1",
