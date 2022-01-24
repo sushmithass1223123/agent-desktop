@@ -179,22 +179,22 @@
 
                         <div class="twd-flex twd-justify-between">
                             <div class="twd-flex twd-max-w-6/12 twd-items-center">
-                                <div class="my-4">
+                                <div class="my-4 twd-truncate twd-flex twd-flex-col">
                                     <span>
                                         {{ currentInteraction.AgentName }}
                                     </span>
-                                    <div
+                                    <p
+                                        class="twd-truncate"
                                         *ngIf="
                                             SentReasons.concat(DraftReasons).concat(OutboxReasons).includes(currentInteraction.RouteReason)
                                                 ? currentInteraction.To
                                                 : currentInteraction.From as emailIDs
                                         "
                                         [matTooltip]="emailIDs"
+                                        matTooltipClass="twd-break-all"
                                     >
-                                        <div class="twd-truncate">
-                                            <span> ({{ emailIDs }}) </span>
-                                        </div>
-                                    </div>
+                                        ({{ emailIDs }})
+                                    </p>
                                 </div>
                                 <span *ngIf="sentiment && sentiment !== 'NA'" class="twd-flex twd-items-center twd-ml-4" matTooltip="Sentiment">
                                     <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />

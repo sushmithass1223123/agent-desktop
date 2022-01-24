@@ -165,13 +165,13 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     branding: false,
                     base_url: `${this.baseHref}assets/tinymce/`,
                     content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
+                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount', 'textcolor'],
                     //     'advlist autolink lists link image charmap print preview anchor',
                     //     'searchreplace visualblocks code fullscreen',
                     //     'insertdatetime media table paste code wordcount'
                     // ],
                     toolbar: `
-                        undo redo | formatselect | fontsizeselect  | fontselect  | table | 
+                        undo redo | formatselect | fontsizeselect  | fontselect | forecolor backcolor | table | 
                         bold italic backcolor | alignleft aligncenter 
                         alignright alignjustify | bullist numlist outdent indent |  
                         removeformat

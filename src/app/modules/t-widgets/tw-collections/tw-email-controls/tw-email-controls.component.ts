@@ -518,6 +518,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 CCList: res.CCList,
                 BCCList: res.BCCList,
                 Body: res.Body,
+                Subject: res.Subject,
                 AttachmetList: res?.Attachments || [],
                 To: res.ToList,
                 EmailReceivedTime:
@@ -595,7 +596,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             SDKClient.changeEmailStatus({
                 routeId: currentInteraction.RouteId,
                 sessionId: currentInteraction.InSessionId,
-                status: 'Close'
+                status: this.SentReasons.concat(this.DraftReasons).includes(this.currentInteraction.RouteReason)
+                    ? `Outbox,Closed,sent,${this.currentInteraction.OutSessionId}`
+                    : 'Close'
             })
                 .then(() => {
                     this._fuseProgressBarService.hide();
