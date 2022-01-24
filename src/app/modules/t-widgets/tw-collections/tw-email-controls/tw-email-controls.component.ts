@@ -1214,6 +1214,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             CCList,
             BCCList,
             EmailReceivedTime,
+            EmailSentTime,
             To,
             AttachmetList,
             InSessionId,
@@ -1248,7 +1249,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         <div style='border-top: 1px solid gray; padding-top : 5px;'>
             <div style='border-left: 3px solid gray;padding-left: 5px'>
                 <div> <strong> From: </strong> <span> ${isSentEmail ? emailcomponentInput.To : emailcomponentInput.From} </span> </div>
-                    <div> <strong> Sent: </strong> <span> ${emailcomponentInput.CreatedTime} </span> </div>
+                    <div> <strong> Sent: </strong> <span> ${
+                        isSentEmail ? EmailSentTime || emailcomponentInput.CreatedTime : emailcomponentInput.CreatedTime
+                    } </span> </div>
                     <div> <strong> To: </strong> <span> ${isSentEmail ? emailcomponentInput.From : emailcomponentInput.To} </span> </div>
                     <div> <strong> Subject: </strong> <span> ${emailcomponentInput.Subject} </span> </div>
                 </div>

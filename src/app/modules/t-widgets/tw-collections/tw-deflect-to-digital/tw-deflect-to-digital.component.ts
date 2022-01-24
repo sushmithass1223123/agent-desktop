@@ -119,7 +119,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
 
             if (!this.toNumber) {
-                this._appUIService.showSnackbar('Please provide the number to deflect!', 'failure');
+                this._appUIService.showSnackbar('Please provide the number to deflect', 'failure');
                 return;
             }
 
