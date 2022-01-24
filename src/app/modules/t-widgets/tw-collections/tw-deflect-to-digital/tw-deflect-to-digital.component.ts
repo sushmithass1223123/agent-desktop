@@ -118,7 +118,11 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 return;
             }
 
-            this._appUIService.showSnackbar('Deflecting', 'loading');
+            if (!this.toNumber) {
+                this._appUIService.showSnackbar('Deflecting', 'loading');
+                return;
+            }
+
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
                 customerContact: this.toNumber,
@@ -136,15 +140,15 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 reservedStatusCode: this.data.Data.ReservedStatusCode
             });
 
-            if (res.response.ResultCode !== 0) {
-                throwADError('SDKClient.deflectToDigital failed', res.response);
+            if (res.response.ResultCode < 0) {
+                throwADError('SDKClient.deflectToDigital failed', res.response.ResultMessage);
             }
             this.textTemplatesRef.clearAllData();
             this._appUIService.showSnackbar('Deflected Successfully');
         } catch (e) {
             console.error(e);
             if (e instanceof ADError) {
-                this._appUIService.showSnackbar('Unable to Deflect', 'failure');
+                this._appUIService.showSnackbar(`Unable to Deflect: ${e.message}`, 'failure');
             } else {
                 this._appUIService.showSnackbar('Deflecting failed', 'failure');
             }

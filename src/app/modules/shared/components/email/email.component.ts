@@ -235,7 +235,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                         Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.isArray(From) ? From : [From],
                         From: this.email.mailbox,
-                        Subject: subject,
+                        Subject: (subject || '').startsWith('RE:') ? subject : `RE: ${subject}`,
                         Files: [],
                         CC: []
                     };
@@ -247,7 +247,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                         Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
                         To: Array.from(new Set(ToList.filter((e) => e && e !== mailbox))),
                         From: mailbox,
-                        Subject: subject,
+                        Subject: (subject || '').startsWith('RE:') ? subject : `RE: ${subject}`,
                         Files: [],
                         CC
                     };

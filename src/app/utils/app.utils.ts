@@ -126,7 +126,8 @@ export const processCustomerDetails = (customerInfo: CustomerInfo[]): { exec: (e
  */
 export const getValueFromEvent = (item: CustomerInfo, evt: IUIEvent): string => {
     // get the value from path or default value
-    item.Value = maskDataLocal(extractJsonVal({ [evt.EventName]: evt }, item.ValueSource) ?? item.Value ?? item.DefaultValue, item.MaskData);
+    let extractedValue = extractJsonVal({ [evt.EventName]: evt }, item.ValueSource);
+    item.Value = maskDataLocal(extractedValue, item.MaskData);
     // return value
     return item.Value;
 };

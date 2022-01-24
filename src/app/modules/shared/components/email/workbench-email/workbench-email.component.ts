@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
-import { AgentSkillListComponent, PreviewEmailComponent, SnackbarComponent } from '@modules/shared/components';
+import { AgentSkillListComponent, SnackbarComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -214,6 +214,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Currently selected tab
      */
+    // currentTab: 'sentitem' | 'draft' | 'inbox' | 'queue';
     currentTab: string;
 
     /**
@@ -281,6 +282,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     ];
 
     /**
+     * Flag enabled when no tabs are visible
+     */
+    noTabsAvailable = true;
+
+    /**
      * Agent action features
      */
     agentFeatures: {
@@ -338,7 +344,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             // filter the allowed tabs given in config
             this.availableTabs.forEach((f) => {
                 f.enabled = allowedTabs.includes(f.label.toLowerCase());
+                if (f.enabled) {
+                    this.noTabsAvailable = false;
+                }
             });
+        } else {
+            this.noTabsAvailable = false;
         }
         // subscribe to agent features to check for the allowed tabs realtime
         this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
@@ -374,20 +385,24 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             entries.map((entry) => {
                 if (this.currentTab) {
                     if (entry.isIntersecting) {
+                        // check if polling is enabled in config or not
+                        // polling is disabled when it is set to 0
                         this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
                         if (this.channelConf.Config.SearchPollingInterval) {
                             this.startPolling();
                         } else {
+                            // if polling is disabled, do an advanced search only once
                             this.doAdvancedSearch();
                         }
                     } else {
+                        // stop polling when not in view
                         this.stopPolling();
                         this.advancedSearch.show = false;
                     }
                 }
             });
         });
-        // observe the element
+        // observe the host element
         this.intersectionObserver.observe(this.emailWorkBench.nativeElement);
     }
 
@@ -397,7 +412,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        // disconnect the observer
         this.intersectionObserver?.disconnect();
+        // stop the polling
         this.stopPolling();
     }
 
@@ -449,13 +466,27 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 }
             });
 
-            // check if any selected tab is disabled, switch to first available tab
-            this.availableTabs.forEach((f) => {
-                if (!this.currentTab || (this.currentTab === f.key && !f.enabled)) {
-                    const firstTab = this.availableTabs.find((x) => x.enabled) as any;
-                    this.switchTab(firstTab?.key);
-                }
-            });
+            // check if currently selected tab is disabled, switch to first available tab
+            const { firstAvailableTab, isCurrentTabDisabled, noTabAvailable } = this.availableTabs.reduce(
+                (acc, curr) => {
+                    if (curr.enabled) {
+                        acc.noTabAvailable = false;
+                    }
+                    if (!acc.firstAvailableTab && curr.enabled) {
+                        acc.firstAvailableTab = curr.key;
+                    }
+                    if (curr.key === this.currentTab) {
+                        acc.isCurrentTabDisabled = curr.enabled;
+                    }
+                    return acc;
+                },
+                { firstAvailableTab: '', isCurrentTabDisabled: false, noTabAvailable: true }
+            );
+
+            this.noTabsAvailable = noTabAvailable;
+            if (isCurrentTabDisabled) {
+                this.currentTab = firstAvailableTab;
+            }
         } catch (error) {}
     }
 
@@ -463,6 +494,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Sets available mailboxes
      */
     private async setAvailableMailboxes(): Promise<void> {
+        // check if mailboxes are set, if not, initialize the workench service which will do it for us
         if (!this._emailService.globalEmailWorkbenchState$.availableMailboxes.value?.length) {
             await this._emailService.init();
         }
@@ -476,6 +508,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * To start polling
      */
     private startPolling(): void {
+        // polling timer
         this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval)
             .pipe(filter(() => this.polling.enabled && !this.emailSearchRes.loading && !this.polling.active && !this.advancedSearch.show))
             .subscribe(() => {
@@ -490,6 +523,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         this.polling$?.unsubscribe();
     }
 
+    /**
+     * returns sorted emails based on the filters applied
+     * @returns {Mail[]}
+     */
     getSortedEmails = (emails: Mail[]): Mail[] => {
         const sortKey = this.sortControls.sortBy;
         let sorted: Mail[];
@@ -526,6 +563,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         const byMailList = groupBy(mails, 'Mailbox');
         const selectedUiIds = this.getSelectedEmails().map((x) => x.uiId);
         let nodes: any;
+        // sentitem and draft grouping is simple tree of 2 level height ie mailbox -> mails
         if (['sentitem', 'draft'].includes(this.currentTab)) {
             nodes = Object.entries(byMailList).reduce((acc, curr) => {
                 const [name, children] = curr;
@@ -542,7 +580,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 });
                 return acc;
             }, []);
-        } else {
+        }
+        // inbox and queue have a tree of 3 level height ie mailbox -> intent -> mails
+        else {
             nodes = Object.entries(byMailList).map((entry) => {
                 const [name, mailList] = entry;
                 const groupedNodes = groupBy(mailList, 'Skill');
@@ -796,17 +836,27 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async closeEmails(emails: Mail[]): Promise<void> {
         const loader = this.appUiService.showSnackbar('Closing emails', 'loading');
         try {
-            const { routeIds, uiIds } = emails.reduce(
-                (acc, curr) => {
-                    acc.routeIds.push(curr.RouteId);
-                    acc.uiIds.push(curr.uiId);
-                    return acc;
-                },
-                { routeIds: [], uiIds: [] }
-            );
-            await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
-            if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
-                this.openEmailRes.data.next(null);
+            if (this.currentTab === 'queue') {
+                const routeIds = emails.map((curr) => {
+                    if (this.openEmailRes.data?.value?.uiId === curr.uiId) {
+                        this.openEmailRes.data.next(null);
+                    }
+                    return curr.RouteId;
+                });
+                await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+            } else {
+                await Promise.all(
+                    emails.map((curr) => {
+                        if (this.openEmailRes.data?.value?.uiId === curr.uiId) {
+                            this.openEmailRes.data.next(null);
+                        }
+                        return SDKClient.changeEmailStatus({
+                            routeId: curr.RouteId,
+                            sessionId: curr.InSessionId,
+                            status: ['sentitem', 'draft'].includes(this.currentTab) ? `Outbox,Closed,sent,${curr.OutSessionId}` : 'Close'
+                        });
+                    })
+                );
             }
             this.appUiService.showSnackbar('Emails closed successfully', 'success');
             // deselect all the emails
@@ -864,9 +914,22 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 .subscribe({
                     next: (res: any) => {
                         if (res.status === 'FAILED') {
-                            console.error(res);
+                            // console.error(res);
                             loader.dismiss();
-                            this.appUiService.showSnackbar('Unable to pull email', 'failure');
+                            const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
+                            if (isAlreadyPulled.length) {
+                                if (isAlreadyPulled.length > 1) {
+                                    if (isAlreadyPulled.length === emails.length) {
+                                        this.appUiService.showSnackbar('Emails are already assigned', 'failure');
+                                    } else {
+                                        this.appUiService.showSnackbar('Some emails are already assigned', 'failure');
+                                    }
+                                } else {
+                                    this.appUiService.showSnackbar('Email already assigned', 'failure');
+                                }
+                            } else {
+                                this.appUiService.showSnackbar('Unable to pull email', 'failure');
+                            }
                             return;
                         }
                         if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
