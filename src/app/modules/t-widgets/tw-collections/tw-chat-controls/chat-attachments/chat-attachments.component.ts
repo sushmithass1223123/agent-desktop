@@ -146,18 +146,17 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      */
     startCamera(): void {
         // capture selfview
-        navigator.getUserMedia(
-            {
+        navigator.mediaDevices
+            .getUserMedia({
                 audio: false,
                 video: true
-            },
-            (stream: MediaStream) => {
+            })
+            .then(function (stream: MediaStream) {
                 this.selfVideo = stream;
-            },
-            (error: MediaStreamError) => {
-                this._appUIService.showSnackbar(error.message, 'failure');
-            }
-        );
+            })
+            .catch(function (err) {
+                this._appUIService.showSnackbar(err.message, 'failure');
+            });
     }
 
     /**
