@@ -252,7 +252,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Chatmode
      */
-    chatMode: string;
+    chatMode: 'audio' | 'video';
     /**
      * Line ID
      */
@@ -1631,7 +1631,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the conference type
         this.conferenceType = evt.ConferenceType;
         // update the chatmode
-        this.chatMode = evt.ChatMode;
+        this.chatMode = evt.ChatMode as any;
         // to not open video dialog when interaction is over
         if (!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) {
             this.escalateToAV(this.chatMode as any);

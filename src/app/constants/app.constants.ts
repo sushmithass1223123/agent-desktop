@@ -287,79 +287,79 @@ export const AGENT_FEATURES = {
 export const AGENT_FEATURES_MAP = {
     AllowSupervisorToBargeIn: {
         Type: 'interaction',
-        SubType: 'voice',
+        SubType: ['voice'],
         Icon: 'call_merge',
         Label: 'Barge-In'
     },
     AllowSupervisorToCapturePicture: {
         Type: 'agent',
-        SubType: '',
+        SubType: [],
         Icon: 'fact_check',
         Label: 'View Activity'
     },
     AllowSupervisorToChangeStatus: {
         Type: 'agent',
-        SubType: '',
+        SubType: [],
         Icon: 'track_changes',
         Label: 'Change Status'
     },
     AllowSupervisorToChatConference: {
         Type: 'interaction',
-        SubType: 'textchat',
+        SubType: ['textchat', 'audiochat', 'videochat'],
         Icon: 'forum',
         Label: 'Conference'
     },
     AllowSupervisorToChatSilentMonitor: {
         Type: 'interaction',
-        SubType: 'textchat',
+        SubType: ['textchat', 'audiochat', 'videochat'],
         Icon: 'speaker_notes',
         Label: 'Silent Monitor'
     },
     AllowSupervisorToChatWhisper: {
         Type: 'interaction',
-        SubType: 'textchat',
+        SubType: ['textchat', 'audiochat', 'videochat'],
         Icon: 'quickreply',
         Label: 'Whisper'
     },
     AllowSupervisorToFaxTransferAgent: {
         Type: 'interaction',
-        SubType: 'fax',
+        SubType: ['fax'],
         Icon: 'forward',
         Label: 'Transfer Fax'
     },
     AllowSupervisorToFaxTransferSelf: {
         Type: 'interaction',
-        SubType: 'fax',
+        SubType: ['fax'],
         Icon: 'play_for_work',
         Label: 'Self Transfer'
     },
     AllowSupervisorToInteractionNotification: {
         Type: 'interaction',
-        SubType: 'all',
+        SubType: ['all'],
         Icon: 'notification_important',
         Label: 'Interaction Notification'
     },
     AllowSupervisorToLogout: {
         Type: 'agent',
-        SubType: '',
+        SubType: [],
         Icon: 'power_settings_new',
         Label: 'Logout'
     },
     AllowSupervisorToSendNotification: {
         Type: 'agent',
-        SubType: '',
+        SubType: [],
         Icon: 'notifications',
         Label: 'Send Notification'
     },
     AllowSupervisorToSilentMonitor: {
         Type: 'interaction',
-        SubType: 'voice',
+        SubType: ['voice'],
         Icon: 'contactless',
         Label: 'Silent Monitor'
     },
     AllowSupervisorToViewEmailDetails: {
         Type: 'interaction',
-        SubType: '',
+        SubType: [],
         Icon: 'email',
         Label: 'View Details'
     }

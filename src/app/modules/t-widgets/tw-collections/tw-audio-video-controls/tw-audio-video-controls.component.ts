@@ -290,7 +290,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // start call
         if (this.data.InteractionDetails.ConferenceType === 'conf') {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
-            // show UI
+            this.showUI = true;
+        } else if (this.data.InteractionDetails.ConferenceType === 'whisper') {
+            this.avConn.join(this.wrcCallType, { mode: 'wisper' as 'whisper' });
+            this.showUI = true;
+        } else if (this.data.InteractionDetails.ConferenceType === 'silent') {
+            this.avConn.join(this.wrcCallType, { mode: 'monitor' });
             this.showUI = true;
         } else if (this.data.InteractionDetails.Direction === 'out') {
             this.avConn
@@ -1064,14 +1069,19 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * End Call
      * @method endCall
+     * @param {boolean} ignoreDestroy
      */
-    public endCall(): void {
+    public endCall(ignoreDestroy: boolean = false): void {
         // end the call
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
             this.avConn.endCall(this.wrcCallType, '');
+        }
+
+        if (ignoreDestroy) {
+            return;
         }
 
         if (this.data.Data.EndInteractionOnAVEnd) {
