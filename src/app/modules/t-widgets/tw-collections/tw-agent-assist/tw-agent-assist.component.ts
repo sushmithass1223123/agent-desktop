@@ -10,7 +10,7 @@ import { TwWidgetModel } from 'app/models';
 import { orderBy } from 'lodash';
 import { merge } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TwAgentAssist } from '@ad/types';
+import { AOTWidget, TwAgentAssist } from '@ad/types';
 
 /**
  * Agent Assist Component
@@ -335,7 +335,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         }
 
         // add to AOT widget service
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 }
 

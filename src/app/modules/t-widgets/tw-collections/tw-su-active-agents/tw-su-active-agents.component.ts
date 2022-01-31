@@ -25,7 +25,7 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TwSuActiveAgents } from '@ad/types';
+import { AOTWidget, TwSuActiveAgents } from '@ad/types';
 
 /**
  * Active agents component widget
@@ -503,7 +503,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
         widget.Data = item;
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 
     /**

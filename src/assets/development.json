@@ -387,6 +387,7 @@
                                         "Anchor": false,
                                         "AOT": true,
                                         "AutoOpen": false,
+                                        "LocalAOT": true,
                                         "Icon": "event_note",
                                         "Class": "",
                                         "Position": { "X": 4, "Y": 4, "W": 400, "H": 400 },
@@ -1645,6 +1646,7 @@
                                         "Anchor": false,
                                         "AOT": false,
                                         "AutoOpen": false,
+                                        "LocalAOT": true,
                                         "Icon": "published_with_changes",
                                         "Class": "",
                                         "Position": { "X": 2, "Y": 1, "W": 700, "H": 500 },
@@ -1655,7 +1657,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "http://localhost:4301/?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
+                                        "Url": "https://dice.tetherfi.cloud/AD-Video-Audit-Widget?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
                                     }
                                 },
                                 {
