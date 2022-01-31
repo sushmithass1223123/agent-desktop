@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -1271,11 +1272,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
         widget.Config.Actions = ['collapse', 'maximize', 'resize'];
+        widget.Config.LocalAOT = true;
 
         widget.InteractionDetails = {
             NRIC: this.remoteUserConnectedEvent.NRIC,
             RegNo1: this.remoteUserConnectedEvent.RegNo1,
-            InteractionID: this.data.InteractionDetails?.InteractionID,
+            InteractionID: this.data.InteractionDetails.InteractionID,
             ConferenceType: this.conferenceType,
             CustomerName: this.customerName,
             Direction: direction,
@@ -1290,11 +1292,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
 
         // open call widget
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
         // assign to the local variable
         this.callWidget = widget;
         // disable AV buttons
         this.disableAV = true;
+        // update the interaction icon
+        this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
+            otherData: {
+                icon: param === 'audio' ? 'perm_phone_msg' : 'duo'
+            }
+        });
     }
 
     /**
@@ -2458,6 +2466,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.callWidget = null;
         // enable AV buttons
         this.disableAV = false;
+        // update the interaction icon
+        this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
+            otherData: {
+                icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+            }
+        });
     }
 
     /**
@@ -2905,7 +2919,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     AutoOpen: false,
                     Url: `${this.widgetData.Whiteboard.Url}?sessionid=${this.sessionID}`
                 };
-                this._aotWidgetService.addWidget(widget);
+                this._aotWidgetService.addWidget(widget as AOTWidget);
                 snackRef.dismiss();
             } else {
                 throw new Error('Error occured while opening whiteboard');

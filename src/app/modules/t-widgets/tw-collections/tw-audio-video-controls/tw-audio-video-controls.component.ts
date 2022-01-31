@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { fuseAnimations } from '@fuse/animations';
@@ -271,13 +272,30 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.sessionID = this.data.InteractionDetails.SessionID;
 
         // listen to tmac events
-        SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
-        SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
-        SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
-        SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
-        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
+        // SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+        // SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        // SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        // SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        // SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        // SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
+        // SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
+
+        // listen to TMAC events
+        this._tmacEventService
+            .getInteractionEvents(
+                [
+                    'AVControlMessageReceivedEvent',
+                    'TextChatDisconnectedEvent',
+                    'AgentAVMessageEvent',
+                    'TextChatMessageReceivedEvent',
+                    'ActionMessageReceivedEvent',
+                    'CallHoldEvent',
+                    'CallHoldReconnectEvent'
+                ],
+                this.interactionId
+            )
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
@@ -342,13 +360,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // this.endCall();
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
-        SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
-        SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
-        SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
-        SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
-        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
+
+        // SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+        // SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        // SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        // SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        // SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        // SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
+        // SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
         this.avConn = null;
         this.data.Data.Opener?.disposeCallWidget();
@@ -1113,7 +1132,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     Url
                 };
 
-                this._aotWidgetService.addWidget(widget);
+                this._aotWidgetService.addWidget(widget as AOTWidget);
 
                 if (Customer) {
                     await SDKClient.sendActionMessage({
