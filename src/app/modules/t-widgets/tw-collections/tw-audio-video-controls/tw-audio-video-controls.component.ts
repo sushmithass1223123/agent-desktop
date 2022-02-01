@@ -8,6 +8,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
     ActionMessageReceivedEvent,
@@ -216,7 +217,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
         private _agentFeaturesService: AgentFeaturesService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _interactionManagerService: InteractionManagerService
     ) {
         super();
 
@@ -371,6 +373,13 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         this.avConn = null;
         this.data.Data.Opener?.disposeCallWidget();
+
+        // add the customer stream to interaction otherdata
+        this._interactionManagerService.updateInteraction(this.interactionId, {
+            otherData: {
+                customerStream: undefined
+            }
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -524,6 +533,13 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // check if the user connected is customer
                     if (evt.data.streamInfo?.user === 'customer' && evt.data.streamInfo?.type !== 'screenshare') {
                         evt.data.streamInfo.user = this.data.InteractionDetails.CustomerName;
+
+                        // add the customer stream to interaction otherdata
+                        this._interactionManagerService.updateInteraction(this.interactionId, {
+                            otherData: {
+                                customerStream: evt.data.stream
+                            }
+                        });
                     } else {
                         // other agent connected
                     }
