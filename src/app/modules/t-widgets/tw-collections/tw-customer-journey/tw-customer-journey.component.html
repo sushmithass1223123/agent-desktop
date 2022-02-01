@@ -4,7 +4,12 @@
         widget: (customFuse.widget$ | async)
     } as customFuse"
 >
-    <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)">
+    <tw-wrapper
+        [data]="data"
+        (maximizeEvent)="onMaximized($event)"
+        (collapseEvent)="collapseEvent.emit($event)"
+        (floatEvent)="floatEvent.emit($event)"
+    >
         <div [ngClass]="maximized && (customFuse.anchor?.content || customFuse.widget?.content) + ' maximized'" class="customer-journey">
             <ad-table
                 [footer]="maximized ? 'show' : 'hide'"

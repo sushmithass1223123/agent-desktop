@@ -30,7 +30,7 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": false, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": { "Enabled": true, "ByTeam": true, "DefaultACW": false, "DefaultLogout": false }
                                 }
                             },
                             {

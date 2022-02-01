@@ -78,6 +78,9 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
             widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
             widget.Data.RouteOnInteraction = this.data.Data.RouteOnInteraction ?? true;
+            this.maximized[widget.Type] = widget.Config.ViewState === 'maximize';
+            this.collapsed[widget.Type] = widget.Config.ViewState === 'collapse';
+            this.floating[widget.Type] = widget.Config.ViewState === 'float';
         });
     }
 
@@ -88,32 +91,5 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-    }
-
-    /**
-     * On maximised event handler
-     * @param {Boolean} ismaximized
-     * @param {String} type
-     */
-    onmaximized(ismaximized: boolean, type: string): void {
-        this.maximized[type] = ismaximized;
-    }
-
-    /**
-     * On collapsed event handler
-     * @param {Boolean} isCollapsed
-     * @param {String} type
-     */
-    onCollapsed(isCollapsed: boolean, type: string): void {
-        this.collapsed[type] = isCollapsed;
-    }
-
-    /**
-     * On floating event handler
-     * @param {Boolean} isFloating
-     * @param {String} type
-     */
-    onFloating(isFloating: boolean, type: string): void {
-        this.floating[type] = isFloating;
     }
 }

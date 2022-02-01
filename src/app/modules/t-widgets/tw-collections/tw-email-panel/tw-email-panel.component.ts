@@ -71,6 +71,9 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
             widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
             widget.Data.RouteOnInteraction = this.data.Data.RouteOnInteraction ?? false;
+            this.maximized[widget.Type] = widget.Config.ViewState === 'maximize';
+            this.collapsed[widget.Type] = widget.Config.ViewState === 'collapse';
+            this.floating[widget.Type] = widget.Config.ViewState === 'float';
         });
     }
 
@@ -80,8 +83,5 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        this.unsubscribeAll.next(null);
-        this.unsubscribeAll.complete();
     }
 }
