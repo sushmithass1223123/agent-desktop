@@ -35,7 +35,7 @@ export class TwWidgetModel {
     /**
      * [OPTIONAL] To destory the widget
      */
-    destroy: () => void;
+    destroy?: () => void;
     /**
      * [OPTIONAL] To trigger an event before destroying the widget
      */

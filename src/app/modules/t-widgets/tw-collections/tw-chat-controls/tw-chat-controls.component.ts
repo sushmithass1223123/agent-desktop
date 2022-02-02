@@ -1,4 +1,4 @@
-import { AOTWidget } from '@ad/types';
+import { AOTWidget, WidgetConfig } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -73,6 +73,7 @@ import {
     SnackbarStateTypes
 } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -217,7 +218,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * AV call widget ref
      */
-    callWidget: IWidget;
+    callWidget: AOTWidget;
     /**
      * Flag to disable AV escalate buttons
      */
@@ -258,10 +259,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Line ID
      */
     lineId: string;
-    /**
-     * Transfer/Conference widgetf
-     */
-    tranfConfWidget: IWidget;
     /**
      * Flag to show emoji overlay
      */
@@ -1266,13 +1263,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
-        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
+        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon) as AOTWidget<any, any>;
 
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
         widget.Config.Actions = ['collapse', 'maximize', 'resize'];
         widget.Config.LocalAOT = true;
+
+        try {
+            // check if audio/video call widget config is overridden
+            if (typeof this.widgetData.CallWidget === 'object') {
+                if (param === 'audio') {
+                    widget.Config = { ...widget.Config, ...this.widgetData.CallWidget?.Audio };
+                } else {
+                    widget.Config = { ...widget.Config, ...this.widgetData.CallWidget?.Video };
+                }
+            }
+        } catch (error) {
+            throwADError('TwCallControlsWidget.openCallWidget.CallWidget', error);
+        }
+
+        // check if the widget is disabled in overridden config
+        if (!widget.Config.Enabled) {
+            this._appUIService.showSnackbar(
+                `${param === 'audio' ? 'Audio Call' : 'Video Call'} Widget is disabled, Please contact the administrator!`,
+                'failure'
+            );
+            return;
+        }
 
         widget.InteractionDetails = {
             NRIC: this.remoteUserConnectedEvent.NRIC,
@@ -1292,15 +1311,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
 
         // open call widget
-        this._aotWidgetService.addWidget(widget as AOTWidget);
+        this._aotWidgetService.addWidget(widget);
         // assign to the local variable
         this.callWidget = widget;
         // disable AV buttons
         this.disableAV = true;
+
         // update the interaction icon
         this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
             otherData: {
-                icon: param === 'audio' ? 'perm_phone_msg' : 'duo'
+                icon: widget.Config.Icon
             }
         });
     }
@@ -2132,11 +2152,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._appUIService.showSnackbar(alertMessage);
         }
 
-        // destroy the transfer/conf widget
-        if (this.tranfConfWidget) {
-            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
-            this.tranfConfWidget = null;
-        }
         // close the conf/transfer if opened
         this.transferConfDialogRef?.close();
         this.confirmDialogRef?.close();
@@ -2462,15 +2477,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To dispose call widget
      */
     public disposeCallWidget(): void {
-        // dispose the call widget
-        this.callWidget = null;
-        // enable AV buttons
-        this.disableAV = false;
         // update the interaction icon
         this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
             otherData: {
                 icon: this.isSMM ? 'custom-' + this.channel : 'chat'
             }
+        });
+
+        setTimeout(() => {
+            // dispose the call widget
+            this.callWidget = undefined;
+            // enable AV buttons
+            this.disableAV = false;
         });
     }
 
@@ -2909,7 +2927,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
             });
             if (res.response?.ResultMessage === 'Success') {
-                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create');
+                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
                 widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
                 widget.Config.ViewState = 'maximize';
                 widget.Config.Anchor = true;
@@ -2919,7 +2937,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     AutoOpen: false,
                     Url: `${this.widgetData.Whiteboard.Url}?sessionid=${this.sessionID}`
                 };
-                this._aotWidgetService.addWidget(widget as AOTWidget);
+                this._aotWidgetService.addWidget(widget);
                 snackRef.dismiss();
             } else {
                 throw new Error('Error occured while opening whiteboard');
@@ -3205,5 +3223,18 @@ interface IWidgetData extends CommonWidgetData {
          * To mute customer video
          */
         CustomerVideo: boolean;
+    };
+    /**
+     * Call widget config
+     */
+    CallWidget: {
+        /**
+         * Audio call widget config
+         */
+        Audio: Partial<WidgetConfig>;
+        /**
+         * Video call widget config
+         */
+        Video: Partial<WidgetConfig>;
     };
 }

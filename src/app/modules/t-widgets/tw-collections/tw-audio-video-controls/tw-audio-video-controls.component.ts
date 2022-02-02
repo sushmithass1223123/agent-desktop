@@ -274,30 +274,13 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.sessionID = this.data.InteractionDetails.SessionID;
 
         // listen to tmac events
-        // SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        // SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        // SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
-        // SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
-        // SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
-        // SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
-        // SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
-
-        // listen to TMAC events
-        this._tmacEventService
-            .getInteractionEvents(
-                [
-                    'AVControlMessageReceivedEvent',
-                    'TextChatDisconnectedEvent',
-                    'AgentAVMessageEvent',
-                    'TextChatMessageReceivedEvent',
-                    'ActionMessageReceivedEvent',
-                    'CallHoldEvent',
-                    'CallHoldReconnectEvent'
-                ],
-                this.interactionId
-            )
-            .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+        SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.on('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
+        SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
         // check for the avEvent
         const avEvent = this.data.Data.AVEvent || null;
@@ -323,8 +306,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 .then((dt: any) => {
                     // check the response is sucess or timed out
                     if (dt.code === TEnums.WrcCodes.RequestTimeout) {
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
+                        // close the widget
+                        this.destroyWidget();
                     }
                     // show UI
                     this.showUI = true;
@@ -362,14 +345,13 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // this.endCall();
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
-
-        // SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
-        // SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
-        // SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
-        // SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
-        // SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
-        // SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
-        // SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
+        SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
+        SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
+        SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
+        SDKClient.events.off('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
+        SDKClient.events.off('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
+        SDKClient.events.off('CallHoldEvent', this.CallHoldEvent);
+        SDKClient.events.off('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
         this.avConn = null;
         this.data.Data.Opener?.disposeCallWidget();
@@ -1104,19 +1086,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * End Call
      * @method endCall
-     * @param {boolean} ignoreDestroy
      */
-    public endCall(ignoreDestroy: boolean = false): void {
+    public endCall(): void {
         // end the call
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
             this.avConn.endCall(this.wrcCallType, '');
-        }
-
-        if (ignoreDestroy) {
-            return;
         }
 
         if (this.data.Data.EndInteractionOnAVEnd) {

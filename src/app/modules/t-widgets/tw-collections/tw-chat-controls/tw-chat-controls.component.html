@@ -282,7 +282,7 @@
 
                         <button
                             *ngIf="agentFeatures.transfer"
-                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected"
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
@@ -294,7 +294,7 @@
 
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.conference"
-                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || this.botConnected"
+                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected"
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
@@ -307,11 +307,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
                             [disabled]="
-                                status !== 'connected' ||
-                                disableAV ||
-                                conferenceType === 'silent' ||
-                                conferenceType === 'whisper' ||
-                                this.botConnected
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected
                             "
                             mat-mini-fab
                             color="default"
@@ -325,11 +321,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
                             [disabled]="
-                                status !== 'connected' ||
-                                disableAV ||
-                                conferenceType === 'silent' ||
-                                conferenceType === 'whisper' ||
-                                this.botConnected
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected
                             "
                             mat-mini-fab
                             color="default"
@@ -346,7 +338,7 @@
                                 supervisorInit &&
                                 (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')
                             "
-                            [disabled]="status !== 'connected' || this.botConnected"
+                            [disabled]="status !== 'connected' || botConnected"
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
