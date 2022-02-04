@@ -472,6 +472,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Media download
          */
         mediaDownload: boolean;
+        /**
+         * To toggle user view mode
+         */
+        toggleUserView: boolean;
     };
     /**
      * Connected event ref
@@ -626,7 +630,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             voicenote: this.widgetData.VoiceNoteAllowed ?? false,
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
             webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
-            mediaDownload: false
+            mediaDownload: false,
+            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false
         };
 
         // set the user info
@@ -827,6 +832,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
                 case AGENT_FEATURES.IsChatMediaDownloadEnabled:
                     this.agentFeatures.mediaDownload = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsToggleChatUserViewEnabled:
+                    this.agentFeatures.toggleUserView = f.IsEnabled;
                     break;
                 default:
             }
@@ -3237,4 +3245,8 @@ interface IWidgetData extends CommonWidgetData {
          */
         Video: Partial<WidgetConfig>;
     };
+    /**
+     * To toggle user view
+     */
+    ToggleUserViewAllowed: boolean;
 }

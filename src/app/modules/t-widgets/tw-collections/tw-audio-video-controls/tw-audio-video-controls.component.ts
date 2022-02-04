@@ -207,6 +207,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     onCallHoldEvent: boolean;
 
     /**
+     *
+     */
+    userView: 'call' | 'chat';
+
+    /**
      * Constructor
      */
     constructor(
@@ -289,6 +294,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.createAVConnection(avEvent);
 
         this.wrcCallType = this.data.InteractionDetails.CallType === 'video' ? TEnums.WrcCallTypes.Video : TEnums.WrcCallTypes.Audio;
+
+        this.userView = 'call';
 
         // start call
         if (this.data.InteractionDetails.ConferenceType === 'conf') {
@@ -702,30 +709,40 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // mark the device as selected if VIVR send "camerachange"  with action
             // or if we get ack from VIVR for the request "togglecamera"
             const msg = JSON.parse(evt.Message);
+            const type = msg.type.toLowerCase();
 
-            switch (msg.type.toLowerCase()) {
+            switch (type) {
                 case 'camerachange':
                     if (msg.status === 'action') {
                         this.setCameraSelected(msg.data.deviceId);
                     }
                     break;
                 case 'togglecamera':
+                case 'toggleview':
                     switch (msg.status) {
                         case 'ack':
                             break;
                         case 'accepted':
-                            this._appUIService.showSnackbar('Toggle camera request is accepted by customer');
+                            this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is accepted by customer`);
                             break;
                         case 'rejected':
-                            this._appUIService.showSnackbar('Toggle camera request is rejected by customer!', 'failure');
+                            this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is rejected by customer!`, 'failure');
                             break;
                         case 'success':
-                            this._appUIService.showSnackbar('Customer camera toggled successfully');
-                            this.setCameraSelected(msg.data.deviceId);
+                            this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggled successfully`);
+                            // set camera selected for 'togglecamera'
+                            if (type === 'togglecamera') this.setCameraSelected(msg.data.deviceId);
+                            // set user view for 'toggleview'
+                            else if (type === 'toggleview') this.userView = msg.data.view;
                             break;
                         case 'failed':
-                            this._appUIService.showSnackbar('Customer camera toggle failed!', 'failure');
+                            this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggle failed!`, 'failure');
                             break;
+                    }
+                    break;
+                case 'viewchange':
+                    if (msg.status === 'action') {
+                        this.userView = msg.data.view;
                     }
                     break;
             }
@@ -1193,6 +1210,41 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } catch (error) {
             this._appUIService.showSnackbar('Toggle camera request error!', 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.toggleUserCamera', error);
+        } finally {
+            this._fuseProgressBarService.hide();
+        }
+    }
+
+    /**
+     * To toggle user view
+     */
+    public async toggleUserView(): Promise<void> {
+        try {
+            this._fuseProgressBarService.show();
+
+            const { response } = await SDKClient.sendActionMessage({
+                interactionId: this.interactionId.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        view: this.userView === 'call' ? 'chat' : 'call'
+                    },
+                    status: 'request',
+                    type: 'toggleview',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+
+            if (response.ResultCode === 1) {
+                this._appUIService.showSnackbar('Toggle view request sent successfully');
+            } else {
+                this._appUIService.showSnackbar('Toggle view request failed!', 'failure');
+            }
+        } catch (error) {
+            this._appUIService.showSnackbar('Toggle view request error!', 'failure');
+            throwADError('Error in TwAudioVideoControlsComponent.toggleUserView', error);
         } finally {
             this._fuseProgressBarService.hide();
         }

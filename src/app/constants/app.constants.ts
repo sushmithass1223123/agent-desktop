@@ -278,7 +278,8 @@ export const AGENT_FEATURES = {
     IsEmailWorkbenchQueueAllowed: 'isemailworkbenchqueueallowed',
     IsEmailWorkbenchInboxAllowed: 'isemailworkbenchinboxallowed',
     IsEmailWorkbenchSentAllowed: 'isemailworkbenchsentallowed',
-    IsEmailWorkbenchDraftsAllowed: 'isemailworkbenchdraftsallowed'
+    IsEmailWorkbenchDraftsAllowed: 'isemailworkbenchdraftsallowed',
+    IsToggleChatUserViewEnabled: 'istogglechatuserviewenabled'
 };
 
 /**

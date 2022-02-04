@@ -1371,7 +1371,8 @@
                                                         "AgentVideo": true,
                                                         "CustomerAudio": true,
                                                         "CustomerVideo": false
-                                                    }
+                                                    },
+                                                    "ToggleUserViewAllowed": true
                                                 }
                                             },
                                             {
