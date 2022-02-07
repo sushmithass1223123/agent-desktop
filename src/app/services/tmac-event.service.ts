@@ -1,3 +1,4 @@
+import { AOTWidget, WidgetAction } from '@ad/types';
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -21,7 +22,7 @@ import {
     TmacServerConnectionSuccess
 } from '@tmac/sdk';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
-import { CustomTMACEventTypes, IAction, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
+import { CustomTMACEventTypes, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { upperFirst } from 'lodash';
@@ -203,7 +204,7 @@ export class TMACEventService extends SharedWrapper {
             // get the element
             const element = opener ?? parent;
             // check if the element is present
-            if (element) {
+            if (element != window) {
                 // send post message to the element
                 element.postMessage(
                     {
@@ -277,7 +278,7 @@ export class TMACEventService extends SharedWrapper {
                         const widget = this._aotWidgets.filter((w: IWidget) => w.Type === 'tw-register-callback')?.[0];
                         // check if widget is found
                         if (widget) {
-                            this._aotWidgetService.addWidget(widget);
+                            this._aotWidgetService.addWidget(widget as AOTWidget);
                         }
                         break;
                     }
@@ -342,7 +343,7 @@ export class TMACEventService extends SharedWrapper {
                         }
                         // check if widget is found
                         if (widget) {
-                            this._aotWidgetService.addWidget(widget);
+                            this._aotWidgetService.addWidget(widget as AOTWidget);
                         }
                         break;
                     }
@@ -619,7 +620,7 @@ export class TMACEventService extends SharedWrapper {
         const icon = data.Icon || '';
         const width = data.Width || 1000;
         const height = data.Height || 700;
-        const actions: IAction[] = data.Actions || ['destroy', 'maximize'];
+        const actions: WidgetAction[] = data.Actions || ['destroy', 'maximize'];
         const viewState = data.ViewState || 'restore';
 
         // create a widget model
@@ -640,7 +641,7 @@ export class TMACEventService extends SharedWrapper {
 
         widget.Data.Url = url.toString();
 
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
     };
 
     /**

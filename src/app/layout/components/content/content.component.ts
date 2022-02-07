@@ -3,7 +3,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { IWidget } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 /**
  * Content Component
@@ -62,9 +62,15 @@ export class ContentComponent implements OnInit, OnDestroy {
         this._aotWidgetService.subscribe();
 
         // subscribe to AOT widgets
-        this._aotWidgetService.widgets.pipe(takeUntil(this._unsubscribeAll)).subscribe((widgets: IWidget[]) => {
-            this.aotWidgets = widgets;
-        });
+        this._aotWidgetService.widgets
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                map((widgets) => widgets.filter((widget) => !widget.Config.LocalAOT)),
+                filter((widgets) => widgets.length > 0)
+            )
+            .subscribe((widgets) => {
+                this.aotWidgets = widgets;
+            });
     }
 
     /**

@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -153,7 +154,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
     openAOTWidget(widget: IWidget): void {
         // if widget data is there, then open AOT
         if (widget) {
-            this._aotWidgetService.addWidget(widget);
+            this._aotWidgetService.addWidget(widget as AOTWidget);
             this._fuseSidebarService.getSidebar('quickPanel').close();
         }
     }

@@ -22,10 +22,10 @@
     >
         <mat-icon>aspect_ratio</mat-icon>
     </button>
-
+<!-- 
     <button *ngIf="data.Config.Actions.includes('pin')" mat-icon-button [matTooltip]="data.Config.Pinned ? 'Unpin' : 'Pin'">
         <mat-icon [ngClass]="{ 'rotate-45': data.Config.Pinned }">push_pin</mat-icon>
-    </button>
+    </button> -->
 
     <button *ngIf="data.Config.Actions.includes('refresh')" mat-icon-button matTooltip="Refresh" (click)="refreshWidget()">
         <mat-icon>refresh</mat-icon>

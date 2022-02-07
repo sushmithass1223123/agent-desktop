@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { fuseAnimations } from '@fuse/animations';
@@ -7,6 +8,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import {
     ActionMessageReceivedEvent,
@@ -205,6 +207,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     onCallHoldEvent: boolean;
 
     /**
+     *
+     */
+    userView: 'call' | 'chat';
+
+    /**
      * Constructor
      */
     constructor(
@@ -215,7 +222,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
         private _agentFeaturesService: AgentFeaturesService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _interactionManagerService: InteractionManagerService
     ) {
         super();
 
@@ -279,18 +287,27 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
         SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
+        const widgetData = this.data.Data;
+
         // check for the avEvent
-        const avEvent = this.data.Data.AVEvent || null;
+        const avEvent = widgetData.AVEvent || null;
 
         // create the AV channel connection
         this.createAVConnection(avEvent);
 
         this.wrcCallType = this.data.InteractionDetails.CallType === 'video' ? TEnums.WrcCallTypes.Video : TEnums.WrcCallTypes.Audio;
 
+        this.userView = 'call';
+
         // start call
         if (this.data.InteractionDetails.ConferenceType === 'conf') {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
-            // show UI
+            this.showUI = true;
+        } else if (this.data.InteractionDetails.ConferenceType === 'whisper') {
+            this.avConn.join(this.wrcCallType, { mode: 'wisper' as 'whisper' });
+            this.showUI = true;
+        } else if (this.data.InteractionDetails.ConferenceType === 'silent') {
+            this.avConn.join(this.wrcCallType, { mode: 'monitor' });
             this.showUI = true;
         } else if (this.data.InteractionDetails.Direction === 'out') {
             this.avConn
@@ -298,8 +315,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 .then((dt: any) => {
                     // check the response is sucess or timed out
                     if (dt.code === TEnums.WrcCodes.RequestTimeout) {
-                        // close the call widget
-                        this._aotWidgetService.destroyWidget(this.data.ID);
+                        // close the widget
+                        this.destroyWidget();
                     }
                     // show UI
                     this.showUI = true;
@@ -311,24 +328,29 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         this.muteAVOnHold = {
             enabled:
-                this.data.Data.MuteAVOnHold?.AgentAudio ||
-                this.data.Data.MuteAVOnHold?.AgentVideo ||
-                this.data.Data.MuteAVOnHold?.CustomerAudio ||
-                this.data.Data.MuteAVOnHold?.CustomerVideo,
-            agentAudio: this.data.Data.MuteAVOnHold?.AgentAudio,
-            agentVideo: this.data.Data.MuteAVOnHold?.AgentVideo,
-            customerAudio: this.data.Data.MuteAVOnHold?.CustomerAudio,
-            customerVideo: this.data.Data.MuteAVOnHold?.CustomerVideo
+                widgetData.MuteAVOnHold?.AgentAudio ||
+                widgetData.MuteAVOnHold?.AgentVideo ||
+                widgetData.MuteAVOnHold?.CustomerAudio ||
+                widgetData.MuteAVOnHold?.CustomerVideo,
+            agentAudio: widgetData.MuteAVOnHold?.AgentAudio,
+            agentVideo: widgetData.MuteAVOnHold?.AgentVideo,
+            customerAudio: widgetData.MuteAVOnHold?.CustomerAudio,
+            customerVideo: widgetData.MuteAVOnHold?.CustomerVideo
         };
+
+        // override the on end chat to make sure the call is ended before the chat end
+        if (widgetData.Source === 'TwChatControlsComponent') {
+            widgetData.Opener = widgetData.Opener as TwChatControlsComponent;
+            widgetData.Opener.onEndChat = async () => {
+                return this.endCall(true);
+            };
+        }
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        // call the wrapper destroy method
-        this.destroyWrapper();
-
         // check if the interaction is on hold
         if (this.hold) {
             this.holdUnholdCall();
@@ -347,6 +369,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         this.avConn = null;
         this.data.Data.Opener?.disposeCallWidget();
+
+        // add the customer stream to interaction otherdata
+        this._interactionManagerService.updateInteraction(this.interactionId, {
+            otherData: {
+                customerStream: undefined
+            }
+        });
+
+        // call the wrapper destroy method
+        this.destroyWrapper();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -500,6 +532,13 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // check if the user connected is customer
                     if (evt.data.streamInfo?.user === 'customer' && evt.data.streamInfo?.type !== 'screenshare') {
                         evt.data.streamInfo.user = this.data.InteractionDetails.CustomerName;
+
+                        // add the customer stream to interaction otherdata
+                        this._interactionManagerService.updateInteraction(this.interactionId, {
+                            otherData: {
+                                customerStream: evt.data.stream
+                            }
+                        });
                     } else {
                         // other agent connected
                     }
@@ -680,30 +719,40 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // mark the device as selected if VIVR send "camerachange"  with action
             // or if we get ack from VIVR for the request "togglecamera"
             const msg = JSON.parse(evt.Message);
+            const type = msg.type.toLowerCase();
 
-            switch (msg.type.toLowerCase()) {
+            switch (type) {
                 case 'camerachange':
                     if (msg.status === 'action') {
                         this.setCameraSelected(msg.data.deviceId);
                     }
                     break;
                 case 'togglecamera':
+                case 'toggleview':
                     switch (msg.status) {
                         case 'ack':
                             break;
                         case 'accepted':
-                            this._appUIService.showSnackbar('Toggle camera request is accepted by customer');
+                            this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is accepted by customer`);
                             break;
                         case 'rejected':
-                            this._appUIService.showSnackbar('Toggle camera request is rejected by customer!', 'failure');
+                            this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is rejected by customer!`, 'failure');
                             break;
                         case 'success':
-                            this._appUIService.showSnackbar('Customer camera toggled successfully');
-                            this.setCameraSelected(msg.data.deviceId);
+                            this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggled successfully`);
+                            // set camera selected for 'togglecamera'
+                            if (type === 'togglecamera') this.setCameraSelected(msg.data.deviceId);
+                            // set user view for 'toggleview'
+                            else if (type === 'toggleview') this.userView = msg.data.view;
                             break;
                         case 'failed':
-                            this._appUIService.showSnackbar('Customer camera toggle failed!', 'failure');
+                            this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggle failed!`, 'failure');
                             break;
+                    }
+                    break;
+                case 'viewchange':
+                    if (msg.status === 'action') {
+                        this.userView = msg.data.view;
                     }
                     break;
             }
@@ -1065,13 +1114,17 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * End Call
      * @method endCall
      */
-    public endCall(): void {
-        // end the call
+    public async endCall(endOnly = false): Promise<boolean> {
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
             this.avConn.endCall(this.wrcCallType, '');
+        }
+
+        // of endOnly then return
+        if (endOnly) {
+            return true;
         }
 
         if (this.data.Data.EndInteractionOnAVEnd) {
@@ -1081,6 +1134,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // close the widget
         this.destroyWidget();
+
+        return true;
     }
 
     /**
@@ -1103,7 +1158,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     Url
                 };
 
-                this._aotWidgetService.addWidget(widget);
+                this._aotWidgetService.addWidget(widget as AOTWidget);
 
                 if (Customer) {
                     await SDKClient.sendActionMessage({
@@ -1171,6 +1226,41 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } catch (error) {
             this._appUIService.showSnackbar('Toggle camera request error!', 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.toggleUserCamera', error);
+        } finally {
+            this._fuseProgressBarService.hide();
+        }
+    }
+
+    /**
+     * To toggle user view
+     */
+    public async toggleUserView(): Promise<void> {
+        try {
+            this._fuseProgressBarService.show();
+
+            const { response } = await SDKClient.sendActionMessage({
+                interactionId: this.interactionId.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        view: this.userView === 'call' ? 'chat' : 'call'
+                    },
+                    status: 'request',
+                    type: 'toggleview',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+
+            if (response.ResultCode === 1) {
+                this._appUIService.showSnackbar('Toggle view request sent successfully');
+            } else {
+                this._appUIService.showSnackbar('Toggle view request failed!', 'failure');
+            }
+        } catch (error) {
+            this._appUIService.showSnackbar('Toggle view request error!', 'failure');
+            throwADError('Error in TwAudioVideoControlsComponent.toggleUserView', error);
         } finally {
             this._fuseProgressBarService.hide();
         }
@@ -1276,6 +1366,10 @@ interface IWidgetData extends CommonWidgetData {
      * Send messsge function from opener
      */
     SendMessage?: () => {};
+    /**
+     * To end call from opener
+     */
+    EndCall?: () => void;
 }
 
 interface IInteractionDetails {

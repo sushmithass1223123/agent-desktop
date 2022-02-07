@@ -30,7 +30,7 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": false, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": { "Enabled": true, "ByTeam": true, "DefaultACW": false, "DefaultLogout": false }
                                 }
                             },
                             {
@@ -387,6 +387,7 @@
                                         "Anchor": false,
                                         "AOT": true,
                                         "AutoOpen": false,
+                                        "LocalAOT": true,
                                         "Icon": "event_note",
                                         "Class": "",
                                         "Position": { "X": 4, "Y": 4, "W": 400, "H": 400 },
@@ -1370,7 +1371,8 @@
                                                         "AgentVideo": true,
                                                         "CustomerAudio": true,
                                                         "CustomerVideo": false
-                                                    }
+                                                    },
+                                                    "ToggleUserViewAllowed": true
                                                 }
                                             },
                                             {
@@ -1634,6 +1636,32 @@
                             ],
                             "AOT": [
                                 {
+                                    "Name": "External Pop",
+                                    "Description": "",
+                                    "Key": "External-Pop",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": false,
+                                        "Hidden": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": true,
+                                        "AutoOpen": true,
+                                        "LocalAOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 1, "Y": 1, "W": 300, "H": 300 },
+                                        "Actions": ["maximize", "destroy", "resize"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "http://127.0.0.1:5500/index.html"
+                                    }
+                                },
+                                {
                                     "Name": "VKYC Audit",
                                     "Description": "",
                                     "Key": "VKYC-Audit",
@@ -1645,6 +1673,7 @@
                                         "Anchor": false,
                                         "AOT": false,
                                         "AutoOpen": false,
+                                        "LocalAOT": true,
                                         "Icon": "published_with_changes",
                                         "Class": "",
                                         "Position": { "X": 2, "Y": 1, "W": 700, "H": 500 },
@@ -1655,7 +1684,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "http://localhost:4301/?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
+                                        "Url": "https://dice.tetherfi.cloud/AD-Video-Audit-Widget?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
                                     }
                                 },
                                 {

@@ -25,7 +25,7 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TwSuActiveAgents } from '@ad/types';
+import { AOTWidget, TwSuActiveAgents } from '@ad/types';
 
 /**
  * Active agents component widget
@@ -345,7 +345,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
 
         // check for the type and subtype
-        if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
+        if (this.featureMap[feature.Feature].Type !== type || !this.featureMap[feature.Feature].SubType.includes(subType)) {
             return false;
         }
 
@@ -354,7 +354,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             return feature.IsEnabled;
         }
         // check if interaction action
-        else if (type === 'interaction' && this.featureMap[feature.Feature].Type === type && this.featureMap[feature.Feature].SubType === subType) {
+        else if (
+            type === 'interaction' &&
+            this.featureMap[feature.Feature].Type === type &&
+            this.featureMap[feature.Feature].SubType.includes(subType)
+        ) {
             return feature.IsEnabled;
         } else {
             return false;
@@ -499,7 +503,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
         widget.Data = item;
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 
     /**

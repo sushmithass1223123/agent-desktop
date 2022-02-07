@@ -1,10 +1,11 @@
+import { AOTWidget, Widget } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { IAgentData, SDKClient } from '@tmac/sdk';
+import { IAgentData, SDKClient, TUtils } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -29,15 +30,15 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     /**
      * To hold static widgets
      */
-    staticWidgets = [];
+    staticWidgets: Widget[] = [];
     /**
      * To hold dynamic widgets
      */
-    dynamicWidgets = [];
+    dynamicWidgets: Widget[] = [];
     /**
      * To hold AOT widgets
      */
-    aotWidgets = [];
+    aotWidgets: AOTWidget[] = [];
     /**
      * Loaded flag
      */
@@ -155,6 +156,12 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         this.staticWidgets = supervisorWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         this.dynamicWidgets = supervisorWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         this.aotWidgets = supervisorWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.aotWidgets = this.aotWidgets.map((w) => {
+            if (!w.ID) {
+                w.ID = TUtils.Generic.uuid();
+            }
+            return w;
+        });
 
         // process aot widgets
         this._aotWidgetService.processAOTWidgets(this.aotWidgets);

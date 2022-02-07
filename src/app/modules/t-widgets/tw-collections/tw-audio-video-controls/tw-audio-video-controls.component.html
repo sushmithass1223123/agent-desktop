@@ -77,6 +77,17 @@
                         >
                             <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
                         </button>
+
+                        <button
+                            *ngIf="data.Data.Opener.agentFeatures.toggleUserView"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            matTooltip="Toggle User View"
+                            (click)="toggleUserView()"
+                        >
+                            <mat-icon> {{ userView === 'call' ? 'view_carousel' : 'wysiwyg' }} </mat-icon>
+                        </button>
                     </div>
 
                     <div fxLayout="row" fxLayoutAlign="start center" class="actions-2">
@@ -119,7 +130,7 @@
                     fxFlex
                     fxLayout="row wrap"
                     fxLayoutAlign="center start"
-                    class="w-100-p border-radius-20 remote-video-container"
+                    class="w-100-p border-radius-20 remote-video-container twd-overflow-auto"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animateStagger]="{ value: '50' }"
                 >
@@ -239,6 +250,17 @@
                                     <span>{{ item.label }}</span>
                                 </button>
                             </mat-menu>
+                        </button>
+
+                        <button
+                            *ngIf="data.Data.Opener.agentFeatures.toggleUserView"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            matTooltip="Toggle User View"
+                            (click)="toggleUserView()"
+                        >
+                            <mat-icon> {{ userView === 'call' ? 'view_carousel' : 'wysiwyg' }} </mat-icon>
                         </button>
                     </div>
 

@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -73,7 +74,7 @@ export class WidgetFabComponent implements OnInit, OnChanges {
     openAOTWidget(widget: IWidget): void {
         // if widget data is there, then open AOT
         if (widget) {
-            this._aotWidgetService.addWidget(widget);
+            this._aotWidgetService.addWidget(widget as AOTWidget);
             this.openWidgetList = false;
         }
     }
