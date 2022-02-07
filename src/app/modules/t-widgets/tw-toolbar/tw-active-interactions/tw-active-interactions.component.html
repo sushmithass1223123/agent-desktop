@@ -1,5 +1,5 @@
 <div fxFlex fxFill fxLayout="row" fxLayoutAlign=" center" *ngIf="interactionList.length || emailInteractionList.length">
-    <ng-container *ngFor="let item of interactionList">
+    <ng-container *ngFor="let item of interactionList; trackBy: trackBy">
         <div
             fxLayout="row"
             class="voice grey-300 border-radius-30 p-4 mx-4"
@@ -52,7 +52,7 @@
         </div>
 
         <avatar
-            *ngIf="item.type === 'textchat'"
+            *ngIf="item.type === 'textchat' && (item.otherData.customerStream === undefined || item.status === 'hold')"
             class="mx-4 border-radius-100"
             [ngClass]="{
                 'mat-elevation-z1': item.status !== 'disconnected'
@@ -65,6 +65,22 @@
             matBadgePosition="after"
             (click)="openInteraction(item)"
         ></avatar>
+
+        <div
+            *ngIf="item.type === 'textchat' && item.otherData.customerStream && item.status !== 'hold'"
+            class="twd-w-12 twd-h-12 twd-rounded-full twd-border-[3px] twd-border-primary-700 mat-elevation-z2 twd-cursor-pointer"
+            [matTooltip]="item.user"
+            (click)="openInteraction(item)"
+        >
+            <video
+                class="twd-w-full twd-h-full twd-rounded-full twd-object-cover"
+                autoplay
+                playsinline="true"
+                muted="true"
+                [srcObject]="item.otherData.customerStream"
+                [id]="item.otherData.customerStream.id"
+            ></video>
+        </div>
     </ng-container>
 
     <div *ngIf="emailInteractionList.length">

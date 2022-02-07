@@ -70,7 +70,6 @@
                             "./node_modules/@ctrl/ngx-emoji-mart/picker.css"
                         ],
                         "scripts": [],
-                        "showCircularDependencies": true,
                         "allowedCommonJsDependencies": [
                             "lodash",
                             "@swimlane/dragula",
@@ -111,7 +110,6 @@
                             },
                             "outputHashing": "all",
                             "sourceMap": true,
-                            "extractCss": true,
                             "namedChunks": false,
                             "aot": true,
                             "extractLicenses": true,

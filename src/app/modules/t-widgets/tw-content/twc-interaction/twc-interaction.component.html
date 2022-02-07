@@ -31,6 +31,12 @@
                 [widgets]="item.widgets.dynamic"
             ></tw-template>
 
+            <ng-container *ngIf="item.widgets.localAOT$ | async as localAOTs">
+                <div class="aot-widgets">
+                    <tw-template *ngFor="let item of localAOTs" [widget]="item"></tw-template>
+                </div>
+            </ng-container>
+
             <div
                 class="tw-aot-fab"
                 cdkDrag

@@ -82,6 +82,9 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
             widget.InteractionDetails = this.data.InteractionDetails;
             widget.Data.Path = this.data.Data.Path;
             widget.Data.RouteOnInteraction = this.data.Data.RouteOnInteraction ?? true;
+            this.maximized[widget.Type] = widget.Config.ViewState === 'maximize';
+            this.collapsed[widget.Type] = widget.Config.ViewState === 'collapse';
+            this.floating[widget.Type] = widget.Config.ViewState === 'float';
         });
     }
     /**
@@ -90,41 +93,5 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-
-        this.unsubscribeAll.next(null);
-        this.unsubscribeAll.complete();
-    }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Private methods
-    // -----------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * To updted the maximized reference of widget based on type
-     * @param isMaximized Maximized flag
-     * @param type Widget type
-     */
-    public onmaximized(isMaximized: boolean, type: string): void {
-        this.maximized[type] = isMaximized;
-    }
-    /**
-     * To updted the collapsed reference of widget based on type
-     * @param isCollapsed Collapsed flag
-     * @param type Widget type
-     */
-    public onCollapsed(isCollapsed: boolean, type: string): void {
-        this.collapsed[type] = isCollapsed;
-    }
-    /**
-     * To updted the floating reference of widget based on type
-     * @param isFloating Floating flag
-     * @param type Widget type
-     */
-    public onFloating(isFloating: boolean, type: string): void {
-        this.floating[type] = isFloating;
     }
 }

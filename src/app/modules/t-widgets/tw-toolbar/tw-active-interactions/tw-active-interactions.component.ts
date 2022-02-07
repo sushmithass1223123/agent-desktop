@@ -85,6 +85,16 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
     }
 
     /**
+     * Trackby for mat tree node
+     * @param _index
+     * @param email
+     * @returns
+     */
+    trackBy = (_index: number, item: InteractionRef): string => {
+        return item.status || item.user || item.otherData;
+    };
+
+    /**
      * Toggle button
      * @param {boolean} show
      * @param {MatButton} btn

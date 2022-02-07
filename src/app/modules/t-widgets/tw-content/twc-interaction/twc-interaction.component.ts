@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -21,7 +22,7 @@ import { InteractionManagerService } from 'app/services/interaction-manager.serv
 import { throwADError } from 'app/utils';
 import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 /**
  * TwcInteractionComponent
@@ -212,7 +213,15 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             widgets: {
                 static: staticWidgets,
                 dynamic: dynamicWidgets,
-                aot: aotWidgets
+                aot: aotWidgets,
+                localAOT$: this._aotWidgetService.widgets.pipe(
+                    takeUntil(this.unsubscribeAll),
+                    map((widgets) =>
+                        widgets.filter(
+                            (f: AOTWidget<any, IUIEvent>) => f.Config.LocalAOT && f.InteractionDetails?.InteractionID === evt.InteractionID
+                        )
+                    )
+                )
             }
         });
 
