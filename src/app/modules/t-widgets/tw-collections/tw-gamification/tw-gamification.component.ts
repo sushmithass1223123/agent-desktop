@@ -1,3 +1,4 @@
+import { AOTWidget, WidgetAction } from '@ad/types';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -5,12 +6,11 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IAction, IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
+import { IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { TwGamification } from '@ad/types';
 
 type Coin = {
     /**
@@ -508,7 +508,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         const icon = '';
         const width = 1000;
         const height = 700;
-        const actions: IAction[] = ['destroy', 'maximize'];
+        const actions: WidgetAction[] = ['destroy', 'maximize'];
         const viewState = 'restore';
 
         // create a widget model
@@ -525,7 +525,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
 
         widget.Data.Url = url.toString();
 
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 }
 

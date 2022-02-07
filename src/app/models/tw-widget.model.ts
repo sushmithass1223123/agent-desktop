@@ -1,5 +1,5 @@
-import { IWidgetConfig } from 'app/interfaces';
 import { TUtils } from '@tmac/sdk';
+import { WidgetConfig } from '../../../libs/types/src/core';
 /**
  * Widget model
  */
@@ -21,9 +21,9 @@ export class TwWidgetModel {
      */
     Type: string;
     /**
-     * Configuration object of widget of type IWidgetConfig
+     * Configuration object of widget of type WidgetConfig
      */
-    Config: IWidgetConfig;
+    Config: WidgetConfig;
     /**
      * Any extra data for the widget
      */
@@ -35,7 +35,7 @@ export class TwWidgetModel {
     /**
      * [OPTIONAL] To destory the widget
      */
-    destroy: () => void;
+    destroy?: () => void;
     /**
      * [OPTIONAL] To trigger an event before destroying the widget
      */
@@ -53,6 +53,7 @@ export class TwWidgetModel {
             Anchor: false,
             AOT: false,
             AutoOpen: false,
+            LocalAOT: false,
             Icon: icon || 'widgets',
             Class: '',
             Position: {

@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
@@ -727,7 +728,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         };
 
         // open call widget
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
         // assign to the local variable
         this.callWidget = widget;
     }

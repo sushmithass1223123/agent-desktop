@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
@@ -1234,7 +1235,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 templateRef: this.ReplyEditorDialog
             };
             widget.Data = this.replyEditorModal;
-            this._aotWidgetService.addWidget(widget);
+            this._aotWidgetService.addWidget(widget as AOTWidget);
         } catch (e) {
             console.error(e);
             this.setComponentState('email/reply/failure');

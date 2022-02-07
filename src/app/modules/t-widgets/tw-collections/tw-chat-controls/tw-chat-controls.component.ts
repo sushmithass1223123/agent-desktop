@@ -1,3 +1,4 @@
+import { AOTWidget, WidgetConfig } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -72,6 +73,7 @@ import {
     SnackbarStateTypes
 } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
+import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
@@ -216,7 +218,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * AV call widget ref
      */
-    callWidget: IWidget;
+    callWidget: AOTWidget;
     /**
      * Flag to disable AV escalate buttons
      */
@@ -252,15 +254,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Chatmode
      */
-    chatMode: string;
+    chatMode: 'audio' | 'video';
     /**
      * Line ID
      */
     lineId: string;
-    /**
-     * Transfer/Conference widgetf
-     */
-    tranfConfWidget: IWidget;
     /**
      * Flag to show emoji overlay
      */
@@ -474,6 +472,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Media download
          */
         mediaDownload: boolean;
+        /**
+         * To toggle user view mode
+         */
+        toggleUserView: boolean;
     };
     /**
      * Connected event ref
@@ -628,7 +630,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             voicenote: this.widgetData.VoiceNoteAllowed ?? false,
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
             webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
-            mediaDownload: false
+            mediaDownload: false,
+            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false
         };
 
         // set the user info
@@ -829,6 +832,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
                 case AGENT_FEATURES.IsChatMediaDownloadEnabled:
                     this.agentFeatures.mediaDownload = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsToggleChatUserViewEnabled:
+                    this.agentFeatures.toggleUserView = f.IsEnabled;
                     break;
                 default:
             }
@@ -1265,17 +1271,40 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
-        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
+        const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon) as AOTWidget<any, any>;
 
         widget.Config.Anchor = true;
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
         widget.Config.Actions = ['collapse', 'maximize', 'resize'];
+        widget.Config.LocalAOT = true;
+
+        try {
+            // check if audio/video call widget config is overridden
+            if (typeof this.widgetData.CallWidget === 'object') {
+                if (param === 'audio') {
+                    widget.Config = { ...widget.Config, ...this.widgetData.CallWidget?.Audio };
+                } else {
+                    widget.Config = { ...widget.Config, ...this.widgetData.CallWidget?.Video };
+                }
+            }
+        } catch (error) {
+            throwADError('TwCallControlsWidget.openCallWidget.CallWidget', error);
+        }
+
+        // check if the widget is disabled in overridden config
+        if (!widget.Config.Enabled) {
+            this._appUIService.showSnackbar(
+                `${param === 'audio' ? 'Audio Call' : 'Video Call'} Widget is disabled, Please contact the administrator!`,
+                'failure'
+            );
+            return;
+        }
 
         widget.InteractionDetails = {
             NRIC: this.remoteUserConnectedEvent.NRIC,
             RegNo1: this.remoteUserConnectedEvent.RegNo1,
-            InteractionID: this.data.InteractionDetails?.InteractionID,
+            InteractionID: this.data.InteractionDetails.InteractionID,
             ConferenceType: this.conferenceType,
             CustomerName: this.customerName,
             Direction: direction,
@@ -1295,6 +1324,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.callWidget = widget;
         // disable AV buttons
         this.disableAV = true;
+
+        // update the interaction icon
+        this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
+            otherData: {
+                icon: widget.Config.Icon
+            }
+        });
     }
 
     /**
@@ -1302,36 +1338,46 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param reason Reson of chat end
      * @param btn [OPTIONAL] End button to disable/enable
      */
-    private endChat(reason: string, btn?: MatButton): void {
+    private async endChat(reason: string, btn?: MatButton): Promise<void> {
         // show the progress bar
         this._fuseProgressBarService.show();
         // disable the button
         if (btn) {
             btn.disabled = true;
         }
-        SDKClient.endTextChat(
-            {
-                interactionId: this.interaction.InteractionID.toString(),
-                reason
-            },
-            null
-        )
-            .then(() => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-                // check to close interaction on end
-                if (this.widgetData.CloseInteractionOnEnd) {
-                    this.closeInteraction(null);
-                }
-            })
-            .catch(() => {
-                // enable if something goes wrong
-                if (btn) {
-                    btn.disabled = false;
-                }
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('End chat failed!', 'failure');
-            });
+
+        // check if there is any call going on, then end the call first
+        if (this.callWidget) {
+            await this.onEndChat();
+        }
+
+        try {
+            await SDKClient.endTextChat(
+                {
+                    interactionId: this.interaction.InteractionID.toString(),
+                    reason
+                },
+                null
+            );
+
+            // check to close interaction on end
+            if (this.widgetData.CloseInteractionOnEnd) {
+                this.closeInteraction(null);
+            }
+        } catch (error) {
+            // enable if something goes wrong
+            if (btn) {
+                btn.disabled = false;
+            }
+
+            this._appUIService.showSnackbar('End chat failed!', 'failure');
+        } finally {
+            this._fuseProgressBarService.hide();
+        }
+    }
+
+    async onEndChat(): Promise<boolean> {
+        return true;
     }
 
     /**
@@ -1631,7 +1677,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the conference type
         this.conferenceType = evt.ConferenceType;
         // update the chatmode
-        this.chatMode = evt.ChatMode;
+        this.chatMode = evt.ChatMode as any;
         // to not open video dialog when interaction is over
         if (!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) {
             this.escalateToAV(this.chatMode as any);
@@ -2124,11 +2170,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._appUIService.showSnackbar(alertMessage);
         }
 
-        // destroy the transfer/conf widget
-        if (this.tranfConfWidget) {
-            this._aotWidgetService.destroyWidget(this.tranfConfWidget.ID);
-            this.tranfConfWidget = null;
-        }
         // close the conf/transfer if opened
         this.transferConfDialogRef?.close();
         this.confirmDialogRef?.close();
@@ -2454,10 +2495,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To dispose call widget
      */
     public disposeCallWidget(): void {
-        // dispose the call widget
-        this.callWidget = null;
-        // enable AV buttons
-        this.disableAV = false;
+        // update the interaction icon
+        this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
+            otherData: {
+                icon: this.isSMM ? 'custom-' + this.channel : 'chat'
+            }
+        });
+
+        setTimeout(() => {
+            // dispose the call widget
+            this.callWidget = undefined;
+            // enable AV buttons
+            this.disableAV = false;
+        });
     }
 
     /**
@@ -2895,7 +2945,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
             });
             if (res.response?.ResultMessage === 'Success') {
-                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create');
+                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
                 widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
                 widget.Config.ViewState = 'maximize';
                 widget.Config.Anchor = true;
@@ -3192,4 +3242,21 @@ interface IWidgetData extends CommonWidgetData {
          */
         CustomerVideo: boolean;
     };
+    /**
+     * Call widget config
+     */
+    CallWidget: {
+        /**
+         * Audio call widget config
+         */
+        Audio: Partial<WidgetConfig>;
+        /**
+         * Video call widget config
+         */
+        Video: Partial<WidgetConfig>;
+    };
+    /**
+     * To toggle user view
+     */
+    ToggleUserViewAllowed: boolean;
 }

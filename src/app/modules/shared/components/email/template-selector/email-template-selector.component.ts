@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TwEmailTemplatePreviewComponent } from '@modules/t-widgets/tw-collections/tw-email-template-preview/tw-email-template-preview.component';
@@ -163,7 +164,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             widget.Config.Position.W = 500;
             widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
             widget.Data = data;
-            this.aotService.addWidget(widget);
+            this.aotService.addWidget(widget as AOTWidget);
             this.templatePreview.aots.push(widget.ID);
         } else {
             this.previewDialogRef = this.matDialog.open(TwEmailTemplatePreviewComponent, {
