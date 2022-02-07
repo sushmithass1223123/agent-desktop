@@ -204,7 +204,7 @@ export class TMACEventService extends SharedWrapper {
             // get the element
             const element = opener ?? parent;
             // check if the element is present
-            if (element) {
+            if (element != window) {
                 // send post message to the element
                 element.postMessage(
                     {
