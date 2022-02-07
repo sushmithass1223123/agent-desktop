@@ -287,8 +287,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.events.on('CallHoldEvent', this.CallHoldEvent);
         SDKClient.events.on('CallHoldReconnectEvent', this.CallHoldReconnectEvent);
 
+        const widgetData = this.data.Data;
+
         // check for the avEvent
-        const avEvent = this.data.Data.AVEvent || null;
+        const avEvent = widgetData.AVEvent || null;
 
         // create the AV channel connection
         this.createAVConnection(avEvent);
@@ -326,24 +328,29 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         this.muteAVOnHold = {
             enabled:
-                this.data.Data.MuteAVOnHold?.AgentAudio ||
-                this.data.Data.MuteAVOnHold?.AgentVideo ||
-                this.data.Data.MuteAVOnHold?.CustomerAudio ||
-                this.data.Data.MuteAVOnHold?.CustomerVideo,
-            agentAudio: this.data.Data.MuteAVOnHold?.AgentAudio,
-            agentVideo: this.data.Data.MuteAVOnHold?.AgentVideo,
-            customerAudio: this.data.Data.MuteAVOnHold?.CustomerAudio,
-            customerVideo: this.data.Data.MuteAVOnHold?.CustomerVideo
+                widgetData.MuteAVOnHold?.AgentAudio ||
+                widgetData.MuteAVOnHold?.AgentVideo ||
+                widgetData.MuteAVOnHold?.CustomerAudio ||
+                widgetData.MuteAVOnHold?.CustomerVideo,
+            agentAudio: widgetData.MuteAVOnHold?.AgentAudio,
+            agentVideo: widgetData.MuteAVOnHold?.AgentVideo,
+            customerAudio: widgetData.MuteAVOnHold?.CustomerAudio,
+            customerVideo: widgetData.MuteAVOnHold?.CustomerVideo
         };
+
+        // override the on end chat to make sure the call is ended before the chat end
+        if (widgetData.Source === 'TwChatControlsComponent') {
+            widgetData.Opener = widgetData.Opener as TwChatControlsComponent;
+            widgetData.Opener.onEndChat = async () => {
+                return this.endCall(true);
+            };
+        }
     }
 
     /**
      * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
      */
     ngOnDestroy(): void {
-        // call the wrapper destroy method
-        this.destroyWrapper();
-
         // check if the interaction is on hold
         if (this.hold) {
             this.holdUnholdCall();
@@ -369,6 +376,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 customerStream: undefined
             }
         });
+
+        // call the wrapper destroy method
+        this.destroyWrapper();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1104,13 +1114,17 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * End Call
      * @method endCall
      */
-    public endCall(): void {
-        // end the call
+    public async endCall(endOnly = false): Promise<boolean> {
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
             this.avConn.dropCall('');
         } else {
             this.avConn.endCall(this.wrcCallType, '');
+        }
+
+        // of endOnly then return
+        if (endOnly) {
+            return true;
         }
 
         if (this.data.Data.EndInteractionOnAVEnd) {
@@ -1120,6 +1134,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // close the widget
         this.destroyWidget();
+
+        return true;
     }
 
     /**
@@ -1350,6 +1366,10 @@ interface IWidgetData extends CommonWidgetData {
      * Send messsge function from opener
      */
     SendMessage?: () => {};
+    /**
+     * To end call from opener
+     */
+    EndCall?: () => void;
 }
 
 interface IInteractionDetails {

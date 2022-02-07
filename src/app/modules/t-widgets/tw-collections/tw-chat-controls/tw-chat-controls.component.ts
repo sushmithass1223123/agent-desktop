@@ -1338,36 +1338,46 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param reason Reson of chat end
      * @param btn [OPTIONAL] End button to disable/enable
      */
-    private endChat(reason: string, btn?: MatButton): void {
+    private async endChat(reason: string, btn?: MatButton): Promise<void> {
         // show the progress bar
         this._fuseProgressBarService.show();
         // disable the button
         if (btn) {
             btn.disabled = true;
         }
-        SDKClient.endTextChat(
-            {
-                interactionId: this.interaction.InteractionID.toString(),
-                reason
-            },
-            null
-        )
-            .then(() => {
-                // hide the progress bar
-                this._fuseProgressBarService.hide();
-                // check to close interaction on end
-                if (this.widgetData.CloseInteractionOnEnd) {
-                    this.closeInteraction(null);
-                }
-            })
-            .catch(() => {
-                // enable if something goes wrong
-                if (btn) {
-                    btn.disabled = false;
-                }
-                this._fuseProgressBarService.hide();
-                this._appUIService.showSnackbar('End chat failed!', 'failure');
-            });
+
+        // check if there is any call going on, then end the call first
+        if (this.callWidget) {
+            await this.onEndChat();
+        }
+
+        try {
+            await SDKClient.endTextChat(
+                {
+                    interactionId: this.interaction.InteractionID.toString(),
+                    reason
+                },
+                null
+            );
+
+            // check to close interaction on end
+            if (this.widgetData.CloseInteractionOnEnd) {
+                this.closeInteraction(null);
+            }
+        } catch (error) {
+            // enable if something goes wrong
+            if (btn) {
+                btn.disabled = false;
+            }
+
+            this._appUIService.showSnackbar('End chat failed!', 'failure');
+        } finally {
+            this._fuseProgressBarService.hide();
+        }
+    }
+
+    async onEndChat(): Promise<boolean> {
+        return true;
     }
 
     /**
