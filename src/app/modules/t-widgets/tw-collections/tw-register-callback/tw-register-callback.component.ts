@@ -249,7 +249,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
      */
     fetchCampaigns(): void {
         if (this.tcmProxyUrl) {
-            this.http.get<ResCampaign[]>(`${this.tcmProxyUrl}/Campaign/GetCampaigns`).subscribe(
+            this.http.get<ResCampaign[]>(`${this.tcmProxyUrl}Campaign/Getcampaigns`).subscribe(
                 (res) => {
                     this.getCampaignsReq = {
                         data: res,
@@ -323,7 +323,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             retryCount: this.selectedCampaign.retryCount
         };
         if (this.tcmProxyUrl) {
-            this.http.post(`${this.tcmProxyUrl}/Contact/CreateCampaignContact`, reqPacket).subscribe(
+            this.http.post(`${this.tcmProxyUrl}Contact/CreateCampaignContact`, reqPacket).subscribe(
                 () => {
                     this.addCampaingReq = {
                         error: false,

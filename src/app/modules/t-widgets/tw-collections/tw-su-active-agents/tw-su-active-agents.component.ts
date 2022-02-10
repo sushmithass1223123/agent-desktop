@@ -188,7 +188,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     private checkAgentFeatures(): void {
         try {
             const checkFeature = SDKClient.getAgentData().featuresList.filter(
-                (f) => f.Feature === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
+                (f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
             )?.[0];
             this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
         } catch (error) {}

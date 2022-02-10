@@ -72,7 +72,8 @@ export class MsTeamsAuthService extends SharedWrapper {
                 },
                 requestArgs: {
                     userName
-                }
+                },
+                method: 'POST'
             });
 
             return new Results(true, 'setSubscriptions', response);
