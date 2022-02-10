@@ -371,7 +371,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api" }
+                                    "Data": { "TCMProxyUrl": "http://10.133.146.11:5002" }
                                 }
                             ],
                             "AOT": [
@@ -1195,7 +1195,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api" }
+                                    "Data": { "TCMProxyUrl": "http://10.133.146.11:5002" }
                                 },
                                 {
                                     "Name": "Voice Canned Responses",
@@ -1656,10 +1656,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {
-                                        "OpenInNew": false,
-                                        "Url": "http://127.0.0.1:5500/index.html"
-                                    }
+                                    "Data": { "OpenInNew": false, "Url": "http://127.0.0.1:5500/index.html" }
                                 },
                                 {
                                     "Name": "VKYC Audit",
@@ -2078,7 +2075,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
+                                        "TCMProxyUrl": "http://10.133.146.11:5002",
                                         "DataMap": {
                                             "Name": {
                                                 "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
@@ -2364,7 +2361,7 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "SearchPollingInterval": 60000,
+                                                    "SearchPollingInterval": 0,
                                                     "DeleteAllowed": false,
                                                     "QueueTransferForAgent": false,
                                                     "TemplatesByTeam": false,
@@ -2661,5 +2658,5 @@
             ]
         }
     },
-    "Version": "5.1.1.30-beta.1"
+    "Version": "5.1.130"
 }

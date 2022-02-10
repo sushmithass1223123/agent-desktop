@@ -85,30 +85,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        let url = this.data.Data.TCMProxyUrl;
-        if (!url) {
-            this.getDashboardDataRes = {
-                error: true,
-                loading: false,
-                msg: 'TCMProxyUrl is missing from config'
-            };
-            return;
-        }
-        url = url.endsWith('/') ? url : url + '/';
-
-        const { agentId } = SDKClient.getAgentData();
-
-        this._http.get(`${url}/Contact/GetContactSessionByAgent?agentId=${agentId}`).subscribe({
-            next: this.addNewCallbacks,
-            error: () => {
-                this.getDashboardDataRes = {
-                    error: true,
-                    loading: false,
-                    msg: 'Unable to fetch Contact session'
-                };
-            }
-        });
-
+        this.fetchCallbacks();
         // since we get data from api as well as event
         // use 'addTMACEventListener' from _tmacEventService
         // instead of 'getNonInteractionEvents'
@@ -133,6 +110,33 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             }
         ]);
     }
+
+    fetchCallbacks = () => {
+        let url = this.data.Data.TCMProxyUrl;
+        if (!url) {
+            this.getDashboardDataRes = {
+                error: true,
+                loading: false,
+                msg: 'TCMProxyUrl is missing from config'
+            };
+            return;
+        }
+        url = url.endsWith('/') ? url : url + '/';
+
+        this.getDashboardDataRes.loading = true;
+        const { agentId } = SDKClient.getAgentData();
+
+        this._http.get(`${url}Contact/GetContactSessionByAgent?agentId=${agentId}`).subscribe({
+            next: this.addNewCallbacks,
+            error: () => {
+                this.getDashboardDataRes = {
+                    error: true,
+                    loading: false,
+                    msg: 'Unable to fetch Contact session'
+                };
+            }
+        });
+    };
 
     /**
      * CallbackDataReceivedForAgent Handler

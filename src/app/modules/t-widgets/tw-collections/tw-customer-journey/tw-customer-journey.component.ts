@@ -401,6 +401,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             })
             .catch((err) => {
                 this.table.loading = false;
+                this.logger.error('Unable to set interaction history', err);
                 console.error(err);
             })
             .finally(() => {

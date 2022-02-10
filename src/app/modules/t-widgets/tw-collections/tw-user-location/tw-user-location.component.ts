@@ -83,7 +83,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
             // this.map.
             // (L as any).setLocale('en-US');
         } catch (e) {
-            console.error(e);
+            this.logger.error('Unable to set location', e);
             this.error = 'Unable to set location';
         }
     }
