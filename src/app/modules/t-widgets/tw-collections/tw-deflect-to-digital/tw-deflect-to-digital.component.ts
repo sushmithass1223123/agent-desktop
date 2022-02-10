@@ -119,10 +119,11 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
 
             if (!this.toNumber) {
-                this._appUIService.showSnackbar('Deflecting', 'loading');
+                this._appUIService.showSnackbar('Please provide the number to deflect', 'failure');
                 return;
             }
 
+            this._appUIService.showSnackbar('Deflecting', 'loading');
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
                 customerContact: this.toNumber,
@@ -144,7 +145,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 throwADError('SDKClient.deflectToDigital failed', res.response.ResultMessage);
             }
             this.textTemplatesRef.clearAllData();
-            this._appUIService.showSnackbar('Deflected Successfully');
+            this._appUIService.showSnackbar(res.response.ResultMessage);
         } catch (e) {
             console.error(e);
             if (e instanceof ADError) {

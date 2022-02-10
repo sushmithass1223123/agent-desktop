@@ -5,7 +5,7 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div *ngIf="widgetData.callType === 'audio'" fxFill class="audio">
+        <div *ngIf="data.InteractionDetails.CallType === 'audio'" fxFill class="audio">
             <div fxFill fxLayout="column" fxLayoutAlign="space-between none" class="px-12">
                 <div *ngIf="userList.length" fxFlex fxLayout="row wrap" fxLayoutAlign=" center">
                     <ng-container *ngFor="let item of userList">
@@ -67,22 +67,33 @@
                         </button>
 
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.screenshare"
+                            *ngIf="data.Data.Opener.agentFeatures.screenshare"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold || remoteScreenSharing"
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
                             [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
                         >
                             <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
                         </button>
+
+                        <button
+                            *ngIf="data.Data.Opener.agentFeatures.toggleUserView"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            matTooltip="Toggle User View"
+                            (click)="toggleUserView()"
+                        >
+                            <mat-icon> {{ userView === 'call' ? 'wysiwyg' : 'view_carousel' }} </mat-icon>
+                        </button>
                     </div>
 
                     <div fxLayout="row" fxLayoutAlign="start center" class="actions-2">
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.hold"
-                            [disabled]="!connected"
+                            *ngIf="data.Data.Opener.agentFeatures.hold"
+                            [disabled]="!connected || (onCallHoldEvent && !manualHold)"
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"
@@ -113,13 +124,13 @@
             </div>
         </div>
 
-        <div *ngIf="widgetData.callType === 'video'" fxFill fxFlex class="video">
+        <div *ngIf="data.InteractionDetails.CallType === 'video'" fxFill fxFlex class="video">
             <div fxFill fxFlex fxLayout="column" fxLayoutAlign="space-between none" class="position-relative video-controls">
                 <div
                     fxFlex
                     fxLayout="row wrap"
                     fxLayoutAlign="center start"
-                    class="w-100-p border-radius-20 remote-video-container"
+                    class="w-100-p border-radius-20 remote-video-container twd-overflow-auto"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animateStagger]="{ value: '50' }"
                 >
@@ -133,7 +144,7 @@
 
                         <div class="button-group">
                             <button
-                                *ngIf="widgetData.opener.agentFeatures.snapshot"
+                                *ngIf="data.Data.Opener.agentFeatures.snapshot"
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold"
@@ -144,7 +155,7 @@
                             </button>
 
                             <button
-                                *ngIf="widgetData.opener.agentFeatures.webrtcTest"
+                                *ngIf="data.Data.Opener.agentFeatures.webrtcTest"
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold"
@@ -204,7 +215,7 @@
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold"
+                            [disabled]="!connected || hold || onCallHoldEvent"
                             matTooltip="Change to Video"
                             (click)="changeToVideo(upgradeToVideoBtn)"
                         >
@@ -212,10 +223,10 @@
                         </button>
 
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.screenshare"
+                            *ngIf="data.Data.Opener.agentFeatures.screenshare"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold || remoteScreenSharing"
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
                             [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
@@ -227,7 +238,7 @@
                             *ngIf="userCameraList?.length"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold"
+                            [disabled]="!connected || hold || onCallHoldEvent"
                             matTooltip="Toggle User Camera"
                             [matMenuTriggerFor]="userCameraMenu"
                         >
@@ -240,12 +251,23 @@
                                 </button>
                             </mat-menu>
                         </button>
+
+                        <button
+                            *ngIf="data.Data.Opener.agentFeatures.toggleUserView"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            matTooltip="Toggle User View"
+                            (click)="toggleUserView()"
+                        >
+                            <mat-icon> {{ userView === 'call' ? 'view_carousel' : 'wysiwyg' }} </mat-icon>
+                        </button>
                     </div>
 
                     <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="actions-2">
                         <button
-                            *ngIf="widgetData.opener.agentFeatures.hold"
-                            [disabled]="!connected"
+                            *ngIf="data.Data.Opener.agentFeatures.hold"
+                            [disabled]="!connected || (onCallHoldEvent && !manualHold)"
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"

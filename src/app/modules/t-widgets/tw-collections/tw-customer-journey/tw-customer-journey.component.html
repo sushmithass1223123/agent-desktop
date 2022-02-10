@@ -4,7 +4,12 @@
         widget: (customFuse.widget$ | async)
     } as customFuse"
 >
-    <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)">
+    <tw-wrapper
+        [data]="data"
+        (maximizeEvent)="onMaximized($event)"
+        (collapseEvent)="collapseEvent.emit($event)"
+        (floatEvent)="floatEvent.emit($event)"
+    >
         <div [ngClass]="maximized && (customFuse.anchor?.content || customFuse.widget?.content) + ' maximized'" class="customer-journey">
             <ad-table
                 [footer]="maximized ? 'show' : 'hide'"
@@ -37,10 +42,16 @@
             </div>
             <div class="twd-w-10/12 twd-pl-3 twd-flex twd-justify-between twd-items-center">
                 <div class="twd-flex-1 twd-flex twd-items-center twd-px-1 twd-truncate">
-                    <div mat-card-avatar [ngSwitch]="s.Channel | lowercase" class="w-32 h-32 border-sm-primary">
-                        <mat-icon color="primary" [matTooltip]="s.Channel">
-                            {{ table.config.Channel.icon(record).name }}
-                        </mat-icon>
+                    <div
+                        mat-card-avatar
+                        [ngSwitch]="s.Channel | lowercase"
+                        class="w-32 h-32 border-sm-primary"
+                        *ngIf="table.config.Channel.icon(record).name as iconName"
+                    >
+                        <mat-icon color="primary" *ngIf="iconName.includes('custom-'); else normalIcon" [svgIcon]="iconName"> </mat-icon>
+                        <ng-template #normalIcon>
+                            <mat-icon color="primary"> {{ iconName }} </mat-icon>
+                        </ng-template>
                     </div>
                     <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
                         <ng-container *ngSwitchCase="'voice'"> Voice with </ng-container>

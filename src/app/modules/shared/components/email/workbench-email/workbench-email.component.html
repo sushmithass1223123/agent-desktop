@@ -52,15 +52,13 @@
             <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
                 <div
                     *ngIf="getEmailChecks() as selectedMails"
-                    class="theme-bg twd-pb-5 border-radius-20 twd-h-full twd-col-span-3 lg:twd-col-span-1 twd-overflow-y-auto"
+                    class="theme-bg border-radius-20 twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
                     [ngClass]="{
-                        'twd-flex twd-flex-col twd-justify-center': noTabsAvailable
+                        'twd-justify-center': noTabsAvailable
                     }"
                 >
                     <ng-container *ngIf="!noTabsAvailable">
-                        <!-- 'twd-h-[116px]': state.bulkSelection, -->
-                        <!-- 'twd-h-[172px]': selectedMails.some || selectedMails.all -->
-                        <div class="twd-sticky theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
+                        <div class="theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
                             <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
                                 <button class="lg:twd-hidden" #expandableButton (click)="state.hideCategoryMenu = !state.hideCategoryMenu">
                                     <mat-icon>{{ state.hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
@@ -369,6 +367,17 @@
                             </div>
                         </div>
 
+                        <!-- [ngClass]="{
+                            'twd-h-[calc(100%-72px)]': !state.bulkSelection,
+                            'twd-h-[calc(100%-116px)]': state.bulkSelection,
+                            'twd-h-[calc(100%-172px)]': selectedMails.some || selectedMails.all
+                        }" -->
+                        <div *ngIf="dataSource.data.length && !emailSearchRes.error" class="twd-flex-1 twd-relative">
+                            <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
+                                <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
+                            </div>
+                        </div>
+
                         <div class="twd-p-3" *ngIf="emailSearchRes.loading && !dataSource.data.length">
                             <div
                                 [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
@@ -379,18 +388,6 @@
                                 </span>
                                 <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
                             </div>
-                        </div>
-
-                        <div
-                            *ngIf="dataSource.data.length && !emailSearchRes.error"
-                            class="twd-p-3 twd-overflow-y-auto"
-                            [ngClass]="{
-                                'twd-h-[calc(100%-72px)]': !state.bulkSelection,
-                                'twd-h-[calc(100%-116px)]': state.bulkSelection,
-                                'twd-h-[calc(100%-172px)]': selectedMails.some || selectedMails.all
-                            }"
-                        >
-                            <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
                         </div>
                     </ng-container>
 
@@ -673,7 +670,7 @@
                                     (click)="latestEmailPreview = true; openEmail(node)"
                                 >
                                     <div class="twd-w-full 2xl:twd-max-w-9/12">
-                                        <p class="font-weight-600 my-4 twd-truncate">
+                                        <p class="font-weight-600 my-4 twd-break-all 2xl:twd-w-10/12">
                                             {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
                                         </p>
                                         <p class="my-4 twd-truncate twd-max-w-[180px]">

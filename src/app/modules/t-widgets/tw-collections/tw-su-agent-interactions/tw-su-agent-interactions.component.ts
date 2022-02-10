@@ -133,7 +133,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             agentId: this.configData.AgentLoginID,
             deviceId: this.configData.StationID,
             tmacServer: this.configData.TmacServer,
-            chatMode: item.Channel === 'audiochat' ? 'audio' : item.Channel === 'videochat' ? 'video' : 'text',
+            chatMode: item.Channel.toLowerCase() === 'audiochat' ? 'audio' : item.Channel.toLowerCase() === 'videochat' ? 'video' : 'text',
             comment: '',
             conferenceType: type,
             interactionId: item.InteractionID.toString(),
@@ -211,7 +211,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             const subType = element.Channel.toLowerCase();
 
             // check for the type and subtype
-            if (this.featureMap[feature.Feature].Type !== type || this.featureMap[feature.Feature].SubType !== subType) {
+            if (this.featureMap[feature.Feature].Type !== type || !this.featureMap[feature.Feature].SubType.includes(subType)) {
                 return false;
             }
 
@@ -223,7 +223,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             else if (
                 type === 'interaction' &&
                 this.featureMap[feature.Feature].Type === type &&
-                this.featureMap[feature.Feature].SubType === subType
+                this.featureMap[feature.Feature].SubType.includes(subType)
             ) {
                 return feature.IsEnabled;
             } else {
@@ -238,7 +238,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * To perform action on agent interaction
      */
     public performInteractionAction(item: InteractionDataModel, feature: AgentFeatures): void {
-        console.log('performAgentAction', { item, feature });
         switch (feature.Feature.toLowerCase()) {
             case AGENT_FEATURES.AllowSupervisorToBargeIn:
                 break;

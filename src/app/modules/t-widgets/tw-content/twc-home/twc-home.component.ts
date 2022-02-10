@@ -1,15 +1,16 @@
+import { AOTWidget, Widget } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { IAgentData, SDKClient } from '@tmac/sdk';
+import { IAgentData, SDKClient, TUtils } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { differenceInHours, startOfDay } from 'date-fns';
-import { takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 /**
  * TwcHomeComponent
@@ -29,15 +30,15 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     /**
      * To hold static widgets
      */
-    staticWidgets = [];
+    staticWidgets: Widget[] = [];
     /**
      * To hold dynamic widgets
      */
-    dynamicWidgets = [];
+    dynamicWidgets: Widget[] = [];
     /**
      * To hold AOT widgets
      */
-    aotWidgets = [];
+    aotWidgets: AOTWidget[] = [];
     /**
      * Loaded flag
      */
@@ -134,16 +135,26 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         this.staticWidgets = homeWidgets?.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         this.dynamicWidgets = homeWidgets?.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         this.aotWidgets = homeWidgets?.AOT?.filter((w: IWidget) => w.Config.Enabled) ?? [];
+        this.aotWidgets = this.aotWidgets.map((w) => {
+            if (!w.ID) {
+                w.ID = TUtils.Generic.uuid();
+            }
+            return w;
+        });
 
         // process aot widgets
         this._aotWidgetService.processAOTWidgets(this.aotWidgets);
 
-        this._aotWidgetService.newWidget('home').subscribe((x) => {
-            this.aotWidgets.push(x.json);
-            if (x.json.Config?.AutoOpen) {
-                this._aotWidgetService.addWidget(x.json);
-            }
-        });
+        // subscribe to new AOT widgets
+        this._aotWidgetService
+            .newWidget('home')
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((x) => {
+                this.aotWidgets.push(x.json);
+                if (x.json.Config?.AutoOpen) {
+                    this._aotWidgetService.addWidget(x.json);
+                }
+            });
 
         // subscribe to dashboard service
         this._dashboardService.connectionState.pipe(takeUntil(this.unsubscribeAll)).subscribe((state: string) => {

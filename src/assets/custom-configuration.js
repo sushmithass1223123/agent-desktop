@@ -7,8 +7,34 @@
  */
 var ssoAuthSettings = {
     msTeams: {
-        clientId: '7d503b82-ae8a-41e9-b570-8c4d403794c9',
-        redirectUri: location.origin,
-        scopes: ['user.read', 'mailboxsettings.read', 'calendars.readwrite']
+        appId: '9403399d-0720-48d4-bf6e-14f0f421007e',
+        subscriptionUri: 'https://tcmmsteamsapi.qa.tetherfi.cloud',
+        tetherfiOrganization: 'DICE',
+        scopes: [
+            'Notifications.ReadWrite.CreatedByApp',
+            'Presence.Read',
+            'Presence.Read.All',
+            'Presence.ReadWrite',
+            'TeamsActivity.Read',
+            'TeamsActivity.Send',
+            'Team.ReadBasic.All',
+            'TeamsAppInstallation.ReadForChat',
+            'TeamsAppInstallation.ReadForTeam',
+            'TeamsAppInstallation.ReadForUser',
+            'TeamsAppInstallation.ReadWriteForChat',
+            'TeamsAppInstallation.ReadWriteForTeam',
+            'TeamsAppInstallation.ReadWriteForUser',
+            'TeamsAppInstallation.ReadWriteSelfForChat',
+            'TeamsAppInstallation.ReadWriteSelfForTeam',
+            'TeamsAppInstallation.ReadWriteSelfForUser',
+            'User.Read',
+            'User.Read.All',
+            'User.ReadBasic.All',
+            'User.ReadWrite',
+            'User.ReadWrite.All',
+            'Group.ReadWrite.All',
+            'UserActivity.ReadWrite.CreatedByApp',
+            'UserNotification.ReadWrite.CreatedByApp'
+        ]
     }
 };

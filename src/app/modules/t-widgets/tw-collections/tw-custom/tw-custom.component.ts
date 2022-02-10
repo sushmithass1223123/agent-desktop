@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FuseConfig } from '@fuse/types';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
@@ -10,8 +11,10 @@ import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage, IWidget } from 'app/interfaces';
+import { throwADError } from 'app/utils';
+import { isEqual } from 'lodash';
 import { Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 /**
  * TwCustomComponent
@@ -35,7 +38,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * Fuse custom config
      */
-    customFuse$ = this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' });
+    customFuse$ = this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme', webFont: 'webFont' });
     /**
      * Window pop widget
      */
@@ -85,6 +88,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     dialogRef: MatDialogRef<any, any>;
 
+    /**
+     * Fuse config ref
+     */
+    fuseConfigRef: Partial<FuseConfig>;
+
     constructor(
         private sanitizer: DomSanitizer,
         private _aotWidgetService: AOTWidgetService,
@@ -126,13 +134,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // check event are there
                         if (events.length) {
                             // send events to the child
-                            this.sendDataToWindow(message.callback || 'onTMACEvent', events);
+                            this.sendDataToWindow(message.callback || 'onTMACEvent', events, message.userObject);
                         }
                         break;
                     case 'showconfirmdialog':
                         this.dialogRef = this._appUIService.showAppConfirmDialog('generic', message.data?.title, message.data?.message);
                         this.dialogRef.afterClosed().subscribe((dialogResult: boolean) => {
-                            this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult);
+                            this.sendDataToWindow(message.callback || 'onConfirmClosed', dialogResult, message.userObject);
                         });
                         break;
                     case 'closeconfirmdialog':
@@ -147,9 +155,15 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // invoke SDK method dynamically
                         const response = await SDKClient[method](...params);
                         // send the response to the child
-                        this.sendDataToWindow(message.callback || `${method}Done`, response);
+                        this.sendDataToWindow(message.callback || `${method}Done`, response, message.userObject);
+                        break;
+                    case 'destroywidget':
+                        // destroy the widget
+                        this._aotWidgetService.destroyWidget(this.data.ID);
                         break;
                     default:
+                    case 'getthemeconfig':
+                        this.sendDataToWindow(message.callback || 'onThemeChange', this.fuseConfigRef, message.userObject);
                 }
             } catch (error) {
                 this.logger.error('Error in TwCustomComponent.postMessage', error, false);
@@ -201,6 +215,16 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 }, Number(this.data.Data.AutoRefresh) * 1000);
             }
         }
+
+        this.customFuse$
+            .pipe(
+                takeUntil(this.unsubscribeAll),
+                distinctUntilChanged((p, c) => isEqual(p, c))
+            )
+            .subscribe((config) => {
+                this.fuseConfigRef = config;
+                this.sendDataToWindow('onThemeChange', config);
+            });
     }
 
     /**
@@ -226,8 +250,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      *
      * @param {String} fn
      * @param {Any} data
+     * @param {Any} userObject
      */
-    private sendDataToWindow(fn: string, data: any): void {
+    private sendDataToWindow(fn: string, data: any, userObject?: any): void {
         try {
             const iframe = document.getElementById('tw_frame_' + this.data.ID);
             // get the element
@@ -241,16 +266,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         callback: null,
                         data,
                         source: 'tmac',
-                        userObject: null
+                        userObject
                     },
                     '*'
                 );
             }
         } catch (error) {
-            console.error({
-                error,
-                data
-            });
+            throwADError('Error in TwCustomComponent', error);
         }
     }
 

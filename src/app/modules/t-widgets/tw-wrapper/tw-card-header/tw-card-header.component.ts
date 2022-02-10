@@ -52,9 +52,19 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
     @Output() collapse = new EventEmitter();
 
     /**
-     * On destro event emitter
+     * On destroy event emitter
      */
     @Output() destroy = new EventEmitter();
+
+    /**
+     * On resize
+     */
+    @Output() resize = new EventEmitter();
+
+    /**
+     * Resize mode
+     */
+    resizeMode: boolean;
 
     /**
      * Un subscribe all subject
@@ -112,6 +122,14 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
      */
     collapseWidget(): void {
         this.collapse.emit();
+    }
+
+    /**
+     * Resize  method
+     */
+    resizeWidget(): void {
+        this.resizeMode = !this.resizeMode;
+        this.resize.emit();
     }
 
     /**

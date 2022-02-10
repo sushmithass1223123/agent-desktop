@@ -12,10 +12,13 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { IAppConfig } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
+import AES from 'crypto-js/aes';
+import Base64 from 'crypto-js/enc-base64';
+import Utf8 from 'crypto-js/enc-Utf8';
+import { environment } from 'environments/environment';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
 
 /**
  * LoginComponent
@@ -374,16 +377,16 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         // subscribe to _activatedRoute for loging agent id
         this._activatedRoute.paramMap.subscribe(async (paramMap) => {
+            // check if ssoType in param
+            if (paramMap.has('ssoType')) {
+                this.ssoType = paramMap.get('ssoType').toLowerCase();
+            }
+
             // check if agentId in param
             if (paramMap.has('agentId')) {
                 await this.loadConfig(paramMap.get('agentId'));
             } else {
                 await this.loadConfig();
-            }
-
-            // check if ssoType in param
-            if (paramMap.has('ssoType')) {
-                this.ssoType = paramMap.get('ssoType').toLowerCase();
             }
         });
     }
@@ -440,20 +443,96 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 )
             )
             .subscribe(async (params) => {
-                // if there is not user in param then return
-                if (!params.u) {
-                    return;
+                try {
+                    let patchVal = {};
+                    // if there is not user in param then return
+                    if (!params.u) {
+                        return;
+                    }
+
+                    // check for username/lanid
+                    if (params.u) {
+                        patchVal = { ...patchVal, lanId: params.u };
+                    }
+
+                    // check for station
+                    if (params.s) {
+                        patchVal = { ...patchVal, station: params.s };
+                    }
+
+                    // check for password
+                    if (params.p || params.ap || params.sp) {
+                        var k = Utf8.parse('1029384756564738');
+                        var cg = {
+                            iv: Base64.parse('AQIDBAUGBgUEAwIBBwcHBw==')
+                        };
+                        let decrypted = '';
+                        if (params.p) {
+                            this.password.Agent = true;
+                            this.password.Station = true;
+                            // decrypt the password or use original
+                            decrypted = AES.decrypt(decodeURIComponent(params.p), k, cg).toString(Utf8) || params.p;
+                            patchVal = { ...patchVal, agentPassword: decrypted, stationPassword: decrypted };
+                        } else {
+                            if (params.ap) {
+                                this.password.Agent = true;
+                                // decrypt the agent password or use original
+                                decrypted = AES.decrypt(decodeURIComponent(params.ap), k, cg).toString(Utf8) || params.ap;
+                                patchVal = { ...patchVal, agentPassword: decrypted };
+                            }
+
+                            if (params.sp) {
+                                this.password.Station = true;
+                                // decrypt the station password or use original
+                                decrypted = AES.decrypt(decodeURIComponent(params.sp), k, cg).toString(Utf8) || params.sp;
+                                patchVal = { ...patchVal, stationPassword: decrypted };
+                            }
+                        }
+                    }
+
+                    // check for pbx login
+                    if (params.pbx && (params.pbx === '1' || params.pbx === 'true')) {
+                        this.pbxChecked = true;
+                        if (typeof params.jsonData === 'object') {
+                            params.jsonData.pbxLogin = true;
+                        } else {
+                            params.jsonData = {
+                                pbxLogin: true
+                            };
+                        }
+                    } else {
+                        this.pbxChecked = params?.jsonData?.pbxLogin === 'true';
+                    }
+
+                    // check for ms login
+                    if (params.ms && (params.ms === '1' || params.ms === 'true')) {
+                        this.msChecked = true;
+                        if (typeof params.jsonData === 'object') {
+                            params.jsonData.msLogin = true;
+                        } else {
+                            params.jsonData = {
+                                msLogin: true
+                            };
+                        }
+                    } else {
+                        this.msChecked = params?.jsonData?.msLogin === 'true';
+                    }
+
+                    // check if ms/pbx enabled, then enable station field
+                    this.stationEnabled = this.msChecked || this.pbxChecked;
+                    // patch lanId to form
+                    this.loginForm.patchValue(patchVal);
+                    // add the params to query data
+                    this.queryData = params;
+                    // check if al (auto login) false or 0, then do not auto login
+                    if (params.al !== undefined && (params.al === 'false' || params.al === '0')) {
+                        return;
+                    }
+                    this.fuseSplashService.show();
+                    this.login(true);
+                } catch (error) {
+                    this.logger.error('activatedRoute.queryParams', error, false);
                 }
-                // patch lanId to form
-                this.loginForm.patchValue({ lanId: params.u });
-                // add the params to query data
-                this.queryData = params;
-                // check if al (auto login) false or 0, then do not auto login
-                if (params.al !== undefined && (params.al === 'false' || params.al === '0')) {
-                    return;
-                }
-                this.fuseSplashService.show();
-                this.login(true);
             });
 
         this.lanIdField?.nativeElement?.focus();
@@ -581,18 +660,17 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      */
     private startCamera(): void {
         // capture selfview
-        navigator.getUserMedia(
-            {
+        navigator.mediaDevices
+            .getUserMedia({
                 audio: false,
                 video: true
-            },
-            (stream: MediaStream) => {
+            })
+            .then(function (stream: MediaStream) {
                 this.selfVideo = stream;
-            },
-            (error: MediaStreamError) => {
-                this._appUIService.showSnackbar(error.message, 'failure');
-            }
-        );
+            })
+            .catch(function (err) {
+                this._appUIService.showSnackbar(err.message, 'failure');
+            });
     }
 
     /**
@@ -738,7 +816,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 throw new Error(`Invalid Response : ${response}`);
             }
         } catch (error) {
-            console.error(error);
+            this.logger.error('getTMACVersion', error, false);
             this.connectionError.errored = true;
             this.connectionError.countdown = interval(1000).pipe(
                 take(this.connectionError.pollingInterval + 1),
@@ -836,7 +914,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 this.loading = false;
             })
             .catch((e) => {
-                console.error(e);
+                this.logger.error('login', e, false);
                 this.videoElement?.nativeElement.play();
                 // set loading to false
                 this.loading = false;
@@ -999,6 +1077,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      * For single sign on
      */
     async ssoLogin(): Promise<boolean> {
+        this.logger.debug(`ssoLogin: ${this.ssoType}`, false);
         if (!this.ssoType) {
             return false;
         }
@@ -1008,12 +1087,15 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         try {
             if (this.ssoType === 'msteams') {
                 const response = await this._msTeamsAuthSerivce.signIn();
+                this.logger.debug(`ssoLogin: response=${response?.isSuccess}, ${response?.message}`, false);
                 // check if authenticated
-                if (this._msTeamsAuthSerivce.authenticated) {
+                if (response.isSuccess == true) {
                     // check the response
                     if (response.result?.user?.email) {
                         // get the agent lanId
                         const lanId = response.result.user.email.split('@')[0];
+                        this.logger.debug(`ssoLogin: lanId=${lanId}`, false);
+
                         if (lanId) {
                             this.loginForm.patchValue({ lanId: lanId });
                             this.fuseSplashService.show();
@@ -1023,10 +1105,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 }
                 return true;
             } else {
+                this.logger.warn(`ssoLogin: SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, false);
                 this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
             }
         } catch (error) {
-            console.error('fail to authenticate', error);
+            this.logger.error(`ssoLogin: Fail to authenticate`, error, false);
         } finally {
             this.loading = false;
         }

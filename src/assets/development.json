@@ -30,7 +30,7 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": false, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": { "Enabled": true, "ByTeam": true, "DefaultACW": false, "DefaultLogout": false }
                                 }
                             },
                             {
@@ -371,7 +371,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api" }
+                                    "Data": { "TCMProxyUrl": "http://10.133.146.11:5002" }
                                 }
                             ],
                             "AOT": [
@@ -387,6 +387,7 @@
                                         "Anchor": false,
                                         "AOT": true,
                                         "AutoOpen": false,
+                                        "LocalAOT": true,
                                         "Icon": "event_note",
                                         "Class": "",
                                         "Position": { "X": 4, "Y": 4, "W": 400, "H": 400 },
@@ -437,7 +438,7 @@
                                         "Icon": "phone_callback",
                                         "Class": "",
                                         "Position": { "X": 0, "Y": 1, "W": 300, "H": 300 },
-                                        "Actions": ["minimize", "destroy"],
+                                        "Actions": ["minimize", "destroy", "resize"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
@@ -821,8 +822,8 @@
                                                             "Blind": true,
                                                             "Comments": false,
                                                             "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "TeamFilter": false
                                                         }
                                                     },
                                                     "Conference": {
@@ -950,7 +951,7 @@
                                     "Name": "Deflect To Digital",
                                     "Description": "",
                                     "Key": "TWDeflectToDigital",
-                                    "Type": "tw-voice-canned-responses",
+                                    "Type": "tw-deflect-to-digital",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -969,12 +970,12 @@
                                     "Data": {
                                         "ResponseMode": "manual",
                                         "EditAllowed": false,
-                                        "Number": "OutgoingCallEvent.PhoneNumber",
-                                        "DeflectExpiry": 1,
+                                        "Number": "IncomingCallEvent.PhoneNumber",
+                                        "DeflectExpiry": 5,
                                         "DeflectIntent": "devtest",
                                         "DestChannel": "textchat",
                                         "DestSubChannel": "text",
-                                        "DisconnectTimeout": -1,
+                                        "DisconnectTimeout": 1,
                                         "FallbackSkillId": 42001,
                                         "NextStatusName": "ACW",
                                         "StatusLockTimeout": 1,
@@ -1194,7 +1195,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api" }
+                                    "Data": { "TCMProxyUrl": "http://10.133.146.11:5002" }
                                 },
                                 {
                                     "Name": "Voice Canned Responses",
@@ -1364,7 +1365,14 @@
                                                     "ConversationService": { "Url": "", "Limit": 50, "Label": false },
                                                     "ReplyAllowed": true,
                                                     "EndInteractionOnAVEnd": false,
-                                                    "CloseInteractionOnEnd": false
+                                                    "CloseInteractionOnEnd": false,
+                                                    "MuteAVOnHold": {
+                                                        "AgentAudio": true,
+                                                        "AgentVideo": true,
+                                                        "CustomerAudio": true,
+                                                        "CustomerVideo": false
+                                                    },
+                                                    "ToggleUserViewAllowed": true
                                                 }
                                             },
                                             {
@@ -1628,6 +1636,55 @@
                             ],
                             "AOT": [
                                 {
+                                    "Name": "External Pop",
+                                    "Description": "",
+                                    "Key": "External-Pop",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": false,
+                                        "Hidden": true,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": true,
+                                        "AutoOpen": true,
+                                        "LocalAOT": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 1, "Y": 1, "W": 300, "H": 300 },
+                                        "Actions": ["maximize", "destroy", "resize"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": { "OpenInNew": false, "Url": "http://127.0.0.1:5500/index.html" }
+                                },
+                                {
+                                    "Name": "VKYC Audit",
+                                    "Description": "",
+                                    "Key": "VKYC-Audit",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "LocalAOT": true,
+                                        "Icon": "published_with_changes",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1, "W": 700, "H": 500 },
+                                        "Actions": ["maximize", "destroy", "resize"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dice.tetherfi.cloud/AD-Video-Audit-Widget?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
+                                    }
+                                },
+                                {
                                     "Name": "Agent Assist",
                                     "Description": "",
                                     "Key": "AgentAssist",
@@ -1780,14 +1837,9 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
+                                                            "ChannelPrefix": ["EM"],
                                                             "Columns": []
-                                                        },
-                                                        "Blind": true,
-                                                        "Comments": false,
-                                                        "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
-                                                        "ChannelPrefix": ["VO"],
-                                                        "Columns": ["Name"]
+                                                        }
                                                     },
                                                     "Conference": {
                                                         "Allowed": true,
@@ -1807,17 +1859,8 @@
                                                             "Blind": true,
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["VO", "Hi", "HI", "CS", "NGI3", "Pr"],
+                                                            "ChannelPrefix": ["EM"],
                                                             "Columns": ["Stf"]
-                                                        },
-                                                        "SpeedDial": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": false,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": false },
-                                                            "ChannelPrefix": ["VO"],
-                                                            "Columns": ["Name"]
                                                         }
                                                     },
                                                     "DownloadAllowed": true,
@@ -2032,7 +2075,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
+                                        "TCMProxyUrl": "http://10.133.146.11:5002",
                                         "DataMap": {
                                             "Name": {
                                                 "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
@@ -2205,100 +2248,10 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "Agent Assist",
+                                    "Name": "OCM | e-KYC Audit",
                                     "Description": "",
-                                    "Key": "AgentAssist",
-                                    "Type": "tw-agent-assist",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "verified_user",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
-                                        "Title": "Agent Assist",
-                                        "Icon": "assistant",
-                                        "Width": 450,
-                                        "Height": 800,
-                                        "Actions": ["collapse", "maximize", "destroy"],
-                                        "ViewState": "restore"
-                                    }
-                                },
-                                {
-                                    "Name": "Work Codes",
-                                    "Description": "",
-                                    "Key": "WorkCodes",
-                                    "Type": "tw-work-codes",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 1 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": false }
-                                },
-                                {
-                                    "Name": "Campaign Contact",
-                                    "Description": "",
-                                    "Key": "CampaignManager",
-                                    "Type": "tw-campaign-contact",
-                                    "Config": {
-                                        "Enabled": false,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "contact_page",
-                                        "Class": "",
-                                        "Position": { "X": 2, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "CustomerInfo": [
-                                            { "Title": "Name", "ValueSource": "ContactData.campaignContact.Name", "DefaultValue": "" },
-                                            { "Title": "PhoneNumber", "ValueSource": "ContactData.campaignContact.PhoneNumber", "DefaultValue": "" },
-                                            { "Title": "NRIC", "ValueSource": "ContactData.campaignContact.nric", "DefaultValue": "" },
-                                            { "Title": "Gender", "ValueSource": "ContactData.campaignContact.Gender", "DefaultValue": "" },
-                                            { "Title": "Age", "ValueSource": "ContactData.campaignContact.Age", "DefaultValue": "" },
-                                            { "Title": "Language", "ValueSource": "ContactData.campaignContact.language", "DefaultValue": "" },
-                                            { "Title": "Email", "ValueSource": "ContactData.campaignContact.Email", "DefaultValue": "" },
-                                            {
-                                                "Title": "Callback DateTime",
-                                                "ValueSource": "ContactData.campaignContact.ScheduleTime",
-                                                "DefaultValue": ""
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
-                                    "Name": "Campaign Contact",
-                                    "Description": "",
-                                    "Key": "CampaignManager",
-                                    "Type": "tw-campaign-contact",
+                                    "Key": "OCM-VKYC-Audit",
+                                    "Type": "tw-custom",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2316,7 +2269,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/TCM_Client/ui/campaign_selector.html?phone=${Interaction.Item.PhoneNumber}&agentID=${AgentData.agentId}&extension=${AgentData.deviceId}&ucid=&skill=${Interaction.Item.Skill}&intid=${Interaction.InteractionID}&ID=${Interaction.Item.ID}"
+                                        "Url": "https://dice.tetherfi.cloud/OCM/EKYCAudit/Index?sessionid=${Interaction.Item.Data.sessionID}"
                                     }
                                 }
                             ],
@@ -2408,7 +2361,7 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "SearchPollingInterval": 60000,
+                                                    "SearchPollingInterval": 0,
                                                     "DeleteAllowed": false,
                                                     "QueueTransferForAgent": false,
                                                     "TemplatesByTeam": false,
@@ -2705,5 +2658,5 @@
             ]
         }
     },
-    "Version": "5.0.12.30"
+    "Version": "5.1.130"
 }

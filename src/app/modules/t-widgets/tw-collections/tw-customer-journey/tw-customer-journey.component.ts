@@ -108,6 +108,16 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     @Output() maximizeEvent = new EventEmitter();
 
     /**
+     * Float event emitter
+     */
+    @Output() floatEvent = new EventEmitter();
+
+    /**
+     * Collapsed event emitter
+     */
+    @Output() collapseEvent = new EventEmitter();
+
+    /**
      * Maximized flag
      */
     maximized: boolean;
@@ -391,6 +401,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             })
             .catch((err) => {
                 this.table.loading = false;
+                this.logger.error('Unable to set interaction history', err);
                 console.error(err);
             })
             .finally(() => {

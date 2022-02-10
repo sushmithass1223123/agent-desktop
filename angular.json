@@ -1,5 +1,8 @@
 {
     "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "cli": {
+        "analytics": false
+    },
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
@@ -67,7 +70,6 @@
                             "./node_modules/@ctrl/ngx-emoji-mart/picker.css"
                         ],
                         "scripts": [],
-                        "showCircularDependencies": true,
                         "allowedCommonJsDependencies": [
                             "lodash",
                             "@swimlane/dragula",
@@ -108,7 +110,6 @@
                             },
                             "outputHashing": "all",
                             "sourceMap": true,
-                            "extractCss": true,
                             "namedChunks": false,
                             "aot": true,
                             "extractLicenses": true,
@@ -118,7 +119,7 @@
                                 {
                                     "type": "initial",
                                     "maximumWarning": "6mb",
-                                    "maximumError": "10mb"
+                                    "maximumError": "11mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",

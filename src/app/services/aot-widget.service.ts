@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Injectable } from '@angular/core';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { TUtils } from '@tmac/sdk';
@@ -24,7 +25,7 @@ export class AOTWidgetService extends SharedWrapper {
     /**
      * Widget subject to emit when AOT is added or removed
      */
-    private _widgets$: BehaviorSubject<IWidget[]>;
+    private _widgets$: BehaviorSubject<AOTWidget[]>;
 
     /**
      * New widget subject
@@ -42,7 +43,7 @@ export class AOTWidgetService extends SharedWrapper {
     /**
      * Getter for widgets
      */
-    get widgets(): any | Observable<any> {
+    get widgets(): Observable<AOTWidget[]> {
         return this._widgets$.asObservable();
     }
 
@@ -88,15 +89,15 @@ export class AOTWidgetService extends SharedWrapper {
      *
      * @param {IWidget[]} widgets
      */
-    public processAOTWidgets(widgets: IWidget[]): void {
+    public processAOTWidgets(widgets: AOTWidget[]): void {
         // validate
         if (widgets && widgets.length) {
             // check if widgets are there, if so load it
-            widgets.forEach((widget: IWidget) => {
+            widgets.forEach((widget: AOTWidget) => {
                 // check if auto open
                 if (widget.Config.AutoOpen) {
                     setTimeout(() => {
-                        this.addWidget(widget);
+                        this.addWidget(widget as AOTWidget);
                         // set auto open to false so that when config is updated it wont open again
                         widget.Config.AutoOpen = false;
                     }, 3000);
@@ -109,7 +110,7 @@ export class AOTWidgetService extends SharedWrapper {
      * To add a new AOT widget
      * @param widget Widget model
      */
-    public addWidget(widget: IWidget): void {
+    public addWidget(widget: AOTWidget): void {
         // check if the widget is null
         if (!widget || !widget.Config.Enabled) {
             return;
@@ -168,7 +169,7 @@ export class AOTWidgetService extends SharedWrapper {
         const widget = widgetList.filter((w) => w.ID === id)?.[0];
 
         // get the widget and call on destroy
-        if (widget && typeof widget.OnDestroy === 'function' && !force && !widget.OnDestroy()) {
+        if (!widget || (widget && typeof widget.OnDestroy === 'function' && !force && !widget.OnDestroy())) {
             return;
         }
 

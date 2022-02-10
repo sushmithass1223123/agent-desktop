@@ -130,7 +130,10 @@
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
                     <input matInput type="time" formControlName="Time" />
-                    <mat-error *ngIf="addContactFormGroup.controls.Time.errors?.invalid"> Time Required </mat-error>
+                    <ng-container *ngIf="addContactFormGroup.controls.Time.errors as fieldErrors">
+                        <mat-error *ngIf="fieldErrors.required"> Time Required </mat-error>
+                        <mat-error *ngIf="fieldErrors.invalid"> Invalid time </mat-error>
+                    </ng-container>
                 </mat-form-field>
 
                 <div fxFlex="100" fxLayoutAlign="end" class="mb-12">

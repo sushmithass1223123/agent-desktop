@@ -1,4 +1,6 @@
+import { AOTWidget, WidgetConfig } from '@ad/types';
 import { IUIEvent } from '@tmac/sdk';
+import { Observable } from 'rxjs';
 
 export interface IWidget<T = any, K = any> {
     /**
@@ -24,7 +26,7 @@ export interface IWidget<T = any, K = any> {
     /**
      * Widget Configs
      */
-    Config: IWidgetConfig;
+    Config: WidgetConfig;
     /**
      * Widget Custom Data
      */
@@ -66,81 +68,9 @@ export interface InteractionWidgets {
          * AOT widgets
          */
         aot?: IWidget[];
+        /**
+         * Local AOT widgets observable
+         */
+        localAOT$: Observable<AOTWidget<any, any>[]>;
     };
-}
-
-export interface IWidgetConfig {
-    /**
-     * Enabled flag
-     */
-    Enabled: boolean;
-    /**
-     * Hidden widget flag
-     */
-    Hidden: boolean;
-    /**
-     * Static flag
-     */
-    Static: boolean;
-    /**
-     * Anchor flag
-     */
-    Anchor: boolean;
-    /**
-     * AOT flag
-     */
-    AOT: boolean;
-    /**
-     * Flag to auto open AOT widget
-     */
-    AutoOpen: boolean;
-    /**
-     * Icon of Widget
-     */
-    Icon: string;
-    /**
-     * class of widget
-     */
-    Class: string;
-    /**
-     * Widget position
-     */
-    Position: IWidgetPosition;
-    /**
-     * Available widget actions
-     */
-    Actions: IAction[];
-    /**
-     * Initail state of widget
-     */
-    ViewState: 'restore' | 'maximize' | 'collapse' | 'hidden' | 'float';
-    /**
-     * Pinned widget
-     */
-    Pinned: boolean;
-    /**
-     * Header flag
-     */
-    Header: boolean;
-}
-
-export type IAction = 'restore' | 'maximize' | 'collapse' | 'destroy' | 'float' | 'pin' | 'refresh';
-
-export interface IWidgetPosition {
-    /**
-     * X axis position
-     */
-    X: number;
-    /**
-     * Y axis position
-     */
-    Y: number;
-    /**
-     * Height of widget
-     */
-    H?: number;
-    /**
-     * Width of widget
-     */
-    W?: number;
 }

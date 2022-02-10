@@ -4,15 +4,19 @@ import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthCodeMSALBrowserAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
+import * as microsoftTeams from '@microsoft/teams-js';
+import { SharedWrapper } from '@modules/t-widgets/utils';
+import { TUtils } from '@tmac/sdk';
 import { MsTeamsOAuthSettings } from 'app/constants';
-
+import { MsTeamAuthSettings } from 'app/interfaces';
 /**
  * Microsoft teams authentication service
  */
 @Injectable({
     providedIn: 'root'
 })
-export class MsTeamsAuthService {
+export class MsTeamsAuthService extends SharedWrapper {
+    private _context: microsoftTeams.Context;
     /**
      * Microsoft graph client ref
      */
@@ -28,10 +32,15 @@ export class MsTeamsAuthService {
     /**
      * Teams auth setting ref
      */
-    authSettings: OAuthSettings;
+    authSettings: MsTeamAuthSettings;
 
     constructor(private _msalService: MsalService) {
-        const accounts = this._msalService.instance.getAllAccounts();
+        // intialize
+        super('MsTeamsAuthService');
+
+        this.authSettings = MsTeamsOAuthSettings;
+
+        /* const accounts = this._msalService.instance.getAllAccounts();
         this.authSettings = MsTeamsOAuthSettings;
         this.authenticated = accounts.length > 0;
         if (this.authenticated) {
@@ -40,7 +49,38 @@ export class MsTeamsAuthService {
 
         this.getUser().then((user) => {
             this.user = user;
-        });
+        }); */
+    }
+
+    /**
+     * To set subscriptions
+     *
+     * @param userId
+     * @param userName
+     *  @param token
+     * @returns
+     */
+    async setSubscriptions(userId: string, userName: string, token: string, organization: string): Promise<Results> {
+        try {
+            this.logger.debug(`setSubscriptions: userId : ${userId}, userName : ${userName} , organization : ${organization}`, false);
+
+            const { response } = await TUtils.HttpClient.sendRequest({
+                urls: [`${this.authSettings.subscriptionUri}/omini/${organization}/subscribe/user/${userId}`],
+                header: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                requestArgs: {
+                    userName
+                },
+                method: 'POST'
+            });
+
+            return new Results(true, 'setSubscriptions', response);
+        } catch (error) {
+            this.logger.error(`setSubscriptions`, error, false);
+            return new Results(false, 'setSubscriptions');
+        }
     }
 
     /**
@@ -48,25 +88,52 @@ export class MsTeamsAuthService {
      * @returns
      */
     async signIn(): Promise<Results> {
-        try {
-            const authDetails = await this._msalService
-                .loginPopup(this.authSettings)
-                .toPromise()
-                .catch((reason) => {
-                    throw new Error(JSON.stringify(reason, null, 2));
+        this.logger.debug(`signIn`, false);
+        return new Promise<Results>((resolve, reject) => {
+            try {
+                this.logger.debug(`signIn.initialize`, false);
+                microsoftTeams.initialize(() => {
+                    this.logger.debug(`signIn.getContext`, false);
+                    microsoftTeams.getContext((context: microsoftTeams.Context) => {
+                        this._context = context;
+                        // try to haddle this with bindCallback
+                        const _this = this;
+                        microsoftTeams.authentication.getAuthToken({
+                            successCallback: (result) => {
+                                this.logger.debug(`signIn.successCallback: result=${result}`, false);
+                                const lanId = _this._context?.userPrincipalName?.split('@')[0];
+                                _this
+                                    .setSubscriptions(_this._context.userObjectId ?? '', lanId, result, _this.authSettings.tetherfiOrganization)
+                                    .then((res) => {
+                                        this.logger.debug(`signIn.setSubscriptions: result=${res}`, false);
+                                    })
+                                    .catch((error) => {
+                                        this.logger.error(`signIn.setSubscriptions`, error, false);
+                                    });
+                                resolve(
+                                    new Results(true, 'authenticated', {
+                                        user: { email: _this._context.userPrincipalName, ..._this._context },
+                                        token: result
+                                    })
+                                );
+                            },
+                            failureCallback: (error) => {
+                                this.logger.error(`signIn.failureCallback`, error, false);
+                                reject(
+                                    new Results(false, 'fail to authenticate', {
+                                        user: { email: _this._context.userPrincipalName, ..._this._context },
+                                        error
+                                    })
+                                );
+                            }
+                        });
+                    });
                 });
-
-            if (authDetails) {
-                this._msalService.instance.setActiveAccount(authDetails.account);
-                this.authenticated = true;
-                this.user = await this.getUser();
-
-                return new Results(true, 'authenticated', { authDetails, user: this.user });
+            } catch (error) {
+                this.logger.error(`signIn`, error, false);
+                reject(new Results(false, 'fail to authenticate', error));
             }
-            return new Results(false, 'fail to authenticate');
-        } catch (error) {
-            throw error;
-        }
+        });
     }
 
     /**
@@ -74,11 +141,12 @@ export class MsTeamsAuthService {
      */
     async signOut(): Promise<void> {
         try {
+            this.logger.debug(`signOut`, false);
             await this._msalService.logoutPopup().toPromise();
             this.user = undefined;
             this.authenticated = false;
         } catch (error) {
-            console.error('signOut', error);
+            this.logger.error(`signOut`, error, false);
         }
     }
 
@@ -249,22 +317,4 @@ class User {
      * User timezone
      */
     timeZone!: string;
-}
-
-/**
- * Authentication setting
- */
-interface OAuthSettings {
-    /**
-     * App Id
-     */
-    appId: string;
-    /**
-     * Redirect Url
-     */
-    redirectUri: string;
-    /**
-     * Scropes
-     */
-    scopes: string[];
 }

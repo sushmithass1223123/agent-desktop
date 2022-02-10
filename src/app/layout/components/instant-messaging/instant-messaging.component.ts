@@ -1,3 +1,4 @@
+import { AOTWidget } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
@@ -150,6 +151,28 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
     config: WidgetData;
 
     /**
+     * Agent features list
+     */
+    agentFeatures: {
+        /**
+         * To allow screenshare
+         */
+        screenshare: boolean;
+        /**
+         * To allow hold
+         */
+        hold: boolean;
+        /**
+         * To allow snapshot
+         */
+        snapshot: boolean;
+        /**
+         * To allow webrtc test
+         */
+        webrtcTest: boolean;
+    };
+
+    /**
      * Constructor
      *
      * @param {FuseSidebarService} _fuseSidebarService
@@ -166,6 +189,12 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         // Set the defaults
         this.selectedContact = null;
         this._unsubscribeAll = new Subject();
+        this.agentFeatures = {
+            screenshare: false,
+            hold: false,
+            snapshot: false,
+            webrtcTest: false
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -233,6 +262,8 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
                     type: 'audio'
                 });
             }
+
+            this.agentFeatures.screenshare = x.ScreenShareAllowed;
         });
 
         // this._instantMessagingService.getActiveAgents.pipe(takeUntil(this._unsubscribeAll)).subscribe((x: boolean) => {
@@ -668,19 +699,24 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         widget.Config.Position.W = param === 'audio' ? 600 : 800;
         widget.Config.Position.H = param === 'audio' ? 275 : 550;
         widget.Config.Actions = ['collapse', 'maximize'];
-        widget.Data.DirectCall = false;
-        widget.Data.ConferenceType = '';
-        widget.Data.CustomerName = avEvent?.FromAgentName || this.selectedContact.name;
-        widget.Data.Direction = direction;
+
+        widget.InteractionDetails = {
+            NRIC: '',
+            RegNo1: '',
+            InteractionID: 0,
+            ConferenceType: '',
+            CustomerName: avEvent?.FromAgentName || this.selectedContact.name,
+            Direction: direction,
+            SessionID: TUtils.Generic.uuid(),
+            CallType: param
+        };
+
+        widget.Data = { ...this.config };
+        widget.Data.Source = 'InstantMessagingComponent';
         widget.Data.AVEvent = avEvent;
-        widget.Data.Config = this.config;
         widget.Data.Opener = this;
-        widget.Data.InteractionID = 0;
-        widget.Data.SessionID = TUtils.Generic.uuid();
         widget.Data.AgentID = avEvent?.FromAgentId || this.selectedContact.id;
         widget.Data.TmacServer = avEvent?.FromTmacServer || this.selectedContact.tmacServer;
-        widget.Data.CallType = param;
-
         widget.Data.SendMessage = (jsonMessage: any) => {
             SDKClient.sendAgentAVMessage({
                 jsonData: '',
@@ -692,7 +728,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         };
 
         // open call widget
-        this._aotWidgetService.addWidget(widget);
+        this._aotWidgetService.addWidget(widget as AOTWidget);
         // assign to the local variable
         this.callWidget = widget;
     }
