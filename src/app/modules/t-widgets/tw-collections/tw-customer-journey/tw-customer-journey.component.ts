@@ -417,7 +417,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
      */
     processHistoryData(historyData: InteractionHistory[], update?: boolean): void {
         // const tableData: Record<string, IHRecord> = groupBy(historyData, 'GroupID');
-        const sourceData = Object.entries(groupBy(historyData.reverse(), 'GroupID')).map((groups) => {
+        const sourceData = Object.entries(
+             // group all the data from api by 'GroupID' so that multiple channels of the
+            // same interaction are together
+            groupBy(historyData.reverse(), 'GroupID')).map((groups) => {
             let [, interactionRecords] = groups;
             let records: IHRecord[] = interactionRecords.map((data) => {
                 if (!((data.InteractionDate as any) instanceof Date)) {
@@ -448,7 +451,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             });
             if (records.length) {
                 let chatIndex = -1;
+                // group all the transcripts / group ID together
                 records = records.reduce((acc, curr, idx) => {
+                    // check if the current record is of the type 'chat'
+                    // if it is of type 'chat', start populating its 'Transcripts'
                     if (curr.Channel.match(/chat/i)) {
                         if (chatIndex > -1) {
                             acc[chatIndex].Transcripts.unshift(curr);
@@ -457,6 +463,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             acc.push({ ...curr, Transcripts: [] });
                         }
                     } else {
+                        // if it isn't of type chat, then push it to the new array as it is
                         acc.push(Object.assign(curr));
                     }
                     return acc;
@@ -487,16 +494,25 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 };
             }
         });
+        // concat to the table data
         this.table.source.data = this.table.source.data.concat(sourceData);
+        // get the oldest record in the table
         const lastEl = historyData.slice(0, 1) || [];
+        // set the lastId to the oldest record in the tablle
         this.historyParams.lastId = lastEl[0]?.LastID?.toString();
+        // set state of table
         this.table.loading = false;
+        // calculate the page offSet
+        // pageOffset is the number of missing records from the current page
         const pageOffset = this.table.source.data.length % parseInt(this.historyParams.noOfRecords, 10);
+        // calculate the number of records to be fetched in the very first page
         const recordsIncompleteInFirstPage =
             this.table.source.data.length < this.table.pageSizeOptions[0] ? parseInt(this.historyParams.noOfRecords, 10) - pageOffset : 0;
+        // if there are incomplete records in first page, fetch another page with + 1 overflowing record
         if (recordsIncompleteInFirstPage) {
             this.getInteractionHistory((recordsIncompleteInFirstPage + 1).toString());
         } else if (pageOffset === 0) {
+            // if the records in the page is exactly the same as page size, fetch onw more record
             this.getInteractionHistory('1');
         }
     }
