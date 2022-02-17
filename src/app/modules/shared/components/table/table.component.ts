@@ -9,6 +9,16 @@ type GenericLabel<T, K> = K | ((el: T) => K);
 
 type Icon = { name?: string; only?: boolean; color?: 'warn' | 'primary' | 'accent'; prefixed?: boolean };
 
+type BaseTableConfig = {
+    /**
+     * Title of the record
+     */
+    title?: string;
+    /**
+     * Width of the column
+     */
+    width?: string;
+};
 export interface SelectedPayload {
     /**
      * Action selected of the row
@@ -21,47 +31,75 @@ export interface SelectedPayload {
 }
 
 export type TableConfig<T = any> =
-    | {
+    | BaseTableConfig & {
           /**
-           * Json key of the record
+           * Type of the record to be displayed
            */
-          title?: string;
-          type?: 'string';
-          value?: GenericLabel<T, string | number>;
-          icon?: GenericLabel<T, Icon>;
-          tooltip?: boolean;
-          truncate?: boolean;
-          uppercase?: boolean;
-          searchable?: boolean;
-          width?: string;
-          custom?: TemplateRef<any>;
+           type?: 'string';
+           /**
+            * Displayed Value of the record
+            */
+           value?: GenericLabel<T, string | number>;
+           /**
+            * icon value
+            */
+           icon?: GenericLabel<T, Icon>;
+           /**
+            * tooltip flag
+            */
+           tooltip?: boolean;
+           /**
+            * truncate flag
+            */
+           truncate?: boolean;
+           /**
+            * upper case flag
+            */
+           uppercase?: boolean;
+           /**
+            * searchable flag
+            */
+           searchable?: boolean;
+           /**
+            * custom ref for the cell
+            */
+           custom?: TemplateRef<any>;
       }
-    | {
-          /**
-           * Json key of the record
-           */
-          title?: string;
+    | BaseTableConfig & {
           /**
            * Type of the cell
            */
           type: 'date';
+                     /**
+            * Displayed Value of the record
+            */
           value?: GenericLabel<T, string | number>;
+          /**
+            * tooltip flag
+            */
           tooltip?: boolean;
-          width?: string;
           truncate?: boolean;
           searchable?: boolean;
       }
-    | {
-          /**
-           * Json key of the record
-           */
-          title?: string;
+    |  BaseTableConfig &{
           /**
            * Type of the cell
            */
           type: 'controls';
-          width?: string;
-          value?: { title: string; icon: string; visible?: (el: T) => boolean }[];
+                 /**
+            * Config for the control cell
+            */
+          value?: { 
+                 /**
+     * Title of the record
+     */title: string; 
+                /**
+            * icon value
+            */icon: string; 
+                       /**
+            * visibility flag for the control
+            */
+            visible?: (el: T) => boolean }[];
       };
 
 /**

@@ -71,6 +71,7 @@
                         ],
                         "scripts": [],
                         "allowedCommonJsDependencies": [
+                            "crypto-js",
                             "lodash",
                             "@swimlane/dragula",
                             "chart.js",

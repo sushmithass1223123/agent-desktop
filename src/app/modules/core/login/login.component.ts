@@ -450,9 +450,15 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                         return;
                     }
 
+                    const k = Utf8.parse('1029384756564738');
+                    const cg = {
+                        iv: Base64.parse('AQIDBAUGBgUEAwIBBwcHBw==')
+                    };
+
                     // check for username/lanid
                     if (params.u) {
-                        patchVal = { ...patchVal, lanId: params.u };
+                        const lanId = AES.decrypt(decodeURIComponent(params.u), k, cg).toString(Utf8) || params.u;
+                        patchVal = { ...patchVal, lanId };
                     }
 
                     // check for station
@@ -462,10 +468,6 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
                     // check for password
                     if (params.p || params.ap || params.sp) {
-                        var k = Utf8.parse('1029384756564738');
-                        var cg = {
-                            iv: Base64.parse('AQIDBAUGBgUEAwIBBwcHBw==')
-                        };
                         let decrypted = '';
                         if (params.p) {
                             this.password.Agent = true;
