@@ -182,11 +182,13 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                         editor.on('init', () => {
                             editor.setContent(this.body || '');
                             this._editor = editor;
+                            // notify the email-component that body of the email has changed
                             editor.focus();
                             const setEmailbody = () => {
                                 this.body = editor.getContent();
                                 this.bodyChange.emit(this.body);
                             };
+                            // on every debounced changed user is notified
                             fromEvent(editor, 'change')
                                 .pipe(
                                     takeUntil(this.unsubscribeAll$),
@@ -196,6 +198,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                                     debounceTime(this.debounce.duration)
                                 )
                                 .subscribe(setEmailbody);
+                            // on every blur event user is notified
                             fromEvent(editor, 'blur').pipe(takeUntil(this.unsubscribeAll$)).subscribe(setEmailbody);
                         });
                     }

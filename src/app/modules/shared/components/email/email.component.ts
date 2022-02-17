@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -28,15 +27,27 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     showCcBcc = false;
 
+    /**
+     * email object passsed from parent
+     */
     @Input()
     email: EmailComponentInputs;
 
+    /**
+     * outputter for the send email method
+     */
     @Output()
     sendEmail = new EventEmitter();
 
+    /**
+     * mode of the email component
+     */
     @Input()
     mode: EmailComponentMode = 'preview';
 
+    /**
+     * internal email object
+     */
     _email: Partial<EmailComponentInputs> = {};
 
     /**
@@ -48,11 +59,20 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
         BCC: new FormControl('')
     });
 
+    /**
+     * configurations for the preview
+     */
     @Input()
     previewConf = {
+        /**
+         * header state
+         */
         headerCollapsed: false
     };
 
+    /**
+     * State of the email component
+     */
     @Input()
     state: 'loading' | 'error' | 'loaded' = 'loaded';
 
@@ -94,8 +114,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     constructor(
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appDataService: AppDataService,
-        private httpClient: HttpClient
+        private _appDataService: AppDataService
     ) {}
 
     /**
@@ -126,12 +145,13 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
-     * Sets up email preview
+     * Sets up email preview inside a shadow dom
      * @param {HTMLDivElement} el
      */
     setEmailBody(): void {
         if (this.emailRef) {
             const el = this.emailRef.nativeElement;
+            // if email is sent as plain text -> add whitespace:normal else 'pre-line'
             el.style.whiteSpace = isStringHtml(this.email.Body) ? 'normal' : 'pre-line';
             if (!el.shadowRoot) {
                 el.attachShadow({ mode: 'open' });
@@ -258,6 +278,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     break;
             }
             this.showCcBcc = false;
+            // attach to shadow dom only when the email mode is preview
             if (this.mode === 'preview') {
                 this.setEmailBody();
             }
