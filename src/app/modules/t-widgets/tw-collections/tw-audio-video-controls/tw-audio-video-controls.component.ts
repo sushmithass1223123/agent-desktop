@@ -84,7 +84,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * Session Id
      */
-    sessionID: string;
+    sessionId: string;
     /**
      * Need more decription
      */
@@ -276,7 +276,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // add the widget data
         this.interactionId = this.data.InteractionDetails.InteractionID;
-        this.sessionID = this.data.InteractionDetails.SessionID;
+        this.sessionId = this.data.InteractionDetails.SessionID;
 
         // listen to tmac events
         SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
@@ -429,7 +429,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.interactionId.toString(),
             this.user.agentId,
             this.user.agentName,
-            this.sessionID.split('|')[0],
+            this.sessionId.split('|')[0],
             'chat',
             AV
         );
@@ -1005,7 +1005,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                     name: this.data.InteractionDetails.CustomerName,
                                     nric: this.data.InteractionDetails.NRIC || '',
                                     phone: this.data.InteractionDetails.RegNo1 || '',
-                                    sessionId: this.sessionID
+                                    sessionId: this.sessionId
                                 },
                                 { base64 }
                             )

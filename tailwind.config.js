@@ -84,10 +84,14 @@ module.exports = {
                 10: '40px'
             },
             flex: {
-                full: '1 1 100%'
+                full: '1 1 100%',
+                max: '1 1 1e-09px'
             },
             fontFamily: {
                 material: 'Material Icons'
+            },
+            borderRadius: {
+                20: '20px'
             }
         }
     },

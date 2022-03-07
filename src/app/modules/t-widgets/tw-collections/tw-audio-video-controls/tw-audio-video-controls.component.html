@@ -5,9 +5,9 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div *ngIf="data.InteractionDetails.CallType === 'audio'" fxFill class="audio">
-            <div fxFill fxLayout="column" fxLayoutAlign="space-between none" class="px-12">
-                <div *ngIf="userList.length" fxFlex fxLayout="row wrap" fxLayoutAlign=" center">
+        <div *ngIf="data.InteractionDetails.CallType === 'audio'" class="audio twd-w-full twd-h-full">
+            <div class="twd-w-full twd-h-full twd-flex twd-flex-col twd-justify-between twd-px-3">
+                <div *ngIf="userList.length" class="twd-flex twd-flex-max twd-flex-row twd-flex-wrap twd-items-center">
                     <ng-container *ngFor="let item of userList">
                         <avatar
                             *ngIf="item.streamInfo.type === 'audio'"
@@ -21,10 +21,7 @@
                 </div>
 
                 <div
-                    fxFlex
-                    fxLayout="column"
-                    fxLayoutAlign="center none"
-                    class="p-8 border-radius-20 call-details"
+                    class="call-details twd-flex twd-flex-max twd-flex-col twd-justify-center twd-rounded-20 twd-p-2"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
                     <div class="w-100-p border-radius-20 remote-video-container" *ngIf="remoateScreenshareRef">
@@ -40,21 +37,24 @@
                         </div>
                     </div>
 
-                    <div fxLayout="row" fxLayoutAlign="space-between none">
-                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
-                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
+                    <div class="twd-flex twd-flex-row twd-justify-between">
+                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>construction</mat-icon> {{ sessionId }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center">
+                            <mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</span
+                        >
                     </div>
 
-                    <div fxLayout="row" fxLayoutAlign="space-between none">
-                        <span fxLayout="row" fxLayoutAlign=" center">
+                    <div class="twd-flex twd-flex-row twd-justify-between">
+                        <span class="twd-flex twd-flex-row twd-items-center">
                             <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                         </span>
-                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
                     </div>
                 </div>
 
-                <div fxFlex fxLayout="row wrap" fxLayoutAlign="space-between center" class="call-controls">
-                    <div fxLayout="row" fxLayoutAlign="start center" class="actions-1">
+                <div class="call-controls twd-flex twd-flex-row twd-flex-wrap twd-flex-max twd-justify-between twd-items-center">
+                    <div class="actions-1 twd-flex twd-flex-row twd-justify-start twd-items-center">
                         <button
                             mat-flat-button
                             mat-icon-button
@@ -90,7 +90,7 @@
                         </button>
                     </div>
 
-                    <div fxLayout="row" fxLayoutAlign="start center" class="actions-2">
+                    <div class="actions-2 twd-flex twd-flex-row twd-justify-start twd-items-center">
                         <button
                             *ngIf="data.Data.Opener.agentFeatures.hold"
                             [disabled]="!connected || (onCallHoldEvent && !manualHold)"
@@ -124,13 +124,21 @@
             </div>
         </div>
 
-        <div *ngIf="data.InteractionDetails.CallType === 'video'" fxFill fxFlex class="video">
-            <div fxFill fxFlex fxLayout="column" fxLayoutAlign="space-between none" class="position-relative video-controls">
+        <div *ngIf="data.InteractionDetails.CallType === 'video'" class="video twd-w-full twd-h-full twd-flex twd-flex-max">
+            <div class="video-controls twd-relative twd-w-full twd-h-full twd-flex twd-flex-col twd-justify-between twd-items-stretch twd-flex-max">
                 <div
-                    fxFlex
-                    fxLayout="row wrap"
-                    fxLayoutAlign="center start"
-                    class="w-100-p border-radius-20 remote-video-container twd-overflow-auto"
+                    class="
+                        remote-video-container
+                        twd-w-full
+                        twd-flex
+                        twd-flex-max
+                        twd-flex-row
+                        twd-flex-wrap
+                        twd-justify-center
+                        twd-items-start
+                        twd-rounded-20
+                        twd-overflow-auto
+                    "
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animateStagger]="{ value: '50' }"
                 >
@@ -169,24 +177,29 @@
                         <span class="text-boxed user">{{ user.streamInfo.user }}</span>
                     </div>
 
-                    <div fxFill fxFlex fxLayout fxLayoutAlign="center center" *ngIf="userList.length === 0">
+                    <div class="twd-w-full twd-h-full twd-flex twd-flex-max twd-justify-center twd-items-center" *ngIf="userList.length === 0">
                         <img src="assets/images/vectors/no-widget.svg" />
                     </div>
                 </div>
 
-                <div fxLayout="column" fxLayoutAlign="center none" class="px-12 py-4 call-details">
-                    <div fxLayout="row" fxLayoutAlign="space-between none">
-                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
-                        <span fxLayout="row" fxLayoutAlign=" center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
-                        <div fxLayout="row" fxLayoutAlign=" center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</div>
-                        <span fxLayout="row" fxLayoutAlign=" center">
+                <div class="call-details twd-flex twd-flex-col twd-justify-center twd-px-3 twd-py-1">
+                    <div class="twd-flex twd-flex-row twd-justify-between">
+                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>construction</mat-icon> {{ sessionId }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center">
+                            <mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</span
+                        >
+                    </div>
+                    <div class="twd-flex twd-flex-row twd-justify-between">
+                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center">
                             <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                         </span>
                     </div>
                 </div>
 
-                <div fxLayout="row wrap" fxLayout="row" fxLayoutAlign=" none" class="call-controls">
-                    <div fxFlex="40" fxLayout="row" fxLayoutAlign="start center" class="actions-1">
+                <div class="call-controls twd-flex twd-flex-row twd-flex-wrap">
+                    <div class="actions-1 twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-max twd-max-w-5/12">
                         <button
                             mat-flat-button
                             mat-icon-button
@@ -264,7 +277,7 @@
                         </button>
                     </div>
 
-                    <div fxFlex="60" fxLayout="row" fxLayoutAlign="start center" class="actions-2">
+                    <div class="actions-2 twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-max twd-max-w-7/12">
                         <button
                             *ngIf="data.Data.Opener.agentFeatures.hold"
                             [disabled]="!connected || (onCallHoldEvent && !manualHold)"
