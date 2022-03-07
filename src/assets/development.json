@@ -387,7 +387,6 @@
                                         "Anchor": false,
                                         "AOT": true,
                                         "AutoOpen": false,
-                                        "LocalAOT": true,
                                         "Icon": "event_note",
                                         "Class": "",
                                         "Position": { "X": 4, "Y": 4, "W": 400, "H": 400 },
@@ -2636,7 +2635,7 @@
             "proxy": {
                 "urls": [
                     "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://localhost:55443/TMACSDKProxySC/TmacProxy.asmx",
+                    "https://localhost/TMACSDKProxy/TmacProxy.asmx",
                     "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "type": "soap",
@@ -2658,5 +2657,5 @@
             ]
         }
     },
-    "Version": "5.1.130"
+    "Version": "5.1.228"
 }
