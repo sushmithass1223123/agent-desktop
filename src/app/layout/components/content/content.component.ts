@@ -65,8 +65,7 @@ export class ContentComponent implements OnInit, OnDestroy {
         this._aotWidgetService.widgets
             .pipe(
                 takeUntil(this._unsubscribeAll),
-                map((widgets) => widgets.filter((widget) => !widget.Config.LocalAOT)),
-                filter((widgets) => widgets.length > 0)
+                map((widgets) => widgets.filter((widget) => !widget.Config.LocalAOT))
             )
             .subscribe((widgets) => {
                 this.aotWidgets = widgets;
