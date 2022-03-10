@@ -1601,14 +1601,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             n.checked = checked;
         }
     };
-
-    // /**
-    //  * Returns selected email info for rerender between switcher view
-    //  * @returns {any}
-    //  */
-    // getSelectedEmailInfo(): any {
-    //     return Object.assign({}, this.openEmailRes.data);
-    // }
 }
 
 // for more info visit - https://angular.io/api/core

@@ -240,7 +240,7 @@ export class AgentFeaturesService extends SharedWrapper {
                 // save the stream to reference
                 this._agentFeatureInfo.data.cameraStream = stream;
             },
-            (error: MediaStreamError) => {
+            (error: Error) => {
                 this._agentFeatureInfo.permissions.camera = false;
                 this._appUIService.showSnackbar('Error: Please give access to the camera for supervisor', 'failure');
                 setTimeout(() => {
@@ -281,13 +281,14 @@ export class AgentFeaturesService extends SharedWrapper {
                         track.stop();
                     });
                     // throw an error
-                    throw new MediaStreamError();
+                    throw new Error();
+                    // throw new MediaStreamError();
                 }
                 this._agentFeatureInfo.permissions.display = true;
                 // save the stream to reference
                 this._agentFeatureInfo.data.displayStream = stream;
             })
-            .catch((error: MediaStreamError) => {
+            .catch((error: Error) => {
                 this._agentFeatureInfo.permissions.display = false;
                 this._appUIService.showSnackbar('Error: Please share your entire screen for supervisor', 'failure');
                 setTimeout(() => {
