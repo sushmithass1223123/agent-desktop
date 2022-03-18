@@ -1,10 +1,12 @@
-import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatColors } from '@fuse/mat-colors';
 import { AppUiService } from '@services/app-ui.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { format } from 'date-fns';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CustomCalendarEvent } from '../calendar.interface';
 import { CalendarEventModel } from '../calendar.model';
 
@@ -17,7 +19,7 @@ import { CalendarEventModel } from '../calendar.model';
     styleUrls: ['./event-form.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CalendarEventFormDialogComponent implements OnInit {
+export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
     /**
      * Widget data
      */
@@ -87,29 +89,48 @@ export class CalendarEventFormDialogComponent implements OnInit {
     }
 
     /**
-     * Lifecycle Method
+     * On init
      */
     ngOnInit(): void {
         this.eventForm = this.createEventForm();
-        this.eventForm.controls.type.valueChanges.subscribe((type) => {
-            const titleControl = this.eventForm.get('title');
-            const taskTypeControl = this.eventForm.get('taskType');
-            const taskDataControl = this.eventForm.get('taskData');
-            if (type === 'executetask') {
-                taskTypeControl.setValidators(Validators.required);
-                taskDataControl.setValidators(Validators.required);
-            } else {
-                titleControl.setValidators([Validators.required]);
-            }
-            titleControl.updateValueAndValidity();
-            taskTypeControl.updateValueAndValidity();
-            taskDataControl.updateValueAndValidity();
-        });
+        // set the initial validators
+        this.setValidators(this.eventForm.controls.type.value);
     }
+
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * To set validators for form
+     * @param { 'executetask' | 'event' } type
+     */
+    setValidators(type: 'executetask' | 'event'): void {
+        const titleControl = this.eventForm.get('title');
+        const taskTypeControl = this.eventForm.get('taskType');
+        const taskDataControl = this.eventForm.get('taskData');
+
+        if (type === 'executetask') {
+            titleControl.setValue('');
+            titleControl.setValidators([Validators.nullValidator]);
+            taskTypeControl.setValidators(Validators.required);
+            taskDataControl.setValidators(Validators.required);
+        } else {
+            taskTypeControl.setValue('');
+            taskDataControl.setValue('');
+            taskTypeControl.setValidators(Validators.nullValidator);
+            taskDataControl.setValidators(Validators.nullValidator);
+            titleControl.setValidators([Validators.required]);
+        }
+        titleControl.updateValueAndValidity();
+        taskTypeControl.updateValueAndValidity();
+        taskDataControl.updateValueAndValidity();
+    }
 
     /**
      * To alert copy
