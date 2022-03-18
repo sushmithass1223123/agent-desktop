@@ -15,7 +15,7 @@
                 formControlName="type"
                 fxLayout
                 fxLayoutAlign="space-around "
-                (change)="event.type = $event.value"
+                (change)="event.type = $event.value; setValidators($event.value)"
                 color="primary"
             >
                 <mat-radio-button value="event">Event</mat-radio-button>
