@@ -1,3 +1,4 @@
+import { AppRootConfig, TwCampaignContact, TwCampaignContactData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -8,7 +9,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { GenericInteractionEvent, IAgentData, IncomingCallEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { CustomerInfo, IAppConfig, IWidget } from 'app/interfaces';
+import { CustomerInfo } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { take, takeUntil } from 'rxjs/operators';
@@ -26,17 +27,17 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<IncomingCallEvent | GenericInteractionEvent, WidgetData>;
+    @Input() data: TwCampaignContact<IncomingCallEvent | GenericInteractionEvent>;
 
     /**
      * Widget data
      */
-    widgetData: WidgetData;
+    widgetData: TwCampaignContactData;
 
     /**
      * To store entire app config and get update
      */
-    appConfig: IAppConfig;
+    appConfig: AppRootConfig;
 
     /**
      * ID of interaction

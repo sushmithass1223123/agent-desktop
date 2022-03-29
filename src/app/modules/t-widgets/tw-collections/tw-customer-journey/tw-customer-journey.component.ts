@@ -1,7 +1,8 @@
 // import { SelectionModel } from '@angular/cdk/collections';
+import { TwCustomerJourney } from '@ad/types';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { TableComponent, SelectedPayload } from '@modules/shared/components';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SelectedPayload, TableComponent } from '@modules/shared/components';
 import { TwWrapperComponent } from '@modules/t-widgets/tw-wrapper/tw-wrapper.component';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
@@ -17,12 +18,11 @@ import {
     SDKClient
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget, ResData } from 'app/interfaces';
-import { maticonByExtension, throwADError } from 'app/utils';
+import { maticonByExtension } from 'app/utils';
 import { format, parse } from 'date-fns';
-import { groupBy, orderBy, sortBy } from 'lodash';
-import { BehaviorSubject, from, of } from 'rxjs';
-import { catchError, filter, map, share, takeUntil, tap } from 'rxjs/operators';
+import { groupBy, sortBy } from 'lodash';
+import { BehaviorSubject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 
 type Mode = 'Interactions' | 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
@@ -64,7 +64,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     /**
      * Input data from app config json
      */
-    @Input() data: IWidget<any, WidgetData>;
+    @Input() data: TwCustomerJourney;
 
     /**
      * Fuse custom config

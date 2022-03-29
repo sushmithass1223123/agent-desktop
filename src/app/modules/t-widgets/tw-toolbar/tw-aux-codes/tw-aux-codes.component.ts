@@ -1,9 +1,9 @@
+import { TwAuxCode } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IWidget } from 'app/interfaces';
 
 /**
  * Aux codes components
@@ -18,7 +18,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Widget data
      */
-    @Input() data: IWidget<any, IWidgetData>;
+    @Input() data: TwAuxCode;
     /**
      * AUX code menu opened falg
      */

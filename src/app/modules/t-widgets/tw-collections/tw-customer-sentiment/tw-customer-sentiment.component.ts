@@ -1,12 +1,12 @@
+import { TwCustomerSentiment } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { GenericEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
-import { IWidget, TwChartConfig } from 'app/interfaces';
+import { TwChartConfig } from 'app/interfaces';
 import * as Chart from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
-import { TwCustomerSentiment } from '@ad/types';
 
 /**
  * Neutral image
@@ -81,7 +81,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwCustomerSentiment;
 
     /**
      * customerSentimentChart data

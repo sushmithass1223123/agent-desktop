@@ -1,3 +1,4 @@
+import { AppRootConfig, LoginConfig, LogoConfig } from '@ad/types';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -10,7 +11,6 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { IAppConfig } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import AES from 'crypto-js/aes';
 import Base64 from 'crypto-js/enc-base64';
@@ -46,7 +46,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * App configuration
      */
-    appConfig: IAppConfig;
+    appConfig: AppRootConfig;
     /**
      * Brand logo
      */
@@ -97,50 +97,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Login configuration
      */
-    loginConfig = null;
+    loginConfig: LoginConfig = null;
     /**
      * App customer logo
      */
-    appCustomerLogo: {
-        /**
-         * Logo alt
-         */
-        Alt: string;
-        /**
-         * Small logo reference
-         */
-        Small: {
-            /**
-             * logo source
-             */
-            Src: string;
-            /**
-             * Logo width
-             */
-            Width: number;
-            /**
-             * Logo height
-             */
-            Height: number;
-        };
-        /**
-         * Large logo reference
-         */
-        Large: {
-            /**
-             * logo source
-             */
-            Src: string;
-            /**
-             * Logo width
-             */
-            Width: number;
-            /**
-             * Logo height
-             */
-            Height: number;
-        };
-    } = null;
+    appCustomerLogo: LogoConfig = null;
     /**
      * App logo source
      */

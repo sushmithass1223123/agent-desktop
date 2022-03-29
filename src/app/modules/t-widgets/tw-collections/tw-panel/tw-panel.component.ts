@@ -4,7 +4,6 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwPanel } from '@ad/types';
 
 /**
- * Need more Description
  * Tw Panel Compoenent
  */
 @Component({

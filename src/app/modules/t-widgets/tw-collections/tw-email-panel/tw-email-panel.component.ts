@@ -1,7 +1,7 @@
+import { TwEmailPanel } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
-import { TwEmailPanel } from '@ad/types';
 
 /**
  * Email Panel Component
@@ -16,7 +16,7 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
     /**
      * Holds widget data
      */
-    @Input() data: IWidget;
+    @Input() data: TwEmailPanel;
 
     /**
      * Holds all the email panel widgets

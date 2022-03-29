@@ -23,7 +23,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<any, WidgetData>;
+    @Input() data: TwCannedResponses<any>;
 
     /**
      * Interaction Id

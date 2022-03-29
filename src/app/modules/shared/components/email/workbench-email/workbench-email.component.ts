@@ -594,6 +594,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     return {
                         name: nodeName,
                         children: this.getSortedEmails(
+                            // iterate over the emails to retain the checked status of the email
                             grandChildrenNodes.map((x) => {
                                 x.checked = selectedUiIds.includes(x.uiId);
                                 return x;
@@ -1365,16 +1366,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     trackBy = (_index: number, email: Mail): string => {
         return email.uiId;
     };
-
-    /**
-     * Iframe event when loaded , loads the email inside it
-     * @param iframe
-     */
-    loadEmailInIframe(iframe: HTMLIFrameElement): void {
-        const frag = document.createRange().createContextualFragment(this.openEmailRes.data.value?.Body);
-        const doc = iframe.contentDocument || iframe.contentWindow;
-        (doc as any).body.appendChild(frag);
-    }
 
     /**
      * This method is used to formate the email list reponse from the queue search

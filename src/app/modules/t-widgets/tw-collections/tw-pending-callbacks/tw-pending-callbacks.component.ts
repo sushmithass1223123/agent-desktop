@@ -1,11 +1,11 @@
+import { TwPendingCallbacks, TwPendingCallbacksData } from '@ad/types';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget, ResData } from 'app/interfaces';
+import { ResData } from 'app/interfaces';
 import * as moment from 'moment';
-import { TwPendingCallbacks } from '@ad/types';
 
 /**
  * Pending Callbacks widget
@@ -20,7 +20,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwPendingCallbacks<any>;
 
     /**
      * Phone nuber to be entered by user if not found in the Event data
@@ -60,7 +60,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
     /**
      * Data Config
      */
-    dataConfig: WidgetData;
+    dataConfig: TwPendingCallbacksData;
 
     /**
      * Constructor
@@ -177,13 +177,6 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
             this.appUiService.showSnackbar('Unable to close callback', 'failure');
         }
     }
-}
-
-interface WidgetData {
-    /**
-     * TCM Proxy api URL
-     */
-    TCMProxyUrl: string;
 }
 
 // for more info visit - https://angular.io/api/core

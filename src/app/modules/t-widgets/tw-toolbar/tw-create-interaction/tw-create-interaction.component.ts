@@ -1,3 +1,4 @@
+import { TwCreateInteraction } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { appAnimations } from '@modules/shared/animations/app.animation';
@@ -6,7 +7,6 @@ import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/t
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
-import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -25,7 +25,7 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
     /**
      * Widget data
      */
-    @Input() data: IWidget;
+    @Input() data: TwCreateInteraction;
 
     /**
      * Subject to unsubscribe

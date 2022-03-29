@@ -1,6 +1,6 @@
 {
     "Login": {
-        "Modes": { "Enabled": true, "Type": "nonpbx" },
+        "Modes": { "Enabled": false, "Type": "nonpbx" },
         "FaceAuth": { "Enabled": false, "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages" },
         "DomainListEnabled": false,
         "Password": { "Agent": false, "Station": false },

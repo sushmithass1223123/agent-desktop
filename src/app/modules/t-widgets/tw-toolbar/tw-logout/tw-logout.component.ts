@@ -1,3 +1,4 @@
+import { TwLogout } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -5,7 +6,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IWidget } from 'app/interfaces';
 
 /**
  * Logout button component
@@ -20,7 +20,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * App config json data
      */
-    @Input() data: IWidget<any, IWidgetData>;
+    @Input() data: TwLogout;
     /**
      * Can logout flag
      */

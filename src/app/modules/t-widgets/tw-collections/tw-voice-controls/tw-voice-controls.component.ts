@@ -1,4 +1,4 @@
-import { TwVoiceControlsService } from './tw-voice-controls.service';
+import { AgentSkillListData, IVRTransferMenu, TwVoiceControls, TwVoiceControlsData } from '@ad/types';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -43,12 +43,12 @@ import {
     UUIDataEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AgentSkillListData, AgentSkillRef, CommonWidgetData, InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
+import { InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
-import { TwVoiceControls } from '@ad/types';
+import { TwVoiceControlsService } from './tw-voice-controls.service';
 
 /**
  * Voice Controls Component
@@ -63,11 +63,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Daat from App config
      */
-    @Input() data: IWidget<IncomingCallEvent | OutgoingCallEvent, IWidgetData>;
+    @Input() data: TwVoiceControls<IncomingCallEvent | OutgoingCallEvent>;
     /**
      * Widget data
      */
-    widgetData: IWidgetData;
+    widgetData: TwVoiceControlsData;
     /**
      * Maximise event emitter
      */
@@ -138,7 +138,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * IVR menus
      */
-    ivrMenus: IIVRTransferOption[] = [];
+    ivrMenus: IVRTransferMenu[] = [];
     /**
      * Interaction status
      */
@@ -1973,80 +1973,4 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         dialogRef.componentInstance.data = widget;
     }
-}
-
-interface IIVRTransferOption {
-    /**
-     * Menu text
-     */
-    Text: string;
-    /**
-     * Menu type
-     */
-    Type: string;
-    /**
-     * Menu value
-     */
-    Value: string;
-    /**
-     * Menu icon
-     */
-    Icon: string;
-}
-
-interface IWidgetData extends CommonWidgetData {
-    /**
-     * Transfer ref
-     */
-    Transfer: AgentSkillRef;
-    /**
-     * Conference ref
-     */
-    Conference: AgentSkillRef;
-    /**
-     * IVR ref
-     */
-    IVR: {
-        /**
-         * Menu enabled flag
-         */
-        MenuEnabled: boolean;
-        /**
-         * Default IVR menus
-         */
-        DefaultMenu: string[];
-        /**
-         * IVR Transfer ref
-         */
-        Transfer: {
-            /**
-             * IVR transfer allowed flag
-             */
-            Allowed: boolean;
-            /**
-             * IVR transfer menu ref
-             */
-            Menu: IIVRTransferOption[];
-        };
-    };
-    /**
-     * Dialpad allowed flag
-     */
-    DialpadAllowed: boolean;
-    /**
-     * Interaction comment allowed flag
-     */
-    InteractionCommentAllowed: boolean;
-    /**
-     * Make call allowed flag
-     */
-    MakeCallAllowed: boolean;
-    /**
-     * Send SMS allowed flag
-     */
-    SendSMSAllowed: boolean;
-    /**
-     * Close interaction on call end flag
-     */
-    CloseInteractionOnEnd: boolean;
 }

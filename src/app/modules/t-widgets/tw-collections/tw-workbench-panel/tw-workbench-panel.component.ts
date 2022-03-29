@@ -1,9 +1,8 @@
+import { TwWorkbenchPanel } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
 import { filter } from 'rxjs/operators';
-import { TwWorkbenchPanel } from '@ad/types';
 
 /**
  * Workbench Panel Component
@@ -18,7 +17,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * Holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<any, WidgetData>;
+    @Input() data: TwWorkbenchPanel;
 
     /**
      * Fuse custom config

@@ -1,4 +1,3 @@
-export * from './app-config.interface';
 export * from './app-request.interface';
 export * from './app-response.interface';
 export * from './app-utils.interface';

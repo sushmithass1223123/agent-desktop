@@ -1,4 +1,4 @@
-import { AOTWidget, WidgetAction } from '@ad/types';
+import { AOTWidget, AppRootConfig, WidgetAction } from '@ad/types';
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -22,7 +22,7 @@ import {
     TmacServerConnectionSuccess
 } from '@tmac/sdk';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
-import { CustomTMACEventTypes, IAppConfig, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
+import { CustomTMACEventTypes, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { upperFirst } from 'lodash';
@@ -47,7 +47,7 @@ export class TMACEventService extends SharedWrapper {
     /**
      * App config
      */
-    appConfig: IAppConfig;
+    appConfig: AppRootConfig;
     /**
      * Interaction events storage array
      */

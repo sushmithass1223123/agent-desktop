@@ -1,4 +1,4 @@
-import { AOTWidget } from '@ad/types';
+import { AOTWidget, TwAudioVideoControls } from '@ad/types';
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { fuseAnimations } from '@fuse/animations';
@@ -30,7 +30,7 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS } from 'app/constants';
-import { CommonWidgetData, IWidget } from 'app/interfaces';
+import { CommonWidgetData } from 'app/interfaces';
 import { InstantMessagingComponent } from 'app/layout/components/instant-messaging/instant-messaging.component';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -53,7 +53,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<IInteractionDetails, IWidgetData>;
+    // @Input() data: IWidget<IInteractionDetails, IWidgetData>;
+    @Input() data: TwAudioVideoControls<IInteractionDetails>;
     /**
      * Fuse custom config
      */
@@ -1308,68 +1309,6 @@ interface CustomMediaDeviceInfo {
      * To know which media device is selected
      */
     selected: boolean;
-}
-
-interface IWidgetData extends CommonWidgetData {
-    /**
-     * Flag to end interaaction on AV end
-     */
-    EndInteractionOnAVEnd?: boolean;
-    /**
-     * WebRTC test ref
-     */
-    WebRTCTest?: {
-        /**
-         *  WebRTC test allowed flag
-         */
-        Allowed: boolean;
-        /**
-         * Test url
-         */
-        Url: string;
-        /**
-         * FLag to send to customer
-         */
-        Customer: boolean;
-    };
-    /**
-     * Flag to mute agent/customer audio/video on interaction hold
-     */
-    MuteAVOnHold?: {
-        /**
-         * To mute agent audio
-         */
-        AgentAudio: boolean;
-        /**
-         * To mute agent video
-         */
-        AgentVideo: boolean;
-        /**
-         * To mute customer audio
-         */
-        CustomerAudio: boolean;
-        /**
-         * To mute customer video
-         */
-        CustomerVideo: boolean;
-    };
-    Source: 'TwChatControlsComponent' | 'InstantMessagingComponent';
-    /**
-     * AV event from opener
-     */
-    AVEvent?: any;
-    /**
-     * Opener of this widget
-     */
-    Opener?: TwChatControlsComponent | InstantMessagingComponent;
-    /**
-     * Send messsge function from opener
-     */
-    SendMessage?: () => {};
-    /**
-     * To end call from opener
-     */
-    EndCall?: () => void;
 }
 
 interface IInteractionDetails {
