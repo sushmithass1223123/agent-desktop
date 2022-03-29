@@ -1,9 +1,9 @@
+import { AppRootConfig } from '@ad/types';
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
-import { IAppConfig } from 'app/interfaces';
 import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
@@ -70,7 +70,7 @@ export class AppDataService extends SharedWrapper {
         this._configSubject.next(config);
     }
 
-    get config(): any | Observable<IAppConfig> {
+    get config(): any | Observable<AppRootConfig> {
         return this._configSubject.asObservable();
     }
 
@@ -159,7 +159,7 @@ export class AppDataService extends SharedWrapper {
     /**
      * To set json config
      */
-    private setJsonConfig(config: IAppConfig): void {
+    private setJsonConfig(config: AppRootConfig): void {
         try {
             // set the title
             if (config.AppConfigs.TitleName) {
@@ -302,9 +302,9 @@ export class AppDataService extends SharedWrapper {
      * Gets app specific keys from app config
      *
      * @param {Record<string , string>} json
-     * @returns {Observable<Partial<IAppConfig>>}
+     * @returns {Observable<Partial<AppRootConfig>>}
      */
-    public getConfig(json?: Record<string, string>): Observable<Partial<IAppConfig> | any> {
+    public getConfig(json?: Record<string, string>): Observable<Partial<AppRootConfig> | any> {
         if (json) {
             return this._configSubject.pipe(map((conf) => formatJsonData(conf, json)));
         }

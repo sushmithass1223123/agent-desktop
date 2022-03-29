@@ -1,3 +1,4 @@
+import { TwWorkCodes, TwWorkCodesData } from '@ad/types';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -7,11 +8,10 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient, WorkCode, WorkCodeAddedEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { CustomSDKEvent, IWidget, ResData } from 'app/interfaces';
+import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-import { TwWorkCodes } from '@ad/types';
 
 /**
  * Work codes Component
@@ -26,7 +26,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwWorkCodes;
 
     /**
      * Work Code input ref
@@ -58,7 +58,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Data Configuration
      */
-    widgetData: WidgetData;
+    widgetData: TwWorkCodesData;
 
     /**
      * Selected Workcodes
@@ -105,7 +105,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.widgetData = this.data.Data || new Object();
+        this.widgetData = this.data.Data || {
+            ByGroup: false,
+            ByTeam: false,
+            Role: null
+        };
 
         this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
             startWith(''),

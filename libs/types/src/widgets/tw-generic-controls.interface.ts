@@ -1,0 +1,44 @@
+import { InteractionWidget } from '../core';
+
+/**
+ * Generic controls widget is used to handle generic interactions.
+ *
+ * Example config:
+ * ```json
+ * {
+ *       "Name": "Generic Controls",
+ *       "Description": "",
+ *       "Type": "tw-generic-controls",
+ *       "Config": {
+ *           "Enabled": true,
+ *           "Hidden": false,
+ *           "Static": false,
+ *           "Anchor": true,
+ *           "AOT": false,
+ *           "AutoOpen": false,
+ *           "Icon": "widgets",
+ *           "Class": "",
+ *           "Position": { "X": 2, "Y": 1 },
+ *           "Actions": ["collapse"],
+ *           "ViewState": "restore",
+ *           "Header": true,
+ *           "Pinned": false
+ *       },
+ *       "Data": { "CloseInteractionAllowed": true }
+ * }
+ * ```
+ *
+ */
+export type TwGenericControls<T> = InteractionWidget<TwGenericControlsData, T>;
+
+/**
+ * Generic controls widget's data configuration
+ */
+export interface TwGenericControlsData {
+    /**
+     * Flag to enable the close interaction button
+     * @type {Boolean} true | false
+     * @default false
+     */
+    CloseInteractionAllowed: boolean;
+}

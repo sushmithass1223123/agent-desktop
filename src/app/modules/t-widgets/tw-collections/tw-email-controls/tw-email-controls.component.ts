@@ -1204,7 +1204,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Returns email info
+     * Returns email info that is passed to <email /> component
      */
     getReplyInfo(): EmailComponentInputs {
         const {

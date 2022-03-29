@@ -31,76 +31,77 @@ export interface SelectedPayload {
 }
 
 export type TableConfig<T = any> =
-    | BaseTableConfig & {
+    | (BaseTableConfig & {
           /**
            * Type of the record to be displayed
            */
-           type?: 'string';
-           /**
-            * Displayed Value of the record
-            */
-           value?: GenericLabel<T, string | number>;
-           /**
-            * icon value
-            */
-           icon?: GenericLabel<T, Icon>;
-           /**
-            * tooltip flag
-            */
-           tooltip?: boolean;
-           /**
-            * truncate flag
-            */
-           truncate?: boolean;
-           /**
-            * upper case flag
-            */
-           uppercase?: boolean;
-           /**
-            * searchable flag
-            */
-           searchable?: boolean;
-           /**
-            * custom ref for the cell
-            */
-           custom?: TemplateRef<any>;
-      }
-    | BaseTableConfig & {
+          type?: 'string';
+          /**
+           * Displayed Value of the record
+           */
+          value?: GenericLabel<T, string | number>;
+          /**
+           * icon value
+           */
+          icon?: GenericLabel<T, Icon>;
+          /**
+           * tooltip flag
+           */
+          tooltip?: boolean;
+          /**
+           * truncate flag
+           */
+          truncate?: boolean;
+          /**
+           * upper case flag
+           */
+          uppercase?: boolean;
+          /**
+           * searchable flag
+           */
+          searchable?: boolean;
+          /**
+           * custom ref for the cell
+           */
+          custom?: TemplateRef<any>;
+      })
+    | (BaseTableConfig & {
           /**
            * Type of the cell
            */
           type: 'date';
-                     /**
-            * Displayed Value of the record
-            */
+          /**
+           * Displayed Value of the record
+           */
           value?: GenericLabel<T, string | number>;
           /**
-            * tooltip flag
-            */
+           * tooltip flag
+           */
           tooltip?: boolean;
           truncate?: boolean;
           searchable?: boolean;
-      }
-    |  BaseTableConfig &{
+      })
+    | (BaseTableConfig & {
           /**
            * Type of the cell
            */
           type: 'controls';
-                 /**
-            * Config for the control cell
-            */
-          value?: { 
-                 /**
-     * Title of the record
-     */title: string; 
-                /**
-            * icon value
-            */icon: string; 
-                       /**
-            * visibility flag for the control
-            */
-            visible?: (el: T) => boolean }[];
-      };
+          /**
+           * Config for the control cell
+           */
+          value?: {
+              /**
+               * Title of the record
+               */ title: string;
+              /**
+               * icon value
+               */ icon: string;
+              /**
+               * visibility flag for the control
+               */
+              visible?: (el: T) => boolean;
+          }[];
+      });
 
 /**
  * Ad table component that can render a mat-table based on AD needs

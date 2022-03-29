@@ -1,4 +1,4 @@
-import { AOTWidget, WidgetConfig } from '@ad/types';
+import { AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, WidgetConfig } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -69,7 +69,6 @@ import {
     CustomSDKEvent,
     InteractionComment,
     InteractionRef,
-    IWidget,
     SnackbarStateTypes
 } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -97,11 +96,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To hold all the data related to this widget from the config
      */
-    @Input() data: IWidget<TextChatIncomingEvent, IWidgetData>;
+    // @Input() data: IWidget<TextChatIncomingEvent, IWidgetData>;
+    @Input() data: TwChatControls<TextChatIncomingEvent>;
     /**
      * Widget data ref
      */
-    widgetData: IWidgetData;
+    widgetData: TwChatControlsData & InteractionWidgetBaseData;
     /**
      * Media Channels
      */
@@ -3077,186 +3077,4 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.previewMediaDialogData.otherData.scale -= 0.25;
         }
     }
-}
-
-interface IWidgetData extends CommonWidgetData {
-    /**
-     * Transfer ref
-     */
-    Transfer: AgentSkillRef;
-    /**
-     * Conference ref
-     */
-    Conference: AgentSkillRef;
-    /**
-     * Audio esacalate allowed flag
-     */
-    AudioEscalateAllowed: boolean;
-    /**
-     * Video esacalate allowed flag
-     */
-    VideoEscalateAllowed: boolean;
-    /**
-     * Signature allowed flag
-     */
-    SignatureAllowed: boolean;
-    /**
-     * Emoji allowed flag
-     */
-    EmojiAllowed: boolean;
-    /**
-     * Reply to a chat allowed flag
-     */
-    ReplyOnChatAllowed: boolean;
-    /**
-     * Voice not allowed flag
-     */
-    VoiceNoteAllowed: boolean;
-    /**
-     * Attachment allowed flag
-     */
-    AttachmentAllowed: boolean;
-    /**
-     * Screenshare allowed flag
-     */
-    ScreenShareAllowed: boolean;
-    /**
-     * Interaction comment allowed flag
-     */
-    InteractionCommentAllowed: boolean;
-    /**
-     * Hold interaction allowed flag
-     */
-    HoldInteractionAllowed: boolean;
-    /**
-     * Whiteboard reference
-     */
-    Whiteboard: {
-        /**
-         * Whiteboard allowed flag
-         */
-        Allowed: boolean;
-        /**
-         * Whiteboard url
-         */
-        Url: string;
-    };
-    /**
-     * Snapshot ref
-     */
-    Snapshot: {
-        /**
-         * Snapshot allowed flag
-         */
-        Allowed: boolean;
-        /**
-         * Source of snapshot
-         */
-        Source: 'local' | 'remote';
-        /**
-         * If 'Source' is remote the timeout for that
-         */
-        RemoteResponseTimeout: 10;
-    };
-    /**
-     * To show user lable on chat box
-     */
-    ShowUserLabel: boolean;
-    /**
-     * Chat template ref
-     */
-    ChatTemplate: {
-        /**
-         * Chat template allowed flag
-         */
-        Allowed: boolean;
-        /**
-         * Filter types for chat templates
-         */
-        Filter: 'statsWith' | 'contails' | 'endsWith';
-        /**
-         * Filter by time
-         */
-        FilterByTime: boolean;
-    };
-    /**
-     * WebRTC test ref
-     */
-    WebRTCTest: {
-        /**
-         *  WebRTC test allowed flag
-         */
-        Allowed: boolean;
-        /**
-         * Test url
-         */
-        Url: string;
-        /**
-         * FLag to send to customer
-         */
-        Customer: boolean;
-    };
-    /**
-     * Conversation service ref
-     */
-    ConversationService: {
-        /**
-         * Conversation service url
-         */
-        Url: string;
-        /**
-         * Data limit
-         */
-        Limit: number;
-    };
-    /**
-     * Reply allowed flag for the interaction
-     */
-    ReplyAllowed: boolean;
-    /**
-     * Flag to end interaaction on AV end
-     */
-    EndInteractionOnAVEnd: boolean;
-    /**
-     * Flag to close interaction on chat end
-     */
-    CloseInteractionOnEnd: boolean;
-    /**
-     * Flag to mute agent/customer audio/video on interaction hold
-     */
-    MuteAVOnHold: {
-        /**
-         * To mute agent audio
-         */
-        AgentAudio: boolean;
-        /**
-         * To mute agent video
-         */
-        AgentVideo: boolean;
-        /**
-         * To mute customer audio
-         */
-        CustomerAudio: boolean;
-        /**
-         * To mute customer video
-         */
-        CustomerVideo: boolean;
-    };
-    /**
-     * Call widget config
-     */
-    CallWidget: {
-        /**
-         * Audio call widget config
-         */
-        Audio: Partial<WidgetConfig>;
-        /**
-         * Video call widget config
-         */
-        Video: Partial<WidgetConfig>;
-    };
-    /**
-     * To toggle user view
-     */
-    ToggleUserViewAllowed: boolean;
 }
