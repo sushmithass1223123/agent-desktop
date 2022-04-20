@@ -24,4 +24,9 @@ export type TwLogoutData = {
      * Flag to allow logout on open tabs
      */
     AllowLogoutOnOpenInteractions: boolean;
+    /**
+     * Flag to allow logout button on available status when no "LogoutAux" is configured.
+     * This config will have no impact if "LogoutAux" is configured.
+     */
+    AllowLogoutOnAvailable: boolean;
 };
