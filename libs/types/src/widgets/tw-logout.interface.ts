@@ -9,7 +9,7 @@ import { Widget } from '..';
  *   "Description": "",
  *   "Type": "tw-logout",
  *   "Config": { "Enabled": true },
- *   "Data": { "LogoutAux": "logout", "AllowLogoutOnOpenInteractions": false }
+ *   "Data": { "LogoutAux": ["logout"], "AllowLogoutOnOpenInteractions": true, AllowLogoutOnAvailable: false }
  * }
  * ```
  */
@@ -17,9 +17,11 @@ export interface TwLogout extends Widget<TwLogoutData> {}
 
 export type TwLogoutData = {
     /**
-     * Logout aux
+     * Logout AUX which accepts single or multiple Aux codes.
+     * This property can be a string of single value or array of multiple values.
+     * The value should be taken from AGT_AUX_Codes Table's "Code" column.
      */
-    LogoutAux: string;
+    LogoutAux: string | string[];
     /**
      * Flag to allow logout on open tabs
      */

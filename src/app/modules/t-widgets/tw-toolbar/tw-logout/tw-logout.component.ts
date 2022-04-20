@@ -26,6 +26,11 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     canLogout: boolean;
 
+    /**
+     * Logout Aux
+     */
+    logoutAux: string[];
+
     constructor(
         private _router: Router,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -33,6 +38,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _tmacEventService: TMACEventService
     ) {
         super();
+        this.logoutAux = [];
     }
 
     /**
@@ -44,13 +50,17 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         this.initWrapper(this.data);
         // set defaults
         this.data.Data = {
-            LogoutAux: '',
+            LogoutAux: [],
             AllowLogoutOnOpenInteractions: true,
+            AllowLogoutOnAvailable: false,
             ...this.data.Data
         };
+        // assign the logout aux by checking the type of config for backward compatibility
+        this.logoutAux =
+            typeof this.data.Data.LogoutAux === 'string' ? (this.data.Data.LogoutAux ? [this.data.Data.LogoutAux] : []) : this.data.Data.LogoutAux;
         // listen for agent status change event
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
-        this.canLogout = !(this.data.Data.LogoutAux ?? '');
+        this.canLogout = !this.logoutAux.length;
         // initial check
         this.findLogoutAux();
     }
@@ -89,7 +99,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
 
         // check if LogoutAux is configured
         // if LogoutAux is not configured then check if the status is "Available" and AllowLogoutOnAvailable
-        if (!this.data.Data.LogoutAux && ((currentAux === 'available' && this.data.Data.AllowLogoutOnAvailable) || currentAux !== 'available')) {
+        if (!this.logoutAux.length && ((currentAux === 'available' && this.data.Data.AllowLogoutOnAvailable) || currentAux !== 'available')) {
             this.canLogout = true;
             return;
         }
@@ -98,7 +108,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             // get the logout code from aux codes list
             const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter((a: IAUXCodes) => a.Name.toLowerCase() === currentAux)?.[0];
             // check if the logout aux matches
-            if (auxItem?.Code === this.data.Data.LogoutAux) {
+            if (this.logoutAux.includes(auxItem?.Code)) {
                 this.canLogout = true;
             } else {
                 this.canLogout = false;

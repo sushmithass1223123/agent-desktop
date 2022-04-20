@@ -45,7 +45,11 @@
                                 "Description": "",
                                 "Type": "tw-logout",
                                 "Config": { "Enabled": true },
-                                "Data": { "LogoutAux": "logout", "AllowLogoutOnOpenInteractions": false, "AllowLogoutOnAvailable": true }
+                                "Data": {
+                                    "LogoutAux": ["logout"],
+                                    "AllowLogoutOnOpenInteractions": true,
+                                    "AllowLogoutOnAvailable": false
+                                }
                             },
                             {
                                 "Name": "Agent IM",
