@@ -80,16 +80,23 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @method
      */
     private findLogoutAux(): void {
-        // check if logout aux provided
-        if (!this.data.Data.LogoutAux) {
+        const currentAux = SDKClient.getAgentData().agentStatus?.toLocaleLowerCase();
+        // should not allow agents to logout on "On Call" status when LogoutAux is configured or not
+        if (currentAux.includes('on call')) {
+            this.canLogout = false;
+            return;
+        }
+
+        // check if LogoutAux is configured
+        // if LogoutAux is not configured then check if the status is "Available" and AllowLogoutOnAvailable
+        if (!this.data.Data.LogoutAux && ((currentAux === 'available' && this.data.Data.AllowLogoutOnAvailable) || currentAux !== 'available')) {
+            this.canLogout = true;
             return;
         }
 
         try {
             // get the logout code from aux codes list
-            const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter(
-                (a: IAUXCodes) => a.Name === SDKClient.getAgentData().agentStatus
-            )?.[0];
+            const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter((a: IAUXCodes) => a.Name.toLowerCase() === currentAux)?.[0];
             // check if the logout aux matches
             if (auxItem?.Code === this.data.Data.LogoutAux) {
                 this.canLogout = true;
@@ -156,15 +163,4 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             }
         });
     }
-}
-
-interface IWidgetData {
-    /**
-     * Logout aux
-     */
-    LogoutAux: string;
-    /**
-     * Flag to allow logout on open tabs
-     */
-    AllowLogoutOnOpenInteractions: boolean;
 }

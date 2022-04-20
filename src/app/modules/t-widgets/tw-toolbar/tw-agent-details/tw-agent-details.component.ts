@@ -174,11 +174,15 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         // show the progress bar
         this._fuseProgressBarService.show();
         const oldStatus = this.agentData.agentStatus;
+        const type = item.Code.toLocaleLowerCase();
+        const code = item.Value.toString();
+
         this.agentData.agentStatus = 'Please wait...';
+
         // change the status
         SDKClient.changeStatus({
-            type: item.Code.toLocaleLowerCase() === 'available' ? 'available' : item.Code.toLocaleLowerCase() === 'acw' ? 'acw' : 'aux',
-            code: item.Value.toString()
+            type: !['available', 'acw'].includes(type) ? 'aux' : type,
+            code: code
         })
             .then((dt) => {
                 if (dt.response.EventName === 'AgentStatusChangeEvent') {
@@ -186,6 +190,8 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                     dt.response = dt.response as AgentStatusChangeEvent;
                     // get the status
                     this.agentData.agentStatus = dt.response.Status;
+                    // [MS: April 20, '21] TODO: Do we need to emit event on change status response?
+                    // SDKClient.events.emit(dt.response.EventName, dt.response);
                 } else {
                     this._appUIService.showSnackbar('Change status failed, please try again!', 'failure');
                     this.agentData.agentStatus = oldStatus;
