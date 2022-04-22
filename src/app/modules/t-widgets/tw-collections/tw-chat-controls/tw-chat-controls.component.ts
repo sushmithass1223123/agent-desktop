@@ -1957,6 +1957,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const msg = JSON.parse(evt.Message);
             let message = '';
             let status: SnackbarStateTypes = 'success';
+
             switch (msg.type.toLowerCase()) {
                 case 'webrtctroubleshoot':
                     if (msg.status === 'accepted') {
@@ -1970,29 +1971,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                     if (message) {
                         this._appUIService.showSnackbar(message, status);
-                    }
-                    break;
-                case 'snapshot':
-                    if (msg.status === 'snapshotRequestAck') {
-                        message = 'Retreiving snapshot';
-                        status = 'loading';
-                    } else if (msg.status === 'response') {
-                        message = 'Snapshot Received';
-                        status = 'success';
-                    } else {
-                        message = 'Unable to take snapshot';
-                        status = 'failure';
-                    }
-                    if (message) {
-                        const snapshotMatRef = this._appUIService.showSnackbar(message, status);
-                        if (status === 'loading') {
-                            from([0])
-                                .pipe(takeUntil(this.unsubscribeAll), delay(this.widgetData.Snapshot.RemoteResponseTimeout * 1000 || 10000))
-                                .subscribe(() => {
-                                    snapshotMatRef.dismiss();
-                                    console.error('Snapshot Response timed out');
-                                });
-                        }
                     }
                     break;
                 case 'openwhiteboard':

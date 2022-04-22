@@ -30,14 +30,12 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS } from 'app/constants';
-import { CommonWidgetData } from 'app/interfaces';
-import { InstantMessagingComponent } from 'app/layout/components/instant-messaging/instant-messaging.component';
+import { SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { map } from 'lodash';
-import { timer } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
-import { TwChatControlsComponent } from '../tw-chat-controls/tw-chat-controls.component';
+import { from, merge, Subject, timer } from 'rxjs';
+import { delay, filter, takeUntil, tap } from 'rxjs/operators';
 
 /**
  * Audio Video Controls
@@ -213,6 +211,21 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     userView: 'call' | 'chat';
 
     /**
+     * Snapshot request reference
+     */
+    snapshotRequested: boolean;
+
+    /**
+     * Snapshot request timeout reference
+     */
+    snapshotRequestTimeoutRef$: Subject<boolean>;
+
+    /**
+     * Snapshot response timeout reference
+     */
+    snapshotResponseTimeoutRef$: Subject<boolean>;
+
+    /**
      * Constructor
      */
     constructor(
@@ -241,6 +254,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             customerAudio: false,
             customerVideo: false
         };
+
+        this.snapshotRequested = false;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -341,7 +356,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // override the on end chat to make sure the call is ended before the chat end
         if (widgetData.Source === 'TwChatControlsComponent') {
-            widgetData.Opener = widgetData.Opener as TwChatControlsComponent;
             widgetData.Opener.onEndChat = async () => {
                 return this.endCall(true);
             };
@@ -723,40 +737,111 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             const type = msg.type.toLowerCase();
 
             switch (type) {
+                case 'snapshot':
+                    {
+                        let message = '';
+                        const msgStatus = msg.status.toLowerCase();
+                        let status: SnackbarStateTypes = 'success';
+
+                        switch (msgStatus) {
+                            case 'ack':
+                                message = 'Snapshot request sent successfully';
+                                status = 'success';
+                                break;
+                            case 'snapshotrequestack':
+                            case 'accept':
+                                message = 'Retreiving snapshot...';
+                                status = 'loading';
+                                break;
+                            case 'reject':
+                                message = 'Snapshot request is rejected by customer!';
+                                status = 'failure';
+                                break;
+                            case 'response':
+                            case 'success':
+                                message = 'Snapshot received';
+                                status = 'success';
+                                break;
+                            default:
+                                message = 'Unable to take snapshot';
+                                status = 'failure';
+                                break;
+                        }
+
+                        // clear the request timeout ref if any response is received from customer
+                        this.clearSnapshotTimeout(true);
+
+                        // check if the response from remote is not accept/ack
+                        // then we need to clear the flag and clear request timeout
+                        if (!['ack', 'snapshotrequestack', 'accept'].includes(msgStatus)) {
+                            this.snapshotRequested = false;
+                            // clear the response timeout ref
+                            this.clearSnapshotTimeout(false);
+                        }
+
+                        if (message) {
+                            const snapshotMatRef = this._appUIService.showSnackbar(message, status);
+                            if (status === 'loading') {
+                                // if there a reference of timer then return
+                                if (this.snapshotResponseTimeoutRef$ && !this.snapshotResponseTimeoutRef$.isStopped) return;
+
+                                this.snapshotResponseTimeoutRef$ = new Subject<boolean>();
+
+                                from([0])
+                                    .pipe(
+                                        delay(this.data.Data.Snapshot?.RemoteResponseTimeout * 1000 || 10000),
+                                        takeUntil(merge(this.snapshotResponseTimeoutRef$, this.unsubscribeAll))
+                                    )
+                                    .subscribe(() => {
+                                        snapshotMatRef.dismiss();
+                                        this.snapshotRequested = false;
+                                        console.error('Snapshot response timed out');
+                                    });
+                            }
+                        }
+                    }
+                    break;
                 case 'camerachange':
-                    if (msg.status === 'action') {
-                        this.setCameraSelected(msg.data.deviceId);
+                    {
+                        if (msg.status === 'action') {
+                            this.setCameraSelected(msg.data.deviceId);
+                        }
                     }
                     break;
                 case 'togglecamera':
                 case 'toggleview':
-                    switch (msg.status) {
-                        case 'ack':
-                            break;
-                        case 'accepted':
-                            this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is accepted by customer`);
-                            break;
-                        case 'rejected':
-                            this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is rejected by customer!`, 'failure');
-                            break;
-                        case 'success':
-                            this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggled successfully`);
-                            // set camera selected for 'togglecamera'
-                            if (type === 'togglecamera') this.setCameraSelected(msg.data.deviceId);
-                            // set user view for 'toggleview'
-                            else if (type === 'toggleview') this.userView = msg.data.view;
-                            break;
-                        case 'failed':
-                            this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggle failed!`, 'failure');
-                            break;
+                    {
+                        switch (msg.status) {
+                            case 'ack':
+                                break;
+                            case 'accepted':
+                                this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is accepted by customer`);
+                                break;
+                            case 'rejected':
+                                this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is rejected by customer!`, 'failure');
+                                break;
+                            case 'success':
+                                this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggled successfully`);
+                                // set camera selected for 'togglecamera'
+                                if (type === 'togglecamera') this.setCameraSelected(msg.data.deviceId);
+                                // set user view for 'toggleview'
+                                else if (type === 'toggleview') this.userView = msg.data.view;
+                                break;
+                            case 'failed':
+                                this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggle failed!`, 'failure');
+                                break;
+                        }
                     }
                     break;
                 case 'viewchange':
-                    if (msg.status === 'action') {
-                        this.userView = msg.data.view;
+                    {
+                        if (msg.status === 'action') {
+                            this.userView = msg.data.view;
+                        }
                     }
                     break;
             }
+            ``;
         } catch (error) {
             throwADError('Error in TwAudioVideoControlsComponent.ActionMessageReceivedEvent', error);
         }
@@ -906,6 +991,26 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         });
     }
 
+    /**
+     * To clear snapshot request/response timeout ref
+     * @param {Boolean} request
+     */
+    private clearSnapshotTimeout(request: boolean) {
+        // clear request timeout
+        if (request) {
+            if (this.snapshotRequestTimeoutRef$ && !this.snapshotRequestTimeoutRef$.isStopped) {
+                this.snapshotRequestTimeoutRef$.next(true);
+                this.snapshotRequestTimeoutRef$.complete();
+            }
+        }
+
+        // clear response timeout
+        if (this.snapshotResponseTimeoutRef$ && !this.snapshotResponseTimeoutRef$.isStopped) {
+            this.snapshotResponseTimeoutRef$.next(true);
+            this.snapshotResponseTimeoutRef$.complete();
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @  Public Methods
     // -----------------------------------------------------------------------------------------------------
@@ -973,8 +1078,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param {any} user
      */
     public async takeSnapShot(user: any): Promise<void> {
-        this.data.Data.Opener = this.data.Data.Opener as TwChatControlsComponent;
-        if (this.data.Data.Opener.data.Data.Snapshot?.Source?.toLowerCase() === 'local') {
+        if (this.data.Data.Snapshot?.Source?.toLowerCase() === 'local') {
             this.remoteVideoElements?.forEach((element: ElementRef) => {
                 if (element.nativeElement.id === user.stream.id) {
                     // create a canvas
@@ -1052,9 +1156,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     });
                 }
             });
-        } else if (this.data.Data.Opener.data.Data.Snapshot?.Source?.toLowerCase() === 'remote') {
+        } else if (this.data.Data.Snapshot?.Source?.toLowerCase() === 'remote') {
             try {
-                const matRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
+                const snackRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
 
                 try {
                     await SDKClient.sendActionMessage({
@@ -1073,7 +1177,44 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     });
                 } catch (error) {}
 
-                matRef.dismiss();
+                this.snapshotRequested = true;
+
+                // if the RemoteRequestTimeout is not configured, then do not wait for ack or request timeout
+                if (!this.data.Data.Snapshot?.RemoteRequestTimeout) {
+                    snackRef.dismiss();
+                    return;
+                }
+
+                this.snapshotRequestTimeoutRef$ = new Subject<boolean>();
+
+                from([0])
+                    .pipe(
+                        delay(this.data.Data.Snapshot?.RemoteRequestTimeout * 1000 || 30000),
+                        takeUntil(merge(this.snapshotRequestTimeoutRef$, this.unsubscribeAll))
+                    )
+                    .subscribe(async () => {
+                        this.snapshotRequested = false;
+
+                        try {
+                            await SDKClient.sendActionMessage({
+                                interactionId: this.interactionId as any,
+                                message: JSON.stringify({
+                                    source: 'agent',
+                                    options: {},
+                                    data: {
+                                        interactionId: this.interactionId
+                                    },
+                                    status: 'request-timeout',
+                                    type: 'snapshot',
+                                    eventName: 'ActionMessage',
+                                    id: TUtils.Generic.uuid()
+                                })
+                            });
+                        } catch (error) {}
+
+                        this._appUIService.showSnackbar('Snapshot request timed out', 'failure');
+                        console.error('Snapshot request timed out');
+                    });
             } catch (e) {
                 console.error(e);
             }
@@ -1092,7 +1233,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // un hold the call
             this.avConn.unHold();
             if (this.data.Data.Source === 'TwChatControlsComponent') {
-                this.data.Data.Opener = this.data.Data.Opener as TwChatControlsComponent;
                 if (typeof this.data.Data.Opener.unHoldInteraction === 'function') {
                     this.data.Data.Opener.unHoldInteraction();
                 }
@@ -1101,7 +1241,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // hold the call
             this.avConn.hold();
             if (this.data.Data.Source === 'TwChatControlsComponent') {
-                this.data.Data.Opener = this.data.Data.Opener as TwChatControlsComponent;
                 if (typeof this.data.Data.Opener.holdInteraction === 'function') {
                     this.data.Data.Opener.holdInteraction();
                 }
@@ -1128,8 +1267,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             return true;
         }
 
-        if (this.data.Data.EndInteractionOnAVEnd) {
-            this.data.Data.Opener = this.data.Data.Opener as TwChatControlsComponent;
+        // to confirm end call
+        if (this.data.Data.EndInteractionOnAVEnd && this.data.Data.Source === 'TwChatControlsComponent') {
             this.data.Data.Opener.confirmEndChat(null);
         }
 
