@@ -238,10 +238,6 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
          * Countdown oveservable
          */
         countdown?: Observable<number>;
-    } = {
-        pollingInterval: 20,
-        retrying: false,
-        errored: false
     };
     /**
      * Flag for showing otp input
@@ -251,6 +247,23 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      * Single sign on type
      */
     ssoType = '';
+    /**
+     * Login config error ref
+     */
+    configError: {
+        /**
+         * Errored flag
+         */
+        errored: boolean;
+        /**
+         * Reteying flag
+         */
+        retrying: boolean;
+        /**
+         * Agent id from route param to get config if any
+         */
+        agentId?: string;
+    };
     /**
      * Lan Id input children ref
      */
@@ -336,6 +349,17 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         this.uiVersion = _appDataService.getAppVersion();
 
+        this.connectionError = {
+            pollingInterval: 20,
+            retrying: false,
+            errored: false
+        };
+
+        this.configError = {
+            errored: false,
+            retrying: false
+        };
+
         // subscribe to _activatedRoute for loging agent id
         this._activatedRoute.paramMap.subscribe(async (paramMap) => {
             // check if ssoType in param
@@ -343,12 +367,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 this.ssoType = paramMap.get('ssoType').toLowerCase();
             }
 
-            // check if agentId in param
-            if (paramMap.has('agentId')) {
-                await this.loadConfig(paramMap.get('agentId'));
-            } else {
-                await this.loadConfig();
-            }
+            const agentId = paramMap.has('agentId') ? paramMap.get('agentId') : undefined;
+            this.loadConfig(agentId);
         });
     }
 
@@ -526,21 +546,44 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         // if the json is not proper then route to not-found page
         if (!config) {
             // we will route to error page
-            this._router.navigate(['not-found'], {
-                state: {
-                    subtitle: 'Oops',
-                    title: '404',
-                    description: 'Unable to load the config for login, please contact the administrator.',
-                    login: false
-                },
-                queryParamsHandling: 'preserve'
-            });
+            // this._router.navigate(['not-found'], {
+            //     state: {
+            //         subtitle: 'Oops',
+            //         title: '404',
+            //         description: 'Unable to load the config for login, please contact the administrator.',
+            //         login: false
+            //     },
+            //     queryParamsHandling: 'preserve'
+            // });
+
+            this.loading = false;
+
+            this.configError = {
+                errored: true,
+                retrying: false,
+                agentId
+            };
+
             return;
+        }
+
+        // reset the config error
+        if (this.configError.errored) {
+            this.configError = {
+                errored: false,
+                retrying: false,
+                agentId: ''
+            };
         }
 
         this.appConfig = config;
         this.configLoaded(config);
         await this.getTMACVersion();
+    }
+
+    retryLoadConfig(): void {
+        this.configError.retrying = true;
+        this.loadConfig(this.configError.agentId);
     }
 
     /**
