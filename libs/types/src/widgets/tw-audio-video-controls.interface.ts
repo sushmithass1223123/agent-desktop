@@ -29,6 +29,27 @@ export type TwAudioVideoControlsData = {
         Customer: boolean;
     };
     /**
+     * Snapshot ref
+     */
+    Snapshot?: {
+        /**
+         * Flag to allow snapshot
+         */
+        Allowed: boolean;
+        /**
+         * Source of snapshot
+         */
+        Source: 'local' | 'remote';
+        /**
+         * If 'Source' is remote, the timeout for snapshot retrieval
+         */
+        RemoteResponseTimeout: 10;
+        /**
+         * If 'Source' is remote, the timeout for the request
+         */
+        RemoteRequestTimeout: 10;
+    };
+    /**
      * Flag to mute agent/customer audio/video on interaction hold
      */
     MuteAVOnHold?: {

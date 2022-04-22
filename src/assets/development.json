@@ -1357,7 +1357,12 @@
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
                                                     "Whiteboard": { "Allowed": true, "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html" },
-                                                    "Snapshot": { "Allowed": true, "Source": "remote", "RemoteResponseTimeout": 10 },
+                                                    "Snapshot": {
+                                                        "Allowed": true,
+                                                        "Source": "remote",
+                                                        "RemoteResponseTimeout": 10,
+                                                        "RemoteRequestTimeout": 10
+                                                    },
                                                     "ShowUserLabel": false,
                                                     "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
                                                     "WebRTCTest": {

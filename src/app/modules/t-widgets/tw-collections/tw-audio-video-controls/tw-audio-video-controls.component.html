@@ -155,7 +155,7 @@
                                 *ngIf="data.Data.Opener.agentFeatures.snapshot"
                                 mat-flat-button
                                 mat-icon-button
-                                [disabled]="!connected || hold"
+                                [disabled]="!connected || hold || snapshotRequested"
                                 matTooltip="Take Snapshot"
                                 (click)="takeSnapShot(user)"
                             >
@@ -270,7 +270,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
-                            matTooltip="Toggle User View"
+                            [matTooltip]="userView === 'call' ? 'Change to chat view' : 'Change to call view'"
                             (click)="toggleUserView()"
                         >
                             <mat-icon> {{ userView === 'call' ? 'view_carousel' : 'wysiwyg' }} </mat-icon>
