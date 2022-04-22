@@ -126,7 +126,7 @@ export class AppUiService extends SharedWrapper {
         state: SnackbarStateTypes = 'success',
         vPos: MatSnackBarVerticalPosition = 'top',
         hPos: MatSnackBarHorizontalPosition = 'center',
-        duration: number = this._appConfig.AppConfigs.Notifications.AppAlertTimeout || 5000,
+        duration: number = this._appConfig?.AppConfigs?.Notifications?.AppAlertTimeout || 5000,
         onClick?: () => void
     ): MatSnackBarRef<SnackbarComponent> {
         if (message) {

@@ -2642,11 +2642,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
-                    "https://localhost/TMACSDKProxy/TmacProxy.asmx",
-                    "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"
-                ],
+                "urls": ["https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx", "https://localhost/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },

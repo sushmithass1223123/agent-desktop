@@ -16,7 +16,7 @@
                     <mat-card-title fxLayout="row" fxLayoutAlign=" center">
                         <mat-icon color="warn" class="mr-4">error</mat-icon> Trying to reach server
                     </mat-card-title>
-                    <mat-card-subtitle class="mt-8" *ngIf="connectionError.retrying; else countdownRef"> Retrying ... </mat-card-subtitle>
+                    <mat-card-subtitle class="mt-8" *ngIf="connectionError.retrying; else countdownRef"> Retrying... </mat-card-subtitle>
                     <ng-template #countdownRef>
                         <mat-card-subtitle class="mt-8" *ngIf="connectionError.countdown | async as countdown">
                             {{ 'Retrying in ' + (connectionError.pollingInterval - countdown) + ' seconds...' }}
@@ -44,7 +44,30 @@
             </mat-card>
         </div>
 
-        <div id="login-form" class="{{ loading ? 'blur' : null }}">
+        <div class="overlay" *ngIf="configError.errored">
+            <mat-card class="p-28 border-radius-30">
+                <mat-card-header>
+                    <mat-card-title fxLayout="row" fxLayoutAlign=" center">
+                        <mat-icon color="warn" class="mr-4">error</mat-icon> Config Error
+                    </mat-card-title>
+                    <mat-card-subtitle class="mt-8" *ngIf="configError.retrying; else countdownRef"> Retrying... </mat-card-subtitle>
+                </mat-card-header>
+                <mat-divider></mat-divider>
+                <mat-card-content class="my-12 h-48">
+                    <p>
+                        Unable to load the config for login.<br />
+                        Please contact the administrator.
+                    </p>
+                </mat-card-content>
+                <mat-card-actions fxLayout fxLayoutAlign="end ">
+                    <button mat-raised-button class="border-radius-30" color="primary" (click)="retryLoadConfig()" [disabled]="configError.retrying">
+                        RETRY NOW
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+
+        <div id="login-form" class="{{ loading || connectionError.errored || configError.errored ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { delay: '400ms', y: '-25px' } }">
                 <img
                     [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"
