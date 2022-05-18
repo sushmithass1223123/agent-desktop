@@ -104,7 +104,7 @@
                             </div>
                         </div>
                         <div class="twd-flex-1 twd-flex twd-flex-col border-radius-20" [ngClass]="customFuse?.content">
-                            <div class="twd-flex twd-text-center twd-gap-3 border-bottom twd-p-1" *ngIf="switcherList | keyvalue as tabList">
+                            <div class="twd-flex twd-text-center twd-gap-3 border-bottom twd-p-2" *ngIf="switcherList | keyvalue as tabList">
                                 <ng-container *ngIf="tabList.length > 1">
                                     <div
                                         *ngFor="let item of tabList"
@@ -116,8 +116,8 @@
                                     </div>
                                 </ng-container>
                             </div>
-                            <div class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative border-bottom twd-p-1">
-                                <div class="twd-flex twd-items-center" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }">
+                            <div class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative border-bottom twd-p-2">
+                                <div class="twd-flex twd-items-center twd-gap-2" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }">
                                     <div #skillSelectDropdown class="twd-flex-1">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                             <mat-select #skillSelectRef placeholder="Select Skill..." [(ngModel)]="selectedSkill">
@@ -130,7 +130,7 @@
                                     </div>
 
                                     <!-- skill select dropdown when clicked , select dropdown input form field shown -->
-                                    <div #skillSelectButton class="ml-8 twd-hidden">
+                                    <div #skillSelectButton class="twd-hidden">
                                         <button
                                             mat-raised-button
                                             mat-icon-button
@@ -147,20 +147,20 @@
                                         </button>
                                     </div>
 
-                                    <div class="ml-8">
+                                    <div>
                                         <button mat-raised-button mat-icon-button matTooltip="Clear All" (click)="clearAllFilter()">
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </div>
 
-                                    <div class="ml-8">
+                                    <div>
                                         <button mat-raised-button mat-icon-button matTooltip="Reload Agent List" (click)="reloadAgentList()">
                                             <mat-icon>refresh</mat-icon>
                                         </button>
                                     </div>
 
                                     <!-- search key button hidden by defaullt , when clicked , searchKey input form field shown -->
-                                    <div #searchKeyButton class="ml-8">
+                                    <div #searchKeyButton>
                                         <button
                                             mat-raised-button
                                             mat-icon-button
@@ -178,7 +178,7 @@
                                     </div>
 
                                     <!-- Search form field with form control searchKey -->
-                                    <div #searchKeyText class="ml-8 twd-hidden">
+                                    <div #searchKeyText class="twd-hidden">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                             <input matInput #searchRef [formControl]="searchKey" placeholder="Search" />
                                             <button
@@ -195,7 +195,7 @@
                                         </mat-form-field>
                                     </div>
                                 </div>
-                                <div class="ml-8 twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Skill List' }">
+                                <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Skill List' }">
                                     <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                         <input matInput [formControl]="searchKey" #skillSearchRef placeholder="Search" />
                                         <button
@@ -211,7 +211,7 @@
                                         </button>
                                     </mat-form-field>
                                 </div>
-                                <div class="ml-8 twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Speed Dial' }">
+                                <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Speed Dial' }">
                                     <!-- <mat-radio-group [formControl]="operationHoursCtrl">
                                         <mat-radio-button value="all">All</mat-radio-button>
                                         <mat-radio-button value="operating">Operating</mat-radio-button>
@@ -232,12 +232,17 @@
                                         </button>
                                     </mat-form-field>
                                 </div>
-                                <div class="twd-absolute twd-w-full twd-min-h-8/12 twd-max-h-full" [ngClass]="customFuse?.content">
+                                <div
+                                    class="twd-w-full twd-absolute twd-left-0 twd-h-[calc(100%-60px)] twd-max-h-full"
+                                    [ngClass]="customFuse?.content"
+                                >
                                     <ad-table
                                         #adTable
                                         [sort]="true"
-                                        footer="disabled"
                                         [selectable]="true"
+                                        [pagination]="true"
+                                        [scrollToTopOnPageEvent]="true"
+                                        [advancedSearch]="false"
                                         (actionReducer)="tabConf.onSelect($event.record)"
                                     >
                                     </ad-table>
