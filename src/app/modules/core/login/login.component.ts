@@ -14,7 +14,7 @@ import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from 'app/services/app-data.service';
 import AES from 'crypto-js/aes';
 import Base64 from 'crypto-js/enc-base64';
-import Utf8 from 'crypto-js/enc-Utf8';
+import Utf8 from 'crypto-js/enc-utf8';
 import { environment } from 'environments/environment';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
