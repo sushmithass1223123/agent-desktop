@@ -189,7 +189,7 @@
                                     #agentActionBtn
                                     mat-icon-button
                                     mat-raised-button
-                                    *ngIf="featureCheck(feature, 'agent', '')"
+                                    *ngIf="featureCheck(feature, 'agent', 'all')"
                                     (click)="performAgentAction(item, feature)"
                                     [matTooltip]="featureMap[feature.Feature].Label"
                                 >
