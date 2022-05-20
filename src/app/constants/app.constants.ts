@@ -1,5 +1,4 @@
 import { AppAlertDialogTypes, AppConfirmDialogTypes, ReminderTaskDialogTypes } from 'app/interfaces';
-import { Color } from 'ng2-charts';
 
 /**
  * Chart colors
@@ -294,13 +293,13 @@ export const AGENT_FEATURES_MAP = {
     },
     AllowSupervisorToCapturePicture: {
         Type: 'agent',
-        SubType: [],
+        SubType: ['all'],
         Icon: 'fact_check',
         Label: 'View Activity'
     },
     AllowSupervisorToChangeStatus: {
         Type: 'agent',
-        SubType: [],
+        SubType: ['all'],
         Icon: 'track_changes',
         Label: 'Change Status'
     },
@@ -342,13 +341,13 @@ export const AGENT_FEATURES_MAP = {
     },
     AllowSupervisorToLogout: {
         Type: 'agent',
-        SubType: [],
+        SubType: ['all'],
         Icon: 'power_settings_new',
         Label: 'Logout'
     },
     AllowSupervisorToSendNotification: {
         Type: 'agent',
-        SubType: [],
+        SubType: ['all'],
         Icon: 'notifications',
         Label: 'Send Notification'
     },
@@ -360,7 +359,7 @@ export const AGENT_FEATURES_MAP = {
     },
     AllowSupervisorToViewEmailDetails: {
         Type: 'interaction',
-        SubType: [],
+        SubType: ['all'],
         Icon: 'email',
         Label: 'View Details'
     }
