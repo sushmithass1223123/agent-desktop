@@ -1,10 +1,8 @@
-import { maskData } from '@tmac/operators';
+import { extractJsonVal, maskData } from '@tmac/operators';
 import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
-import { get, set } from 'lodash';
-import { extractJsonVal } from '@tmac/operators';
-import { eventNames } from 'process';
 import { Duration } from 'date-fns';
+import { get, set } from 'lodash';
 
 type Generic = string | number;
 
