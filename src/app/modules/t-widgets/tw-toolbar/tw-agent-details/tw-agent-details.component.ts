@@ -47,7 +47,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
             Code: 'nodata',
             Display: 1,
             MaxCount: 0,
-            Name: 'No Data Available',
+            Name: 'No data available',
             TeamId: 0,
             Value: 0
         }

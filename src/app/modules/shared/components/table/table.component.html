@@ -5,7 +5,7 @@
         noFilteredData: source.data.length && !source.filteredData?.length && source.filter
     } as avl"
 >
-    <div *ngIf="avl.data" class="twd-overflow-y-auto bg-inherit" [ngClass]="{ 'twd-max-width-1 twd-flex-1': !avl.noFilteredData }">
+    <div *ngIf="avl.data" class="twd-overflow-y-auto bg-inherit" [ngClass]="{ 'twd-max-width-1 twd-flex-1': !avl.noFilteredData }" #tableContainer>
         <!-- 'twd-max-h-11/12': footer === 'disabled' || !pagination || !(config | keyvalue)?.length -->
         <mat-table
             [dataSource]="source"
@@ -165,11 +165,11 @@ The actual rendered columns are set as a property on the row definition" -->
     </div>
 
     <div *ngIf="!avl.data" class="twd-max-width-1 twd-grid twd-items-center twd-flex-1">
-        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No Data Available</p>
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No data available</p>
     </div>
 
     <div *ngIf="avl.noFilteredData" class="twd-max-width-1 twd-grid twd-items-center twd-flex-1">
-        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No Data With Applied Filters Available</p>
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No data with applied filters available</p>
     </div>
 
     <div
@@ -177,7 +177,7 @@ The actual rendered columns are set as a property on the row definition" -->
         class="twd-max-width twd-flex twd-justify-between twd-py-2"
         [ngClass]="{ 'twd-hidden': !avl.data || footer === 'hide' }"
     >
-        <div class="twd-max-width twd-flex twd-px-2 twd-gap-3 twd-items-center">
+        <div *ngIf="advancedSearch" class="twd-max-width twd-flex twd-px-2 twd-gap-3 twd-items-center">
             <button (click)="showAdvanceSearchModal()" mat-button class="border-radius-20" color="primary">
                 <mat-icon>search</mat-icon>
                 Advanced Search
@@ -192,8 +192,9 @@ The actual rendered columns are set as a property on the row definition" -->
                 Reset
             </button>
         </div>
-        <div *ngIf="pagination">
-            <mat-paginator [pageSizeOptions]="pageSizeOptions" (page)="emitPageEvent($event)" showFirstLastButtons> </mat-paginator>
+        <div *ngIf="pagination" [ngClass]="{ 'twd-flex-1': !advancedSearch }">
+            <mat-paginator [hidePageSize]="hidePageSize" [pageSizeOptions]="pageSizeOptions" (page)="emitPageEvent($event)" showFirstLastButtons>
+            </mat-paginator>
         </div>
     </div>
 </div>

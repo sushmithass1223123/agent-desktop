@@ -99,7 +99,7 @@
                                                 "SpeedDial": {
                                                     "Allowed": true,
                                                     "Consult": true,
-                                                    "Blind": true,
+                                                    "Blind": false,
                                                     "Comments": false,
                                                     "Source": { "Use": "Number", "Display": "${Name} - ${Number}", "FreeTextAllowed": true },
                                                     "Columns": [],

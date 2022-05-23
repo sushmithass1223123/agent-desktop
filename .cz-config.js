@@ -1,40 +1,53 @@
 module.exports = {
     types: [
-        { value: '✨ feat', name: '✨ feat:\tAdding a new feature' },
-        { value: '🔨 fix', name: '🔨 fix:\tFixing a bug' },
-        { value: '🚚 chore', name: '🚚 chore:\tGeneral changes' },
-        { value: '📝 docs', name: '📝 docs:\tAdd or update documentation' },
         {
-            value: '🎨 style',
-            name: '🎨 style:\tAdd or update styles, ui or ux'
+            value: ':sparkles: feat',
+            name: '✨ feat:\tA new feature'
         },
         {
-            value: '♻️  refactor',
-            name: '♻️  refactor:\tCode change that neither fixes a bug nor adds a feature'
+            value: ':bug: fix',
+            name: '🐛 fix:\tA bug fix'
         },
         {
-            value: '🚀 perf',
-            name: '🚀 perf:\tCode change that improves performance'
+            value: ':package: build',
+            name: '📦 build:\tNew build'
         },
         {
-            value: '💉 test',
-            name: '💉 test:\tAdding tests cases'
+            value: ':truck: chore',
+            name: '🚚 chore:\tGeneral changes'
         },
         {
-            value: '🔖 build',
-            name: '🔖 build:\tNew build'
+            value: ':memo: docs',
+            name: '📝 docs:\tDocumentation only changes'
+        },
+        {
+            value: ':wrench: config',
+            name: '🔧 config:\tAdd or update configuration files'
+        },
+        {
+            value: ':zap: perf',
+            name: '🚀 perf:\tA code change that improves performance'
+        },
+        {
+            value: ':recycle: refactor',
+            name: '♻️  refactor:\t A code change that neither fixes a bug nor adds a feature'
+        },
+        {
+            value: ':art: style',
+            name: '🎨 style:\tChanges that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)'
+        },
+        {
+            value: ':mag: test',
+            name: '🔍 test:\tAdding missing tests or correcting existing tests'
         }
     ],
-    // { name: 'ui' }, { name: 'android' }, { name: 'ios' }, { name: 'home' }, { name: 'planner' }, { name: 'settings' }
     scopes: [],
-
     scopeOverrides: {
         fix: [{ name: 'merge' }, { name: 'style' }, { name: 'test' }, { name: 'hotfix' }]
     },
 
     allowCustomScopes: true,
     allowBreakingChanges: ['feat', 'fix'],
-    // skip any questions you want
     skipQuestions: ['footer', 'breaking'],
     subjectLimit: 100,
     upperCaseSubject: true

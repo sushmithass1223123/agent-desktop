@@ -9,28 +9,8 @@
         "**/dist": true
     },
     "typescript.tsdk": "node_modules\\typescript\\lib",
-    "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#ab307e",
-        "activityBar.activeBorder": "#25320e",
-        "activityBar.background": "#ab307e",
-        "activityBar.foreground": "#e7e7e7",
-        "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#25320e",
-        "activityBarBadge.foreground": "#e7e7e7",
-        "statusBar.background": "#832561",
-        "statusBar.foreground": "#e7e7e7",
-        "statusBarItem.hoverBackground": "#ab307e",
-        "titleBar.activeBackground": "#832561",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#83256199",
-        "titleBar.inactiveForeground": "#e7e7e799",
-        "sash.hoverBorder": "#ab307e",
-        "statusBarItem.remoteBackground": "#832561",
-        "statusBarItem.remoteForeground": "#e7e7e7"
-    },
-    "peacock.color": "#832561",
     "angular.enable-strict-mode-prompt": false,
-    "commit-message-editor.dynamicTemplate": ["{type} ({scope}): {description}", "", "{body}", "", "{breaking_change}{footer}"],
+    "commit-message-editor.dynamicTemplate": ["{type}({scope}): {description}", "", "{body}", "", "{breaking_change}{footer}"],
     "commit-message-editor.tokens": [
         {
             "label": "Type",
@@ -44,47 +24,52 @@
                 {
                     "label": "✨ feat",
                     "description": "A new feature",
-                    "value": "✨ feat"
+                    "value": ":sparkles: feat"
                 },
                 {
-                    "label": "🔨 fix",
+                    "label": "🐛 fix",
                     "description": "A bug fix",
-                    "value": "🔨 fix"
+                    "value": ":bug: fix"
                 },
                 {
-                    "label": "💻 build",
+                    "label": "📦 build",
                     "description": "New build",
-                    "value": "💻 build"
+                    "value": ":package: build"
                 },
                 {
                     "label": "🚚 chore",
                     "description": "General changes",
-                    "value": "🚚 chore"
+                    "value": ":truck: chore"
                 },
                 {
                     "label": "📝 docs",
                     "description": "Documentation only changes",
-                    "value": "📝 docs"
+                    "value": ":memo: docs"
                 },
                 {
-                    "label": "🚀 perf",
+                    "label": "🔧 config",
+                    "description": "Add or update configuration files",
+                    "value": ":wrench: config"
+                },
+                {
+                    "label": "⚡️ perf",
                     "description": "A code change that improves performance",
-                    "value": "🚀 perf"
+                    "value": ":zap: perf"
                 },
                 {
                     "label": "♻️ refactor",
                     "description": "A code change that neither fixes a bug nor adds a feature",
-                    "value": "♻️ refactor"
+                    "value": ":recycle: refactor"
                 },
                 {
                     "label": "🎨 style",
                     "description": "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
-                    "value": "🎨 style"
+                    "value": ":art: style"
                 },
                 {
-                    "label": "💉 test",
+                    "label": "🔍 test",
                     "description": "Adding missing tests or correcting existing tests",
-                    "value": "💉 test"
+                    "value": ":mag: test"
                 }
             ],
             "description": "Type of changes"
