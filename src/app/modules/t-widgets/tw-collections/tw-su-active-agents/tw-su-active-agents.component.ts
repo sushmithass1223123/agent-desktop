@@ -1,3 +1,4 @@
+import { AOTWidget, TwSuActiveAgents } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
@@ -25,7 +26,6 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
-import { AOTWidget, TwSuActiveAgents } from '@ad/types';
 
 /**
  * Active agents component widget
@@ -334,7 +334,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {String} type
      * @param {String} subType
      */
-    public featureCheck(feature: AgentFeatures, type: string, subType: string): boolean {
+    public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', subType: string): boolean {
         // if not allow supervisor or in map the item is not found return false
         if (
             !feature.Feature.startsWith('AllowSupervisor') ||
