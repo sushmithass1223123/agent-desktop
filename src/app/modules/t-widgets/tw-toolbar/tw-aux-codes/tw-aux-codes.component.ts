@@ -31,7 +31,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
             Code: 'nodata',
             Display: 1,
             MaxCount: 0,
-            Name: 'No Data Available',
+            Name: 'No data available',
             TeamId: 0,
             Value: 0
         }

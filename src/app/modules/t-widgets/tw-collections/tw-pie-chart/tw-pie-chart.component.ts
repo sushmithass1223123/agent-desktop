@@ -69,7 +69,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     constructor(private _tmacEventService: TMACEventService) {
         super();
-        this.noDataMessage = 'No Data Available';
+        this.noDataMessage = 'No data available';
     }
 
     /**

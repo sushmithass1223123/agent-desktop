@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
@@ -118,20 +118,24 @@ export class TableComponent implements OnInit {
      * list of Columns allowed in the table
      */
     @Input() config: Record<string, TableConfig>;
+
     /**
      * List of displayed columns
      */
     @Input() columns = [];
+
     /**
      * Paginator flag
      * this enables pagination for the table
      */
     @Input() pagination = false;
+
     /**
      * Sort flag
      * This enables sort for the table
      */
     @Input() sort = false;
+
     /**
      * Grouping flag
      * This enables grouping for the table
@@ -144,13 +148,18 @@ export class TableComponent implements OnInit {
     @Input() expandableRows = false;
 
     /**
+     * To hide page size
+     */
+    @Input() hidePageSize = false;
+
+    /**
      * Page size when pagination enabled
      */
     @Input() pageSizeOptions = [15, 20, 30];
 
     /**
      * Footer flag
-     * This disables, shhows or hides the footer ie advanced search button and pagination controls
+     * This disables, shows or hides the footer ie advanced search button and pagination controls
      */
     @Input() footer: 'disabled' | 'show' | 'hide' = 'show';
 
@@ -189,6 +198,11 @@ export class TableComponent implements OnInit {
             this.source.paginator = content;
         }
     }
+
+    /**
+     * Advanced search flag
+     */
+    @Input() advancedSearch = false;
 
     /**
      * Advanced Search Modal
@@ -247,11 +261,27 @@ export class TableComponent implements OnInit {
      * Flag for whether row is selectable
      */
     @Input() selectable = false;
+
+    /**
+     * Input data
+     */
     @Input() data: any[] = [];
 
-    constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
     /**
-     * Lifecycle hook
+     * Flag to scroll to top on page event
+     */
+    @Input() scrollToTopOnPageEvent = true;
+
+    /**
+     * Table container div ref
+     */
+    @ViewChild('tableContainer')
+    tableContainerRef: ElementRef<HTMLDivElement>;
+
+    constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
+
+    /**
+     * Lifecycle hook OnInit
      */
     ngOnInit(): void {
         this.source = new MatTableDataSource(this.data ? this.data : []);
@@ -394,6 +424,9 @@ export class TableComponent implements OnInit {
      * @param {any} evt
      */
     emitPageEvent(evt: any): void {
+        if (this.scrollToTopOnPageEvent) {
+            this.tableContainerRef.nativeElement.scrollTop = 0;
+        }
         this.pageEvent?.emit(evt);
     }
 
