@@ -53,6 +53,10 @@ const appRoutes: Routes = [
     {
         path: 'not-found',
         component: ResourceNotFoundComponent
+    },
+    {
+        path: '**',
+        component: ResourceNotFoundComponent
     }
 ];
 
