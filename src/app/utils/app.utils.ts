@@ -1,10 +1,8 @@
-import { maskData } from '@tmac/operators';
+import { extractJsonVal, maskData } from '@tmac/operators';
 import { IUIEvent, TUtils } from '@tmac/sdk';
 import { CustomerInfo, IMaskData } from 'app/interfaces';
-import { get, set } from 'lodash';
-import { extractJsonVal } from '@tmac/operators';
-import { eventNames } from 'process';
 import { Duration } from 'date-fns';
+import { get, set } from 'lodash';
 
 type Generic = string | number;
 
@@ -209,4 +207,10 @@ export const formatDuration = (duration: Duration) => {
     }
 
     return formatted;
+};
+
+export const validateEmail = (email: string): boolean => {
+    const res =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return res.test(String(email).toLowerCase());
 };

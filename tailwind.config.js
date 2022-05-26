@@ -6,9 +6,7 @@ process.env.TAILWIND_MODE = guessProductionMode() ? 'build' : 'watch';
 module.exports = {
     prefix: 'twd-',
     mode: 'jit',
-    purge: {
-        content: ['./src/**/*.{html,ts,css,scss,sass,less,styl}']
-    },
+    content: ['./src/**/*.{html,ts,css,scss,sass,less,styl}'],
     darkMode: 'class', // or 'media' or 'class'
     theme: {
         fontSize: {
@@ -94,9 +92,6 @@ module.exports = {
                 20: '20px'
             }
         }
-    },
-    variants: {
-        extend: {}
     },
     plugins: []
 };
