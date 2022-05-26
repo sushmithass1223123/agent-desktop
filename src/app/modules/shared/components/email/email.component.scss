@@ -1,7 +1,13 @@
-.mat-chip {
+.mat-chip.mat-standard-chip {
     @apply twd-text-xs;
-    cursor: pointer !important;
-    max-width: 300px;
+    @apply twd-min-h-0;
+    @apply twd-h-auto;
+    @apply twd-pl-2;
+    @apply twd-pr-0;
+    @apply twd-py-0.5;
+    @apply twd-m-0.5;
+    @apply twd-cursor-pointer;
+    @apply twd-max-w-[300px];
 }
 .attachments-summary .mat-chip {
     max-width: 40%;

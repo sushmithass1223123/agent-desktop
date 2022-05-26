@@ -1,13 +1,15 @@
+import { COMMA, ENTER, SEMICOLON } from '@angular/cdk/keycodes';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
 import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse } from 'app/interfaces';
-import { ADError, maticonByExtension, throwADError } from 'app/utils';
+import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 
@@ -107,6 +109,11 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     emailRef: ElementRef<HTMLDivElement>;
 
     /**
+     * The list of key codes that will trigger a chipEnd event
+     */
+    separatorKeysCodes: number[] = [ENTER, COMMA, SEMICOLON];
+
+    /**
      * File upload url config
      */
     fileUploadUrl: any;
@@ -176,8 +183,6 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     throwADError('Error in email.component.addUserSuggestions', 'Unexpected response from server');
                 }
                 this.suggestedUsers = res.response;
-                const emailRegex =
-                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 merge(this._addressFG.controls.To.valueChanges, this._addressFG.controls.CC.valueChanges, this._addressFG.controls.BCC.valueChanges)
                     .pipe(
                         takeUntil(this.unsubscribeAll$),
@@ -188,7 +193,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                         const key = val.trim();
                         if (key) {
                             this.suggestedUsers = res.response.filter((x) => x.toLowerCase().includes(key));
-                            if (!this.suggestedUsers.length && emailRegex.test(key)) {
+                            if (!this.suggestedUsers.length && validateEmail(key)) {
                                 this.suggestedUsers = [key];
                             }
                         } else {
@@ -392,7 +397,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
     /**
      * Select template for email
-     * @param {string} preview
+     * @param {string} html
      */
     selectTemplate(html: string): void {
         this._email.Body = `${html} ${this._email.Body}`;
@@ -403,9 +408,47 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * @param key
      * @param evt
      */
-    selectEmailAddress(key: string, evt: MatAutocompleteSelectedEvent): void {
-        this._email[key].push(evt.option.value);
+    emailIdSelected(key: string, evt: MatAutocompleteSelectedEvent, chipInput: HTMLInputElement): void {
+        const value = (evt.option.viewValue || '').trim();
+
+        if (!this.validateEmailIdAndPush(key, value)) return;
+
+        // after typing the email Id and if we navigate and press enter
+        // both 'emailIdSelected' and 'emailIdAdded' will be triggered.
+        // inorder to avoid duplicate addition clear the input value so that
+        // in this case 'emailIdAdded' the value will be empty.
+        chipInput.value = '';
+    }
+
+    /**
+     * On entering email Id on chips input
+     * @param key
+     * @param evt
+     */
+    emailIdAdded(key: string, evt: MatChipInputEvent): void {
+        let value = (evt.value || '').trim();
+        if (!value) return;
+
+        if (!this.validateEmailIdAndPush(key, value)) return;
+
+        // clear the input value
+        evt.chipInput!.clear();
+    }
+
+    /**
+     * To validate the email Id and push to list
+     * @param key
+     * @param emailId
+     */
+    validateEmailIdAndPush(key: string, emailId: string): boolean {
+        if (!validateEmail(emailId)) {
+            this._appUiService.showSnackbar('Please enter a valid email address', 'failure');
+            return false;
+        }
+
+        this._email[key].push(emailId);
         this._addressFG.patchValue({ [key]: '' });
+        return true;
     }
 
     /**
