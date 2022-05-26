@@ -189,9 +189,16 @@
             </span>
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
-        <input [formControl]="_addressFG.get(key)" matInput [matAutocomplete]="suggestedUsersRef" class="my-2 twd-flex-1" />
+        <input
+            #chipInput
+            class="my-2 twd-flex-1"
+            [formControl]="_addressFG.get(key)"
+            [matAutocomplete]="suggestedUsersRef"
+            [matChipInputFor]="chipList"
+            (matChipInputTokenEnd)="addEmailAddress(key, $event)"
+        />
     </mat-chip-list>
-    <mat-autocomplete autoActiveFirstOption #suggestedUsersRef="matAutocomplete" (optionSelected)="selectEmailAddress(key, $event)">
+    <mat-autocomplete #suggestedUsersRef="matAutocomplete" (optionSelected)="selectEmailAddress(key, $event, chipInput)">
         <mat-option *ngFor="let user of suggestedUsers" [value]="user">
             {{ user }}
         </mat-option>
