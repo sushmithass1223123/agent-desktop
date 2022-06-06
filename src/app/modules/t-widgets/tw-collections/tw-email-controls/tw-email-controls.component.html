@@ -148,18 +148,19 @@
                         </div>
                         <div class="twd-flex twd-justify-between">
                             <div class="twd-flex">
-                                <div class="twd-flex twd-items-center" matTooltip="Intent">
-                                    <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent || 'NA' }}</span>
+                                <div class="twd-flex twd-items-center">
+                                    <mat-icon class="s-20" matTooltip="Intent">grading</mat-icon>
+                                    <span class="text-bold twd-leading-none" matTooltip="Intent">{{ intent || 'NA' }}</span>
+                                    <span class="twd-px-2"> | </span>
+                                    <span class="text-bold twd-leading-none" matTooltip="Skill">{{
+                                        currentInteraction.SkillName || currentInteraction.Skill || 'NA'
+                                    }}</span>
                                 </div>
-                                <span class="twd-px-2"> | </span>
-                                <span class="text-bold" matTooltip="Skill">{{
-                                    currentInteraction.SkillName || currentInteraction.Skill || 'NA'
-                                }}</span>
                             </div>
 
                             <div class="twd-flex twd-items-center twd-truncate" matTooltip="Route Type">
                                 <mat-icon class="s-20">directions</mat-icon>
-                                <span class="twd-truncate">
+                                <span class="twd-truncate twd-leading-none">
                                     {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
                                 </span>
                             </div>
@@ -168,12 +169,25 @@
                         <div class="twd-flex twd-justify-between">
                             <div class="twd-flex twd-items-center text-bold twd-truncate" matTooltip="Mailbox">
                                 <mat-icon class="s-20">list_alt</mat-icon>
-                                <span class="twd-truncate">
+                                <span class="twd-truncate twd-leading-none">
                                     {{ currentInteraction.Email_Mailbox || 'NA' }}
                                 </span>
                             </div>
 
-                            <div class="twd-flex twd-items-center" matTooltip="Priority">{{ currentInteraction.Priority || 'NA' }}</div>
+                            <div class="twd-flex twd-items-center" matTooltip="Priority">
+                                <mat-icon
+                                    *ngIf="currentInteraction.PriorityIcon"
+                                    [ngClass]="{
+                                        'mat-warn': currentInteraction.PriorityIcon === 'high',
+                                        'text-alt-success': currentInteraction.PriorityIcon === 'low'
+                                    }"
+                                    class="s-20"
+                                    >{{ currentInteraction.PriorityIcon }}</mat-icon
+                                >
+                                <span class="twd-truncate twd-leading-none">
+                                    {{ currentInteraction.Priority || 'NA' }}
+                                </span>
+                            </div>
                         </div>
 
                         <div class="twd-flex twd-justify-between">
@@ -204,8 +218,8 @@
 
                             <div class="twd-flex twd-items-end twd-flex-col" matTooltip="Sent on" *ngIf="currentInteraction.EmailSentTime">
                                 <div class="twd-flex twd-items-center">
-                                    <mat-icon> forward_to_inbox </mat-icon>
-                                    <span class="twd-ml-2">
+                                    <mat-icon class="s-20"> forward_to_inbox </mat-icon>
+                                    <span class="twd-leading-none">
                                         {{ currentInteraction.EmailSentTime | date: 'mediumDate' }}
                                     </span>
                                 </div>
@@ -216,8 +230,8 @@
 
                             <div class="twd-flex twd-items-end twd-flex-col" matTooltip="Received on" *ngIf="currentInteraction.EmailReceivedTime">
                                 <div class="twd-flex twd-items-center">
-                                    <mat-icon> move_to_inbox </mat-icon>
-                                    <span class="twd-ml-2">
+                                    <mat-icon class="s-20"> move_to_inbox </mat-icon>
+                                    <span class="twd-leading-none">
                                         {{ currentInteraction.EmailReceivedTime | date: 'mediumDate' }}
                                     </span>
                                 </div>
@@ -250,6 +264,15 @@
                             SentReasons.includes(currentInteraction.RouteReason)
                         "
                     >
+                        <button
+                            *ngIf="data.Data?.InternetHeadersAllowed && currentInteraction.InternetHeaders"
+                            mat-raised-button
+                            class="border-radius-20"
+                            matTooltip="Internet Headers"
+                            (click)="showHeaders()"
+                        >
+                            <mat-icon>view_headline</mat-icon>
+                        </button>
                         <button
                             *ngIf="data.Data?.InteractionCommentAllowed"
                             mat-raised-button
