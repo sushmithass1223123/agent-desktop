@@ -35,7 +35,7 @@ import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
-import { delay, filter, takeUntil, tap } from 'rxjs/operators';
+import { delay, filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Audio Video Controls
@@ -506,7 +506,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // config incoming call
                     const confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
-                        `${param} call requested by ${this.data.InteractionDetails.CustomerName}, Do you want to accept it?`
+                        `${param} call requested by ${this.data.InteractionDetails.CustomerName}, Do you want to accept it?`,
+                        '',
+                        null,
+                        {
+                            disableClose: false
+                        }
                     );
 
                     confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
@@ -1096,7 +1101,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     const confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
                         `<img src="${base64}" width="640" height="320" />`,
-                        'Confirm Snapshot'
+                        'Confirm Snapshot',
+                        null,
+                        {
+                            disableClose: false
+                        }
                     );
                     confirmDialogRef.afterClosed().subscribe((resp) => {
                         if (resp) {

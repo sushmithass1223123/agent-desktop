@@ -10,7 +10,7 @@
         fxLayoutAlign="start center"
         class="h-100-p p-8 font-size-16 font-weight-600"
     >
-        {{ data.message }}
+        <p [innerHTML]="data.message"></p>
     </div>
     <button mat-icon-button color="warn" class="mr-8" (click)="dismiss()">
         <mat-icon>close</mat-icon>

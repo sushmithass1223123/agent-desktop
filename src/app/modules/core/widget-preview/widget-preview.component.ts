@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppDataService } from '@services/app-data.service';
-import { TUtils } from '@tmac/sdk';
+import { IResponseData, TUtils } from '@tmac/sdk';
 
 /**
  * Widget Preview
@@ -118,7 +118,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
             }
 
             // get the template json
-            const result = await TUtils.HttpClient.sendRequest({
+            const result = (await TUtils.HttpClient.sendRequest)({
                 urls: [`${this.appConfig.ProxyUrl}/GetWidgetPreviewJson`],
                 requestArgs: { id: templateName },
                 header: {
@@ -129,7 +129,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
             });
 
             setTimeout(
-                (x) => {
+                (x: IResponseData<any>) => {
                     // check the response
                     if (x.response) {
                         this.loading = false;

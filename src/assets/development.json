@@ -375,7 +375,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "http://10.133.146.11:5002" }
+                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud:55018" }
                                 }
                             ],
                             "AOT": [
@@ -1198,7 +1198,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "http://10.133.146.11:5002" }
+                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud:55018" }
                                 },
                                 {
                                     "Name": "Voice Canned Responses",
@@ -1849,34 +1849,13 @@
                                                             "Columns": []
                                                         }
                                                     },
-                                                    "Conference": {
-                                                        "Allowed": true,
-                                                        "Agent": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": true },
-                                                            "AllowedStates": ["Available"],
-                                                            "TeamFilter": false,
-                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
-                                                        },
-                                                        "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": ["Stf"]
-                                                        }
-                                                    },
                                                     "DownloadAllowed": true,
                                                     "ForwardAllowed": true,
                                                     "ReplyAllAllowed": true,
                                                     "InteractionCommentAllowed": true,
                                                     "DraftPollingInterval": 10000,
-                                                    "TemplatesByTeam": false
+                                                    "TemplatesByTeam": false,
+                                                    "InternetHeadersAllowed": true
                                                 }
                                             },
                                             {
@@ -2083,7 +2062,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "http://10.133.146.11:5002",
+                                        "TCMProxyUrl": "https://dice.tetherfi.cloud:55018",
                                         "DataMap": {
                                             "Name": {
                                                 "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
@@ -2374,7 +2353,8 @@
                                                     "QueueTransferForAgent": false,
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
-                                                    "SearchDuration": 24
+                                                    "SearchDuration": 24,
+                                                    "InternetHeadersAllowed": true
                                                 }
                                             },
                                             {
@@ -2620,6 +2600,7 @@
         "DevToolsDisabled": false,
         "AddAOTWidgetEnabled": true,
         "Notifications": { "Sounds": true, "SoundLevel": 1, "DesktopAlerts": true, "DesktopAlertTimeout": 5000, "AppAlertTimeout": 5000 },
+        "CheckForResolution": true,
         "AV": {
             "webRTCConfig": {
                 "iceServers": [{ "urls": "turn:dice.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],

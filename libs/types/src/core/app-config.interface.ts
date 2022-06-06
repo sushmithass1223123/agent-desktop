@@ -90,6 +90,10 @@ export type AppConfigs = {
      */
     AddAOTWidgetEnabled: boolean;
     /**
+     * Flag to check for display resolution and alert
+     */
+    CheckForResolution: boolean;
+    /**
      * AV config
      */
     AV: AVConfig;

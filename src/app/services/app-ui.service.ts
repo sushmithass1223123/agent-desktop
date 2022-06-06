@@ -1,3 +1,4 @@
+import { AppRootConfig } from '@ad/types';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
@@ -50,7 +51,7 @@ export class AppUiService extends SharedWrapper {
     /**
      * App configuration data
      */
-    private _appConfig: any;
+    private _appConfig: AppRootConfig;
     /**
      * Subject to unsubscribe for all subscriptions
      */
@@ -205,8 +206,9 @@ export class AppUiService extends SharedWrapper {
         this._matSnackBar.dismiss();
 
         // add desktop alert
-        this.showDesktopAlert('You have a new notification', snackBarArgs.message, false);
-
+        if (!snackBarArgs.disableNotification) {
+            this.showDesktopAlert('You have a new notification', snackBarArgs.message, false);
+        }
         // add to the notifications
         this.addNotification({
             icon: 'notification_important',
@@ -334,7 +336,6 @@ export class AppUiService extends SharedWrapper {
             panelClass: 'custom-dialog',
             minWidth: '350px',
             autoFocus: false,
-            disableClose: true,
             ...(matConfig || {})
         });
         return dialogRef;
@@ -477,7 +478,7 @@ export class AppUiService extends SharedWrapper {
      */
     public showDesktopAlert(title: string, message: string, sound: boolean, soundType?: string): void {
         // get the config
-        const config = this._appConfig.AppConfigs.Notifications;
+        const config = this._appConfig?.AppConfigs?.Notifications;
 
         // check if notification is enabled
         if (!this._notificationSettings.desktopAlert || document.hasFocus()) {
@@ -591,12 +592,74 @@ export class AppUiService extends SharedWrapper {
      * This method sanitizes email body and adds all <a>  tags with a target='_blank'
      * This makes it safer for injecttion in innerHtml and when a link is opened , it opens in new Tab
      */
-    sanitizeEmailBody(
+    public sanitizeEmailBody(
         /**
          * Email's body as html string
          */
         body: string
     ): SafeHtml {
         return this.domSanitizer.bypassSecurityTrustHtml(body.replaceAll('<a', '<a target="_blank"'));
+    }
+
+    /**
+     * To check for display resolution
+     */
+    public checkForDisplayResolution() {
+        if (!this._appConfig?.AppConfigs?.CheckForResolution) {
+            return;
+        }
+
+        if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            // for desktop zoom based on display resolutions
+            let zoomLevel = 0;
+            let message = '';
+            const pixelRatio = Number(window.devicePixelRatio.toFixed(2));
+            const height = screen.height;
+
+            if (height > 900 && height < 1080) {
+                zoomLevel = 0.9;
+            } else if (height > 800 && height <= 900) {
+                zoomLevel = 0.8;
+            } else if (height <= 800) {
+                zoomLevel = 0.67;
+            }
+
+            // // check the display resolutions
+            // switch (screen.height) {
+            //     case 1050:
+            //     case 1024:
+            //         zoomLevel = 0.9;
+            //         break;
+            //     case 900:
+            //         zoomLevel = 0.8;
+            //         break;
+            //     case 800:
+            //         zoomLevel = 0.67;
+            //         break;
+            //     default:
+            //         if (screen.height <= 768) {
+            //             zoomLevel = 0.67;
+            //         }
+            //         break;
+            // }
+
+            if (zoomLevel > 0 && pixelRatio !== 1 && pixelRatio > zoomLevel) {
+                message = `Your display resolution <b>(<span class="text-alt-danger">${screen.width}x${
+                    screen.height
+                }</span>)</b> seems to be lesser than recommended, please zoom out to at least <b class="text-alt-success">${
+                    zoomLevel * 100
+                }%</b> or lesser for better user experience. Recommended to use a display with Resolution <b class="text-alt-success">1920x1080</b> and Scale <b class="text-alt-success">100%</b>.`;
+            }
+
+            if (message) {
+                this.showAppSnackbar({
+                    message,
+                    duration: 60000,
+                    state: 'warning',
+                    hPos: 'right',
+                    disableNotification: true
+                });
+            }
+        }
     }
 }
