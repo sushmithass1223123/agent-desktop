@@ -1,4 +1,11 @@
-import { AOTWidget } from '@ad/types';
+import {
+    AgentTransferConferenceConfig,
+    AOTWidget,
+    SkillTransferConferenceConfig,
+    TwEmailWorkbenchConfig,
+    TwWorkbenchPanelChannel,
+    TwWorkbenchPanelGeneral
+} from '@ad/types';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
@@ -41,7 +48,6 @@ type Mail = {
     HasAttachment: boolean;
     ConversationID: string;
     IsEmailProbableSpam: boolean;
-
     CCList?: string;
     BCCList?: string;
     Files?: any[];
@@ -49,6 +55,7 @@ type Mail = {
     checked?: boolean;
     RouteReason?: string;
     EmailType?: string;
+    InternetHeaders?: string;
 };
 
 /**
@@ -72,6 +79,7 @@ type ComponentActions =
  * Available tabs of the email workbench
  */
 type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
+
 /**
  * Global search form controls
  * Global search is the direct search key input present at the top of the emails list
@@ -105,11 +113,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * holds all the data related to the parent tw workbecnh widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: IWidget<TwWorkbenchPanelGeneral>;
     /**
      * holds all the data related to this workbench tab
      */
-    @Input() channelConf: any;
+    @Input() channelConf: TwWorkbenchPanelChannel;
 
     /**
      * Outbox reasons
@@ -310,6 +318,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     };
 
     /**
+     * Flag to show email internet headers
+     */
+    showInternetHeaders = false;
+
+    /**
      * Constructor
      */
     constructor(
@@ -320,7 +333,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private matDialog: MatDialog,
         private _emailService: EmailService,
         private _aotWidgetService: AOTWidgetService,
-        private _agentFeaturesService: AgentFeaturesService
+        private _agentFeaturesService: AgentFeaturesService,
+        private _appUIService: AppUiService
     ) {
         super();
     }
@@ -337,10 +351,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // get and set the list of available mailboxes
         await this.setAvailableMailboxes();
         // set the flag whether to get the email templates by departments
-        this._emailService.emailTemplatesDepartmentsByTeam = !!this.channelConf.Config.TemplatesByTeam;
-
+        this._emailService.emailTemplatesDepartmentsByTeam = !!(this.channelConf.Config as TwEmailWorkbenchConfig).TemplatesByTeam;
         // get the allowed tabs from config
-        const allowedTabs = this.channelConf.Config?.Tabs?.map((m: string) => m.toLowerCase()) ?? [];
+        const allowedTabs = (this.channelConf.Config as TwEmailWorkbenchConfig)?.Tabs?.map((m: string) => m.toLowerCase()) ?? [];
         if (allowedTabs.length) {
             // filter the allowed tabs given in config
             this.availableTabs.forEach((f) => {
@@ -365,16 +378,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // set the flags to check if delete and queue transfers are allowed for the agent
         const { agentProfile } = SDKClient.getAgentData();
         // delete is not allowed for agents
-        this.deleteAllowed = this.channelConf.Config.DeleteAllowed && agentProfile === 'S';
+        this.deleteAllowed = (this.channelConf.Config as TwEmailWorkbenchConfig).DeleteAllowed && agentProfile === 'S';
         // queue transfer allowed via config or if the user is a supervisor
-        this.allowQueueTransfer = this.channelConf.Config?.QueueTransferForAgent ? true : agentProfile === 'S';
-
+        this.allowQueueTransfer = (this.channelConf.Config as TwEmailWorkbenchConfig)?.QueueTransferForAgent ? true : agentProfile === 'S';
         // set the current tab
         this.currentTab = this.availableTabs.find((f) => f.enabled)?.key ?? '';
         if (this.currentTab) {
             this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
             this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
         }
+        this.showInternetHeaders = (this.channelConf.Config as TwEmailWorkbenchConfig)?.InternetHeadersAllowed;
     }
 
     /**
@@ -388,8 +401,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     if (entry.isIntersecting) {
                         // check if polling is enabled in config or not
                         // polling is disabled when it is set to 0
-                        this.polling.allowed = this.polling.enabled = this.channelConf.Config.SearchPollingInterval > 0;
-                        if (this.channelConf.Config.SearchPollingInterval) {
+                        this.polling.allowed = this.polling.enabled = (this.channelConf.Config as TwEmailWorkbenchConfig).SearchPollingInterval > 0;
+                        if ((this.channelConf.Config as TwEmailWorkbenchConfig).SearchPollingInterval) {
                             this.startPolling();
                         } else {
                             // if polling is disabled, do an advanced search only once
@@ -418,10 +431,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // stop the polling
         this.stopPolling();
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * To check agent features for IsSetBroadcastEnabled
@@ -510,7 +519,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     private startPolling(): void {
         // polling timer
-        this.polling$ = timer(0, this.channelConf.Config.SearchPollingInterval)
+        this.polling$ = timer(0, (this.channelConf.Config as TwEmailWorkbenchConfig).SearchPollingInterval)
             .pipe(filter(() => this.polling.enabled && !this.emailSearchRes.loading && !this.polling.active && !this.advancedSearch.show))
             .subscribe(() => {
                 this.doAdvancedSearch(true);
@@ -616,10 +625,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         }
         this.dataSource.data = nodes;
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * Pushes advance search form to advancedSearch.data
@@ -1016,10 +1021,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             Priority: inboxRes.Priority,
                             ToList: inboxRes.ToList,
                             Body: this.appUiService.sanitizeEmailBody(inboxRes.Body || '')['changingThisBreaksApplicationSecurity'],
-
                             InSessionId: email.InSessionId,
                             OutSessionId: email.OutSessionId,
-                            EmailType: inboxRes?.EmailType
+                            EmailType: inboxRes?.EmailType,
+                            IsEmailProbableSpam: inboxRes.IsEmailProbableSpam,
+                            InternetHeaders: inboxRes.InternetHeaders
                         }
                     });
                 }
@@ -1131,9 +1137,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {any} email
      */
     transferEmail(emails: Mail[]): void {
-        const config = this.channelConf?.Config || {};
-        const agentConfig = config?.Transfer?.Agent || {};
-        const skillConfig = config?.Transfer?.Skill || {};
+        const config = (this.channelConf?.Config || {}) as TwEmailWorkbenchConfig;
+        const agentConfig = config?.Transfer?.Agent || ({} as AgentTransferConferenceConfig);
+        const skillConfig = config?.Transfer?.Skill || ({} as SkillTransferConferenceConfig);
         const uiIds = emails.map((e) => e.uiId);
         const data: AgentSkillListData = {
             title: 'Email Transfer',
@@ -1251,8 +1257,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
         try {
             // check if search duration is configured, then patch the from datetime value
-            if (this.channelConf.Config.SearchDuration) {
-                const fromDate = addHours(new Date(), -this.channelConf.Config.SearchDuration);
+            if ((this.channelConf.Config as TwEmailWorkbenchConfig).SearchDuration) {
+                const fromDate = addHours(new Date(), -(this.channelConf.Config as TwEmailWorkbenchConfig).SearchDuration);
                 updateValue = {
                     fromDate,
                     fromTime: format(fromDate, 'HH:mm')
@@ -1591,6 +1597,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         for (const n of mails) {
             n.checked = checked;
         }
+    };
+
+    /**
+     * To show internet headers
+     * @param {String} headers
+     */
+    showHeaders = (headers: string) => {
+        this._appUIService.showCustomDialog('alert', headers, 'Internet Headers', {
+            messageClasses: 'twd-whitespace-pre-line twd-break-words'
+        });
     };
 }
 
