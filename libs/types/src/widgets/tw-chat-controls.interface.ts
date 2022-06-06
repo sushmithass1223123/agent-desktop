@@ -97,101 +97,101 @@ export type TwChatControlsWhiteboard = {
  * The config example:
  * ```json
  * {
- *   "Name": "Chat Controls",
- *   "Description": "",
- *   "Type": "tw-chat-controls",
- *   "Config": {
- *      "Enabled": true,
- *      "Hidden": false,
- *      "Static": false,
- *      "Anchor": true,
- *      "AOT": false,
- *      "AutoOpen": false,
- *      "Icon": "chat",
- *      "Class": "",
- *      "Position": { "X": 2, "Y": 1 },
- *      "Actions": ["maximize", "collapse", "float"],
- *      "ViewState": "restore",
- *      "Header": true,
- *      "Pinned": false
- *    },
- *   "Data": {
- *      "Transfer": {
- *          "Allowed": true,
- *          "Agent": {
- *              "Allowed": true,
- *              "Consult": true,
- *              "Blind": true,
- *              "Comments": true,
- *              "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
- *              "AllowedStates": [],
- *              "TeamFilter": false,
- *              "Columns": []
- *          },
- *          "Skill": {
- *              "Allowed": true,
- *              "Consult": false,
- *              "Blind": true,
- *              "Comments": true,
- *              "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
- *              "ChannelPrefix": [],
- *              "Columns": []
- *           }
- *       },
- *      "Conference": {
- *          "Allowed": true,
- *          "Agent": {
- *              "Allowed": true,
- *              "Consult": true,
- *              "Blind": false,
- *              "Comments": true,
- *              "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
- *              "AllowedStates": [],
- *              "TeamFilter": false,
- *              "Columns": []
- *           },
- *          "Skill": {
- *              "Allowed": true,
- *              "Consult": true,
- *              "Blind": false,
- *              "Comments": true,
- *              "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
- *              "ChannelPrefix": ["CH"],
- *              "Columns": []
- *           }
- *       },
- *      "AudioEscalateAllowed": true,
- *      "VideoEscalateAllowed": true,
- *      "SignatureAllowed": true,
- *      "EmojiAllowed": true,
- *      "ReplyOnChatAllowed": true,
- *      "VoiceNoteAllowed": false,
- *      "AttachmentAllowed": true,
- *      "ScreenShareAllowed": true,
- *      "InteractionCommentAllowed": true,
- *      "HoldInteractionAllowed": true,
- *      "Whiteboard": { "Allowed": true, "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html" },
- *      "Snapshot": { "Allowed": true, "Source": "remote", "RemoteResponseTimeout": 10 },
- *      "ShowUserLabel": false,
- *      "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
- *      "WebRTCTest": {
- *          "Allowed": true,
- *          "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
- *          "Customer": true
- *       },
- *      "ConversationService": { "Url": "", "Limit": 50, "Label": false },
- *      "ReplyAllowed": true,
- *      "EndInteractionOnAVEnd": false,
- *      "CloseInteractionOnEnd": false,
- *      "MuteAVOnHold": {
- *          "AgentAudio": true,
- *          "AgentVideo": true,
- *          "CustomerAudio": true,
- *          "CustomerVideo": false
- *       },
- *      "ToggleUserViewAllowed": true
- *      }
- *    }
+ *     "Name": "Chat Controls",
+ *     "Description": "",
+ *     "Type": "tw-chat-controls",
+ *     "Config": {
+ *         "Enabled": true,
+ *         "Hidden": false,
+ *         "Static": false,
+ *         "Anchor": true,
+ *         "AOT": false,
+ *         "AutoOpen": false,
+ *         "Icon": "chat",
+ *         "Class": "",
+ *         "Position": { "X": 2, "Y": 1 },
+ *         "Actions": ["maximize", "collapse", "float"],
+ *         "ViewState": "restore",
+ *         "Header": true,
+ *         "Pinned": false
+ *     },
+ *     "Data": {
+ *         "Transfer": {
+ *             "Allowed": true,
+ *             "Agent": {
+ *                 "Allowed": true,
+ *                 "Consult": true,
+ *                 "Blind": true,
+ *                 "Comments": true,
+ *                 "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+ *                 "AllowedStates": [],
+ *                 "TeamFilter": false,
+ *                 "Columns": []
+ *             },
+ *             "Skill": {
+ *                 "Allowed": true,
+ *                 "Consult": false,
+ *                 "Blind": true,
+ *                 "Comments": true,
+ *                 "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+ *                 "ChannelPrefix": [],
+ *                 "Columns": []
+ *             }
+ *         },
+ *         "Conference": {
+ *             "Allowed": true,
+ *             "Agent": {
+ *                 "Allowed": true,
+ *                 "Consult": true,
+ *                 "Blind": false,
+ *                 "Comments": true,
+ *                 "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+ *                 "AllowedStates": [],
+ *                 "TeamFilter": false,
+ *                 "Columns": []
+ *             },
+ *             "Skill": {
+ *                 "Allowed": true,
+ *                 "Consult": true,
+ *                 "Blind": false,
+ *                 "Comments": true,
+ *                 "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+ *                 "ChannelPrefix": ["CH"],
+ *                 "Columns": []
+ *             }
+ *         },
+ *         "AudioEscalateAllowed": true,
+ *         "VideoEscalateAllowed": true,
+ *         "SignatureAllowed": true,
+ *         "EmojiAllowed": true,
+ *         "ReplyOnChatAllowed": true,
+ *         "VoiceNoteAllowed": false,
+ *         "AttachmentAllowed": true,
+ *         "ScreenShareAllowed": true,
+ *         "InteractionCommentAllowed": true,
+ *         "HoldInteractionAllowed": true,
+ *         "Whiteboard": { "Allowed": true, "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html" },
+ *         "Snapshot": { "Allowed": true, "Source": "remote", "RemoteResponseTimeout": 10 },
+ *         "ShowUserLabel": false,
+ *         "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
+ *         "WebRTCTest": {
+ *             "Allowed": true,
+ *             "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
+ *             "Customer": true
+ *         },
+ *         "ConversationService": { "Url": "", "Limit": 50, "Label": false },
+ *         "ReplyAllowed": true,
+ *         "EndInteractionOnAVEnd": false,
+ *         "CloseInteractionOnEnd": false,
+ *         "MuteAVOnHold": {
+ *             "AgentAudio": true,
+ *             "AgentVideo": true,
+ *             "CustomerAudio": true,
+ *             "CustomerVideo": false
+ *         },
+ *         "ToggleUserViewAllowed": true
+ *     }
+ * }
  * ```
  */
 export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> {}
