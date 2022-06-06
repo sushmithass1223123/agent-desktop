@@ -579,6 +579,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         this.appConfig = config;
         this.configLoaded(config);
         await this.getTMACVersion();
+        this._appUIService.checkForDisplayResolution();
     }
 
     retryLoadConfig(): void {
