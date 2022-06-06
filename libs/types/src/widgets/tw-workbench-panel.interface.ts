@@ -1,4 +1,5 @@
-import { AgentTransferConferenceConfig } from '../components/agent-skill-list.interface';
+import { Widget } from '..';
+import { AgentSkillConfig } from '../components/agent-skill-list.interface';
 
 /**
  * Configs related to individual workbench tabs
@@ -7,7 +8,7 @@ export type TwEmailWorkbenchConfig = {
     /**
      * Transfer related settings of the workbench tab
      */
-    Transfer?: AgentTransferConferenceConfig;
+    Transfer?: AgentSkillConfig;
     /**
      * Polling interval of the tab.
      * This property allows the workbench tab to poll
@@ -18,6 +19,12 @@ export type TwEmailWorkbenchConfig = {
      */
     SearchPollingInterval: number;
     /**
+     * Flag to show / hide the delete button in email preview window
+     * @type {boolean} true | false
+     * @default false
+     */
+    DeleteAllowed: boolean;
+    /**
      * Flag to enable the transfer of the item from workbench queue.
      * This is only available when the user is agent.
      * For supervisors this is always enabled.
@@ -25,7 +32,35 @@ export type TwEmailWorkbenchConfig = {
      * @default false
      */
     QueueTransferForAgent?: boolean;
+    /**
+     * Flag to decide whether the email templates in the interaction should be fetch by team or not.
+     * @default false
+     */
+    TemplatesByTeam: boolean;
+    /**
+     * Tabs to be configured to show on workbench
+     * @type {TwEmailWorkbenchTabs[]} Array of tab items
+     * @default []
+     */
+    Tabs: TwEmailWorkbenchTabs[];
+    /**
+     * The duration of emails to be fetched initially in hours
+     * @type {Number} Duration on hours
+     * @default 0
+     */
+    SearchDuration: number;
+    /**
+     * Flag to show / hide the internet header button in email preview window
+     * @type {boolean} true | false
+     * @default false
+     */
+    InternetHeadersAllowed: boolean;
 };
+
+/**
+ * Available tabs of the email workbench
+ */
+export type TwEmailWorkbenchTabs = 'queue' | 'inbox' | 'sent' | 'drafts';
 
 export type TwChatWorkbenchConfig = {
     /**
@@ -82,8 +117,6 @@ export type TwWorkbenchPanelGeneral = {
      */
     WorkbenchUrl: string;
 };
-
-import { Widget } from '..';
 
 /**
  * This widget is used to display the workbench panel containg the email and the chat worbench
