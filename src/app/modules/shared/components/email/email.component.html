@@ -7,7 +7,7 @@
         <div
             id="subject"
             *ngIf="_email.Subject"
-            class="twd-text-xl twd-flex twd-justify-between twd-p-2"
+            class="twd-text-xl twd-flex twd-justify-between twd-p-2 twd-rounded-t-20"
             mat-ripple
             (click)="emailHeader.scrollTop = 0; headerCollapsed = !headerCollapsed"
         >
@@ -92,10 +92,7 @@
                             <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
                             <span
                                 mat-ripple
-                                class="
-                                    twd-cursor-pointer twd-text-xs twd-font-bold twd-px-1 twd-py-[3px] twd-rounded-20 twd-leading-none
-                                    secondary-text
-                                "
+                                class="twd-cursor-pointer twd-text-xs twd-font-bold twd-px-1 twd-py-[3px] twd-rounded-20 twd-leading-none secondary-text"
                                 (click)="showCcBcc = !showCcBcc"
                             >
                                 CC/BCC
@@ -183,7 +180,14 @@
 
 <ng-template let-key="key" #recipientInputField>
     <mat-chip-list class="twd-w-full twd-flex-1 twd-flex twd-flex-wrap" #chipList>
-        <mat-chip *ngFor="let emailId of _email[key]" [matTooltip]="emailId" selectable removable (removed)="removeEmail(key, emailId)">
+        <mat-chip
+            class="email-id"
+            *ngFor="let emailId of _email[key]"
+            [matTooltip]="emailId"
+            selectable
+            removable
+            (removed)="removeEmail(key, emailId)"
+        >
             <!-- <mat-chip-avatar>
                 <img src="assets/images/avatars/profile.jpg" [alt]="emailId" />
             </mat-chip-avatar> -->
