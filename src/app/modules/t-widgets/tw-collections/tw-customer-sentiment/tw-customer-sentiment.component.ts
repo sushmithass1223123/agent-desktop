@@ -143,7 +143,7 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService) {
-        super();
+        super('TwCustomerSentimentComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

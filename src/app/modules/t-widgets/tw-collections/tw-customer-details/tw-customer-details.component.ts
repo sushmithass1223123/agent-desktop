@@ -44,7 +44,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     @Output() collapseEvent = new EventEmitter();
 
     constructor(private _tmacEventService: TMACEventService) {
-        super();
+        super('TwCustomerDetailsComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

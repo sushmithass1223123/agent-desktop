@@ -185,7 +185,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService
     ) {
-        super();
+        super('InstantMessagingComponent');
         // Set the defaults
         this.selectedContact = null;
         this._unsubscribeAll = new Subject();

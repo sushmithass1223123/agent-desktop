@@ -101,7 +101,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService
     ) {
-        super();
+        super('TwCustomComponent');
 
         this.excludedEvents = EXCLUDED_TMAC_EVENT as CustomTMACEventTypes[];
     }

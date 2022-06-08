@@ -57,7 +57,7 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
     close: () => void;
 
     constructor(@Optional() @Inject(MAT_DIALOG_DATA) private dialogData: ModalProps, private domSanitizer: DomSanitizer) {
-        super();
+        super('TwEmailTemplatePreviewComponent');
     }
 
     /**

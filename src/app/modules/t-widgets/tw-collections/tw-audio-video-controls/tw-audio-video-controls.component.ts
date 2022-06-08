@@ -239,7 +239,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _fuseProgressBarService: FuseProgressBarService,
         private _interactionManagerService: InteractionManagerService
     ) {
-        super();
+        super('TwAudioVideoControlsComponent');
 
         // set defaults
         this.agentFeatures = {

@@ -70,7 +70,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
     restartTimer$ = new Subject();
 
     constructor() {
-        super();
+        super('TwAuxTimerComponent');
     }
 
     /**

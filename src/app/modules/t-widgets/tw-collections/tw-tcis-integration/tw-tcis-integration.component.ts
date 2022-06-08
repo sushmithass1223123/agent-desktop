@@ -33,7 +33,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     private _signalrWrapper: SignalRWrapper;
 
     constructor(private _tmacEventService: TMACEventService) {
-        super();
+        super('TwTcisIntegrationComponent');
     }
 
     /**

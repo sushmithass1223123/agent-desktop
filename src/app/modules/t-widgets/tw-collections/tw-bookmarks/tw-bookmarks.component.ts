@@ -144,7 +144,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
      * Constructor
      */
     constructor(private _appUIService: AppUiService, private _matDialog: MatDialog) {
-        super();
+        super('TwBookmarksComponent');
 
         this.treeControl = new FlatTreeControl<BookmarkFlatNode>(this.getLevel, this.isExpandable);
 

@@ -57,7 +57,7 @@ export class TwGenericPanelComponent extends TWidgetWrapper implements OnInit, O
     ];
 
     constructor() {
-        super();
+        super('TwGenericPanelComponent');
     }
 
     /**

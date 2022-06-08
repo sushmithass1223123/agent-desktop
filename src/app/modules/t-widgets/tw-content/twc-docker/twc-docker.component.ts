@@ -30,7 +30,7 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
     unload: boolean;
 
     constructor(public hostElement: ElementRef, public contentPageService: ContentPageService) {
-        super(hostElement, contentPageService);
+        super('TwcDockerComponent', hostElement, contentPageService);
     }
 
     /**

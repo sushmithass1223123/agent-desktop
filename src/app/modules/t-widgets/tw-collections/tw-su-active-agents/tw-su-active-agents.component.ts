@@ -127,7 +127,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _instantMessagingService: InstantMessagingService,
         private _agentFeaturesService: AgentFeaturesService
     ) {
-        super();
+        super('TwSuActiveAgentsComponent');
 
         this.agentList = [];
         this.filteredAgents = [];

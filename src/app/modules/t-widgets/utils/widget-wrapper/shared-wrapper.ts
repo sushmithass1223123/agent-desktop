@@ -11,7 +11,7 @@ export class SharedWrapper {
      */
     logger: ILogger;
 
-    constructor(source?: string) {
-        this.logger = TUtils.Logger.register(`AD-${source ?? this.constructor.name}`);
+    constructor(source: string) {
+        this.logger = TUtils.Logger.register(source);
     }
 }

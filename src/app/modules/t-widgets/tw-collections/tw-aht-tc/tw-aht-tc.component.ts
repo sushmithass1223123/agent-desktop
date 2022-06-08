@@ -62,7 +62,7 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
     @ViewChild(TableComponent) table: TableComponent;
 
     constructor(private _tmacEventService: TMACEventService) {
-        super();
+        super('TwAhtTcComponent');
     }
 
     /**

@@ -71,7 +71,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
      * @param {AppUiService} _appUIService
      */
     constructor(private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
-        super();
+        super('TwAgentAssistComponent');
     }
 
     /**

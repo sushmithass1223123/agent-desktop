@@ -46,7 +46,7 @@ export class AppDataService extends SharedWrapper {
         private _fuseFacadeService: FuseFacadeService // private _tmacEventService: TMACEventService
     ) {
         // Set the config from the default config
-        super();
+        super('AppDataService');
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object());
         this._appVersion = packageInfo.version;

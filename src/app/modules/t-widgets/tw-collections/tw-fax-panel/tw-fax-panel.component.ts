@@ -53,7 +53,7 @@ export class TwFaxPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     ];
 
     constructor() {
-        super();
+        super('TwFaxPanelComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

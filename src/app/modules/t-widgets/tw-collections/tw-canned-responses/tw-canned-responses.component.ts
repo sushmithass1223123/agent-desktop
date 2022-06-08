@@ -77,7 +77,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
-        super();
+        super('TwCannedResponsesComponent');
     }
 
     /**

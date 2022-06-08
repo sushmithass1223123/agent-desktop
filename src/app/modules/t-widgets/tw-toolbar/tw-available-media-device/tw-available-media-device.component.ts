@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
+import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
 import { COMMON_ERR_MESSAGE } from 'app/constants';
 
@@ -30,7 +30,7 @@ type AvailableDevices = {
     styleUrls: ['./tw-available-media-device.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwAvailableMediaDeviceComponent extends SharedWrapper implements OnInit {
+export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements OnInit {
     /**
      * Available devices Dialog ref
      */
@@ -79,7 +79,7 @@ export class TwAvailableMediaDeviceComponent extends SharedWrapper implements On
     videoElm: ElementRef<HTMLMediaElement>;
 
     constructor(private matDialog: MatDialog) {
-        super();
+        super('TwAvailableMediaDeviceComponent');
     }
 
     /**

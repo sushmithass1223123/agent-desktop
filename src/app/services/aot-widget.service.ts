@@ -33,7 +33,7 @@ export class AOTWidgetService extends SharedWrapper {
     private _newWidget$: Subject<INewAOT>;
 
     constructor(private _appDataService: AppDataService, private _appUiService: AppUiService) {
-        super();
+        super('AOTWidgetService');
     }
 
     // -----------------------------------------------------------------------------------------------------

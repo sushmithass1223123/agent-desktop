@@ -36,7 +36,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
      * Constructor
      */
     constructor(private _fuseFacadeService: FuseFacadeService) {
-        super();
+        super('TwWorkbenchPanelComponent');
     }
 
     /**

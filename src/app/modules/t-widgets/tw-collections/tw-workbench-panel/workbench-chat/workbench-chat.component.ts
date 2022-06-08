@@ -124,7 +124,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
         private _appUiService: AppUiService,
         private _matDialog: MatDialog
     ) {
-        super();
+        super('WorkbenchChatComponent');
         const today = new Date();
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);

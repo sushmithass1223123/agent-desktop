@@ -23,7 +23,7 @@ export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, On
     toolbarMenuWidget: IWidget[] = [];
 
     constructor() {
-        super();
+        super('TwToolbarMenuComponent');
     }
 
     /**

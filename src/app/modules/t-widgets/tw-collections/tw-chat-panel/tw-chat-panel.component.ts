@@ -62,7 +62,7 @@ export class TwChatPanelComponent extends TWidgetWrapper implements OnInit, OnDe
      * Constructor
      */
     constructor() {
-        super();
+        super('TwChatPanelComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

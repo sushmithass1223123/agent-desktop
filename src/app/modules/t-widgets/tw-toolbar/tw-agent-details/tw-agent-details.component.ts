@@ -58,7 +58,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
+        super('TwAgentDetailsComponent');
     }
 
     /**

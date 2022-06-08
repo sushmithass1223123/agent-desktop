@@ -65,7 +65,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
      * Constructor
      */
     constructor(private _http: HttpClient) {
-        super();
+        super('TwSuGamificationComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -32,10 +32,10 @@ export class TWidgetWrapper {
      */
     logger: ILogger;
 
-    constructor() {
+    constructor(source: string) {
         // Set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
-        this.logger = TUtils.Logger.register(`AD-${this.constructor.name.replace('Tw', '').replace('Component', 'Widget')}`);
+        this.logger = TUtils.Logger.register(source.replace('Tw', '').replace('Component', 'Widget'));
     }
 
     /**

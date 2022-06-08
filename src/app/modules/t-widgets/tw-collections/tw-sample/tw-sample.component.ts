@@ -47,7 +47,7 @@ export class TwSampleComponent extends TWidgetWrapper implements OnInit, OnDestr
         // @ [OPTIONAL]
         private _appDataService: AppDataService
     ) {
-        super();
+        super('TwSampleComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

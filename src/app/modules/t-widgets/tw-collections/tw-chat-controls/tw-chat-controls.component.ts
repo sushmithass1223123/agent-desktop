@@ -1,4 +1,4 @@
-import { AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, WidgetConfig } from '@ad/types';
+import { AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -61,23 +61,14 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
-import {
-    AgentSkillListData,
-    AgentSkillRef,
-    ChatTranscripts,
-    CommonWidgetData,
-    CustomSDKEvent,
-    InteractionComment,
-    InteractionRef,
-    SnackbarStateTypes
-} from 'app/interfaces';
+import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
 import { map } from 'lodash';
 import * as moment from 'moment';
-import { from, Subject, timer } from 'rxjs';
-import { delay, filter, takeUntil } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -541,7 +532,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _fuseFacadeService: FuseFacadeService,
         private _agentFeaturesService: AgentFeaturesService
     ) {
-        super();
+        super('TwChatControlsComponent');
 
         // set defaults
         this.textTemplates = {

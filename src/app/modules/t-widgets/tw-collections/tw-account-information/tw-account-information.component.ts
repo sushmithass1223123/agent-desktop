@@ -117,7 +117,7 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
      * @param {FuseProgressBarService} _fuseProgressBarService
      */
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
-        super();
+        super('TwAccountInformationComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

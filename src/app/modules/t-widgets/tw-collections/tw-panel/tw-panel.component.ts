@@ -27,7 +27,7 @@ export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestro
      * Constructor
      */
     constructor(private _viewContainerRef: ViewContainerRef) {
-        super();
+        super('TwPanelComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

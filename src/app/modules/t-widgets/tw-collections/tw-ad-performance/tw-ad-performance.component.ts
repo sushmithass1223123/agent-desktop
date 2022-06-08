@@ -55,7 +55,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
      * @param {HttpClient} _http
      */
     constructor(private _http: HttpClient) {
-        super();
+        super('TwAdPerformanceComponent');
     }
 
     /**

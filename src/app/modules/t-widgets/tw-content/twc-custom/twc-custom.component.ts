@@ -66,7 +66,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         private _tmacEventService: TMACEventService,
         private _fuseFacadeService: FuseFacadeService
     ) {
-        super(hostElement, contentPageService);
+        super('TwcCustomComponent', hostElement, contentPageService);
 
         this.excludedEvents = [
             'WallboardRefreshEvent',

@@ -90,7 +90,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * Constructor
      */
     constructor(private _appUiService: AppUiService, private _tmacEventService: TMACEventService, private matDialog: MatDialog) {
-        super();
+        super('TwWorkCodesComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -67,7 +67,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     agentCommentRef: TemplateRef<any>;
 
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
-        super();
+        super('TwAdInteractionDetailsComponent');
     }
 
     /**

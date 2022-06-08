@@ -66,7 +66,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         private _tmacEventService: TMACEventService,
         private _appUIService: AppUiService
     ) {
-        super();
+        super('TwVoiceBotTranscriptsComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

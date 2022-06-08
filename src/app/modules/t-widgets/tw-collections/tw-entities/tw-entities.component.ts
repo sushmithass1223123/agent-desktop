@@ -30,7 +30,7 @@ export class TwEntitiesComponent extends TWidgetWrapper implements OnInit {
     entities$: Observable<Record<string, string[]>[]>;
 
     constructor() {
-        super();
+        super('TwEntitiesComponent');
     }
 
     /**

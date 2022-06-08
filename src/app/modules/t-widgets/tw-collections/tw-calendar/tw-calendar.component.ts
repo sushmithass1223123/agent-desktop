@@ -81,7 +81,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      * Constructor
      */
     constructor(private _matDialog: MatDialog, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
-        super();
+        super('TwCalendarComponent');
 
         // Set the defaults
         this.view = 'month';

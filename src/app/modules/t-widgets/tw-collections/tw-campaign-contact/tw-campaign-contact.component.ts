@@ -119,7 +119,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         private _tmacEventService: TMACEventService,
         private _formBuilder: FormBuilder
     ) {
-        super();
+        super('TwCampaignContactComponent');
         this.showMakeCall = false;
         this.callMadeToCustomer = false;
     }

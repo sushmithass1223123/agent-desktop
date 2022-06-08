@@ -67,7 +67,7 @@ export class TwAdFeedbackComponent extends TWidgetWrapper implements OnInit, OnD
      * Constructor
      */
     constructor() {
-        super();
+        super('TwAdFeedbackComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

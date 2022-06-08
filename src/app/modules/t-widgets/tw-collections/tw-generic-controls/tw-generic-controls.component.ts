@@ -70,7 +70,7 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         private _contentPageService: ContentPageService,
         private _fuseFacadeService: FuseFacadeService
     ) {
-        super();
+        super('TwGenericControlsComponent');
     }
 
     /**

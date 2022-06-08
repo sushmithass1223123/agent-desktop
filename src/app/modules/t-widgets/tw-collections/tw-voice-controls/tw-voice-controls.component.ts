@@ -323,7 +323,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _contentPageService: ContentPageService,
         public voiceControlsService: TwVoiceControlsService
     ) {
-        super();
+        super('TwVoiceControlsComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -153,7 +153,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         private _appUIService: AppUiService,
         private _appDataService: AppDataService
     ) {
-        super();
+        super('TwCustomerJourneyComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -418,9 +418,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     processHistoryData(historyData: InteractionHistory[], update?: boolean): void {
         // const tableData: Record<string, IHRecord> = groupBy(historyData, 'GroupID');
         const sourceData = Object.entries(
-             // group all the data from api by 'GroupID' so that multiple channels of the
+            // group all the data from api by 'GroupID' so that multiple channels of the
             // same interaction are together
-            groupBy(historyData.reverse(), 'GroupID')).map((groups) => {
+            groupBy(historyData.reverse(), 'GroupID')
+        ).map((groups) => {
             let [, interactionRecords] = groups;
             let records: IHRecord[] = interactionRecords.map((data) => {
                 if (!((data.InteractionDate as any) instanceof Date)) {

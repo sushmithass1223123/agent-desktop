@@ -46,7 +46,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
         private _router: Router,
         private _appDataService: AppDataService
     ) {
-        super();
+        super('WidgetPreviewComponent');
     }
 
     /**

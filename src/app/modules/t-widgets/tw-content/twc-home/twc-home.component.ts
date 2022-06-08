@@ -103,7 +103,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         private _fuseFacadeService: FuseFacadeService,
         private _aotWidgetService: AOTWidgetService
     ) {
-        super(hostElement, contentPageService);
+        super('TwcHomeComponent', hostElement, contentPageService);
     }
 
     /**
