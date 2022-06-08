@@ -49,7 +49,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * @constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
-        super();
+        super('TwWallboardComponent');
     }
 
     /**

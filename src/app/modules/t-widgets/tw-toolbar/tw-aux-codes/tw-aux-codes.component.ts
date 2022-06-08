@@ -50,7 +50,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     agentStatus = '';
 
     constructor(private _fuseProgressBarService: FuseProgressBarService, private _tmacEventService: TMACEventService) {
-        super();
+        super('TwAuxCodesComponent');
     }
 
     /**

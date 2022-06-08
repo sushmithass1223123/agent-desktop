@@ -36,7 +36,7 @@ export class TwcWorkbenchComponent extends TWContentWrapper implements OnInit, O
      * @param {contentPageService} ContentPageService
      */
     constructor(hostElement: ElementRef, contentPageService: ContentPageService) {
-        super(hostElement, contentPageService);
+        super('TwcWorkbenchComponent', hostElement, contentPageService);
     }
 
     /**

@@ -75,7 +75,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
      * Constructor
      */
     constructor(private _http: HttpClient, private _tmacEventService: TMACEventService) {
-        super();
+        super('TwAdCallbacksComponent');
     }
 
     /**

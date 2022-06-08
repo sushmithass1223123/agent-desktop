@@ -38,7 +38,7 @@ export class TwInstantMessagingComponent extends TWidgetWrapper implements OnIni
         private _appUIService: AppUiService,
         private _instantMessagingService: InstantMessagingService
     ) {
-        super();
+        super('TwInstantMessagingComponent');
     }
 
     /**

@@ -99,7 +99,7 @@ export class AppUiService extends SharedWrapper {
         private _appDataService: AppDataService,
         private domSanitizer: DomSanitizer
     ) {
-        super();
+        super('AppUiService');
         this.init();
     }
 

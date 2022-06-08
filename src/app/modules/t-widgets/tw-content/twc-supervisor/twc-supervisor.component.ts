@@ -103,7 +103,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         private _fuseFacadeService: FuseFacadeService,
         private _aotWidgetService: AOTWidgetService
     ) {
-        super(hostElement, _contentPageService);
+        super('TwcSupervisorComponent', hostElement, _contentPageService);
     }
 
     /**

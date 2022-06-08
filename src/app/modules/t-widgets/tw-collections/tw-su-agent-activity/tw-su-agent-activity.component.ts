@@ -45,7 +45,7 @@ export class TwSuAgentActivityComponent extends TWidgetWrapper implements OnInit
      * Constructor
      */
     constructor() {
-        super();
+        super('TwSuAgentActivityComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

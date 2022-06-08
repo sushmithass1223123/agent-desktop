@@ -82,7 +82,7 @@ export class AgentFeaturesService extends SharedWrapper {
     private _featureUpdatedSubject: Subject<boolean>;
 
     constructor(private _appUIService: AppUiService) {
-        super();
+        super('AgentFeaturesService');
         this._featureUpdatedSubject = new Subject();
         this._agentFeatureInfo = {
             permissions: {

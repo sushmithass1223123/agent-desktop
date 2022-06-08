@@ -36,7 +36,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, public voiceControlsService: TwVoiceControlsService) {
-        super();
+        super('TwVoiceCannedResponsesComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

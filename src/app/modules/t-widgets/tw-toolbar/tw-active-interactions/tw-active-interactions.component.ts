@@ -48,7 +48,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService
     ) {
-        super();
+        super('TwActiveInteractionsComponent');
     }
 
     /**

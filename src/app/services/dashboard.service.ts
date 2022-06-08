@@ -52,7 +52,7 @@ export class DashboardService extends SharedWrapper {
     private _agentHierarchy: boolean;
 
     constructor(private _appDataService: AppDataService, private _tmacEventService: TMACEventService) {
-        super();
+        super('DashboardService');
     }
 
     /**

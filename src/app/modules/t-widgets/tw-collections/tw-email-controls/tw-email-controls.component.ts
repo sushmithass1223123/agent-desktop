@@ -237,7 +237,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseFacadeService: FuseFacadeService,
         private _emailService: EmailService
     ) {
-        super();
+        super('TwEmailControlsComponent');
     }
 
     // @ Lifecycle hooks

@@ -68,7 +68,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
      * @param {appUiService} AppUiService
      */
     constructor(private http: HttpClient, private appUiService: AppUiService) {
-        super();
+        super('TwPendingCallbacksComponent');
         this.pendingCallbacksTable = {
             source: new MatTableDataSource([]),
             columns: ['CampaignName', 'CampaignType', 'ScheduleTime', 'Name', 'Status', 'Actions']

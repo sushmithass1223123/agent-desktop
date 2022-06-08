@@ -336,7 +336,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private _agentFeaturesService: AgentFeaturesService,
         private _appUIService: AppUiService
     ) {
-        super();
+        super('WorkbenchEmailComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

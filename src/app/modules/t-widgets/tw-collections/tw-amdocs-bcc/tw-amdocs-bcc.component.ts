@@ -24,7 +24,7 @@ export class TwAmdocsBccComponent extends TWidgetWrapper implements OnInit, OnDe
      * Constructor
      */
     constructor() {
-        super();
+        super('TwAmdocsBccComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
     private _signalrWrapper: SignalRWrapper;
 
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
-        super();
+        super('TwTrsIntegrationComponent');
     }
 
     /**

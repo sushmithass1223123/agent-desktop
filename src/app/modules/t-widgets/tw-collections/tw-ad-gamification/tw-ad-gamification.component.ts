@@ -43,7 +43,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
      * @param {gamificationService} GamificationService
      */
     constructor(private _http: HttpClient) {
-        super();
+        super('TwAdGamificationComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

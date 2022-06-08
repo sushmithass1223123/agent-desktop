@@ -70,7 +70,7 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
     interaction: IUIEvent;
 
     constructor(private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
-        super();
+        super('TwComposeMessagingComponent');
     }
 
     /**

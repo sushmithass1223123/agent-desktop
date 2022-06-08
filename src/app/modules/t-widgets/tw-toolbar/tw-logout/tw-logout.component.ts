@@ -37,7 +37,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
+        super('TwLogoutComponent');
         this.logoutAux = [];
     }
 

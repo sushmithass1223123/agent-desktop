@@ -18,7 +18,7 @@ export class TwUnknownComponent extends TWidgetWrapper implements OnInit, OnDest
     @Input() data: TwUnknown;
 
     constructor() {
-        super();
+        super('TwUnknownComponent');
     }
 
     /**

@@ -46,7 +46,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
-        super();
+        super('TwDeflectToDigitalComponent');
     }
 
     /**

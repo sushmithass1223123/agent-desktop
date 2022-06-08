@@ -51,7 +51,7 @@ export class TwEmailPanelComponent extends TWidgetWrapper implements OnInit, OnD
     ];
 
     constructor() {
-        super();
+        super('TwEmailPanelComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

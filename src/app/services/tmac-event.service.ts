@@ -120,7 +120,7 @@ export class TMACEventService extends SharedWrapper {
         private _router: Router
     ) {
         // intialize all the subject
-        super();
+        super('TMACEventService');
         this._unsubscribeAll = new Subject();
         this._interactionEventArray = [];
         this._nonInteractionEventArray = [];

@@ -155,7 +155,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
+        super('TwGamificationComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

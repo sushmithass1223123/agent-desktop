@@ -61,7 +61,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         private _tmacEventService: TMACEventService,
         private _aotWidgetService: AOTWidgetService
     ) {
-        super(hostElement, contentPageService);
+        super('TwcInteractionComponent', hostElement, contentPageService);
     }
 
     /**

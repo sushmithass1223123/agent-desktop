@@ -19,7 +19,7 @@ export class InteractionManagerService extends SharedWrapper {
     private _interactionsSubject: BehaviorSubject<InteractionRef[]>;
 
     constructor() {
-        super();
+        super('InteractionManagerService');
     }
 
     // -----------------------------------------------------------------------------------------------------
