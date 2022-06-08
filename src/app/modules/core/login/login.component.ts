@@ -8,7 +8,7 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { MsTeamsAuthService, TeamsSignInResponse } from '@services/ms-teams-auth.service';
+import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from 'app/services/app-data.service';
@@ -1093,7 +1093,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         try {
             if (this.ssoType === 'msteams') {
-                const response = await this._msTeamsAuthSerivce.signIn<TeamsSignInResponse>();
+                const response = await this._msTeamsAuthSerivce.signIn();
                 this.logger.debug(`ssoLogin: response=${response?.isSuccess}, ${response?.message}`, false);
                 // check if authenticated
                 if (response.isSuccess == true) {
