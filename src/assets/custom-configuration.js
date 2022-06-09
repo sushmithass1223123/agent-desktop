@@ -8,7 +8,7 @@
 var ssoAuthSettings = {
     msTeams: {
         appId: '6cec53f1-82f1-44ce-92bb-ce5157e3232f',
-        redirectUri: 'https://localhost:4200/agent-desktop-dice/sso/msteams',
+        redirectUri: 'https://localhost:4200/sso/msteams',
         subscriptionUri: 'https://tcmmsteamsapi.qa.tetherfi.cloud',
         tetherfiOrganization: 'DICE',
         scopes: [
