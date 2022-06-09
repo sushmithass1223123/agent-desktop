@@ -4,7 +4,7 @@ import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthCodeMSALBrowserAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
-import {app, authentication,} from "@microsoft/teams-js";
+import { app, authentication } from '@microsoft/teams-js';
 import { SharedWrapper } from '@modules/t-widgets/utils';
 import { TUtils } from '@tmac/sdk';
 import { MsTeamsOAuthSettings } from 'app/constants';
@@ -16,7 +16,6 @@ import { MsTeamAuthSettings } from 'app/interfaces';
     providedIn: 'root'
 })
 export class MsTeamsAuthService extends SharedWrapper {
-    private _context: any;
     /**
      * Microsoft graph client ref
      */
@@ -49,7 +48,7 @@ export class MsTeamsAuthService extends SharedWrapper {
 
         this.getUser().then((user) => {
             this.user = user;
-        }); 
+        });
     }
 
     /**
@@ -86,63 +85,72 @@ export class MsTeamsAuthService extends SharedWrapper {
     /*
     for ms team web app logging support
     */
-    webLogging(){
+    webLogging() {
         return new Promise<Results>((resolve, reject) => {
             try {
-                this._msalService.loginPopup(this.authSettings)
-                    .subscribe({
-                        next: (authDetails) => {
-                            console.log(authDetails);
-                            if (authDetails) {
-                                this._msalService.instance.setActiveAccount(authDetails.account);
-                                this.authenticated = true;
-                                const lanId = authDetails.account.username.split('@')[0];
-                                this.setSubscriptions(authDetails.account.username,lanId,authDetails.accessToken,this.authSettings.tetherfiOrganization);
-                                const user = new User();
-                                user.displayName = authDetails.account.name;
-                                user.email = authDetails.account.username;
-                                user.avatar = '/assets/no-profile-photo.png';
-                                resolve(new Results(true, 'authenticated', { authDetails, user }));
-                                
-                            }
-                            else{
-                                this.logger.error(`signIn.webLogging.subscribe no auth data`, false);
-                                resolve(null);
-                            }
-                        },
-                        error: (error) => {
-                            this.logger.error(`signIn.webLogging.subscribe`, error, false);
+                this._msalService.loginPopup(this.authSettings).subscribe({
+                    next: (authDetails) => {
+                        console.log(authDetails);
+                        if (authDetails) {
+                            this._msalService.instance.setActiveAccount(authDetails.account);
+                            this.authenticated = true;
+                            const lanId = authDetails.account.username.split('@')[0];
+                            this.setSubscriptions(
+                                authDetails.account.username,
+                                lanId,
+                                authDetails.accessToken,
+                                this.authSettings.tetherfiOrganization
+                            );
+                            const user = new User();
+                            user.displayName = authDetails.account.name;
+                            user.email = authDetails.account.username;
+                            user.avatar = '/assets/no-profile-photo.png';
+                            resolve(new Results(true, 'authenticated', { authDetails, user }));
+                        } else {
+                            this.logger.error(`webLogging.loginPopup.subscribe no auth data`, false);
                             resolve(null);
                         }
+                    },
+                    error: (error) => {
+                        this.logger.error(`webLogging.loginPopup.subscribe`, error, false);
+                        resolve(null);
                     }
-                );
+                });
             } catch (error) {
-                this.logger.error(`signIn.webLogging`, error, false);
+                this.logger.error(`webLogging`, error, false);
                 resolve(null);
             }
         });
     }
+
     /*
     for ms teams app login support
     */
-    appLogging(){
+    appLogging() {
         return new Promise<Results>(async (resolve, reject) => {
             try {
-                this.logger.debug(`signIn.getContext , appLogging`, false);
+                this.logger.debug(`appLogging.initialize`, false);
                 await app.initialize();
-                this.logger.debug(`signIn.getContext`, false);
+
+                this.logger.debug(`appLogging.getContext`, false);
                 const context = await app.getContext();
-                this._context = context;
 
+                this.logger.debug(`appLogging.getAuthToken`, false);
                 const result = await authentication.getAuthToken();
-                this.logger.debug(`signIn.successCallback: result=${result}`, false);
+                this.logger.debug(`appLogging.getAuthToken: result=${result}`, false);
+
                 const lanId = context?.user?.userPrincipalName?.split('@')[0];
-                this.setSubscriptions(context.user.id?? context.user.userPrincipalName, lanId, result, this.authSettings.tetherfiOrganization).then((res) =>{this.logger.debug(`signIn.setSubscriptions: result=${res}`, false);}).catch((error) => { this.logger.error(`signIn.setSubscriptions`, error, false);});
+                this.setSubscriptions(context.user.id || context.user.userPrincipalName, lanId, result, this.authSettings.tetherfiOrganization)
+                    .then((res) => {
+                        this.logger.debug(`appLogging.setSubscriptions: result=${res}`, false);
+                    })
+                    .catch((error) => {
+                        this.logger.error(`appLogging.setSubscriptions`, error, false);
+                    });
 
-                resolve(new Results(true, 'authenticated', {user: { email: context.user.userPrincipalName, ...context },token: result}));
-
+                resolve(new Results(true, 'authenticated', { user: { email: context.user.userPrincipalName, ...context }, token: result }));
             } catch (error) {
-                this.logger.error(`signIn.webLogging`, error, false);
+                this.logger.error(`appLogging.webLogging`, error, false);
                 resolve(null);
             }
         });
@@ -155,17 +163,13 @@ export class MsTeamsAuthService extends SharedWrapper {
     async signIn(): Promise<Results> {
         this.logger.debug(`signIn`, false);
         return new Promise<Results>(async (resolve, reject) => {
-            
             try {
-
-                this.logger.debug(`signIn.initialize`, false);
-                var response =  await Promise.all([this.webLogging(),this.appLogging()]);
-                resolve(response[0]??resolve[1]);
-
+                var response = await Promise.all([this.webLogging(), this.appLogging()]);
+                resolve(response[0] ?? resolve[1]);
             } catch (error) {
                 this.logger.error(`signIn`, error, false);
-                reject(new Results(false, 'fail to authenticate', error));
-            }            
+                reject(new Results(false, 'fail to authenticate', null, error));
+            }
         });
     }
 

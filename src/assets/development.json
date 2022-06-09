@@ -2571,11 +2571,7 @@
             ]
         },
         "Urls": {
-            "DashboardServerUrls": [
-                "https://dice.tetherfi.cloud/SignalRDashboard2",
-                "http://localhost:55444/SignalRDashboard",
-                "https://dice.tetherfi.cloud:443/SignalRDashboardSup"
-            ],
+            "DashboardServerUrls": ["https://dicedev.tetherfi.cloud/SignalRDashboard1", "https://dicedev.tetherfi.cloud/SignalRDashboard2"],
             "FileServerUrl": {
                 "MediaStreamer": "https://dice.tetherfi.cloud:13019/upload",
                 "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
@@ -2623,7 +2619,11 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx", "https://localhost/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": [
+                    "https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx",
+                    "https://localhost/TMACSDKProxy/TmacProxy.asmx",
+                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"
+                ],
                 "type": "soap",
                 "timeout": 60
             },
