@@ -136,7 +136,7 @@ export class MsTeamsAuthService extends SharedWrapper {
                 const context = await app.getContext();
 
                 this.logger.debug(`appLogging.getAuthToken`, false);
-                const result = await authentication.getAuthToken();
+                const result = await authentication.getAuthToken({ resources: this.authSettings.scopes });
                 this.logger.debug(`appLogging.getAuthToken: result=${result}`, false);
 
                 const lanId = context?.user?.userPrincipalName?.split('@')[0];
@@ -164,8 +164,11 @@ export class MsTeamsAuthService extends SharedWrapper {
         this.logger.debug(`signIn`, false);
         return new Promise<Results>(async (resolve, reject) => {
             try {
-                var response = await Promise.all([this.webLogging(), this.appLogging()]);
-                resolve(response[0] ?? resolve[1]);
+                let response = await this.appLogging();
+                if (!response) {
+                    response = await this.webLogging();
+                }
+                resolve(response);
             } catch (error) {
                 this.logger.error(`signIn`, error, false);
                 reject(new Results(false, 'fail to authenticate', null, error));
