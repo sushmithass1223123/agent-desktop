@@ -4,20 +4,17 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper class="twd-z-[101]" [data]="data">
     <!-- your code goes here -->
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign=" none" style="gap: 8px">
-        <div fxFlex fxLayout="column" fxLayoutAlign=" none" style="gap: 8px">
-            <tw-panel fxFlex [data]="activityWidgets['profileWidget']">
-                <div fxFlex fxLayout="row" fxLayoutAlign=" none">
+    <div class="twd-flex twd-flex-1 twd-w-full twd-h-full twd-gap-1 twd-p-1">
+        <div class="twd-flex twd-flex-1 twd-flex-col twd-gap-1">
+            <tw-panel class="twd-flex-1" [data]="activityWidgets['profileWidget']">
+                <div class="twd-flex twd-flex-1">
                     <img *ngIf="activityWidgets['profileWidget'].Data.ImageURL; else noData" [src]="activityWidgets['profileWidget'].Data.ImageURL" />
                 </div>
                 <div
-                    fxFlex
-                    fxLayout="column"
-                    fxLayoutAlign=" none"
                     *ngIf="activityWidgets['profileWidget'].Data.Details && activityWidgets['profileWidget'].Data.Details.length > 0; else noData"
-                    class="p-8 custom-scroll-adjust"
+                    class="twd-flex twd-flex-1 twd-flex-col twd-p-2"
                 >
                     <div *ngFor="let item of activityWidgets['profileWidget'].Data.Details" class="mb-8">
                         <span class="font-weight-700"> {{ item.Title }}: </span>
@@ -25,26 +22,19 @@
                     </div>
                 </div>
             </tw-panel>
-            <tw-panel fxFlex [data]="activityWidgets['snapshotWidget']">
+            <tw-panel class="twd-flex-1" [data]="activityWidgets['snapshotWidget']">
                 <img *ngIf="activityWidgets['snapshotWidget'].Data.ImageURL; else noData" [src]="activityWidgets['snapshotWidget'].Data.ImageURL" />
             </tw-panel>
-            <tw-panel fxFlex [data]="activityWidgets['locationWidget']">
-                <div
-                    *ngIf="activityWidgets['locationWidget'].Data.Location; else noData"
-                    class="w-100-p h-100-h"
-                    leaflet
-                    [leafletOptions]="activityWidgets['locationWidget'].Data.Location"
-                ></div>
-            </tw-panel>
+            <tw-user-location class="twd-flex-1" [data]="activityWidgets['locationWidget']"></tw-user-location>
         </div>
-        <div fxFlex fxLayout="column" fxLayoutAlign=" none" style="gap: 8px">
-            <tw-panel fxFlex [data]="activityWidgets['screenshotWidget']">
+        <div class="twd-flex twd-flex-1 twd-flex-col twd-gap-1">
+            <tw-panel class="twd-flex-1" [data]="activityWidgets['screenshotWidget']">
                 <img
                     *ngIf="activityWidgets['screenshotWidget'].Data.ImageURL; else noData"
                     [src]="activityWidgets['screenshotWidget'].Data.ImageURL"
                 />
             </tw-panel>
-            <tw-panel fxFlex [data]="activityWidgets['screenVideoWidget']">
+            <tw-panel class="twd-flex-1" [data]="activityWidgets['screenVideoWidget']">
                 <video
                     *ngIf="activityWidgets['screenVideoWidget'].Data.VideoURL; else noData"
                     [src]="activityWidgets['screenVideoWidget'].Data.VideoURL"
@@ -55,8 +45,8 @@
     </div>
 
     <ng-template #noData>
-        <div fxFlex fxFlex fxLayout="column" fxLayoutAlign="center center" class="border-radius-20 border-md-primary">
-            <span class="mat-title m-0">No Preview</span>
+        <div class="twd-flex twd-flex-1 twd-flex-col twd-justify-center twd-items-center border-radius-20 border-md-primary">
+            <span class="mat-title m-0">No preview</span>
         </div>
     </ng-template>
 

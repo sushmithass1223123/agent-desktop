@@ -1,8 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { latLng, tileLayer } from 'leaflet';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Supervisor Agent Activity Details Component
@@ -25,48 +27,38 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
     activityWidgets: IWidget[] = [];
 
     /**
-     * Location options
-     */
-    options = {
-        layers: [tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })],
-        zoom: 5,
-        center: latLng(46.879966, -121.726909)
-    };
-
-    /**
      * Constructor
      */
-    constructor() {
+    constructor(private _tmacEventService: TMACEventService) {
         super('TwSuAgentActivityDetailsComponent');
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
     /**
-     * A callback method that is invoked immediately after the default change detector has checked the directive's data-bound properties for the first time,
-     * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
+     * Lifecycle hooks
      */
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
-
         // create the activity widgets
         this.createWidgets(this.data.Data?.ActivityDetails);
+        // listen to TMAC events
+        this._tmacEventService
+            .getNonInteractionEvents(['AgentActivityEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
 
     /**
-     * A callback method that performs custom clean-up, invoked immediately before a directive, pipe, or service instance is destroyed.
+     * Lifecycle hooks
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Private Methods
-    // -----------------------------------------------------------------------------------------------------
+    AgentActivityEvent(event: any): void {
+        this.createWidgets(event);
+    }
 
     /**
      * To create widgets
@@ -94,13 +86,15 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
         snapshotWidget.Config.Actions = ['maximize'];
 
         // create location widget
-        const locationWidget = new TwWidgetModel('Location', 'tw-panel', 'location_on');
+        const locationWidget = new TwWidgetModel('Location', 'tw-user-location', 'location_on');
         // check if the location is received
         if (item.location) {
-            locationWidget.Data.Location = {
-                layers: [tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })],
-                zoom: 5,
-                center: latLng(item.location.latitude, item.location.longitude)
+            locationWidget.Data = {
+                Source: 'dashboard',
+                Location: {
+                    Latitude: item.location.latitude,
+                    Longitude: item.location.longitude
+                }
             };
         }
         locationWidget.Config.Class = 'mx-cover panel';
@@ -125,10 +119,6 @@ export class TwSuAgentActivityDetailsComponent extends TWidgetWrapper implements
         this.activityWidgets['screenshotWidget'] = screenshotWidget;
         this.activityWidgets['screenVideoWidget'] = screenVideoWidget;
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------
 }
 
 // for more info visit - https://angular.io/api/core

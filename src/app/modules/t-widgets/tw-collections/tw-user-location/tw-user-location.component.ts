@@ -1,5 +1,5 @@
 import { TwUserLocation } from '@ad/types';
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { TMACEventService } from '@services/tmac-event.service';
 import { TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './tw-user-location.component.html',
     styleUrls: ['./tw-user-location.component.scss']
 })
-export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**
      * holds all the data related to this widget from the config
      */
@@ -51,6 +51,18 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        this.loading = true;
+        this.loadingRef = setTimeout(() => {
+            this.error = 'Location not found';
+            this.loading = false;
+        }, 5000);
+
+        // location found in data, do not register for event
+        if (this.data.Data.Source === 'dashboard') {
+            return;
+        }
+
         const interactionId = this.data?.InteractionDetails?.InteractionID;
         if (!interactionId) {
             this.logger.error('Interaction details not found!', null);
@@ -60,10 +72,16 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
             .getInteractionEvents(['TextChatRemoteUserConnectedEvent'], interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
-        this.loading = true;
-        this.loadingRef = setTimeout(() => {
-            this.loading = false;
-        }, 10000);
+    }
+
+    /**
+     * Lifecycle hook
+     */
+    ngAfterViewInit(): void {
+        const { Latitude, Longitude } = this.data.Data?.Location ?? {};
+        if (Latitude && Longitude) {
+            this.setLocation(Latitude, Longitude);
+        }
     }
 
     /**
@@ -92,23 +110,32 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, O
             }
 
             const [lat, long] = location.split(',');
-            this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(this.map);
-            const icon = L.icon({
-                iconUrl: 'assets/images/leaflet/marker-icon.png',
-                shadowUrl: 'assets/images/leaflet/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [13, 41]
-            });
-            L.marker([lat, long], { icon }).addTo(this.map).openPopup();
-            this.clearLoading();
-            setTimeout(() => {
-                this.map.invalidateSize();
-            }, 1000);
+            this.setLocation(lat, long);
         } catch (e) {
             this.logger.error('Unable to set location', e);
             this.error = 'Unable to set location';
         }
+    }
+
+    /**
+     * To set location
+     * @param {Number} lat
+     * @param {Number} long
+     */
+    setLocation(lat: number, long: number): void {
+        this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(this.map);
+        const icon = L.icon({
+            iconUrl: 'assets/images/leaflet/marker-icon.png',
+            shadowUrl: 'assets/images/leaflet/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [13, 41]
+        });
+        L.marker([lat, long], { icon }).addTo(this.map).openPopup();
+        this.clearLoading();
+        setTimeout(() => {
+            this.map.invalidateSize();
+        }, 1000);
     }
 
     /**

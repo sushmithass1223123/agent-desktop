@@ -1353,9 +1353,7 @@ export class TMACEventService extends SharedWrapper {
 
     /**
      * To emit custom SDK event through subscriber
-     *
-     * @param {Any} evt
-     * @param {Boolean} interactionEvent [OPTIONAL]
+     * @param data
      */
     emitSDKEvent(data: {
         /**
@@ -1383,7 +1381,7 @@ export class TMACEventService extends SharedWrapper {
 
         try {
             // check if logging is enabled
-            const logEnabled = this.appConfig?.AppConfigs?.SDK?.Logging?.SDKEvents ?? false;
+            const logEnabled = this.appConfig?.AppConfigs?.SDK?.logging?.sdkEvents ?? false;
 
             // to log the event
             if (logEnabled && data.log) {

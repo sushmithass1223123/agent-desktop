@@ -8,4 +8,24 @@ export type TwUserLocation = InteractionWidget<TwUserLocationData>;
 /**
  * Data config for the user location widget
  */
-export interface TwUserLocationData {}
+export interface TwUserLocationData {
+    /**
+     * Source of the widget
+     */
+    Source?: 'dashboard' | 'interaction';
+    /**
+     * Location data
+     */
+    Location?: Location;
+}
+
+interface Location {
+    /**
+     * Location latitude
+     */
+    Latitude: number;
+    /**
+     * Location longitude
+     */
+    Longitude: number;
+}
