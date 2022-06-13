@@ -201,7 +201,18 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {any} item
      */
     private createActivityWidget(item: any): void {
-        // create activity details widget
+        // if the widget opened, send the event to update
+        if (this.activityWidget) {
+            this._tmacEventService.emitSDKEvent({
+                event: {
+                    EventName: 'AgentActivityEvent',
+                    ...item
+                },
+                isInteractionEvent: false
+            });
+            return;
+        }
+
         const widget = new TwWidgetModel(item.title, 'tw-su-agent-activity-details', 'local_activity');
         widget.Config.Actions = ['collapse', 'destroy'];
         widget.Config.ViewState = 'maximize';
@@ -213,8 +224,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.destroy = () => {
             this.activityWidget = null;
         };
-
-        // push the widget to list
         this.activityWidget = widget;
     }
 
@@ -399,6 +408,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         this._appUIService.showSnackbar('Done', 'success');
                         this.createActivityWidget({
                             title: `Activity - ${agentInfo.AgentName}`,
+                            agentId: agentInfo.AgentLoginID,
                             profilePicture: response.ProfilePic,
                             details: [
                                 {
@@ -422,7 +432,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     })
                     .catch((error: string) => {
                         this._appUIService.showSnackbar('Unable to get agent activity', 'failure');
-                        // log the error to server for troubleshooting purpose
                         this.logger.error('Error in performAgentAction.AgentSnapShotEvent', error);
                     });
                 break;
