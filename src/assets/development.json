@@ -45,11 +45,7 @@
                                 "Description": "",
                                 "Type": "tw-logout",
                                 "Config": { "Enabled": true },
-                                "Data": {
-                                    "LogoutAux": ["logout"],
-                                    "AllowLogoutOnOpenInteractions": true,
-                                    "AllowLogoutOnAvailable": false
-                                }
+                                "Data": { "LogoutAux": ["logout"], "AllowLogoutOnOpenInteractions": true, "AllowLogoutOnAvailable": false }
                             },
                             {
                                 "Name": "Agent IM",
@@ -375,7 +371,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud:55018" }
+                                    "Data": { "TCMProxyUrl": "https://dicedev.tetherfi.cloud:55018" }
                                 }
                             ],
                             "AOT": [
@@ -447,7 +443,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
+                                        "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
                                             "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "Mr. Tan" },
                                             "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "6596975347" }
@@ -475,8 +471,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx",
-                                        "TVirtualStoreUrl": "https://dice.tetherfi.cloud/TVirtualStore"
+                                        "GamificationProxyUrl": "https://dicedev.tetherfi.cloud/GamificationProxy/Proxy.asmx",
+                                        "TVirtualStoreUrl": "https://dicedev.tetherfi.cloud/TVirtualStore"
                                     }
                                 }
                             ]
@@ -513,7 +509,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TASUrl": "https://dice.tetherfi.cloud/TAS/Quiz/Index" }
+                                    "Data": { "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index" }
                                 }
                             ],
                             "Dynamic": [
@@ -716,7 +712,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "GamificationProxyUrl": "https://dice.tetherfi.cloud/GamificationProxy/Proxy.asmx" }
+                                    "Data": { "GamificationProxyUrl": "https://dicedev.tetherfi.cloud/GamificationProxy/Proxy.asmx" }
                                 },
                                 {
                                     "Name": "Add Products",
@@ -738,7 +734,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": true, "Url": "https://dice.tetherfi.cloud/TVirtualStore/product.html" }
+                                    "Data": { "OpenInNew": true, "Url": "https://dicedev.tetherfi.cloud/TVirtualStore/product.html" }
                                 }
                             ]
                         }
@@ -939,9 +935,9 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
                                                     "Columns": []
                                                 }
                                             }
@@ -1007,7 +1003,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
+                                        "AssistWidgetUrl": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -1148,7 +1144,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}" }
+                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}" }
                                 },
                                 {
                                     "Name": "Register Callback",
@@ -1171,7 +1167,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
+                                        "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
                                             "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "Mr. Tan" },
                                             "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "6596975347" }
@@ -1198,7 +1194,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TCMProxyUrl": "https://dice.tetherfi.cloud:55018" }
+                                    "Data": { "TCMProxyUrl": "https://dicedev.tetherfi.cloud:55018" }
                                 },
                                 {
                                     "Name": "Voice Canned Responses",
@@ -1244,7 +1240,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                        "Url": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
                                     }
                                 }
                             ]
@@ -1356,7 +1352,10 @@
                                                     "ScreenShareAllowed": true,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
-                                                    "Whiteboard": { "Allowed": true, "Url": "https://dice.tetherfi.cloud/Whiteboard/ui/index.html" },
+                                                    "Whiteboard": {
+                                                        "Allowed": true,
+                                                        "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html"
+                                                    },
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "remote",
@@ -1479,9 +1478,9 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
                                                     "Columns": [
                                                         "InteractionDate",
                                                         "Channel",
@@ -1544,7 +1543,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
+                                        "AssistWidgetUrl": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -1689,7 +1688,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/AD-Video-Audit-Widget?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
+                                        "Url": "https://dicedev.tetherfi.cloud/AD-Video-Audit-Widget?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
                                     }
                                 },
                                 {
@@ -1714,7 +1713,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                        "Url": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
                                     }
                                 },
                                 {
@@ -1738,7 +1737,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud/TCM_Proxy/api",
+                                        "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
                                             "Name": {
                                                 "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
@@ -1878,9 +1877,9 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
                                                     "Columns": [
                                                         "InteractionDate",
                                                         "Channel",
@@ -1920,7 +1919,7 @@
                                     },
                                     "Data": {
                                         "Confidence": 0.5,
-                                        "AssistWidgetUrl": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
+                                        "AssistWidgetUrl": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=${intent}&ucid=${Interaction.UCID}",
                                         "Title": "Agent Assist",
                                         "Icon": "assistant",
                                         "Width": 450,
@@ -2062,7 +2061,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TCMProxyUrl": "https://dice.tetherfi.cloud:55018",
+                                        "TCMProxyUrl": "https://dicedev.tetherfi.cloud:55018",
                                         "DataMap": {
                                             "Name": {
                                                 "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
@@ -2210,9 +2209,9 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "IframeBaseUrl": "https://dice.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
                                                     "NoOfRecords": 10,
-                                                    "SentimentDashboardUrl": "https://dice.tetherfi.cloud/SentimentDashboard",
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
                                                     "Columns": [
                                                         "InteractionDate",
                                                         "Channel",
@@ -2256,7 +2255,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud/OCM/EKYCAudit/Index?sessionid=${Interaction.Item.Data.sessionID}"
+                                        "Url": "https://dicedev.tetherfi.cloud/OCM/EKYCAudit/Index?sessionid=${Interaction.Item.Data.sessionID}"
                                     }
                                 }
                             ],
@@ -2283,7 +2282,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dice.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                        "Url": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
                                     }
                                 }
                             ]
@@ -2319,7 +2318,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "General": { "WorkbenchUrl": "https://dice.tetherfi.cloud:55005/api/workbench" },
+                                        "General": { "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench" },
                                         "Channels": [
                                             {
                                                 "Type": "Email",
@@ -2380,7 +2379,7 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
-                    "Data": { "Path": "/tmeet", "Url": "https://dice.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
+                    "Data": { "Path": "/tmeet", "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
                 },
                 {
                     "Name": "Docker",
@@ -2412,7 +2411,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2434,7 +2433,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2456,7 +2455,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2478,7 +2477,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dice.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
                                 }
                             ]
                         }
@@ -2573,10 +2572,10 @@
         "Urls": {
             "DashboardServerUrls": ["https://dicedev.tetherfi.cloud/SignalRDashboard1", "https://dicedev.tetherfi.cloud/SignalRDashboard2"],
             "FileServerUrl": {
-                "MediaStreamer": "https://dice.tetherfi.cloud:13019/upload",
-                "MediaProxy": "https://dice.tetherfi.cloud/ApiFileUploadDownLoad"
+                "MediaStreamer": "https://dicedev.tetherfi.cloud:13019/upload",
+                "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
-            "TCMClient": "https://dice.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
+            "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
         }
     },
     "AppConfigs": {
@@ -2599,7 +2598,7 @@
         "CheckForResolution": true,
         "AV": {
             "webRTCConfig": {
-                "iceServers": [{ "urls": "turn:dice.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
+                "iceServers": [{ "urls": "turn:dicedev.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },
@@ -2636,12 +2635,12 @@
                 "sdkEvents": true
             },
             "customScripts": [
-                "https://dice.tetherfi.cloud/tmaclibs/adapter.js",
-                "https://dice.tetherfi.cloud/tmaclibs/RecordRTC.js",
-                "https://dice.tetherfi.cloud/tmaclibs/livechat_video_debug.js",
-                "https://dice.tetherfi.cloud/tmaclibs/collector.min.js"
+                "https://dicedev.tetherfi.cloud/tmaclibs/adapter.js",
+                "https://dicedev.tetherfi.cloud/tmaclibs/RecordRTC.js",
+                "https://dicedev.tetherfi.cloud/tmaclibs/livechat_video_debug.js",
+                "https://dicedev.tetherfi.cloud/tmaclibs/collector.min.js"
             ]
         }
     },
-    "Version": "5.1.228"
+    "Version": "5.1.5.30"
 }
