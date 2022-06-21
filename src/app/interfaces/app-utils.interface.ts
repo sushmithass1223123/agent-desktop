@@ -378,6 +378,10 @@ export interface AppSnackBarArgs {
      */
     duration?: number;
     /**
+     * To disable desktop notification for app snackbar
+     */
+    disableNotification?: boolean;
+    /**
      * performs action when snackbar clicked
      */
     onClick?: (...args) => void;

@@ -5,11 +5,16 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper [data]="data" (maximizeEvent)="onMaximize($event)">
-    <div class="twd-w-full twd-h-full twd-relative">
+    <div *ngIf="loading" class="twd-w-full twd-h-full twd-flex twd-justify-center twd-items-center">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div [ngClass]="{ 'twd-hidden': loading }" class="twd-w-full twd-h-full twd-relative">
         <div #mapContainer class="twd-h-full twd-w-full twd-absolute" *ngIf="!error; else noData"></div>
     </div>
+
     <ng-template #noData>
-        <div class="mt-20">
+        <div class="twd-h-full twd-flex twd-justify-center twd-items-center">
             <p class="text-center mat-title">
                 {{ error }}
             </p>

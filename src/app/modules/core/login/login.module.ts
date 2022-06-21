@@ -5,7 +5,6 @@ import { BrowserCacheLocation, IPublicClientApplication, PublicClientApplication
 import { FuseProgressBarModule, FuseSidebarModule } from '@fuse/components';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { SharedModule } from '@modules/shared/shared.module';
-import { AppUiService } from '@services/app-ui.service';
 import { MsTeamsOAuthSettings } from 'app/constants';
 import { LoginComponent } from './login.component';
 
@@ -15,7 +14,7 @@ let msalInstance: IPublicClientApplication | undefined;
  * Microsoft AL Instance Factory
  * @returns
  */
-export function MSALInstanceFactory(): IPublicClientApplication {
+function MSALInstanceFactory(): IPublicClientApplication {
     msalInstance =
         msalInstance ??
         new PublicClientApplication({
@@ -38,7 +37,6 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 @NgModule({
     declarations: [LoginComponent],
     providers: [
-        AppUiService,
         {
             provide: MSAL_INSTANCE,
             useFactory: MSALInstanceFactory

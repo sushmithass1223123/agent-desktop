@@ -3,7 +3,10 @@
 const webpack = require('webpack');
 
 module.exports = (config) => {
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
+    config.plugins.push(new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+    }));
     // addTailwindPlugin({
     //     webpackConfig: config,
     //     tailwindConfig,

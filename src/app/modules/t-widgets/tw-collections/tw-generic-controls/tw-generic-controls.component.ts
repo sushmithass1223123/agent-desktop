@@ -1,3 +1,4 @@
+import { TwGenericControls } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -8,9 +9,8 @@ import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
-import { InteractionRef, IWidget } from 'app/interfaces';
+import { InteractionRef } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TwGenericControls } from '@ad/types';
 
 /**
  * Generic Controls Components
@@ -25,7 +25,7 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
     /**
      * Daat from App config
      */
-    @Input() data: IWidget;
+    @Input() data: TwGenericControls<any>;
 
     /**
      * Confirm dialog ref
@@ -70,7 +70,7 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         private _contentPageService: ContentPageService,
         private _fuseFacadeService: FuseFacadeService
     ) {
-        super();
+        super('TwGenericControlsComponent');
     }
 
     /**

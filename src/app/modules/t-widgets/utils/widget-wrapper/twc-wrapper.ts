@@ -63,12 +63,12 @@ export class TWContentWrapper {
         this.setWidthHeight();
     }
 
-    constructor(public hostElement: ElementRef, public contentPageService: ContentPageService) {
+    constructor(source: string, public hostElement: ElementRef, public contentPageService: ContentPageService) {
         // set the unsubscribeAll defaults
         this.unsubscribeAll = new Subject();
         this.pageActive = false;
         this.setWidthHeight();
-        this.logger = TUtils.Logger.register(`AD-${this.constructor.name.replace('Twc', '').replace('Component', 'Widget')}`);
+        this.logger = TUtils.Logger.register(source.replace('Twc', '').replace('Component', 'Widget'));
     }
 
     /**

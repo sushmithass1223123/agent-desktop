@@ -4,7 +4,6 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwPanel } from '@ad/types';
 
 /**
- * Need more Description
  * Tw Panel Compoenent
  */
 @Component({
@@ -28,7 +27,7 @@ export class TwPanelComponent extends TWidgetWrapper implements OnInit, OnDestro
      * Constructor
      */
     constructor(private _viewContainerRef: ViewContainerRef) {
-        super();
+        super('TwPanelComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

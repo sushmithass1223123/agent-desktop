@@ -80,8 +80,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
-
+        super('TwSuAgentInteractionsComponent');
         this.agentData = SDKClient.getAgentData();
     }
 

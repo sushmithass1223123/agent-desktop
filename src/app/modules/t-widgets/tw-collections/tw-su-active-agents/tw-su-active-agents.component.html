@@ -69,6 +69,7 @@
                     <mat-icon>campaign</mat-icon>
                 </button>
             </div>
+
             <div
                 class="agent-list twd-flex twd-flex-1 twd-flex-col twd-gap-2 twd-px-1 twd-pb-2 twd-overflow-y-auto"
                 [@animateStagger]="{ value: '50' }"
@@ -178,24 +179,19 @@
 
                     <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
                         <div
-                            class="
-                                feature-actions
-                                border-right-primary
-                                twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12
-                            "
+                            class="feature-actions border-right-primary twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12"
                         >
                             <ng-container *ngFor="let feature of item.AgentFeatures">
                                 <button
                                     #agentActionBtn
                                     mat-icon-button
                                     mat-raised-button
-                                    *ngIf="featureCheck(feature, 'agent', '')"
+                                    *ngIf="featureCheck(feature, 'agent', 'all')"
                                     (click)="performAgentAction(item, feature)"
                                     [matTooltip]="featureMap[feature.Feature].Label"
                                 >
                                     <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
                                 </button>
-
                                 <button
                                     #agentActionBtn
                                     mat-icon-button
@@ -301,14 +297,7 @@
 
                 <div
                     *ngIf="!filteredAgents.length"
-                    class="
-                        twd-w-full
-                        h-68
-                        p-12
-                        border-radius-20
-                        agent-item
-                        twd-cursor-pointer twd-flex twd-flex-row twd-justify-center twd-items-center
-                    "
+                    class="twd-w-full h-68 p-12 border-radius-20 agent-item twd-cursor-pointer twd-flex twd-flex-row twd-justify-center twd-items-center"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animate]="{ value: '*', params: { y: '100%' } }"
                 >
@@ -323,4 +312,4 @@
     </div>
 </tw-wrapper>
 
-<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget"> </tw-su-agent-activity-details>
+<tw-su-agent-activity-details *ngIf="activityWidget" [data]="activityWidget"></tw-su-agent-activity-details>

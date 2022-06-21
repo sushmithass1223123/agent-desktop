@@ -82,7 +82,7 @@ export class AgentFeaturesService extends SharedWrapper {
     private _featureUpdatedSubject: Subject<boolean>;
 
     constructor(private _appUIService: AppUiService) {
-        super();
+        super('AgentFeaturesService');
         this._featureUpdatedSubject = new Subject();
         this._agentFeatureInfo = {
             permissions: {
@@ -117,24 +117,25 @@ export class AgentFeaturesService extends SharedWrapper {
         let screenvideo = '';
         let location = '';
 
-        // get the snapshot
-        if (evt.Camera && this._agentFeatureInfo.permissions.camera) {
-            snapshot = await this.getUrlFromStream('snapshot');
-        }
-
-        // get the screenshot
-        if (evt.ScreenShot && this._agentFeatureInfo.permissions.display) {
-            screenshot = await this.getUrlFromStream('screenshot');
-        }
-
-        // get the screenvideo
-        if (evt.ScreenVideo) {
-            screenvideo = '';
-        }
-
-        // get the location
-        if (evt.Location && this._agentFeatureInfo.permissions.location) {
-            location = JSON.stringify(this._agentFeatureInfo.data.location);
+        try {
+            // get the snapshot
+            if (evt.Camera && this._agentFeatureInfo.permissions.camera) {
+                snapshot = await this.getUrlFromStream('snapshot');
+            }
+            // get the screenshot
+            if (evt.ScreenShot && this._agentFeatureInfo.permissions.display) {
+                screenshot = await this.getUrlFromStream('screenshot');
+            }
+            // get the screenvideo
+            if (evt.ScreenVideo) {
+                screenvideo = '';
+            }
+            // get the location
+            if (evt.Location && this._agentFeatureInfo.permissions.location) {
+                location = JSON.stringify(this._agentFeatureInfo.data.location);
+            }
+        } catch (error) {
+            this.logger.error('Exception in AgentSnapShotEvent', error);
         }
 
         // send the response to SDK
@@ -180,6 +181,9 @@ export class AgentFeaturesService extends SharedWrapper {
         }
 
         return new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => {
+                reject(null);
+            }, 5000);
             try {
                 // create a video element
                 const video = document.createElement('video');
@@ -191,22 +195,28 @@ export class AgentFeaturesService extends SharedWrapper {
                 video.srcObject = stream;
                 // listen to play event
                 video.onplay = () => {
-                    // create canvas
-                    const canvas = document.createElement('canvas');
-                    // set canvas width and height
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-
-                    // get context of canvas, used to draw on canvas
-                    const context = canvas.getContext('2d');
-                    // draw video's current image on canvas
-                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-
-                    // return the canvas url
-                    resolve(canvas.toDataURL());
+                    setTimeout(() => {
+                        // create canvas
+                        const canvas = document.createElement('canvas');
+                        const width = video.videoWidth || 640;
+                        const height = video.videoHeight || 480;
+                        // set canvas width and height
+                        canvas.width = width;
+                        canvas.height = height;
+                        // get context of canvas, used to draw on canvas
+                        const context = canvas.getContext('2d');
+                        // draw video's current image on canvas
+                        context.drawImage(video, 0, 0, width, height);
+                        // clear timeout
+                        clearTimeout(timeout);
+                        // return the canvas url
+                        resolve(canvas.toDataURL());
+                    }, 2000);
                 };
+                // play the video
+                video.play();
             } catch (error) {
-                // log the error to server for troubleshooting purpose
+                clearTimeout(timeout);
                 this.logger.error('Error in getUrlFromStream', error);
                 reject(error);
             }
@@ -240,7 +250,7 @@ export class AgentFeaturesService extends SharedWrapper {
                 // save the stream to reference
                 this._agentFeatureInfo.data.cameraStream = stream;
             },
-            (error: MediaStreamError) => {
+            (error: Error) => {
                 this._agentFeatureInfo.permissions.camera = false;
                 this._appUIService.showSnackbar('Error: Please give access to the camera for supervisor', 'failure');
                 setTimeout(() => {
@@ -281,13 +291,14 @@ export class AgentFeaturesService extends SharedWrapper {
                         track.stop();
                     });
                     // throw an error
-                    throw new MediaStreamError();
+                    throw new Error();
+                    // throw new MediaStreamError();
                 }
                 this._agentFeatureInfo.permissions.display = true;
                 // save the stream to reference
                 this._agentFeatureInfo.data.displayStream = stream;
             })
-            .catch((error: MediaStreamError) => {
+            .catch((error: Error) => {
                 this._agentFeatureInfo.permissions.display = false;
                 this._appUIService.showSnackbar('Error: Please share your entire screen for supervisor', 'failure');
                 setTimeout(() => {

@@ -177,7 +177,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
+        super('TwRegisterCallbackComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

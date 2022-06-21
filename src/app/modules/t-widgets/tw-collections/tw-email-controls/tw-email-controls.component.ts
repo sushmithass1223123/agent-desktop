@@ -1,16 +1,5 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    TemplateRef,
-    ViewChild,
-    ViewEncapsulation
-} from '@angular/core';
+import { AgentTransferConferenceConfig, InteractionWidgetBaseData, SkillTransferConferenceConfig, TwEmailControlsData } from '@ad/types';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -67,7 +56,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * data from widget
      */
-    @Input() data: IWidget<EmailEventGeneric>;
+    @Input() data: IWidget<EmailEventGeneric, TwEmailControlsData & InteractionWidgetBaseData>;
 
     /**
      * Reject email dialog
@@ -248,7 +237,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseFacadeService: FuseFacadeService,
         private _emailService: EmailService
     ) {
-        super();
+        super('TwEmailControlsComponent');
     }
 
     // @ Lifecycle hooks
@@ -512,6 +501,19 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 });
             }
 
+            let priorityIcon = '';
+            switch (inboxRes?.Priority.toLowerCase()) {
+                case 'high':
+                    priorityIcon = 'priority_high';
+                    break;
+                case 'normal':
+                    priorityIcon = 'info';
+                    break;
+                case 'low':
+                    priorityIcon = 'low_priority';
+                    break;
+            }
+
             // Adding email body to the cache
             // so that next time when it is switched form Replied -> Original or vice versa it doesnt need to be fetched
             this.emailBodies[sessionId] = {
@@ -530,15 +532,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         ? parse(outboxRes.SendDate + outboxRes.SendTime, 'yyyyMMddHHmmss', new Date()).toString()
                         : '',
                 From: res.From,
-
                 AgentName: res.AgentName,
                 ConversationID: res.ConversationID,
                 CurrentStatus: res.CurrentStatus,
                 ClosedBy: (res as any).ClosedBy,
-
                 Priority: inboxRes?.Priority,
+                PriorityIcon: priorityIcon,
                 RepliedStatus: inboxRes?.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
-                Intent: inboxRes?.Intent
+                Intent: inboxRes?.Intent,
+                InternetHeaders: inboxRes?.InternetHeaders
             };
         };
 
@@ -1134,8 +1136,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {any} email
      */
     transferEmail(email: any): void {
-        const agentConfig = this.data.Data.Transfer?.Agent || {};
-        const skillConfig = this.data.Data.Transfer?.Skill || {};
+        const agentConfig = this.data.Data.Transfer?.Agent || ({} as AgentTransferConferenceConfig);
+        const skillConfig = this.data.Data.Transfer?.Skill || ({} as SkillTransferConferenceConfig);
 
         const data: AgentSkillListData = {
             title: 'Email Transfer',
@@ -1204,7 +1206,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * Returns email info
+     * Returns email info that is passed to <email /> component
      */
     getReplyInfo(): EmailComponentInputs {
         const {
@@ -1261,5 +1263,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         `;
         emailcomponentInput.prelude = prelude;
         return emailcomponentInput;
+    }
+
+    /**
+     * To show internet email headers
+     */
+    showHeaders(): void {
+        this._appUIService.showCustomDialog('alert', this.currentInteraction.InternetHeaders, 'Internet Headers', {
+            messageClasses: 'twd-whitespace-pre-line twd-break-words'
+        });
     }
 }

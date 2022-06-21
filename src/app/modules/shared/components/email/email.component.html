@@ -7,7 +7,7 @@
         <div
             id="subject"
             *ngIf="_email.Subject"
-            class="twd-text-xl twd-flex twd-justify-between twd-p-2"
+            class="twd-text-xl twd-flex twd-justify-between twd-p-2 twd-rounded-t-20"
             mat-ripple
             (click)="emailHeader.scrollTop = 0; headerCollapsed = !headerCollapsed"
         >
@@ -90,7 +90,11 @@
                         </label>
                         <div class="twd-flex-1 twd-flex twd-items-center">
                             <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
-                            <span mat-ripple class="twd-cursor-pointer twd-text-xs twd-font-bold twd-pt-1" (click)="showCcBcc = !showCcBcc">
+                            <span
+                                mat-ripple
+                                class="twd-cursor-pointer twd-text-xs twd-font-bold twd-px-1 twd-py-[3px] twd-rounded-20 twd-leading-none secondary-text"
+                                (click)="showCcBcc = !showCcBcc"
+                            >
                                 CC/BCC
                             </span>
                         </div>
@@ -177,22 +181,37 @@
 <ng-template let-key="key" #recipientInputField>
     <mat-chip-list class="twd-w-full twd-flex-1 twd-flex twd-flex-wrap" #chipList>
         <mat-chip
+            class="email-id"
             *ngFor="let emailId of _email[key]"
-            class="twd-my-0 twd-min-h-auto"
             [matTooltip]="emailId"
             selectable
             removable
             (removed)="removeEmail(key, emailId)"
         >
-            <span class="twd-truncate">
+            <!-- <mat-chip-avatar>
+                <img src="assets/images/avatars/profile.jpg" [alt]="emailId" />
+            </mat-chip-avatar> -->
+            <span class="twd-truncate twd-leading-none">
                 {{ emailId }}
             </span>
-            <mat-icon matChipRemove>cancel</mat-icon>
+            <mat-icon class="!twd-mr-2" matChipRemove>close</mat-icon>
         </mat-chip>
-        <input [formControl]="_addressFG.get(key)" matInput [matAutocomplete]="suggestedUsersRef" class="my-2 twd-flex-1" />
+        <input
+            #chipInput
+            class="!twd-text-xs"
+            [formControl]="_addressFG.get(key)"
+            [matAutocomplete]="suggestedUsersRef"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="emailIdAdded(key, $event)"
+        />
     </mat-chip-list>
-    <mat-autocomplete autoActiveFirstOption #suggestedUsersRef="matAutocomplete" (optionSelected)="selectEmailAddress(key, $event)">
-        <mat-option *ngFor="let user of suggestedUsers" [value]="user">
+    <mat-autocomplete
+        class="!twd-w-auto !twd-min-w-6/12"
+        #suggestedUsersRef="matAutocomplete"
+        (optionSelected)="emailIdSelected(key, $event, chipInput)"
+    >
+        <mat-option *ngFor="let user of suggestedUsers" [value]="user" class="!twd-text-xs">
             {{ user }}
         </mat-option>
     </mat-autocomplete>

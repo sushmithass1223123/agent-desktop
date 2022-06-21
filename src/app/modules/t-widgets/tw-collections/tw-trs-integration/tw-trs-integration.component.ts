@@ -1,10 +1,9 @@
+import { TwTrsIntegration, TwTrsIntegrationData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
 import { AgentStatusChangeEvent, CommandResultEvent, IResponse, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
-import { TwTrsIntegration } from '@ad/types';
+import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
 /**
  * TRS Integration Component
@@ -19,12 +18,12 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwTrsIntegration;
 
     /**
      * Widget config data
      */
-    private WidgetData: IWidgetData;
+    private WidgetData: TwTrsIntegrationData;
 
     /**
      * SignalR wrapper for TRS connection
@@ -32,7 +31,7 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
     private _signalrWrapper: SignalRWrapper;
 
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
-        super();
+        super('TwTrsIntegrationComponent');
     }
 
     /**
@@ -172,11 +171,4 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
      * @param data
      */
     private getReleaseBlackOutConfirmation(data: any): void {}
-}
-
-interface IWidgetData {
-    /**
-     * Connection urls
-     */
-    Urls: string[];
 }

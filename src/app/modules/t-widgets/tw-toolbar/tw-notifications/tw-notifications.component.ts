@@ -38,7 +38,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
     notifications: AppNotification[];
 
     constructor(private _appUIService: AppUiService) {
-        super();
+        super('TwNotificationsComponent');
     }
 
     /**

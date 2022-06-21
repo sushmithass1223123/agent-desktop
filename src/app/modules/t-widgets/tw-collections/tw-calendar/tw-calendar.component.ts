@@ -1,3 +1,4 @@
+import { TwCalendar } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -8,14 +9,12 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentReminder, AgentReminderEvent, SDKClient, UpdateAgentReminderEvent } from '@tmac/sdk';
 import { CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
-import { IWidget } from 'app/interfaces';
 import { addMinutes, format, isBefore, isSameDay, isSameMonth } from 'date-fns';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
 import { CalendarEventModel } from './calendar.model';
 import { CalendarEventFormDialogComponent } from './event-form/event-form.component';
-import { TwCalendar } from '@ad/types';
 
 /**
  * Calendar component
@@ -31,7 +30,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwCalendar;
     /**
      * Calendar event actions
      */
@@ -82,7 +81,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      * Constructor
      */
     constructor(private _matDialog: MatDialog, private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
-        super();
+        super('TwCalendarComponent');
 
         // Set the defaults
         this.view = 'month';

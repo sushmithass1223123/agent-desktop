@@ -304,6 +304,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
 
         // register for get events
         SDKClient.getEvents();
+
+        this._appUIService.checkForDisplayResolution();
     }
 
     // -----------------------------------------------------------------------------------------------------

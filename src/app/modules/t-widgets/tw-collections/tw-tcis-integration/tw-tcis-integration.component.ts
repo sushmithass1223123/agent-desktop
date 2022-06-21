@@ -1,13 +1,11 @@
+import { TwTcisIntegration, TwTcisIntegrationData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
-import { getStringVars } from '@tmac/operators';
+import { extractJsonVal, getStringVars } from '@tmac/operators';
 import { IUIEvent, SDKClient, SignalRWrapper, TMACEventTypes, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
-import { extractJsonVal } from '@tmac/operators';
 import { get, uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { TwTcisIntegration } from '@ad/types';
 
 /**
  * TCIS Integration Component
@@ -22,12 +20,12 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwTcisIntegration;
 
     /**
      * Widget config data
      */
-    private WidgetData: WidgetData;
+    private WidgetData: TwTcisIntegrationData;
 
     /**
      * SignalR wrapper for TCIS connection
@@ -35,7 +33,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     private _signalrWrapper: SignalRWrapper;
 
     constructor(private _tmacEventService: TMACEventService) {
-        super();
+        super('TwTcisIntegrationComponent');
     }
 
     /**
@@ -53,7 +51,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
         }
         // listen to tmac events
         this._tmacEventService
-            .getInteractionEventsByName(eventNames)
+            .getInteractionEventsByName(eventNames as any[])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) =>
                 evts.forEach((evt: IUIEvent) => {
@@ -67,7 +65,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                         if (action.EventName === evt.EventName) {
                             let args = '';
                             // check if any action to be executed on this event
-                            if (action.EventName === evt.EventName && this.matchChannel(evt, action.Channel)) {
+                            if (action.EventName === evt.EventName && this.matchChannel(evt, action.Channel as any)) {
                                 if (action.Parameters && action.Parameters.length) {
                                     args = this.reduceParams(action.Parameters, evt);
                                 }

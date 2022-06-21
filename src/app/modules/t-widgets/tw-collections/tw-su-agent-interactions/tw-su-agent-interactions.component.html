@@ -115,7 +115,7 @@
             <mat-row *matRowDef="let row; columns: interactionDetailsTable.columns"></mat-row>
         </mat-table>
 
-        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No Data Available</p>
+        <p *ngIf="interactionDetailsTable.source.data.length === 0" class="text-center m-0 mat-title">No data available</p>
     </div>
     <mat-paginator *ngIf="maximized" [pageSizeOptions]="maximized ? [30, 40, 50] : [3, 6, 12]" showFirstLastButtons> </mat-paginator>
 

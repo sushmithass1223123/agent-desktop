@@ -1,14 +1,13 @@
+import { TwComposeMessaging } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IResponse, IUIEvent, SDKClient } from '@tmac/sdk';
-import { IWidget } from 'app/interfaces';
 import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { TwComposeMessaging } from '@ad/types';
 
 /**
  * Tw Compose Messaging Component
@@ -24,7 +23,7 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<any, IWidgetData>;
+    @Input() data: TwComposeMessaging;
     /**
      * Departments
      */
@@ -71,7 +70,7 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
     interaction: IUIEvent;
 
     constructor(private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
-        super();
+        super('TwComposeMessagingComponent');
     }
 
     /**

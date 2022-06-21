@@ -57,7 +57,7 @@ export class TwVoicePanelComponent extends TWidgetWrapper implements OnInit, OnD
     ];
 
     constructor() {
-        super();
+        super('TwVoicePanelComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import { TwAdInteractionDetails } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { TableComponent } from '@modules/shared/components';
@@ -8,7 +9,6 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TwAdInteractionDetails } from '@ad/types';
 
 /**
  * Agent Interactions details Table widget
@@ -67,7 +67,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     agentCommentRef: TemplateRef<any>;
 
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
-        super();
+        super('TwAdInteractionDetailsComponent');
     }
 
     /**
@@ -171,6 +171,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         this.table.sort = true;
         this.table.pagination = true;
         this.table.pageSizeOptions = [0, 5, 10].map((r) => r + 10);
+        this.table.advancedSearch = true;
         this.table.sortBy = 'CreatedDateTime';
         this.table.sortDirection = 'desc';
     }

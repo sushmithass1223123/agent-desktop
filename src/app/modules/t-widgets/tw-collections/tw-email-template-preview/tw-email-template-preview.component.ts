@@ -1,10 +1,9 @@
+import { TwEmailTemplatePreview } from '@ad/types';
 import { Component, Inject, Input, OnInit, Optional, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
 import { EmailTemplate } from '@tmac/sdk';
-import { TwEmailTemplatePreview } from '@ad/types';
 
 type ModalProps = {
     /**
@@ -36,7 +35,7 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwEmailTemplatePreview;
 
     /**
      * safe html for input injection
@@ -58,14 +57,14 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
     close: () => void;
 
     constructor(@Optional() @Inject(MAT_DIALOG_DATA) private dialogData: ModalProps, private domSanitizer: DomSanitizer) {
-        super();
+        super('TwEmailTemplatePreviewComponent');
     }
 
     /**
      * lifecycle hook
      */
     ngOnInit(): void {
-        const data = this.dialogData || this.data.Data;
+        const data = this.dialogData;
         const templateInfo: EmailTemplate = data.info;
         if (templateInfo.Type === 'Form') {
             this.safeHtml = this.domSanitizer.bypassSecurityTrustHtml(

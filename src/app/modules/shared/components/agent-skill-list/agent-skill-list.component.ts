@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
@@ -18,10 +17,10 @@ import {
     WallboardSkillModel
 } from '@tmac/sdk';
 import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
-import { formatJsonData } from 'app/utils';
+import { formatJsonData, InlineWorker } from 'app/utils';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 import { TableComponent } from '../table/table.component';
 
@@ -31,11 +30,12 @@ type ISwitch = {
     table: Partial<TableComponent>;
     data: any[];
     onSelect: (row: any) => void | Promise<void>;
-
     allowed?: boolean;
     consult?: boolean;
     blind?: boolean;
     comments?: boolean;
+    sortBy?: string;
+    sortDir?: 'asc' | 'desc';
 };
 type ITab = 'Agent List' | 'Skill List' | 'Speed Dial';
 type ISkillType = Omit<FavouriteSkill, 'Staff' | 'Avail'> & { Stf: string; Avl: string };
@@ -83,10 +83,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Widget icon
      */
     icon: string;
-    /**
-     * Mat table sort
-     */
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
     /**
      * Grid list switcher
      */
@@ -179,6 +175,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     operationHoursCtrl = new FormControl('operating');
 
     /**
+     * Inline worker
+     */
+    worker: InlineWorker;
+
+    /**
      * Constructor
      */
     constructor(
@@ -224,7 +225,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 freeText: { allowed: !!(this._dialogData?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, active: false, value: '' },
                 table: Object.assign(table, { columns }),
                 data: [],
-                onSelect: this.selectAgent
+                onSelect: this.selectAgent,
+                sortBy: 'FirstName',
+                sortDir: 'asc'
             };
             this.switcherList['Agent List'] = Object.assign(conf, this._dialogData?.agent);
             setActiveSwitcher('Agent List');
@@ -248,7 +251,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 freeText: { allowed: !!(this._dialogData?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, active: false, value: '' },
                 table: Object.assign(table, { columns }),
                 data: [],
-                onSelect: this.selectSkill
+                onSelect: this.selectSkill,
+                sortBy: 'Name',
+                sortDir: 'asc'
             };
             this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.skill);
             setActiveSwitcher('Skill List');
@@ -277,7 +282,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 },
                 table: Object.assign(table, { columns }),
                 data: [],
-                onSelect: this.selectSpeedDialContact
+                onSelect: this.selectSpeedDialContact,
+                sortBy: 'Name',
+                sortDir: 'asc'
             };
             this.switcherList['Speed Dial'] = Object.assign(conf, this._dialogData?.speedDial);
             setActiveSwitcher('Speed Dial');
@@ -373,23 +380,75 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * After view init lifecycle hook
      */
     async ngAfterViewInit(): Promise<void> {
-        // this.switchTab(this.activeSwitcher);
-        await this.presetData();
+        // await this.presetData();
         this.switchTab(this.activeSwitcher);
         this.table.source.filterPredicate = this.filterPredicate;
     }
 
+    // /**
+    //  * Initializes tables
+    //  */
+    // private async presetData(): Promise<void> {
+    //     const err = (e: Error, msg: string) => {
+    //         this._appUIService.showSnackbar(msg, 'failure');
+    //         console.error(e);
+    //         this.loading -= 1;
+    //     };
+
+    //     if (this._dialogData?.agent.allowed) {
+    //         this.loading += 1;
+    //         await Promise.all([
+    //             SDKClient.getAgentListStaffed({
+    //                 agentId: true,
+    //                 byTeam: this._dialogData.agent.teamFilter ?? false,
+    //                 type: ''
+    //             }),
+    //             SDKClient.getTmacWallboardSkills()
+    //         ])
+    //             .then((res) => {
+    //                 this.mapAgents(res[0]);
+    //                 this.mapSkills(res[1]);
+    //                 this.initTables().agent();
+    //             })
+    //             .catch((e) => err(e, 'Error loading Agent list'))
+    //             .finally(() => (this.loading -= 1));
+    //     }
+
+    //     if (this._dialogData?.skill.allowed) {
+    //         this.loading += 1;
+    //         await SDKClient.getFavouriteSkills()
+    //             .then((res) => {
+    //                 this.mapFavSkills(res);
+    //                 this.initTables().skill();
+    //             })
+    //             .catch((e) => err(e, 'Error loading Skill list'))
+    //             .finally(() => (this.loading -= 1));
+    //     }
+
+    //     if (this._dialogData?.speedDial?.allowed) {
+    //         this.loading += 1;
+    //         await SDKClient.getSpeedDialNumbers(this._dialogData.speedDial.teamFilter)
+    //             .then((res) => {
+    //                 this.mapSpeedDial(res);
+    //                 this.initTables().speedDial();
+    //             })
+    //             .catch((e) => err(e, 'Error loading Speed Dial list'))
+    //             .finally(() => (this.loading -= 1));
+    //     }
+    // }
+
     /**
      * Initializes tables
+     * @param {ITab} tab
      */
-    private async presetData(): Promise<void> {
+    private async presetData(tab: ITab): Promise<void> {
         const err = (e: Error, msg: string) => {
             this._appUIService.showSnackbar(msg, 'failure');
             console.error(e);
             this.loading -= 1;
         };
-        // check if agent allowed then load agent list
-        if (this._dialogData?.agent.allowed) {
+
+        if (tab === 'Agent List' && !this.switcherList['Agent List']?.data?.length) {
             this.loading += 1;
             await Promise.all([
                 SDKClient.getAgentListStaffed({
@@ -404,27 +463,25 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     this.mapSkills(res[1]);
                     this.initTables().agent();
                 })
-                .catch((e) => err(e, 'Error loading Agents'))
+                .catch((e) => err(e, 'Error in loading Agent list'))
                 .finally(() => (this.loading -= 1));
-        }
-        if (this._dialogData?.skill.allowed) {
+        } else if (tab === 'Skill List' && !this.switcherList['Skill List']?.data?.length) {
             this.loading += 1;
             await SDKClient.getFavouriteSkills()
                 .then((res) => {
                     this.mapFavSkills(res);
                     this.initTables().skill();
                 })
-                .catch((e) => err(e, 'Error loading Skills'))
+                .catch((e) => err(e, 'Error in loading Skill list'))
                 .finally(() => (this.loading -= 1));
-        }
-        if (this._dialogData?.speedDial?.allowed) {
+        } else if (tab === 'Speed Dial' && !this.switcherList['Speed Dial']?.data?.length) {
             this.loading += 1;
             await SDKClient.getSpeedDialNumbers(this._dialogData.speedDial.teamFilter)
                 .then((res) => {
                     this.mapSpeedDial(res);
                     this.initTables().speedDial();
                 })
-                .catch((e) => err(e, 'Error loading Speed Dials'))
+                .catch((e) => err(e, 'Error in loading Speed Dial list'))
                 .finally(() => (this.loading -= 1));
         }
     }
@@ -623,10 +680,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.unsubscribeAll.complete();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Private Methods
-    // -----------------------------------------------------------------------------------------------------
-
     /**
      * Sets up listening to Search input
      */
@@ -640,17 +693,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             .subscribe((key: string) => {
                 // check which filter should be applied based on this.activeSwitcher
                 this.table.source.filter = JSON.stringify({ searchKey: key, skill: this.selectedSkill });
-                // this.table.doAdvancedSearch();
             });
-    }
-
-    /**
-     * Searches agents based on skill
-     */
-    searchAgentsOnSkill(): void {
-        // check which filter should be applied based on this.activeSwitcher
-        this.table.source.filter = JSON.stringify({ skill: this.selectedSkill });
-        // this.table.doAdvancedSearch();
     }
 
     /**
@@ -954,36 +997,96 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @  Public Methods
-    // -----------------------------------------------------------------------------------------------------\
-
     /**
      * Switch tab
-     * @param item
+     * @param {ITab} tab
      */
-    switchTab(tab: ITab): void {
-        // this.table.source.data = [];
+    async switchTab(tab: ITab): Promise<void> {
+        // terminate if any work going on
+        this.worker?.terminate();
+        // set the switcher and get data
         this.activeSwitcher = tab;
-        this.table.source.data = this.switcherList[this.activeSwitcher].data;
-        this.table.config = this.switcherList[this.activeSwitcher].table.config;
-        this.table.columns = this.switcherList[this.activeSwitcher].table.columns;
+        await this.presetData(tab);
+        // get the switcher
+        const switcher = this.switcherList[this.activeSwitcher];
+        // get the current tab data
+        let data = [...switcher.data];
+        // initial data load limit
+        const initLimit = 15;
+        // check if we need to append data lazyly
+        const lazyLoad = data.length > initLimit;
+        // if lazy then load only initLimit data else load all
+        this.table.source.data = lazyLoad ? data.splice(0, initLimit) : data;
+
+        if (lazyLoad) {
+            // create a web worker to get load to table data asynchronously
+            this.worker = new InlineWorker(() => {
+                // @ts-ignore as this is from DedicatedWorkerGlobalScope (because of that we have postMessage and onmessage methods)
+                this.onmessage = (evt: MessageEvent) => {
+                    // @ts-ignore
+                    this.postMessage(evt.data);
+                };
+            });
+
+            // on message from web worker
+            this.worker.onmessage().subscribe((evt: MessageEvent) => {
+                // destructure the event data
+                const { data, dataSet, limit } = evt.data;
+                // get the current data
+                const curr = this.table.source.data;
+                // append the current and received data to table data source
+                this.table.source.data = [...curr, ...data];
+                // check if the limit reached
+                if (!dataSet || !dataSet.length) {
+                    // terminate worker
+                    this.worker.terminate();
+                } else {
+                    // repeat the same process until the limit
+                    this.handleDataInWebWorker(dataSet, limit);
+                }
+            });
+
+            // handle worker error
+            this.worker.onerror().subscribe((error: ErrorEvent) => {
+                console.error(error);
+            });
+
+            // send post message to web worker with the data and load table data source asynchronously
+            this.handleDataInWebWorker(data, initLimit);
+        }
+
+        this.table.hidePageSize = true;
+        this.table.sortBy = switcher.sortBy;
+        this.table.sortDirection = switcher.sortDir;
+        this.table.config = switcher.table.config;
+        this.table.columns = switcher.table.columns;
 
         this.searchKey.setValue('');
+
         // assign active switcher
         // clear the selection
         this.selectedItem = '';
 
         this.clearSelected();
+
         // clear all filter
         this.clearAllFilter();
     }
 
     /**
+     * Handle table data
+     * @param {any} dataSet
+     * @param {Number} limit
+     */
+    private handleDataInWebWorker(dataSet: any, limit: number) {
+        // send post message to web worker with the data and load table data source asynchronously
+        this.worker.postMessage({ data: dataSet.splice(0, limit), dataSet, limit });
+    }
+
+    /**
      * Filter predicate for rows
-     * @param {any} row
-     * @param {string} filterStr
-     * @returns {boolean}
+     * @param {AgentModel} row
+     * @param {String} filterStr
      */
     filterPredicate = (row: AgentModel, filterStr: string): boolean => {
         if (this.table.source.data.length > 0) {
@@ -1005,7 +1108,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
 
     /**
      * Filters agent list based on selected skill and optional search key
-     * @param {String} searchKey
+     * @param {AgentModel} row
+     * @param {any} filters
+     * @returns
      */
     filterAgentList = (row: AgentModel, filters: any): boolean => {
         if (filters.searchKey && !filters.skill) {
@@ -1225,6 +1330,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.loading -= 1;
             });
     };
+
     /**
      * To process dynamic selected from list
      */
@@ -1242,7 +1348,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * To check for number only
      * @param event Input event
      */
-    public numberOnly(event: any): boolean {
+    numberOnly(event: any): boolean {
         const charCode = event.which ? event.which : event.keyCode;
         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
             return false;
@@ -1290,6 +1396,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.close(false);
                 break;
         }
+    }
+
+    /**
+     * Searches agents based on skill
+     */
+    searchAgentsOnSkill(): void {
+        // check which filter should be applied based on this.activeSwitcher
+        this.table.source.filter = JSON.stringify({ skill: this.selectedSkill });
+        // this.table.doAdvancedSearch();
     }
 
     /**

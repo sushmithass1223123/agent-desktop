@@ -1,3 +1,4 @@
+import { TwLogout } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -5,7 +6,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { IWidget } from 'app/interfaces';
 
 /**
  * Logout button component
@@ -20,11 +20,16 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * App config json data
      */
-    @Input() data: IWidget<any, IWidgetData>;
+    @Input() data: TwLogout;
     /**
      * Can logout flag
      */
     canLogout: boolean;
+
+    /**
+     * Logout Aux
+     */
+    logoutAux: string[];
 
     constructor(
         private _router: Router,
@@ -32,7 +37,8 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
+        super('TwLogoutComponent');
+        this.logoutAux = [];
     }
 
     /**
@@ -44,13 +50,17 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         this.initWrapper(this.data);
         // set defaults
         this.data.Data = {
-            LogoutAux: '',
+            LogoutAux: [],
             AllowLogoutOnOpenInteractions: true,
+            AllowLogoutOnAvailable: false,
             ...this.data.Data
         };
+        // assign the logout aux by checking the type of config for backward compatibility
+        this.logoutAux =
+            typeof this.data.Data.LogoutAux === 'string' ? (this.data.Data.LogoutAux ? [this.data.Data.LogoutAux] : []) : this.data.Data.LogoutAux;
         // listen for agent status change event
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
-        this.canLogout = !(this.data.Data.LogoutAux ?? '');
+        this.canLogout = !this.logoutAux.length;
         // initial check
         this.findLogoutAux();
     }
@@ -80,18 +90,25 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * @method
      */
     private findLogoutAux(): void {
-        // check if logout aux provided
-        if (!this.data.Data.LogoutAux) {
+        const currentAux = SDKClient.getAgentData().agentStatus?.toLocaleLowerCase();
+        // should not allow agents to logout on "On Call" status when LogoutAux is configured or not
+        if (currentAux.includes('on call')) {
+            this.canLogout = false;
+            return;
+        }
+
+        // check if LogoutAux is configured
+        // if LogoutAux is not configured then check if the status is "Available" and AllowLogoutOnAvailable
+        if (!this.logoutAux.length && ((currentAux === 'available' && this.data.Data.AllowLogoutOnAvailable) || currentAux !== 'available')) {
+            this.canLogout = true;
             return;
         }
 
         try {
             // get the logout code from aux codes list
-            const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter(
-                (a: IAUXCodes) => a.Name === SDKClient.getAgentData().agentStatus
-            )?.[0];
+            const auxItem: IAUXCodes = SDKClient.getAgentData().auxCodes.filter((a: IAUXCodes) => a.Name.toLowerCase() === currentAux)?.[0];
             // check if the logout aux matches
-            if (auxItem?.Code === this.data.Data.LogoutAux) {
+            if (this.logoutAux.includes(auxItem?.Code)) {
                 this.canLogout = true;
             } else {
                 this.canLogout = false;
@@ -156,15 +173,4 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             }
         });
     }
-}
-
-interface IWidgetData {
-    /**
-     * Logout aux
-     */
-    LogoutAux: string;
-    /**
-     * Flag to allow logout on open tabs
-     */
-    AllowLogoutOnOpenInteractions: boolean;
 }

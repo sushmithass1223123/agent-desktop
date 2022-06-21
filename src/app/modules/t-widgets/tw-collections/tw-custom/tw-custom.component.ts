@@ -1,3 +1,4 @@
+import { TwCustom } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -10,7 +11,7 @@ import { setStringVars } from '@tmac/operators';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
-import { CustomTMACEventTypes, IPostMessage, IWidget } from 'app/interfaces';
+import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { throwADError } from 'app/utils';
 import { isEqual } from 'lodash';
 import { Subscription } from 'rxjs';
@@ -29,7 +30,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     /**
      * Holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwCustom;
 
     /**
      * Fuse Config
@@ -100,7 +101,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService
     ) {
-        super();
+        super('TwCustomComponent');
 
         this.excludedEvents = EXCLUDED_TMAC_EVENT as CustomTMACEventTypes[];
     }

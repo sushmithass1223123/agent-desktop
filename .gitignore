@@ -6,7 +6,7 @@
 
 # dependencies
 /node_modules
-/node_modules1
+/node_modules*
 
 # IDEs and editors
 /.idea
@@ -25,6 +25,7 @@
 !.vscode/extensions.json
 
 # misc
+/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -44,3 +45,5 @@ Thumbs.db
 .gitignore
 /dist
 /docs
+.angular
+package-lock.json

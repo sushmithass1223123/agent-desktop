@@ -136,12 +136,7 @@
 
                                             <form
                                                 [formGroup]="advancedSearch.form"
-                                                class="
-                                                    px-12
-                                                    twd-grid twd-grid-cols-2 twd-gap-1
-                                                    lg:twd-gap-2
-                                                    twd-h-[calc(100%-52px)] twd-overflow-y-auto
-                                                "
+                                                class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto"
                                                 (ngSubmit)="submitAdvanceSearchForm()"
                                                 novalidate
                                             >
@@ -408,14 +403,17 @@
 
                 <div
                     *ngIf="openEmailRes.loading || state.openEmailResData as selectedEmail"
-                    class="
-                        email-open
-                        border-radius-20
-                        twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10
-                        lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto
-                    "
+                    class="email-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto"
                 >
                     <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
+                        <button
+                            *ngIf="showInternetHeaders && ['queue', 'inbox'].includes(currentTab) && selectedEmail?.InternetHeaders"
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            (click)="showHeaders(selectedEmail?.InternetHeaders)"
+                        >
+                            Internet Headers
+                        </button>
                         <button
                             mat-raised-button
                             class="border-radius-20 twd-text-xs lg:twd-text-sm"
@@ -461,13 +459,7 @@
                     </div>
 
                     <div
-                        class="
-                            email-open__body
-                            twd-mx-4
-                            border-radius-20
-                            twd-mb-3 twd-flex-1 twd-flex twd-flex-col
-                            lg:twd-overflow-hidden lg:twd-max-h-full
-                        "
+                        class="email-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
                         [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <email
@@ -532,15 +524,7 @@
 
                 <div
                     *ngIf="!state.openEmailResData && !openEmailRes.loading"
-                    class="
-                        email-open
-                        twd-h-auto
-                        lg:twd-h-full
-                        border-radius-20
-                        twd-col-span-2 twd-hidden
-                        lg:twd-flex
-                        twd-items-center twd-justify-center
-                    "
+                    class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
                 >
                     <div class="twd-flex twd-flex-col twd-justify-center">
                         <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> email </mat-icon>
@@ -646,10 +630,7 @@
                     >
                         <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
                             <div
-                                class="
-                                    twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0
-                                    mat-elevation-z1
-                                "
+                                class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0 mat-elevation-z1"
                                 [ngClass]="
                                     state.openEmailResData?.uiId === node.uiId
                                         ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
@@ -662,11 +643,7 @@
 
                                 <div
                                     mat-ripple
-                                    class="
-                                        twd-flex-1 twd-flex twd-flex-wrap
-                                        2xl:twd-flex-nowrap
-                                        twd-justify-between twd-px-2 twd-py-1 twd-overflow-hidden
-                                    "
+                                    class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-px-2 twd-py-1 twd-overflow-hidden"
                                     (click)="latestEmailPreview = true; openEmail(node)"
                                 >
                                     <div class="twd-w-full 2xl:twd-max-w-9/12">

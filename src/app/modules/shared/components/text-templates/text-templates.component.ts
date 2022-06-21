@@ -68,7 +68,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
     showTemplates = false;
 
     constructor(private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
-        super();
+        super('TextTemplatesComponent');
     }
 
     /**

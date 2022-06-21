@@ -23,7 +23,7 @@ export class TwBroadcastComponent extends TWidgetWrapper implements OnInit, OnDe
     broadcastMessage: string;
 
     constructor() {
-        super();
+        super('TwBroadcastComponent');
     }
 
     /**

@@ -1,4 +1,4 @@
-import { AOTWidget } from '@ad/types';
+import { AOTWidget, AppRootConfig } from '@ad/types';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -7,7 +7,7 @@ import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
-import { IAppConfig, IWidget } from 'app/interfaces';
+import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Observable, Subject, timer } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -122,7 +122,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
      * OnInit
      */
     ngOnInit(): void {
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: IAppConfig) => {
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: AppRootConfig) => {
             if (config) {
                 // get app config
                 this.appConfig = config;

@@ -1,4 +1,4 @@
-import { AOTWidget, WidgetAction } from '@ad/types';
+import { AOTWidget, TwSuGamification, WidgetAction } from '@ad/types';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -6,7 +6,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget, ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
+import { ResData, ResGamification, ResGamificationBadge } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
 import { interval, Subscription } from 'rxjs';
@@ -44,7 +44,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwSuGamification;
 
     /**
      * stateful leaderBoardrequest
@@ -155,7 +155,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService
     ) {
-        super();
+        super('TwGamificationComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

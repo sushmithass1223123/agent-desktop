@@ -5,6 +5,11 @@ import { AppUiService } from '@services/app-ui.service';
 import { GenericEvent, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
+export type TwAccountInformationInteraction = {
+    InteractionID: number;
+    PhoneNumber: string;
+};
+
 @Component({
     selector: 'tw-account-information',
     templateUrl: './tw-account-information.component.html',
@@ -15,7 +20,7 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
     /**
      * Holds all the data related to this widget from the config
      */
-    @Input() data: TwAccountInformation;
+    @Input() data: TwAccountInformation<TwAccountInformationInteraction>;
     /**
      * Maximized flag
      */
@@ -112,7 +117,7 @@ export class TwAccountInformationComponent extends TWidgetWrapper implements OnI
      * @param {FuseProgressBarService} _fuseProgressBarService
      */
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
-        super();
+        super('TwAccountInformationComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

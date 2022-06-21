@@ -1,13 +1,12 @@
+import { TwDeflectToDigital } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TextTemplatesComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { TwDeflectToDigital } from '@ad/types';
 
 @Component({
     selector: 'tw-deflect-to-digital',
@@ -19,7 +18,8 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     /**
      * holds all the data related to this widget from the config
      */
-    @Input() data: IWidget<any, WidgetData>;
+    // @Input() data: IWidget<any, WidgetData>;
+    @Input() data: TwDeflectToDigital;
 
     /**
      * Interaction Id
@@ -46,7 +46,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
-        super();
+        super('TwDeflectToDigitalComponent');
     }
 
     /**

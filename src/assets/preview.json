@@ -100,7 +100,7 @@
         "Name": "Bookmarks",
         "Description": "",
         "Key": "Bookmarks",
-        "Type": "tw-sample",
+        "Type": "tw-bookmarks",
         "Config": {
             "Enabled": true,
             "Hidden": false,
@@ -108,7 +108,7 @@
             "Anchor": false,
             "AOT": false,
             "AutoOpen": false,
-            "Icon": "sms",
+            "Icon": "bookmarks",
             "Class": "",
             "Position": {
                 "X": 2,
@@ -119,6 +119,9 @@
             "Header": true,
             "Pinned": false
         },
-        "Data": {}
+        "Data": {
+            "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"],
+            "DataLevel": "agent_orgunit"
+        }
     }
 ]

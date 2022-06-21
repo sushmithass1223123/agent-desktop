@@ -17,7 +17,7 @@ export class TwEntitiesComponent extends TWidgetWrapper implements OnInit {
     /**
      * App config data
      */
-    @Input() data: TwEntities;
+    @Input() data: TwEntities<any>;
 
     /**
      * Current interaction data
@@ -30,7 +30,7 @@ export class TwEntitiesComponent extends TWidgetWrapper implements OnInit {
     entities$: Observable<Record<string, string[]>[]>;
 
     constructor() {
-        super();
+        super('TwEntitiesComponent');
     }
 
     /**

@@ -1,3 +1,4 @@
+import { AppRootConfig, LoginConfig, LogoConfig } from '@ad/types';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -10,11 +11,10 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { IAppConfig } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import AES from 'crypto-js/aes';
 import Base64 from 'crypto-js/enc-base64';
-import Utf8 from 'crypto-js/enc-Utf8';
+import Utf8 from 'crypto-js/enc-utf8';
 import { environment } from 'environments/environment';
 import { merge, set } from 'lodash';
 import { interval, Observable, Subject } from 'rxjs';
@@ -46,7 +46,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * App configuration
      */
-    appConfig: IAppConfig;
+    appConfig: AppRootConfig;
     /**
      * Brand logo
      */
@@ -97,50 +97,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Login configuration
      */
-    loginConfig = null;
+    loginConfig: LoginConfig = null;
     /**
      * App customer logo
      */
-    appCustomerLogo: {
-        /**
-         * Logo alt
-         */
-        Alt: string;
-        /**
-         * Small logo reference
-         */
-        Small: {
-            /**
-             * logo source
-             */
-            Src: string;
-            /**
-             * Logo width
-             */
-            Width: number;
-            /**
-             * Logo height
-             */
-            Height: number;
-        };
-        /**
-         * Large logo reference
-         */
-        Large: {
-            /**
-             * logo source
-             */
-            Src: string;
-            /**
-             * Logo width
-             */
-            Width: number;
-            /**
-             * Logo height
-             */
-            Height: number;
-        };
-    } = null;
+    appCustomerLogo: LogoConfig = null;
     /**
      * App logo source
      */
@@ -277,10 +238,6 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
          * Countdown oveservable
          */
         countdown?: Observable<number>;
-    } = {
-        pollingInterval: 20,
-        retrying: false,
-        errored: false
     };
     /**
      * Flag for showing otp input
@@ -290,6 +247,23 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      * Single sign on type
      */
     ssoType = '';
+    /**
+     * Login config error ref
+     */
+    configError: {
+        /**
+         * Errored flag
+         */
+        errored: boolean;
+        /**
+         * Reteying flag
+         */
+        retrying: boolean;
+        /**
+         * Agent id from route param to get config if any
+         */
+        agentId?: string;
+    };
     /**
      * Lan Id input children ref
      */
@@ -347,7 +321,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         private _tmacEventService: TMACEventService,
         private _msTeamsAuthSerivce: MsTeamsAuthService
     ) {
-        super();
+        super('LoginComponent');
 
         // Configure the layout
         this._fuseFacadeService.setConfig = {
@@ -375,6 +349,17 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         this.uiVersion = _appDataService.getAppVersion();
 
+        this.connectionError = {
+            pollingInterval: 20,
+            retrying: false,
+            errored: false
+        };
+
+        this.configError = {
+            errored: false,
+            retrying: false
+        };
+
         // subscribe to _activatedRoute for loging agent id
         this._activatedRoute.paramMap.subscribe(async (paramMap) => {
             // check if ssoType in param
@@ -382,12 +367,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 this.ssoType = paramMap.get('ssoType').toLowerCase();
             }
 
-            // check if agentId in param
-            if (paramMap.has('agentId')) {
-                await this.loadConfig(paramMap.get('agentId'));
-            } else {
-                await this.loadConfig();
-            }
+            const agentId = paramMap.has('agentId') ? paramMap.get('agentId') : undefined;
+            this.loadConfig(agentId);
         });
     }
 
@@ -565,21 +546,45 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         // if the json is not proper then route to not-found page
         if (!config) {
             // we will route to error page
-            this._router.navigate(['not-found'], {
-                state: {
-                    subtitle: 'Oops',
-                    title: '404',
-                    description: 'Unable to load the config for login, please contact the administrator.',
-                    login: false
-                },
-                queryParamsHandling: 'preserve'
-            });
+            // this._router.navigate(['not-found'], {
+            //     state: {
+            //         subtitle: 'Oops',
+            //         title: '404',
+            //         description: 'Unable to load the config for login, please contact the administrator.',
+            //         login: false
+            //     },
+            //     queryParamsHandling: 'preserve'
+            // });
+
+            this.loading = false;
+
+            this.configError = {
+                errored: true,
+                retrying: false,
+                agentId
+            };
+
             return;
+        }
+
+        // reset the config error
+        if (this.configError.errored) {
+            this.configError = {
+                errored: false,
+                retrying: false,
+                agentId: ''
+            };
         }
 
         this.appConfig = config;
         this.configLoaded(config);
         await this.getTMACVersion();
+        this._appUIService.checkForDisplayResolution();
+    }
+
+    retryLoadConfig(): void {
+        this.configError.retrying = true;
+        this.loadConfig(this.configError.agentId);
     }
 
     /**
@@ -1111,7 +1116,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
             }
         } catch (error) {
-            this.logger.error(`ssoLogin: Fail to authenticate`, error, false);
+            this.logger.error(`ssoLogin: Fail to authenticate`, error.error, false);
         } finally {
             this.loading = false;
         }

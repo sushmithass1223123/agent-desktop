@@ -1,11 +1,10 @@
+import { TwVoiceCannedResponses } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentInteractionTemplate, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { IWidget } from 'app/interfaces';
 import { groupBy } from 'lodash';
 import { TwVoiceControlsService } from '../tw-voice-controls/tw-voice-controls.service';
-
 /**
  * TwVoiceCannedResponsesComponent
  */
@@ -19,7 +18,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
     /**
      * Holds all the data related to this widget from the config
      */
-    @Input() data: IWidget;
+    @Input() data: TwVoiceCannedResponses;
     /**
      * Interaction ID
      */
@@ -37,7 +36,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, public voiceControlsService: TwVoiceControlsService) {
-        super();
+        super('TwVoiceCannedResponsesComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

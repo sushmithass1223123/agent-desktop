@@ -61,7 +61,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         private _tmacEventService: TMACEventService,
         private _aotWidgetService: AOTWidgetService
     ) {
-        super(hostElement, contentPageService);
+        super('TwcInteractionComponent', hostElement, contentPageService);
     }
 
     /**
@@ -316,6 +316,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         this.interactions.forEach((i) => {
             if (i.interactionDetails.InteractionID === evt.InteractionID) {
                 i.widgets.aot.forEach((widget) => {
+                    if (!widget.Config.Enabled) return;
                     this._aotWidgetService.destroyWidget(widget.ID);
                 });
             }

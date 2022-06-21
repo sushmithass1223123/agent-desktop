@@ -21,7 +21,7 @@ export class TwAdScoreComponent extends TWidgetWrapper implements OnInit, OnDest
      * Constructor
      */
     constructor() {
-        super();
+        super('TwAdScoreComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------

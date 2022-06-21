@@ -20,7 +20,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     /**
      * App config data
      */
-    @Input() data: TwCustomerDetails;
+    @Input() data: TwCustomerDetails<any>;
 
     /**
      * Current interaction data
@@ -44,7 +44,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     @Output() collapseEvent = new EventEmitter();
 
     constructor(private _tmacEventService: TMACEventService) {
-        super();
+        super('TwCustomerDetailsComponent');
     }
 
     // -----------------------------------------------------------------------------------------------------
