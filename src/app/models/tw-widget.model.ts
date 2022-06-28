@@ -1,5 +1,5 @@
+import { WidgetConfig } from '@ad/types';
 import { TUtils } from '@tmac/sdk';
-import { WidgetConfig } from '../../../libs/types/src/core';
 /**
  * Widget model
  */

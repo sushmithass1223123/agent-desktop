@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
+import { AppConfigsModel, LoginWidgetModel } from 'app/models';
 import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
@@ -150,7 +151,7 @@ export class AppDataService extends SharedWrapper {
     /**
      * To get development config
      */
-    private async getDevelopmentConfig(): Promise<any> {
+    private async getDevelopmentConfig(): Promise<AppRootConfig> {
         // get the config
         const respnse = await fetch(this.devConfigPath);
         return await respnse.json();
@@ -235,8 +236,8 @@ export class AppDataService extends SharedWrapper {
      *
      * @param {string} agentId
      */
-    async getJsonConfig(agentId?: string, local?: boolean): Promise<any> {
-        let data = null;
+    async getJsonConfig(agentId?: string, local?: boolean): Promise<AppRootConfig> {
+        let data: AppRootConfig = null;
         try {
             // check the environment and load config
             if (!local && environment.production) {
@@ -253,6 +254,10 @@ export class AppDataService extends SharedWrapper {
 
             // set the config to service
             if (data) {
+                // apply the defaults to make sure no undefined exception
+                data.Login = merge({}, new LoginWidgetModel(), data.Login);
+                data.AppConfigs = merge({}, new AppConfigsModel(), data.AppConfigs);
+
                 let conf = JSON.stringify(data);
                 const domain = window.location.hostname || '';
                 conf.replaceAll('${domainName}', domain);
