@@ -20,6 +20,10 @@ export type LoginConfig = {
      */
     Password: Password;
     /**
+     * @deprecated Use "Password" instead
+     */
+    PasswordEnabled: boolean;
+    /**
      * Flag to enable station input when mode is disabled
      */
     StationEnabled: boolean;
@@ -35,6 +39,10 @@ export type LoginConfig = {
      * Config to open mainpage in a differnent window after login
      */
     MultiWindowMode: MultiWindowMode;
+    /**
+     * Threshold for SSO link expiry
+     */
+    SSOLinkExpiry: number;
 };
 
 /**
