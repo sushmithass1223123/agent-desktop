@@ -630,19 +630,16 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Start camera for face auth
      */
-    private startCamera(): void {
-        // capture selfview
-        navigator.mediaDevices
-            .getUserMedia({
+    private async startCamera(): Promise<void> {
+        try {
+            // capture selfview
+            this.selfVideo = await navigator.mediaDevices.getUserMedia({
                 audio: false,
                 video: true
-            })
-            .then(function (stream: MediaStream) {
-                this.selfVideo = stream;
-            })
-            .catch(function (err) {
-                this._appUIService.showSnackbar(err.message, 'failure');
             });
+        } catch (error) {
+            this._appUIService.showSnackbar(error.message, 'failure');
+        }
     }
 
     /**
