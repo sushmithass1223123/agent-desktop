@@ -63,7 +63,10 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
      * Lifecycle hook
      */
     ngOnInit(): void {
-        SDKClient.getEmailTemplateDepartments(this.emailService.emailTemplatesDepartmentsByTeam)
+        SDKClient.getEmailTemplateDepartments(
+            this.emailService.emailTemplatesDepartmentsByTeam,
+            this.emailService.emailTemplatesDepartmentsByHierarchy
+        )
             .then((res) => {
                 this.availableTemplates.departments = this.getDropdownKeyvaluePair(res.response, 'ID');
             })
