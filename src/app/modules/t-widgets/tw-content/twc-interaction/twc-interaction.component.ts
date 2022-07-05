@@ -163,19 +163,19 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         // get the content widgets
         const widgets = cloneDeep(this.data.Data.Widgets) || [];
 
-        const staticWidgets = widgets.Static ?? [];
+        const staticWidgets = widgets.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
 
         // const dynamicWidgets = ((environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic) ?? [];
-        let dynamicWidgets = widgets.Dynamic ?? [];
+        let dynamicWidgets = widgets.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         try {
-            if (environment.production && evt.WidgetConfigData) {
-                dynamicWidgets = JSON.parse(evt.WidgetConfigData);
+            if (evt.WidgetConfigData) {
+                dynamicWidgets = JSON.parse(evt.WidgetConfigData)?.filter((w: IWidget) => w.Config.Enabled);
             }
         } catch (error) {
             throwADError('Error in TwcInteractionComponent.createWidgetList', error);
         }
 
-        const aotWidgets = [...this.tempAOTs, ...(widgets.AOT ?? [])];
+        const aotWidgets = [...this.tempAOTs, ...(widgets.AOT?.filter((w: IWidget) => w.Config.Enabled ?? []) ?? [])];
 
         const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);
 
