@@ -93,6 +93,7 @@
                             <!-- Images -->
                             <div *ngIf="message.attachment.type === 'image'" class="image" (click)="previewMedia(message)">
                                 <img
+                                    title="Attachment"
                                     [ngClass]="{
                                         'rotate-0': message.attachment?.angle === 0,
                                         'rotate-90-inverse': message.attachment?.angle === 1,
@@ -162,7 +163,7 @@
             </div>
 
             <div *ngIf="!replied && message.time" [ngClass]="message?.type" class="time twd-flex twd-flex-row twd-items-center twd-justify-end">
-                {{ message.time | date: 'shortTime' }}
+                {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
                 <mat-icon *ngIf="message.position === 'right' && message.status === 'init'" class="s-12 ml-4 spin"> loop</mat-icon>
                 <mat-icon *ngIf="message.position === 'right' && message.status === 'sent'" class="s-12 ml-4">done </mat-icon>
                 <mat-icon
@@ -451,18 +452,7 @@
                             >
                                 <div
                                     *ngIf="message.dividerMessage"
-                                    class="
-                                        twd-bg-primary-100 twd-text-primary-contrast-100
-                                        dark:twd-bg-primary-900 dark:twd-bg-contrast-900
-                                        my-8
-                                        border-radius-4
-                                        text-center
-                                        py-4
-                                        px-8
-                                        mx-auto
-                                        font-size-12 font-weight-600
-                                        mat-elevation-z1
-                                    "
+                                    class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1"
                                     [innerHTML]="message.message"
                                 ></div>
 
@@ -509,7 +499,6 @@
                         <!-- CHAT TYPING -->
                         <!-- REPLY FORM -->
                         <div class="reply-form">
-                            <button style="display: none" cdkOverlayOrigin #replyingMessageOverlay="cdkOverlayOrigin"></button>
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
                                 <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
                                     <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
@@ -614,6 +603,7 @@
                                         <div class="twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="attachActions.length">
                                             <button
                                                 *ngFor="let item of attachActions"
+                                                type="button"
                                                 mat-mini-fab
                                                 color="default"
                                                 [matTooltip]="item.label"
@@ -737,6 +727,7 @@
                 >
                     <img
                         *ngIf="previewMediaDialogData?.attachment?.type === 'image'"
+                        title="Attachment preview"
                         [src]="previewMediaDialogData?.attachment?.src"
                         width="100%"
                         width="100%"

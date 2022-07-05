@@ -70,6 +70,7 @@
         <div id="login-form" class="{{ loading || connectionError.errored || configError.errored ? 'blur' : null }}">
             <div class="logo" [@animate]="{ value: '*', params: { delay: '400ms', y: '-25px' } }">
                 <img
+                    title="Customer logo"
                     [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"
                     [alt]="appCustomerLogo?.Alt || 'Tetherfi'"
                     [width]="appCustomerLogo?.Large.Width || 180"
@@ -141,6 +142,7 @@
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Agent">
                         <input
+                            title="Agent password"
                             class="login-input"
                             required
                             matInput
@@ -166,6 +168,7 @@
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Station">
                         <input
+                            title="Station password"
                             class="login-input"
                             required
                             matInput
@@ -247,6 +250,7 @@
                 </ng-container>
                 <p class="text-center text-danger text-bold">{{ errorMessage || ' ' }}</p>
                 <button
+                    type="button"
                     [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
                     mat-raised-button
                     color="primary"
@@ -281,6 +285,7 @@
     </div>
 
     <img
+        title="Brand logo"
         class="brand-logo animate__animated animate__pulse animate__infinite animate__slow"
         [@animate]="{ value: '*', params: { delay: '600ms', y: '25px' } }"
         [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
