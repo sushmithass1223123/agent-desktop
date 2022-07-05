@@ -104,4 +104,9 @@ export interface TwEmailControlsData {
      * @default false
      */
     InternetHeadersAllowed: boolean;
+    /**
+     * Flag to decide whether the email templates in the interaction should be fetch by hierarchy or not.
+     * @default false
+     */
+    TemplatesByHierarchy: boolean;
 }

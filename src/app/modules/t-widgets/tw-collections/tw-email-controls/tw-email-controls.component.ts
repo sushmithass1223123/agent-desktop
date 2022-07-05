@@ -253,6 +253,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.currentInteraction = this.data.InteractionDetails;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.data.Data.TemplatesByTeam;
+        this._emailService.emailTemplatesDepartmentsByHierarchy = !!this.data.Data.TemplatesByHierarchy;
 
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction

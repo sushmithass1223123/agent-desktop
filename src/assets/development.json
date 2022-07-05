@@ -1855,7 +1855,8 @@
                                                     "InteractionCommentAllowed": true,
                                                     "DraftPollingInterval": 10000,
                                                     "TemplatesByTeam": false,
-                                                    "InternetHeadersAllowed": true
+                                                    "InternetHeadersAllowed": true,
+                                                    "TemplatesByHierarchy": false
                                                 }
                                             },
                                             {
@@ -2354,7 +2355,8 @@
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
-                                                    "InternetHeadersAllowed": true
+                                                    "InternetHeadersAllowed": true,
+                                                    "TemplatesByHierarchy": false
                                                 }
                                             },
                                             {

@@ -81,7 +81,15 @@ export class EmailService {
      */
     readonly globalEmailWorkbenchState$ = this._internal$.email;
 
+    /**
+     * Email template depratments by team
+     */
     emailTemplatesDepartmentsByTeam = false;
+
+    /**
+     * Email template depratments by hierarchy
+     */
+    emailTemplatesDepartmentsByHierarchy = false;
 
     constructor() {}
 
