@@ -318,6 +318,37 @@ body.theme-cyan-orange {
     @include fuse-color-classes($palettes);
 }
 
+// Define the primary, accent and warn palettes
+$indigo-deeporange-primary-palette: mat-palette($mat-indigo);
+$indigo-deeporange-accent-palette: mat-palette($mat-deep-orange, 400);
+$indigo-deeporange-warn-palette: mat-palette($mat-red);
+
+// Create the Material theme object
+$theme: mat-light-theme($indigo-deeporange-primary-palette, $indigo-deeporange-accent-palette, $indigo-deeporange-warn-palette);
+
+// Add ".theme-indigo-deeporange" class to the body to activate this theme.
+// Class name must start with "theme-" !!!
+body.theme-indigo-deeporange {
+    // Create an Angular Material theme from the $theme map
+    @include angular-material-theme($theme);
+
+    // Apply the theme to the Fuse Core
+    @include fuse-core-theme($theme);
+
+    // Apply the theme to the user components
+    @include app-core-theme($theme);
+
+    // Generate Fuse color classes for primary, accent and warn colors
+    $palettes: (
+        primary: $indigo-deeporange-primary-palette,
+        accent: $indigo-deeporange-accent-palette,
+        warn: $indigo-deeporange-warn-palette
+    );
+
+    @include tailwind-core-theme($palettes, 700);
+    @include fuse-color-classes($palettes);
+}
+
 // -----------------------------------------------------------------------------------------------------
 // @ Define a gray dark theme
 // -----------------------------------------------------------------------------------------------------
