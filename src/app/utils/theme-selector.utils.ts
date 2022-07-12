@@ -6,8 +6,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'purple-700',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'purple-700'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -41,8 +41,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'purple-700',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'purple-700'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -76,8 +76,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'teal-800',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'teal-800'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -111,8 +111,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'cyan-500',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'cyan-500'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -142,12 +142,47 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             };
             break;
         }
+        case 'theme-indigo-deeporange': {
+            selectedTheme = {
+                layout: {
+                    navbar: {
+                        customBackgroundColor: true,
+                        background: 'indigo-800'
+                    },
+                    toolbar: {
+                        customBackgroundColor: true,
+                        background: 'grey-200'
+                    },
+                    content: {
+                        customBackgroundColor: true,
+                        background: 'grey-200'
+                    },
+                    anchorWidget: {
+                        customBackgroundColor: true,
+                        bodyBackground: 'deep-orange-300',
+                        headerBackground: 'indigo-800',
+                        contentBackground: 'deep-orange-100'
+                    },
+                    widget: {
+                        customBackgroundColor: true,
+                        bodyBackground: 'indigo-200',
+                        headerBackground: 'indigo-600',
+                        contentBackground: 'indigo-50'
+                    },
+                    footer: {
+                        customBackgroundColor: false,
+                        background: 'grey-400'
+                    }
+                }
+            };
+            break;
+        }
         case 'theme-default-dark': {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'grey-900',
-                        customBackgroundColor: false
+                        customBackgroundColor: false,
+                        background: 'grey-900'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -181,8 +216,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'blue-grey-900',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'blue-grey-900'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -216,8 +251,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'pink-800',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'pink-800'
                     },
                     toolbar: {
                         customBackgroundColor: true,
@@ -251,8 +286,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
             selectedTheme = {
                 layout: {
                     navbar: {
-                        background: 'grey-50',
-                        customBackgroundColor: true
+                        customBackgroundColor: true,
+                        background: 'grey-50'
                     },
                     toolbar: {
                         customBackgroundColor: true,

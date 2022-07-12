@@ -1,4 +1,4 @@
-import { AppRootConfig, LoginConfig, LogoConfig } from '@ad/types';
+import { AppRootConfig, LogoConfig, MultiWindowMode, Password } from '@ad/types';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { CustomDate } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import AES from 'crypto-js/aes';
 import Base64 from 'crypto-js/enc-base64';
@@ -50,54 +51,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Brand logo
      */
-    brandLogo: {
-        /**
-         * Logo alt
-         */
-        Alt: string;
-        /**
-         * Small logo reference
-         */
-        Small: {
-            /**
-             * logo source
-             */
-            Src: string;
-            /**
-             * Logo width
-             */
-            Width: number;
-            /**
-             * Logo height
-             */
-            Height: number;
-        };
-        /**
-         * Large logo reference
-         */
-        Large: {
-            /**
-             * logo source
-             */
-            Src: string;
-            /**
-             * Logo width
-             */
-            Width: number;
-            /**
-             * Logo height
-             */
-            Height: number;
-        };
-    } = null;
+    brandLogo: LogoConfig = null;
     /**
      * Login form
      */
     loginForm: FormGroup;
-    /**
-     * Login configuration
-     */
-    loginConfig: LoginConfig = null;
     /**
      * App customer logo
      */
@@ -146,7 +104,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Password enabled flag
      */
-    password = {
+    password: Password = {
         Agent: false,
         Station: false
     };
@@ -196,24 +154,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Multiple window mode
      */
-    multiWindowMode: {
-        /**
-         * Enabled flag
-         */
-        Enabled: boolean;
-        /**
-         * Width of new window
-         */
-        Width: number;
-        /**
-         * Height of new window
-         */
-        Height: number;
-        /**
-         * New window dimension type
-         */
-        PixelDimension: boolean;
-    };
+    multiWindowMode: MultiWindowMode;
     /**
      * Login error message
      */
@@ -426,8 +367,10 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             .subscribe(async (params) => {
                 try {
                     let patchVal = {};
+                    let username = params.u || params.dblb;
+
                     // if there is not user in param then return
-                    if (!params.u) {
+                    if (!username) {
                         return;
                     }
 
@@ -437,10 +380,34 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     };
 
                     // check for username/lanid
-                    if (params.u) {
-                        const lanId = AES.decrypt(decodeURIComponent(params.u), k, cg).toString(Utf8) || params.u;
-                        patchVal = { ...patchVal, lanId };
+                    const usernameDecrypted = AES.decrypt(decodeURIComponent(username), k, cg).toString(Utf8);
+                    if (usernameDecrypted) {
+                        // encrypted may have username or username+timestamp (sso login timestamp)
+                        const [u, timestamp] = usernameDecrypted.split('+');
+                        username = u;
+                        // get the current datetime in UTC
+                        const currentUTCDt = (new Date() as CustomDate).customFormat('yyyyMMddHHmmss', true);
+                        // max time to expire the link
+                        const expiry = this.appConfig?.Login?.SSOLinkExpiry;
+                        // if there is a login timestamp then check against the expiry time
+                        // if expiry time is not configured then ignore link expiry check
+                        if (timestamp && expiry > 0 && parseInt(currentUTCDt) > parseInt(timestamp) + expiry) {
+                            this.logger.warn(`Link has expired, ct=${currentUTCDt}, lt=${timestamp}, expiry=${expiry}`);
+                            // we will route to error page
+                            this._router.navigate(['not-found'], {
+                                state: {
+                                    subtitle: 'Oops',
+                                    title: '404',
+                                    description: 'Sorry, the link has expired, Please login again.',
+                                    login: false
+                                },
+                                queryParamsHandling: 'preserve'
+                            });
+                            return;
+                        }
                     }
+
+                    patchVal = { ...patchVal, lanId: username };
 
                     // check for station
                     if (params.s) {
@@ -592,10 +559,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      *
      * @param config
      */
-    private configLoaded(config: any): void {
-        this.loginConfig = config.Login;
+    private configLoaded(config: AppRootConfig): void {
         this.appCustomerLogo = config.AppConfigs.Logos.Customer || null;
-
         this.faceAuthEnabled = config.Login.FaceAuth?.Enabled;
         this.faceAuthServerUrl = config.Login.FaceAuth?.AuthServerUrl;
         this.domainListEnabled = config.Login.DomainListEnabled;
@@ -665,19 +630,16 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Start camera for face auth
      */
-    private startCamera(): void {
-        // capture selfview
-        navigator.mediaDevices
-            .getUserMedia({
+    private async startCamera(): Promise<void> {
+        try {
+            // capture selfview
+            this.selfVideo = await navigator.mediaDevices.getUserMedia({
                 audio: false,
                 video: true
-            })
-            .then(function (stream: MediaStream) {
-                this.selfVideo = stream;
-            })
-            .catch(function (err) {
-                this._appUIService.showSnackbar(err.message, 'failure');
             });
+        } catch (error) {
+            this._appUIService.showSnackbar(error.message, 'failure');
+        }
     }
 
     /**

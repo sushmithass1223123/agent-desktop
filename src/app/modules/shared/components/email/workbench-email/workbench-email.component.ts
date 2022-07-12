@@ -350,8 +350,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async ngOnInit(): Promise<void> {
         // get and set the list of available mailboxes
         await this.setAvailableMailboxes();
-        // set the flag whether to get the email templates by departments
+        // set the flag whether to get the email templates by departments by team
         this._emailService.emailTemplatesDepartmentsByTeam = !!(this.channelConf.Config as TwEmailWorkbenchConfig).TemplatesByTeam;
+        // set the flag whether to get the email templates by departments by hierarchy
+        this._emailService.emailTemplatesDepartmentsByHierarchy = !!(this.channelConf.Config as TwEmailWorkbenchConfig).TemplatesByTeam;
         // get the allowed tabs from config
         const allowedTabs = (this.channelConf.Config as TwEmailWorkbenchConfig)?.Tabs?.map((m: string) => m.toLowerCase()) ?? [];
         if (allowedTabs.length) {

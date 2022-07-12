@@ -54,4 +54,5 @@ import 'zone.js'; // Included with Angular CLI.
 // Add global to window, assigning the value of window itself.
 (window as any).global = window;
 import 'polyfills/replaceAll';
+import 'polyfills/dateCustomFormat';
 import '@angular/localize/init';

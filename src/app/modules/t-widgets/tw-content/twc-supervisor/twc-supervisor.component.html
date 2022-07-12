@@ -1,18 +1,18 @@
 <div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
     <div
         *ngIf="staticWidgets.length || dynamicWidgets.length"
-        class="lg:twd-flex twd-flex-row twd-flex-full twd-w-full twd-h-full twd-justify-center twd-items-stretch twd-gap-1.5"
+        class="twd-flex twd-flex-col twd-justify-start twd-items-center xl:twd-flex-row xl:twd-justify-center xl:twd-items-stretch twd-flex-full twd-w-full twd-h-full twd-gap-1.5"
     >
         <tw-template
             *ngIf="staticWidgets.length > 0"
-            [ngClass]="{ 'lg:twd-max-w-4/12': dynamicWidgets.length > 0 }"
+            [ngClass]="{ 'xl:twd-max-w-4/12': dynamicWidgets.length > 0 }"
             class="static-widget-grid twd-flex-full twd-gap-1.5"
             [widgets]="staticWidgets"
         ></tw-template>
 
         <tw-template
             *ngIf="dynamicWidgets.length > 0"
-            [ngClass]="{ 'lg:twd-max-w-8/12': staticWidgets.length > 0, 'static-less': staticWidgets.length === 0 }"
+            [ngClass]="{ 'xl:twd-max-w-8/12': staticWidgets.length > 0, 'static-less': staticWidgets.length === 0 }"
             class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
             [widgets]="dynamicWidgets"
         ></tw-template>

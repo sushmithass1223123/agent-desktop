@@ -7,3 +7,4 @@ export * from './login-data.interface';
 export * from './sdk.interface';
 export * from './sso.interface';
 export * from './widget.interface';
+export * from './polyfills.interface';

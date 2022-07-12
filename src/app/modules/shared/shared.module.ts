@@ -27,6 +27,7 @@ import {
 import { EmailModule } from './components/email/email.module';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
+import { CustomDatePipe } from './pipes';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -65,7 +66,8 @@ const sharedComponents = [
     AgentSkillListComponent,
     SharedWrapperComponent,
     TableComponent,
-    TextTemplatesComponent
+    TextTemplatesComponent,
+    CustomDatePipe
 ];
 
 /**

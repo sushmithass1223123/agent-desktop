@@ -35,15 +35,14 @@ standardVersion({
     types: [
         { type: 'feat', section: 'Features' },
         { type: 'fix', section: 'Bug Fixes' },
+        { type: 'build', section: 'New Build' },
+        { type: 'chore', section: 'General Changes' },
         { type: 'docs', section: 'Documentation' },
-        { type: 'style', section: 'Styling' },
-        { type: 'refactor', section: 'Refactors' },
-        { type: 'perf', section: 'Performance' },
-        { type: 'test', section: 'Tests' },
-        { type: 'build', section: 'Build System' },
-        { type: 'ci', section: 'CI' },
-        { type: 'chore', section: 'Chore' },
-        { type: 'revert', section: 'Reverts' }
+        { type: 'config', section: 'Config Changes' },
+        { type: 'perf', section: 'Performance Improvement' },
+        { type: 'refactor', section: 'Code Refactor' },
+        { type: 'style', section: 'Code Style Changes' },
+        { type: 'test', section: 'Test' },
     ],
     bumpFiles: [tracker],
     packageFiles: [tracker]
