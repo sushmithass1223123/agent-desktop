@@ -16,17 +16,19 @@
         [ngClass]="item.interactionDetails.InteractionID === activeInteraction ? 'active' : ''"
         [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
     >
-        <div class="lg:twd-flex twd-flex-row twd-flex-full twd-w-full twd-h-full twd-justify-center twd-items-stretch twd-gap-1.5">
+        <div
+            class="twd-flex twd-flex-col twd-justify-start twd-items-center xl:twd-flex-row xl:twd-justify-center xl:twd-items-stretch twd-flex-full twd-w-full twd-h-full twd-gap-1.5"
+        >
             <tw-template
                 *ngIf="item.widgets.static.length > 0"
-                [ngClass]="{ 'lg:twd-max-w-4/12': item.widgets.dynamic.length > 0 }"
+                [ngClass]="{ 'xl:twd-max-w-4/12': item.widgets.dynamic.length > 0 }"
                 class="static-widget-grid twd-flex-full twd-gap-1.5"
                 [widgets]="item.widgets.static"
             ></tw-template>
 
             <tw-template
                 *ngIf="item.widgets.dynamic.length > 0"
-                [ngClass]="{ 'lg:twd-max-w-8/12': item.widgets.static.length > 0, 'static-less': item.widgets.static.length === 0 }"
+                [ngClass]="{ 'xl:twd-max-w-8/12': item.widgets.static.length > 0, 'static-less': item.widgets.static.length === 0 }"
                 class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
                 [widgets]="item.widgets.dynamic"
             ></tw-template>
