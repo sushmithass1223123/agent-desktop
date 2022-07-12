@@ -82,7 +82,7 @@
                                         {
                                             "Name": "Make Call",
                                             "Enabled": true,
-                                            "EnableState": "calloutbound",
+                                            "EnableState": "",
                                             "Type": "voice",
                                             "SubType": "voice",
                                             "Icon": "call",
@@ -2645,5 +2645,5 @@
             ]
         }
     },
-    "Version": "5.1.5.30"
+    "Version": "5.1.6.30"
 }
