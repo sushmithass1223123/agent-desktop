@@ -162,7 +162,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // destroy the widget
                         this._aotWidgetService.destroyWidget(this.data.ID);
                         break;
-                    default:
                     case 'getthemeconfig':
                         this.sendDataToWindow(message.callback || 'onThemeChange', this.fuseConfigRef, message.userObject);
                 }
