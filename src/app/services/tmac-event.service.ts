@@ -854,13 +854,13 @@ export class TMACEventService extends SharedWrapper {
                 // to close tab/interaction
                 else if (fn === 'closetab' || fn === 'closeinteraction') {
                     // check the interactionId
-                    const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId;
+                    const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId ?? message.data.interactionId;
                     if (!intId) {
                         this.logger.info('postMessageReceived to close tab reject, interaction id not found');
                         return;
                     }
                     // close tab
-                    SDKClient.closeInteraction(message.data.interactionID);
+                    SDKClient.closeInteraction(intId);
                 }
                 // to show snackbar
                 else if (fn === 'showsnackbar' && message.data?.message) {
@@ -893,6 +893,17 @@ export class TMACEventService extends SharedWrapper {
                         throw new Error(error);
                     }
                     return;
+                }
+                // to end interaction
+                else if (fn === 'endinteraction') {
+                    // check the interactionId
+                    const intId = message.data.interactionId;
+                    if (!intId) {
+                        this.logger.info('postMessageReceived to end interaction reject, interaction id not found');
+                        return;
+                    }
+                    // disconnect call
+                    SDKClient.disconnectCall(intId);
                 }
 
                 // notify the observers
