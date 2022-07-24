@@ -51,17 +51,9 @@ export type TransferConfig<T, K = string> = {
      */
     Source: T;
     /**
-     * List of allowed states whilte transferring/conferencing
-     */
-    AllowedStates: any[];
-    /**
      * List of columns displayed during transfer/conference
      */
     Columns: K[];
-    /**
-     * Channel prefix to filter
-     */
-    ChannelPrefix: [];
 };
 
 /**
@@ -72,6 +64,10 @@ export type AgentTransferConferenceConfig = TransferConfig<
     'AgentID' | 'FirstName' | 'LastName' | 'CurrentAgentStatus'
 > & {
     /**
+     * List of allowed states whilte transferring/conferencing
+     */
+    AllowedStates: string[];
+    /**
      * Flag to enable team based list of agents
      */
     TeamFilter: boolean;
@@ -80,7 +76,12 @@ export type AgentTransferConferenceConfig = TransferConfig<
 export type SkillTransferConferenceConfig = TransferConfig<
     SkillSources | AgentSkillListSource<SkillSources, SkillSources>,
     'Name' | 'VDN' | 'ID' | 'Stf' | 'Avl' | 'CIQ'
->;
+> & {
+    /**
+     * Channel prefix to filter
+     */
+    ChannelPrefix: string[];
+};
 
 /**
  * Speed Dial Transfer/Conference config
@@ -95,169 +96,182 @@ export type SpeedDialTransferConferenceConfig = TransferConfig<
     TeamFilter: boolean;
 };
 
+/**
+ * Agent Skill Data type
+ */
+export type AgentSkillDataType =
+    | 'makeCall'
+    | 'transferCall'
+    | 'conferenceCall'
+    | 'transferChat'
+    | 'conferenceChat'
+    | 'transferEmail'
+    | 'transferFax'
+    | 'pushChat';
+
 export type AgentSkillListData = {
     /**
      * Type of dialog
      */
-    type: 'makeCall' | 'transferCall' | 'conferenceCall' | 'transferChat' | 'conferenceChat' | 'transferEmail' | 'transferFax' | 'pushChat';
+    Type: AgentSkillDataType;
     /**
      * Title of dialog
      */
-    title?: string;
+    Title?: string;
     /**
      * Agent settings
      */
-    agent: {
+    Agent: {
         /**
          * Agent allowed flag
          */
-        allowed: boolean;
+        Allowed: boolean;
         /**
          * Consult allowed flag
          */
-        consult: boolean;
+        Consult: boolean;
         /**
          * Comments allowed flag
          */
-        comments: boolean;
+        Comments: boolean;
         /**
          * Blind allowed flag
          */
-        blind: boolean;
+        Blind: boolean;
         /**
          * Source to select
          */
-        source: AgentSources | AgentSkillListSource<AgentSources, AgentSources | 'agentName'>;
+        Source: AgentSources | AgentSkillListSource<AgentSources, AgentSources | 'agentName'>;
         /**
          * Allowed states to do action
          */
-        allowedStates: string[];
+        AllowedStates: string[];
         /**
          * Allowed Columns
          */
-        columns?: string[];
+        Columns?: string[];
         /**
          * To filter agent list based on team visibility
          */
-        teamFilter?: boolean;
+        TeamFilter?: boolean;
     };
     /**
      * Skill settings
      */
-    skill: {
+    Skill: {
         /**
          * Agent allowed flag
          */
-        allowed: boolean;
+        Allowed: boolean;
         /**
          * Consult allowed flag
          */
-        consult: boolean;
+        Consult: boolean;
         /**
          * Comments allowed flag
          */
-        comments: boolean;
+        Comments: boolean;
         /**
          * Blind allowed flag
          */
-        blind: boolean;
+        Blind: boolean;
         /**
          * Source to select
          */
-        source: SkillSources | AgentSkillListSource<SkillSources, SkillSources>;
+        Source: SkillSources | AgentSkillListSource<SkillSources, SkillSources>;
         /**
          * Channel prefix to filter skill list
          */
-        channelPrfix: string[];
+        ChannelPrefix: string[];
         /**
          * Allowed Columns
          */
-        columns?: string[];
+        Columns?: string[];
     };
     /**
      * speed dial settings
      */
-    speedDial?: {
+    SpeedDial?: {
         /**
          * Agent allowed flag
          */
-        allowed: boolean;
+        Allowed: boolean;
         /**
          * Consult allowed flag
          */
-        consult: boolean;
+        Consult: boolean;
         /**
          * Comments allowed flag
          */
-        comments: boolean;
+        Comments: boolean;
         /**
          * Blind allowed flag
          */
-        blind: boolean;
+        Blind: boolean;
         /**
          * Source to select
          */
-        source: SpeedDialSources | AgentSkillListSource<SpeedDialSources, SpeedDialSources>;
+        Source: SpeedDialSources | AgentSkillListSource<SpeedDialSources, SpeedDialSources>;
         /**
          * Allowed Columns
          */
-        columns?: string[];
+        Columns?: string[];
         /**
          * To filter agent list based on team visibility
          */
-        teamFilter?: boolean;
+        TeamFilter?: boolean;
     };
 
     /**
      * FOR INTERNAL USE ONLY
      * Dynamic lists to be displayed while teransferring / conferencing
      */
-    dynamicLists?: {
+    DynamicLists?: {
         /**
          * Label of the column
          */
-        label: string;
+        Label: string;
         /**
          * Place holder used for the seelected row
          */
-        placeholder: string;
+        Placeholder: string;
         /**
          * List of data to be displayed
          */
-        data: any[];
+        Data: any[];
         /**
          * List of columns to be displayed
          */
-        columns: string[];
+        Columns: string[];
         /**
          * Key to be passed when a row selected
          */
-        selection: string;
+        Selection: string;
         /**
          * Flag to enabled consult
          */
-        consult: boolean;
+        Consult: boolean;
         /**
          * Flag to enable blind transfers
          */
-        blind: boolean;
+        Blind: boolean;
         /**
          * Flag to enable comments
          */
-        comments: boolean;
+        Comments: boolean;
     }[];
     /**
      * Interaction Id
      */
-    interactionId?: number;
+    InteractionId?: number;
     /**
      * Any extra info to pass
      */
-    otherData?: any;
+    OtherData?: any;
     /**
      *  Callback on close
      */
-    callback?: (data?: any) => void;
+    Callback?: (data?: any) => void;
 };
 
 /**

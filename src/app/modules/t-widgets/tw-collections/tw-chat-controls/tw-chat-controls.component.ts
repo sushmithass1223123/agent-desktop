@@ -1,4 +1,4 @@
-import { AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
+import { AgentSkillListData, AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -61,8 +61,8 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
-import { AgentSkillListData, ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
+import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
+import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
 import { map } from 'lodash';
@@ -2591,104 +2591,152 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param type
      * @param icon
      */
-    public openTransferConferenceDialog(type: string): void {
-        const transferConfig = {
-            agent: this.widgetData.Transfer?.Agent ?? null,
-            skill: this.widgetData.Transfer?.Skill ?? null
+    public openTransferConferenceDialog(type: 'transfer' | 'conference'): void {
+        // const transferConfig = {
+        //     agent: this.widgetData.Transfer?.Agent ?? null,
+        //     skill: this.widgetData.Transfer?.Skill ?? null
+        // };
+
+        // const conferenceConfig = {
+        //     agent: this.widgetData.Conference?.Agent ?? null,
+        //     skill: this.widgetData.Conference?.Skill ?? null
+        // };
+
+        // // get data based on type
+        // let data: AgentSkillListData =
+        //     type === 'transfer'
+        //         ? {
+        //               title: 'Transfer Chat',
+        //               type: 'transferChat',
+        //               agent: {
+        //                   allowed: transferConfig?.agent?.Allowed,
+        //                   consult: transferConfig?.agent?.Consult,
+        //                   blind: transferConfig?.agent?.Blind,
+        //                   comments: transferConfig?.agent?.Comments,
+        //                   source: transferConfig?.agent?.Source,
+        //                   allowedStates: transferConfig?.agent?.AllowedStates,
+        //                   columns: transferConfig?.agent?.Columns,
+        //                   teamFilter: transferConfig?.agent?.TeamFilter
+        //               },
+        //               skill: {
+        //                   allowed: transferConfig?.skill?.Allowed,
+        //                   consult: transferConfig?.skill?.Consult,
+        //                   blind: transferConfig?.skill?.Blind,
+        //                   comments: transferConfig?.skill?.Comments,
+        //                   source: transferConfig?.skill?.Source,
+        //                   channelPrfix: transferConfig?.skill?.ChannelPrefix,
+        //                   columns: transferConfig?.skill?.Columns
+        //               }
+        //           }
+        //         : {
+        //               title: 'Conference Chat',
+        //               type: 'conferenceChat',
+        //               agent: {
+        //                   allowed: conferenceConfig?.agent?.Allowed,
+        //                   consult: conferenceConfig?.agent?.Consult,
+        //                   blind: conferenceConfig?.agent?.Blind,
+        //                   comments: conferenceConfig?.agent?.Comments,
+        //                   source: conferenceConfig?.agent?.Source,
+        //                   allowedStates: conferenceConfig?.agent?.AllowedStates,
+        //                   columns: conferenceConfig?.agent?.Columns,
+        //                   teamFilter: conferenceConfig?.agent?.TeamFilter
+        //               },
+        //               skill: {
+        //                   allowed: conferenceConfig?.skill?.Allowed,
+        //                   consult: conferenceConfig?.skill?.Consult,
+        //                   blind: conferenceConfig?.skill?.Blind,
+        //                   comments: conferenceConfig?.skill?.Comments,
+        //                   source: conferenceConfig?.skill?.Source,
+        //                   channelPrfix: conferenceConfig?.skill?.ChannelPrefix,
+        //                   columns: conferenceConfig?.skill?.Columns
+        //               }
+        //           };
+
+        // // add common properties
+        // data = {
+        //     interactionId: this.interaction.InteractionID,
+        //     ...data,
+        //     otherData: {
+        //         type: type === 'transfer' ? 'transfer' : 'conf',
+        //         mode: this.chatMode,
+        //         sessionId: this.sessionID,
+        //         lineId: this.lineId
+        //     }
+        // };
+
+        // // check if the type is conference and self destination list is there
+        // if (type === 'conference' && this.selfServiceDestinations.length) {
+        //     data.otherData = {
+        //         ...data.otherData
+        //     };
+        //     data.dynamicLists = [
+        //         {
+        //             label: 'Bot Conference',
+        //             placeholder: 'Destination',
+        //             data: this.selfServiceDestinations,
+        //             columns: ['Name', 'Value'],
+        //             selection: 'Value',
+        //             consult: true,
+        //             blind: false,
+        //             comments: false
+        //         }
+        //     ];
+        // }
+
+        // data.callback = (callbackData) => {
+        //     // check the source
+        //     if (callbackData.source === 'Bot Conference') {
+        //         this.conferenceWithBot(callbackData.selectedRow.Value);
+        //     }
+        // };
+
+        const transferConferenceConfig = {
+            transfer: this.widgetData.Transfer ?? {},
+            conference: this.widgetData.Conference ?? {}
         };
 
-        const conferenceConfig = {
-            agent: this.widgetData.Conference?.Agent ?? null,
-            skill: this.widgetData.Conference?.Skill ?? null
-        };
-
-        // get data based on type
-        let data: AgentSkillListData =
-            type === 'transfer'
-                ? {
-                      title: 'Transfer Chat',
-                      type: 'transferChat',
-                      agent: {
-                          allowed: transferConfig?.agent?.Allowed,
-                          consult: transferConfig?.agent?.Consult,
-                          blind: transferConfig?.agent?.Blind,
-                          comments: transferConfig?.agent?.Comments,
-                          source: transferConfig?.agent?.Source,
-                          allowedStates: transferConfig?.agent?.AllowedStates,
-                          columns: transferConfig?.agent?.Columns,
-                          teamFilter: transferConfig?.agent?.TeamFilter
-                      },
-                      skill: {
-                          allowed: transferConfig?.skill?.Allowed,
-                          consult: transferConfig?.skill?.Consult,
-                          blind: transferConfig?.skill?.Blind,
-                          comments: transferConfig?.skill?.Comments,
-                          source: transferConfig?.skill?.Source,
-                          channelPrfix: transferConfig?.skill?.ChannelPrefix,
-                          columns: transferConfig?.skill?.Columns
-                      }
-                  }
-                : {
-                      title: 'Conference Chat',
-                      type: 'conferenceChat',
-                      agent: {
-                          allowed: conferenceConfig?.agent?.Allowed,
-                          consult: conferenceConfig?.agent?.Consult,
-                          blind: conferenceConfig?.agent?.Blind,
-                          comments: conferenceConfig?.agent?.Comments,
-                          source: conferenceConfig?.agent?.Source,
-                          allowedStates: conferenceConfig?.agent?.AllowedStates,
-                          columns: conferenceConfig?.agent?.Columns,
-                          teamFilter: conferenceConfig?.agent?.TeamFilter
-                      },
-                      skill: {
-                          allowed: conferenceConfig?.skill?.Allowed,
-                          consult: conferenceConfig?.skill?.Consult,
-                          blind: conferenceConfig?.skill?.Blind,
-                          comments: conferenceConfig?.skill?.Comments,
-                          source: conferenceConfig?.skill?.Source,
-                          channelPrfix: conferenceConfig?.skill?.ChannelPrefix,
-                          columns: conferenceConfig?.skill?.Columns
-                      }
-                  };
-
-        // add common properties
-        data = {
-            interactionId: this.interaction.InteractionID,
-            ...data,
-            otherData: {
+        let data: Partial<AgentSkillListData> = {
+            InteractionId: this.interaction.InteractionID,
+            OtherData: {
                 type: type === 'transfer' ? 'transfer' : 'conf',
                 mode: this.chatMode,
                 sessionId: this.sessionID,
                 lineId: this.lineId
-            }
-        };
-
-        // check if the type is conference and self destination list is there
-        if (type === 'conference' && this.selfServiceDestinations.length) {
-            data.otherData = {
-                ...data.otherData
-            };
-            data.dynamicLists = [
-                {
-                    label: 'Bot Conference',
-                    placeholder: 'Destination',
-                    data: this.selfServiceDestinations,
-                    columns: ['Name', 'Value'],
-                    selection: 'Value',
-                    consult: true,
-                    blind: false,
-                    comments: false
+            },
+            Callback: (callbackData) => {
+                // check the source
+                if (callbackData.source === 'Bot Conference') {
+                    this.conferenceWithBot(callbackData.selectedRow.Value);
                 }
-            ];
-        }
-
-        data.callback = (callbackData) => {
-            // check the source
-            if (callbackData.source === 'Bot Conference') {
-                this.conferenceWithBot(callbackData.selectedRow.Value);
             }
         };
+
+        if (type === 'transfer') {
+            data = new AgentSkillListDataModel('transferChat', 'Transfer Chat');
+            data = { ...data, ...transferConferenceConfig.transfer };
+        } else if (type === 'conference') {
+            data = new AgentSkillListDataModel('conferenceChat', 'Conference Chat');
+            data = { ...data, ...transferConferenceConfig.conference };
+
+            // check if the type is conference and self destination list is there
+            if (this.selfServiceDestinations.length) {
+                data.OtherData = {
+                    ...data.OtherData
+                };
+                data.DynamicLists = [
+                    {
+                        Label: 'Bot Conference',
+                        Placeholder: 'Destination',
+                        Data: this.selfServiceDestinations,
+                        Columns: ['Name', 'Value'],
+                        Selection: 'Value',
+                        Consult: true,
+                        Blind: false,
+                        Comments: false
+                    }
+                ];
+            }
+        }
 
         // open agent skill list component in dialog
         this.transferConfDialogRef = this._matDialog.open(AgentSkillListComponent, {

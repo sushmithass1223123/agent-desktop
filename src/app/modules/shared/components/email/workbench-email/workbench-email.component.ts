@@ -1,4 +1,5 @@
 import {
+    AgentSkillListData,
     AgentTransferConferenceConfig,
     AOTWidget,
     SkillTransferConferenceConfig,
@@ -22,8 +23,8 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
 import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
-import { AgentSkillListData, EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
+import { EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
+import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { addHours, format, format as formatDate } from 'date-fns';
 import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
@@ -1140,32 +1141,48 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     transferEmail(emails: Mail[]): void {
         const config = (this.channelConf?.Config || {}) as TwEmailWorkbenchConfig;
-        const agentConfig = config?.Transfer?.Agent || ({} as AgentTransferConferenceConfig);
-        const skillConfig = config?.Transfer?.Skill || ({} as SkillTransferConferenceConfig);
         const uiIds = emails.map((e) => e.uiId);
-        const data: AgentSkillListData = {
-            title: 'Email Transfer',
-            type: 'transferEmail',
-            agent: {
-                allowed: agentConfig.Allowed,
-                consult: agentConfig.Consult,
-                blind: agentConfig.Blind,
-                comments: agentConfig.Comments,
-                source: agentConfig.Source,
-                allowedStates: agentConfig.AllowedStates,
-                columns: agentConfig.Columns,
-                teamFilter: agentConfig.TeamFilter
-            },
-            skill: {
-                allowed: skillConfig.Allowed,
-                consult: skillConfig.Consult,
-                blind: skillConfig.Blind,
-                comments: skillConfig.Comments,
-                source: skillConfig.Source,
-                channelPrfix: skillConfig.ChannelPrefix,
-                columns: skillConfig.Columns
-            },
-            callback: ({ success }) => {
+
+        // const agentConfig = config?.Transfer?.Agent || ({} as AgentTransferConferenceConfig);
+        // const skillConfig = config?.Transfer?.Skill || ({} as SkillTransferConferenceConfig);
+        // const data: AgentSkillListData = {
+        //     Title: 'Email Transfer',
+        //     Type: 'transferEmail',
+        //     Agent: {
+        //         Allowed: agentConfig.Allowed,
+        //         Consult: agentConfig.Consult,
+        //         Blind: agentConfig.Blind,
+        //         Comments: agentConfig.Comments,
+        //         Source: agentConfig.Source,
+        //         AllowedStates: agentConfig.AllowedStates,
+        //         Columns: agentConfig.Columns,
+        //         TeamFilter: agentConfig.TeamFilter
+        //     },
+        //     Skill: {
+        //         Allowed: skillConfig.Allowed,
+        //         Consult: skillConfig.Consult,
+        //         Blind: skillConfig.Blind,
+        //         Comments: skillConfig.Comments,
+        //         Source: skillConfig.Source,
+        //         ChannelPrefix: skillConfig.ChannelPrefix,
+        //         Columns: skillConfig.Columns
+        //     },
+        //     Callback: ({ success }) => {
+        //         if (success) {
+        //             this.doAdvancedSearch(true);
+        //             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
+        //                 this.openEmailRes.data.next(null);
+        //             }
+        //         }
+        //     }
+        // };
+
+        const transferConfig = config?.Transfer ?? {};
+        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
+        data = {
+            ...data,
+            ...transferConfig,
+            Callback: ({ success }) => {
                 if (success) {
                     this.doAdvancedSearch(true);
                     if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
@@ -1174,6 +1191,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 }
             }
         };
+
         const sessionKey = this.getCurrentSessionKey();
         this.matDialog.open(AgentSkillListComponent, {
             data: {

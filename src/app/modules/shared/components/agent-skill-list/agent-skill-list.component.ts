@@ -1,3 +1,4 @@
+import { AgentSkillListData, AgentSkillListSource } from '@ad/types';
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -16,7 +17,6 @@ import {
     SpeedDialModel,
     WallboardSkillModel
 } from '@tmac/sdk';
-import { AgentSkillListData, AgentSkillListSourceObject } from 'app/interfaces';
 import { formatJsonData, InlineWorker } from 'app/utils';
 import { orderBy } from 'lodash';
 import { Subject } from 'rxjs';
@@ -200,8 +200,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * OnInit
      */
     ngOnInit(): void {
-        this.title = this._dialogData?.title || 'Agent Skill List';
-        this.interactionId = this._dialogData?.interactionId ?? 0;
+        this.title = this._dialogData?.Title || 'Agent Skill List';
+        this.interactionId = this._dialogData?.InteractionId ?? 0;
 
         const setActiveSwitcher = (tab: ITab) => {
             if (!this.activeSwitcher) {
@@ -209,7 +209,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
         };
 
-        if (this._dialogData?.agent && this._dialogData?.agent.allowed) {
+        if (this._dialogData?.Agent && this._dialogData?.Agent.Allowed) {
             const table = {
                 config: {
                     FirstName: { searchable: true, title: 'First Name' },
@@ -219,21 +219,27 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 }
             };
             const columns =
-                this._dialogData.agent.columns && this._dialogData.agent.columns.length ? this._dialogData.agent.columns : Object.keys(table.config);
+                this._dialogData.Agent.Columns && this._dialogData.Agent.Columns.length ? this._dialogData.Agent.Columns : Object.keys(table.config);
             const conf: ISwitch = {
                 placeholder: 'Agent',
-                freeText: { allowed: !!(this._dialogData?.agent.source as AgentSkillListSourceObject)?.FreeTextAllowed, active: false, value: '' },
+                freeText: { allowed: !!(this._dialogData?.Agent.Source as AgentSkillListSource)?.FreeTextAllowed, active: false, value: '' },
                 table: Object.assign(table, { columns }),
                 data: [],
                 onSelect: this.selectAgent,
                 sortBy: 'FirstName',
-                sortDir: 'asc'
+                sortDir: 'asc',
+                allowed: this._dialogData.Agent.Allowed,
+                blind: this._dialogData.Agent.Blind,
+                comments: this._dialogData.Agent.Comments,
+                consult: this._dialogData.Agent.Consult
             };
-            this.switcherList['Agent List'] = Object.assign(conf, this._dialogData?.agent);
+            // this.switcherList['Agent List'] = Object.assign(conf, this._dialogData?.Agent);
+
+            this.switcherList['Agent List'] = conf;
             setActiveSwitcher('Agent List');
         }
 
-        if (this._dialogData?.skill && this._dialogData?.skill.allowed) {
+        if (this._dialogData?.Skill && this._dialogData?.Skill.Allowed) {
             const table: Partial<TableComponent> = {
                 config: {
                     Name: { searchable: true, width: '33%' },
@@ -245,21 +251,27 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 }
             };
             const columns =
-                this._dialogData.skill.columns && this._dialogData.skill.columns.length ? this._dialogData.skill.columns : Object.keys(table.config);
+                this._dialogData.Skill.Columns && this._dialogData.Skill.Columns.length ? this._dialogData.Skill.Columns : Object.keys(table.config);
             const conf: ISwitch = {
                 placeholder: 'Skill/VDN',
-                freeText: { allowed: !!(this._dialogData?.skill.source as AgentSkillListSourceObject)?.FreeTextAllowed, active: false, value: '' },
+                freeText: { allowed: !!(this._dialogData?.Skill.Source as AgentSkillListSource)?.FreeTextAllowed, active: false, value: '' },
                 table: Object.assign(table, { columns }),
                 data: [],
                 onSelect: this.selectSkill,
                 sortBy: 'Name',
-                sortDir: 'asc'
+                sortDir: 'asc',
+                allowed: this._dialogData.Skill.Allowed,
+                blind: this._dialogData.Skill.Blind,
+                comments: this._dialogData.Skill.Comments,
+                consult: this._dialogData.Skill.Consult
             };
-            this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.skill);
+            // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
+
+            this.switcherList['Skill List'] = conf;
             setActiveSwitcher('Skill List');
         }
 
-        if (this._dialogData?.speedDial && this._dialogData?.speedDial.allowed) {
+        if (this._dialogData?.SpeedDial && this._dialogData?.SpeedDial.Allowed) {
             const table: Partial<TableComponent> = {
                 config: {
                     Name: { searchable: true },
@@ -270,13 +282,13 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 }
             };
             const columns =
-                this._dialogData.speedDial.columns && this._dialogData.speedDial.columns.length
-                    ? this._dialogData.speedDial.columns
+                this._dialogData.SpeedDial.Columns && this._dialogData.SpeedDial.Columns.length
+                    ? this._dialogData.SpeedDial.Columns
                     : Object.keys(table.config);
             const conf: ISwitch = {
                 placeholder: 'Number',
                 freeText: {
-                    allowed: !!(this._dialogData?.speedDial.source as AgentSkillListSourceObject)?.FreeTextAllowed,
+                    allowed: !!(this._dialogData?.SpeedDial.Source as AgentSkillListSource)?.FreeTextAllowed,
                     active: false,
                     value: ''
                 },
@@ -284,43 +296,49 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 data: [],
                 onSelect: this.selectSpeedDialContact,
                 sortBy: 'Name',
-                sortDir: 'asc'
+                sortDir: 'asc',
+                allowed: this._dialogData.SpeedDial.Allowed,
+                blind: this._dialogData.SpeedDial.Blind,
+                comments: this._dialogData.SpeedDial.Comments,
+                consult: this._dialogData.SpeedDial.Consult
             };
-            this.switcherList['Speed Dial'] = Object.assign(conf, this._dialogData?.speedDial);
+            // this.switcherList['Speed Dial'] = Object.assign(conf, this._dialogData?.SpeedDial);
+
+            this.switcherList['Speed Dial'] = conf;
             setActiveSwitcher('Speed Dial');
         }
 
-        if (this._dialogData?.dynamicLists && this._dialogData.dynamicLists.length) {
-            this._dialogData?.dynamicLists.forEach((l) => {
+        if (this._dialogData?.DynamicLists && this._dialogData.DynamicLists.length) {
+            this._dialogData?.DynamicLists.forEach((l) => {
                 const table: Partial<TableComponent> = {
-                    config: l.columns.reduce((acc, curr) => {
+                    config: l.Columns.reduce((acc, curr) => {
                         acc[curr] = { searchable: true };
                         return acc;
                     }, {}),
-                    columns: l.columns
+                    columns: l.Columns
                 };
-                this.switcherList[l.label] = {
-                    data: l.data,
+                this.switcherList[l.Label] = {
+                    data: l.Data,
                     freeText: {
                         allowed: false,
                         active: false,
                         value: ''
                     },
                     allowed: true,
-                    consult: l.consult,
-                    blind: l.blind,
-                    comments: l.comments,
+                    consult: l.Consult,
+                    blind: l.Blind,
+                    comments: l.Comments,
                     onSelect: (row) => {
-                        this.selectDynamic(row, l.selection);
+                        this.selectDynamic(row, l.Selection);
                     },
-                    placeholder: l.placeholder,
+                    placeholder: l.Placeholder,
                     table
                 };
             });
         }
 
         this.setupSearchInputListener();
-        const type = this._dialogData?.type || '';
+        const type = this._dialogData?.Type || '';
 
         switch (type) {
             case 'makeCall':
@@ -382,7 +400,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     async ngAfterViewInit(): Promise<void> {
         // await this.presetData();
         this.switchTab(this.activeSwitcher);
-        this.table.source.filterPredicate = this.filterPredicate;
+        if (this.table) {
+            this.table.source.filterPredicate = this.filterPredicate;
+        }
     }
 
     // /**
@@ -395,12 +415,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     //         this.loading -= 1;
     //     };
 
-    //     if (this._dialogData?.agent.allowed) {
+    //     if (this._dialogData?.Agent.Allowed) {
     //         this.loading += 1;
     //         await Promise.all([
     //             SDKClient.getAgentListStaffed({
     //                 agentId: true,
-    //                 byTeam: this._dialogData.agent.teamFilter ?? false,
+    //                 byTeam: this._dialogData.Agent.teamFilter ?? false,
     //                 type: ''
     //             }),
     //             SDKClient.getTmacWallboardSkills()
@@ -414,7 +434,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     //             .finally(() => (this.loading -= 1));
     //     }
 
-    //     if (this._dialogData?.skill.allowed) {
+    //     if (this._dialogData?.Skill.Allowed) {
     //         this.loading += 1;
     //         await SDKClient.getFavouriteSkills()
     //             .then((res) => {
@@ -425,9 +445,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     //             .finally(() => (this.loading -= 1));
     //     }
 
-    //     if (this._dialogData?.speedDial?.allowed) {
+    //     if (this._dialogData?.SpeedDial?.Allowed) {
     //         this.loading += 1;
-    //         await SDKClient.getSpeedDialNumbers(this._dialogData.speedDial.teamFilter)
+    //         await SDKClient.getSpeedDialNumbers(this._dialogData.SpeedDial.teamFilter)
     //             .then((res) => {
     //                 this.mapSpeedDial(res);
     //                 this.initTables().speedDial();
@@ -453,7 +473,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             await Promise.all([
                 SDKClient.getAgentListStaffed({
                     agentId: true,
-                    byTeam: this._dialogData.agent.teamFilter ?? false,
+                    byTeam: this._dialogData.Agent.TeamFilter ?? false,
                     type: ''
                 }),
                 SDKClient.getTmacWallboardSkills()
@@ -476,7 +496,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 .finally(() => (this.loading -= 1));
         } else if (tab === 'Speed Dial' && !this.switcherList['Speed Dial']?.data?.length) {
             this.loading += 1;
-            await SDKClient.getSpeedDialNumbers(this._dialogData.speedDial.teamFilter)
+            await SDKClient.getSpeedDialNumbers(this._dialogData.SpeedDial.TeamFilter)
                 .then((res) => {
                     this.mapSpeedDial(res);
                     this.initTables().speedDial();
@@ -488,18 +508,18 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
 
     private initTables = () => ({
         agent: () => {
-            if (this._dialogData.agent.columns && this._dialogData.agent.columns.length) {
-                this.table.columns = this._dialogData.agent.columns;
+            if (this._dialogData.Agent.Columns && this._dialogData.Agent.Columns.length) {
+                this.table.columns = this._dialogData.Agent.Columns;
             }
         },
         skill: () => {
-            if (this._dialogData.skill.columns && this._dialogData.skill.columns.length) {
-                this.table.columns = this._dialogData.skill.columns;
+            if (this._dialogData.Skill.Columns && this._dialogData.Skill.Columns.length) {
+                this.table.columns = this._dialogData.Skill.Columns;
             }
         },
         speedDial: () => {
-            if (this._dialogData.speedDial.columns && this._dialogData.speedDial.columns.length) {
-                this.table.columns = this._dialogData.speedDial.columns;
+            if (this._dialogData.SpeedDial.Columns && this._dialogData.SpeedDial.Columns.length) {
+                this.table.columns = this._dialogData.SpeedDial.Columns;
             }
         }
     });
@@ -556,7 +576,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // check the prefix list
-        const channelPrefix = this._dialogData?.skill.channelPrfix || [];
+        const channelPrefix = this._dialogData?.Skill.ChannelPrefix || [];
 
         // Filtering skills based on
         // 1. The prefix passed in Config
@@ -654,7 +674,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.loading += 1;
         SDKClient.getAgentListStaffed({
             agentId: true,
-            byTeam: this._dialogData.agent.teamFilter ?? false,
+            byTeam: this._dialogData.Agent.TeamFilter ?? false,
             type: ''
         })
             .then((res) => {
@@ -845,7 +865,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private transferConferenceChat(): void {
         this.loading += 1;
-        const type = this._dialogData.otherData.type === 'conf' ? 'conference' : this._dialogData.otherData.type;
+        const type = this._dialogData.OtherData.type === 'conf' ? 'conference' : this._dialogData.OtherData.type;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // agent transfer/conf
         if (this.selectedRow?.type === 'Agent List') {
@@ -855,8 +875,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     comment: this.comments,
                     interactionId: this.interactionId.toString(),
                     otherData: JSON.stringify({
-                        type: this._dialogData.otherData.type,
-                        mode: this._dialogData.otherData.mode
+                        type: this._dialogData.OtherData.type,
+                        mode: this._dialogData.OtherData.mode
                     }),
                     // uncomment this when freetext available for agent
                     // toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
@@ -879,12 +899,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             // blind transfer/confks
             else {
                 SDKClient.transferTextChat({
-                    chatMode: this._dialogData.otherData.mode,
+                    chatMode: this._dialogData.OtherData.mode,
                     comment: this.comments,
-                    conferenceType: this._dialogData.otherData.type,
+                    conferenceType: this._dialogData.OtherData.type,
                     interactionId: this.interactionId.toString(),
-                    lineId: this._dialogData.otherData.lineId,
-                    sessionId: this._dialogData.otherData.sessionId,
+                    lineId: this._dialogData.OtherData.lineId,
+                    sessionId: this._dialogData.OtherData.sessionId,
                     toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
@@ -909,7 +929,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         else if (this.selectedRow?.type === 'Skill List' || freeTextConf.active) {
             this.loading -= 1;
             SDKClient.transferTextChatToQueue({
-                chatMode: this._dialogData.otherData.mode,
+                chatMode: this._dialogData.OtherData.mode,
                 interactionId: this.interactionId.toString(),
                 isBlind: true,
                 skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem
@@ -938,7 +958,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private transferEmail(): void {
         this.loading += 1;
-        const emails: any[] = this._dialogData.otherData.emails;
+        const emails: any[] = this._dialogData.OtherData.emails;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
@@ -1009,6 +1029,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         await this.presetData(tab);
         // get the switcher
         const switcher = this.switcherList[this.activeSwitcher];
+
+        // no data found
+        if (!switcher?.data) {
+            return;
+        }
+
         // get the current tab data
         let data = [...switcher.data];
         // initial data load limit
@@ -1113,15 +1139,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @returns
      */
     filterAgentList = (row: AgentModel, filters: any): boolean => {
-        if (filters.searchKey && !filters.skill) {
+        if (filters.searchKey && !filters.Skill) {
             const searchRe = new RegExp(filters.searchKey, 'i');
             return !!JSON.stringify(row).match(searchRe);
-        } else if (!filters.searchKey && filters.skill) {
-            const skillRe = new RegExp(filters.skill, 'i');
+        } else if (!filters.searchKey && filters.Skill) {
+            const skillRe = new RegExp(filters.Skill, 'i');
             return !!row.AgentVoiceSkillsAsString.match(skillRe);
         } else {
             const searchRe = new RegExp(filters.searchKey, 'i');
-            const skillRe = new RegExp(filters.skill, 'i');
+            const skillRe = new RegExp(filters.Skill, 'i');
             return !!(JSON.stringify(row).match(searchRe) && row.AgentVoiceSkillsAsString.match(skillRe));
         }
     };
@@ -1166,7 +1192,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Load speed dial table
      */
     loadSpeedDial(): void {
-        SDKClient.getSpeedDialNumbers(this._dialogData?.speedDial?.teamFilter)
+        SDKClient.getSpeedDialNumbers(this._dialogData?.SpeedDial?.TeamFilter)
             .then((res) => {
                 this.switcherList[this.activeSwitcher].data = res.response;
             })
@@ -1209,9 +1235,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             return;
         }
         // get the allowed state list
-        const allowedStates = this._dialogData?.agent.allowedStates || [];
+        const allowedStates = this._dialogData?.Agent.AllowedStates || [];
         // source to select
-        const source = this._dialogData?.agent.source || 'agentId';
+        const source = this._dialogData?.Agent.Source || 'agentId';
         // change the status
         row.CurrentAgentStatus = dt.response.ResultMessage;
         // get the new state
@@ -1248,7 +1274,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         this.clearSelected();
         freeTextConf.active = false;
-        const source = this._dialogData?.speedDial.source || 'Name';
+        const source = this._dialogData?.SpeedDial.Source || 'Name';
         if (typeof source === 'object') {
             // assign the selected item
             this.selectedItem = source.Use === 'Number' ? row.Number : row.Name;
@@ -1279,7 +1305,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.clearSelected();
         freeTextConf.active = false;
         // this.selectedItem = '';
-        // this.skillListTable.tableData.selection.clear();
+        // this.SkillListTable.tableData.selection.clear();
         // this.clearDisplayValues();
         this.loading += 1;
         row.Stf = 'loading';
@@ -1290,7 +1316,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             .then((dt) => {
                 this.loading -= 1;
                 // source to select
-                const source = this._dialogData?.skill.source || 'skill';
+                const source = this._dialogData?.Skill.Source || 'skill';
                 // check the response is proper
                 if (dt.response.EventName === 'QueueStatusEvent') {
                     // cast the response
@@ -1370,7 +1396,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // check the type if not dynamic list selection
-        const type = this._dialogData?.type || '';
+        const type = this._dialogData?.Type || '';
         switch (type) {
             case 'makeCall':
                 this.makeCall();
@@ -1414,8 +1440,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     close(success: boolean): void {
         // call the callback
-        if (typeof this._dialogData.callback === 'function') {
-            this._dialogData.callback({
+        if (typeof this._dialogData.Callback === 'function') {
+            this._dialogData.Callback({
                 source: this.selectedRow?.type,
                 selectedRow: this.selectedRow?.row,
                 isConsult: this.isConsult,
