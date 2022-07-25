@@ -1,4 +1,10 @@
-import { AgentTransferConferenceConfig, InteractionWidgetBaseData, SkillTransferConferenceConfig, TwEmailControlsData } from '@ad/types';
+import {
+    AgentSkillListData,
+    AgentTransferConferenceConfig,
+    InteractionWidgetBaseData,
+    SkillTransferConferenceConfig,
+    TwEmailControlsData
+} from '@ad/types';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -26,16 +32,8 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
-import {
-    AgentSkillListData,
-    EmailComponentInputs,
-    EmailComponentMode,
-    EmailFile,
-    InteractionComment,
-    InteractionRef,
-    IWidget,
-    ResData
-} from 'app/interfaces';
+import { EmailComponentInputs, EmailComponentMode, EmailFile, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
+import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
@@ -1137,32 +1135,39 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {any} email
      */
     transferEmail(email: any): void {
-        const agentConfig = this.data.Data.Transfer?.Agent || ({} as AgentTransferConferenceConfig);
-        const skillConfig = this.data.Data.Transfer?.Skill || ({} as SkillTransferConferenceConfig);
+        // const agentConfig = this.data.Data.Transfer?.Agent || ({} as AgentTransferConferenceConfig);
+        // const skillConfig = this.data.Data.Transfer?.Skill || ({} as SkillTransferConferenceConfig);
+        // const data: AgentSkillListData = {
+        //     Title: 'Email Transfer',
+        //     Type: 'transferEmail',
+        //     Agent: {
+        //         Allowed: agentConfig.Allowed,
+        //         AllowedStates: agentConfig.AllowedStates,
+        //         Consult: agentConfig.Consult,
+        //         Blind: agentConfig.Blind,
+        //         Comments: agentConfig.Comments,
+        //         Source: agentConfig.Source,
+        //         Columns: agentConfig.Columns,
+        //         TeamFilter: agentConfig.TeamFilter
+        //     },
+        //     Skill: {
+        //         Allowed: skillConfig.Allowed,
+        //         Consult: skillConfig.Consult,
+        //         Blind: skillConfig.Blind,
+        //         Comments: skillConfig.Comments,
+        //         ChannelPrefix: skillConfig.ChannelPrefix,
+        //         Source: skillConfig.Source,
+        //         Columns: skillConfig.Columns
+        //     }
+        // };
 
-        const data: AgentSkillListData = {
-            title: 'Email Transfer',
-            type: 'transferEmail',
-            agent: {
-                allowed: agentConfig.Allowed,
-                allowedStates: agentConfig.AllowedStates,
-                consult: agentConfig.Consult,
-                blind: agentConfig.Blind,
-                comments: agentConfig.Comments,
-                source: agentConfig.Source,
-                columns: agentConfig.Columns,
-                teamFilter: agentConfig.TeamFilter
-            },
-            skill: {
-                allowed: skillConfig.Allowed,
-                consult: skillConfig.Consult,
-                blind: skillConfig.Blind,
-                comments: skillConfig.Comments,
-                channelPrfix: skillConfig.ChannelPrefix,
-                source: skillConfig.Source,
-                columns: skillConfig.Columns
-            }
+        const transferConfig = this.data.Data.Transfer ?? {};
+        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
+        data = {
+            ...data,
+            ...transferConfig
         };
+
         this.matDialog.open(AgentSkillListComponent, {
             data: {
                 ...data,
