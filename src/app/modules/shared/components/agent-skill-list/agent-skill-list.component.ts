@@ -1022,6 +1022,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param {ITab} tab
      */
     async switchTab(tab: ITab): Promise<void> {
+        // clear selected if any
+        this.table.clearSelected();
+
         // terminate if any work going on
         this.worker?.terminate();
         // set the switcher and get data
