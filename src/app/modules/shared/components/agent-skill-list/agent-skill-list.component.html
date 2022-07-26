@@ -4,7 +4,7 @@
             <ng-container *ngIf="switcherList[activeSwitcher] as tabConf">
                 <ng-container
                     *ngIf="{
-                        transfer: (!selectedItem && !tabConf.freeText.value) || !!loading
+                        disabled: (!selectedItem && !tabConf.freeText.value) || !!loading
                     } as controls"
                 >
                     <div class="twd-h-full twd-flex twd-flex-col">
@@ -81,7 +81,7 @@
                                     mat-raised-button
                                     class="custom-btn bg-success border-radius-20"
                                     [matTooltip]="actionTooltip"
-                                    [disabled]="controls.transfer"
+                                    [disabled]="controls.disabled"
                                     (click)="executeAction(true)"
                                 >
                                     <mat-icon *ngIf="!loading">{{ icon }}</mat-icon>
@@ -93,12 +93,10 @@
                                     mat-raised-button
                                     matTooltip="Blind"
                                     class="custom-btn bg-success border-radius-20"
-                                    [disabled]="controls.transfer"
+                                    [disabled]="controls.disabled"
                                     (click)="executeAction(false)"
                                 >
-                                    <span *ngIf="!loading" class="twd-font-extrabold">
-                                        {{ _dialogData?.Type.includes('transfer') ? 'BT' : 'BC' }}</span
-                                    >
+                                    <span *ngIf="!loading" class="twd-font-extrabold"> {{ blindLabel }}</span>
                                     <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                                 </button>
                             </div>

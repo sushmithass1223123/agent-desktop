@@ -27,7 +27,7 @@ import { EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { addHours, format, format as formatDate } from 'date-fns';
-import { groupBy, isEqual, sortBy, uniqBy } from 'lodash';
+import { groupBy, isEqual, merge, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { EmailService, initEmailSearchState } from '../email.service';
@@ -1178,10 +1178,17 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         // };
 
         const transferConfig = config?.Transfer ?? {};
-        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
+        let data = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
+        data = merge({}, data, transferConfig);
         data = {
             ...data,
-            ...transferConfig,
+            OtherData: {
+                type: 'transfer',
+                emails: emails.map((e) => ({
+                    ...e,
+                    SessionId: e[sessionKey]
+                }))
+            },
             Callback: ({ success }) => {
                 if (success) {
                     this.doAdvancedSearch(true);
@@ -1194,16 +1201,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
         const sessionKey = this.getCurrentSessionKey();
         this.matDialog.open(AgentSkillListComponent, {
-            data: {
-                ...data,
-                otherData: {
-                    type: 'transfer',
-                    emails: emails.map((e) => ({
-                        ...e,
-                        SessionId: e[sessionKey]
-                    }))
-                }
-            },
+            data,
             panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
             minWidth: '30%',
             maxWidth: '100%',

@@ -1,4 +1,4 @@
-import { TwCreateInteraction } from '@ad/types';
+import { AgentSkillListData, TwCreateInteraction } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { appAnimations } from '@modules/shared/animations/app.animation';
@@ -7,7 +7,8 @@ import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/t
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
-import { TwWidgetModel } from 'app/models';
+import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
+import { merge } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -156,49 +157,72 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
 
             case 'voice':
                 let config = data.Data;
+
+                // config = {
+                //     title: 'Make Call',
+                //     type: 'makeCall',
+                //     ...config,
+                //     skill: {
+                //         allowed: false,
+                //         blind: false,
+                //         columns: []
+                //     }
+                // };
+
+                // if (config.SpeedDial) {
+                //     config = {
+                //         agent: {
+                //             allowed: true,
+                //             consult: true,
+                //             source: config.Agent.Source,
+                //             allowedStates: config.Agent.AllowedStates,
+                //             columns: config.Agent.Columns,
+                //             teamFilter: config.Agent.TeamFilter
+                //         },
+                //         speedDial: {
+                //             allowed: config.SpeedDial?.Allowed,
+                //             consult: config.SpeedDial?.Consult,
+                //             blind: config.SpeedDial?.Blind,
+                //             comments: config.SpeedDial?.Comments,
+                //             source: config.SpeedDial?.Source,
+                //             teamFilter: config.SpeedDial?.TeamFilter,
+                //             columns: config.SpeedDial?.Columns
+                //         }
+                //     };
+                // } else {
+                //     config = {
+                //         agent: {
+                //             allowed: true,
+                //             consult: true,
+                //             source: config.Source,
+                //             allowedStates: config.AllowedStates,
+                //             columns: config.Columns,
+                //             teamFilter: config.TeamFilter
+                //         }
+                //     };
+                // }
+
+                let dialogData: AgentSkillListData = new AgentSkillListDataModel('makeCall', 'Make Call');
+
+                // set agent configs to true which is not available in "data.Data" section
+                dialogData.Agent = {
+                    ...dialogData.Agent,
+                    Allowed: true,
+                    Consult: true
+                };
+
+                // for the backward compatibility
+                // SpeedDial was added in the version 5.0.8.30, until then "data.Data" was having what's needed for the Agent config
+                // so check if the "data.Data" has SpeedDial then merge with entire data
+                // else change only the Agent data which is in the else condition
                 if (config.SpeedDial) {
-                    config = {
-                        agent: {
-                            allowed: true,
-                            consult: true,
-                            source: config.Agent.Source,
-                            allowedStates: config.Agent.AllowedStates,
-                            columns: config.Agent.Columns,
-                            teamFilter: config.Agent.TeamFilter
-                        },
-                        speedDial: {
-                            allowed: config.SpeedDial?.Allowed,
-                            consult: config.SpeedDial?.Consult,
-                            blind: config.SpeedDial?.Blind,
-                            comments: config.SpeedDial?.Comments,
-                            source: config.SpeedDial?.Source,
-                            teamFilter: config.SpeedDial?.TeamFilter,
-                            columns: config.SpeedDial?.Columns
-                        }
-                    };
+                    dialogData = merge({}, dialogData, config);
                 } else {
-                    config = {
-                        agent: {
-                            allowed: true,
-                            consult: true,
-                            source: config.Source,
-                            allowedStates: config.AllowedStates,
-                            columns: config.Columns,
-                            teamFilter: config.TeamFilter
-                        }
-                    };
+                    dialogData.Agent = merge({}, dialogData.Agent, config);
                 }
+
                 this._matDialog.open(AgentSkillListComponent, {
-                    data: {
-                        title: 'Make Call',
-                        type: 'makeCall',
-                        ...config,
-                        skill: {
-                            allowed: false,
-                            blind: false,
-                            columns: []
-                        }
-                    },
+                    data: dialogData,
                     panelClass: [
                         'agent-skill-dialog',
                         'twd-w-11/12',

@@ -36,6 +36,7 @@ import { EmailComponentInputs, EmailComponentMode, EmailFile, InteractionComment
 import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
+import { merge } from 'lodash';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
@@ -1163,20 +1164,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         const transferConfig = this.data.Data.Transfer ?? {};
         let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
+        data = merge({}, data, transferConfig);
         data = {
             ...data,
-            ...transferConfig
+            InteractionId: email.InteractionId,
+            OtherData: {
+                type: 'transfer',
+                emails: [email]
+            }
         };
 
         this.matDialog.open(AgentSkillListComponent, {
-            data: {
-                ...data,
-                interactionId: email.InteractionId,
-                otherData: {
-                    type: 'transfer',
-                    emails: [email]
-                }
-            },
+            data,
             panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
             minWidth: '30%',
             maxWidth: '100%',

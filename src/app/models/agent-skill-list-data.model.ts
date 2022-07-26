@@ -1,4 +1,12 @@
-import { AgentSkillDataType, AgentSkillListData, AgentSkillListSource, AgentSources, SkillSources, SpeedDialSources } from '@ad/types';
+import {
+    AgentSkillDataType,
+    AgentSkillListData,
+    AgentSkillListSource,
+    AgentSources,
+    SkillSources,
+    SkillTransferConferenceRules,
+    SpeedDialSources
+} from '@ad/types';
 
 export class AgentSkillListDataModel implements AgentSkillListData {
     Type: AgentSkillDataType;
@@ -21,6 +29,7 @@ export class AgentSkillListDataModel implements AgentSkillListData {
         Source: SkillSources | AgentSkillListSource<SkillSources, SkillSources>;
         ChannelPrefix: string[];
         Columns?: string[];
+        Rules?: SkillTransferConferenceRules;
     };
     SpeedDial?: {
         Allowed: boolean;
@@ -67,7 +76,25 @@ export class AgentSkillListDataModel implements AgentSkillListData {
             Columns: [],
             Comments: false,
             Consult: false,
-            Source: 'skill'
+            Source: 'skill',
+            Rules: {
+                Enabled: false,
+                STF: {
+                    Enabled: false,
+                    Min: 0,
+                    Max: 0
+                },
+                AVL: {
+                    Enabled: false,
+                    Min: 0,
+                    Max: 0
+                },
+                CIQ: {
+                    Enabled: false,
+                    Min: 0,
+                    Max: 0
+                }
+            }
         };
 
         this.SpeedDial = {
