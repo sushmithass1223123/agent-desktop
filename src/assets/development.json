@@ -814,7 +814,25 @@
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
                                                             "ChannelPrefix": ["VO"],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
                                                         },
                                                         "SpeedDial": {
                                                             "Allowed": true,
@@ -845,7 +863,25 @@
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
                                                             "ChannelPrefix": ["VO"],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
                                                         }
                                                     },
                                                     "IVR": {
@@ -1318,7 +1354,25 @@
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
                                                             "ChannelPrefix": [],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
                                                         }
                                                     },
                                                     "Conference": {
@@ -1340,7 +1394,25 @@
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
                                                             "ChannelPrefix": ["CH"],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
                                                         }
                                                     },
                                                     "AudioEscalateAllowed": true,
@@ -1689,7 +1761,7 @@
                                     },
                                     "Data": {
                                         "OpenInNew": false,
-                                        "Url": "https://dicedev.tetherfi.cloud/AD-Video-Audit-Widget?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
+                                        "Url": "http://localhost:4200?interactionId=${Interaction.InteractionID}&sessionId=${Interaction.UCID}"
                                     }
                                 },
                                 {
@@ -1846,7 +1918,25 @@
                                                             "Comments": true,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
                                                             "ChannelPrefix": ["EM"],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
                                                         }
                                                     },
                                                     "DownloadAllowed": true,
@@ -2346,7 +2436,25 @@
                                                             "Comments": false,
                                                             "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
                                                             "ChannelPrefix": ["EM"],
-                                                            "Columns": []
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
                                                         }
                                                     },
                                                     "SearchPollingInterval": 0,

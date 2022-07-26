@@ -56,6 +56,43 @@ export type TransferConfig<T, K = string> = {
     Columns: K[];
 };
 
+type SkillTransferConferenceRulesConfig = {
+    /**
+     * Enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Minimum count
+     */
+    Min: number;
+    /**
+     * Maximum count
+     */
+    Max: number;
+};
+
+/**
+ * Skill Transfer/Conference rules config
+ */
+export type SkillTransferConferenceRules = {
+    /**
+     * Enabled flag
+     */
+    Enabled: boolean;
+    /**
+     * Agent's staffed rules config
+     */
+    STF: SkillTransferConferenceRulesConfig;
+    /**
+     * Agent's available rules config
+     */
+    AVL: SkillTransferConferenceRulesConfig;
+    /**
+     * Calls in queue rules config
+     */
+    CIQ: SkillTransferConferenceRulesConfig;
+};
+
 /**
  * Agent's Transfer/Conference config
  */
@@ -81,6 +118,10 @@ export type SkillTransferConferenceConfig = TransferConfig<
      * Channel prefix to filter
      */
     ChannelPrefix: string[];
+    /**
+     * Rules to allow skill transfer/conference
+     */
+    Rules: SkillTransferConferenceRules;
 };
 
 /**
@@ -187,6 +228,10 @@ export type AgentSkillListData = {
          * Allowed Columns
          */
         Columns?: string[];
+        /**
+         * Rules to allow skill transfer/conference
+         */
+        Rules?: SkillTransferConferenceRules;
     };
     /**
      * speed dial settings

@@ -45,6 +45,7 @@ import {
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
+import { merge } from 'lodash';
 import { Subject, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
@@ -1721,7 +1722,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             conference: this.widgetData.Conference ?? {}
         };
 
-        let data: Partial<AgentSkillListData> = {
+        let data: Partial<AgentSkillListData> = {};
+
+        if (type === 'transfer') {
+            data = new AgentSkillListDataModel('transferCall', 'Transfer Call');
+            data = merge({}, data, transferConferenceConfig.transfer);
+        } else if (type === 'conference') {
+            data = new AgentSkillListDataModel('conferenceCall', 'Conference Call');
+            data = merge({}, data, transferConferenceConfig.conference);
+        }
+
+        data = {
+            ...data,
             InteractionId: this.interaction.InteractionID,
             OtherData: {
                 isMSCall: this.isMSCall,
@@ -1754,14 +1766,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 }
             }
         };
-
-        if (type === 'transfer') {
-            data = new AgentSkillListDataModel('transferCall', 'Transfer Call');
-            data = { ...data, ...transferConferenceConfig.transfer };
-        } else if (type === 'conference') {
-            data = new AgentSkillListDataModel('conferenceCall', 'Conference Call');
-            data = { ...data, ...transferConferenceConfig.conference };
-        }
 
         this.dialogRef = this._matDialog.open(AgentSkillListComponent, {
             data,

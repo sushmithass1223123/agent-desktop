@@ -180,6 +180,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     worker: InlineWorker;
 
     /**
+     * Blind action label
+     */
+    blindLabel: string;
+
+    /**
      * Constructor
      */
     constructor(
@@ -294,7 +299,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 },
                 table: Object.assign(table, { columns }),
                 data: [],
-                onSelect: this.selectSpeedDialContact,
+                onSelect: this.selectSpeedDial,
                 sortBy: 'Name',
                 sortDir: 'asc',
                 allowed: this._dialogData.SpeedDial.Allowed,
@@ -338,6 +343,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         this.setupSearchInputListener();
+
         const type = this._dialogData?.Type || '';
 
         switch (type) {
@@ -347,6 +353,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 if (this.switcherList['Agent List']) {
                     this.switcherList['Agent List'].placeholder = 'Agent/Station/Number';
                 }
+                this.blindLabel = 'B';
                 break;
             case 'transferCall':
                 this.icon = 'phone_forwarded';
@@ -354,6 +361,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 if (this.switcherList['Agent List']) {
                     this.switcherList['Agent List'].placeholder = 'Agent/Station/Number';
                 }
+                this.blindLabel = 'BT';
                 break;
             case 'conferenceCall':
                 this.icon = 'group_add';
@@ -361,31 +369,37 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 if (this.switcherList['Agent List']) {
                     this.switcherList['Agent List'].placeholder = 'Agent/Station/Number';
                 }
+                this.blindLabel = 'BC';
                 break;
             case 'transferChat':
                 this.disableInput = true;
                 this.icon = 'forward';
                 this.actionTooltip = 'Consult';
+                this.blindLabel = 'BT';
                 break;
             case 'pushChat':
                 this.disableInput = true;
                 this.icon = 'forward';
                 this.actionTooltip = 'Push';
+                this.blindLabel = 'BT';
                 break;
             case 'conferenceChat':
                 this.disableInput = true;
                 this.icon = 'group_add';
                 this.actionTooltip = 'Consult';
+                this.blindLabel = 'BC';
                 break;
             case 'transferEmail':
                 this.disableInput = true;
                 this.icon = 'forward_to_inbox';
                 this.actionTooltip = 'Transfer';
+                this.blindLabel = 'BT';
                 break;
             case 'transferFax':
                 this.disableInput = true;
                 this.icon = 'forward';
                 this.actionTooltip = 'Transfer';
+                this.blindLabel = 'BT';
                 break;
             default:
                 this.icon = 'list_alt';
@@ -1022,8 +1036,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param {ITab} tab
      */
     async switchTab(tab: ITab): Promise<void> {
-        // clear selected if any
         this.table.clearSelected();
+        this.clearSelected();
 
         // terminate if any work going on
         this.worker?.terminate();
@@ -1091,12 +1105,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.table.columns = switcher.table.columns;
 
         this.searchKey.setValue('');
-
-        // assign active switcher
-        // clear the selection
-        this.selectedItem = '';
-
-        this.clearSelected();
 
         // clear all filter
         this.clearAllFilter();
@@ -1273,7 +1281,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Selects speed dial contact
      * @param {SpeedDialModel} row
      */
-    selectSpeedDialContact = (row: SpeedDialModel): void => {
+    selectSpeedDial = (row: SpeedDialModel): void => {
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         this.clearSelected();
         freeTextConf.active = false;
@@ -1319,15 +1327,52 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             .then((dt) => {
                 this.loading -= 1;
                 // source to select
-                const source = this._dialogData?.Skill.Source || 'skill';
+                const source = this._dialogData.Skill.Source || 'skill';
                 // check the response is proper
                 if (dt.response.EventName === 'QueueStatusEvent') {
                     // cast the response
                     dt.response = dt.response as QueueStatusEvent;
+                    const { AgentsStaffed: STF, AgentAvailable: AVL, CallsInQueue: CIQ } = dt.response.Skill;
                     // assign the values
-                    row.Stf = dt.response.Skill.AgentsStaffed.toString();
-                    row.Avl = dt.response.Skill.AgentAvailable.toString();
-                    row.CIQ = dt.response.Skill.CallsInQueue.toString();
+                    row.Stf = STF.toString();
+                    row.Avl = AVL.toString();
+                    row.CIQ = CIQ.toString();
+
+                    const rules = this._dialogData.Skill.Rules;
+
+                    // check if rules check is enabled
+                    if (rules.Enabled) {
+                        if (rules.STF.Enabled) {
+                            if (rules.STF.Min > -1 && !(STF >= rules.STF.Min)) {
+                                return this.skillSelecteFailed(`Unabled to select the skill, Minimum Staffed Agents should be ${rules.STF.Min}`);
+                            }
+
+                            if (rules.STF.Max > -1 && !(STF <= rules.STF.Max)) {
+                                return this.skillSelecteFailed(`Unabled to select the skill, Maximum Staffed Agents should be ${rules.STF.Max}`);
+                            }
+                        }
+
+                        if (rules.AVL.Enabled) {
+                            if (rules.AVL.Min > -1 && !(AVL >= rules.AVL.Min)) {
+                                return this.skillSelecteFailed(`Unabled to select the skill, Minimum Available Agents should be ${rules.AVL.Min}`);
+                            }
+
+                            if (rules.AVL.Max > -1 && !(AVL <= rules.AVL.Max)) {
+                                return this.skillSelecteFailed(`Unabled to select the skill, Maximum Available Agents should be ${rules.AVL.Max}`);
+                            }
+                        }
+
+                        if (rules.CIQ.Enabled) {
+                            if (rules.CIQ.Min > -1 && !(CIQ >= rules.CIQ.Min)) {
+                                return this.skillSelecteFailed(`Unabled to select the skill, Minimum Calls In Queue should be ${rules.CIQ.Min}`);
+                            }
+
+                            if (rules.CIQ.Max > -1 && !(CIQ <= rules.CIQ.Max)) {
+                                return this.skillSelecteFailed(`Unabled to select the skill, Maximum Calls In Queue should be ${rules.CIQ.Max}`);
+                            }
+                        }
+                    }
+
                     // select the row in grid
                     if (typeof source === 'object') {
                         // assign the selected item
@@ -1341,6 +1386,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     } else {
                         // assign the selected item
                         this.selectedItem = source === 'skill' ? row.ID : row.VDN;
+                        this.selectedItemDisplayName = this.selectedItem;
                     }
                     // assign the selected row
                     this.selectedRow = { type: 'Skill List', row };
@@ -1359,6 +1405,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.loading -= 1;
             });
     };
+
+    skillSelecteFailed(message: string) {
+        this._appUIService.showSnackbar(message, 'failure');
+        this.clearSelected();
+        this.table.clearSelected();
+    }
 
     /**
      * To process dynamic selected from list

@@ -426,14 +426,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                     Source: 'agentId',
                     AllowedStates: []
                 },
-                Skill: {
-                    Allowed: false,
-                    Consult: false,
-                    Blind: false,
-                    Comments: false,
-                    ChannelPrefix: [],
-                    Source: 'skill'
-                },
+                OtherData: node,
                 Callback: ({ callbackData }) => {
                     const { TmacServer, LoginID } = callbackData.selectedRow;
                     const { channel, itemID: itemid } = node;
@@ -456,10 +449,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
             };
 
             this._matDialog.open(AgentSkillListComponent, {
-                data: {
-                    ...data,
-                    otherData: node
-                },
+                data,
                 panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
                 minWidth: '30%',
                 maxWidth: '100%',

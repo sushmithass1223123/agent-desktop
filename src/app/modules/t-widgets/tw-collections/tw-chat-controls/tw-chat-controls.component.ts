@@ -65,7 +65,7 @@ import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, Sn
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
-import { map } from 'lodash';
+import { map, merge } from 'lodash';
 import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -2695,7 +2695,34 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             conference: this.widgetData.Conference ?? {}
         };
 
-        let data: Partial<AgentSkillListData> = {
+        let data: Partial<AgentSkillListData> = {};
+
+        if (type === 'transfer') {
+            data = new AgentSkillListDataModel('transferChat', 'Transfer Chat');
+            data = merge({}, data, transferConferenceConfig.transfer);
+        } else if (type === 'conference') {
+            data = new AgentSkillListDataModel('conferenceChat', 'Conference Chat');
+            data = merge({}, data, transferConferenceConfig.conference);
+
+            // check if the type is conference and self destination list is there
+            if (this.selfServiceDestinations.length) {
+                data.DynamicLists = [
+                    {
+                        Label: 'Bot Conference',
+                        Placeholder: 'Destination',
+                        Data: merge([], this.selfServiceDestinations),
+                        Columns: ['Name', 'Value'],
+                        Selection: 'Value',
+                        Consult: true,
+                        Blind: false,
+                        Comments: false
+                    }
+                ];
+            }
+        }
+
+        data = {
+            ...data,
             InteractionId: this.interaction.InteractionID,
             OtherData: {
                 type: type === 'transfer' ? 'transfer' : 'conf',
@@ -2710,33 +2737,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
             }
         };
-
-        if (type === 'transfer') {
-            data = new AgentSkillListDataModel('transferChat', 'Transfer Chat');
-            data = { ...data, ...transferConferenceConfig.transfer };
-        } else if (type === 'conference') {
-            data = new AgentSkillListDataModel('conferenceChat', 'Conference Chat');
-            data = { ...data, ...transferConferenceConfig.conference };
-
-            // check if the type is conference and self destination list is there
-            if (this.selfServiceDestinations.length) {
-                data.OtherData = {
-                    ...data.OtherData
-                };
-                data.DynamicLists = [
-                    {
-                        Label: 'Bot Conference',
-                        Placeholder: 'Destination',
-                        Data: this.selfServiceDestinations,
-                        Columns: ['Name', 'Value'],
-                        Selection: 'Value',
-                        Consult: true,
-                        Blind: false,
-                        Comments: false
-                    }
-                ];
-            }
-        }
 
         // open agent skill list component in dialog
         this.transferConfDialogRef = this._matDialog.open(AgentSkillListComponent, {
