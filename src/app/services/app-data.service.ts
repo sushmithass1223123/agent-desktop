@@ -2,6 +2,7 @@ import { AppRootConfig } from '@ad/types';
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { NavigationExtras, Router } from '@angular/router';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
 import { AppConfigsModel, LoginWidgetModel } from 'app/models';
@@ -35,7 +36,7 @@ export class AppDataService extends SharedWrapper {
     /**
      * App Config Json subject
      */
-    private _appConfigSubject: BehaviorSubject<any>;
+    private _appConfigSubject: BehaviorSubject<AppRootConfig>;
     /**
      * App version
      */
@@ -44,12 +45,13 @@ export class AppDataService extends SharedWrapper {
     constructor(
         @Inject(DOCUMENT) private document: any,
         private _titleService: Title,
-        private _fuseFacadeService: FuseFacadeService // private _tmacEventService: TMACEventService
+        private _fuseFacadeService: FuseFacadeService, // private _tmacEventService: TMACEventService
+        private _router: Router
     ) {
         // Set the config from the default config
         super('AppDataService');
         this._configSubject = new BehaviorSubject(new Object());
-        this._appConfigSubject = new BehaviorSubject(new Object());
+        this._appConfigSubject = new BehaviorSubject(new Object()) as BehaviorSubject<AppRootConfig>;
         this._appVersion = packageInfo.version;
     }
 
@@ -71,7 +73,7 @@ export class AppDataService extends SharedWrapper {
         this._configSubject.next(config);
     }
 
-    get config(): any | Observable<AppRootConfig> {
+    get config(): Observable<AppRootConfig> {
         return this._configSubject.asObservable();
     }
 
@@ -262,7 +264,7 @@ export class AppDataService extends SharedWrapper {
                 const domain = window.location.hostname || '';
                 conf.replaceAll('${domainName}', domain);
                 conf = JSON.parse(conf);
-                this.config = conf;
+                this.config = conf as any;
                 this.setJsonConfig(data);
                 this.setTheme();
                 return {
@@ -314,5 +316,25 @@ export class AppDataService extends SharedWrapper {
             return this._configSubject.pipe(map((conf) => formatJsonData(conf, json)));
         }
         return this._configSubject;
+    }
+
+    /**
+     * Route to a path
+     *
+     * @param commands
+     * @param extras
+     */
+    public routeToPath(commands: any[], extras?: NavigationExtras) {
+        // check if the route is to login page
+        if (commands.some((s) => s.includes('login'))) {
+            // check if any logout Url is configured
+            const logoutUrl = this._configSubject.value?.Login?.LogoutUrl;
+            if (logoutUrl) {
+                // route to logout url
+                location.href = logoutUrl;
+                return;
+            }
+        }
+        this._router.navigate(commands, extras);
     }
 }

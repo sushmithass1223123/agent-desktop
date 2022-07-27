@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
+import { AppDataService } from '@services/app-data.service';
 
 /**
  * Common resource not found compnent
@@ -33,7 +32,7 @@ export class ResourceNotFoundComponent implements OnInit {
      */
     route = '';
 
-    constructor(private _router: Router, private _titleService: Title, private fuseSplashService: FuseSplashScreenService) {}
+    constructor(private _titleService: Title, private _appDataService: AppDataService) {}
 
     /**
      * Lifecycles Hook
@@ -54,6 +53,6 @@ export class ResourceNotFoundComponent implements OnInit {
      */
     routeBack(): void {
         // we will route to login page
-        this._router.navigate([this.route ?? 'login'], { queryParamsHandling: 'preserve' });
+        this._appDataService.routeToPath([this.route ?? 'login'], { queryParamsHandling: 'preserve' });
     }
 }
