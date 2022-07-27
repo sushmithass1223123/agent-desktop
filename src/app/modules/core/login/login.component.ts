@@ -254,7 +254,6 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         private _fuseFacadeService: FuseFacadeService,
         private _formBuilder: FormBuilder,
         private _appDataService: AppDataService,
-        private _router: Router,
         private _appUIService: AppUiService,
         private _titleService: Title,
         private _activatedRoute: ActivatedRoute,
@@ -393,8 +392,9 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                         // if expiry time is not configured then ignore link expiry check
                         if (timestamp && expiry > 0 && parseInt(currentUTCDt) > parseInt(timestamp) + expiry) {
                             this.logger.warn(`Link has expired, ct=${currentUTCDt}, lt=${timestamp}, expiry=${expiry}`);
+
                             // we will route to error page
-                            this._router.navigate(['not-found'], {
+                            this._appDataService.routeToPath(['not-found'], {
                                 state: {
                                     subtitle: 'Oops',
                                     title: '404',
@@ -513,7 +513,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         // if the json is not proper then route to not-found page
         if (!config) {
             // we will route to error page
-            // this._router.navigate(['not-found'], {
+            // this._appDataService.routeToPath(['not-found'], {
             //     state: {
             //         subtitle: 'Oops',
             //         title: '404',
@@ -957,7 +957,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                                   }
                                 : {};
                             // we will route to main page
-                            this._router.navigate([`main/${agentId}`], {
+                            this._appDataService.routeToPath([`main/${agentId}`], {
                                 queryParams,
                                 state: {
                                     routeFrom: 'login',

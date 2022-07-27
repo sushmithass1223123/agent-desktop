@@ -113,12 +113,7 @@ export class TMACEventService extends SharedWrapper {
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(
-        private _appDataService: AppDataService,
-        private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService,
-        private _router: Router
-    ) {
+    constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
         // intialize all the subject
         super('TMACEventService');
         this._unsubscribeAll = new Subject();
@@ -733,7 +728,7 @@ export class TMACEventService extends SharedWrapper {
         }
 
         // we will route to login page
-        this._router.navigate(['login'], {
+        this._appDataService.routeToPath(['login'], {
             // queryParamsHandling: 'preserve',
             // preserveFragment: true,
             // state: {
@@ -790,7 +785,7 @@ export class TMACEventService extends SharedWrapper {
      */
     private TmacServerConnectionAborted = () => {
         // we will route to login page
-        this._router.navigate(['login']);
+        this._appDataService.routeToPath(['login']);
         this._appUIService.showSnackbar('TMAC Server connection closed, Please relogin!');
     };
 

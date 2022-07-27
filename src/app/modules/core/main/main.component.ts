@@ -44,7 +44,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     /**
      * Logging agent Id
      */
-    agentId: string;
+    agentIdRouteParam: string;
     /**
      * Query params
      */
@@ -101,31 +101,19 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
 
     /**
      * Constructor
-     *
-     * @param {DOCUMENT} document
-     * @param {FuseFacadeService} _fuseFacadeService
-     * @param {AppDataService} _appDataService
-     * @param {FuseSidebarService} _fuseSidebarService
-     * @param {Router} _router
-     * @param {AppUiService} _appUIService
-     * @param {AgentFeaturesService} _agentFeaturesService
-     * @param {TMACEventService} _tmacEventService
-     * @param {ActivatedRoute} _activatedRouter
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
         private _fuseFacadeService: FuseFacadeService,
         private _appDataService: AppDataService,
         private _fuseSidebarService: FuseSidebarService,
-        private _router: Router,
-        private route: ActivatedRoute,
         private _appUIService: AppUiService,
         private _agentFeaturesService: AgentFeaturesService,
         private _tmacEventService: TMACEventService,
         private _interactionManagerService: InteractionManagerService,
         private _activatedRouter: ActivatedRoute,
         private _titleService: Title,
-        private fuseSplashService: FuseSplashScreenService
+        private _fuseSplashService: FuseSplashScreenService
     ) {
         // set the private defaults
         this._unsubscribeAll = new Subject();
@@ -133,7 +121,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // subscribe to _activatedRouter for loging agent id
         this._activatedRouter.paramMap.subscribe((paramMap) => {
             if (paramMap.has('agentId')) {
-                this.agentId = paramMap.get('agentId');
+                this.agentIdRouteParam = paramMap.get('agentId');
             }
         });
 
@@ -151,7 +139,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * On init
      */
     ngOnInit(): void {
-        this.fuseSplashService.hide();
+        this._fuseSplashService.hide();
         // subscribe to TMACEventService and InteractionManagerService
         this._tmacEventService.subscribe();
         this._interactionManagerService.subscribe();
@@ -202,7 +190,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         /**
          * subscribes to Activated route
          */
-        this.route.queryParams
+        this._activatedRouter.queryParams
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 // delay(2000),
@@ -235,7 +223,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         }
 
         // get the logging agent id
-        const agentId = history.state?.agentId ?? this.agentId;
+        const agentId = history.state?.agentId ?? this.agentIdRouteParam;
         // check the agent Id
         if (agentId) {
             if (route !== 'login') {
@@ -244,7 +232,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
                 // if the json is not proper then route to not-found page
                 if (!config) {
                     // we will route to error page
-                    this._router.navigate(['not-found'], {
+                    this._appDataService.routeToPath(['not-found'], {
                         state: {
                             subtitle: 'Oops',
                             title: '404',
@@ -287,7 +275,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     private routeToLogin(): void {
         // we will route to login page
-        this._router.navigate([`login${this.agentId ? '/' + this.agentId : ''}`]);
+        this._appDataService.routeToPath([`login${this.agentIdRouteParam ? '/' + this.agentIdRouteParam : ''}`]);
     }
 
     /**

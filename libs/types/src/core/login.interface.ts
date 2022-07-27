@@ -43,6 +43,10 @@ export type LoginConfig = {
      * Threshold for SSO link expiry
      */
     SSOLinkExpiry: number;
+    /**
+     * Url to route on logout
+     */
+    LogoutUrl: string;
 };
 
 /**
