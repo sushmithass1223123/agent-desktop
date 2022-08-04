@@ -2634,7 +2634,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dice.tetherfi.cloud/Dev_TMACSDKProxy/TmacProxy.asmx",
+                    "https://dicedev.tetherfi.cloud/TMACSDKProxy/TmacProxy.asmx",
                     "https://localhost/TMACSDKProxy/TmacProxy.asmx",
                     "https://34.231.71.249:55443/TMACSDKProxy/TmacProxy.asmx"
                 ],
@@ -2657,5 +2657,5 @@
             ]
         }
     },
-    "Version": "5.1.2.2801"
+    "Version": "5.1.2.2801-patch.1"
 }
