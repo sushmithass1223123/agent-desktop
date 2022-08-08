@@ -818,21 +818,9 @@
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
-                                                                "STF": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "AVL": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "CIQ": {
-                                                                    "Enabled": true,
-                                                                    "Min": 0,
-                                                                    "Max": 0
-                                                                }
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         },
                                                         "SpeedDial": {
@@ -867,21 +855,9 @@
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
-                                                                "STF": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "AVL": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "CIQ": {
-                                                                    "Enabled": true,
-                                                                    "Min": 0,
-                                                                    "Max": 0
-                                                                }
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
                                                     },
@@ -1358,21 +1334,9 @@
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
-                                                                "STF": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "AVL": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "CIQ": {
-                                                                    "Enabled": true,
-                                                                    "Min": 0,
-                                                                    "Max": 0
-                                                                }
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
                                                     },
@@ -1398,21 +1362,9 @@
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
-                                                                "STF": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "AVL": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "CIQ": {
-                                                                    "Enabled": true,
-                                                                    "Min": 0,
-                                                                    "Max": 0
-                                                                }
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
                                                     },
@@ -1922,21 +1874,9 @@
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
-                                                                "STF": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "AVL": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "CIQ": {
-                                                                    "Enabled": true,
-                                                                    "Min": 0,
-                                                                    "Max": 0
-                                                                }
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
                                                     },
@@ -2440,21 +2380,9 @@
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
-                                                                "STF": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "AVL": {
-                                                                    "Enabled": true,
-                                                                    "Min": 1,
-                                                                    "Max": -1
-                                                                },
-                                                                "CIQ": {
-                                                                    "Enabled": true,
-                                                                    "Min": 0,
-                                                                    "Max": 0
-                                                                }
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
                                                     },
@@ -2754,5 +2682,5 @@
             ]
         }
     },
-    "Version": "5.1.6.30"
+    "Version": "5.1.7.30"
 }
