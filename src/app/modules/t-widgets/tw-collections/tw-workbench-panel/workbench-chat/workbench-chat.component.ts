@@ -1,3 +1,4 @@
+import { AgentSkillListData } from '@ad/types';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
@@ -9,7 +10,8 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IAgentData, SDKClient } from '@tmac/sdk';
-import { AgentSkillListData, IWidget } from 'app/interfaces';
+import { IWidget } from 'app/interfaces';
+import { AgentSkillListDataModel } from 'app/models';
 import { formatJsonData } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
@@ -370,53 +372,84 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
      */
     pushChat(node: any): void {
         try {
+            // const data: AgentSkillListData = {
+            //     Title: 'Push Chat',
+            //     Type: 'pushChat',
+            //     Agent: {
+            //         Allowed: true,
+            //         Consult: true,
+            //         Blind: false,
+            //         Comments: false,
+            //         Source: 'agentId',
+            //         AllowedStates: []
+            //     },
+            //     Skill: {
+            //         Allowed: false,
+            //         Consult: false,
+            //         Blind: false,
+            //         Comments: false,
+            //         ChannelPrefix: [],
+            //         Source: 'skill'
+            //     }
+            // };
+
+            // data.Callback = (callbackData) => {
+            //     const { TmacServer, LoginID } = callbackData.selectedRow;
+            //     const { channel, itemID: itemid } = node;
+            //     this._appUiService.showSnackbar('Pushing Chat', 'loading');
+            //     this.http
+            //         .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
+            //             tmacServer: TmacServer,
+            //             agentId: LoginID,
+            //             channel: channel,
+            //             items: [{ itemid }]
+            //         })
+            //         .subscribe((res: any) => {
+            //             if (res && res.status !== 'FAILED') {
+            //                 this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+            //                 return;
+            //             }
+            //             this._appUiService.showSnackbar('Unable to push chat', 'failure');
+            //         });
+            // };
+
             // TODD:: add config for push
-            const data: AgentSkillListData = {
-                title: 'Push Chat',
-                type: 'pushChat',
-                agent: {
-                    allowed: true,
-                    consult: true,
-                    blind: false,
-                    comments: false,
-                    source: 'agentId',
-                    allowedStates: []
+
+            let data: AgentSkillListData = new AgentSkillListDataModel('pushChat', 'Push Chat');
+            data = {
+                ...data,
+                Agent: {
+                    Allowed: true,
+                    Consult: true,
+                    Blind: false,
+                    Comments: false,
+                    Source: 'agentId',
+                    AllowedStates: []
                 },
-                skill: {
-                    allowed: false,
-                    consult: false,
-                    blind: false,
-                    comments: false,
-                    channelPrfix: [],
-                    source: 'skill'
+                OtherData: node,
+                Callback: ({ callbackData }) => {
+                    const { TmacServer, LoginID } = callbackData.selectedRow;
+                    const { channel, itemID: itemid } = node;
+                    this._appUiService.showSnackbar('Pushing Chat', 'loading');
+                    this.http
+                        .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
+                            tmacServer: TmacServer,
+                            agentId: LoginID,
+                            channel: channel,
+                            items: [{ itemid }]
+                        })
+                        .subscribe((res: any) => {
+                            if (res && res.status !== 'FAILED') {
+                                this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                                return;
+                            }
+                            this._appUiService.showSnackbar('Unable to push chat', 'failure');
+                        });
                 }
             };
 
-            data.callback = (callbackData) => {
-                const { TmacServer, LoginID } = callbackData.selectedRow;
-                const { channel, itemID: itemid } = node;
-                this._appUiService.showSnackbar('Pushing Chat', 'loading');
-                this.http
-                    .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
-                        tmacServer: TmacServer,
-                        agentId: LoginID,
-                        channel: channel,
-                        items: [{ itemid }]
-                    })
-                    .subscribe((res: any) => {
-                        if (res && res.status !== 'FAILED') {
-                            this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
-                            return;
-                        }
-                        this._appUiService.showSnackbar('Unable to push chat', 'failure');
-                    });
-            };
-
             this._matDialog.open(AgentSkillListComponent, {
-                data: {
-                    ...data,
-                    otherData: node
-                },
+                data,
                 panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
                 minWidth: '30%',
                 maxWidth: '100%',

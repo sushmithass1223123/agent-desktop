@@ -113,12 +113,7 @@ export class TMACEventService extends SharedWrapper {
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(
-        private _appDataService: AppDataService,
-        private _appUIService: AppUiService,
-        private _aotWidgetService: AOTWidgetService,
-        private _router: Router
-    ) {
+    constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
         // intialize all the subject
         super('TMACEventService');
         this._unsubscribeAll = new Subject();
@@ -733,7 +728,7 @@ export class TMACEventService extends SharedWrapper {
         }
 
         // we will route to login page
-        this._router.navigate(['login'], {
+        this._appDataService.routeToPath(['login'], {
             // queryParamsHandling: 'preserve',
             // preserveFragment: true,
             // state: {
@@ -790,7 +785,7 @@ export class TMACEventService extends SharedWrapper {
      */
     private TmacServerConnectionAborted = () => {
         // we will route to login page
-        this._router.navigate(['login']);
+        this._appDataService.routeToPath(['login']);
         this._appUIService.showSnackbar('TMAC Server connection closed, Please relogin!');
     };
 
@@ -854,13 +849,13 @@ export class TMACEventService extends SharedWrapper {
                 // to close tab/interaction
                 else if (fn === 'closetab' || fn === 'closeinteraction') {
                     // check the interactionId
-                    const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId;
+                    const intId = message.data.interactionID ?? message.data.InteractionID ?? message.data.intId ?? message.data.interactionId;
                     if (!intId) {
                         this.logger.info('postMessageReceived to close tab reject, interaction id not found');
                         return;
                     }
                     // close tab
-                    SDKClient.closeInteraction(message.data.interactionID);
+                    SDKClient.closeInteraction(intId);
                 }
                 // to show snackbar
                 else if (fn === 'showsnackbar' && message.data?.message) {
@@ -893,6 +888,17 @@ export class TMACEventService extends SharedWrapper {
                         throw new Error(error);
                     }
                     return;
+                }
+                // to end interaction
+                else if (fn === 'endinteraction') {
+                    // check the interactionId
+                    const intId = message.data.interactionId;
+                    if (!intId) {
+                        this.logger.info('postMessageReceived to end interaction reject, interaction id not found');
+                        return;
+                    }
+                    // disconnect call
+                    SDKClient.disconnectCall(intId);
                 }
 
                 // notify the observers

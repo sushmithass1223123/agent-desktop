@@ -4,7 +4,7 @@
             <ng-container *ngIf="switcherList[activeSwitcher] as tabConf">
                 <ng-container
                     *ngIf="{
-                        transfer: (!selectedItem && !tabConf.freeText.value) || !!loading
+                        disabled: (!selectedItem && !tabConf.freeText.value) || !!loading
                     } as controls"
                 >
                     <div class="twd-h-full twd-flex twd-flex-col">
@@ -81,7 +81,7 @@
                                     mat-raised-button
                                     class="custom-btn bg-success border-radius-20"
                                     [matTooltip]="actionTooltip"
-                                    [disabled]="controls.transfer"
+                                    [disabled]="controls.disabled"
                                     (click)="executeAction(true)"
                                 >
                                     <mat-icon *ngIf="!loading">{{ icon }}</mat-icon>
@@ -93,12 +93,10 @@
                                     mat-raised-button
                                     matTooltip="Blind"
                                     class="custom-btn bg-success border-radius-20"
-                                    [disabled]="controls.transfer"
+                                    [disabled]="controls.disabled"
                                     (click)="executeAction(false)"
                                 >
-                                    <span *ngIf="!loading" class="twd-font-extrabold">
-                                        {{ _dialogData?.type.includes('transfer') ? 'BT' : 'BC' }}</span
-                                    >
+                                    <span *ngIf="!loading" class="twd-font-extrabold"> {{ blindLabel }}</span>
                                     <mat-spinner *ngIf="loading" diameter="28" class="my-4"></mat-spinner>
                                 </button>
                             </div>
@@ -110,7 +108,7 @@
                                         *ngFor="let item of tabList"
                                         class="border-radius-20 twd-p-2 twd-font-bold twd-cursor-pointer twd-flex-1"
                                         [ngClass]="activeSwitcher === item.key && customFuse?.body"
-                                        (click)="switchTab(item.key); searchRef.focus()"
+                                        (click)="switchTab(item.key); agentSearchRef.focus()"
                                     >
                                         {{ item.key }}
                                     </div>
@@ -132,9 +130,9 @@
                                     <!-- Search form field with form control searchKey -->
                                     <div #searchKeyText class="twd-hidden">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                            <input matInput #searchRef [formControl]="searchKey" placeholder="Search" />
+                                            <input matInput #agentSearchRef [formControl]="searchKey" placeholder="Search" />
                                             <button
-                                                *ngIf="searchRef.value"
+                                                *ngIf="agentSearchRef.value"
                                                 mat-button
                                                 color="primary"
                                                 matSuffix
@@ -188,7 +186,7 @@
                                                 searchKeyText.classList.replace('twd-hidden', 'twd-flex-1');
                                                 searchKeyButton.classList.toggle('twd-hidden');
                                                 skillSelectButton.classList.toggle('twd-hidden');
-                                                searchRef.focus()
+                                                agentSearchRef.focus()
                                             "
                                         >
                                             <mat-icon>search</mat-icon>
@@ -196,11 +194,11 @@
                                     </div>
                                 </div>
 
-                                <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Skill List' }">
+                                <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher === 'Agent List' }">
                                     <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                        <input matInput [formControl]="searchKey" #skillSearchRef placeholder="Search" />
+                                        <input matInput [formControl]="searchKey" #searchRef placeholder="Search" />
                                         <button
-                                            *ngIf="skillSearchRef.value"
+                                            *ngIf="searchRef.value"
                                             mat-button
                                             color="primary"
                                             matSuffix
@@ -213,27 +211,6 @@
                                     </mat-form-field>
                                 </div>
 
-                                <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Speed Dial' }">
-                                    <!-- <mat-radio-group [formControl]="operationHoursCtrl">
-                                        <mat-radio-button value="all">All</mat-radio-button>
-                                        <mat-radio-button value="operating">Operating</mat-radio-button>
-                                        <mat-radio-button value="non-operating">Non Operating</mat-radio-button>
-                                    </mat-radio-group> -->
-                                    <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                        <input matInput [formControl]="searchKey" #skillSearchRef placeholder="Search" />
-                                        <button
-                                            *ngIf="skillSearchRef.value"
-                                            mat-button
-                                            color="primary"
-                                            matSuffix
-                                            mat-icon-button
-                                            aria-label="Clear"
-                                            (click)="searchKey.setValue('')"
-                                        >
-                                            <mat-icon>close</mat-icon>
-                                        </button>
-                                    </mat-form-field>
-                                </div>
                                 <div
                                     class="twd-w-full twd-absolute twd-left-0 twd-h-[calc(100%-60px)] twd-max-h-full"
                                     [ngClass]="customFuse?.content"

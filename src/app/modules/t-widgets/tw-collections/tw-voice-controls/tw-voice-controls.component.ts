@@ -44,7 +44,8 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionComment, InteractionRef, IWidget } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
+import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
+import { merge } from 'lodash';
 import { Subject, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
@@ -1599,120 +1600,170 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param type
      */
     openTransferConferenceDialog(type: string): void {
-        const transferConfig = {
-            agent: this.widgetData.Transfer?.Agent ?? null,
-            skill: this.widgetData.Transfer?.Skill ?? null,
-            speedDial: this.widgetData.Transfer?.SpeedDial ?? null
+        // const transferConfig = {
+        //     agent: this.widgetData.Transfer?.Agent ?? null,
+        //     skill: this.widgetData.Transfer?.Skill ?? null,
+        //     speedDial: this.widgetData.Transfer?.SpeedDial ?? null
+        // };
+
+        // const conferenceConfig = {
+        //     agent: this.widgetData.Conference?.Agent ?? null,
+        //     skill: this.widgetData.Conference?.Skill ?? null,
+        //     speedDial: this.widgetData.Conference?.SpeedDial ?? null
+        // };
+
+        // // get data based on type
+        // let data: AgentSkillListData =
+        //     type === 'transfer'
+        //         ? {
+        //               Title: 'Transfer Call',
+        //               Type: 'transferCall',
+        //               Agent: {
+        //                   Allowed: transferConfig.agent?.Allowed,
+        //                   Consult: transferConfig.agent?.Consult,
+        //                   Blind: transferConfig.agent?.Blind,
+        //                   Comments: transferConfig.agent?.Comments,
+        //                   Source: transferConfig.agent?.Source,
+        //                   AllowedStates: transferConfig.agent?.AllowedStates,
+        //                   Columns: transferConfig.agent?.Columns,
+        //                   TeamFilter: transferConfig.agent?.TeamFilter
+        //               },
+        //               Skill: {
+        //                   Allowed: transferConfig.skill?.Allowed,
+        //                   Consult: transferConfig.skill?.Consult,
+        //                   Blind: transferConfig.skill?.Blind,
+        //                   Comments: transferConfig.skill?.Comments,
+        //                   Source: transferConfig.skill?.Source,
+        //                   ChannelPrefix: transferConfig.skill?.ChannelPrefix,
+        //                   Columns: transferConfig.skill?.Columns
+        //               },
+        //               SpeedDial: {
+        //                   Allowed: transferConfig.speedDial?.Allowed,
+        //                   Consult: transferConfig.speedDial?.Consult,
+        //                   Blind: transferConfig.speedDial?.Blind,
+        //                   Comments: transferConfig.speedDial?.Comments,
+        //                   Source: transferConfig.speedDial?.Source,
+        //                   Columns: transferConfig.speedDial?.Columns,
+        //                   TeamFilter: transferConfig.speedDial?.TeamFilter
+        //               }
+        //           }
+        //         : {
+        //               Title: 'Conference Call',
+        //               Type: 'conferenceCall',
+        //               Agent: {
+        //                   Allowed: conferenceConfig.agent?.Allowed,
+        //                   Consult: conferenceConfig.agent?.Consult,
+        //                   Blind: conferenceConfig.agent?.Blind,
+        //                   Comments: conferenceConfig.agent?.Comments,
+        //                   Source: conferenceConfig.agent?.Source,
+        //                   AllowedStates: conferenceConfig.agent?.AllowedStates,
+        //                   Columns: conferenceConfig.agent?.Columns,
+        //                   TeamFilter: conferenceConfig.agent?.TeamFilter
+        //               },
+        //               Skill: {
+        //                   Allowed: conferenceConfig.skill?.Allowed,
+        //                   Consult: conferenceConfig.skill?.Consult,
+        //                   Blind: conferenceConfig.skill?.Blind,
+        //                   Comments: conferenceConfig.skill?.Comments,
+        //                   Source: conferenceConfig.skill?.Source,
+        //                   ChannelPrefix: conferenceConfig.skill?.ChannelPrefix,
+        //                   Columns: conferenceConfig.skill?.Columns
+        //               },
+        //               SpeedDial: {
+        //                   Allowed: conferenceConfig.speedDial?.Allowed,
+        //                   Consult: conferenceConfig.speedDial?.Consult,
+        //                   Blind: conferenceConfig.speedDial?.Blind,
+        //                   Comments: conferenceConfig.speedDial?.Comments,
+        //                   Source: conferenceConfig.speedDial?.Source,
+        //                   Columns: conferenceConfig.speedDial?.Columns,
+        //                   TeamFilter: conferenceConfig.speedDial?.TeamFilter
+        //               }
+        //           };
+
+        // // add common properties
+        // data = {
+        //     ...data,
+        //     InteractionId: this.interaction.InteractionID,
+        //     OtherData: {
+        //         isMSCall: this.isMSCall,
+        //         avConns: this.avConns,
+        //         callLines: this.callLines
+        //     }
+        // };
+
+        // data.Callback = (callbackData) => {
+        //     // assign the data
+        //     this.tempCallRef = {
+        //         ...this.tempCallRef,
+        //         ...callbackData
+        //     };
+
+        //     // hold call on conference call success for MS calls
+        //     if (data.Type === 'conferenceCall' && this.isMSCall) {
+        //         // get the connection variable for main line
+        //         // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+        //         // so we use mute/unmute instead
+        //         const connection: AVChannel = this.avConns[this.callLines[0]];
+        //         // mute the call
+        //         connection.mute(true, false);
+        //         // mute flag
+        //         this.muted = true;
+        //         // change status for hold temp.
+        //         this.status = 'hold';
+        //         // update the interaction status
+        //         this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
+        //             status: 'hold'
+        //         });
+        //     }
+        // };
+
+        const transferConferenceConfig = {
+            transfer: this.widgetData.Transfer ?? {},
+            conference: this.widgetData.Conference ?? {}
         };
 
-        const conferenceConfig = {
-            agent: this.widgetData.Conference?.Agent ?? null,
-            skill: this.widgetData.Conference?.Skill ?? null,
-            speedDial: this.widgetData.Conference?.SpeedDial ?? null
-        };
+        let data: Partial<AgentSkillListData> = {};
 
-        // get data based on type
-        let data: AgentSkillListData =
-            type === 'transfer'
-                ? {
-                      title: 'Transfer Call',
-                      type: 'transferCall',
-                      agent: {
-                          allowed: transferConfig.agent?.Allowed,
-                          consult: transferConfig.agent?.Consult,
-                          blind: transferConfig.agent?.Blind,
-                          comments: transferConfig.agent?.Comments,
-                          source: transferConfig.agent?.Source,
-                          allowedStates: transferConfig.agent?.AllowedStates,
-                          columns: transferConfig.agent?.Columns,
-                          teamFilter: transferConfig.agent?.TeamFilter
-                      },
-                      skill: {
-                          allowed: transferConfig.skill?.Allowed,
-                          consult: transferConfig.skill?.Consult,
-                          blind: transferConfig.skill?.Blind,
-                          comments: transferConfig.skill?.Comments,
-                          source: transferConfig.skill?.Source,
-                          channelPrfix: transferConfig.skill?.ChannelPrefix,
-                          columns: transferConfig.skill?.Columns
-                      },
-                      speedDial: {
-                          allowed: transferConfig.speedDial?.Allowed,
-                          consult: transferConfig.speedDial?.Consult,
-                          blind: transferConfig.speedDial?.Blind,
-                          comments: transferConfig.speedDial?.Comments,
-                          source: transferConfig.speedDial?.Source,
-                          columns: transferConfig.speedDial?.Columns,
-                          teamFilter: transferConfig.speedDial?.TeamFilter
-                      }
-                  }
-                : {
-                      title: 'Conference Call',
-                      type: 'conferenceCall',
-                      agent: {
-                          allowed: conferenceConfig.agent?.Allowed,
-                          consult: conferenceConfig.agent?.Consult,
-                          blind: conferenceConfig.agent?.Blind,
-                          comments: conferenceConfig.agent?.Comments,
-                          source: conferenceConfig.agent?.Source,
-                          allowedStates: conferenceConfig.agent?.AllowedStates,
-                          columns: conferenceConfig.agent?.Columns,
-                          teamFilter: conferenceConfig.agent?.TeamFilter
-                      },
-                      skill: {
-                          allowed: conferenceConfig.skill?.Allowed,
-                          consult: conferenceConfig.skill?.Consult,
-                          blind: conferenceConfig.skill?.Blind,
-                          comments: conferenceConfig.skill?.Comments,
-                          source: conferenceConfig.skill?.Source,
-                          channelPrfix: conferenceConfig.skill?.ChannelPrefix,
-                          columns: conferenceConfig.skill?.Columns
-                      },
-                      speedDial: {
-                          allowed: conferenceConfig.speedDial?.Allowed,
-                          consult: conferenceConfig.speedDial?.Consult,
-                          blind: conferenceConfig.speedDial?.Blind,
-                          comments: conferenceConfig.speedDial?.Comments,
-                          source: conferenceConfig.speedDial?.Source,
-                          columns: conferenceConfig.speedDial?.Columns,
-                          teamFilter: conferenceConfig.speedDial?.TeamFilter
-                      }
-                  };
+        if (type === 'transfer') {
+            data = new AgentSkillListDataModel('transferCall', 'Transfer Call');
+            data = merge({}, data, transferConferenceConfig.transfer);
+        } else if (type === 'conference') {
+            data = new AgentSkillListDataModel('conferenceCall', 'Conference Call');
+            data = merge({}, data, transferConferenceConfig.conference);
+        }
 
-        // add common properties
         data = {
             ...data,
-            interactionId: this.interaction.InteractionID,
-            otherData: {
+            InteractionId: this.interaction.InteractionID,
+            OtherData: {
                 isMSCall: this.isMSCall,
                 avConns: this.avConns,
                 callLines: this.callLines
-            }
-        };
+            },
+            Callback: (callbackData) => {
+                // assign the data
+                this.tempCallRef = {
+                    ...this.tempCallRef,
+                    ...callbackData
+                };
 
-        data.callback = (callbackData) => {
-            // assign the data
-            this.tempCallRef = {
-                ...this.tempCallRef,
-                ...callbackData
-            };
-
-            // hold call on conference call success for MS calls
-            if (data.type === 'conferenceCall' && this.isMSCall) {
-                // get the connection variable for main line
-                // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
-                // so we use mute/unmute instead
-                const connection: AVChannel = this.avConns[this.callLines[0]];
-                // mute the call
-                connection.mute(true, false);
-                // mute flag
-                this.muted = true;
-                // change status for hold temp.
-                this.status = 'hold';
-                // update the interaction status
-                this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
-                    status: 'hold'
-                });
+                // hold call on conference call success for MS calls
+                if (data.Type === 'conferenceCall' && this.isMSCall) {
+                    // get the connection variable for main line
+                    // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
+                    // so we use mute/unmute instead
+                    const connection: AVChannel = this.avConns[this.callLines[0]];
+                    // mute the call
+                    connection.mute(true, false);
+                    // mute flag
+                    this.muted = true;
+                    // change status for hold temp.
+                    this.status = 'hold';
+                    // update the interaction status
+                    this._interactionManagerService.updateInteraction(this.interaction.InteractionID, {
+                        status: 'hold'
+                    });
+                }
             }
         };
 

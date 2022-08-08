@@ -83,7 +83,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
      */
     private routeToNotFound(message: string): void {
         // route to the not found page
-        this._router.navigate(['not-found'], {
+        this._appDataService.routeToPath(['not-found'], {
             state: {
                 subtitle: 'Oops',
                 title: '',

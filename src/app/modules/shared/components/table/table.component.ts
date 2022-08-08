@@ -376,10 +376,7 @@ export class TableComponent implements OnInit {
      * @param {any} record
      */
     async triggerAction(action: string, record: any): Promise<void> {
-        if (this.selected) {
-            this.selected = null;
-            this.collapseExpanded();
-        }
+        this.clearSelected();
         record.expanded = true;
         // const payload = { action, record };
         this.selected = await this.formatPayload({ action, record });
@@ -456,6 +453,16 @@ export class TableComponent implements OnInit {
     selectRow(row: any): void {
         if (this.selectable) {
             this.triggerAction('row-selected', row);
+        }
+    }
+
+    /**
+     * To clear selected
+     */
+    clearSelected(): void {
+        if (this.selected) {
+            this.selected = null;
+            this.collapseExpanded();
         }
     }
 }

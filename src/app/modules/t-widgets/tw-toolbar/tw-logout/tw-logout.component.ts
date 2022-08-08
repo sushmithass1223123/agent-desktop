@@ -1,7 +1,8 @@
 import { TwLogout } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
@@ -21,6 +22,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * App config json data
      */
     @Input() data: TwLogout;
+
     /**
      * Can logout flag
      */
@@ -31,14 +33,27 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     logoutAux: string[];
 
+    /**
+     * Logout route param
+     */
+    agentIdRouteParam: string;
+
     constructor(
-        private _router: Router,
+        private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private _activatedRouter: ActivatedRoute
     ) {
         super('TwLogoutComponent');
         this.logoutAux = [];
+
+        // subscribe to _activatedRouter for loging agent id
+        this._activatedRouter.paramMap.subscribe((paramMap) => {
+            if (paramMap.has('agentId')) {
+                this.agentIdRouteParam = paramMap.get('agentId');
+            }
+        });
     }
 
     /**
@@ -150,7 +165,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         if (dt.response && dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar('Logged out successfully');
                             // route back to login page
-                            this._router.navigate(['login']);
+                            this._appDataService.routeToPath([`login${this.agentIdRouteParam ? '/' + this.agentIdRouteParam : ''}`]);
                         } else {
                             // logout error
                             this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
