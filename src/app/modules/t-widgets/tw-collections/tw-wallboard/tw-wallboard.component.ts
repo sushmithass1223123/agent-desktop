@@ -65,14 +65,12 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         // get the widget data
         this.widgetData = this.data.Data || new Object();
 
-        if (this.widgetData.SLEnabled) {
-            // get the dashboard color codes for wallboard
-            SDKClient.getDashboardColorCodes().then((x) => {
-                if (x.response) {
-                    this.dashboardColors = x.response.filter((n) => n.DashboardName === 'TmacWallboard');
-                }
-            });
-        }
+        // get the dashboard color codes for wallboard
+        SDKClient.getDashboardColorCodes().then((x) => {
+            if (x.response) {
+                this.dashboardColors = x.response.filter((n) => n.DashboardName === 'TmacWallboard');
+            }
+        });
 
         let eventName: CustomTMACEventTypes;
         if (this.widgetData.Role === 'agent') {
@@ -178,7 +176,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     getDashboardBgColor(value: number, type: string): string {
         // get the color code for the value
-        const filterData = this.dashboardColors.filter(
+        const filterData = this.dashboardColors?.filter(
             (data) => data.ColumnName === type && Number(data.EndRange) >= value && Number(data.StartRange) <= value
         )?.[0];
         // if the data found
@@ -195,7 +193,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     getDashboardFontColor(value: number, type: string): string {
         // get the color code for the value
-        const filterData = this.dashboardColors.filter(
+        const filterData = this.dashboardColors?.filter(
             (data) => data.ColumnName === type && Number(data.EndRange) >= value && Number(data.StartRange) <= value
         )?.[0];
         // if the data found

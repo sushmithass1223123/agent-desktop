@@ -768,8 +768,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // evt.data.local: ILocalStreamInfo
                     // evt.data.remote: IRemoteStreamInfo[]
 
-                    console.log('#### onStreamChanged', JSON.stringify(evt.data, undefined, 1));
-
                     const remote: IRemoteStreamInfo[] = evt.data.remote;
                     remote?.forEach((r) => {
                         if (r.state !== 'changed') return;
