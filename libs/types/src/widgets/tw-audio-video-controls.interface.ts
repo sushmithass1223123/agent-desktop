@@ -1,20 +1,69 @@
 import { InteractionWidget } from '..';
 
 /**
- * FOR INTERNAL USAGE ONLY.
- * Audio-Video widget handles the AV communication in AD
+ * Audio-Video widget handles the AV communication in AD.
+ *
+ * This widget can be standalone with limited features.
+ */
+
+/**
+ * Audio-Video widget handles the AV communication in AD.
+ *
+ * This widget can be standalone with limited features.
+ * The config example for standalone widget:
+ * ```json
+ * {
+ *     "Name": "Chat Controls",
+ *     "Description": "",
+ *     "Type": "tw-audio-video-controls",
+ *     "Config": {
+ *         "Enabled": true,
+ *         "Hidden": false,
+ *         "Static": false,
+ *         "Anchor": true,
+ *         "AOT": false,
+ *         "AutoOpen": false,
+ *         "Icon": "chat",
+ *         "Class": "",
+ *         "Position": { "X": 2, "Y": 1 },
+ *         "Actions": ["maximize", "collapse", "float"],
+ *         "ViewState": "restore",
+ *         "Header": true,
+ *         "Pinned": false
+ *     },
+ *     "Data": {
+ *         "ScreenShareAllowed": true,
+ *         "HoldInteractionAllowed": true,
+ *         "Snapshot": { "Allowed": true, "Source": "remote", "RemoteResponseTimeout": 10 },
+ *         "WebRTCTest": {
+ *             "Allowed": true,
+ *             "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
+ *             "Customer": true
+ *         },
+ *         "EndInteractionOnAVEnd": false,
+ *         "MuteAVOnHold": {
+ *             "AgentAudio": true,
+ *             "AgentVideo": true,
+ *             "CustomerAudio": true,
+ *             "CustomerVideo": false
+ *         },
+ *         "ToggleUserViewAllowed": true,
+ *         "Source": "TwChatControlsComponent"
+ *     }
+ * }
+ * ```
  */
 export interface TwAudioVideoControls<T = any> extends InteractionWidget<TwAudioVideoControlsData, T> {}
 
 export type TwAudioVideoControlsData = {
     /**
-     * Flag to end interaaction on AV end
+     * [STANDALONE] Flag to end interaaction on AV end
      */
-    EndInteractionOnAVEnd?: boolean;
+    EndInteractionOnAVEnd: boolean;
     /**
-     * WebRTC test ref
+     * [STANDALONE] WebRTC test ref
      */
-    WebRTCTest?: {
+    WebRTCTest: {
         /**
          * Flag to allow WebRTC test
          */
@@ -29,9 +78,9 @@ export type TwAudioVideoControlsData = {
         Customer: boolean;
     };
     /**
-     * Snapshot ref
+     * [STANDALONE] Snapshot ref
      */
-    Snapshot?: {
+    Snapshot: {
         /**
          * Flag to allow snapshot
          */
@@ -50,9 +99,9 @@ export type TwAudioVideoControlsData = {
         RemoteRequestTimeout: 10;
     };
     /**
-     * Flag to mute agent/customer audio/video on interaction hold
+     * [STANDALONE] Flag to mute agent/customer audio/video on interaction hold
      */
-    MuteAVOnHold?: {
+    MuteAVOnHold: {
         /**
          * Flag to mute agent audio
          */
@@ -71,23 +120,39 @@ export type TwAudioVideoControlsData = {
         CustomerVideo: boolean;
     };
     /**
-     * Source components from where this widget can be opened.
+     * [INTERNAL] Source components from where this widget can be opened.
      */
     Source: 'TwChatControlsComponent' | 'InstantMessagingComponent';
     /**
-     * AV event from opener
-     */
-    AVEvent?: any;
-    /**
-     * Opener of this widget
-     */
-    Opener?: any;
-    /**
-     * Send messsge function from opener
+     * [INTERNAL] Send messsge function from opener
      */
     SendMessage?: () => {};
     /**
-     * Flag to end call from opener
+     * [INTERNAL] Flag to end call from opener
      */
     EndCall?: () => void;
+    /**
+     * To auto start the call if the value is provided
+     *
+     * [INTERNAL] Used when opened as AOT from tw-chat-controls-widget
+     */
+    CallType?: 'audio' | 'video';
+    /**
+     * To identify the direction of call
+     *
+     * [INTERNAL] Used when opened as AOT from tw-chat-controls-widget
+     */
+    Direction?: 'in' | 'out';
+    /**
+     * [STANDALONE] Flag to hold interaction
+     */
+    HoldInteractionAllowed: boolean;
+    /**
+     * [STANDALONE] Flag to allow screenshare
+     */
+    ScreenShareAllowed: boolean;
+    /**
+     * [STANDALONE] Flag to toggle user view
+     */
+    ToggleUserViewAllowed: boolean;
 };

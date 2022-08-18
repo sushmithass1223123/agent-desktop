@@ -187,28 +187,22 @@
         <div class="w-100-p h-100-p chat-controls">
             <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
                 <div class="twd-flex twd-justify-between">
-                    <div class="twd-flex twd-items-center">
-                        <mat-icon class="s-20">alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}
-                    </div>
-                    <div class="twd-flex twd-items-center">
-                        <mat-icon class="s-20">construction</mat-icon> {{ sessionID + '|' + interaction.InteractionID }}
-                    </div>
+                    <div class="twd-flex twd-items-center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}</div>
+                    <div class="twd-flex twd-items-center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interaction.InteractionID }}</div>
                 </div>
                 <div class="twd-flex twd-justify-between">
-                    <div class="twd-flex twd-items-center">
-                        <mat-icon class="s-20">timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
-                    </div>
+                    <div class="twd-flex twd-items-center"><mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</div>
                     <div *ngIf="isSMM" class="twd-flex twd-items-center">
-                        <mat-icon class="s-20" [svgIcon]="'custom-' + channel"></mat-icon>
+                        <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
                         <span class="text-bold ml-4">{{ channel }}</span>
                     </div>
                     <div *ngIf="asyncChatRef.isAsync" class="twd-flex twd-items-center">
-                        <mat-icon class="s-20">sync_alt</mat-icon>
+                        <mat-icon>sync_alt</mat-icon>
                         <span class="text-bold ml-4">Async Chat</span>
                     </div>
 
                     <div class="twd-flex twd-items-center">
-                        <mat-icon class="s-20">grading</mat-icon> <span class="text-bold">{{ intent }}</span>
+                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
                     </div>
                 </div>
             </div>
@@ -402,7 +396,7 @@
                             mat-mini-fab
                             color="warn"
                             #endBtn
-                            (click)="confirmEndChat(endBtn)"
+                            (click)="confirmEndChat()"
                             matTooltip="End Chat"
                         >
                             <mat-icon>close</mat-icon>
@@ -428,7 +422,7 @@
                             class="border-radius-20"
                             color="warn"
                             #closeBtn
-                            (click)="confirmCloseInteraction(closeBtn)"
+                            (click)="confirmCloseInteraction()"
                             matTooltip="Close Interaction"
                         >
                             Close

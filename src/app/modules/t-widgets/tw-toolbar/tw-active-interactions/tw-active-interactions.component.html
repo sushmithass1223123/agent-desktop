@@ -52,7 +52,10 @@
         </div>
 
         <avatar
-            *ngIf="item.type === 'textchat' && (item.otherData.customerStream === undefined || item.status === 'hold')"
+            *ngIf="
+                item.type === 'textchat' &&
+                (item.otherData.customerStream === undefined || item.status === 'hold' || item.otherData.customerStream.streamInfo.type === 'audio')
+            "
             class="mx-4 border-radius-100"
             [ngClass]="{
                 'mat-elevation-z1': item.status !== 'disconnected'
@@ -67,18 +70,19 @@
         ></avatar>
 
         <div
-            *ngIf="item.type === 'textchat' && item.otherData.customerStream && item.status !== 'hold'"
+            *ngIf="item.type === 'textchat' && item.otherData?.customerStream?.streamInfo.type === 'video' && item.status !== 'hold'"
             class="twd-w-12 twd-h-12 twd-rounded-full twd-border-[3px] twd-border-primary-700 mat-elevation-z2 twd-cursor-pointer"
             [matTooltip]="item.user"
             (click)="openInteraction(item)"
         >
             <video
+                *ngIf="item.otherData.customerStream.streamInfo.type === 'video'"
                 class="twd-w-full twd-h-full twd-rounded-full twd-object-cover"
                 autoplay
                 playsinline="true"
                 muted="true"
-                [srcObject]="item.otherData.customerStream"
-                [id]="item.otherData.customerStream.id"
+                [srcObject]="item.otherData.customerStream.stream"
+                [id]="item.otherData.customerStream.stream.id"
             ></video>
         </div>
     </ng-container>
@@ -99,19 +103,7 @@
         <mat-menu class="custom" #emailList="matMenu">
             <div
                 *ngFor="let item of emailInteractionList"
-                class="
-                    twd-bg-primary-100
-                    twd-flex
-                    twd-items-center
-                    twd-text-base
-                    twd-font-bold
-                    twd-p-2
-                    twd-rounded-full
-                    twd-overflow-hidden
-                    twd-cursor-pointer
-                    w-200
-                    mx-8
-                "
+                class="twd-bg-primary-100 twd-flex twd-items-center twd-text-base twd-font-bold twd-p-2 twd-rounded-full twd-overflow-hidden twd-cursor-pointer w-200 mx-8"
                 [ngClass]="{
                     'twd-bg-primary-200': item.isActive,
                     'mt-4': emailInteractionList.length > 1

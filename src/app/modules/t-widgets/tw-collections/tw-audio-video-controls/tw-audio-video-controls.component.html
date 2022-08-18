@@ -5,7 +5,7 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div *ngIf="data.InteractionDetails.CallType === 'audio'" class="audio twd-w-full twd-h-full">
+        <!-- <div *ngIf="callType === 'audio'" class="audio twd-w-full twd-h-full">
             <div class="twd-w-full twd-h-full twd-flex twd-flex-col twd-justify-between twd-px-3">
                 <div *ngIf="userList.length" class="twd-flex twd-flex-max twd-flex-row twd-flex-wrap twd-items-center">
                     <ng-container *ngFor="let item of userList">
@@ -67,7 +67,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.Opener.agentFeatures.screenshare"
+                            *ngIf="agentFeatures.screenshare"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
@@ -79,7 +79,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.Opener.agentFeatures.toggleUserView"
+                            *ngIf="agentFeatures.toggleUserView"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
@@ -92,7 +92,7 @@
 
                     <div class="actions-2 twd-flex twd-flex-row twd-justify-start twd-items-center">
                         <button
-                            *ngIf="data.Data.Opener.agentFeatures.hold"
+                            *ngIf="agentFeatures.hold"
                             [disabled]="!connected || (onCallHoldEvent && !manualHold)"
                             mat-flat-button
                             mat-icon-button
@@ -110,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- For audio call -->
             <div hidden>
                 <ng-container *ngFor="let item of userList">
                     <audio
@@ -122,23 +121,12 @@
                     ></audio>
                 </ng-container>
             </div>
-        </div>
+        </div> -->
 
-        <div *ngIf="data.InteractionDetails.CallType === 'video'" class="video twd-w-full twd-h-full twd-flex twd-flex-max">
+        <div class="video twd-w-full twd-h-full twd-flex twd-flex-max">
             <div class="video-controls twd-relative twd-w-full twd-h-full twd-flex twd-flex-col twd-justify-between twd-items-stretch twd-flex-max">
                 <div
-                    class="
-                        remote-video-container
-                        twd-w-full
-                        twd-flex
-                        twd-flex-max
-                        twd-flex-row
-                        twd-flex-wrap
-                        twd-justify-center
-                        twd-items-start
-                        twd-rounded-20
-                        twd-overflow-auto
-                    "
+                    class="remote-video-container twd-w-full twd-flex twd-flex-max twd-flex-row twd-flex-wrap twd-justify-center twd-items-start twd-rounded-20 twd-overflow-auto"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animateStagger]="{ value: '50' }"
                 >
@@ -148,11 +136,35 @@
                         [ngClass]="'vd-' + userList.length + ' ' + (maximized ? 'maximized' : '')"
                         [@animate]="{ value: '*', params: { y: '100%' } }"
                     >
-                        <video autoplay playsinline="true" [srcObject]="user.stream" [id]="user.stream.id" #remoteVideo></video>
+                        <div *ngIf="user.streamInfo.type === 'audio'" class="twd-w-full twd-h-full twd-flex twd-justify-center twd-items-center">
+                            <audio autoplay playsinline="true" [srcObject]="user.stream" [id]="user.stream.id"></audio>
+                            <div class="twd-absolute twd-inset-0 twd-m-auto twd-w-48 twd-h-48 twd-bg-gray-400 twd-rounded-full twd-z-[1]">
+                                <div class="pulse-element-1" [style.font-size]="user.level + 'px'"></div>
+                                <div class="pulse-element-2" [style.font-size]="user.level + 'px'"></div>
+                            </div>
+
+                            <avatar
+                                [name]="user.streamInfo.user || 'User'"
+                                class="twd-z-[1]"
+                                initialClass="!twd-text-5xl"
+                                classes="!twd-w-48 !twd-h-48 border-radius-100 fuse-white mat-elevation-z2"
+                                [matTooltip]="user.streamInfo.user || 'User'"
+                                [ngClass]="{ talking: user.level > 0 }"
+                            ></avatar>
+                        </div>
+
+                        <video
+                            *ngIf="user.streamInfo.type === 'video'"
+                            autoplay
+                            playsinline="true"
+                            [srcObject]="user.stream"
+                            [id]="user.stream.id"
+                            #remoteVideo
+                        ></video>
 
                         <div class="button-group">
                             <button
-                                *ngIf="data.Data.Opener.agentFeatures.snapshot"
+                                *ngIf="user.streamInfo.type === 'video' && agentFeatures.snapshot"
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold || snapshotRequested"
@@ -163,7 +175,7 @@
                             </button>
 
                             <button
-                                *ngIf="data.Data.Opener.agentFeatures.webrtcTest"
+                                *ngIf="agentFeatures.webrtcTest"
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold"
@@ -178,22 +190,32 @@
                     </div>
 
                     <div class="twd-w-full twd-h-full twd-flex twd-flex-max twd-justify-center twd-items-center" *ngIf="userList.length === 0">
-                        <img src="assets/images/vectors/no-widget.svg" />
+                        <img title="no-avatar" src="assets/images/vectors/no-widget.svg" />
                     </div>
                 </div>
 
                 <div class="call-details twd-flex twd-flex-col twd-justify-center twd-px-3 twd-py-1">
                     <div class="twd-flex twd-flex-row twd-justify-between">
-                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>construction</mat-icon> {{ sessionId }} </span>
-                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>wifi</mat-icon> {{ mos }} </span>
+                        <span class="twd-flex twd-flex-row twd-items-center">
+                            <mat-icon>construction</mat-icon>
+                            <span> {{ sessionId }} </span>
+                        </span>
+                        <span class="twd-flex twd-flex-row twd-items-center">
+                            <mat-icon>wifi</mat-icon>
+                            <span> {{ mos }} </span>
+                        </span>
                         <span class="twd-flex twd-flex-row twd-items-center">
                             <mat-icon>alarm_on</mat-icon> {{ startTime | date: 'mediumTime' }}</span
                         >
                     </div>
                     <div class="twd-flex twd-flex-row twd-justify-between">
-                        <span class="twd-flex twd-flex-row twd-items-center"> <mat-icon>offline_bolt</mat-icon> {{ status }} </span>
                         <span class="twd-flex twd-flex-row twd-items-center">
-                            <mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
+                            <mat-icon>offline_bolt</mat-icon>
+                            <span> {{ status }} </span>
+                        </span>
+                        <span class="twd-flex twd-flex-row twd-items-center">
+                            <mat-icon>timer</mat-icon>
+                            <span>{{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span>
                         </span>
                     </div>
                 </div>
@@ -212,7 +234,7 @@
                         </button>
 
                         <button
-                            *ngIf="!agentFeatures.oneWayVideo"
+                            *ngIf="selfVideo?.type === 'video' && !agentFeatures.oneWayVideo"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
@@ -224,7 +246,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.oneWayVideo"
+                            *ngIf="agentFeatures.oneWayVideo || callType === 'audio'"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
@@ -236,7 +258,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.Opener.agentFeatures.screenshare"
+                            *ngIf="agentFeatures.screenshare"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
@@ -266,7 +288,7 @@
                         </button>
 
                         <button
-                            *ngIf="data.Data.Opener.agentFeatures.toggleUserView"
+                            *ngIf="agentFeatures.toggleUserView"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
@@ -279,7 +301,7 @@
 
                     <div class="actions-2 twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-max twd-max-w-7/12">
                         <button
-                            *ngIf="data.Data.Opener.agentFeatures.hold"
+                            *ngIf="agentFeatures.hold"
                             [disabled]="!connected || (onCallHoldEvent && !manualHold)"
                             mat-flat-button
                             mat-icon-button
@@ -302,7 +324,7 @@
                     class="border-radius-20 bg-dark self-video"
                     [ngClass]="{ minimize: selfViewSmall }"
                     (dblclick)="minimizeVideo()"
-                    *ngIf="selfVideo && !agentFeatures.oneWayVideo"
+                    *ngIf="selfVideo?.type === 'video' && !agentFeatures.oneWayVideo"
                     [@animate]="{ value: '*', params: { scale: '0.5' } }"
                 >
                     <div class="drag-handle" cdkDragHandle>
@@ -314,7 +336,7 @@
                         </svg>
                     </div>
                     <div class="overlay"></div>
-                    <video autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo" [id]="selfVideo.id"></video>
+                    <video autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo.stream" [id]="selfVideo.stream.id"></video>
                 </div>
             </div>
         </div>
