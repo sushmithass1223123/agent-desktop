@@ -6,8 +6,8 @@
             "script": "start",
             "group": "build",
             "problemMatcher": [],
-            "label": "ng serve",
-            "detail": "ng serve"
+            "label": "npm run start:mem",
+            "detail": "npm run start:mem"
         },
         {
             "type": "npm",
