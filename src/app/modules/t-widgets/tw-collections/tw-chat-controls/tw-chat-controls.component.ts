@@ -2036,6 +2036,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'hold'
         });
+
+        // do not send action message for recovery event, as this will keep sending when relogged in or refreshed
+        if (evt.RecoveryEvent) return;
+
+        try {
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'hold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {}
     }
 
     /**
@@ -2051,6 +2072,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             status: 'connected'
         });
         this.interactionOnHold.loading = false;
+
+        // do not send action message for recovery event, as this will keep sending when relogged in or refreshed
+        if (evt.RecoveryEvent) return;
+
+        try {
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'unhold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {}
     }
 
     /**
