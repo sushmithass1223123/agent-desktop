@@ -1,6 +1,6 @@
 {
     "Login": {
-        "Modes": { "Enabled": false, "Type": "nonpbx" },
+        "Modes": { "Enabled": true, "Type": "nonpbx" },
         "FaceAuth": { "Enabled": false, "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages" },
         "DomainListEnabled": false,
         "Password": { "Agent": false, "Station": false },
@@ -54,7 +54,12 @@
                                 "Description": "",
                                 "Type": "tw-instant-messaging",
                                 "Config": { "Enabled": true },
-                                "Data": { "TeamFilter": true, "AudioEscalateAllowed": true, "VideoEscalateAllowed": true, "ScreenShareAllowed": true }
+                                "Data": {
+                                    "TeamFilter": false,
+                                    "AudioEscalateAllowed": true,
+                                    "VideoEscalateAllowed": true,
+                                    "ScreenShareAllowed": true
+                                }
                             },
                             { "Name": "Notification", "Description": "", "Type": "tw-notifications", "Config": { "Enabled": true }, "Data": {} },
                             {

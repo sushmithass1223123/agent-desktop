@@ -228,7 +228,13 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
             });
 
         this._tmacEventService
-            .getNonInteractionEvents(['TeamAgentListEvent', 'AgentNotificaitonEvent', 'SupervisorAgentListEvent', 'AgentAVMessageEvent'])
+            .getNonInteractionEvents([
+                'TeamAgentListEvent',
+                'AgentNotificaitonEvent',
+                'SupervisorAgentListEvent',
+                'AgentAVMessageEvent',
+                'DisposeIMCallWidgetEvent'
+            ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
@@ -614,6 +620,13 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
     };
 
     /**
+     * To process custom DisposeIMCallWidgetEvent and dispose call widget
+     */
+    DisposeIMCallWidgetEvent(): void {
+        this.disposeCallWidget();
+    }
+
+    /**
      * To process agent list
      *
      * @param { any } data
@@ -689,16 +702,17 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
 
         // get the widget type
         const widgetMode = {
-            title: param === 'audio' ? 'Audio Call' : 'Video Call',
+            title: 'AV Controls',
             type: 'tw-audio-video-controls',
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon);
         widget.Config.Anchor = true;
-        widget.Config.Position.W = param === 'audio' ? 600 : 800;
-        widget.Config.Position.H = param === 'audio' ? 275 : 550;
-        widget.Config.Actions = ['collapse', 'maximize'];
+        widget.Config.AOT = true;
+        widget.Config.Position.W = 800;
+        widget.Config.Position.H = 550;
+        widget.Config.Actions = ['collapse', 'maximize', 'resize'];
 
         widget.InteractionDetails = {
             NRIC: '',
@@ -712,9 +726,9 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         };
 
         widget.Data = { ...this.config };
+        widget.Data.CallType = param;
+        widget.Data.Direction = direction;
         widget.Data.Source = 'InstantMessagingComponent';
-        widget.Data.AVEvent = avEvent;
-        widget.Data.Opener = this;
         widget.Data.AgentID = avEvent?.FromAgentId || this.selectedContact.id;
         widget.Data.TmacServer = avEvent?.FromTmacServer || this.selectedContact.tmacServer;
         widget.Data.SendMessage = (jsonMessage: any) => {
