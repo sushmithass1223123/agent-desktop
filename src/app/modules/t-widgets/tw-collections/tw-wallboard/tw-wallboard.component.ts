@@ -44,6 +44,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Custom cell ref for 'CustomerServiceLevel'
      */
     @ViewChild('customServiceLevelCell') customServiceLevelCell: TemplateRef<HTMLDivElement>;
+    @ViewChild('customAgentStaffedCountCell') customAgentStaffedCountCell: TemplateRef<HTMLDivElement>;
+    @ViewChild('customSAgentAvailableCountCell') customSAgentAvailableCountCell: TemplateRef<HTMLDivElement>;
+    @ViewChild('customCallsInQueueCountCell') customCallsInQueueCountCell: TemplateRef<HTMLDivElement>;
 
     /**
      * @constructor
@@ -110,9 +113,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     setupAdTable(): void {
         this.table.config = {
             SkillName: { title: 'Skill Name', width: '40%' },
-            AgentsStaffed: { title: 'Stf' },
-            AgentAvailable: { title: 'Avl' },
-            CallsInQueue: { title: 'CIQ' },
+            AgentsStaffed: { title: 'Stf', custom: this.customAgentStaffedCountCell },
+            AgentAvailable: { title: 'Avl', custom: this.customSAgentAvailableCountCell },
+            CallsInQueue: { title: 'CIQ', custom: this.customCallsInQueueCountCell },
             ServiceLevel: { title: 'SL %', custom: this.customServiceLevelCell }
         };
         this.table.sort = true;
@@ -168,13 +171,16 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     };
 
     /**
-     * To get SL bg color
+     * To get dashboard bg color
      *
      * @param {Number} value
+     * @param {String} type
      */
-    getSLBgColor(value: number): string {
+    getDashboardBgColor(value: number, type: string): string {
         // get the color code for the value
-        const filterData = this.dashboardColors.filter((data) => Number(data.EndRange) >= value && Number(data.StartRange) <= value)?.[0];
+        const filterData = this.dashboardColors.filter(
+            (data) => data.ColumnName === type && Number(data.EndRange) >= value && Number(data.StartRange) <= value
+        )?.[0];
         // if the data found
         if (filterData) {
             return filterData.BackgroundColor;
@@ -183,12 +189,15 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     }
 
     /**
-     * To get SL font color
+     * To get dashboard font color
      * @param {Number} value
+     * @param {String} type
      */
-    getSLFontColor(value: number): string {
+    getDashboardFontColor(value: number, type: string): string {
         // get the color code for the value
-        const filterData = this.dashboardColors.filter((data) => Number(data.EndRange) >= value && Number(data.StartRange) <= value)?.[0];
+        const filterData = this.dashboardColors.filter(
+            (data) => data.ColumnName === type && Number(data.EndRange) >= value && Number(data.StartRange) <= value
+        )?.[0];
         // if the data found
         if (filterData) {
             return filterData.FontColor;

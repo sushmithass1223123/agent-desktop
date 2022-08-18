@@ -7,11 +7,48 @@
 
 <ng-template #customServiceLevelCell let-row="record">
     <div
+        class="twd-w-full twd-rounded-20"
         [ngStyle]="{
-            'background-color': row.BCMSData && getSLBgColor(row.BCMSData.SLPercentage),
-            color: row.BCMSData && getSLFontColor(row.BCMSData.SLPercentage)
+            'background-color': row.BCMSData && getDashboardBgColor(row.BCMSData.SLPercentage, 'SLPercentage'),
+            color: row.BCMSData && getDashboardFontColor(row.BCMSData.SLPercentage, 'SLPercentage')
         }"
     >
         {{ row.BCMSData ? row.BCMSData?.SLPercentage + '%' : 'NA' }}
+    </div>
+</ng-template>
+
+<ng-template #customAgentStaffedCountCell let-row="record">
+    <div
+        class="twd-w-full twd-rounded-20"
+        [ngStyle]="{
+            'background-color': getDashboardBgColor(row.AgentsStaffed, 'AgentsStaffed'),
+            color: getDashboardFontColor(row.AgentsStaffed)
+        }"
+    >
+        {{ row.AgentsStaffed }}
+    </div>
+</ng-template>
+
+<ng-template #customSAgentAvailableCountCell let-row="record">
+    <div
+        class="twd-w-full twd-rounded-20"
+        [ngStyle]="{
+            'background-color': getDashboardBgColor(row.AgentAvailable, 'AgentAvailable'),
+            color: getDashboardFontColor(row.AgentAvailable)
+        }"
+    >
+        {{ row.AgentAvailable }}
+    </div>
+</ng-template>
+
+<ng-template #customCallsInQueueCountCell let-row="record">
+    <div
+        class="twd-w-full twd-rounded-20"
+        [ngStyle]="{
+            'background-color': getDashboardBgColor(row.CallsInQueue, 'CallsInQueue'),
+            color: getDashboardFontColor(row.CallsInQueue)
+        }"
+    >
+        {{ row.CallsInQueue }}
     </div>
 </ng-template>
