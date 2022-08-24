@@ -305,9 +305,17 @@
                 </div>
             </div>
 
-            <p *ngIf="filteredAgents.length" class="text-center twd-inset-x-0 twd-pt-2">
-                Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
-            </p>
+            <div *ngIf="agentList && agentList.length" class="twd-flex twd-justify-between twd-pt-2 twd-px-2">
+                <p *ngIf="filteredAgents.length" class="text-center twd-inset-x-0">
+                    Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
+                </p>
+
+                <div class="twd-text-right twd-flex-auto">
+                    <span class="twd-font-bold">Total: </span>
+
+                    <span>{{ (searchTerm ? filteredAgents.length : agentList.length) + ' of ' + agentList.length }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </tw-wrapper>
