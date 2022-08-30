@@ -1,3 +1,4 @@
+import { TwWallboard, TwWallboardData } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { TableComponent } from '@modules/shared/components';
@@ -5,9 +6,8 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { CustomTMACEventTypes, IWidget } from 'app/interfaces';
+import { CustomTMACEventTypes } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TwWallboard } from '@ad/types';
 
 /**
  * Wallboard componet
@@ -23,12 +23,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * App config json data
      */
-    @Input() data: IWidget;
-
-    /**
-     * Widget data
-     */
-    widgetData: WidgetData;
+    @Input() data: TwWallboard;
 
     /**
      * To store dashboard color codes
@@ -60,10 +55,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     ngOnInit(): void {
         // call the wrapper init method
-        this.initWrapper(this.data);
-
-        // get the widget data
-        this.widgetData = this.data.Data || new Object();
+        this.initWrapper(this.data, new TwWallboardData());
 
         // get the dashboard color codes for wallboard
         SDKClient.getDashboardColorCodes().then((x) => {
@@ -73,12 +65,12 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         });
 
         let eventName: CustomTMACEventTypes;
-        if (this.widgetData.Role === 'agent') {
+        if (this.data.Data.Role === 'agent') {
             eventName = 'WallboardRefreshEvent';
-        } else if (this.widgetData.Role === 'supervisor') {
+        } else if (this.data.Data.Role === 'supervisor') {
             eventName = 'TeamWallboardRefreshEvent';
         } else {
-            this.logger.warn(`Unable to get event name to regiser, Role=${this.widgetData.Role}`);
+            this.logger.warn(`Unable to get event name to regiser, Role=${this.data.Data.Role}`);
         }
 
         // register if only eventname is there
@@ -121,7 +113,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         this.table.columns = ['SkillName', 'AgentsStaffed', 'AgentAvailable', 'CallsInQueue'];
         this.table.sortBy = 'CallsInQueue';
 
-        if (this.widgetData.SLEnabled) {
+        if (this.data.Data.SLEnabled) {
             // add service level to column
             // this.displayedColumns.push('ServiceLevel');
             this.table.columns.push('ServiceLevel');
@@ -133,39 +125,64 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      * Updates table data on event
      */
     private wallboardRefreshEvent = (evt: WallboardRefreshEvent) => {
-        // get skills to show
-        let skillsToShow = evt.Skills;
-        // for team wallboard event filter staffed agents
-        if (evt.EventName === 'TeamWallboardRefreshEvent') {
-            skillsToShow = evt.Skills.filter((s) => s.AgentsStaffed > 0 || s.CallsInQueue > 0);
-        } else if (evt.EventName === 'WallboardRefreshEvent') {
-            // check for skill update
-            if (this.table.source.data.length && this.table.source.data.length !== skillsToShow.length) {
-                this._appUIService.showAppSnackbar({
-                    message: 'Agent skills has been updated!',
-                    state: 'success',
-                    duration: 10000
+        try {
+            // get skills to show
+            let skillsToShow = evt.Skills;
+
+            const hideSkillFilter = this.data.Data.HideSkillFilter;
+            if (hideSkillFilter?.Value.length) {
+                skillsToShow = skillsToShow.filter((s) => {
+                    return !hideSkillFilter.Value.some((a) => {
+                        try {
+                            let filterType = 'includes';
+                            if (hideSkillFilter.Type.toLowerCase() === 'startswith') {
+                                filterType = 'startsWith';
+                            } else if (hideSkillFilter.Type.toLowerCase() === 'endswith') {
+                                filterType = 'endsWith';
+                            }
+
+                            return s.SkillName.toLowerCase()[filterType](a.toLocaleLowerCase());
+                        } catch {}
+
+                        return s;
+                    });
                 });
             }
-        }
 
-        // assign the data
-        // this.dataSource = new MatTableDataSource(skillsToShow);
-        this.table.source = new MatTableDataSource(skillsToShow);
-        // sorting data accessor for nested object sorting
-        // check if the SL is enabled, since we need custom sort for Service Level only!
-        if (this.widgetData.SLEnabled) {
-            this.table.source.sortingDataAccessor = (item, property) => {
-                switch (property) {
-                    case 'ServiceLevel':
-                        return item.BCMSData.SLPercentage;
-                    default:
-                        return item[property];
+            // for team wallboard event filter staffed agents
+            if (evt.EventName === 'TeamWallboardRefreshEvent') {
+                skillsToShow = skillsToShow.filter((s) => s.AgentsStaffed > 0 || s.CallsInQueue > 0);
+            } else if (evt.EventName === 'WallboardRefreshEvent') {
+                // check for skill update
+                if (this.table.source.data.length && this.table.source.data.length !== skillsToShow.length) {
+                    this._appUIService.showAppSnackbar({
+                        message: 'Agent skills has been updated!',
+                        state: 'success',
+                        duration: 10000
+                    });
                 }
-            };
+            }
+
+            // assign the data
+            // this.dataSource = new MatTableDataSource(skillsToShow);
+            this.table.source = new MatTableDataSource(skillsToShow);
+            // sorting data accessor for nested object sorting
+            // check if the SL is enabled, since we need custom sort for Service Level only!
+            if (this.data.Data.SLEnabled) {
+                this.table.source.sortingDataAccessor = (item, property) => {
+                    switch (property) {
+                        case 'ServiceLevel':
+                            return item.BCMSData.SLPercentage;
+                        default:
+                            return item[property];
+                    }
+                };
+            }
+            // add the sort
+            // this.dataSource.sort = this.sort;
+        } catch (error) {
+            this.logger.error('Error in wallboardRefreshEvent', error);
         }
-        // add the sort
-        // this.dataSource.sort = this.sort;
     };
 
     /**
@@ -202,15 +219,4 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
         }
         return '';
     }
-}
-
-interface WidgetData {
-    /**
-     * Available Roles for this reusable component
-     */
-    Role: 'agent' | 'supervisor';
-    /**
-     * SL enabled flag
-     */
-    SLEnabled: boolean;
 }
