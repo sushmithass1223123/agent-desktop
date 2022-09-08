@@ -29,7 +29,31 @@ import { Widget } from '..';
  */
 export type TwWallboard = Widget<TwWallboardData>;
 
-export interface TwWallboardData {
+// export interface TwWallboardData {
+//     /**
+//      * Role of the widget ie whether the wallboard is loaded for agent or supervisor
+//      */
+//     Role: 'agent' | 'supervisor';
+//     /**
+//      * Flag to add 'ServiceLevel' column in the table
+//      */
+//     SLEnabled: boolean;
+//     /**
+//      * The skill filter to hide skills
+//      */
+//     HideSkillFilter: {
+//         /**
+//          * Type of filters
+//          */
+//         Type: 'contains' | 'startswith' | 'endswith';
+//         /**
+//          * Filter values
+//          */
+//         Value: string[];
+//     };
+// }
+
+export class TwWallboardData {
     /**
      * Role of the widget ie whether the wallboard is loaded for agent or supervisor
      */
@@ -38,4 +62,27 @@ export interface TwWallboardData {
      * Flag to add 'ServiceLevel' column in the table
      */
     SLEnabled: boolean;
+    /**
+     * The skill filter to hide skills
+     */
+    HideSkillFilter: {
+        /**
+         * Type of filters
+         */
+        Type: 'contains' | 'startswith' | 'endswith';
+        /**
+         * Filter values
+         */
+        Value: string[];
+    };
+
+    constructor() {
+        // set defaults
+        this.Role = 'agent';
+        this.SLEnabled = false;
+        this.HideSkillFilter = {
+            Type: 'contains',
+            Value: []
+        };
+    }
 }

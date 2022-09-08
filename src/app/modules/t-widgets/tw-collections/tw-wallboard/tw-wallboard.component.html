@@ -1,7 +1,7 @@
 <tw-wrapper [data]="data">
     <div class="w-100-p bg-inherit mat-table-container custom-scroll-adjust h-100-p twd-relative">
         <ad-table></ad-table>
-        <img *ngIf="widgetData.Role === 'agent'" title="wallboard" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
+        <img *ngIf="data.Data.Role === 'agent'" title="wallboard" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
     </div>
 </tw-wrapper>
 
