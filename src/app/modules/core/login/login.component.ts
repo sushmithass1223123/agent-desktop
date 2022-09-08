@@ -2,7 +2,7 @@ import { AppRootConfig, LogoConfig, MultiWindowMode, Password } from '@ad/types'
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
@@ -11,13 +11,13 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { MsTeamsAuthService } from '@services/ms-teams-auth.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CommandResultEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
-import { CustomDate } from 'app/interfaces';
 import { AppDataService } from 'app/services/app-data.service';
 import AES from 'crypto-js/aes';
 import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
 import { environment } from 'environments/environment';
 import { merge, set } from 'lodash';
+import moment from 'moment';
 import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
 
@@ -384,14 +384,35 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                         // encrypted may have username or username+timestamp (sso login timestamp)
                         const [u, timestamp] = usernameDecrypted.split('+');
                         username = u;
-                        // get the current datetime in UTC
-                        const currentUTCDt = (new Date() as CustomDate).customFormat('yyyyMMddHHmmss', true);
+
+                        let currentUTCString = null;
+                        let timestampWithExpiryString = null;
+                        let isExpired = false;
                         // max time to expire the link
                         const expiry = this.appConfig?.Login?.SSOLinkExpiry;
+
                         // if there is a login timestamp then check against the expiry time
                         // if expiry time is not configured then ignore link expiry check
-                        if (timestamp && expiry > 0 && parseInt(currentUTCDt) > parseInt(timestamp) + expiry) {
-                            this.logger.warn(`Link has expired, ct=${currentUTCDt}, lt=${timestamp}, expiry=${expiry}`);
+                        if (timestamp && expiry) {
+                            try {
+                                // get the current datetime in UTC and add seconds
+                                currentUTCString = moment().utc().format('YYYYMMDDHHmmss');
+                                const currentUTCDate = moment(currentUTCString, 'YYYYMMDDHHmmss');
+
+                                // convert the login timestamp to date
+                                timestampWithExpiryString = moment(timestamp, 'YYYYMMDDHHmmss').add(expiry, 'seconds').format('YYYYMMDDHHmmss');
+                                const timestampWithExpiryDate = moment(timestampWithExpiryString, 'YYYYMMDDHHmmss');
+
+                                // check if the link is expired
+                                isExpired = moment(currentUTCDate).isAfter(timestampWithExpiryDate);
+                            } catch (error) {
+                                this.logger.error('activatedRoute.queryParams.linkExpiryCheck', error, false);
+                            }
+                        }
+
+                        // check if the link is expired
+                        if (isExpired) {
+                            this.logger.warn(`Link has expired, ct=${currentUTCString}, lt=${timestamp}, expiry=${expiry}`);
 
                             // we will route to error page
                             this._appDataService.routeToPath(['not-found'], {
