@@ -49,33 +49,21 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
      */
     appConfig: AppRootConfig;
     /**
-     * Brand logo
+     * Flag to identify the config is loaded or not
      */
-    brandLogo: LogoConfig = null;
+    isConfigLoaded: boolean;
     /**
      * Login form
      */
     loginForm: FormGroup;
     /**
+     * Brand logo
+     */
+    brandLogo: LogoConfig = null;
+    /**
      * App customer logo
      */
     appCustomerLogo: LogoConfig = null;
-    /**
-     * App logo source
-     */
-    logoSrc = '';
-    /**
-     * App logo Alt
-     */
-    logoAlt = '';
-    /**
-     * App logo width
-     */
-    logoWidth = 0;
-    /**
-     * App logo height
-     */
-    logoHeight = 0;
 
     /**
      * Face authentication enabled flag from config
@@ -637,15 +625,20 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         if (this.domainListEnabled) {
             this.loginForm.controls.domain.setValidators(Validators.required);
         }
+
         if (this.stationEnabled) {
             this.loginForm.controls.station.setValidators(Validators.required);
         }
+
         if (this.password.Agent) {
             this.loginForm.controls.agentPassword.setValidators(Validators.required);
         }
+
         if (this.password.Station) {
             this.loginForm.controls.stationPassword.setValidators(Validators.required);
         }
+
+        this.isConfigLoaded = true;
     }
 
     /**

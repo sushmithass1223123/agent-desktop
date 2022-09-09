@@ -110,7 +110,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 // assign the customer logo
                 this.customerLogo = config.AppConfigs.Logos.Customer || null;
                 // get the top widgets
-                this.topWidgets = this.getNavWidgets(sidebarWidgets.Top) || [];
+                this.topWidgets = sidebarWidgets.Top || [];
                 // get the bottom widgets
                 this.bottomWidgets = sidebarWidgets.Bottom || [];
 
@@ -189,23 +189,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
 
-    /**
-     * To filter widgets based on the accessibility
-     */
-    getNavWidgets(widgets) {
-        let filteredWidgets = widgets;
-        try {
-            // check if supervisor access available
-            if (widgets) {
-                const sIndex = widgets.findIndex((w) => w.Type === 'twn-supervisor');
+    // /**
+    //  * To filter widgets based on the accessibility
+    //  */
+    // getNavWidgets(widgets) {
+    //     let filteredWidgets = widgets;
+    //     try {
+    //         // check if supervisor access available
+    //         if (widgets) {
+    //             const sIndex = widgets.findIndex((w) => w.Type === 'twn-supervisor');
 
-                if (sIndex > -1 && SDKClient.getAgentData().agentProfile.toLowerCase() !== 's') {
-                    filteredWidgets.splice(sIndex, 1);
-                }
-            }
-        } catch (e) {
-            console.log('Error occured on filtering navbar widgets', e);
-        }
-        return filteredWidgets;
-    }
+    //             if (sIndex > -1 && SDKClient.getAgentData().agentProfile.toLowerCase() !== 's') {
+    //                 filteredWidgets.splice(sIndex, 1);
+    //             }
+    //         }
+    //     } catch (e) {
+    //         console.log('Error occured on filtering navbar widgets', e);
+    //     }
+    //     return filteredWidgets;
+    // }
 }

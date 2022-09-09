@@ -20,11 +20,15 @@ export class AppConfigsModel {
         this.Logos = {
             Favicon: '',
             Default: {
-                Large: { Src: '', Width: 180, Height: 90 },
-                Small: { Src: '', Width: null, Height: null },
+                Large: { Src: 'assets/images/logos/tetherfi.png', Width: 180, Height: 90 },
+                Small: { Src: 'assets/images/logos/tetherfi-logo-round.png', Width: 50, Height: 50 },
                 Alt: 'Tetherfi'
             },
-            Customer: { Large: { Src: '', Width: 160, Height: 88 }, Small: { Src: '', Width: 50, Height: 50 }, Alt: 'Tetherfi' }
+            Customer: {
+                Large: { Src: 'assets/images/logos/tetherfi.png', Width: 180, Height: 90 },
+                Small: { Src: '', Width: 50, Height: 50 },
+                Alt: 'Tetherfi'
+            }
         };
         this.RefreshDisabled = false;
         this.DevToolsDisabled = false;
