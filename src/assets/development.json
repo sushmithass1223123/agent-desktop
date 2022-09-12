@@ -2678,8 +2678,8 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx",
                     "https://localhost/TMACSDKProxy/TmacProxy.asmx",
+                    "https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx",
                     "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "type": "soap",
