@@ -68,7 +68,7 @@
         </div>
 
         <div id="login-form" class="{{ loading || connectionError.errored || configError.errored ? 'blur' : null }}">
-            <div class="logo" [@animate]="{ value: '*', params: { delay: '400ms', y: '-25px' } }">
+            <div [hidden]="!isConfigLoaded" class="logo" [@animate]="{ value: '*', params: { delay: '400ms', y: '-25px' } }">
                 <img
                     title="Customer logo"
                     [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"

@@ -1,6 +1,7 @@
 <div class="navbar-header" [ngClass]="(customFuse$ | async).background">
     <div class="logo" *ngIf="customerLogo?.Small.Src">
         <img
+            title="Customer small logo"
             class="logo-icon"
             [src]="customerLogo?.Small.Src"
             [alt]="customerLogo?.Alt"
@@ -63,6 +64,7 @@
         </mat-selection-list>
 
         <img
+            title="Brand small logo"
             class="brand-logo"
             [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
             [alt]="brandLogo?.Alt || 'Tetherfi'"

@@ -1,3 +1,6 @@
 [submodule "release-notes"]
 	path = release-notes
 	url = https://git.tetherfi.com/releasenotes/agent-desktop.git
+[submodule "tmac-sdk"]
+	path = tmac-sdk
+	url = https://git.tetherfi.com/tetherfi_product/products/tmac/ui/tmac-sdk.git

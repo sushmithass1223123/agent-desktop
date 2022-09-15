@@ -238,7 +238,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "agent", "SLEnabled": true }
+                                    "Data": { "Role": "agent", "SLEnabled": true, "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] } }
                                 }
                             ],
                             "Dynamic": [
@@ -583,7 +583,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "supervisor", "SLEnabled": false }
+                                    "Data": {
+                                        "Role": "supervisor",
+                                        "SLEnabled": false,
+                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
+                                    }
                                 },
                                 {
                                     "Name": "Channels",

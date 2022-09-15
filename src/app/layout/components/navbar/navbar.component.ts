@@ -3,6 +3,7 @@ import { MatListOption } from '@angular/material/list';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { SDKClient } from '@tmac/sdk';
 import { InteractionRef, IWidget } from 'app/interfaces/';
 import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
@@ -187,4 +188,24 @@ export class NavbarComponent implements OnInit, OnDestroy {
     toggleSidebarOpen(key: string): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
+
+    // /**
+    //  * To filter widgets based on the accessibility
+    //  */
+    // getNavWidgets(widgets) {
+    //     let filteredWidgets = widgets;
+    //     try {
+    //         // check if supervisor access available
+    //         if (widgets) {
+    //             const sIndex = widgets.findIndex((w) => w.Type === 'twn-supervisor');
+
+    //             if (sIndex > -1 && SDKClient.getAgentData().agentProfile.toLowerCase() !== 's') {
+    //                 filteredWidgets.splice(sIndex, 1);
+    //             }
+    //         }
+    //     } catch (e) {
+    //         console.log('Error occured on filtering navbar widgets', e);
+    //     }
+    //     return filteredWidgets;
+    // }
 }

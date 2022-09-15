@@ -1,7 +1,6 @@
 <div
-    class="avatar-content mat-elevation-z1"
     [ngStyle]="{ 'background-color': circleColor }"
-    [ngClass]="(classes ? classes : '') + ' ' + (circleColor ? circleColor : '')"
+    [ngClass]="(classes ? classes : '') + ' ' + (circleColor ? circleColor : '') + ' avatar-content mat-elevation-z1'"
 >
     <img *ngIf="!showInitials && photoUrl" src="{{ photoUrl }}" />
 
@@ -10,7 +9,7 @@
         <mat-icon [svgIcon]="matIcon" *ngIf="matIcon.indexOf('custom') >= 0"></mat-icon>
     </div>
 
-    <div *ngIf="showInitials" class="initials">
+    <div *ngIf="showInitials" [ngClass]="'initials ' + initialClass">
         {{ initials }}
     </div>
 </div>

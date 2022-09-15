@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { AVATAR_COLORS } from 'app/constants';
 
 /**
@@ -34,6 +34,12 @@ export class AvatarComponent implements OnInit, OnChanges {
      */
     @Input()
     public classes: string;
+
+    /**
+     * Initial classes
+     */
+    @Input()
+    public initialClass: string;
 
     /**
      * Custom circle color

@@ -1,7 +1,7 @@
 import { AOTWidget, AppRootConfig, WidgetAction } from '@ad/types';
+import { U } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import {
@@ -1165,6 +1165,41 @@ export class TMACEventService extends SharedWrapper {
     }
 
     /**
+     * To get non-interaction TMAC events for provided eventnames
+     *
+     * @param {CustomTMACEventTypes[]} eventNames
+     */
+    getNonInteractionEventsExtended<T = any>(
+        eventNames: {
+            event: CustomTMACEventTypes;
+            noRepeat?: boolean;
+        }[]
+    ): Observable<T[]> {
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const tempEventNames = eventNames.map((m) => !m.noRepeat && m.event).filter((f) => !!f);
+            const events = this._nonInteractionEventArray.filter((i: IUIEvent) => tempEventNames.includes(i.EventName));
+            tempSub.next(events);
+            tempSub.complete();
+        });
+
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all non interaction events for provided eventnames
+        return concat(tempSub, this._nonInteractionEvent$).pipe(
+            map((evts) => evts?.filter((evt) => evt && eventNames.map((m) => m.event).includes(evt.EventName))),
+            filter((evts) => evts.length > 0)
+        );
+    }
+
+    /**
      * To get non-interaction TMAC events for provided eventnames excluded
      *
      * @param {CustomTMACEventTypes[]} eventName Name of the event
@@ -1219,6 +1254,48 @@ export class TMACEventService extends SharedWrapper {
         // return all interaction events for provided interaction id and eventnames
         return concat(tempSub, this._interactionEvent$).pipe(
             map((evts) => evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.includes(evt.EventName))),
+            filter((evts) => evts.length > 0)
+        );
+    }
+
+    /**
+     * To get interaction TMAC events for provided eventsnames and interaction id
+     *
+     * @param { {event: CustomTMACEventTypes, noRepeat: boolean } } eventNames
+     * @param {Number} interactionId
+     *
+     */
+    getInteractionEventsExtended<T = any>(
+        eventNames: {
+            event: CustomTMACEventTypes;
+            noRepeat?: boolean;
+        }[],
+        interactionId: number
+    ): Observable<T[]> {
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const tempEventNames = eventNames.map((m) => !m.noRepeat && m.event).filter((f) => !!f);
+            const events = this._interactionEventArray.filter(
+                (i: IUIEvent) => i.InteractionID === interactionId && tempEventNames.includes(i.EventName)
+            );
+            tempSub.next(events);
+            tempSub.complete();
+        });
+
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for provided interaction id and eventnames
+        return concat(tempSub, this._interactionEvent$).pipe(
+            map((evts) =>
+                evts?.filter((evt) => evt && evt.InteractionID === interactionId && eventNames.map((m) => m.event).includes(evt.EventName))
+            ),
             filter((evts) => evts.length > 0)
         );
     }
@@ -1375,6 +1452,12 @@ export class TMACEventService extends SharedWrapper {
          */
         log?: boolean;
     }): void {
+        // verify the interaction event
+        if (data.isInteractionEvent && !data.event.InteractionID) {
+            this.logger.warn(`${data.event.EventName} is an interaction event, but InteractionID is not found!`);
+            return;
+        }
+
         // emit via SDK
         SDKClient.events.emit(data.event.EventName, data.event);
 
@@ -1394,6 +1477,28 @@ export class TMACEventService extends SharedWrapper {
                 this.logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
             }
         } catch (error) {}
+    }
+
+    /**
+     * To remove interaction events from the array
+     *
+     * @param interactionId
+     * @param eventName
+     */
+    removeInteractionEvents(interactionId: number, eventName: CustomTMACEventTypes[]): void {
+        // remove the events for the InteractionID
+        this._interactionEventArray = this._interactionEventArray.filter(
+            (f) => f.InteractionID === interactionId && !eventName.some((s) => s === f.EventName)
+        );
+    }
+
+    /**
+     * To remove non interaction events
+     * @param eventName
+     */
+    removeNonInteractionEvents(eventName: CustomTMACEventTypes[]): void {
+        // remove the events for the InteractionID
+        this._nonInteractionEventArray = this._interactionEventArray.filter((f) => !eventName.some((s) => s === f.EventName));
     }
 }
 

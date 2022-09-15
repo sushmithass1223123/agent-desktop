@@ -151,7 +151,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 audio: false,
                 video: true
             })
-            .then(function (stream: MediaStream) {
+            .then((stream: MediaStream) => {
                 this.selfVideo = stream;
             })
             .catch(function (err) {
