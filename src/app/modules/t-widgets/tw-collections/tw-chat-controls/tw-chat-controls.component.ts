@@ -517,6 +517,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     previewMediaDialogData: any;
 
+    @ViewChild('endBtn') endButton: MatButton;
+
+    @ViewChild('closeBtn') closeButton: MatButton;
     /**
      * Constructor
      */
@@ -754,7 +757,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'CallHoldReconnectEvent',
                     'HoldTimerEvent',
                     'CCLDataEvent',
-                    'AgentNotificaitonEvent'
+                    'AgentNotificaitonEvent',
+                    'DisposeCallWidgetEvent',
+                    'AVDisconnectedEvent',
+                    'HoldInteractionEvent',
+                    'UnholdInteractionEvent',
+                    'ConfirmEndInteractionEvent'
                 ],
                 this.interaction.InteractionID
             )
@@ -1246,7 +1254,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'in' | 'out'} direction Direction of the call
      * @param {AVControlMessageReceivedEvent} avEvent [OPTIONAL] For incoming requestav to process AVControlMessageReceivedEvent
      */
-    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out', avEvent: AVControlMessageReceivedEvent): void {
+    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out'): void {
         // if the widget is created then ignore
         if (this.callWidget) {
             return;
@@ -1257,16 +1265,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // get the widget type
         const widgetMode = {
-            title: param === 'audio' ? 'Audio Call' : 'Video Call',
+            title: 'AV Controls',
             type: 'tw-audio-video-controls',
             icon: param === 'audio' ? 'phone' : 'duo'
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon) as AOTWidget<any, any>;
 
+        widget.Config.AOT = true;
         widget.Config.Anchor = true;
-        widget.Config.Position.W = param === 'audio' ? 600 : 800;
-        widget.Config.Position.H = param === 'audio' ? 275 : 550;
+        widget.Config.Position.W = 800;
+        widget.Config.Position.H = 550;
         widget.Config.Actions = ['collapse', 'maximize', 'resize'];
         widget.Config.LocalAOT = true;
 
@@ -1292,21 +1301,23 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return;
         }
 
-        widget.InteractionDetails = {
-            NRIC: this.remoteUserConnectedEvent.NRIC,
-            RegNo1: this.remoteUserConnectedEvent.RegNo1,
-            InteractionID: this.data.InteractionDetails.InteractionID,
-            ConferenceType: this.conferenceType,
-            CustomerName: this.customerName,
-            Direction: direction,
-            SessionID: this.sessionID,
-            CallType: param
-        };
+        // widget.InteractionDetails = {
+        //     InteractionID: this.data.InteractionDetails.InteractionID,
+        //     NRIC: this.remoteUserConnectedEvent.NRIC,
+        //     RegNo1: this.remoteUserConnectedEvent.RegNo1,
+        //     ConferenceType: this.conferenceType,
+        //     CustomerName: this.customerName,
+        //     Direction: direction,
+        //     SessionID: this.sessionID,
+        //     CallType: param
+        // };
+
+        widget.InteractionDetails = this.data.InteractionDetails;
 
         widget.Data = { ...this.data.Data };
         widget.Data.Source = 'TwChatControlsComponent';
-        widget.Data.AVEvent = avEvent;
-        widget.Data.Opener = this;
+        widget.Data.CallType = param;
+        widget.Data.Direction = direction;
         widget.destroy = () => this._aotWidgetService.destroyWidget(widget.ID, true);
 
         // open call widget
@@ -1327,21 +1338,38 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To end the current chat interaction
      * @param reason Reson of chat end
-     * @param btn [OPTIONAL] End button to disable/enable
      */
-    private async endChat(reason: string, btn?: MatButton): Promise<void> {
+    private async endChat(reason: string): Promise<void> {
         // show the progress bar
         this._fuseProgressBarService.show();
         // disable the button
-        if (btn) {
-            btn.disabled = true;
+        if (this.endButton) {
+            this.endButton.disabled = true;
         }
 
-        // check if there is any call going on, then end the call first
+        // check if there is any call going on, then end the call first and wait for AVDisconnectedEvent to process end chat
         if (this.callWidget) {
-            await this.onEndChat();
+            this._tmacEventService.emitSDKEvent({
+                event: {
+                    EventName: 'DisconnectAVEvent',
+                    InteractionID: this.interaction.InteractionID,
+                    Reason: reason
+                },
+                isInteractionEvent: true
+            });
+
+            return;
         }
 
+        await this.processEndChat(reason);
+    }
+
+    /**
+     * To process end chat
+     *
+     * @param reason
+     */
+    private async processEndChat(reason: string): Promise<void> {
         try {
             await SDKClient.endTextChat(
                 {
@@ -1353,22 +1381,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
             // check to close interaction on end
             if (this.widgetData.CloseInteractionOnEnd) {
-                this.closeInteraction(null);
+                this.closeInteraction();
             }
         } catch (error) {
             // enable if something goes wrong
-            if (btn) {
-                btn.disabled = false;
+            if (this.endButton) {
+                this.endButton.disabled = false;
             }
 
             this._appUIService.showSnackbar('End chat failed!', 'failure');
         } finally {
             this._fuseProgressBarService.hide();
         }
-    }
-
-    async onEndChat(): Promise<boolean> {
-        return true;
     }
 
     /**
@@ -1549,10 +1573,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To close interaction
-     *
-     * @param btn
      */
-    private async closeInteraction(btn: MatButton): Promise<void> {
+    private async closeInteraction(): Promise<void> {
         try {
             const { response } = await SDKClient.closeInteraction(this.interaction.InteractionID.toString(), null);
             // check the response
@@ -1562,15 +1584,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this._interactionManagerService.removeInteraction(response.InteractionID);
             } else {
                 // enable if something goes wrong
-                if (btn) {
-                    btn.disabled = false;
+                if (this.closeButton) {
+                    this.closeButton.disabled = false;
                 }
                 this._appUIService.showSnackbar('Close interaction failed', 'failure');
             }
         } catch (error) {
             // enable if something goes wrong
-            if (btn) {
-                btn.disabled = false;
+            if (this.closeButton) {
+                this.closeButton.disabled = false;
             }
             this._appUIService.showSnackbar('Close interaction error', 'failure');
         } finally {
@@ -2014,6 +2036,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'hold'
         });
+
+        // do not send action message for recovery event, as this will keep sending when relogged in or refreshed
+        if (evt.RecoveryEvent) return;
+
+        try {
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'hold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {}
     }
 
     /**
@@ -2029,6 +2072,27 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             status: 'connected'
         });
         this.interactionOnHold.loading = false;
+
+        // do not send action message for recovery event, as this will keep sending when relogged in or refreshed
+        if (evt.RecoveryEvent) return;
+
+        try {
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'unhold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {}
     }
 
     /**
@@ -2082,7 +2146,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check the type
             const type = JSON.parse(evt.Message).param;
             // open the call widget
-            this.openCallWidget(type, 'in', evt);
+            this.openCallWidget(type, 'in');
         }
     }
 
@@ -2261,6 +2325,41 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * To process custom HoldInteractionEvent
+     */
+    HoldInteractionEvent(): void {
+        this.holdInteraction();
+    }
+
+    /**
+     * To process custom UnholdInteractionEvent
+     */
+    UnholdInteractionEvent(): void {
+        this.unHoldInteraction();
+    }
+
+    /**
+     * To process custom DisposeCallWidgetEvent and dispose call widget
+     */
+    DisposeCallWidgetEvent(): void {
+        this.disposeCallWidget();
+    }
+
+    /**
+     * To process custom AVDisconnectedEvent and end chat after AV disconnect
+     */
+    AVDisconnectedEvent(evt: { Reason: string }): void {
+        this.processEndChat(evt.Reason);
+    }
+
+    /**
+     * To process custom ConfirmEndInteractionEvent and confirm end chat
+     */
+    ConfirmEndInteractionEvent(): void {
+        this.confirmEndChat();
+    }
+
+    /**
      * On widget maximzed event
      */
     public onMaximized(isMax: boolean): void {
@@ -2334,22 +2433,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param {MatButton} btn End chat button reference
      */
-    public confirmEndChat(btn: MatButton): void {
-        // config force login
+    public confirmEndChat(): void {
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
         this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
-                this.endChat('AgentChatDisconnected', btn);
+                this.endChat('AgentChatDisconnected');
             }
         });
     }
 
     /**
      * To confirm close interaction
-     *
-     * @param {MatButton} btn Close interaction button reference
      */
-    public confirmCloseInteraction(btn: MatButton): void {
+    public confirmCloseInteraction(): void {
         // confirm close interaction
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
@@ -2358,8 +2454,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 // disable the button
-                btn.disabled = true;
-                this.closeInteraction(btn);
+                this.closeButton.disabled = true;
+                this.closeInteraction();
             }
         });
     }
@@ -2432,7 +2528,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public escalateToAV(type: 'audio' | 'video'): void {
         // open call widget
-        this.openCallWidget(type, 'out', null);
+        this.openCallWidget(type, 'out');
+
+        // this._tmacEventService.emitSDKEvent({
+        //     event: {
+        //         EventName: 'EscalateToAVEvent',
+        //         InteractionID: this.interaction.InteractionID,
+        //         CallType: type
+        //     },
+        //     isInteractionEvent: true
+        // });
     }
 
     /**

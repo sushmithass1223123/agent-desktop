@@ -1,6 +1,7 @@
 import { Directive, HostBinding } from '@angular/core';
 import { ILogger, TUtils } from '@tmac/sdk';
 import { IWidget } from 'app/interfaces';
+import { merge } from 'lodash';
 import { Subject } from 'rxjs';
 
 /**
@@ -43,11 +44,16 @@ export class TWidgetWrapper {
      *
      * @param {IWidget} data Widget data
      */
-    initWrapper(data: IWidget): void {
+    initWrapper<T>(data: IWidget, base?: T): void {
         // check if the data is null
         if (!data) {
             console.warn('TWidgetWrapper: data us null');
             return;
+        }
+
+        if (base) {
+            // for backward compatible configs
+            data.Data = merge({}, base, data.Data);
         }
 
         // check if any id is appended, if not add here
