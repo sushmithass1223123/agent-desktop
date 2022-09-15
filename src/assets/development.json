@@ -238,14 +238,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {
-                                        "Role": "agent",
-                                        "SLEnabled": true,
-                                        "HideSkillFilter": {
-                                            "Type": "startswith",
-                                            "Value": ["DAC"]
-                                        }
-                                    }
+                                    "Data": { "Role": "agent", "SLEnabled": true, "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] } }
                                 }
                             ],
                             "Dynamic": [
@@ -640,10 +633,7 @@
                                     "Data": {
                                         "Role": "supervisor",
                                         "SLEnabled": false,
-                                        "HideSkillFilter": {
-                                            "Type": "startswith",
-                                            "Value": ["DAC"]
-                                        }
+                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
                                     }
                                 },
                                 {
@@ -2701,5 +2691,5 @@
             ]
         }
     },
-    "Version": "5.1.7.30"
+    "Version": "5.1.8.30"
 }
