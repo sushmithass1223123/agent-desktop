@@ -1180,6 +1180,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         const transferConfig = config?.Transfer ?? {};
         let data = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
         data = merge({}, data, transferConfig);
+        const sessionKey = this.getCurrentSessionKey();
         data = {
             ...data,
             OtherData: {
@@ -1199,7 +1200,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
         };
 
-        const sessionKey = this.getCurrentSessionKey();
         this.matDialog.open(AgentSkillListComponent, {
             data,
             panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
