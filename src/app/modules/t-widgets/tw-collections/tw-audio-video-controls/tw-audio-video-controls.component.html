@@ -186,7 +186,11 @@
                             </button>
                         </div>
 
-                        <span class="text-boxed user">{{ user.streamInfo.user }}</span>
+                        <span class="text-boxed user twd-flex twd-items-center"
+                            >{{ user.streamInfo.user }}
+                            <mat-icon *ngIf="!remoteAudioMuted">mic</mat-icon>
+                            <mat-icon *ngIf="remoteAudioMuted">mic_off</mat-icon>
+                        </span>
                     </div>
 
                     <div class="twd-w-full twd-h-full twd-flex twd-flex-max twd-justify-center twd-items-center" *ngIf="userList.length === 0">

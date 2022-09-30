@@ -6,6 +6,7 @@ import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
 import { TwCustomerDetails } from '@ad/types';
+import { QueueColorCodesModel, SDKClient } from '@tmac/sdk';
 
 /**
  * Custommer details widget
@@ -42,6 +43,10 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      * Collapsed event emitter
      */
     @Output() collapseEvent = new EventEmitter();
+    /**
+     * Background color codes for Queue time
+     */
+    queueTimeColorCodes: QueueColorCodesModel[] = [];
 
     constructor(private _tmacEventService: TMACEventService) {
         super('TwCustomerDetailsComponent');
@@ -81,6 +86,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         } catch (error) {
             throwADError('Error in TwCampaignContactComponent', error);
         }
+        this.getQueueTimeColorCodes();
     }
 
     /**
@@ -90,5 +96,48 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
+
+    /**
+     * Get colorcodes for queue time based for various ranges
+     */
+    getQueueTimeColorCodes() {
+        try{
+            SDKClient.getQueueTimeColorCodes(this.data).then(data => {
+                this.queueTimeColorCodes = data.response;
+            });
+        } catch(e) {
+            this.logger.error('Error on fetching Queue time color codes', e, false);
+        }
+    }
+
+    getCustomStyles(item) {
+        if(item.Unit !== '') {
+            return {
+                'background-color': this.getColorCode(item),
+                'text-align':'center',
+                'width': '75%',
+                'border-radius': '40px'
+            };
+        } else {
+            return '';
+        }
+    }
+
+    getColorCode(item) {
+        let colorCode = 'none';
+        try {
+            const type = item.ValueSource.split('.').pop();
+            switch(type) {
+                case 'QueueTime': colorCode = this.queueTimeColorCodes?.filter(
+                    (data) => Number(data.endTime) >= Number(item.Value) && Number(data.startTime) <= Number(item.Value)
+                )?.[0]?.colorCode;
+
+                return colorCode; 
+            }
+        } catch(e) {
+            this.logger.error('Error occured on displaying customer info bg color', e, false);
+            return colorCode; 
+        }
     }
 }
