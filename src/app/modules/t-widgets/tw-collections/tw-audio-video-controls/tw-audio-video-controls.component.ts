@@ -266,6 +266,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     interactionDetails: IInteractionDetails = {} as IInteractionDetails;
 
+    /** 
+     * Remote audio flag */
+    remoteAudioMuted: boolean;
     /**
      * Constructor
      */
@@ -832,11 +835,33 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param {AVControlMessageReceivedEvent} evt
      */
     AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
+        try {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
 
+
+        switch(evt.Type) {
+            case 'requestav': 
+                            this.interactionDetails.Direction = 'in';
+                            this.callType = JSON.parse(evt.Message).param;
+                            this.startAVCall();
+                            break;
+            case 'mute':
+                        if(JSON.parse(evt.Message).param === 'audio') {
+                            this.remoteAudioMuted = true;
+                            this._appUIService.showSnackbar('Customer muted the audio', 'warning');
+                        }
+                        break;
+            case 'unmute':
+                        if(JSON.parse(evt.Message).param === 'audio') {
+                            this.remoteAudioMuted = false;
+                            this._appUIService.showSnackbar('Customer unmuted the audio', 'success');
+                        }
+                        break;
+
+        }
         // check if its a av request
         if (evt.Type === 'requestav') {
             this.interactionDetails.Direction = 'in';
@@ -846,6 +871,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
+        } catch(e) {
+            this.logger.error('error occured in AVControlMessageReceivedEvent',e,false);
+        }
     };
 
     /**
