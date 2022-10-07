@@ -129,10 +129,14 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
         try {
             const type = item.ValueSource.split('.').pop();
             switch(type) {
-                case 'QueueTime': colorCode = this.queueTimeColorCodes?.filter(
-                    (data) => Number(data.endTime) >= Number(item.Value) && Number(data.startTime) <= Number(item.Value)
+                case 'QueueTime': colorCode = this.queueTimeColorCodes.filter(
+                    (data) => {
+                        if(Number(data.endTime) >= Number(item.Value) && Number(data.startTime) <= Number(item.Value))
+                        {
+                            return data;
+                        }
+                    }
                 )?.[0]?.colorCode;
-
                 return colorCode; 
             }
         } catch(e) {
