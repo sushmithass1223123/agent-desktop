@@ -596,7 +596,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         // 1. The prefix passed in Config
         // 2. Operating hours
         this.switcherList['Skill List'].data = res.response.reduce((acc, skill) => {
-            const valid = { prefix: false, opHours: false };
+            const valid = { prefix: false, opHours: false, isWorkingDay: false };
             // Filter 1 : The prefix passed in Config
             if (channelPrefix.length > 0) {
                 valid.prefix = channelPrefix.some((prefix) => skill.Name.toLowerCase().startsWith(prefix.toLowerCase()));
@@ -614,8 +614,14 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 }
             }
 
-            // Push to the Acc array if both the conditions are satisfied
-            if (valid.prefix && valid.opHours) {
+            // Filter 3 : check for holiday
+            if (valid.opHours) {
+                // [Chirag: Aug 1, '22] check if current time is a holiday for this skill
+                valid.isWorkingDay = this.isWorkingDay(skill.Holidays)
+            }
+
+            // Push to the Acc array if all three conditions are satisfied
+            if (valid.prefix && valid.opHours && valid.isWorkingDay) {
                 acc.push(
                     formatJsonData<ISkillType>(
                         { row: skill },
@@ -679,6 +685,32 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
         });
         return validOpHours;
+    };
+
+    // [Chirag Aug 1, 22'] - Check if current time is a holiday
+    isWorkingDay = (holidays: any[]): boolean => {
+
+        // get current date and time
+        const today = new Date();
+        const getOpHours = (opHours: any, key: string) => {
+            const time = new Date();
+            time.setHours(opHours[key].Hours);
+            time.setMinutes(opHours[key].Minutes);
+            time.setSeconds(opHours[key].Seconds);
+            return time;
+        };
+
+        // check if current time is holiday
+        for (let i in holidays) {
+            const startTime = getOpHours(holidays[i], 'StartTime');
+            const endTime = getOpHours(holidays[i], 'EndTime');
+            if (startTime.getTime() <= today.getTime()) {
+                if (endTime.getTime() >= today.getTime()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     };
 
     /**
