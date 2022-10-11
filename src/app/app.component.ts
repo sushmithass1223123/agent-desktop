@@ -101,6 +101,10 @@ export class AppComponent implements OnInit, OnDestroy {
         {
             label: 'custom-file-zip',
             name: 'file-zip'
+        },
+        {
+            label: 'custom-cobrowse',
+            name: 'cobrowse'
         }
     ];
 
