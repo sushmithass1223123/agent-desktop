@@ -27,7 +27,8 @@
     },
     "Main": {
         "Toolbar": {
-            "Widgets": [{
+            "Widgets": [
+                {
                     "Name": "Interaction indicators",
                     "Description": "",
                     "Type": "tw-active-interaction",
@@ -44,7 +45,8 @@
                         "Enabled": true
                     },
                     "Data": {
-                        "Widgets": [{
+                        "Widgets": [
+                            {
                                 "Name": "Broadcast Message",
                                 "Description": "",
                                 "Type": "tw-broadcast",
@@ -146,7 +148,8 @@
                                     "Enabled": true
                                 },
                                 "Data": {
-                                    "Channels": [{
+                                    "Channels": [
+                                        {
                                             "Name": "Send SMS",
                                             "Enabled": true,
                                             "EnableState": "",
@@ -216,7 +219,8 @@
         },
         "Navbar": {
             "Widgets": {
-                "Top": [{
+                "Top": [
+                    {
                         "Name": "Home",
                         "Description": "",
                         "Type": "twn-home",
@@ -308,7 +312,8 @@
                         }
                     }
                 ],
-                "Bottom": [{
+                "Bottom": [
+                    {
                         "Name": "TMeet",
                         "Description": "",
                         "Type": "twn-custom",
@@ -338,7 +343,8 @@
             }
         },
         "Content": {
-            "Widgets": [{
+            "Widgets": [
+                {
                     "Name": "Home",
                     "Description": "",
                     "Type": "twc-home",
@@ -354,38 +360,41 @@
                         "Path": "/home",
                         "Duration": 100,
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Wallboard",
-                                "Description": "",
-                                "Type": "tw-wallboard",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": false,
-                                    "Anchor": true,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "dvr",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
+                            "Static": [
+                                {
+                                    "Name": "Wallboard",
+                                    "Description": "",
+                                    "Type": "tw-wallboard",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": true,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "Role": "agent",
-                                    "SLEnabled": true,
-                                    "HideSkillFilter": {
-                                        "Type": "startswith",
-                                        "Value": ["DAC"]
+                                    "Data": {
+                                        "Role": "agent",
+                                        "SLEnabled": true,
+                                        "HideSkillFilter": {
+                                            "Type": "startswith",
+                                            "Value": ["DAC"]
+                                        }
                                     }
                                 }
-                            }],
-                            "Dynamic": [{
+                            ],
+                            "Dynamic": [
+                                {
                                     "Name": "All Interactions",
                                     "Description": "",
                                     "Key": "AllInteractions",
@@ -524,7 +533,8 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "TaskOptions": [{
+                                        "TaskOptions": [
+                                            {
                                                 "Name": "Change Status",
                                                 "Value": "changestate"
                                             },
@@ -567,7 +577,8 @@
                                     }
                                 }
                             ],
-                            "AOT": [{
+                            "AOT": [
+                                {
                                     "Name": "CRM Integration",
                                     "Description": "",
                                     "Key": "WebRTC",
@@ -717,33 +728,36 @@
                         "Duration": 100,
                         "AgentHierarchy": false,
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Active Agents",
-                                "Description": "",
-                                "Type": "tw-su-active-agents",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "vertical_split",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
+                            "Static": [
+                                {
+                                    "Name": "Active Agents",
+                                    "Description": "",
+                                    "Type": "tw-su-active-agents",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "vertical_split",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": true,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index"
+                                    "Data": {
+                                        "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index"
+                                    }
                                 }
-                            }],
-                            "Dynamic": [{
+                            ],
+                            "Dynamic": [
+                                {
                                     "Name": "All Interactions",
                                     "Description": "",
                                     "Key": "AllInteractions",
@@ -983,7 +997,8 @@
                                 }
                             ],
                             "Agent": [],
-                            "AOT": [{
+                            "AOT": [
+                                {
                                     "Name": "Leaderboard",
                                     "Description": "",
                                     "Key": "Leaderboard",
@@ -1062,288 +1077,295 @@
                         "Path": "/voice",
                         "RouteOnInteraction": true,
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Voice-Panel",
-                                "Description": "",
-                                "Type": "tw-voice-panel",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": true,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
+                            "Static": [
+                                {
+                                    "Name": "Voice-Panel",
+                                    "Description": "",
+                                    "Type": "tw-voice-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": false
-                                },
-                                "Data": {
-                                    "Widgets": [{
-                                            "Name": "Voice Call",
-                                            "Description": "",
-                                            "Type": "tw-voice-controls",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "phone",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse", "float"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
-                                            },
-                                            "Data": {
-                                                "Transfer": {
-                                                    "Allowed": true,
-                                                    "Agent": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "station",
-                                                            "Display": "${LastName}, ${FirstName}",
-                                                            "FreeTextAllowed": true
-                                                        },
-                                                        "AllowedStates": [],
-                                                        "TeamFilter": false,
-                                                        "Columns": []
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Voice Call",
+                                                "Description": "",
+                                                "Type": "tw-voice-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "phone",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
-                                                    "Skill": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "vdn",
-                                                            "Display": "skill",
-                                                            "FreeTextAllowed": true
-                                                        },
-                                                        "ChannelPrefix": ["VO"],
-                                                        "Columns": [],
-                                                        "Rules": {
-                                                            "Enabled": true,
-                                                            "STF": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "AVL": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "CIQ": {
-                                                                "Enabled": true,
-                                                                "Min": 0,
-                                                                "Max": 0
-                                                            }
-                                                        }
-                                                    },
-                                                    "SpeedDial": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": false,
-                                                        "Source": {
-                                                            "Use": "Number",
-                                                            "Display": "Number",
-                                                            "FreeTextAllowed": true
-                                                        },
-                                                        "Columns": [],
-                                                        "TeamFilter": false
-                                                    }
+                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
-                                                "Conference": {
-                                                    "Allowed": true,
-                                                    "Agent": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "station",
-                                                            "Display": "agentName",
-                                                            "FreeTextAllowed": true
-                                                        },
-                                                        "AllowedStates": [],
-                                                        "TeamFilter": false,
-                                                        "Columns": []
-                                                    },
-                                                    "Skill": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "vdn",
-                                                            "Display": "skill",
-                                                            "FreeTextAllowed": true
-                                                        },
-                                                        "ChannelPrefix": ["VO"],
-                                                        "Columns": [],
-                                                        "Rules": {
-                                                            "Enabled": true,
-                                                            "STF": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "AVL": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "CIQ": {
-                                                                "Enabled": true,
-                                                                "Min": 0,
-                                                                "Max": 0
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "IVR": {
-                                                    "MenuEnabled": true,
-                                                    "DefaultMenu": ["Main Menu TRPS Way", "Products", "Mobile", "Agent"],
+                                                "Data": {
                                                     "Transfer": {
                                                         "Allowed": true,
-                                                        "Menu": [{
-                                                            "Text": "Accesscode+TPIN",
-                                                            "Type": "v_nv",
-                                                            "Value": "tpin",
-                                                            "Icon": "lock"
-                                                        }]
-                                                    }
-                                                },
-                                                "DialpadAllowed": true,
-                                                "InteractionCommentAllowed": true,
-                                                "MakeCallAllowed": true,
-                                                "SendSMSAllowed": true,
-                                                "CloseInteractionOnEnd": false
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Details",
-                                            "Description": "",
-                                            "Type": "tw-customer-details",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "person",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
-                                            },
-                                            "Data": {
-                                                "CustomerInfo": [{
-                                                        "Title": "Mobile",
-                                                        "ValueSource": "CCLDataEvent.RegisteredPhone",
-                                                        "Unit": "",
-                                                        "DefaultValue": "",
-                                                        "MaskData": true
-                                                    },
-                                                    {
-                                                        "Title": "Name",
-                                                        "ValueSource": "CCLDataEvent.CallerName",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Email",
-                                                        "ValueSource": "CCLDataEvent.Email",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Address",
-                                                        "ValueSource": "CCLDataEvent.Address",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "NRIC",
-                                                        "ValueSource": "CCLDataEvent.NRIC",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Account Number",
-                                                        "ValueSource": "CCLDataEvent.AccountNumber",
-                                                        "Unit": "",
-                                                        "DefaultValue": "",
-                                                        "MaskData": {
-                                                            "MaskWith": "*",
-                                                            "MaxMaskedChars": 14,
-                                                            "UnMaskedStartChars": 0,
-                                                            "UnMaskedEndChars": 4
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "station",
+                                                                "Display": "${LastName}, ${FirstName}",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": ["VO"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
+                                                        },
+                                                        "SpeedDial": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "Number",
+                                                                "Display": "Number",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "Columns": [],
+                                                            "TeamFilter": false
                                                         }
                                                     },
-                                                    {
-                                                        "Title": "Queue time",
-                                                        "ValueSource": "IVRDataEvent.NA",
-                                                        "Unit": "s",
-                                                        "DefaultValue": "00:00:00"
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Journey",
-                                            "Description": "",
-                                            "Type": "tw-customer-journey",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "storage",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
+                                                    "Conference": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "station",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": ["VO"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "IVR": {
+                                                        "MenuEnabled": true,
+                                                        "DefaultMenu": ["Main Menu TRPS Way", "Products", "Mobile", "Agent"],
+                                                        "Transfer": {
+                                                            "Allowed": true,
+                                                            "Menu": [
+                                                                {
+                                                                    "Text": "Accesscode+TPIN",
+                                                                    "Type": "v_nv",
+                                                                    "Value": "tpin",
+                                                                    "Icon": "lock"
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    "DialpadAllowed": true,
+                                                    "InteractionCommentAllowed": true,
+                                                    "MakeCallAllowed": true,
+                                                    "SendSMSAllowed": true,
+                                                    "CloseInteractionOnEnd": false
+                                                }
                                             },
-                                            "Data": {
-                                                "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                "NoOfRecords": 10,
-                                                "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
-                                                "Columns": []
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "CustomerInfo": [
+                                                        {
+                                                            "Title": "Mobile",
+                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                            "Unit": "",
+                                                            "DefaultValue": "",
+                                                            "MaskData": true
+                                                        },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Account Number",
+                                                            "ValueSource": "CCLDataEvent.AccountNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "",
+                                                            "MaskData": {
+                                                                "MaskWith": "*",
+                                                                "MaxMaskedChars": 14,
+                                                                "UnMaskedStartChars": 0,
+                                                                "UnMaskedEndChars": 4
+                                                            }
+                                                        },
+                                                        {
+                                                            "Title": "Queue time",
+                                                            "ValueSource": "IVRDataEvent.NA",
+                                                            "Unit": "s",
+                                                            "DefaultValue": "00:00:00"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": []
+                                                }
                                             }
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 }
-                            }],
-                            "Dynamic": [{
+                            ],
+                            "Dynamic": [
+                                {
                                     "Name": "Deflect To Digital",
                                     "Description": "",
                                     "Key": "TWDeflectToDigital",
@@ -1547,7 +1569,8 @@
                                     "Data": {}
                                 }
                             ],
-                            "AOT": [{
+                            "AOT": [
+                                {
                                     "Name": "Voice Bio",
                                     "Description": "",
                                     "Key": "VoiceBio",
@@ -1722,335 +1745,263 @@
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Chat-Panel",
-                                "Description": "",
-                                "Type": "tw-chat-panel",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": true,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
+                            "Static": [
+                                {
+                                    "Name": "Chat-Panel",
+                                    "Description": "",
+                                    "Type": "tw-chat-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 3 },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false,
+                                        "Pinned": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": false,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "Widgets": [{
-                                            "Name": "Chat Controls",
-                                            "Description": "",
-                                            "Type": "tw-chat-controls",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "chat",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Chat Controls",
+                                                "Description": "",
+                                                "Type": "tw-chat-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "chat",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
-                                                "Actions": ["maximize", "collapse", "float"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
-                                            },
-                                            "Data": {
-                                                "Transfer": {
-                                                    "Allowed": true,
-                                                    "Agent": {
+                                                "Data": {
+                                                    "Transfer": {
                                                         "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "agentId",
-                                                            "Display": "agentName",
-                                                            "FreeTextAllowed": false
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
-                                                        "AllowedStates": [],
-                                                        "TeamFilter": false,
-                                                        "Columns": []
-                                                    },
-                                                    "Skill": {
-                                                        "Allowed": true,
-                                                        "Consult": false,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "vdn",
-                                                            "Display": "skill",
-                                                            "FreeTextAllowed": false
-                                                        },
-                                                        "ChannelPrefix": [],
-                                                        "Columns": [],
-                                                        "Rules": {
-                                                            "Enabled": true,
-                                                            "STF": {
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": false,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "ChannelPrefix": [],
+                                                            "Columns": [],
+                                                            "Rules": {
                                                                 "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "AVL": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "CIQ": {
-                                                                "Enabled": true,
-                                                                "Min": 0,
-                                                                "Max": 0
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
-                                                    }
-                                                },
-                                                "Conference": {
-                                                    "Allowed": true,
-                                                    "Agent": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": false,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "agentId",
-                                                            "Display": "agentName",
-                                                            "FreeTextAllowed": false
-                                                        },
-                                                        "AllowedStates": [],
-                                                        "TeamFilter": false,
-                                                        "Columns": []
                                                     },
-                                                    "Skill": {
+                                                    "Conference": {
                                                         "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": false,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "vdn",
-                                                            "Display": "skill",
-                                                            "FreeTextAllowed": false
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
                                                         },
-                                                        "ChannelPrefix": ["CH"],
-                                                        "Columns": [],
-                                                        "Rules": {
-                                                            "Enabled": true,
-                                                            "STF": {
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": true,
+                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "ChannelPrefix": ["CH"],
+                                                            "Columns": [],
+                                                            "Rules": {
                                                                 "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "AVL": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "CIQ": {
-                                                                "Enabled": true,
-                                                                "Min": 0,
-                                                                "Max": 0
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
                                                         }
-                                                    }
-                                                },
-                                                "AudioEscalateAllowed": true,
-                                                "VideoEscalateAllowed": true,
-                                                "SignatureAllowed": true,
-                                                "EmojiAllowed": true,
-                                                "ReplyOnChatAllowed": true,
-                                                "VoiceNoteAllowed": false,
-                                                "AttachmentAllowed": true,
-                                                "ScreenShareAllowed": true,
-                                                "InteractionCommentAllowed": true,
-                                                "HoldInteractionAllowed": true,
-                                                "Whiteboard": {
-                                                    "Allowed": true,
-                                                    "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html"
-                                                },
-                                                "Snapshot": {
-                                                    "Allowed": true,
-                                                    "Source": "remote",
-                                                    "RemoteResponseTimeout": 10,
-                                                    "RemoteRequestTimeout": 10
-                                                },
-                                                "ShowUserLabel": false,
-                                                "ChatTemplate": {
-                                                    "Allowed": true,
-                                                    "Filter": "startswith",
-                                                    "FilterByTime": false
-                                                },
-                                                "WebRTCTest": {
-                                                    "Allowed": true,
-                                                    "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
-                                                    "Customer": true
-                                                },
-                                                "ConversationService": {
-                                                    "Url": "",
-                                                    "Limit": 50,
-                                                    "Label": false
-                                                },
-                                                "ReplyAllowed": true,
-                                                "EndInteractionOnAVEnd": false,
-                                                "CloseInteractionOnEnd": false,
-                                                "MuteAVOnHold": {
-                                                    "AgentAudio": true,
-                                                    "AgentVideo": true,
-                                                    "CustomerAudio": true,
-                                                    "CustomerVideo": false
-                                                },
-                                                "ToggleUserViewAllowed": true
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Details",
-                                            "Description": "",
-                                            "Type": "tw-customer-details",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "person",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
+                                                    },
+                                                    "AudioEscalateAllowed": true,
+                                                    "VideoEscalateAllowed": true,
+                                                    "SignatureAllowed": true,
+                                                    "EmojiAllowed": true,
+                                                    "ReplyOnChatAllowed": true,
+                                                    "VoiceNoteAllowed": false,
+                                                    "AttachmentAllowed": true,
+                                                    "ScreenShareAllowed": true,
+                                                    "InteractionCommentAllowed": true,
+                                                    "HoldInteractionAllowed": true,
+                                                    "Whiteboard": {
+                                                        "Allowed": true,
+                                                        "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
+                                                        "CustomerUrl": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html?host=true"
+                                                    },
+                                                    "Snapshot": {
+                                                        "Allowed": true,
+                                                        "Source": "remote",
+                                                        "RemoteResponseTimeout": 10,
+                                                        "RemoteRequestTimeout": 10
+                                                    },
+                                                    "ShowUserLabel": false,
+                                                    "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
+                                                    "WebRTCTest": {
+                                                        "Allowed": true,
+                                                        "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
+                                                        "Customer": true
+                                                    },
+                                                    "ConversationService": { "Url": "", "Limit": 50, "Label": false },
+                                                    "ReplyAllowed": true,
+                                                    "EndInteractionOnAVEnd": false,
+                                                    "CloseInteractionOnEnd": false,
+                                                    "MuteAVOnHold": {
+                                                        "AgentAudio": true,
+                                                        "AgentVideo": true,
+                                                        "CustomerAudio": true,
+                                                        "CustomerVideo": false
+                                                    },
+                                                    "ToggleUserViewAllowed": true
+                                                }
                                             },
-                                            "Data": {
-                                                "CustomerInfo": [{
-                                                        "Title": "Channel",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Queue time",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
-                                                        "Unit": "s",
-                                                        "DefaultValue": "00:00:00"
-                                                    },
-                                                    {
-                                                        "Title": "Mobile",
-                                                        "ValueSource": "CCLDataEvent.RegisteredPhone",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Name",
-                                                        "ValueSource": "CCLDataEvent.CallerName",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Auth Type",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Auth Status",
-                                                        "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authStatus",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Email",
-                                                        "ValueSource": "CCLDataEvent.Email",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "Address",
-                                                        "ValueSource": "CCLDataEvent.Address",
-                                                        "Unit": "",
-                                                        "DefaultValue": ""
-                                                    },
-                                                    {
-                                                        "Title": "NRIC",
-                                                        "ValueSource": "CCLDataEvent.NRIC",
-                                                        "Unit": "",
-                                                        "DefaultValue": "",
-                                                        "MaskData": {
-                                                            "UnMaskedStartChars": 2,
-                                                            "UnMaskedEndChars": 2
-                                                        }
-                                                    },
-                                                    {
-                                                        "Title": "Account Number",
-                                                        "ValueSource": "CCLDataEvent.AccountNumber",
-                                                        "Unit": "",
-                                                        "DefaultValue": "",
-                                                        "MaskData": {
-                                                            "MaskWith": "*",
-                                                            "MaxMaskedChars": 8,
-                                                            "UnMaskedStartChars": 0,
-                                                            "UnMaskedEndChars": 4
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Journey",
-                                            "Description": "",
-                                            "Type": "tw-customer-journey",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "storage",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "collapse",
-                                                "Header": true,
-                                                "Pinned": false
+                                                "Data": {
+                                                    "CustomerInfo": [
+                                                        {
+                                                            "Title": "Channel",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.JsonData.pChannel",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Queue time",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.QueueTime",
+                                                            "Unit": "s",
+                                                            "DefaultValue": "00:00:00"
+                                                        },
+                                                        {
+                                                            "Title": "Mobile",
+                                                            "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Auth Type",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Auth Status",
+                                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authStatus",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        { "Title": "Email", "ValueSource": "CCLDataEvent.Email", "Unit": "", "DefaultValue": "" },
+                                                        { "Title": "Address", "ValueSource": "CCLDataEvent.Address", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": "",
+                                                            "MaskData": { "UnMaskedStartChars": 2, "UnMaskedEndChars": 2 }
+                                                        },
+                                                        {
+                                                            "Title": "Account Number",
+                                                            "ValueSource": "CCLDataEvent.AccountNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "",
+                                                            "MaskData": {
+                                                                "MaskWith": "*",
+                                                                "MaxMaskedChars": 8,
+                                                                "UnMaskedStartChars": 0,
+                                                                "UnMaskedEndChars": 4
+                                                            }
+                                                        }
+                                                    ]
+                                                }
                                             },
-                                            "Data": {
-                                                "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                "NoOfRecords": 10,
-                                                "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
-                                                "Columns": [
-                                                    "InteractionDate",
-                                                    "Channel",
-                                                    "Direction",
-                                                    "InteractionText",
-                                                    "Intent",
-                                                    "LastServicedAgentName",
-                                                    "CIF",
-                                                    "NRIC",
-                                                    "Actions"
-                                                ]
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "collapse",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "InteractionText",
+                                                        "Intent",
+                                                        "LastServicedAgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "Actions"
+                                                    ]
+                                                }
                                             }
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 }
-                            }],
-                            "Dynamic": [{
+                            ],
+                            "Dynamic": [
+                                {
                                     "Name": "User location",
                                     "Description": "",
                                     "Key": "UserLocation",
@@ -2217,7 +2168,8 @@
                                     }
                                 }
                             ],
-                            "AOT": [{
+                            "AOT": [
+                                {
                                     "Name": "External Pop",
                                     "Description": "",
                                     "Key": "External-Pop",
@@ -2398,151 +2350,155 @@
                         "Path": "/email",
                         "RouteOnInteraction": true,
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Email-Panel",
-                                "Description": "",
-                                "Type": "tw-email-panel",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": true,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
+                            "Static": [
+                                {
+                                    "Name": "Email-Panel",
+                                    "Description": "",
+                                    "Type": "tw-email-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": false
-                                },
-                                "Data": {
-                                    "Widgets": [{
-                                            "Name": "Email Controls",
-                                            "Description": "",
-                                            "Type": "tw-email-controls",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "chat",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse", "float"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
-                                            },
-                                            "Data": {
-                                                "Transfer": {
-                                                    "Allowed": true,
-                                                    "Agent": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "agentId",
-                                                            "Display": "agentName",
-                                                            "FreeTextAllowed": false
-                                                        },
-                                                        "AllowedStates": ["Available", "Ready"],
-                                                        "TeamFilter": false,
-                                                        "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Email Controls",
+                                                "Description": "",
+                                                "Type": "tw-email-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "chat",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
-                                                    "Skill": {
+                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "Transfer": {
                                                         "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": true,
-                                                        "Comments": true,
-                                                        "Source": {
-                                                            "Use": "vdn",
-                                                            "Display": "skill",
-                                                            "FreeTextAllowed": true
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "TeamFilter": false,
+                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
                                                         },
-                                                        "ChannelPrefix": ["EM"],
-                                                        "Columns": [],
-                                                        "Rules": {
-                                                            "Enabled": true,
-                                                            "STF": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
                                                             },
-                                                            "AVL": {
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
                                                                 "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
-                                                            },
-                                                            "CIQ": {
-                                                                "Enabled": true,
-                                                                "Min": 0,
-                                                                "Max": 0
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                },
-                                                "DownloadAllowed": true,
-                                                "ForwardAllowed": true,
-                                                "ReplyAllAllowed": true,
-                                                "InteractionCommentAllowed": true,
-                                                "DraftPollingInterval": 10000,
-                                                "TemplatesByTeam": false,
-                                                "InternetHeadersAllowed": true,
-                                                "TemplatesByHierarchy": false
-                                            }
-                                        },
-                                        {
-                                            "Name": "Customer Journey",
-                                            "Description": "",
-                                            "Type": "tw-customer-journey",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "storage",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
+                                                    },
+                                                    "DownloadAllowed": true,
+                                                    "ForwardAllowed": true,
+                                                    "ReplyAllAllowed": true,
+                                                    "InteractionCommentAllowed": true,
+                                                    "DraftPollingInterval": 10000,
+                                                    "TemplatesByTeam": false,
+                                                    "InternetHeadersAllowed": true,
+                                                    "TemplatesByHierarchy": false
+                                                }
                                             },
-                                            "Data": {
-                                                "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                "NoOfRecords": 10,
-                                                "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
-                                                "Columns": [
-                                                    "InteractionDate",
-                                                    "Channel",
-                                                    "Direction",
-                                                    "InteractionText",
-                                                    "Intent",
-                                                    "AgentName",
-                                                    "EmailID",
-                                                    "Actions"
-                                                ]
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "InteractionText",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "EmailID",
+                                                        "Actions"
+                                                    ]
+                                                }
                                             }
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 }
-                            }],
-                            "Dynamic": [{
+                            ],
+                            "Dynamic": [
+                                {
                                     "Name": "Agent Assist",
                                     "Description": "",
                                     "Key": "AgentAssist",
@@ -2711,45 +2667,47 @@
                                     "Data": {}
                                 }
                             ],
-                            "AOT": [{
-                                "Name": "Register Callback",
-                                "Description": "",
-                                "Key": "RegisterCallback",
-                                "Type": "tw-register-callback",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": false,
-                                    "Anchor": true,
-                                    "AOT": true,
-                                    "AutoOpen": false,
-                                    "Icon": "phone_callback",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1,
-                                        "W": 300,
-                                        "H": 300
-                                    },
-                                    "Actions": ["collapse", "destroy"],
-                                    "ViewState": "restore",
-                                    "Header": true,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "TCMProxyUrl": "https://dicedev.tetherfi.cloud:55018",
-                                    "DataMap": {
-                                        "Name": {
-                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
-                                            "DefaultValue": "Mr. Tan"
+                            "AOT": [
+                                {
+                                    "Name": "Register Callback",
+                                    "Description": "",
+                                    "Key": "RegisterCallback",
+                                    "Type": "tw-register-callback",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "AutoOpen": false,
+                                        "Icon": "phone_callback",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 300,
+                                            "H": 300
                                         },
-                                        "Phone": {
-                                            "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
-                                            "DefaultValue": "6596975347"
+                                        "Actions": ["collapse", "destroy"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "TCMProxyUrl": "https://dicedev.tetherfi.cloud:55018",
+                                        "DataMap": {
+                                            "Name": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                "DefaultValue": "6596975347"
+                                            }
                                         }
                                     }
                                 }
-                            }]
+                            ]
                         }
                     }
                 },
@@ -2769,219 +2727,227 @@
                         "Path": "/generic",
                         "RouteOnInteraction": true,
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Generic-Panel",
-                                "Description": "",
-                                "Type": "tw-generic-panel",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": true,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
-                                    },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": false
-                                },
-                                "Data": {
-                                    "Widgets": [{
-                                            "Name": "Generic Controls",
-                                            "Description": "",
-                                            "Type": "tw-generic-controls",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "widgets",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
-                                            },
-                                            "Data": {
-                                                "CloseInteractionAllowed": true
-                                            }
+                            "Static": [
+                                {
+                                    "Name": "Generic-Panel",
+                                    "Description": "",
+                                    "Type": "tw-generic-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
                                         },
-                                        {
-                                            "Name": "Customer Details",
-                                            "Description": "",
-                                            "Type": "tw-customer-details",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "person",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false
+                                    },
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Generic Controls",
+                                                "Description": "",
+                                                "Type": "tw-generic-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "widgets",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
+                                                    },
+                                                    "Actions": ["collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
                                                 },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
+                                                "Data": {
+                                                    "CloseInteractionAllowed": true
+                                                }
                                             },
-                                            "Data": {
-                                                "CustomerInfo": [{
-                                                        "Title": "Campaign Name",
-                                                        "ValueSource": "GenericInteractionEvent.Item.Data.CampaignName",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
-                                                    {
-                                                        "Title": "Customer Name",
-                                                        "ValueSource": "GenericInteractionEvent.Item.Data.Name",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "CustomerInfo": [
+                                                        {
+                                                            "Title": "Campaign Name",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.CampaignName",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Customer Name",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.Name",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Phone Number",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.PhoneNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Skill",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Skill",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Intent",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "AutoDial",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.AutoDial",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": {
+                                                        "X": 2,
+                                                        "Y": 1
                                                     },
-                                                    {
-                                                        "Title": "Phone Number",
-                                                        "ValueSource": "GenericInteractionEvent.Item.Data.PhoneNumber",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Skill",
-                                                        "ValueSource": "GenericInteractionEvent.Item.Skill",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "Intent",
-                                                        "ValueSource": "GenericInteractionEvent.Item.Intent",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    },
-                                                    {
-                                                        "Title": "AutoDial",
-                                                        "ValueSource": "GenericInteractionEvent.Item.Data.AutoDial",
-                                                        "Unit": "",
-                                                        "DefaultValue": "NA"
-                                                    }
-                                                ]
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "InteractionText",
+                                                        "Intent",
+                                                        "AgentName",
+                                                        "CIF",
+                                                        "NRIC",
+                                                        "PhoneNumber",
+                                                        "EmailID",
+                                                        "OverallSentiment",
+                                                        "Actions"
+                                                    ]
+                                                }
                                             }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "OCM | e-KYC Audit",
+                                    "Description": "",
+                                    "Key": "OCM-VKYC-Audit",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "contact_page",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 2
                                         },
-                                        {
-                                            "Name": "Customer Journey",
-                                            "Description": "",
-                                            "Type": "tw-customer-journey",
-                                            "Config": {
-                                                "Enabled": true,
-                                                "Hidden": false,
-                                                "Static": false,
-                                                "Anchor": true,
-                                                "AOT": false,
-                                                "AutoOpen": false,
-                                                "Icon": "storage",
-                                                "Class": "",
-                                                "Position": {
-                                                    "X": 2,
-                                                    "Y": 1
-                                                },
-                                                "Actions": ["maximize", "collapse"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
-                                            },
-                                            "Data": {
-                                                "IframeBaseUrl": "https://dicedev.tetherfi.cloud/CustomerJourneyUI/AgentCustomerJourney/Version1/index.html?Key=SESSIONID:",
-                                                "NoOfRecords": 10,
-                                                "SentimentDashboardUrl": "https://dicedev.tetherfi.cloud/SentimentDashboard",
-                                                "Columns": [
-                                                    "InteractionDate",
-                                                    "Channel",
-                                                    "Direction",
-                                                    "InteractionText",
-                                                    "Intent",
-                                                    "AgentName",
-                                                    "CIF",
-                                                    "NRIC",
-                                                    "PhoneNumber",
-                                                    "EmailID",
-                                                    "OverallSentiment",
-                                                    "Actions"
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            }],
-                            "Dynamic": [{
-                                "Name": "OCM | e-KYC Audit",
-                                "Description": "",
-                                "Key": "OCM-VKYC-Audit",
-                                "Type": "tw-custom",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": false,
-                                    "Anchor": false,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "contact_page",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 2
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
                                     },
-                                    "Actions": ["maximize", "float"],
-                                    "ViewState": "restore",
-                                    "Header": true,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "OpenInNew": false,
-                                    "Url": "https://dicedev.tetherfi.cloud/OCM/EKYCAudit/Index?sessionid=${Interaction.Item.Data.sessionID}"
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud/OCM/EKYCAudit/Index?sessionid=${Interaction.Item.Data.sessionID}"
+                                    }
                                 }
-                            }],
-                            "AOT": [{
-                                "Name": "Agent Assist",
-                                "Description": "",
-                                "Key": "AgentAssist",
-                                "Type": "tw-custom",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": false,
-                                    "Anchor": true,
-                                    "AOT": true,
-                                    "AutoOpen": false,
-                                    "Icon": "verified_user",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 0,
-                                        "Y": 1,
-                                        "W": 450,
-                                        "H": 800
+                            ],
+                            "AOT": [
+                                {
+                                    "Name": "Agent Assist",
+                                    "Description": "",
+                                    "Key": "AgentAssist",
+                                    "Type": "tw-custom",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": true,
+                                        "AOT": true,
+                                        "AutoOpen": false,
+                                        "Icon": "verified_user",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 0,
+                                            "Y": 1,
+                                            "W": 450,
+                                            "H": 800
+                                        },
+                                        "Actions": ["minimize", "destroy"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
                                     },
-                                    "Actions": ["minimize", "destroy"],
-                                    "ViewState": "restore",
-                                    "Header": true,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "OpenInNew": false,
-                                    "Url": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud:8443/visual-ivr-websocket/?intent=agentassisttest&ucid=${Interaction.UCID}&interactionid=${Interaction.InteractionID}"
+                                    }
                                 }
-                            }]
+                            ]
                         }
                     }
                 },
@@ -3001,109 +2967,112 @@
                     "Data": {
                         "Path": "/workbench",
                         "Widgets": {
-                            "Static": [{
-                                "Name": "Workbench Panel",
-                                "Description": "",
-                                "Type": "tw-workbench-panel",
-                                "Config": {
-                                    "Enabled": true,
-                                    "Hidden": false,
-                                    "Static": true,
-                                    "Anchor": true,
-                                    "AOT": false,
-                                    "AutoOpen": false,
-                                    "Icon": "dvr",
-                                    "Class": "",
-                                    "Position": {
-                                        "X": 2,
-                                        "Y": 3
+                            "Static": [
+                                {
+                                    "Name": "Workbench Panel",
+                                    "Description": "",
+                                    "Type": "tw-workbench-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": true,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "dvr",
+                                        "Class": "",
+                                        "Position": {
+                                            "X": 2,
+                                            "Y": 3
+                                        },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false,
+                                        "Pinned": false
                                     },
-                                    "Actions": [],
-                                    "ViewState": "restore",
-                                    "Header": false,
-                                    "Pinned": false
-                                },
-                                "Data": {
-                                    "General": {
-                                        "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench"
-                                    },
-                                    "Channels": [{
-                                            "Type": "Email",
-                                            "Enabled": true,
-                                            "Icon": "email",
-                                            "Config": {
-                                                "Transfer": {
-                                                    "Allowed": true,
-                                                    "Agent": {
+                                    "Data": {
+                                        "General": {
+                                            "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench"
+                                        },
+                                        "Channels": [
+                                            {
+                                                "Type": "Email",
+                                                "Enabled": true,
+                                                "Icon": "email",
+                                                "Config": {
+                                                    "Transfer": {
                                                         "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": false,
-                                                        "Comments": false,
-                                                        "Source": {
-                                                            "Use": "agentId",
-                                                            "Display": "agentName",
-                                                            "FreeTextAllowed": false
-                                                        },
-                                                        "AllowedStates": [],
-                                                        "TeamFilter": false,
-                                                        "Columns": []
-                                                    },
-                                                    "Skill": {
-                                                        "Allowed": true,
-                                                        "Consult": true,
-                                                        "Blind": false,
-                                                        "Comments": false,
-                                                        "Source": {
-                                                            "Use": "vdn",
-                                                            "Display": "skill",
-                                                            "FreeTextAllowed": false
-                                                        },
-                                                        "ChannelPrefix": ["EM"],
-                                                        "Columns": [],
-                                                        "Rules": {
-                                                            "Enabled": true,
-                                                            "STF": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
                                                             },
-                                                            "AVL": {
-                                                                "Enabled": true,
-                                                                "Min": 1,
-                                                                "Max": -1
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
                                                             },
-                                                            "CIQ": {
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
                                                                 "Enabled": true,
-                                                                "Min": 0,
-                                                                "Max": 0
+                                                                "STF": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "AVL": {
+                                                                    "Enabled": true,
+                                                                    "Min": 1,
+                                                                    "Max": -1
+                                                                },
+                                                                "CIQ": {
+                                                                    "Enabled": true,
+                                                                    "Min": 0,
+                                                                    "Max": 0
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                },
-                                                "SearchPollingInterval": 0,
-                                                "DeleteAllowed": false,
-                                                "QueueTransferForAgent": false,
-                                                "TemplatesByTeam": false,
-                                                "Tabs": ["queue", "inbox", "sent", "drafts"],
-                                                "SearchDuration": 24,
-                                                "InternetHeadersAllowed": true,
-                                                "TemplatesByHierarchy": false
+                                                    },
+                                                    "SearchPollingInterval": 0,
+                                                    "DeleteAllowed": false,
+                                                    "QueueTransferForAgent": false,
+                                                    "TemplatesByTeam": false,
+                                                    "Tabs": ["queue", "inbox", "sent", "drafts"],
+                                                    "SearchDuration": 24,
+                                                    "InternetHeadersAllowed": true,
+                                                    "TemplatesByHierarchy": false
+                                                }
+                                            },
+                                            {
+                                                "Type": "Chat",
+                                                "Enabled": true,
+                                                "Icon": "chat",
+                                                "Config": {
+                                                    "PullAllowed": true,
+                                                    "AskPullConfirmation": true,
+                                                    "PushAllowed": true,
+                                                    "SearchPollingInterval": 5000
+                                                }
                                             }
-                                        },
-                                        {
-                                            "Type": "Chat",
-                                            "Enabled": true,
-                                            "Icon": "chat",
-                                            "Config": {
-                                                "PullAllowed": true,
-                                                "AskPullConfirmation": true,
-                                                "PushAllowed": true,
-                                                "SearchPollingInterval": 5000
-                                            }
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 }
-                            }]
+                            ]
                         }
                     }
                 },
@@ -3145,7 +3114,8 @@
                         "Path": "/docker",
                         "Unload": false,
                         "Widgets": {
-                            "Static": [{
+                            "Static": [
+                                {
                                     "Name": "Test Page 1",
                                     "Description": "",
                                     "Key": "TestPage1",
@@ -3296,7 +3266,8 @@
             ]
         },
         "AOT": {
-            "Widgets": [{
+            "Widgets": [
+                {
                     "Name": "TRS",
                     "Description": "",
                     "Key": "TRS",
@@ -3354,7 +3325,8 @@
                     "Data": {
                         "Urls": [],
                         "Hub": "AgentPopUpHub",
-                        "Actions": [{
+                        "Actions": [
+                            {
                                 "EventName": "CCLDataEvent",
                                 "Channel": "chat",
                                 "Parameters": [
@@ -3445,11 +3417,13 @@
         "CheckForResolution": true,
         "AV": {
             "webRTCConfig": {
-                "iceServers": [{
-                    "urls": "turn:dicedev.tetherfi.cloud:3585",
-                    "username": "tetherfi",
-                    "credential": "nuwan"
-                }],
+                "iceServers": [
+                    {
+                        "urls": "turn:dicedev.tetherfi.cloud:3585",
+                        "username": "tetherfi",
+                        "credential": "nuwan"
+                    }
+                ],
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },

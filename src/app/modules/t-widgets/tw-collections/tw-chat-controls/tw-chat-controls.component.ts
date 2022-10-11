@@ -275,22 +275,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
         icon: string;
     }[] = [
-        {
-            action: 'documents',
-            icon: 'insert_drive_file',
-            label: 'Documents'
-        },
-        {
-            action: 'camera',
-            icon: 'camera_alt',
-            label: 'Camera'
-        },
-        {
-            action: 'media',
-            icon: 'photo',
-            label: 'Photos & Videos'
-        }
-    ];
+            {
+                action: 'documents',
+                icon: 'insert_drive_file',
+                label: 'Documents'
+            },
+            {
+                action: 'camera',
+                icon: 'camera_alt',
+                label: 'Camera'
+            },
+            {
+                action: 'media',
+                icon: 'photo',
+                label: 'Photos & Videos'
+            }
+        ];
     /**
      * Type of attachment previw
      */
@@ -927,7 +927,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 }
             }
-        } catch (error) {}
+        } catch (error) { }
 
         // TODO:: sanitze the message
         //        add message badge if the chat window is not active
@@ -1109,7 +1109,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private isValidJson(str: string): boolean {
         try {
             return typeof JSON.parse(str) === 'object';
-        } catch (error) {}
+        } catch (error) { }
         return false;
     }
 
@@ -1418,7 +1418,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // load all text templates
             const { response } = await SDKClient.getAllTextTemplates();
             this.textTemplates.data = response;
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -1482,7 +1482,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 });
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -1497,7 +1497,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const { response } = await TUtils.HttpClient.sendRequest<any>({
             urls: [
                 this.conversationService.Url +
-                    `user-conversations-timeline/${this.cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`
+                `user-conversations-timeline/${this.cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`
             ],
             method: 'GET',
             responseType: 'json',
@@ -1639,7 +1639,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
             // set ready to reply
             this.readyToReply();
-        } catch (error) {}
+        } catch (error) { }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1761,7 +1761,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
                 this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
             }
-        } catch (error) {}
+        } catch (error) { }
 
         // add the user to list
         this.conferenceAgentList.push({
@@ -3052,13 +3052,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         try {
             const snackRef = this._appUIService.showSnackbar('Opening whiteboard', 'loading');
+
+            // [Chirag July,31 22'] send whiteboard url to customer
+            let customerWhiteboardUrl = new URL(this.widgetData.Whiteboard.CustomerUrl ?? this.widgetData.Whiteboard?.Url);
+            customerWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+
             const res = await SDKClient.sendActionMessage({
-                interactionId: this.interaction.InteractionID as any,
+                interactionId: this.interaction.InteractionID.toString(),
                 message: JSON.stringify({
                     source: 'agent',
                     options: {},
                     data: {
-                        url: `${this.widgetData.Whiteboard.Url}?sessionid=${this.sessionID}`
+                        url: customerWhiteboardUrl.toString()
                     },
                     status: 'request',
                     type: 'openWhiteboard',
@@ -3066,6 +3071,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
+
+            // [Chirag July,31 22'] send whiteboard url to customer
+            let agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
+            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+
             if (res.response?.ResultMessage === 'Success') {
                 const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
                 widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
@@ -3075,7 +3085,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 widget.Config.Position.H = 550;
                 widget.Data = {
                     AutoOpen: false,
-                    Url: `${this.widgetData.Whiteboard.Url}?sessionid=${this.sessionID}`
+                    Url: agentWhiteboardUrl.toString()
                 };
                 this._aotWidgetService.addWidget(widget);
                 snackRef.dismiss();
