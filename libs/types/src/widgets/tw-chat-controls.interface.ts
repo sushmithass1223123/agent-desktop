@@ -269,6 +269,23 @@ export type TwChatControlsData = {
         */
         CustomerUrl: string;
     };
+     /**
+     * Cobrowse reference
+     */
+      Cobrowse: {
+        /**
+         * Flag to enable cobrowse
+         */
+        Allowed: boolean;
+        /**
+         * Agent url
+         */
+        AgentUrl: string;
+        /*
+        *  cobrowse url for customer
+        */
+        CustomerUrls: { [name: string]: string }[];
+    };
     /**
      * Snapshot ref
      */

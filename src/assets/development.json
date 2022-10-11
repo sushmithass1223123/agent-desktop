@@ -1858,6 +1858,17 @@
                                                         "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
                                                         "CustomerUrl": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html?host=true"
                                                     },
+                                                    "Cobrowse": {
+                                                        "Allowed": true,
+                                                        "AgentUrl": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
+                                                        "CustomerUrls": [{
+                                                            "Name": "Signup",
+                                                            "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/SignUp.html?host=true"
+                                                        },{
+                                                            "Name": "login",
+                                                            "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/SignUp.html?host=true"
+                                                        }]
+                                                    },
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "remote",
