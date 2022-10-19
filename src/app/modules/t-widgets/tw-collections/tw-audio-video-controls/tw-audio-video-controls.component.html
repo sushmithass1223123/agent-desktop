@@ -188,8 +188,8 @@
 
                         <span class="text-boxed user twd-flex twd-items-center"
                             >{{ user.streamInfo.user }}
-                            <mat-icon *ngIf="!remoteAudioMuted">mic</mat-icon>
-                            <mat-icon *ngIf="remoteAudioMuted">mic_off</mat-icon>
+                            <mat-icon *ngIf="!ifMuted(user.streamInfo, 'audio')">mic</mat-icon>
+                            <mat-icon *ngIf="ifMuted(user.streamInfo, 'audio')">mic_off</mat-icon>
                         </span>
                     </div>
 

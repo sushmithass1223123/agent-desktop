@@ -266,9 +266,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     interactionDetails: IInteractionDetails = {} as IInteractionDetails;
 
-    /** 
-     * Remote audio flag */
-    remoteAudioMuted: boolean;
+    /**
+     * Audio muted users
+     */
+    mutedRemoteUsers = {
+        audio: [],
+        video: []
+    };
+
     /**
      * Constructor
      */
@@ -841,24 +846,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             return;
         }
 
-
+        const requestType = JSON.parse(evt.Message).param;
         switch(evt.Type) {
             case 'requestav': 
                             this.interactionDetails.Direction = 'in';
-                            this.callType = JSON.parse(evt.Message).param;
+                            this.callType = requestType;
                             this.startAVCall();
                             break;
             case 'mute':
-                        if(JSON.parse(evt.Message).param === 'audio') {
-                            this.remoteAudioMuted = true;
-                            this._appUIService.showSnackbar('Customer muted the audio', 'warning');
-                        }
-                        break;
             case 'unmute':
-                        if(JSON.parse(evt.Message).param === 'audio') {
-                            this.remoteAudioMuted = false;
-                            this._appUIService.showSnackbar('Customer unmuted the audio', 'success');
-                        }
+                        this.updateMuteUnmuteUserList(requestType, evt);
                         break;
 
         }
@@ -875,6 +872,25 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.logger.error('error occured in AVControlMessageReceivedEvent',e,false);
         }
     };
+    
+    /**
+     * 
+     * @param type - type of mute [i.e 'audio' | 'video']
+     * @param data - mute/unmute event data to show relevant notification
+     */
+    updateMuteUnmuteUserList(type, data) {
+        let userName = JSON.parse(data.Message).owner;
+        userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
+        switch(type) {
+            case 'audio': if(data.Type === 'mute') {
+                this.mutedRemoteUsers.audio.push(data.User.toLowerCase());
+            } else {
+                this.mutedRemoteUsers.audio.splice(this.mutedRemoteUsers.audio.indexOf(data.User),1);
+            }
+            break;
+        }
+        this._appUIService.showSnackbar(userName + ' ' + data.Type + 'd the ' +type , 'warning');
+    }
 
     /**
      * AgentAVMessageEvent Handler
@@ -1674,6 +1690,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } finally {
             this._fuseProgressBarService.hide();
         }
+    }
+
+    ifMuted(data, type) {
+        return (this.mutedRemoteUsers[type].includes(data.id) || this.mutedRemoteUsers[type].includes(data.user.toLowerCase()));
     }
 }
 
