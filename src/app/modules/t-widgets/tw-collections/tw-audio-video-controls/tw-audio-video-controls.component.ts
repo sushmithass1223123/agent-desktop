@@ -888,6 +888,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 this.mutedRemoteUsers.audio.splice(this.mutedRemoteUsers.audio.indexOf(data.User),1);
             }
             break;
+            case 'video': if(data.Type === 'mute') {
+                this.mutedRemoteUsers.video.push(data.User.toLowerCase());
+            } else {
+                this.mutedRemoteUsers.video.splice(this.mutedRemoteUsers.video.indexOf(data.User),1);
+            }
+            break;
         }
         this._appUIService.showSnackbar(userName + ' ' + data.Type + 'd the ' +type , 'warning');
     }
