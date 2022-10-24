@@ -640,6 +640,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.status = `Error : ${error}`;
                     this._appUIService.showSnackbar(error, 'failure');
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+                    this.endCall(true, 'Something went wrong');
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -1513,12 +1514,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * End Call
      * @method endCall
      */
-    public async endCall(endOnly = false): Promise<boolean> {
+    public async endCall(endOnly = false,reason = ''): Promise<boolean> {
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
-            this.avConn.dropCall('');
+            this.avConn.dropCall(reason);
         } else {
-            this.avConn.endCall(this.wrcCallType, '');
+            this.avConn.endCall(this.wrcCallType, reason);
         }
 
         // of endOnly then return
