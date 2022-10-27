@@ -85,6 +85,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         ext: string;
     }[] = [];
 
+
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {}
 
     /**
@@ -409,5 +410,13 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 this._fuseProgressBarService.hide();
             }
         } catch (error) {}
+    }
+
+    edit() {
+        this.attachPreviewMode = this.attachPreviewMode + '-edit';
+    }
+
+    save() {
+        this.attachPreviewMode = this.attachPreviewMode;
     }
 }

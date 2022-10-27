@@ -33,6 +33,15 @@
                 <mat-icon> camera_alt </mat-icon>
             </button>
 
+            <button
+                *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'"
+                mat-icon-button
+                (click)="edit()"
+                matTooltip="Edit before sending"
+            >
+                <mat-icon> edit </mat-icon>
+            </button>
+
             <button *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'" mat-icon-button (click)="send()">
                 <mat-icon> send </mat-icon>
             </button>
@@ -70,6 +79,11 @@
                         </div>
                     </ng-template>
                 </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="attachPreviewMode === 'preview-edit' || attachPreviewMode === 'previewCapture-edit'">
+                this is an edit placeholder
+                <button (click)="save()">save</button>
             </ng-container>
         </div>
     </div>
