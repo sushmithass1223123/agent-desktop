@@ -34,10 +34,10 @@
             </button>
 
             <button
-                *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'"
+                *ngIf="(attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture') && enableEdit()"
                 mat-icon-button
                 (click)="edit()"
-                matTooltip="Edit before sending"
+                matTooltip="Edit"
             >
                 <mat-icon> edit </mat-icon>
             </button>
@@ -82,8 +82,9 @@
             </ng-container>
 
             <ng-container *ngIf="attachPreviewMode === 'preview-edit' || attachPreviewMode === 'previewCapture-edit'">
-                this is an edit placeholder
-                <button (click)="save()">save</button>
+                <ng-container *ngFor="let item of uploadingFiles; let i = index">
+                    <app-annotation [sessionID]="sessionID" [sourceImage]="item.base64" (annotatedImage)="save($event, i)"></app-annotation>
+                </ng-container>
             </ng-container>
         </div>
     </div>

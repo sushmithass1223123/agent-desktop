@@ -416,7 +416,16 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         this.attachPreviewMode = this.attachPreviewMode + '-edit';
     }
 
-    save() {
-        this.attachPreviewMode = this.attachPreviewMode;
+    save(image, index) {
+        if(image) {
+            this.uploadingFiles[index].base64 = image;
+        }
+        this.attachPreviewMode = this.attachPreviewMode.split('-').shift();
+    }
+
+    enableEdit(){
+       return this.uploadingFiles.find(item => 
+            item.type.includes('image')
+        ) ? true : false;
     }
 }

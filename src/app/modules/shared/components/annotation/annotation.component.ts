@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, Input, OnInit, Output, EventEmitter, AfterViewInit } from '@angular/core';
 
 declare var document: any;
 @Component({
@@ -6,10 +6,10 @@ declare var document: any;
   templateUrl: './annotation.component.html',
   styleUrls: ['./annotation.component.scss']
 })
-export class AnnotationComponent implements OnInit {
+export class AnnotationComponent implements OnInit, AfterViewInit {
 
-  @Input('sourceImage') sourceImage!: string;
-  @ViewChild('imageContainer') imageContainer: ElementRef;
+  @Input() sourceImage!: string;
+  @Input() sessionID;
   isPenActive: boolean = false;
   annotateCanvas!: HTMLCanvasElement | any;
   annotateCtx!: CanvasRenderingContext2D | any;
@@ -24,26 +24,31 @@ export class AnnotationComponent implements OnInit {
   isRectPenTouched: boolean = false;
   isCirclePenTouched: boolean = false;
   showShapeControls: boolean = false;
+  @Output() annotatedImage = new EventEmitter(); 
 
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.annotateCanvas = document.querySelector('#anotateCanvas');
+  }
+
+  ngAfterViewInit(): void {
+    this.annotateCanvas = document.getElementById('anotateCanvas-'+this.sessionID);
     setTimeout(() => {}, 200);
     this.annotateCtx = this.annotateCanvas.getContext('2d');
-    console.log(this.annotateCtx);
     this.cdr.detectChanges();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    this.setCanvasSize(true);
+    //this.setCanvasSize(true);
   }
 
   setCanvasSize(isResize?: boolean) {
-    this.annotateCanvas.width = document.querySelector('.image-container')?.clientWidth;
-    this.annotateCanvas.height = document.querySelector('.image-container')?.clientHeight;
-    this.annotateCtx.drawImage(document.getElementById('imageToAnnotate'), 0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
+    this.annotateCanvas.width = document.getElementById('imageToAnnotate-'+this.sessionID)?.clientWidth;
+    this.annotateCanvas.height = document.getElementById('imageToAnnotate-'+this.sessionID)?.clientHeight;
+    this.annotateCtx.drawImage(document.getElementById('imageToAnnotate-'+this.sessionID), 0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
+    this.annotateCtx.scale(3,3);
+    
     if(!isResize){
       this.canvasCtxDataArray.push(
         this.annotateCtx.getImageData(0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
@@ -145,9 +150,14 @@ export class AnnotationComponent implements OnInit {
     }
   }
 
-  async onDoneAnnotate (){
-    const base64 = this.annotateCanvas.toDataURL();
-    const res: Response = await fetch(base64);
-    // this.formsService.annotateImage.next({annotatedImage: res.url})
+  async onDoneAnnotate (isSubmit){
+    if(isSubmit) {
+      const base64 = this.annotateCanvas.toDataURL();
+      const res: Response = await fetch(base64);
+      this.annotatedImage.emit(res.url);
+    } else {
+      this.annotatedImage.emit(false);
+    }
+    
   }
 }
