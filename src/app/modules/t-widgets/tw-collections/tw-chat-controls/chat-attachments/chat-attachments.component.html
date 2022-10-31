@@ -33,6 +33,15 @@
                 <mat-icon> camera_alt </mat-icon>
             </button>
 
+            <button
+                *ngIf="(attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture') && enableEdit()"
+                mat-icon-button
+                (click)="edit()"
+                matTooltip="Edit"
+            >
+                <mat-icon> edit </mat-icon>
+            </button>
+
             <button *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'" mat-icon-button (click)="send()">
                 <mat-icon> send </mat-icon>
             </button>
@@ -69,6 +78,12 @@
                             <span> {{ item.fileName }} </span>
                         </div>
                     </ng-template>
+                </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="attachPreviewMode === 'preview-edit' || attachPreviewMode === 'previewCapture-edit'">
+                <ng-container *ngFor="let item of uploadingFiles; let i = index">
+                    <app-annotation [sessionID]="sessionID" [sourceImage]="item.base64" (annotatedImage)="save($event, i)"></app-annotation>
                 </ng-container>
             </ng-container>
         </div>
