@@ -40,14 +40,28 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    //this.setCanvasSize(true);
+    this.setCanvasSize(true);
   }
 
   setCanvasSize(isResize?: boolean) {
-    this.annotateCanvas.width = document.getElementById('imageToAnnotate-'+this.sessionID)?.clientWidth;
-    this.annotateCanvas.height = document.getElementById('imageToAnnotate-'+this.sessionID)?.clientHeight;
-    this.annotateCtx.drawImage(document.getElementById('imageToAnnotate-'+this.sessionID), 0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
-    this.annotateCtx.scale(3,3);
+    const image = document.getElementById('imageToAnnotate-'+this.sessionID);
+
+    this.annotateCanvas.width = image?.width * window.devicePixelRatio;
+    this.annotateCanvas.height = image?.height * window.devicePixelRatio;
+
+    this.annotateCanvas.style.width = `${image?.width}px`;
+    this.annotateCanvas.style.height = `${image?.height}px`;
+    
+    this.annotateCtx = this.annotateCanvas.getContext('2d');
+    this.annotateCtx.mozImageSmoothingEnabled = false;
+    this.annotateCtx.webkitImageSmoothingEnabled = false;
+    this.annotateCtx.msImageSmoothingEnabled = false;
+    this.annotateCtx.imageSmoothingEnabled = false;
+    this.annotateCtx.drawImage(
+      image, 0, 0, 
+      image.width * window.devicePixelRatio, 
+      image.height * window.devicePixelRatio
+    );
     
     if(!isResize){
       this.canvasCtxDataArray.push(
@@ -153,8 +167,13 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   async onDoneAnnotate (isSubmit){
     if(isSubmit) {
       const base64 = this.annotateCanvas.toDataURL();
-      const res: Response = await fetch(base64);
-      this.annotatedImage.emit(res.url);
+      
+      this.annotateCanvas.toBlob((blob) => {
+         let file = new File([blob], `image_${new Date().getTime()}.png`, { type: "image/png" });
+         file['base64'] = base64;
+         this.annotatedImage.emit(file);
+      }, 'image/png');
+      
     } else {
       this.annotatedImage.emit(false);
     }
