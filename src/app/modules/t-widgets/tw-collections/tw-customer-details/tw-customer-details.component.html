@@ -9,7 +9,7 @@
         <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
             <div class="line-height-30 position-relative twd-p-1 twd-min-w-4/12 twd-max-w-4/12" *ngFor="let item of customerInfo">
                 <div class="title text-bold">{{ item.Title }}:</div>
-                <div>
+                <div [ngStyle]="item.Unit !== '' ? this.getCustomStyles(item) : ''">
                     {{ item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue || '-' }}
                     <mat-divider class="w-90-p"></mat-divider>
                 </div>

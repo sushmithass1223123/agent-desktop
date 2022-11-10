@@ -267,6 +267,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     interactionDetails: IInteractionDetails = {} as IInteractionDetails;
 
     /**
+     * Audio muted users
+     */
+    mutedRemoteUsers = {
+        audio: [],
+        video: []
+    };
+
+    /**
      * Constructor
      */
     constructor(
@@ -632,6 +640,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.status = `Error : ${error}`;
                     this._appUIService.showSnackbar(error, 'failure');
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+                    this.endCall(true, 'Something went wrong');
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -832,11 +841,25 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param {AVControlMessageReceivedEvent} evt
      */
     AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
+        try {
         // check the interaction
         if (evt.InteractionID !== this.interactionId) {
             return;
         }
 
+        const requestType = JSON.parse(evt.Message).param;
+        switch(evt.Type) {
+            case 'requestav': 
+                            this.interactionDetails.Direction = 'in';
+                            this.callType = requestType;
+                            this.startAVCall();
+                            break;
+            case 'mute':
+            case 'unmute':
+                        this.updateMuteUnmuteUserList(requestType, evt);
+                        break;
+
+        }
         // check if its a av request
         if (evt.Type === 'requestav') {
             this.interactionDetails.Direction = 'in';
@@ -846,7 +869,35 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // forward the av messages to av channel
         this.avConn?.onMessage(evt.Message);
+        } catch(e) {
+            this.logger.error('error occured in AVControlMessageReceivedEvent',e,false);
+        }
     };
+    
+    /**
+     * 
+     * @param type - type of mute [i.e 'audio' | 'video']
+     * @param data - mute/unmute event data to show relevant notification
+     */
+    updateMuteUnmuteUserList(type, data) {
+        let userName = JSON.parse(data.Message).owner;
+        userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
+        switch(type) {
+            case 'audio': if(data.Type === 'mute') {
+                this.mutedRemoteUsers.audio.push(data.User.toLowerCase());
+            } else {
+                this.mutedRemoteUsers.audio.splice(this.mutedRemoteUsers.audio.indexOf(data.User),1);
+            }
+            break;
+            case 'video': if(data.Type === 'mute') {
+                this.mutedRemoteUsers.video.push(data.User.toLowerCase());
+            } else {
+                this.mutedRemoteUsers.video.splice(this.mutedRemoteUsers.video.indexOf(data.User),1);
+            }
+            break;
+        }
+        this._appUIService.showSnackbar(userName + ' ' + data.Type + 'd the ' +type , 'warning');
+    }
 
     /**
      * AgentAVMessageEvent Handler
@@ -1463,12 +1514,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * End Call
      * @method endCall
      */
-    public async endCall(endOnly = false): Promise<boolean> {
+    public async endCall(endOnly = false,reason = ''): Promise<boolean> {
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
-            this.avConn.dropCall('');
+            this.avConn.dropCall(reason);
         } else {
-            this.avConn.endCall(this.wrcCallType, '');
+            this.avConn.endCall(this.wrcCallType, reason);
         }
 
         // of endOnly then return
@@ -1646,6 +1697,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } finally {
             this._fuseProgressBarService.hide();
         }
+    }
+
+    ifMuted(data, type) {
+        return (this.mutedRemoteUsers[type].includes(data.id) || this.mutedRemoteUsers[type].includes(data.user.toLowerCase()));
     }
 }
 

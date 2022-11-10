@@ -275,22 +275,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
         icon: string;
     }[] = [
-        {
-            action: 'documents',
-            icon: 'insert_drive_file',
-            label: 'Documents'
-        },
-        {
-            action: 'camera',
-            icon: 'camera_alt',
-            label: 'Camera'
-        },
-        {
-            action: 'media',
-            icon: 'photo',
-            label: 'Photos & Videos'
-        }
-    ];
+            {
+                action: 'documents',
+                icon: 'insert_drive_file',
+                label: 'Documents'
+            },
+            {
+                action: 'camera',
+                icon: 'camera_alt',
+                label: 'Camera'
+            },
+            {
+                action: 'media',
+                icon: 'photo',
+                label: 'Photos & Videos'
+            }
+        ];
     /**
      * Type of attachment previw
      */
@@ -407,6 +407,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Whiteboard request
          */
         whiteboard: boolean;
+        /**
+         * Co-browse request
+         */
+        cobrowse: boolean;
         /**
          * Reply to chat
          */
@@ -611,6 +615,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
             signature: this.widgetData.SignatureAllowed ?? false,
             whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
+            cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
             attachments: this.widgetData.AttachmentAllowed ?? false,
             emoji: this.widgetData.EmojiAllowed ?? false,
             chatReply: this.widgetData.ReplyOnChatAllowed ?? false,
@@ -679,6 +684,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 icon: 'gesture',
                 type: 'signatureRequest'
             });
+        }
+
+        if (this.agentFeatures.cobrowse) {
+            this.moreActions.push({
+                label: 'Start Co-browsing',
+                icon: 'people',
+                type: 'cobrowse'
+            })
         }
     }
 
@@ -927,7 +940,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 }
             }
-        } catch (error) {}
+        } catch (error) { }
 
         // TODO:: sanitze the message
         //        add message badge if the chat window is not active
@@ -1109,7 +1122,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private isValidJson(str: string): boolean {
         try {
             return typeof JSON.parse(str) === 'object';
-        } catch (error) {}
+        } catch (error) { }
         return false;
     }
 
@@ -1418,7 +1431,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // load all text templates
             const { response } = await SDKClient.getAllTextTemplates();
             this.textTemplates.data = response;
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -1482,7 +1495,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                 });
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -1497,7 +1510,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const { response } = await TUtils.HttpClient.sendRequest<any>({
             urls: [
                 this.conversationService.Url +
-                    `user-conversations-timeline/${this.cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`
+                `user-conversations-timeline/${this.cif}?fromTime=0&toTime=${this.startTime.getTime()}&limit=${this.conversationService.Limit}`
             ],
             method: 'GET',
             responseType: 'json',
@@ -1639,7 +1652,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
             // set ready to reply
             this.readyToReply();
-        } catch (error) {}
+        } catch (error) { }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1761,7 +1774,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
                 this._appUIService.showSnackbar(`${evt.AgentName} connected to the chat`, 'info');
             }
-        } catch (error) {}
+        } catch (error) { }
 
         // add the user to list
         this.conferenceAgentList.push({
@@ -2284,8 +2297,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     TextChatTransferRejectEvent(evt: TextChatTransferRejectEvent): void {
         const otherData = JSON.parse(evt.Data);
         this._appUIService.showSnackbar(
-            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${
-                evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
+            `${evt.FromAgentName} has rejected your ${otherData.type === 'conf' ? 'conference' : 'transfer'} request ${evt.Comment !== '' ? ' with comment: ' + evt.Comment : ''
             }`,
             'failure'
         );
@@ -3052,13 +3064,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         try {
             const snackRef = this._appUIService.showSnackbar('Opening whiteboard', 'loading');
+
+            // [Chirag July,31 22'] send whiteboard url to customer
+            let customerWhiteboardUrl = new URL(this.widgetData.Whiteboard.CustomerUrl ?? this.widgetData.Whiteboard?.Url);
+            customerWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+
             const res = await SDKClient.sendActionMessage({
-                interactionId: this.interaction.InteractionID as any,
+                interactionId: this.interaction.InteractionID.toString(),
                 message: JSON.stringify({
                     source: 'agent',
                     options: {},
                     data: {
-                        url: `${this.widgetData.Whiteboard.Url}?sessionid=${this.sessionID}`
+                        url: customerWhiteboardUrl.toString()
                     },
                     status: 'request',
                     type: 'openWhiteboard',
@@ -3066,6 +3083,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
+
+            // [Chirag July,31 22'] send whiteboard url to customer
+            let agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
+            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+
             if (res.response?.ResultMessage === 'Success') {
                 const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
                 widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
@@ -3075,7 +3097,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 widget.Config.Position.H = 550;
                 widget.Data = {
                     AutoOpen: false,
-                    Url: `${this.widgetData.Whiteboard.Url}?sessionid=${this.sessionID}`
+                    Url: agentWhiteboardUrl.toString()
                 };
                 this._aotWidgetService.addWidget(widget);
                 snackRef.dismiss();
@@ -3085,6 +3107,65 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar('Error occured while opening whiteboard', 'failure');
+        }
+    }
+
+    /**
+     * Opens a cobrowse session
+     */
+    async openCobrowse(): Promise<void> {
+        if (!this.widgetData.Cobrowse?.AgentUrl && this.widgetData.Cobrowse?.CustomerUrls?.length > 0) {
+            this._appUIService.showSnackbar('Agent and Customer Urls are not provided in Config', 'failure');
+            return;
+        }
+        const snackRef = this._appUIService.showSnackbar('Opening Co-browse', 'loading');
+        try {
+
+            // [Chirag July,31 22'] send whiteboard url to customer
+            let customerUrl = new URL(this.widgetData.Cobrowse.CustomerUrls[0].Url);
+            customerUrl.searchParams.set('sessionid', this.sessionID);
+            customerUrl.searchParams.set('cobrowse', "true");
+
+            const res = await SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        url: customerUrl.toString()
+                    },
+                    status: 'request',
+                    type: 'openWhiteboard',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+
+            // [Chirag July,31 22'] send whiteboard url to customer
+            let agentUrl = new URL(this.widgetData.Cobrowse.AgentUrl);
+            agentUrl.searchParams.set('sessionid', this.sessionID);
+            agentUrl.searchParams.set('cobrowse', "true");
+
+            if (res.response?.ResultMessage === 'Success') {
+                const widget = new TwWidgetModel('Co-browse', 'tw-custom', 'create') as AOTWidget;
+                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
+                widget.Config.ViewState = 'maximize';
+                widget.Config.Anchor = true;
+                widget.Config.Position.W = 800;
+                widget.Config.Position.H = 550;
+                widget.Data = {
+                    AutoOpen: false,
+                    Url: agentUrl.toString()
+                };
+                this._aotWidgetService.addWidget(widget);
+            } else {
+                throw new Error('Error occured while opening whiteboard');
+            }
+        } catch (e) {
+            console.error(e);
+            this._appUIService.showSnackbar('Error occured while opening whiteboard', 'failure');
+        } finally {
+            snackRef.dismiss();
         }
     }
 
@@ -3099,6 +3180,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             case 'signatureRequest':
                 this.sendSignatureRequest(actionBtn);
                 break;
+            case 'cobrowse':
+                this.openCobrowse();
             default:
         }
         // close the more actions overlay

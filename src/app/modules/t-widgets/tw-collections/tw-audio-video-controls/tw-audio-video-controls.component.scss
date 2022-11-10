@@ -26,6 +26,7 @@ tw-audio-video-controls {
                 button {
                     margin: 8px 4px 0px;
                 }
+
                 button:not(.mat-warn) {
                     background-color: rgba(0, 0, 0, 0.05);
                 }
@@ -100,9 +101,11 @@ tw-audio-video-controls {
                     left: 10px;
                     width: 100%;
                     display: flex;
-                    & > * {
+
+                    &>* {
                         margin: 0 10px;
                     }
+
                     // width: 32px;
                     // height: 32px;
                 }
@@ -115,6 +118,15 @@ tw-audio-video-controls {
                     font-size: 14px;
                     background-color: rgb(49 49 49);
                     color: rgb(255 255 255 / 54%);
+
+                    .mat-icon {
+                        font-size: 18px;
+                        min-width: 18px;
+                        min-height: 18px;
+                        height: 18px;
+                        width: 18px;
+                        margin-left: 2px;
+                    }
                 }
             }
         }
@@ -174,6 +186,7 @@ tw-audio-video-controls {
             }
 
             &:hover {
+
                 .drag-handle,
                 .overlay {
                     opacity: 1;
