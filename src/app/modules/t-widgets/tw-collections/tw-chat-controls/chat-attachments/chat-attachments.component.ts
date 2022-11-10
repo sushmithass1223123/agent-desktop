@@ -85,6 +85,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         ext: string;
     }[] = [];
 
+
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {}
 
     /**
@@ -409,5 +410,29 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 this._fuseProgressBarService.hide();
             }
         } catch (error) {}
+    }
+
+    edit() {
+        this.attachPreviewMode = this.attachPreviewMode + '-edit';
+    }
+
+    save(image, index) {
+        if(image) {
+            this.uploadingFiles[index] = {
+                file: image,
+                fileName: image.name,
+                base64: image.base64,
+                size: image.size,
+                type: image.type,
+                ext: image.name.split('.').pop()
+            };
+        }
+        this.attachPreviewMode = this.attachPreviewMode.split('-').shift();
+    }
+
+    enableEdit(){
+       return this.uploadingFiles.find(item => 
+            item.type.includes('image')
+        ) ? true : false;
     }
 }

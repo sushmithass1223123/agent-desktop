@@ -92,7 +92,7 @@
                             <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
                             <span
                                 mat-ripple
-                                class="twd-cursor-pointer twd-text-xs twd-font-bold twd-px-1 twd-py-[3px] twd-rounded-20 twd-leading-none secondary-text"
+                                class="twd-cursor-pointer twd-text-xs twd-font-bold twd-px-1 twd-py-[3px] twd-rounded-20 secondary-text"
                                 (click)="showCcBcc = !showCcBcc"
                             >
                                 CC/BCC
@@ -191,7 +191,7 @@
             <!-- <mat-chip-avatar>
                 <img src="assets/images/avatars/profile.jpg" [alt]="emailId" />
             </mat-chip-avatar> -->
-            <span class="twd-truncate twd-leading-none">
+            <span class="twd-truncate">
                 {{ emailId }}
             </span>
             <mat-icon class="!twd-mr-2" matChipRemove>close</mat-icon>

@@ -85,6 +85,10 @@ export type TwChatControlsWhiteboard = {
      * Whiteboard page URL
      */
     Url: string;
+    /*
+    *  Whiteboard url for customer
+    */
+    CustomerUrl: string;
 };
 
 /**
@@ -194,7 +198,7 @@ export type TwChatControlsWhiteboard = {
  * }
  * ```
  */
-export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> {}
+export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> { }
 
 /**
  * Chat control config's Data
@@ -260,6 +264,27 @@ export type TwChatControlsData = {
          * Whiteboard url
          */
         Url: string;
+        /*
+        *  Whiteboard url for customer
+        */
+        CustomerUrl: string;
+    };
+     /**
+     * Cobrowse reference
+     */
+      Cobrowse: {
+        /**
+         * Flag to enable cobrowse
+         */
+        Allowed: boolean;
+        /**
+         * Agent url
+         */
+        AgentUrl: string;
+        /*
+        *  cobrowse url for customer
+        */
+        CustomerUrls: { [name: string]: string }[];
     };
     /**
      * Snapshot ref
