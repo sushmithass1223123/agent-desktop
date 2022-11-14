@@ -701,7 +701,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     }
                     // push to the list
                     this.userList.push(evt.data);
-                    console.log('EVT', this.userList);
                     break;
                 case 'onScreenshareEnded':
                     this.status = 'screenshare-ended';
