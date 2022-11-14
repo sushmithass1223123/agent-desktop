@@ -646,6 +646,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     break;
                 case 'onAVStats':
                     this.status = evt.data;
+                    this.sendAVStatusToServer();
                     break;
                 case 'onConnected':
                     this.connected = true;
@@ -796,6 +797,25 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.logger.error('Error in onAVEvent', error);
         }
     };
+
+    /**
+     * To send av status to the server for logging & reporting purpose 
+     */
+
+    sendAVStatusToServer() {
+        try{
+            const requestArgs = {
+                interactionId : this.interactionId.toString(),
+                type : 'avcallstatus',
+                message: JSON.stringify({
+                    param: this.status
+                })
+            };
+            SDKClient.sendAVControlMessage(requestArgs);
+        } catch(e) {
+            this.logger.error('Error occured on sending AV status to server', e, true);
+        }
+    }
 
     /**
      * To handles custom DisconnectAVEvent
