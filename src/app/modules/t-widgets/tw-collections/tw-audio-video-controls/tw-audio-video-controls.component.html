@@ -157,7 +157,7 @@
                         </div>
 
                         <video
-                            *ngIf="user.streamInfo.type === 'video' && !ifMuted(user.streamInfo, 'video')"
+                            *ngIf="(user.streamInfo.type === 'video' && !ifMuted(user.streamInfo, 'video')) || user.streamInfo.type === 'screenshare'"
                             autoplay
                             playsinline="true"
                             [srcObject]="user.stream"
