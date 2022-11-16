@@ -808,7 +808,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 interactionId : this.interactionId.toString(),
                 type : 'avcallstatus',
                 message: JSON.stringify({
-                    param: this.status
+                    param: this.status,
+                    callType: this.callType,
                 })
             };
             SDKClient.sendAVControlMessage(requestArgs);
