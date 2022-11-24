@@ -125,7 +125,9 @@
                                     /
                                     <span matTooltip="Station">{{ item.StationID }}</span>
                                 </div>
-                                <span matTooltip="Current Status">{{ item.CurrentAgentStatus }}</span>
+                                <span matTooltip="Current Status"
+                                    >{{ item.CurrentAgentStatus }} {{ this.agentListOnHold.includes(item.AgentLoginID) ? '(On Hold)' : '' }}</span
+                                >
                                 <span
                                     matTooltip="Status Duration"
                                     [ngClass]="{
@@ -149,6 +151,9 @@
                                 [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
                                 [matBadge]="channelItem.CurrentCount || ''"
                                 matBadgePosition="after"
+                                [ngClass]="{
+                                    'bg-warning': this.agentListOnHold.includes(item.AgentLoginID)
+                                }"
                             >
                                 <mat-icon>{{
                                     channelItem.Channel === 'voice'
