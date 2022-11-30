@@ -10,6 +10,7 @@ import { TwcNotFoundComponent } from './twc-not-found/twc-not-found.component';
 import { TwcSupervisorComponent } from './twc-supervisor/twc-supervisor.component';
 import { TwcUnknownComponent } from './twc-unknown/twc-unknown.component';
 import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
+import { TwcExternalComponent } from './twc-external/twc-external.component';
 
 /**
  * Tw Content Module
@@ -23,7 +24,8 @@ import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
         TwcCustomComponent,
         TwcDockerComponent,
         TwcUnknownComponent,
-        TwcNotFoundComponent
+        TwcNotFoundComponent,
+        TwcExternalComponent
     ],
     imports: [SharedModule, TwTemplateModule, TwWrapperModule],
     exports: [TwcNotFoundComponent]
