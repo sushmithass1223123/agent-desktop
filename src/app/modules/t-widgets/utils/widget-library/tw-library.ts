@@ -53,7 +53,6 @@ import { TwWorkCodesComponent } from '@modules/t-widgets/tw-collections/tw-work-
 import { TwWorkbenchPanelComponent } from '@modules/t-widgets/tw-collections/tw-workbench-panel/tw-workbench-panel.component';
 import { TwcCustomComponent } from '@modules/t-widgets/tw-content/twc-custom/twc-custom.component';
 import { TwcDockerComponent } from '@modules/t-widgets/tw-content/twc-docker/twc-docker.component';
-import { TwcExternalComponent } from '@modules/t-widgets/tw-content/twc-external/twc-external.component';
 import { TwcHomeComponent } from '@modules/t-widgets/tw-content/twc-home/twc-home.component';
 import { TwcInteractionComponent } from '@modules/t-widgets/tw-content/twc-interaction/twc-interaction.component';
 import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-supervisor/twc-supervisor.component';
@@ -79,7 +78,6 @@ export class TWLibrary {
         'twc-email': TwcInteractionComponent,
         'twc-fax': TwcInteractionComponent,
         'twc-generic': TwcInteractionComponent,
-        'twc-external': TwcExternalComponent,
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
         'tw-wallboard': TwWallboardComponent,
