@@ -17,7 +17,8 @@ import {
     IResponse,
     SDKClient,
     SuAgentDataModel,
-    SuAgentModel
+    SuAgentModel,
+    AgentNotificaitonEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
@@ -113,6 +114,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     allowBroadcast: boolean;
 
+    agentListOnHold: String[] = [];
+
     /**
      * Constructor
      */
@@ -172,6 +175,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // check agent features
         this.checkAgentFeatures();
+
+        // register to event
+        SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
     }
 
     /**
@@ -678,6 +684,26 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 error: console.error
             });
         }
+    }
+
+    /**
+     * AgentNotificaitonEvent Handler
+     * @method AgentNotificaitonEvent
+     * @param {AgentNotificaitonEvent} evt
+    */
+    private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
+        // check the type
+        
+        if (evt.Type === 'CustomerOnHold') { 
+            this.agentListOnHold.push(evt.FromAgentId);
+            this.updateOnHoldAgentList(evt.FromAgentId);
+        }
+    };
+
+    updateOnHoldAgentList(agentId) {
+        setTimeout(() => {
+            this.agentListOnHold.splice(this.agentListOnHold.indexOf(agentId), 1);
+        }, 9900);
     }
 }
 

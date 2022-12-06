@@ -2198,6 +2198,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.ConferenceType !== 'silent') {
             switch (evt.Reason.toLowerCase()) {
                 case 'remoteendclosed':
+                case 'logout':
                     alertMessage = 'Interaction disconnected by customer';
                     break;
                 case 'agentchatdisconnected':
@@ -2217,6 +2218,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
                 case 'supervisortakeover':
                     alertMessage = 'Interaction disconnected by supervisor - Supervisor Takeover';
+                    break;
+                default: alertMessage = 'Interaction disconnected';
                     break;
             }
         }
