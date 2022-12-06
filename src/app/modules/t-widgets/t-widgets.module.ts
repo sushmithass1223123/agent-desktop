@@ -6,7 +6,8 @@ import { TwCollectionsModule } from './tw-collections/tw-collections.module';
 import { TwContentModule } from './tw-content/tw-content.module';
 import { TwTemplateModule } from './tw-template/tw-template.module';
 import { TwToolbarModule } from './tw-toolbar/tw-toolbar.module';
-
+// Import HttpClientModule from @angular/common/http in AppModule
+import {HttpClientModule} from '@angular/common/http';
 /**
  * Widgts module list
  */
@@ -18,7 +19,7 @@ const widgetModules = [TwToolbarModule, TwContentModule, TwTemplateModule, TwCol
 @NgModule({
     declarations: [],
     providers: [TMACEventService, DashboardService],
-    imports: [SharedModule, ...widgetModules],
+    imports: [SharedModule, ...widgetModules, HttpClientModule],
     exports: [...widgetModules]
 })
 export class TWidgetsModule {}

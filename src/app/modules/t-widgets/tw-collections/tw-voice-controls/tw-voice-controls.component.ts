@@ -312,6 +312,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     callConnected: boolean;
 
+    @ViewChild('closeBtn') closeButton: MatButton;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -355,6 +357,17 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice');
+        });
+
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            try{
+                if(data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
+                    this.handleUIControls(data);
+                }
+            } catch(e) {
+                console.log('Error occured on UIControl event received');
+            }
+             
         });
 
         this.interaction = this.data.InteractionDetails;
@@ -2023,5 +2036,18 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         };
 
         dialogRef.componentInstance.data = widget;
+    }
+
+    /**
+     * Method to manipulate interaction controls based on the custom events
+     * @param data 
+     */
+     handleUIControls(data) {
+        if(data.eventName === 'disableCloseInteraction') {
+            this.closeButton.disabled = true;
+        }
+        if(data.eventName === 'enableCloseInteraction') {
+            this.closeButton.disabled = false;
+        }
     }
 }
