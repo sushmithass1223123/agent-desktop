@@ -164,7 +164,15 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         break;
                     case 'getthemeconfig':
                         this.sendDataToWindow(message.callback || 'onThemeChange', this.fuseConfigRef, message.userObject);
+                        break;
+                    case 'uicontrolevents':
+                        this.processUIControlEvents(message);
+                        break;
+                    case 'notificationmessage': 
+                        this._appUIService.showSnackbar(message.data?.message, message.data?.type);
+                        break;
                 }
+                this.logger.info('Message received from custom frame -' + message.name + ':'+ JSON.stringify(message),true);
             } catch (error) {
                 this.logger.error('Error in TwCustomComponent.postMessage', error, false);
             }
@@ -319,5 +327,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             0,
             urlRef
         );
+    }
+
+    processUIControlEvents(message:IPostMessage) {
+        this._tmacEventService._uiControlsEvents.next(message.data);
     }
 }

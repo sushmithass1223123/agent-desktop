@@ -107,6 +107,9 @@ export class TMACEventService extends SharedWrapper {
         }[];
     };
 
+    /** Events to manipulate AD elements from custom widget */
+    _uiControlsEvents: Subject<any> = new Subject();
+
     /**
      * Constructor
      * @param {AppDataService} _appDataService
@@ -1499,6 +1502,13 @@ export class TMACEventService extends SharedWrapper {
     removeNonInteractionEvents(eventName: CustomTMACEventTypes[]): void {
         // remove the events for the InteractionID
         this._nonInteractionEventArray = this._interactionEventArray.filter((f) => !eventName.some((s) => s === f.EventName));
+    }
+
+    /**
+     * To observe events to manipulate UI controls from custom widgets 
+     */
+     get getUIControlEvents(): any | Observable<any> {
+        return this._uiControlsEvents.asObservable();
     }
 }
 

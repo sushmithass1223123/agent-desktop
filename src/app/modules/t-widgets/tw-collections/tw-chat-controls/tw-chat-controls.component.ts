@@ -610,6 +610,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         });
 
+        //observe ui control events from custom widgets
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            try {
+            if(data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
+                this.handleUIControls(data);
+            }  } catch(e) {
+                console.log('Error occured on UIControl event received');
+            }
+        });
+
         this.agentFeatures = {
             audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
             videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
@@ -3280,6 +3290,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.previewMediaDialogData.otherData.scale += 0.25;
         } else {
             this.previewMediaDialogData.otherData.scale -= 0.25;
+        }
+    }
+
+    /**
+     * Method to manipulate chat controls based on the custom events
+     * @param data 
+     */
+     handleUIControls(data) {
+        if(data.eventName === 'disableCloseInteraction') {
+            this.closeButton.disabled = true;
+        }
+        if(data.eventName === 'enableCloseInteraction') {
+            this.closeButton.disabled = false;
         }
     }
 }
