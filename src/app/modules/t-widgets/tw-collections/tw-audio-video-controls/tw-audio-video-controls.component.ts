@@ -31,7 +31,7 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AV_ERRORS } from 'app/constants';
+import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
 import { SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -640,6 +640,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.status = `Error : ${error}`;
                     this._appUIService.showSnackbar(error, 'failure');
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+
+                    if(evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {
+                        return;
+                    }
                     this.endCall(true, 'Something went wrong');
                     // close the widget
                     this.destroyWidget();
