@@ -171,6 +171,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     case 'notificationmessage': 
                         this._appUIService.showSnackbar(message.data?.message, message.data?.type);
                         break;
+                    case 'getagentdata':
+                        this.sendDataToWindow(message.callback, SDKClient.getAgentData(), message.userObject);
+                        break;
                 }
                 this.logger.info('Message received from custom frame -' + message.name + ':'+ JSON.stringify(message),true);
             } catch (error) {
