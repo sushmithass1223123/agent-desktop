@@ -134,18 +134,34 @@ export class AppDataService extends SharedWrapper {
 
         this.logger.info('Config mode=remote, load config from server', false);
 
-        // get the login json from proxy
-        const loginJson: IResponse = await TUtils.HttpClient.sendRequest({
-            urls: [`${data.ProxyUrl}/GetTmacLoginJson`],
-            header: {
-                'Content-Type': 'application/json'
-            },
-            responseType: 'json',
-            requestArgs: { id: agentId ? agentId : '' },
-            method: 'POST',
-            retry: 3
-        });
+        const proxyURLs =  data.ProxyUrl?.split(',');
+        let loginJson: IResponse;
 
+        // get the login json from proxy
+        for (let index = 0; index < proxyURLs.length; index++) {
+            try{
+                loginJson = await TUtils.HttpClient.sendRequest({
+                    urls: [`${proxyURLs[index]}/GetTmacLoginJson`],
+                    header: {
+                        'Content-Type': 'application/json'
+                    },
+                    responseType: 'json',
+                    requestArgs: { id: agentId ? agentId : '' },
+                    method: 'POST',
+                    retry: 3,
+                });
+                if(loginJson.response) {
+                    break;
+                }
+            } catch(e) {
+                console.log('Erro occured on executing', proxyURLs[index]);
+            }
+            
+            
+        }
+        
+        
+        console.log(loginJson);
         // parse the json and return
         return loginJson.response ? JSON.parse(loginJson.response.d) : null;
     }
@@ -242,17 +258,17 @@ export class AppDataService extends SharedWrapper {
         let data: AppRootConfig = null;
         try {
             // check the environment and load config
-            if (!local && environment.production) {
+            //if (!local && environment.production) {
                 // get the config from server for production
                 data = await this.getProductionConfig(agentId);
                 this.logger.info('Production config loaded', false);
                 console.log(data);
-            } else {
+            //} else {
                 // get the config from local for development
-                data = await this.getDevelopmentConfig();
-                this.logger.info('Development config loaded', false);
-                console.log(data);
-            }
+                // data = await this.getDevelopmentConfig();
+                // this.logger.info('Development config loaded', false);
+                // console.log(data);
+            //}
 
             // set the config to service
             if (data) {
