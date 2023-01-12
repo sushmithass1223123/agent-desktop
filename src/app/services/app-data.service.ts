@@ -258,17 +258,17 @@ export class AppDataService extends SharedWrapper {
         let data: AppRootConfig = null;
         try {
             // check the environment and load config
-            //if (!local && environment.production) {
+            if (!local && environment.production) {
                 // get the config from server for production
                 data = await this.getProductionConfig(agentId);
                 this.logger.info('Production config loaded', false);
                 console.log(data);
-            //} else {
+            } else {
                 // get the config from local for development
-                // data = await this.getDevelopmentConfig();
-                // this.logger.info('Development config loaded', false);
-                // console.log(data);
-            //}
+                data = await this.getDevelopmentConfig();
+                this.logger.info('Development config loaded', false);
+                console.log(data);
+            }
 
             // set the config to service
             if (data) {
