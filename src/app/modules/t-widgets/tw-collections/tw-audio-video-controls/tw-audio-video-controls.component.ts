@@ -622,7 +622,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         '',
                         null,
                         {
-                            disableClose: false
+                            disableClose: true
                         }
                     );
 
