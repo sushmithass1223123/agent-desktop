@@ -156,12 +156,8 @@ export class AppDataService extends SharedWrapper {
             } catch(e) {
                 console.log('Erro occured on executing', proxyURLs[index]);
             }
-            
-            
         }
-        
-        
-        console.log(loginJson);
+        this.logger.info(JSON.stringify(loginJson), true);
         // parse the json and return
         return loginJson.response ? JSON.parse(loginJson.response.d) : null;
     }
