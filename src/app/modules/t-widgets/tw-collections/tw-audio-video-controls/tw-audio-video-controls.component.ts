@@ -274,6 +274,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         video: []
     };
 
+    confirmDialogRef;
+
     /**
      * Constructor
      */
@@ -616,7 +618,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     };
 
                     // config incoming call
-                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                    this.confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
                         `${param} call requested by ${this.interactionDetails.CustomerName}, Do you want to accept it?`,
                         '',
@@ -625,8 +627,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             disableClose: true
                         }
                     );
-
-                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+                    this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
 
                     break;
                 case 'onTrace':
@@ -721,11 +722,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // show the error
                     this.connected = false;
                     this.status = 'failed';
-                    if (evt.data.code === TEnums.WrcCodes.Rejected) {
+                    if (evt.data.code === 'CALL_REJECTED') {
                         this._appUIService.showSnackbar('User has rejected your request', 'failure');
+                    } else if (evt.data.code === 'CALL_NOT_ANSWERED') {
+                        this._appUIService.showSnackbar('Call was not answered by the Customer', 'failure');
                     } else {
                         this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
                     }
+                    this.confirmDialogRef?.close();
                     // close the widget
                     this.destroyWidget();
                     break;
