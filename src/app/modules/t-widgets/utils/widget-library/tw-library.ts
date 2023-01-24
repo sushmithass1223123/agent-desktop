@@ -60,6 +60,7 @@ import { TwcSupervisorComponent } from '@modules/t-widgets/tw-content/twc-superv
 import { TwcUnknownComponent } from '@modules/t-widgets/tw-content/twc-unknown/twc-unknown.component';
 import { TwcWorkbenchComponent } from '@modules/t-widgets/tw-content/twc-workbench/twc-workbench.component';
 import { TWidget } from '@modules/t-widgets/utils/t-widget';
+import { TwExternalComponent } from '@modules/t-widgets/tw-collections/tw-external/tw-external.component';
 
 /**
  * Widgets library
@@ -80,6 +81,7 @@ export class TWLibrary {
         'twc-fax': TwcInteractionComponent,
         'twc-generic': TwcInteractionComponent,
         'twc-external': TwcExternalComponent,
+        'tw-external': TwExternalComponent,
         'tw-sample': TwSampleComponent,
         'tw-custom': TwCustomComponent,
         'tw-wallboard': TwWallboardComponent,

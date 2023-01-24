@@ -7,7 +7,7 @@
         "commit": "cz",
         "postinstall": "node ./decorate-angular-cli.js && npm run husky-install && ngcc --properties es2015 browser module main",
         "husky-install": "npx husky install",
-        "start": "ng serve --open",
+        "start": "ng serve --open --ssl",
         "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
         "start:ssl": "ng serve --open --ssl",
         "start:mem:ssl": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open --ssl",
@@ -24,7 +24,8 @@
         "bundle-report": "webpack-bundle-analyzer dist/agent-desktop/stats.json",
         "prebuild": "node ./scripts/pre-build.js && npm run prettify",
         "prettify": "npx prettier --write --config .prettierrc ./src/assets/*.json",
-        "lint-staged": "lint-staged --config .lintstagedrc"
+        "lint-staged": "lint-staged --config .lintstagedrc",
+        "gen": "nx g c tw-external-content"
     },
     "private": true,
     "dependencies": {

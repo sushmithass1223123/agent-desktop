@@ -386,6 +386,36 @@
                                         "Pinned": false
                                     },
                                     "Data": { "TCMProxyUrl": "https://dicedev.tetherfi.cloud:55018" }
+                                },
+                                {
+                                    "Name": "Test Page 1",
+                                    "Key": "TestPage1",
+                                    "Description": "",
+                                    "Type": "tw-external",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
+                                        "Position": { "X": 2, "Y": 2 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "ExternalScripts": [
+                                            { "type": "script", "link": "https://dicedev.tetherfi.cloud/pom-poc-app/assets/index.08ff9814.js" },
+                                            { "type": "css", "link": "https://dicedev.tetherfi.cloud/pom-poc-app/assets/index.3fce1f81.css" }
+                                        ],
+                                        "Url": "https://dicedev.tetherfi.cloud/pom-poc-app/",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ],
                             "AOT": [
@@ -1696,6 +1726,36 @@
                                         "Pinned": false
                                     },
                                     "Data": { "Role": "interaction", "ByTeam": false, "ByGroup": true }
+                                },
+                                {
+                                    "Name": "Testing external",
+                                    "Description": "",
+                                    "Key": "TestPage1",
+                                    "Type": "tw-external",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "widgets",
+                                        "Class": "mx-cover",
+                                        "Position": { "X": 2, "Y": 2 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "ExternalScripts": [
+                                            { "type": "script", "link": "https://dicedev.tetherfi.cloud/pom-poc-app/assets/index.08ff9814.js" },
+                                            { "type": "css", "link": "https://dicedev.tetherfi.cloud/pom-poc-app/assets/index.3fce1f81.css" }
+                                        ],
+                                        "Url": "https://dicedev.tetherfi.cloud/pom-poc-app/",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ],
                             "AOT": [
