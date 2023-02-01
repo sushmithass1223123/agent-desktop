@@ -5,7 +5,8 @@
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
 <tw-wrapper [data]="data">
-    <div [innerHTML]="myTemplate"></div>
+    <div id="test"></div>
+    <!-- <tw-external-content></tw-external-content> -->
 
     <ng-template #noURL>
         <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">

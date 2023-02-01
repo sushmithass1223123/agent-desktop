@@ -54,7 +54,7 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelModule } from './tw-workbench-panel/tw-workbench-panel.module';
 import { TwExternalComponent } from './tw-external/tw-external.component';
-
+import { TwExternalContentComponent } from './tw-external/tw-external-content/tw-external-content.component';
 /**
  * Collections components
  */
@@ -108,7 +108,8 @@ const collectionComponents = [
     TwComposeMessagingComponent,
     TwDeflectToDigitalComponent,
     TwBookmarksComponent,
-    TwExternalComponent
+    TwExternalComponent,
+    TwExternalContentComponent
 ];
 
 /**
