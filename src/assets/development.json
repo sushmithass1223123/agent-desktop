@@ -1874,6 +1874,9 @@
                                                 "ScreenShareAllowed": true,
                                                 "InteractionCommentAllowed": true,
                                                 "HoldInteractionAllowed": true,
+                                                "ReplyOnSMM": {
+                                                    "channels": "Whatsapp"
+                                                },
                                                 "Whiteboard": {
                                                     "Allowed": true,
                                                     "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
