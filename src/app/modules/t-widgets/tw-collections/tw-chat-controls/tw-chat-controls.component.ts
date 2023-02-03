@@ -628,7 +628,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
             attachments: this.widgetData.AttachmentAllowed ?? false,
             emoji: this.widgetData.EmojiAllowed ?? false,
-            chatReply: this.widgetData.ReplyOnChatAllowed ?? false,
+            chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
             conference: this.widgetData.Conference?.Allowed ?? false,
             transfer: this.widgetData.Transfer?.Allowed ?? false,
             chatTemplate: this.widgetData.ChatTemplate?.Allowed ?? false,
@@ -823,7 +823,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this.agentFeatures.emoji = f.IsEnabled;
                     break;
                 case AGENT_FEATURES.IsReplyOnChatEnabled:
-                    this.agentFeatures.chatReply = f.IsEnabled;
+                    this.agentFeatures.chatReply = f.IsEnabled && this.canReplyToChat();
                     break;
                 case AGENT_FEATURES.IsChatConferenceEnabled:
                     this.agentFeatures.conference = f.IsEnabled;
@@ -1700,6 +1700,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.channel = evt.Channel.toLowerCase() || 'textchat';
         // check social media
         this.isSMM = evt.IsSMM || false;
+
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
@@ -2403,7 +2404,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return i === 0 || (this.chatTranscripts[i - 1] && this.chatTranscripts[i - 1].who !== message.who);
     }
 
-    /**
+    public canReplyToChat(): boolean {
+       return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
+    }
+
+    /** 
      * Check if the given message is the last message of a group
      *
      * @param message
