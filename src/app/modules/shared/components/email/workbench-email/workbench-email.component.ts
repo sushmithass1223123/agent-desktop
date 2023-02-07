@@ -678,8 +678,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const globalKey = this.globalSearch.data[this.currentTab];
             if (globalKey) {
                 searchParams = {
-                    startDate: searchFields.startDate,
-                    endDate: searchFields.endDate,
                     subject: globalKey,
                     content: this.currentTab !== 'queue' ? globalKey : undefined,
                     global: 'GLOBAL',
