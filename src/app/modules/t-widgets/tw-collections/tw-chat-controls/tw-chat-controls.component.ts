@@ -1701,6 +1701,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check social media
         this.isSMM = evt.IsSMM || false;
 
+        this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
+
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
