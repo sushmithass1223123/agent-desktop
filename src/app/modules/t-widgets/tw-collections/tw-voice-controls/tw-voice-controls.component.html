@@ -13,10 +13,7 @@
         <div class="twd-w-full twd-h-full twd-flex twd-flex-col voice-controls">
             <div class="twd-flex twd-flex-full twd-flex-row twd-h-9/12">
                 <div
-                    class="
-                        twd-flex twd-flex-col twd-items-center twd-w-[64px] twd-overscroll-y-auto twd-overflow-x-hidden twd-h-full twd-py-2 twd-mt-2
-                        interactions
-                    "
+                    class="twd-flex twd-flex-col twd-items-center twd-w-[64px] twd-overscroll-y-auto twd-overflow-x-hidden twd-h-full twd-py-2 twd-mt-2 interactions"
                 >
                     <avatar
                         *ngFor="let item of interactionList"
@@ -134,37 +131,10 @@
                                 *ngFor="let menu of last4IVR; let i = index"
                             >
                                 <div
-                                    class="
-                                        timeline-bar
-                                        twd-relative twd-h-[16px] twd-mb-4 twd-text-center
-                                        after:twd-absolute
-                                        after:twd-left-0
-                                        after:twd-bottom-0
-                                        after:twd-w-0
-                                        after:twd-h-0
-                                        after:twd-border-solid
-                                        after:twd-border-t-8
-                                        after:twd-border-b-8
-                                        after:twd-border-l-[9px]
-                                        after:twd-border-transparent
-                                        before:twd-absolute
-                                        before:twd-right-[-9px]
-                                        before:twd-bottom-0
-                                        before:twd-w-0
-                                        before:twd-h-0
-                                        before:twd-border-solid
-                                        before:twd-border-t-8
-                                        before:twd-border-b-8
-                                        before:twd-border-l-[9px]
-                                        before:twd-border-transparent
-                                    "
+                                    class="timeline-bar twd-relative twd-h-[16px] twd-mb-4 twd-text-center after:twd-absolute after:twd-left-0 after:twd-bottom-0 after:twd-w-0 after:twd-h-0 after:twd-border-solid after:twd-border-t-8 after:twd-border-b-8 after:twd-border-l-[9px] after:twd-border-transparent before:twd-absolute before:twd-right-[-9px] before:twd-bottom-0 before:twd-w-0 before:twd-h-0 before:twd-border-solid before:twd-border-t-8 before:twd-border-b-8 before:twd-border-l-[9px] before:twd-border-transparent"
                                 >
                                     <div
-                                        class="
-                                            timeline-info-connect-line
-                                            twd-w-2 twd-h-2 twd-bg-white twd-inline-block twd-absolute twd-top-1 twd-rounded-full
-                                            after:twd-w-1 after:twd-h-4 after:twd-absolute after:twd-top-3 after:twd-left-[2px]
-                                        "
+                                        class="timeline-info-connect-line twd-w-2 twd-h-2 twd-bg-white twd-inline-block twd-absolute twd-top-1 twd-rounded-full after:twd-w-1 after:twd-h-4 after:twd-absolute after:twd-top-3 after:twd-left-[2px]"
                                     ></div>
                                 </div>
                                 <div
@@ -314,11 +284,7 @@
                             >
                                 <div class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col">
                                     <div
-                                        class="
-                                            twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1
-                                            border border-radius-20
-                                            twd-flex twd-flex-row twd-justify-between twd-items-center
-                                        "
+                                        class="twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1 border border-radius-20 twd-flex twd-flex-row twd-justify-between twd-items-center"
                                     >
                                         <div>
                                             {{ dialedNumbers }}
@@ -384,7 +350,7 @@
                             (click)="confirmCloseInteraction(closeBtn)"
                             matTooltip="Close Interaction"
                         >
-                            Close
+                            {{ failedCounter >= 3 ? 'Force Close' : 'Close' }}
                         </button>
 
                         <br />
