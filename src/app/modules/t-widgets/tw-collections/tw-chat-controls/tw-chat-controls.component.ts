@@ -1140,7 +1140,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To send reply to customer message
      * @param template Message template
      */
-    private sendMessage(template: any): void {
+    private sendMessage(template: any, isAutomated?): void {
         // get the typed message
         const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
@@ -1221,8 +1221,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // send done typing
         this.doneTyping();
 
-        // Reset the reply form
-        this.replyForm?.reset();
+        if(!isAutomated) {
+            // Reset the reply form
+            this.replyForm?.reset();
+        }
 
         // set ready to reply
         this.readyToReply();
@@ -1927,7 +1929,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sendMessage({
             Text: evt.AutoResponseTemplate,
             ID: evt.AutoResponseTemplateId
-        });
+        },true);
 
         // if this is the final auto response then disconnect the chat
         if (evt.IsFinal) {
@@ -2279,7 +2281,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         // send the selected template
-        this.sendMessage({ ...evt.Data.Template, Type: '' });
+        this.sendMessage({ ...evt.Data.Template, Type: '' },true);
     }
 
     /**
