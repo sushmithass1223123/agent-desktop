@@ -3117,9 +3117,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 widget.Config.Anchor = true;
                 widget.Config.Position.W = 800;
                 widget.Config.Position.H = 550;
+                widget.InteractionDetails = {
+                    InteractionID: this.interaction.InteractionID
+                };
                 widget.Data = {
                     AutoOpen: false,
-                    Url: agentWhiteboardUrl.toString()
+                    Url: agentWhiteboardUrl.toString(),
+                    NotifyTypeOnClose: 'closeWhiteboard'
                 };
                 this._aotWidgetService.addWidget(widget);
                 snackRef.dismiss();

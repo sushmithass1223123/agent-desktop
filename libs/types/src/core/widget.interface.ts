@@ -66,7 +66,7 @@ export type InteractionWidgetBaseData = {
     RouteOnInteraction?: boolean;
 };
 
-export type AOTWidget<T = any, K = undefined> = Widget<T> & {
+export type AOTWidget<T = any, K = any> = Widget<T> & {
     /**
      * Widget Interaction Details
      */

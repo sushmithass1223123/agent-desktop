@@ -54,4 +54,9 @@ export type TwCustomData = {
      * @default 0 which means that refresh is by default disabled
      */
     AutoRefresh: number;
+
+    /**
+     * This is a type of action message to send to customer when custom widget is closed
+     */
+     NotifyTypeOnClose: boolean;
 };
