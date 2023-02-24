@@ -391,6 +391,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.interaction = this.data.InteractionDetails as IncomingCallEvent;
                 // set the manual anser flag
                 this.isManualAnswer = this.interaction.IsManualAnswer || false;
+                // set the process media messages flag
+                this.processMediaMessages = !this.isManualAnswer;
                 // set the direction
                 this.direction = this.interaction.Direction ?? 'In';
                 // set the status
