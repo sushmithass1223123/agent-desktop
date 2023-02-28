@@ -1,0 +1,5 @@
+{
+    "availableLangs": ["en", "de", "zh"],
+    "defaultLang": "en",
+    "fallbackLang": "en"
+}

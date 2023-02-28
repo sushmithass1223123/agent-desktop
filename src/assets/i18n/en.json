@@ -1,0 +1,33 @@
+{
+    "loginComponent": {
+        "welcome": "Welcome to Agent Desktop!",
+        "lanId": "Lan ID",
+        "lanIdRequiredText": "LAN ID is required",
+        "connectivityError": "Trying to reach server",
+        "retrying": "Retrying...",
+        "retryingIn": "Retrying in",
+        "seconds": "seconds...",
+        "connectivityErrorInfo": "Make sure you have an active internet connection.<br /> Please contact the administrator for more info.",
+        "retryNow": "RETRY NOW",
+        "configError": "Config Error",
+        "configErrorInfo": "Unable to load the config for login.<br />Please contact the administrator.",
+        "otpRequired": "OTP is required",
+        "domainNameNone": "None",
+        "domainNameRequired": "Domain Name is required",
+        "lanIdRequired": "Lan ID is required",
+        "agentIdRequired": "Agent ID is required",
+        "passwordRequired": "Password is required",
+        "stationIdRequired": "Station ID is required",
+        "loginToPBX": "Login to PBX",
+        "loginToWebPhone": "Login to Webphone?",
+        "login": "LOGIN",
+        "signIn": "SIGN IN",
+        "copyWriteTetherfi": "Copyright Tetherfi",
+        "ui": "UI",
+        "server": "Server"
+    },
+    "navbarComponent": {
+
+    }
+
+}

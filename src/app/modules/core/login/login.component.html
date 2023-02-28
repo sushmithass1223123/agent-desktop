@@ -1,7 +1,7 @@
-<div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
+<div id="login" class="inner-scroll" fxLayout="row" *transloco="let locale" fxLayoutAlign="start">
     <div id="login-intro" fxFlex fxHide fxShow.gt-xs class="animate__animated animate__fadeIn">
         <div class="title" [@animate]="{ value: '*', params: { delay: '500ms', y: '-25px' } }">
-            Welcome to <span [matTooltip]="uiVersion">Agent Desktop</span>!
+            {{ locale('loginComponent.welcome') }}
         </div>
     </div>
 
@@ -14,21 +14,26 @@
             <mat-card class="p-28 border-radius-30">
                 <mat-card-header>
                     <mat-card-title fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon color="warn" class="mr-4">error</mat-icon> Trying to reach server
+                        <mat-icon color="warn" class="mr-4">error</mat-icon> {{ locale('loginComponent.connectivityError') }}
                     </mat-card-title>
-                    <mat-card-subtitle class="mt-8" *ngIf="connectionError.retrying; else countdownRef"> Retrying... </mat-card-subtitle>
+                    <mat-card-subtitle class="mt-8" *ngIf="connectionError.retrying; else countdownRef">
+                        {{ locale('loginComponent.retrying') }}
+                    </mat-card-subtitle>
                     <ng-template #countdownRef>
                         <mat-card-subtitle class="mt-8" *ngIf="connectionError.countdown | async as countdown">
-                            {{ 'Retrying in ' + (connectionError.pollingInterval - countdown) + ' seconds...' }}
+                            {{
+                                locale('loginComponent.retryingIn') +
+                                    ' ' +
+                                    (connectionError.pollingInterval - countdown) +
+                                    ' ' +
+                                    locale('loginComponent.seconds')
+                            }}
                         </mat-card-subtitle>
                     </ng-template>
                 </mat-card-header>
                 <mat-divider></mat-divider>
                 <mat-card-content class="my-12 h-48">
-                    <p>
-                        Make sure you have an active internet connection.<br />
-                        Please contact the administrator for more info.
-                    </p>
+                    <p [innerHTML]="locale('loginComponent.connectivityErrorInfo')"></p>
                 </mat-card-content>
                 <mat-card-actions fxLayout fxLayoutAlign="end ">
                     <button
@@ -38,7 +43,7 @@
                         (click)="getTMACVersion(true)"
                         [disabled]="connectionError.retrying"
                     >
-                        RETRY NOW
+                        {{ locale('loginComponent.retryNow') }}
                     </button>
                 </mat-card-actions>
             </mat-card>
@@ -48,20 +53,19 @@
             <mat-card class="p-28 border-radius-30">
                 <mat-card-header>
                     <mat-card-title fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon color="warn" class="mr-4">error</mat-icon> Config Error
+                        <mat-icon color="warn" class="mr-4">error</mat-icon> {{ locale('loginComponent.configError') }}
                     </mat-card-title>
-                    <mat-card-subtitle class="mt-8" *ngIf="configError.retrying; else countdownRef"> Retrying... </mat-card-subtitle>
+                    <mat-card-subtitle class="mt-8" *ngIf="configError.retrying; else countdownRef">
+                        {{ locale('loginComponent.retrying') }}
+                    </mat-card-subtitle>
                 </mat-card-header>
                 <mat-divider></mat-divider>
                 <mat-card-content class="my-12 h-48">
-                    <p>
-                        Unable to load the config for login.<br />
-                        Please contact the administrator.
-                    </p>
+                    <p [innerHTML]="locale('loginComponent.configErrorInfo')"></p>
                 </mat-card-content>
                 <mat-card-actions fxLayout fxLayoutAlign="end ">
                     <button mat-raised-button class="border-radius-30" color="primary" (click)="retryLoadConfig()" [disabled]="configError.retrying">
-                        RETRY NOW
+                        {{ locale('loginComponent.retryNow') }}
                     </button>
                 </mat-card-actions>
             </mat-card>
@@ -93,21 +97,21 @@
                 <ng-container *ngIf="showOtp">
                     <mat-form-field class="form-field custom" appearance="outline">
                         <input class="login-input" matInput required placeholder="OTP" formControlName="otp" #otp />
-                        <mat-error> OTP is required </mat-error>
+                        <mat-error> {{ locale('loginComponent.otpRequired') }} </mat-error>
                     </mat-form-field>
                 </ng-container>
 
                 <ng-container *ngIf="!showOtp">
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="domainListEnabled">
                         <mat-select placeholder="Domain List" formControlName="domain">
-                            <mat-option>None</mat-option>
+                            <mat-option>{{ locale('loginComponent.domainNameNone') }}</mat-option>
                             <mat-option *ngFor="let item of domainList" [value]="item">{{ item }}</mat-option>
                         </mat-select>
-                        <mat-error> Domain Name is required </mat-error>
+                        <mat-error> {{ locale('loginComponent.domainNameRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline">
-                        <input class="login-input" matInput required placeholder="Lan ID" formControlName="lanId" #lanId />
+                        <input class="login-input" matInput required [placeholder]="locale('loginComponent.lanId')" formControlName="lanId" #lanId />
                         <button
                             mat-button
                             type="button"
@@ -120,7 +124,7 @@
                         >
                             <mat-icon>close</mat-icon>
                         </button>
-                        <mat-error> LAN ID is required </mat-error>
+                        <mat-error> {{ locale('loginComponent.lanIdRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
@@ -137,7 +141,7 @@
                         >
                             <mat-icon>close</mat-icon>
                         </button>
-                        <mat-error> Agent ID is required </mat-error>
+                        <mat-error>{{ locale('loginComponent.agentIdRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Agent">
@@ -163,7 +167,7 @@
                         >
                             <mat-icon>{{ hidePassword.agent ? 'visibility_off' : 'visibility' }}</mat-icon>
                         </button>
-                        <mat-error> Password is required </mat-error>
+                        <mat-error> {{ locale('loginComponent.passwordRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Station">
@@ -189,7 +193,7 @@
                         >
                             <mat-icon>{{ hidePassword.station ? 'visibility_off' : 'visibility' }}</mat-icon>
                         </button>
-                        <mat-error> Password is required </mat-error>
+                        <mat-error> {{ locale('loginComponent.passwordRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-form-field
@@ -218,7 +222,7 @@
                         >
                             <mat-icon>close</mat-icon>
                         </button>
-                        <mat-error> Station is required </mat-error>
+                        <mat-error> {{ locale('loginComponent.stationIdRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-list *ngIf="loginModeEnabled">
@@ -231,7 +235,7 @@
                                 aria-label="Notifications"
                                 labelPosition="after"
                             >
-                                <h3>Login to PBX?</h3>
+                                <h3>{{ locale('loginComponent.loginToPBX') }}?</h3>
                             </mat-slide-toggle>
                         </mat-list-item>
 
@@ -243,7 +247,7 @@
                                 (change)="msChecked = $event.checked; toggleStation()"
                                 labelPosition="after"
                             >
-                                <h3>Login to Webphone?</h3>
+                                <h3>{{ locale('loginComponent.loginToWebPhone') }}?</h3>
                             </mat-slide-toggle>
                         </mat-list-item>
                     </mat-list>
@@ -259,7 +263,7 @@
                     (click)="login(false)"
                     [disabled]="!loginForm.valid || loading"
                 >
-                    LOGIN
+                    {{ locale('loginComponent.login') }}
                 </button>
             </form>
 
@@ -273,13 +277,14 @@
                     (click)="ssoLogin()"
                     [disabled]="loading"
                 >
-                    SIGN IN
+                    {{ locale('loginComponent.signIn') }}
                 </button>
             </div>
 
             <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
                 <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>
-                Copyright Tetherfi | UI: {{ uiVersion }} - Server: {{ version }}
+                {{ locale('loginComponent.copyWriteTetherfi') }} | {{ locale('loginComponent.ui') }}: {{ uiVersion }} -
+                {{ locale('loginComponent.server') }}: {{ version }}
             </div>
         </div>
     </div>
