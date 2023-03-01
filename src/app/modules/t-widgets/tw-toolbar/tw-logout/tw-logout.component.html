@@ -1,5 +1,5 @@
-<div class="">
-    <button mat-icon-button color="warn" [disabled]="!canLogout" (click)="logout()" matTooltip="Logout">
+<div class="" *transloco="let locale">
+    <button mat-icon-button color="warn" [disabled]="!canLogout" (click)="logout()" [matTooltip]="locale('toolbarComponent.logout')">
         <mat-icon class="primary-text">exit_to_app</mat-icon>
     </button>
 </div>

@@ -1,12 +1,12 @@
-<div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
+<div fxLayout="row wrap" *transloco="let locale" fxLayoutAlign="space-around center" class="px-4">
     <button mat-icon-button (click)="showAvailableDevices()">
-        <mat-icon matTooltip="Available devices"> headset </mat-icon>
+        <mat-icon [matTooltip]="locale('toolbarComponent.availableDevices')"> headset </mat-icon>
     </button>
 </div>
 
-<ng-template #availableDevicesMenu class="custom">
+<ng-template *transloco="let locale" #availableDevicesMenu class="custom">
     <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
-        <p class="mat-title m-0">Available Media Devices</p>
+        <p class="mat-title m-0">{{ locale('toolbarComponent.availableDevices') }}</p>
         <button mat-icon-button tabindex="-1" mat-dialog-close>
             <mat-icon>close</mat-icon>
         </button>

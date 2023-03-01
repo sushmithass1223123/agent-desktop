@@ -111,7 +111,7 @@
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline">
-                        <input class="login-input" matInput required [placeholder]="locale('loginComponent.lanId')" formControlName="lanId" #lanId />
+                        <input class="login-input" matInput required [placeholder]="locale('global.lanId')" formControlName="lanId" #lanId />
                         <button
                             mat-button
                             type="button"
@@ -124,7 +124,7 @@
                         >
                             <mat-icon>close</mat-icon>
                         </button>
-                        <mat-error> {{ locale('loginComponent.lanIdRequired') }} </mat-error>
+                        <mat-error>{{ locale('global.lanId') }} {{ locale('loginComponent.isRequired') }} </mat-error>
                     </mat-form-field>
 
                     <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">

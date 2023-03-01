@@ -1,8 +1,6 @@
 {
     "loginComponent": {
         "welcome": "Welcome to Agent Desktop!",
-        "lanId": "Lan ID",
-        "lanIdRequiredText": "LAN ID is required",
         "connectivityError": "Trying to reach server",
         "retrying": "Retrying...",
         "retryingIn": "Retrying in",
@@ -14,20 +12,43 @@
         "otpRequired": "OTP is required",
         "domainNameNone": "None",
         "domainNameRequired": "Domain Name is required",
-        "lanIdRequired": "Lan ID is required",
+        "isRequired": "is required",
         "agentIdRequired": "Agent ID is required",
         "passwordRequired": "Password is required",
         "stationIdRequired": "Station ID is required",
         "loginToPBX": "Login to PBX",
-        "loginToWebPhone": "Login to Webphone?",
+        "loginToWebPhone": "Login to Webphone",
         "login": "LOGIN",
         "signIn": "SIGN IN",
         "copyWriteTetherfi": "Copyright Tetherfi",
         "ui": "UI",
         "server": "Server"
     },
-    "navbarComponent": {
-
+    "toolbarComponent": {
+        "notifications": "Notifications",
+        "noNotificationsMsg": "No notifications yet!",
+        "logout": "Logout",
+        "im": "IM",
+        "moreActions": "More Actions",
+        "availableDevices": "Available Media devices",
+        "loadingAvailableDevices": "Loading available devices...",
+        "reloadingAvailableDevices": "Reloading available devices",
+        "videoStartErrorMessage": "Error occured while starting the video",
+        "auxCodes": "AUX codes",
+        "agentProfile": "Agent Profile",
+        "teamName": "Team Name"
+    },
+    "global": {
+        "commonErrorMessage": "Something went wrong",
+        "lanId": "Lan ID",
+        "agentId": "Agent ID",
+        "stationId": "Station ID"
+    },
+    "interactionComponent": {
+        "hold": "Hold",
+        "unHold": "Unhold",
+        "disconnect": "Disconnect",
+        "emails": "Emails"
     }
 
 }
