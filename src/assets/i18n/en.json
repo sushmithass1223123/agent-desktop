@@ -49,6 +49,15 @@
         "unHold": "Unhold",
         "disconnect": "Disconnect",
         "emails": "Emails"
+    },
+    "contentComponent": {
+        "unknownWidget": "Unknown widget!",
+        "no": "No",
+        "interactionYet": "interaction yet!",
+        "widgetsFound": "widgets found!",
+        "noInteractions": "No Interaction",
+        "noWidgets": "No Widgets",
+        "customURLNotFound": "Custom URL not found!"
     }
 
 }

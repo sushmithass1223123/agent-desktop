@@ -1,6 +1,6 @@
-<mat-card>
+<mat-card *transloco="let locale">
     <div fxFlex fxFill fxLayout="column" fxLayoutAlign="center center">
         <img class="vector-image" src="assets/images/vectors/no-widget.svg" />
-        <span class="mat-headline mt-24"> Unknown widget! </span>
+        <span class="mat-headline mt-24">{{ locale('contentComponent.unknownWidget') }} </span>
     </div>
 </mat-card>

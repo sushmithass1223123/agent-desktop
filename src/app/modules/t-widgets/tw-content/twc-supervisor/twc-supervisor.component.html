@@ -72,13 +72,14 @@
             </ng-container>
         </ng-template>
     </div>
-
-    <twc-not-found
-        *ngIf="!staticWidgets.length && !dynamicWidgets.length"
-        class="tw-widget-container"
-        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
-        title="No Widgets"
-        type="widget"
-        message="No supervisor widgets found!"
-    ></twc-not-found>
+    <ng-container *transloco="let locale">
+        <twc-not-found
+            *ngIf="!staticWidgets.length && !dynamicWidgets.length"
+            class="tw-widget-container"
+            [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
+            [title]="locale('contentComponent.noWidgets')"
+            type="widget"
+            [message]="locale('contentComponent.no') + locale('contentComponent.widgetsFound')"
+        ></twc-not-found>
+    </ng-container>
 </div>
