@@ -239,6 +239,41 @@
                                         "Pinned": false
                                     },
                                     "Data": { "Role": "agent", "SLEnabled": true, "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] } }
+                                },
+                                {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": true,
+                                        "Number": "IncomingCallEvent.PhoneNumber",
+                                        "DeflectExpiry": 5,
+                                        "DeflectIntent": "devtest",
+                                        "DestChannel": "textchat",
+                                        "DestSubChannel": "text",
+                                        "DisconnectTimeout": 1,
+                                        "FallbackSkillId": 42001,
+                                        "NextStatusName": "ACW",
+                                        "StatusLockTimeout": 1,
+                                        "ReservedStatusCode": 2
+                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -2724,5 +2759,5 @@
             ]
         }
     },
-    "Version": "5.1.11.3001-patch.2"
+    "Version": "5.1.11.3002"
 }
