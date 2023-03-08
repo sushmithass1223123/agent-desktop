@@ -10,6 +10,7 @@
         fxLayoutAlign="space-evenly center"
         class="chat-workbench w-100-p h-100-p py-8"
         [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+        *transloco="let locale"
     >
         <div fxFlex="30" class="chat-list mx-12 border-radius-20 px-8">
             <div fxLayout fxLayoutAlign="center center" class="theme-bg mt-8 border-radius-20 position-relative">
@@ -36,7 +37,7 @@
                     </mat-form-field>
                 </form>
 
-                <button mat-icon-button (click)="doAdvancedSearch()" matTooltip="Refresh">
+                <button mat-icon-button (click)="doAdvancedSearch()" [matTooltip]="locale('widgets.workbench.refresh')">
                     <mat-icon>refresh</mat-icon>
                 </button>
                 <button
@@ -44,7 +45,7 @@
                     (click)="showAdvancedSearchForm = !showAdvancedSearchForm"
                     cdkOverlayOrigin
                     #advancedSearchMenu="cdkOverlayOrigin"
-                    matTooltip="Advance Search"
+                    [matTooltip]="locale('widgets.workbench.advanceSearch')"
                 >
                     <mat-icon>more_vert</mat-icon>
                     <ng-template
@@ -67,7 +68,13 @@
                                 fxLayoutGap="2%"
                             >
                                 <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
-                                    <input matInput formControlName="skills" type="text" placeholder="Skill" [readonly]="globalSearchControl.value" />
+                                    <input
+                                        matInput
+                                        formControlName="skills"
+                                        type="text"
+                                        [placeholder]="locale('widgets.workbench.skill')"
+                                        [readonly]="globalSearchControl.value"
+                                    />
                                 </mat-form-field>
 
                                 <mat-form-field class="form-field custom with-border" fxFlex="48" appearance="outline">
@@ -75,7 +82,7 @@
                                         matInput
                                         formControlName="fromDate"
                                         [matDatepicker]="fromDatePicker"
-                                        placeholder="From Data"
+                                        [placeholder]="locale('widgets.workbench.fromDate')"
                                         [readonly]="globalSearchControl.value"
                                     />
                                     <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
@@ -86,7 +93,7 @@
                                         matInput
                                         formControlName="fromTime"
                                         type="time"
-                                        placeholder="From Time"
+                                        [placeholder]="locale('widgets.workbench.fromTime')"
                                         [readonly]="globalSearchControl.value"
                                     />
                                 </mat-form-field>

@@ -58,6 +58,16 @@
         "noInteractions": "No Interaction",
         "noWidgets": "No Widgets",
         "customURLNotFound": "Custom URL not found!"
+    },
+    "widgets": {
+        "workbench": {
+            "refresh": "Refresh",
+            "advanceSearch": "Advance Search",
+            "skill": "Skill",
+            "fromDate": "From Date",
+            "fromTime": "From Time"
+
+        }
     }
 
 }
