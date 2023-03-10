@@ -1464,7 +1464,8 @@
                                                         "CustomerAudio": true,
                                                         "CustomerVideo": false
                                                     },
-                                                    "ToggleUserViewAllowed": true
+                                                    "ToggleUserViewAllowed": true,
+                                                    "MuteVideoOnInitiateCall": true
                                                 }
                                             },
                                             {
@@ -2759,5 +2760,5 @@
             ]
         }
     },
-    "Version": "5.1.11.3002"
+    "Version": "5.1.11.3003-beta.1"
 }

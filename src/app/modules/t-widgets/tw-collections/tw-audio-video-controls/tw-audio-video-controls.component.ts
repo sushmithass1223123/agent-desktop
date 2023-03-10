@@ -499,17 +499,23 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // start call
         if (this.interactionDetails.ConferenceType === 'conf') {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
+            widgetData.MuteVideoOnInitiateCall ? this.muteVideoOnCall() : '';
             this.showUI = true;
         } else if (this.interactionDetails.ConferenceType === 'whisper') {
             this.avConn.join(this.wrcCallType, { mode: 'wisper' as 'whisper' });
+            widgetData.MuteVideoOnInitiateCall ? this.muteVideoOnCall() : '';
             this.showUI = true;
         } else if (this.interactionDetails.ConferenceType === 'silent') {
             this.avConn.join(this.wrcCallType, { mode: 'monitor' });
+            widgetData.MuteVideoOnInitiateCall ? this.muteVideoOnCall() : '';
             this.showUI = true;
         } else if (this.interactionDetails.Direction === 'out') {
             this.avConn
                 ?.startCall(this.wrcCallType)
                 .then((dt: any) => {
+
+                    widgetData.MuteVideoOnInitiateCall ? this.muteVideoOnCall() : '';
+
                     // check the response is sucess or timed out
                     if (dt.code === TEnums.WrcCodes.RequestTimeout) {
                         // close the widget
@@ -521,6 +527,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 .catch((error) => {
                     this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
                 });
+        } else if (this.interactionDetails.Direction === 'in') {
+            this.avConn && widgetData.MuteVideoOnInitiateCall ? this.muteVideoOnCall() : '';
         }
 
         this.muteAVOnHold = {
@@ -534,6 +542,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             customerAudio: widgetData.MuteAVOnHold?.CustomerAudio,
             customerVideo: widgetData.MuteAVOnHold?.CustomerVideo
         };
+    }
+
+
+    muteVideoOnCall() {
+        if(this.callType === 'video') {
+            this.avConn.mute(false, true);
+            this.videoMuted = true;
+        }
     }
 
     /**
@@ -607,6 +623,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         if (resp) {
                             // accept request
                             evt.data.response(true);
+                            this.avConn && this.data.Data.MuteVideoOnInitiateCall ? this.muteVideoOnCall() : '';
                             // show the UI
                             this.showUI = true;
                         } else {

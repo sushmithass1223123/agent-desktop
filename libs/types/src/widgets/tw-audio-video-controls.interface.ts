@@ -155,4 +155,8 @@ export type TwAudioVideoControlsData = {
      * [STANDALONE] Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /** 
+     * Flag to enable mute video on initiate call  
+    */
+     MuteVideoOnInitiateCall : boolean;
 };
