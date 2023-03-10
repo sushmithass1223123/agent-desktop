@@ -42,7 +42,8 @@
         "commonErrorMessage": "Something went wrong",
         "lanId": "Lan ID",
         "agentId": "Agent ID",
-        "stationId": "Station ID"
+        "stationId": "Station ID",
+        "retry": "Retry"
     },
     "interactionComponent": {
         "hold": "Hold",
@@ -65,8 +66,22 @@
             "advanceSearch": "Advance Search",
             "skill": "Skill",
             "fromDate": "From Date",
-            "fromTime": "From Time"
-
+            "fromTime": "From Time",
+            "toDate": "To Date",
+            "toTime": "To Time",
+            "search": "Search"
+        },
+        "workcodes": {
+            "searchWorkcodes": "Search Workcodes...",
+            "selectWorkcodes": "Select Work Codes",
+            "notFoundError": "Unable to get workcodes",
+            "roleError": "Role not provided / Role Source",
+            "settingWC": "Setting work code",
+            "wcSetSuccess": "Work code set successfully",
+            "wcSetFail": "Unable to set workcode",
+            "removeWC": "Removing work code",
+            "wcRemoveSuccess": "Work code removed successfully",
+            "wcRemoveFail": "Unable to remove workcode"
         }
     }
 

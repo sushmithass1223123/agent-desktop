@@ -55,15 +55,17 @@
 
     <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout="column" fxLayoutAlign="center center">
         <p>{{ loadWorkCodesReq.msg }}</p>
-        <button mat-button mat-raised-button color="primary" class="ml-8" (click)="setup()">Retry</button>
+        <button mat-button mat-raised-button color="primary" class="ml-8" *transloco="let locale" (click)="setup()">
+            {{ locale('global.retry') }}
+        </button>
     </div>
 
     <!-- your code goes here -->
 </tw-wrapper>
 
 <ng-template #addWorkcodeModalRef>
-    <div class="twd-sticky twd-top-0 twd-left-0">
-        <p class="mat-title">Select Work Codes</p>
+    <div *transloco="let locale" class="twd-sticky twd-top-0 twd-left-0">
+        <p class="mat-title">{{ locale('widgets.workcodes.selectWorkcodes') }}</p>
         <mat-form-field class="w-100-p" appearance="outline">
             <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
                 <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
@@ -71,7 +73,12 @@
                     {{ workCode.Name }}
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
-                <input #workCodeInput placeholder="Search Workcodes..." [formControl]="workCodeCtrl" [matChipInputFor]="selectedWorkCodesRef" />
+                <input
+                    #workCodeInput
+                    [placeholder]="locale('widgets.workcodes.searchWorkcodes')"
+                    [formControl]="workCodeCtrl"
+                    [matChipInputFor]="selectedWorkCodesRef"
+                />
             </mat-chip-list>
         </mat-form-field>
     </div>

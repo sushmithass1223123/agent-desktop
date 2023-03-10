@@ -16,7 +16,7 @@
             <div fxLayout fxLayoutAlign="center center" class="theme-bg mt-8 border-radius-20 position-relative">
                 <form class="w-100-p" (ngSubmit)="doGlobalSearch()">
                     <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
-                        <input class="login-input" matInput placeholder="Search" [formControl]="globalSearchControl" />
+                        <input class="login-input" matInput [placeholder]="locale('widgets.workbench.search')" [formControl]="globalSearchControl" />
                         <button *ngIf="!globalSearchControl.value; else clearBtn" mat-icon-button matSuffix disabled type="button">
                             <mat-icon matSuffix>search</mat-icon>
                         </button>
@@ -103,7 +103,7 @@
                                         matInput
                                         formControlName="toDate"
                                         [matDatepicker]="toDatePicker"
-                                        placeholder="To Date"
+                                        [placeholder]="locale('widgets.workbench.toDate')"
                                         [readonly]="globalSearchControl.value"
                                     />
                                     <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
@@ -115,7 +115,7 @@
                                         matInput
                                         formControlName="toTime"
                                         type="time"
-                                        placeholder="To Time"
+                                        [placeholder]="locale('widgets.workbench.toTime')"
                                         [readonly]="globalSearchControl.value"
                                     />
                                 </mat-form-field>
