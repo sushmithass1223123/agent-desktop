@@ -27,6 +27,7 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Active agents component widget
@@ -128,7 +129,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _dashboardService: DashboardService,
         private _fuseSidebarService: FuseSidebarService,
         private _instantMessagingService: InstantMessagingService,
-        private _agentFeaturesService: AgentFeaturesService
+        private _agentFeaturesService: AgentFeaturesService,
+        private translocoService: TranslocoService
     ) {
         super('TwSuActiveAgentsComponent');
 
@@ -251,7 +253,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         if (this.reload) {
             this.reload = false;
-            this._appUIService.showSnackbar('Agent data is reloaded');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataReloadSuccess'));
         }
     }
 
@@ -389,7 +391,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         switch (feature.Feature.toLowerCase()) {
             case AGENT_FEATURES.AllowSupervisorToCapturePicture:
-                this._appUIService.showSnackbar('Please wait, retrieving information...', 'loading');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataloadingMsg'), 'loading');
                 SDKClient.getAgentActivity(
                     {
                         agentId: agent.AgentLoginID,
@@ -408,7 +410,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         const response = dt.response;
                         const agentInfo = dt.userObject.agent;
                         if (response.Response < 0) {
-                            this._appUIService.showSnackbar('Request timedout!', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.requestTimeoutMsg'), 'failure');
                             return;
                         }
                         this._appUIService.showSnackbar('Done', 'success');
@@ -437,14 +439,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     })
                     .catch((error: string) => {
-                        this._appUIService.showSnackbar('Unable to get agent activity', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentActivityFailed'), 'failure');
                         this.logger.error('Error in performAgentAction.AgentSnapShotEvent', error);
                     });
                 break;
             case AGENT_FEATURES.AllowSupervisorToLogout:
                 // check the agent's current status
                 if (agent.CurrentAgentStatus.toLowerCase().includes('on call')) {
-                    this._appUIService.showSnackbar(`Logout is not allowed, ${agent.AgentName} is on call`, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutNotAllowed') + `${agent.AgentName}` +  this.translocoService.translate('widgets.activeAgents.isOnCall'), 'failure');
                     return;
                 }
                 // confirm logout
@@ -456,7 +458,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                     if (dialogResult) {
                         // show the progress bar
-                        this._appUIService.showSnackbar('Please wait, Logging out the user..', 'loading');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutLoadingMessage'), 'loading');
                         SDKClient.logout(
                             {
                                 deviceId: agent.StationID,
@@ -470,10 +472,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                                 // filter the logout agent
                                 this.filteredAgents = this.filteredAgents.filter((a) => a.StationID !== agent.StationID);
                                 // route back to login page
-                                this._appUIService.showSnackbar('Logged out successfully', 'success');
+                                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutSuccess'), 'success');
                             } else {
                                 // logout error
-                                this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFailed'), 'failure');
                             }
                         });
                     }
@@ -528,7 +530,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {IAUXCodes} item
      */
     public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
-        this._appUIService.showSnackbar('Please wait, changing status...', 'loading');
+        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'), 'loading');
         // change the status
         SDKClient.changeStatus(
             {
@@ -546,10 +548,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     // notification to the agent
                     let notification = `Supervisor ${this.user.agentName} has changed your status to ${response.Status}`;
                     // snackbar message
-                    let message = 'Agent status changed successfully';
+                    let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess');
                     // check if the agent is on call
                     if (agent.CurrentAgentStatus.includes('On Call')) {
-                        message = `${agent.AgentName} is on call, status change request sent successfully`;
+                        message = this.translocoService.translate('widgets.activeAgents.statusChangeRequestSuccess');  
+                        message = message?.replace('#agentName', agent.AgentName);
                         notification += ', will be reflecting after the interaction';
                     }
 
@@ -574,12 +577,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         return agt;
                     });
                 } else {
-                    this._appUIService.showSnackbar('Status change failed!', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.statusChangeFailed'), 'failure');
                 }
             })
             .catch(() => {
                 // logout error
-                this._appUIService.showSnackbar('Error in changing status, please try again', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.statusChangeError'), 'failure');
             });
     }
 
@@ -590,7 +593,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     public sendQuizIntent(intentName: string, item: SuAgentModel): void {
         if (!this.data.Data.TASUrl) {
-            this._appUIService.showSnackbar('You missed a quiz event because TASUrl is missing in app config', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.quizMissedError'), 'failure');
             return;
         }
 
@@ -644,8 +647,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         if (this.allowBroadcast) {
             const dialogRef = this._appUIService.showCustomDialog(
                 'prompt',
-                'Write the message to be broadcasted below',
-                'Broadcast Message',
+                this.translocoService.translate('widgets.activeAgents.broadCastPopupTitle'),
+                this.translocoService.translate('widgets.activeAgents.broadCastMsgPlaceholder'),
                 { minRows: 5 },
                 { minWidth: '30%' }
             );
@@ -654,7 +657,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 next: async (message) => {
                     try {
                         if (message) {
-                            this._appUIService.showSnackbar('Sending Broadcast', 'loading');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCastSending'), 'loading');
                             const res = await SDKClient.setBroadcastMessageForTeam({
                                 message,
                                 supervisorId: agentId,
@@ -663,20 +666,20 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                             res.response.forEach((teamRes) => {
                                 if (teamRes.ResultCode < 0) {
                                     if (!erroredSnackbarMessage) {
-                                        erroredSnackbarMessage = `Broadcast message sending failed for `;
+                                        erroredSnackbarMessage = this.translocoService.translate('widgets.activeAgents.broadCastMsgFailed');
                                     }
                                     erroredSnackbarMessage += teamRes.ResultMessage;
                                 }
                             });
                             if (!erroredSnackbarMessage) {
-                                this._appUIService.showSnackbar('Broadcast sent', 'success');
+                                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCaseMsgSuccess'), 'success');
                             } else {
                                 throw new Error(erroredSnackbarMessage);
                             }
                         }
                     } catch (e) {
                         if (!erroredSnackbarMessage) {
-                            this._appUIService.showSnackbar('Something went wrong while sending broacast', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCaseMsgFailedGeneric'), 'failure');
                             console.error(e);
                         }
                     }

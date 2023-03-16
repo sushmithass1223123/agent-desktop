@@ -11,7 +11,7 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="w-100-p h-100-p chat-controls" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+        <div class="w-100-p h-100-p chat-controls" *transloco="let locale" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
             <div *ngIf="chatTranscripts.length" fxLayout="row" fxLayoutAlign=" none" class="mt-4 w-100-p h-100-p chat-container">
                 <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
                     <!-- CHAT CONTENT -->
@@ -53,7 +53,7 @@
 
             <div *ngIf="!chatTranscripts.length" class="w-100-p h-85-p">
                 <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-100-p box-shadow-3d" />
-                <p class="text-center mat-title m-0">No Transcripts Available</p>
+                <p class="text-center mat-title m-0">{{ locale('widgets.voiceBotTranscripts.transcriptsNotFound') }}</p>
             </div>
         </div>
     </ng-container>

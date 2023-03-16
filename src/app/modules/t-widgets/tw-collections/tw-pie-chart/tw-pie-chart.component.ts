@@ -10,6 +10,7 @@ import { orderBy, sortBy } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { TwPieChart } from '@ad/types';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Colors for chart
@@ -67,9 +68,10 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService) {
+    constructor(private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService) {
         super('TwPieChartComponent');
-        this.noDataMessage = 'No data available';
+        this.noDataMessage = translocoService.translate('contentComponent.noDataAvailable');
     }
 
     /**
@@ -94,13 +96,13 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
                     eventName = 'AgentStatusDetailsEvent';
                 } else if (widgetData.Role === 'supervisor') {
                     eventName = 'TeamActiveStatusDetailsEvent';
-                    this.noDataMessage = 'No Active Agents';
+                    this.noDataMessage = this.translocoService.translate('widgets.activeAgents.noAgentsFound');
                 }
                 break;
 
             case 'ciq':
                 eventName = 'TeamWallboardRefreshEvent';
-                this.noDataMessage = 'No Calls in Queue';
+                this.noDataMessage = this.translocoService.translate('contentComponent.noCIQ');
                 break;
 
             case 'intentlist':
@@ -117,7 +119,7 @@ export class TwPieChartComponent extends TWidgetWrapper implements OnInit, OnDes
 
             case 'activechannels':
                 eventName = 'TeamActiveChannelListEvent';
-                this.noDataMessage = 'No Active Channels';
+                this.noDataMessage = this.translocoService.translate('contentComponent.noChannels');
                 break;
         }
 

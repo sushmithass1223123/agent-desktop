@@ -14,16 +14,16 @@
         fxLayoutGap="20px"
         novalidate
     >
-        <mat-form-field appearance="outline" fxFlex="80">
-            <mat-label>Phone Number</mat-label>
+        <mat-form-field *transloco="let locale" appearance="outline" fxFlex="80">
+            <mat-label>{{ locale('widgets.pendingCallback.phoneNumber') }}</mat-label>
             <input type="number" matInput [(ngModel)]="phone" name="phone" #phoneCtrl="ngModel" required />
-            <mat-error *ngIf="phoneCtrl.errors?.required"> Required </mat-error>
+            <mat-error *ngIf="phoneCtrl.errors?.required"> {{ locale('widgets.registerCallback.phoneRequired') }} </mat-error>
         </mat-form-field>
         <button fxFlex="20" mat-raised-button color="primary">{{ buttonLabel }}</button>
     </form>
 </ng-template>
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <!-- your code goes here -->
     <ng-container *ngIf="!getPendingCallbacksReq.loading && !getPendingCallbacksReq.error">
         <ng-container *ngIf="getPendingCallbacksReq.data">
@@ -33,51 +33,50 @@
 
                 <ng-container matColumnDef="CampaignName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header
-                        ><span
-                            >Campaign <br />
-                            Name</span
-                        ></mat-header-cell
-                    >
+                        ><span [innerHTML]="locale('widgets.pendingCallback.campaignName')"></span
+                    ></mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.campName || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="CampaignType">
                     <mat-header-cell *matHeaderCellDef mat-sort-header
-                        ><span
-                            >Campaign <br />
-                            Type</span
-                        ></mat-header-cell
-                    >
+                        ><span [innerHTML]="locale('widgets.pendingCallback.campaignType')"></span
+                    ></mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.campType || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="ScheduleTime">
                     <mat-header-cell *matHeaderCellDef mat-sort-header
-                        ><span
-                            >Scheduled <br />
-                            At</span
-                        ></mat-header-cell
-                    >
+                        ><span [innerHTML]="locale('widgets.pendingCallback.scheduledAt')"></span
+                    ></mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.directAgentScheduleTime || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Name">
                     <mat-header-cell *matHeaderCellDef class="d-flex w-100-p" mat-sort-header>
-                        <span> Name </span>
+                        <span> {{ locale('widgets.registerCallback.name') }} </span>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">{{ element.name || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Status">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header><span>Status</span></mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header
+                        ><span>{{ locale('interactionComponent.status') }}</span></mat-header-cell
+                    >
                     <mat-cell *matCellDef="let element">{{ element.status || 'NA' }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="Actions">
-                    <mat-header-cell *matHeaderCellDef><span>Actions</span></mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef
+                        ><span>{{ locale('interactionComponent.actions') }}</span></mat-header-cell
+                    >
                     <mat-cell *matCellDef="let element">
                         <div fxLayout fxLayoutAlign="center center" class="h-100-p w-100-p">
-                            <mat-icon *ngIf="changeContactStatusReq.data !== element.id" (click)="closeCallback(element)" matTooltip="Close">
+                            <mat-icon
+                                *ngIf="changeContactStatusReq.data !== element.id"
+                                (click)="closeCallback(element)"
+                                [matTooltip]="locale('interactionComponent.close')"
+                            >
                                 close
                             </mat-icon>
                             <mat-icon mat-ripple *ngIf="changeContactStatusReq.data === element.id" class="spin" (click)="closeCallback(element)">
@@ -90,10 +89,10 @@
                 <mat-header-row *matHeaderRowDef="pendingCallbacksTable.columns; sticky: true"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: pendingCallbacksTable.columns"></mat-row>
             </mat-table>
-            <p *ngIf="!pendingCallbacksTable.source.data.length" class="text-center">No data available</p>
+            <p *ngIf="!pendingCallbacksTable.source.data.length" class="text-center">{{ locale('contentComponent.noDataAvailable') }}</p>
         </ng-container>
         <ng-container *ngIf="!getPendingCallbacksReq.data">
-            <ng-container *ngTemplateOutlet="phoneForm; context: { buttonLabel: 'Submit' }"></ng-container>
+            <ng-container *ngTemplateOutlet="phoneForm; context: { buttonLabel: locale('global.submit') }"></ng-container>
         </ng-container>
     </ng-container>
 
@@ -103,7 +102,7 @@
 
     <div *ngIf="getPendingCallbacksReq.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p">
         <p>{{ getPendingCallbacksReq.msg }}</p>
-        <ng-container *ngTemplateOutlet="phoneForm; context: { buttonLabel: 'Retry' }"></ng-container>
+        <ng-container *ngTemplateOutlet="phoneForm; context: { buttonLabel: locale('global.retry') }"></ng-container>
     </div>
 
     <!-- your code goes here -->

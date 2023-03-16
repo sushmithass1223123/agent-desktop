@@ -12,25 +12,25 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="twd-flex twd-flex-col twd-w-full twd-h-full twd-max-h-full">
+        <div *transloco="let locale" class="twd-flex twd-flex-col twd-w-full twd-h-full twd-max-h-full">
             <div class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-1 twd-mb-2">
                 <button mat-icon-button [matMenuTriggerFor]="sortMenu">
                     <mat-icon>sort</mat-icon>
                     <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
                         <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
-                            <span>Agent ID</span>
+                            <span>{{ locale('global.agentId') }}</span>
                             <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
                         <button mat-menu-item (click)="sortAgentList('AgentName')">
-                            <span>Agent Name</span>
+                            <span>{{ locale('global.agentName') }}</span>
                             <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
                         <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus')">
-                            <span>Agent Status</span>
+                            <span>{{ locale('widgets.activeAgents.agentStatus') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
                         <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration')">
-                            <span>Status Duration</span>
+                            <span>{{ locale('widgets.activeAgents.statusDuration') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{
                                 sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
                             }}</mat-icon>
@@ -38,7 +38,7 @@
                     </mat-menu>
                 </button>
                 <mat-form-field class="custom form-field twd-w-full" appearance="outline">
-                    <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                    <input class="login-input" matInput [placeholder]="locale('global.search')" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                     <button
                         *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button
@@ -62,10 +62,10 @@
                         </button>
                     </ng-template>
                 </mat-form-field>
-                <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="reload">
+                <button mat-icon-button (click)="refreshList()" [matTooltip]="locale('widgets.activeAgents.reloadAgentData')" [disabled]="reload">
                     <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
                 </button>
-                <button *ngIf="allowBroadcast" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
+                <button *ngIf="allowBroadcast" mat-icon-button [matTooltip]="locale('widgets.activeAgents.sendBroadcast')" (click)="sendBroadcast()">
                     <mat-icon>campaign</mat-icon>
                 </button>
             </div>
@@ -174,8 +174,10 @@
                         </div>
 
                         <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
-                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR"> supervised_user_circle</mat-icon>
-                            <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" [matTooltip]="locale('widgets.activeAgents.supervisor')">
+                                supervised_user_circle</mat-icon
+                            >
+                            <mat-icon *ngIf="item.IsMSAgent" [matTooltip]="locale('widgets.activeAgents.webphone')">phonelink</mat-icon>
                             <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
                                 {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
                             </mat-icon>
@@ -306,17 +308,18 @@
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animate]="{ value: '*', params: { y: '100%' } }"
                 >
-                    <span class="mat-title m-0"> No agents found!</span>
+                    <span class="mat-title m-0"> {{ locale('widgets.activeAgents.noAgentsFound') }}</span>
                 </div>
             </div>
 
             <div *ngIf="agentList && agentList.length" class="twd-flex twd-justify-between twd-pt-2 twd-px-2">
                 <p *ngIf="filteredAgents.length" class="text-center twd-inset-x-0">
-                    Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
+                    {{ locale('widgets.activeAgents.agentSortMsg') }}
+                    <!--<b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order-->
                 </p>
 
                 <div class="twd-text-right twd-flex-auto">
-                    <span class="twd-font-bold">Total: </span>
+                    <span class="twd-font-bold"> {{ locale('widgets.activeAgents.total') }} </span>
 
                     <span>{{ (searchTerm ? filteredAgents.length : agentList.length) + ' of ' + agentList.length }}</span>
                 </div>

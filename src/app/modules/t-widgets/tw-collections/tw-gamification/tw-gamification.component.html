@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <!-- your code goes here -->
     <div
         *ngIf="
@@ -24,7 +24,7 @@
     >
         <!-- fxLayoutAlign="center center" -->
         <div fxFlex="20" class="top-performers-card">
-            <p class="mat-title mb-8">Top Performers</p>
+            <p class="mat-title mb-8">{{ locale('widgets.gamification.topPerformers') }}</p>
             <div *ngIf="leaderBoardRes.data.length" class="records-list h-100-p p-12 custom-scroll-adjust">
                 <div *ngFor="let p of leaderBoardRes.data; let i = index" fxLayout fxLayoutAlign="start center" class="mb-16">
                     <!-- <div class="w-20 h-20 text-center mat-elevation-z1 border-radius-100 position-absolute rank font-weight-700">{{ i + 1 }}</div> -->
@@ -48,7 +48,7 @@
         </div>
 
         <div fxFlex="20" class="leaderboard-card">
-            <p class="mat-title mb-8">Leaderboard</p>
+            <p class="mat-title mb-8">{{ locale('widgets.gamification.leaderBoard') }}</p>
             <div *ngIf="leaderBoardRes.data.length" class="records-list h-100-p px-12 custom-scroll-adjust">
                 <div *ngFor="let p of leaderBoardRes.data" class="mb-12">
                     <span class="mat-body-2"> {{ p.AgentName || p.AgentId || 'Unknown' }} </span>
@@ -69,7 +69,7 @@
                                 fxFlex="100"
                             ></div>
                         </div>
-                        <strong class="ml-4"> {{ p.TotalPoints }} Pt</strong>
+                        <strong class="ml-4"> {{ p.TotalPoints }} {{ locale('widgets.gamification.points') }}</strong>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
         </div>
 
         <div fxFlex="30">
-            <p class="mat-title mb-8">My Position</p>
+            <p class="mat-title mb-8">{{ locale('widgets.gamification.myPosition') }}</p>
             <div *ngIf="(getAgentLevelsRes.data | slice: -1)[0]" fxLayout="row wrap" fxLayoutAlign="start center" class="mb-12">
                 <div fxFlex="15">
                     <span class="mat-display-1 mb-0"> L{{ currentUser.level }} </span>
@@ -134,7 +134,7 @@
                     ></div>
                 </div>
                 <div fxFlex="100">
-                    <span class="mr-4"> {{ currentUser.totalPoints }} Pts </span>
+                    <span class="mr-4"> {{ currentUser.totalPoints }} {{ locale('widgets.gamification.points') }} </span>
                     |
                     <span class="ml-4">
                         {{
@@ -148,8 +148,8 @@
                     </span>
                 </div>
             </div>
-            <p *ngIf="!(getAgentLevelsRes.data | slice: -1)[0]">No Data available</p>
-            <p class="mat-title mb-8">Earned Badges</p>
+            <p *ngIf="!(getAgentLevelsRes.data | slice: -1)[0]">{{ locale('contentComponent.noDataAvailable') }}</p>
+            <p class="mat-title mb-8">{{ locale('widgets.gamification.earnedBadges') }}</p>
             <div fxLayout="row" fxLayoutAlign="start center" class="mb-12">
                 <div *ngFor="let b of currentUser.badges | slice: 0:3; trackBy: badgeName" fxFlex="30" class="text-center">
                     <img
@@ -166,12 +166,12 @@
                         <mat-icon [color]="b.BadgeId > 99 ? 'primary' : ''"> star_rating </mat-icon>
                     </div> -->
                 </div>
-                <p *ngIf="!currentUser.badges.length">No Data available</p>
+                <p *ngIf="!currentUser.badges.length">{{ locale('contentComponent.noDataAvailable') }}</p>
             </div>
         </div>
 
         <div fxFlex="30">
-            <p class="mat-title mb-8">Coins and Points</p>
+            <p class="mat-title mb-8">{{ locale('widgets.gamification.coinsAndPoints') }}</p>
             <div fxLayout="row wrap" fxLayoutAlign="start center">
                 <div *ngFor="let c of currentUser.coins | slice: 0:5; trackBy: valueField" fxFlex="30" class="mb-8">
                     <img [src]="c.image" class="mx-auto mb-4 d-block" [alt]="c.name" />
@@ -186,7 +186,7 @@
         </div>
 
         <div fxFlex="40" class="my-performance-card">
-            <p class="mat-title mb-8">My Performance</p>
+            <p class="mat-title mb-8">{{ locale('widgets.gamification.myPerformance') }}</p>
             <div *ngIf="getAgentProgressRes.data.length" class="records-list px-8 custom-scroll-adjust">
                 <div *ngFor="let p of getAgentProgressRes.data; trackBy: pointsAssigned" fxLayout fxLayoutAlign="space-between center" class="mb-16">
                     <ng-container [ngSwitch]="p.Channel | lowercase">
@@ -220,7 +220,7 @@
         </div>
 
         <div fxFlex="100" fxLayoutAlign="center center">
-            <button mat-raised-button color="primary" class="w-40-p" (click)="redeem()">Redeem Now !</button>
+            <button mat-raised-button color="primary" class="w-40-p" (click)="redeem()">{{ locale('widgets.gamification.redeemNow') }}</button>
         </div>
     </div>
 
@@ -237,7 +237,7 @@
         class="w-100-p h-100-p"
     >
         <div class="w-70-p text-center">
-            <p class="mat-title mb-40">Setting Up Gamification Dashboard</p>
+            <p class="mat-title mb-40">{{ locale('widgets.gamification.settingUpDashboard') }}</p>
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
     </div>
@@ -256,7 +256,7 @@
     >
         <div class="w-70-p text-center">
             <p class="mat-title mb-40">{{ dashboardState.msg }}</p>
-            <button mat-raised-button color="primary" class="w-20-p" (click)="setupDashboard()">Retry</button>
+            <button mat-raised-button color="primary" class="w-20-p" (click)="setupDashboard()">{{ locale('global.retry') }}Retry</button>
         </div>
     </div>
 
