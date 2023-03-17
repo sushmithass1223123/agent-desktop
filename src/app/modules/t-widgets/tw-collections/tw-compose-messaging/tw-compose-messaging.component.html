@@ -1,11 +1,11 @@
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
     <div class="twd-w-full twd-h-full twd-flex twd-flex-1 twd-flex-col twd-p-4 twd-pt-2">
         <div>
             <mat-form-field class="custom with-border twd-w-full" appearance="outline">
                 <input
                     matInput
-                    placeholder="To Number"
+                    [placeholder]="locale('widgets.composeMessage.toPlaceholder')"
                     (keypress)="numberOnly($event)"
                     [(ngModel)]="toNumber"
                     [disabled]="loading"
@@ -38,17 +38,21 @@
         <div class="twd-w-full twd-flex twd-flex-row twd-justify-between twd-items-center template-selector">
             <div class="twd-max-w-6/12 twd-flex-1 mr-4">
                 <mat-form-field class="custom select-box twd-w-full" appearance="outline">
-                    <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
+                    <mat-select
+                        [placeholder]="locale('widgets.composeMessage.departments')"
+                        [(ngModel)]="selectedDepartment"
+                        (selectionChange)="onSelectDepartment($event)"
+                    >
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
                     </mat-select>
-                    <mat-error> Department is required </mat-error>
+                    <mat-error> {{ locale('widgets.composeMessage.departmentRequired') }} </mat-error>
                 </mat-form-field>
             </div>
             <div class="twd-max-w-6/12 twd-flex-1 mr-4">
                 <mat-form-field class="custom select-box twd-w-full" appearance="outline">
                     <mat-select
-                        placeholder="Groups"
+                        [placeholder]="locale('widgets.composeMessage.groups')"
                         [disabled]="!selectedDepartment || loading"
                         [(ngModel)]="selectedGroup"
                         (selectionChange)="onSelectGroups($event)"
@@ -56,11 +60,17 @@
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>
                     </mat-select>
-                    <mat-error> Groups is required </mat-error>
+                    <mat-error>{{ locale('widgets.composeMessage.groupRequired') }} </mat-error>
                 </mat-form-field>
             </div>
             <div *ngIf="selectedDepartment" class="twd-flex twd-justify-center twd-items-center">
-                <button mat-icon-button color="warn" (click)="clearAllData()" [disabled]="loading" matTooltip="Clear All">
+                <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="clearAllData()"
+                    [disabled]="loading"
+                    [matTooltip]="locale('widgets.composeMessage.clearAll')"
+                >
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
@@ -94,7 +104,7 @@
                     matInput
                     matAutosizeMinRows="1"
                     matTextareaAutosize
-                    placeholder="Please select a template or enter message..."
+                    [placeholder]="locale('widgets.composeMessage.messagePlaceholder')"
                     [(ngModel)]="templateText"
                     [disabled]="loading"
                 ></textarea>

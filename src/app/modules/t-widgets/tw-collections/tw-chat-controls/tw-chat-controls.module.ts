@@ -5,13 +5,18 @@ import { TwWrapperModule } from '@modules/t-widgets/tw-wrapper/tw-wrapper.module
 import { ChatAttachmentsComponent } from './chat-attachments/chat-attachments.component';
 import { TwChatControlsComponent } from './tw-chat-controls.component';
 import { DragScrollModule } from 'ngx-drag-scroll';
-
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../../../transloco-root.module';
 /**
  * Chat control widget module
  */
 @NgModule({
     declarations: [TwChatControlsComponent, ChatAttachmentsComponent],
-    imports: [CommonModule, TwWrapperModule, SharedModule, DragScrollModule],
+    providers: [{
+        provide: TRANSLOCO_SCOPE,
+        useValue: 'default'
+    }],
+    imports: [CommonModule, TwWrapperModule, SharedModule, DragScrollModule,TranslocoRootModule],
     exports: [TwChatControlsComponent]
 })
 export class TwChatControlsModule {}

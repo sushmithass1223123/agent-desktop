@@ -15,7 +15,7 @@
         novalidate
     >
         <mat-form-field *transloco="let locale" appearance="outline" fxFlex="80">
-            <mat-label>{{ locale('widgets.pendingCallback.phoneNumber') }}</mat-label>
+            <mat-label>{{ locale('interactionComponent.phoneNumber') }}</mat-label>
             <input type="number" matInput [(ngModel)]="phone" name="phone" #phoneCtrl="ngModel" required />
             <mat-error *ngIf="phoneCtrl.errors?.required"> {{ locale('widgets.registerCallback.phoneRequired') }} </mat-error>
         </mat-form-field>

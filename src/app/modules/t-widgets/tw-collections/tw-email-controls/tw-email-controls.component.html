@@ -176,7 +176,7 @@
                                 </span>
                             </div>
 
-                            <div class="twd-flex twd-items-center" [matTooltip]="locale('widgets.emailControls.priority')">
+                            <div class="twd-flex twd-items-center" [matTooltip]="locale('interactionComponent.priority')">
                                 <mat-icon
                                     *ngIf="currentInteraction.PriorityIcon"
                                     [ngClass]="{
@@ -214,7 +214,7 @@
                                 <span
                                     *ngIf="sentiment && sentiment !== 'NA'"
                                     class="twd-flex twd-items-center twd-ml-4"
-                                    [matTooltip]="locale('widgets.emailControls.sentiment')"
+                                    [matTooltip]="locale('interactionComopnent.sentiment')"
                                 >
                                     <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
                                     <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
@@ -325,7 +325,7 @@
                             class="border-radius-20"
                             (click)="showReplyEditor()"
                             [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            [matTooltip]="locale('widgets.emailControls.reply')"
+                            [matTooltip]="locale('interactionComponent.reply')"
                         >
                             <mat-icon>reply</mat-icon>
                         </button>
@@ -355,7 +355,7 @@
                             class="border-radius-20"
                             (click)="downloadEmail()"
                             [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            [matTooltip]="locale('widgets.emailControls.download')"
+                            [matTooltip]="locale('interactionComopnent.download')"
                         >
                             <mat-icon>file_download</mat-icon>
                         </button>

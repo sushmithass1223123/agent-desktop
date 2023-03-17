@@ -1090,7 +1090,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                  <br />
                  `;
         });
-        message += this.translocoService.translate('widgets.emailControls.addComment');
+        message += this.translocoService.translate('interactionComponent.addComment');
 
         const dialogRef = this._appUIService.showCustomDialog(
             'prompt',
@@ -1118,16 +1118,16 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                                 User: SDKClient.getAgentData().agentName
                             });
                             // alert user
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.saveICSuccess'));
+                            this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.saveICSuccess'));
                         } else {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.saveICFailed'), 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.saveICFailed'), 'failure');
                         }
 
                         this._fuseProgressBarService.hide();
                     })
                     .catch(() => {
                         this._fuseProgressBarService.hide();
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.saveICError'), 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.saveICError'), 'failure');
                     });
             }
         });
