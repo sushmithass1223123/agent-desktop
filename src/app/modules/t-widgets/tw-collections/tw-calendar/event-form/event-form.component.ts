@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CustomCalendarEvent } from '../calendar.interface';
 import { CalendarEventModel } from '../calendar.model';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Calendar Event Form Dialog Component
@@ -65,16 +66,17 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
         public matDialogRef: MatDialogRef<CalendarEventFormDialogComponent>,
         @Inject(MAT_DIALOG_DATA) private _data: any,
         private _formBuilder: FormBuilder,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService
     ) {
         this.event = _data.event;
         this.action = _data.action;
         this.data = _data.data;
 
         if (this.action === 'edit') {
-            this.dialogTitle = 'Edit Event/Task';
+            this.dialogTitle = translocoService.translate('widgets.calendar.editEventTitle');
         } else {
-            this.dialogTitle = 'New Event/Task';
+            this.dialogTitle = translocoService.translate('widgets.calendar.newEventTitle');
             this.event = new CalendarEventModel({
                 start: _data.date,
                 end: _data.date

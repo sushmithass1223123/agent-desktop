@@ -1,4 +1,4 @@
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <div id="calendar" class="page-layout simple fullwidth h-100-p">
         <!-- HEADER -->
         <div class="header p-16 p-sm-24" [ngClass]="viewDate | date: 'MMM'">
@@ -11,7 +11,7 @@
 
                     <!-- TOOLBAR -->
                     <div class="toolbar" fxLayout="row" fxLayoutAlign="start center">
-                        <button mat-icon-button aria-label="Search" matTooltip="Reload" (click)="setEvents(true)">
+                        <button mat-icon-button aria-label="Search" [matTooltip]="locale('widgets.calendar.reload')" (click)="setEvents(true)">
                             <mat-icon>refresh</mat-icon>
                         </button>
 
@@ -21,20 +21,20 @@
                             [(viewDate)]="viewDate"
                             (viewDateChange)="selectedDay = { date: $event }"
                             aria-label="Today"
-                            matTooltip="Today"
+                            [matTooltip]="locale('widgets.calendar.today')"
                         >
                             <mat-icon>today</mat-icon>
                         </button>
 
-                        <button mat-icon-button (click)="view = 'day'" aria-label="Day" matTooltip="Day">
+                        <button mat-icon-button (click)="view = 'day'" aria-label="Day" [matTooltip]="locale('widgets.calendar.day')">
                             <mat-icon>view_day</mat-icon>
                         </button>
 
-                        <button mat-icon-button (click)="view = 'week'" aria-label="Week" matTooltip="Week">
+                        <button mat-icon-button (click)="view = 'week'" aria-label="Week" [matTooltip]="locale('widgets.calendar.week')">
                             <mat-icon>view_week</mat-icon>
                         </button>
 
-                        <button mat-icon-button (click)="view = 'month'" aria-label="Month" matTooltip="Month">
+                        <button mat-icon-button (click)="view = 'month'" aria-label="Month" [matTooltip]="locale('widgets.calendar.month')">
                             <mat-icon>view_module</mat-icon>
                         </button>
                     </div>
