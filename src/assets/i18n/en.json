@@ -85,7 +85,8 @@
         "saveICSuccess": "Interaction comment saved successfully",
         "saveICFailed": "Interaction comment save failed",
         "saveICError": "Error in saving interaction comment",
-        "addComment": "Add new comment:"
+        "addComment": "Add new comment:",
+        "makeCall": "Make Call"
     },
     "channels": {
         "voice": "Voice",
@@ -156,7 +157,6 @@
             "unmute": "Unmute",
             "ivrTransfer": "IVR Transfer",
             "dialpad": "Dialpad",
-            "makeCall": "Make Call",
             "sendSMS": "Send SMS",
             "forceClose": "Force Close",
             "confirm": "Confirm",
@@ -423,6 +423,32 @@
             "whiteboardLoadingError": "Error occured while opening whiteboard",
             "agentCustomerURLsNotFound": "Agent and Customer Urls are not provided in Config",
             "coBrowseLoading": "Opening Co-browse"
+        },
+        "cannedResponses": {
+            "mode": "Mode",
+            "modeAuto": "Auto",
+            "modeManual": "Manual",
+            "department": "Department",
+            "messagePlaceholder": "Please select a template...",
+            "select": "Select",
+            "getChatTemplatesError": "Error in fetching chat templates"
+        },
+        "campaignContact": {
+            "reason": "Reason",
+            "getContactInfoFailed": "Unable to reach fetch contact information",
+            "assignToCampaignManagerFailed": "Failed to assign the direct agent item to campaign manager",
+            "assignToCampaignManagerError": "Error in assigning the direct agent item to campaign manager",
+            "confirmToMakeCallTitle": "Confirm Make Call",
+            "confirmToMakeCallMsg": "Are you sure to make call to ",
+            "callSuccess": "Make call to #phoneNumber successful",
+            "callFailed": "Make call failed",
+            "callError": "Make call error",
+            "confirmSubmitTitle": "Confirm Submit",
+            "confirmSubmitMsg": "Are you sure to submit",
+            "callbackStatusSuccess": "Callback status updated successfully",
+            "callbackStatusFailed": "Failed to update callback status",
+            "callbackStatusError": "Error in updating callback status"
+
         }
     }
 

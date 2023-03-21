@@ -1,4 +1,4 @@
-<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event">
+<tw-wrapper *transloco="let locale" [data]="data" (maximizeEvent)="maximized = $event">
     <mat-progress-bar *ngIf="progress" mode="query"></mat-progress-bar>
     <div *ngIf="customerInfo && !contactData.loading" class="h-100-p twd-overflow-auto twd-flex twd-flex-col twd-gap-2 px-12 py-8">
         <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap border-radius-20">
@@ -26,7 +26,11 @@
         <form name="submitForm" [formGroup]="submitForm" class="twd-flex twd-flex-1 twd-flex-row twd-items-start twd-gap-4">
             <div class="twd-flex twd-flex-1 twd-flex-col twd-items-start twd-max-w-4/12">
                 <mat-form-field class="custom twd-w-full with-border pb-0" appearance="outline">
-                    <mat-select placeholder="Status" formControlName="status" (selectionChange)="onStatusChange($event)">
+                    <mat-select
+                        [placeholder]="locale('interactionComopnent.status')"
+                        formControlName="status"
+                        (selectionChange)="onStatusChange($event)"
+                    >
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of statusList" [value]="item.Value">{{ item.Text }}</mat-option>
                     </mat-select>
@@ -34,7 +38,7 @@
 
                 <mat-form-field *ngIf="widgetData.ReasonEnabled" class="custom twd-w-full with-border pb-0" appearance="outline">
                     <mat-select
-                        placeholder="Reason"
+                        [placeholder]="locale('widgets.campaignContact.reason')"
                         formControlName="reason"
                         [disabled]="(!submitForm.get('status')?.value ?? true) && reasonList?.length === 0"
                     >
@@ -45,7 +49,14 @@
             </div>
 
             <mat-form-field class="twd-flex-1 custom mb-8 border-radius-20 with-border twd-max-w-4/12" appearance="outline">
-                <textarea placeholder="Comments" matInput name="comment" matTextareaAutosize rows="5" formControlName="comment"></textarea>
+                <textarea
+                    [placeholder]="locale('widgets.customerJourney.comments')"
+                    matInput
+                    name="comment"
+                    matTextareaAutosize
+                    rows="5"
+                    formControlName="comment"
+                ></textarea>
             </mat-form-field>
             <div class="twd-flex twd-flex-1 twd-flex-col twd-items-start twd-gap-4 twd-max-w-4/12 twd-mt-2">
                 <button
@@ -53,7 +64,7 @@
                     mat-raised-button
                     class="mat-custom-btn bg-success border-radius-20 mat-elevation-z2"
                     (click)="confirmMakeCall()"
-                    matTooltip="Make Call"
+                    [matTooltip]="locale('interactionComponent.makeCall')"
                 >
                     <mat-icon>call</mat-icon>
                 </button>
@@ -62,12 +73,12 @@
                     mat-raised-button
                     class="border-radius-20 twd-min-w-4/12"
                     color="primary"
-                    matTooltip="Submit"
+                    [matTooltip]="locale('global.submit')"
                     #submitBtn
                     [disabled]="!checkForSubmit()"
                     (click)="submitCallback(submitBtn)"
                 >
-                    Submit
+                    {{ locale('global.submit') }}
                 </button>
             </div>
         </form>
