@@ -88,7 +88,7 @@
         <div mat-dialog-content class="p-24 pb-0 m-0 custom-scroll-adjust">
             <form [formGroup]="addContactFormGroup" (ngSubmit)="addNewContact()" fxLayout="row wrap" fxLayoutAlign="space-between center" novalidate>
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput [placeholder]="locale('widgets.registerCallback.name')" formControlName="Name" #nameIp />
+                    <input matInput [placeholder]="locale('generalFormFields.name')" formControlName="Name" #nameIp />
                     <button
                         mat-button
                         color="primary"
@@ -101,7 +101,7 @@
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-icon *ngIf="!nameIp.value" matSuffix class="secondary-text">account_circle</mat-icon>
-                    <mat-error> {{ locale('widgets.registerCallback.nameRequired') }} </mat-error>
+                    <mat-error> {{ locale('generalFormFields.nameRequired') }} </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">

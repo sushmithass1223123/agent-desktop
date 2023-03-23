@@ -349,4 +349,12 @@ export class AppDataService extends SharedWrapper {
         }
         this._router.navigate(commands, extras);
     }
+
+    getUpdatedLabel(msg, labels = []) {
+        let updatedLabel = msg;
+        labels?.forEach(ele => {
+            updatedLabel = updatedLabel.replace(ele.key,ele.value);
+        });
+        return updatedLabel;
+    }
 }

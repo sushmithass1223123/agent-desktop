@@ -9,6 +9,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Agent Interactions details Table widget
@@ -66,7 +67,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @ViewChild('agentCommentRef')
     agentCommentRef: TemplateRef<any>;
 
-    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
+    constructor(private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
         super('TwAdInteractionDetailsComponent');
     }
 

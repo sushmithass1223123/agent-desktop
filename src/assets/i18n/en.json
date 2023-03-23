@@ -47,7 +47,9 @@
         "agentName": "Agent Name",
         "search": "Search",
         "submit": "Submit",
-        "agent": "Agent"
+        "agent": "Agent",
+        "reload": "Reload",
+        "save": "Save"
     },
     "interactionComponent": {
         "hold": "Hold",
@@ -189,7 +191,9 @@
             "fetchAgentProgressFailed": "Unable to fetch agent's progress",
             "fetchAgentLevelFailed": "Unable to get Agent levels",
             "fetchQuizInfoFailed": "Unable to fetch quiz info",
-            "TVirtualStoreNotFound": "Missing TVirtualStore in app config"
+            "TVirtualStoreNotFound": "Missing TVirtualStore in app config",
+            "badgesNotFound": "You Have No Badges!",
+            "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config"
 
         },
         "activeAgents": {
@@ -227,9 +231,9 @@
         },
         "registerCallback": {
             "campaignNotFound": "No Campaigns Found!",
-            "name": "Name",
+
             "phone": "Phone",
-            "nameRequired": "Name Required",
+
             "phoneRequired": "Phone Number Required",
             "dateRequired": "Date Required",
             "timeRequired": "Time Required",
@@ -469,7 +473,6 @@
             "editEventErrorMsg": " event/task cannot be edited!",
             "editEventTitle": "Edit Event/Task",
             "newEventTitle": "New Event/Task",
-            "reload": "Reload",
             "today": "Today",
             "day": "Day",
             "week": "Week",
@@ -490,7 +493,129 @@
             "addEventSuccess": " added successfully",
             "addEventError": "Error in adding event/task",
             "addEventFailed": "Adding event failed"
+        },
+        "bookmarks": {
+            "exitSearch": "Exit Search",
+            "clear": "Clear",
+            "addBookmark": "Add Bookmark",
+            "addFolder": "Add Folder",
+            "editBookmark": "Edit Bookmarks",
+            "teamBookmark": "Team Bookmark",
+            "agentBookmark": "Agent Bookmark",
+            "deleteBookmark": "Delete Bookmark",
+            "warningOnEditTeamBookmark": "You cannot edit the record created for the team",
+            "teamFolder": "Team Folder",
+            "agentFolder": "Agent Folder",
+            "renameFolder": "Rename Folder",
+            "deleteFolder": "Delete Folder",
+            "getDataFailed": "Unable to get data, API urls are not found!",
+            "getDataFailedDataNotFound": "Unable to get data, Data not found!",
+            "openLinkFailed": "Unable to open the link, Url not found!",
+            "confirmDeleteTitle": "Confirm Delete",
+            "confirmDeleteMessage": "Are you sure to delete bookmark ",
+            "deleteBookmarkSuccess": "Bookmark #type #name deleted successfully",
+            "deleteBookmarkError": "Error in deleting bookmark ",
+            "editFolder": "Edit Folder",
+            "addBookmarkFailedAPINotFound": "Unable to add bookmark #type, API urls are not found!",
+            "addBookmarkFailedInvalidURL": "Unable to add bookmark, please enter a valid URL",
+            "addBookmarkLoading": "Adding bookmark #type, please wait...",
+            "addBookmarkSuccess": "Bookmark #type added successfully",
+            "addBookmarkError": "Error in add bookmark ",
+            "updateBookmarkFailedAPINotFound": "Unable to update bookmark #type, API urls are not found!",
+            "updateBookmarkLoading": "Updating bookmark #type, please wait...",
+            "updateBookmarkSuccess": "Bookmark #type updated successfully",
+            "updateBookmarkError": "Error in update bookmark "
+        },
+        "audioVideoControls": {
+            "takeSnapshot": "Take Snapshot",
+            "stats": "Stats",
+            "unmuteAudio": "Unmute Audio",
+            "muteAudio": "Mute Audio",
+            "unmuteVideo": "Unmute Video",
+            "muteVideo": "Mute Video",
+            "switchToVideo": "Change to Video",
+            "stopScreenShare": "Stop Screen Share",
+            "screenShare": "Screen Share",
+            "toggleRemoteCamera": "Toggle User Camera",
+            "switchToChatView": "Change to chat view",
+            "switchToCallView": "Change to call view",
+            "unholdCall": "Unhold Call",
+            "holdCall": "Hold Call",
+            "endCall": "End Call",
+            "startCallError": "Error in starting the call: ",
+            "callRequestConfirmMsg": "#callType call requested by #customerName, Do you want to accept it?",
+            "avConnectionError": "Error occured in AV connection",
+            "callRejectedByRemote": "User has rejected your request",
+            "callNotAnsweredByremote": "Call was not answered by the Customer",
+            "callFailed": "Call failed: ",
+            "callDisconnectedError": "Call disconnected, unexpected end!",
+            "callEndedByRemote": "User has ended the call",
+            "remoteMuteTypeMsg": "#userName  #muteTyped the #streamType",
+            "snapshotRequestSuccess": "Snapshot request sent successfully",
+            "snapshotLoading": "Retreiving snapshot...",
+            "snapshotRequestRejectedByRemote": "Snapshot request is rejected by customer!",
+            "snapshotSuccess": "Snapshot received",
+            "snapshotFailed": "Unable to take snapshot",
+            "toggleViewRequestAccepted": "Toggle #toggleViewType request is accepted by customer",
+            "toggleViewRequestRejected": "Toggle #toggleViewType request is rejected by customer!",
+            "toggleViewSuccess": "Customer #toggleViewType toggled successfully",
+            "toggleViewFailed": "Customer #toggleViewType toggle failed!",
+            "confirmSnapshotTitle": "Confirm Snapshot",
+            "saveSnapshotLoading": "Saving ...",
+            "snapshotSaveSuccess": "Snapshot saved successfully!",
+            "snapshotSaveFailed": "Snapshot save failed!",
+            "snapshotRequestLoading": "Requesting customer for snapshot",
+            "snapshotRequestTimeout": "Snapshot request timed out",
+            "upgradeToVideoFailed": "Upgrade to Video failed!",
+            "toggleCamRequestSuccess": "Toggle camera request sent successfully",
+            "toggleCamRequestFailed": "Toggle camera request failed!",
+            "toggleCamRequestError": "Toggle camera request error!",
+            "toggleViewRequestSuccess": "Toggle view request sent successfully",
+            "toggleViewRequestFailed": "Toggle view request failed!",
+            "toggleViewRequestError": "Toggle view request error!",
+            "remoteMuteTypeRequestFailed": "Customer #streamType #muteType request failed!",
+            "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!"
+        },
+        "amdocs": {
+            "caseId": "Case ID",
+            "caseNotes": "Case Notes",
+            "caseNotesPlaceholder": "Enter case notes here...",
+            "open": "Open"
+        },
+        "agentAssist": {
+            "urlNotFound": "Assist widget URL not found!",
+            "confirmCloseTitle": "Confirm Close",
+            "confirmCloseMsg": "Are you sure to close?"
+        },
+        "adScore": {
+            "positivePercentage": "84%",
+            "positive": "Positive",
+            "avgPercentage": "10%",
+            "average": "Average",
+            "negativePercentage": "6%",
+            "negative": "Negative"
+        },
+        "adPerformance": {
+            "kpiGoals": "KPI Goals :",
+            "agentProgressUrlNotFound": "AgentProgressUrl is not provided in app config",
+            "getProgressFailed": "Something went wrong while fetching progress"
+        },
+        "adInteractionDetails": {
+            "viewComments": "View Comments"
+        },
+        "adFeedback": {
+            "customerFeedback": "Customer Feedback",
+            "callDuration": "Call Duration : 00:16:33",
+            "interactionID": "InteractionID",
+            "feedback": "Feedback",
+            "score": "Score"
         }
+    },
+    "generalFormFields": {
+        "name": "Name",
+        "nameRequired": "Name Required",
+        "url": "URL",
+        "urlRequired": "URL is Required"
     }
 
 }

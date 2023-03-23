@@ -1,7 +1,7 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <!-- your code goes here -->
     <div fxFill fxLayout="row wrap" class="p-12">
         <div fxFlex="100" fxLayout fxLayoutAlign="start center" class="mb-16">
@@ -11,9 +11,9 @@
                 </div>
                 <div class="ml-16">
                     <h4 class="m-0">
-                        <strong> 84% </strong>
+                        <strong> {{ locale('widgets.adScore.positivePercentage') }} </strong>
                     </h4>
-                    <small> Positive </small>
+                    <small>{{ locale('widgets.adScore.positive') }} </small>
                 </div>
             </div>
             <div class="w-50-p">
@@ -27,9 +27,9 @@
                 </div>
                 <div class="ml-16">
                     <h4 class="m-0">
-                        <strong> 10% </strong>
+                        <strong>{{ locale('widgets.adScore.avgPercentage') }} </strong>
                     </h4>
-                    <small> Average </small>
+                    <small> {{ locale('widgets.adScore.average') }} </small>
                 </div>
             </div>
             <div class="w-50-p">
@@ -43,9 +43,9 @@
                 </div>
                 <div class="ml-16">
                     <h4 class="m-0">
-                        <strong> 6% </strong>
+                        <strong>{{ locale('widgets.adScore.negativePercentage') }} </strong>
                     </h4>
-                    <small> Negative </small>
+                    <small>{{ locale('widgets.adScore.negative') }} </small>
                 </div>
             </div>
             <div class="w-50-p">

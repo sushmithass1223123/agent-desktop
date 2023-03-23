@@ -1,4 +1,4 @@
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <mat-progress-bar *ngIf="progressLoading" mode="query"></mat-progress-bar>
     <div class="twd-h-full twd-w-full twd-absolute twd-left-0 twd-top-0">
         <div class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-4 twd-py-2 border-bottom twd-h-[56px]">
@@ -13,12 +13,12 @@
                     mat-icon-button
                     aria-label="Close"
                     (click)="searchable = false; searchTerm = ''"
-                    matTooltip="Exit Search"
+                    [matTooltip]="locale('widgets.bookmarks.exitSearch')"
                 >
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <mat-form-field class="custom search form-field twd-w-full" appearance="outline">
-                    <input matInput placeholder="Search" [(ngModel)]="searchTerm" #searchField (input)="filterBookmarks()" />
+                    <input matInput [placeholder]="locale('global.search')" [(ngModel)]="searchTerm" #searchField (input)="filterBookmarks()" />
                     <button
                         *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button
@@ -35,7 +35,7 @@
                             matSuffix
                             mat-icon-button
                             aria-label="Clear"
-                            matTooltip="Clear"
+                            [matTooltip]="locale('widgets.bookmarks.clear')"
                             [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
                             (click)="searchTerm = ''; filterBookmarks()"
                         >
@@ -54,14 +54,21 @@
                     *ngIf="!editable"
                     mat-icon-button
                     color="primary"
-                    matTooltip="Search"
+                    [matTooltip]="locale('global.search')"
                     (click)="enableSearch()"
                     [disabled]="skeltonLoading || !dataSource.data.length"
                 >
                     <mat-icon>search</mat-icon>
                 </button>
 
-                <button *ngIf="!editable" mat-icon-button color="primary" matTooltip="Reload" (click)="getBookmarks()" [disabled]="skeltonLoading">
+                <button
+                    *ngIf="!editable"
+                    mat-icon-button
+                    color="primary"
+                    [matTooltip]="locale('global.reload')"
+                    (click)="getBookmarks()"
+                    [disabled]="skeltonLoading"
+                >
                     <mat-icon [ngClass]="{ 'spin-o': loading }">refresh</mat-icon>
                 </button>
 
@@ -69,7 +76,7 @@
                     *ngIf="!editable"
                     mat-icon-button
                     color="primary"
-                    matTooltip="Add Bookmark"
+                    [matTooltip]="locale('widgets.bookmarks.addBookmark')"
                     (click)="openAddUpdateDataDialog('add', 'url')"
                     [disabled]="skeltonLoading"
                 >
@@ -80,7 +87,7 @@
                     *ngIf="!editable"
                     mat-icon-button
                     color="primary"
-                    matTooltip="Add Folder"
+                    [matTooltip]="locale('widgets.bookmarks.addFolder')"
                     (click)="openAddUpdateDataDialog('add', 'folder')"
                     [disabled]="skeltonLoading"
                 >
@@ -91,14 +98,20 @@
                     *ngIf="!editable"
                     mat-icon-button
                     color="primary"
-                    matTooltip="Edit Bookmarks"
+                    [matTooltip]="locale('widgets.bookmarks.editBookmark')"
                     (click)="editBookmarks(true)"
                     [disabled]="skeltonLoading"
                 >
                     <mat-icon>edit</mat-icon>
                 </button>
 
-                <button *ngIf="editable" mat-icon-button class="secondary-text" matTooltip="Cancel" (click)="editBookmarks(false)">
+                <button
+                    *ngIf="editable"
+                    mat-icon-button
+                    class="secondary-text"
+                    [matTooltip]="locale('interactionComponent.cancel')"
+                    (click)="editBookmarks(false)"
+                >
                     <mat-icon>cancel</mat-icon>
                 </button>
             </div>
@@ -145,7 +158,13 @@
                             <div class="twd-inline-block twd-text-base">
                                 <span class="text-truncate">
                                     <span class="twd-flex twd-items-center">
-                                        <mat-icon mat-list-icon class="text-warning" [matTooltip]="node.team ? 'Team Bookmark' : 'Agent Bookmark'">
+                                        <mat-icon
+                                            mat-list-icon
+                                            class="text-warning"
+                                            [matTooltip]="
+                                                node.team ? locale('widgets.bookmarks.teamBookmark') : locale('widgets.bookmarks.agentBookmark')
+                                            "
+                                        >
                                             {{ node.team ? 'stars' : 'star' }}
                                         </mat-icon>
                                         <span class="twd-pl-3" [matTooltip]="node.data" [matTooltipDisabled]="editable"> {{ node.name }} </span>
@@ -161,7 +180,7 @@
                                     [disabled]="node.team"
                                     mat-icon-button
                                     color="primary"
-                                    matTooltip="Edit Bookmark"
+                                    [matTooltip]="locale('widgets.bookmarks.editBookmark')"
                                     (click)="openAddUpdateDataDialog('edit', 'url', node)"
                                 >
                                     <mat-icon class="s-20">edit</mat-icon>
@@ -172,7 +191,7 @@
                                     [disabled]="node.team"
                                     mat-icon-button
                                     color="warn"
-                                    matTooltip="Delete Bookmark"
+                                    [matTooltip]="locale('widgets.bookmarks.deleteBookmark')"
                                     (click)="deleteBookmark('url', node)"
                                 >
                                     <mat-icon class="s-20">bookmark_remove</mat-icon>
@@ -199,7 +218,7 @@
                             [ngClass]="{
                                 'twd-opacity-70': editable && node.team
                             }"
-                            [matTooltip]="editable && node.team ? 'You cannot edit the record created for the team' : ''"
+                            [matTooltip]="editable && node.team ? locale('widgets.bookmarks.warningOnEditTeamBookmark') : ''"
                         >
                             <!-- <mat-checkbox
                                 [disabled]="!editable"
@@ -222,7 +241,13 @@
                             <div class="twd-inline-block twd-text-base" (click)="toggleTreeNode(node)">
                                 <span class="text-truncate">
                                     <span class="twd-flex twd-items-center">
-                                        <mat-icon mat-list-icon class="text-alt-warning" [matTooltip]="node.team ? 'Team Folder' : 'Agent Folder'">
+                                        <mat-icon
+                                            mat-list-icon
+                                            class="text-alt-warning"
+                                            [matTooltip]="
+                                                node.team ? locale('widgets.bookmarks.teamFolder') : locale('widgets.bookmarks.agentFolder')
+                                            "
+                                        >
                                             {{ treeControl.isExpanded(node) ? 'folder_open' : node.team ? 'folder_shared' : 'folder' }}</mat-icon
                                         >
                                         <span class="twd-pl-3" [matTooltip]="node.name" [matTooltipDisabled]="editable"> {{ node.name }} </span>
@@ -242,7 +267,7 @@
                                 mat-icon-button
                                 class="action"
                                 color="primary"
-                                matTooltip="Add Bookmark"
+                                [matTooltip]="locale('widgets.bookmarks.addBookmark')"
                                 (click)="openAddUpdateDataDialog('add', 'url', node)"
                             >
                                 <mat-icon class="s-20">bookmark_add</mat-icon>
@@ -253,7 +278,7 @@
                                 mat-icon-button
                                 class="action"
                                 color="primary"
-                                matTooltip="Add Folder"
+                                [matTooltip]="locale('widgets.bookmarks.addFolder')"
                                 (click)="openAddUpdateDataDialog('add', 'folder', node)"
                             >
                                 <mat-icon class="s-20">create_new_folder</mat-icon>
@@ -264,7 +289,7 @@
                                 [disabled]="node.team"
                                 mat-icon-button
                                 color="primary"
-                                matTooltip="Rename Folder"
+                                [matTooltip]="locale('widgets.bookmarks.renameFolder')"
                                 (click)="openAddUpdateDataDialog('edit', 'folder', node)"
                             >
                                 <mat-icon class="s-20">drive_file_rename_outline</mat-icon>
@@ -275,7 +300,7 @@
                                 [disabled]="node.team"
                                 mat-icon-button
                                 color="warn"
-                                matTooltip="Delete Folder"
+                                [matTooltip]="locale('widgets.bookmarks.deleteFolder')"
                                 (click)="deleteBookmark('folder', node)"
                             >
                                 <mat-icon class="s-20">folder_delete</mat-icon>
@@ -299,7 +324,11 @@
                                     <mat-icon
                                         mat-list-icon
                                         class="text-warning"
-                                        [matTooltip]="item.userType === 'orgunit' ? 'Team Bookmark' : 'Agent Bookmark'"
+                                        [matTooltip]="
+                                            item.userType === 'orgunit'
+                                                ? locale('widgets.bookmarks.teamBookmark')
+                                                : locale('widgets.bookmarks.agentBookmark')
+                                        "
                                     >
                                         {{ item.userType === 'orgunit' ? 'stars' : 'star' }}
                                     </mat-icon>
@@ -322,7 +351,7 @@
                 *ngIf="!skeltonLoading && (!dataSource.data.length || (searchTerm && !serachData.length))"
                 class="twd-w-full twd-h-full twd-grid twd-place-items-center"
             >
-                <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">No data available</p>
+                <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">{{ locale('contentComponent.noDataAvailable') }}</p>
             </div>
         </div>
     </div>
@@ -351,7 +380,7 @@
                 </li>
             </ul>
             <mat-form-field class="form-field custom" appearance="outline">
-                <input matInput required placeholder="Name" [(ngModel)]="addBookmarkData.name" />
+                <input matInput required [placeholder]="locale('generalFormFields.name')" [(ngModel)]="addBookmarkData.name" />
                 <button
                     *ngIf="addBookmarkData.name"
                     mat-button
@@ -364,11 +393,11 @@
                 >
                     <mat-icon>close</mat-icon>
                 </button>
-                <mat-error> Name is required </mat-error>
+                <mat-error> {{ locale('generalFormFields.nameRequired') }} </mat-error>
             </mat-form-field>
 
             <mat-form-field *ngIf="addBookmarkData.type === 'url'" class="form-field custom" appearance="outline">
-                <input matInput required placeholder="Url" [(ngModel)]="addBookmarkData.data" />
+                <input matInput required [placeholder]="locale('generalFormFields.url')" [(ngModel)]="addBookmarkData.data" />
                 <button
                     *ngIf="addBookmarkData.data"
                     mat-button
@@ -381,7 +410,7 @@
                 >
                     <mat-icon>close</mat-icon>
                 </button>
-                <mat-error> Url is required </mat-error>
+                <mat-error>{{ locale('generalFormFields.urlRequired') }}</mat-error>
             </mat-form-field>
 
             <div class="twd-flex twd-flex-row twd-gap-4 twd-pt-2">
@@ -389,14 +418,22 @@
                     class="twd-flex-1 !twd-rounded-full"
                     mat-raised-button
                     color="primary"
-                    matTooltip="Save"
+                    [matTooltip]="locale('global.save')"
                     [disabled]="addBookmarkData.name === '' || addBookmarkData.data === ''"
                     (click)="addBookmarkData.source === 'add' ? saveBookmark() : updateBookmark()"
                     mat-dialog-close
                 >
-                    Save
+                    {{ locale('global.save') }}
                 </button>
-                <button class="twd-flex-1 !twd-rounded-full" mat-raised-button color="warn" matTooltip="Save" mat-dialog-close>Cancel</button>
+                <button
+                    class="twd-flex-1 !twd-rounded-full"
+                    mat-raised-button
+                    color="warn"
+                    [matTooltip]="locale('interactionComponent.cancel')"
+                    mat-dialog-close
+                >
+                    {{ locale('interactionComponent.cancel') }}
+                </button>
             </div>
         </div>
     </div>
