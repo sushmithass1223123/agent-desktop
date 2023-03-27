@@ -1,20 +1,20 @@
-<div class="twd-w-full">
+<div *transloco="let locale" class="twd-w-full">
     <div *ngIf="!mailboxes.loaded" class="twd-absolute twd-w-full twd-h-full twd-z-10 twd-top-0 twd-left-0">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="twd-text-xl twd-flex twd-items-center twd-gap-2 twd-font-bold twd-mb-4">
         <mat-icon>email</mat-icon>
-        Compose Email
+        {{ locale('sharedComponents.mailBoxSettings.composeEmail') }}
     </div>
 
     <div class="twd-grid twd-grid-cols-1" [formGroup]="mailboxes.form">
         <mat-form-field appearance="outline">
-            <mat-label>Send Email As</mat-label>
+            <mat-label>{{ locale('sharedComponents.mailBoxSettings.sendEmailAs') }}</mat-label>
             <mat-select formControlName="default">
                 <mat-option *ngFor="let mailbox of mailboxes.available" [value]="mailbox">{{ mailbox }}</mat-option>
             </mat-select>
             <mat-error *ngIf="mailboxes.form.controls.default.errors" class="twd-text-red-400 twd-text-xs twd-font-bold">
-                Please select a sender account
+                {{ locale('sharedComponents.mailBoxSettings.senderAccountNotFoundError') }}
             </mat-error>
         </mat-form-field>
 
@@ -36,11 +36,11 @@
         <button
             mat-raised-button
             color="primary"
-            [matTooltip]="mailboxes.form.controls.default.errors ? 'Please select a sender sccount' : ''"
+            [matTooltip]="mailboxes.form.controls.default.errors ? locale('sharedComponents.mailBoxSettings.senderAccountNotFoundError') : ''"
             [disabled]="mailboxes.form.controls.default.errors"
             (click)="composeEmail($event)"
         >
-            Compose New Email
+            {{ locale('sharedComponents.mailBoxSettings.composeEmail') }}
         </button>
     </div>
 </div>

@@ -31,6 +31,7 @@ import { groupBy, isEqual, merge, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { EmailService, initEmailSearchState } from '../email.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Type of the mail node
@@ -335,7 +336,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private _emailService: EmailService,
         private _aotWidgetService: AOTWidgetService,
         private _agentFeaturesService: AgentFeaturesService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService
     ) {
         super('WorkbenchEmailComponent');
     }
@@ -661,7 +663,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     doAdvancedSearch(silent = false): void {
         try {
             if (!this.data.Data.WorkbenchUrl) {
-                this.setComponentState('emails/failure', { msg: 'WorkbenchUrl not provided', silent });
+                this.setComponentState('emails/failure', { msg: this.translocoService.translate('sharedComponents.email.workbenchURLNotFound'), silent });
                 return;
             }
 
@@ -782,7 +784,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param emails email items list
      */
     async deleteEmails(emails: Mail[]): Promise<void> {
-        const loader = this.appUiService.showSnackbar('Deleting emails', 'loading');
+        const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.deleteEmailLoading'), 'loading');
         try {
             const sessionKey = this.getCurrentSessionKey();
             const { sessionIds, uiIds, draftSessionIds }: Record<string, string[]> = emails.reduce(
@@ -828,7 +830,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         } catch (e) {
             console.error(e);
             loader.dismiss();
-            this.appUiService.showSnackbar('Unable to delete emails', 'failure');
+            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.deleteEmailFailed'), 'failure');
         }
     }
 
@@ -837,7 +839,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {any} emails email list
      */
     async closeEmails(emails: Mail[]): Promise<void> {
-        const loader = this.appUiService.showSnackbar('Closing emails', 'loading');
+        const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.closeEmailLoading'), 'loading');
         try {
             if (this.currentTab === 'queue') {
                 const routeIds = emails.map((curr) => {
@@ -861,7 +863,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     })
                 );
             }
-            this.appUiService.showSnackbar('Emails closed successfully', 'success');
+            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.closeEmailSuccess'), 'success');
             // deselect all the emails
             emails.forEach((f) => (f.checked = false));
             setTimeout(() => {
@@ -871,7 +873,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         } catch (e) {
             console.error(e);
             loader.dismiss();
-            this.appUiService.showSnackbar('Unable to close emails', 'failure');
+            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.closeEmailFailed'), 'failure');
         }
     }
 
@@ -880,7 +882,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @method pullEmail
      */
     pullEmails(emails: Mail[]): void {
-        const loader = this.appUiService.showSnackbar('Pulling email', 'loading');
+        const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailLoading'), 'loading');
         try {
             const { agentId, tmacServer } = SDKClient.getAgentData();
             const { items, uiIds } = emails.reduce(
@@ -923,15 +925,15 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             if (isAlreadyPulled.length) {
                                 if (isAlreadyPulled.length > 1) {
                                     if (isAlreadyPulled.length === emails.length) {
-                                        this.appUiService.showSnackbar('Emails are already assigned', 'failure');
+                                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailsAssigned'), 'failure');
                                     } else {
-                                        this.appUiService.showSnackbar('Some emails are already assigned', 'failure');
+                                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.someEmailsAssigned'), 'failure');
                                     }
                                 } else {
-                                    this.appUiService.showSnackbar('Email already assigned', 'failure');
+                                    this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailsAssigned'), 'failure');
                                 }
                             } else {
-                                this.appUiService.showSnackbar('Unable to pull email', 'failure');
+                                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
                             }
                             return;
                         }
@@ -939,18 +941,18 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             this.openEmailRes.data.next(null);
                         }
                         loader.dismiss();
-                        this.appUiService.showSnackbar('Emails pulled successfully', 'success');
+                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailSuccess'), 'success');
                     },
                     error: (err) => {
                         console.error(err);
                         loader.dismiss();
-                        this.appUiService.showSnackbar('Unable to pull email', 'failure');
+                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
                     }
                 });
         } catch (e) {
             console.error(e);
             loader.dismiss();
-            this.appUiService.showSnackbar('Unable to pull email', 'failure');
+            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
         }
     }
 
@@ -1008,7 +1010,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             Files: getAttachments(inboxRes.Attachments),
                             AgentName: inboxRes.AgentName,
                             Intent: inboxRes.Intent,
-                            RepliedStatus: inboxRes.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
+                            RepliedStatus: inboxRes.RepliedStatus === '1' ? this.translocoService.translate('sharedComponents.email.replied') : this.translocoService.translate('sharedComponents.email.notReplied'),
                             ConversationID: inboxRes.ConversationID,
                             CurrentStatus: inboxRes.CurrentStatus,
                             ClosedBy: inboxRes.ClosedBy,
@@ -1049,7 +1051,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         OutSessionId: email.OutSessionId,
 
                         Priority: inboxRes?.Priority,
-                        RepliedStatus: inboxRes?.RepliedStatus === '1' ? 'Replied' : 'Not Replied',
+                        RepliedStatus: inboxRes?.RepliedStatus === '1' ? this.translocoService.translate('sharedComponents.email.replied') : this.translocoService.translate('sharedComponents.email.notReplied'),
                         Intent: inboxRes?.Intent
                     }
                 });
@@ -1102,10 +1104,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async markAsSpam(email: Mail): Promise<void> {
         let loader;
         try {
-            const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', 'Confirm Spam', 'Are you sure to mark this email as spam?');
+            const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', this.translocoService.translate('sharedComponents.email.spamConfirmTitle'), this.translocoService.translate('sharedComponents.email.spamConfirmMsg'));
             const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
             if (dialogResult) {
-                loader = this.appUiService.showSnackbar('Spamming email', 'loading');
+                loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.spamEmailLoading'), 'loading');
                 const sessionKey = this.getCurrentSessionKey();
                 const res = await SDKClient.markEmailAsSpam({
                     fromAddress: email.From,
@@ -1119,12 +1121,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     this.openEmailRes.data.next(null);
                 }
                 loader?.dismiss();
-                this.appUiService.showSnackbar('Email marked as spam');
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.spamEmailSuccess'));
             }
         } catch (err) {
             console.error(err);
             loader?.dismiss();
-            this.appUiService.showSnackbar('Unable to spam the email', 'failure');
+            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.spamEmailFailed'), 'failure');
         }
     }
 
@@ -1242,7 +1244,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             this.setComponentState('email/reply/success');
                             this._aotWidgetService.destroyWidget(widget.ID);
                         } else {
-                            this.appUiService.showSnackbar('Email cannot be empty', 'failure');
+                            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emptyEmailWarning'), 'failure');
                         }
                     } catch (e) {
                         console.error(e);
@@ -1304,7 +1306,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
                 this.openEmailRes.data.next(null);
-                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar('Loading emails', 'loading');
+                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.getEmailsLoading'), 'loading');
                 break;
 
             case 'emails/success':
@@ -1318,27 +1320,27 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
             case 'emails/failure':
                 this.emailSearchRes.loading = false;
-                this.emailSearchRes.msg = 'Error occured while fetching emails';
+                this.emailSearchRes.msg = this.translocoService.translate('sharedComponents.email.getEmailsFailed');
                 this.emailSearchRes.error = true;
-                this.appUiService.showSnackbar('Unable to load emails', 'failure');
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.loadEmailsFailed'), 'failure');
                 break;
 
             case 'email/reply/loading':
-                this.replyEditorModal.sendingEmail = this.appUiService.showSnackbar('Replying to email', 'loading');
+                this.replyEditorModal.sendingEmail = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.replyEmailLoading'), 'loading');
                 break;
             case 'email/reply/success':
                 if (this.replyEditorModal.sendingEmail) {
                     this.replyEditorModal.sendingEmail.dismiss();
                     this.replyEditorModal.sendingEmail = null;
                 }
-                this.appUiService.showSnackbar('Replied to emails');
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.replyEmailSuccess'));
                 break;
             case 'email/reply/failure':
                 if (this.replyEditorModal.sendingEmail) {
                     this.replyEditorModal.sendingEmail.dismiss();
                     this.replyEditorModal.sendingEmail = null;
                 }
-                this.appUiService.showSnackbar('Unable to reply', 'failure');
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.replyEmailFailed'), 'failure');
                 break;
             case 'email/polling/active':
                 this.polling.failed = false;
@@ -1359,7 +1361,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             case 'email/open/failure':
                 this.openEmailRes.loading = false;
                 this.openEmailRes.error = true;
-                this.appUiService.showSnackbar('Unable to open email', 'failure');
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.openEmailFailed'), 'failure');
                 break;
             case 'email/open/loading':
                 this.openEmailRes.loading = true;

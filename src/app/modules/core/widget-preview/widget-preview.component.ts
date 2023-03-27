@@ -4,6 +4,7 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { IResponseData, TUtils } from '@tmac/sdk';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Widget Preview
@@ -44,7 +45,8 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
         private fuseSplashService: FuseSplashScreenService,
         private _activatedRouter: ActivatedRoute,
         private _router: Router,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private translocoService: TranslocoService
     ) {
         super('WidgetPreviewComponent');
     }
@@ -69,11 +71,11 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
                     // get the template
                     this.getTemplateJson(params.templateName);
                 } else {
-                    this.routeToNotFound('Template name is not found!');
+                    this.routeToNotFound(this.translocoService.translate('widgetPreview.templateNameNotFound'));
                 }
             });
         } else {
-            this.routeToNotFound('Config is not found, please contact administrator!');
+            this.routeToNotFound(this.translocoService.translate('widgetPreview.configNotFound'));
         }
     }
 
@@ -135,7 +137,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
                         this.loading = false;
                         this.widgets = x.response.d ? JSON.parse(x.response.d) : [];
                     } else {
-                        this.routeToNotFound('Template name is not found!');
+                        this.routeToNotFound(this.translocoService.translate('widgetPreview.templateNameNotFound'));
                     }
                 },
                 1000,
@@ -143,7 +145,7 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
             );
         } catch (error) {
             this.logger.error('Error in getTemplateJson', error, false);
-            this.routeToNotFound('Error in getting template');
+            this.routeToNotFound(this.translocoService.translate('widgetPreview.getTemplateError'));
         }
     }
 }
