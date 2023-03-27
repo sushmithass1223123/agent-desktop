@@ -9,6 +9,7 @@ import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Active interactions
@@ -46,7 +47,8 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         private _interactionManagerService: InteractionManagerService,
         private _contentPageService: ContentPageService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService
     ) {
         super('TwActiveInteractionsComponent');
     }
@@ -188,7 +190,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                 if (dt.response && dt.response.ResultCode === 0) {
                     // disconnect call success
                 } else {
-                    this._appUIService.showSnackbar('Hold call failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.holdCallFailed'), 'failure');
                 }
             });
         } else {
@@ -199,7 +201,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                 if (dt.response && dt.response.ResultCode === 0) {
                     // disconnect call success
                 } else {
-                    this._appUIService.showSnackbar('Unhold call failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
                 }
             });
         }
@@ -220,7 +222,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             if (dt.response && dt.response.ResultCode === 0) {
                 // disconnect call success
             } else {
-                this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.disconnectCallFailed'), 'failure');
             }
         });
     }

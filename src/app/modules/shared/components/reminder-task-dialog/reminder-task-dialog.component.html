@@ -634,11 +634,17 @@
 
         <p class="text-center mat-title m-0 my-4 line-height-28 message">{{ data.title }}</p>
     </div>
-    <div mat-dialog-content fxLayout="column" fxLayoutAlign="center center" class="m-0">
+    <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign="center center" class="m-0">
         <p class="text-center m-0 mb-4 line-height-28 mat-subheading-2 message" [innerHTML]="data.message"></p>
 
         <div fxLayoutAlign="center center" class="p-12 pb-12">
-            <button mat-raised-button mat-icon-button class="bg-success mr-12" matTooltip="Accept" (click)="data.accept()">
+            <button
+                mat-raised-button
+                mat-icon-button
+                class="bg-success mr-12"
+                [matTooltip]="locale('sharedComponents.reminderTaskDialog.accept')"
+                (click)="data.accept()"
+            >
                 <mat-icon>done</mat-icon>
             </button>
 
@@ -647,7 +653,7 @@
                 mat-raised-button
                 mat-icon-button
                 class="bg-danger mr-12"
-                matTooltip="Reject"
+                [matTooltip]="locale('sharedComponents.reminderTaskDialog.reject')"
                 (click)="data.reject()"
             >
                 <mat-icon>close</mat-icon>
@@ -658,7 +664,7 @@
                 mat-raised-button
                 mat-icon-button
                 class="bg-warning"
-                matTooltip="Snooze"
+                [matTooltip]="locale('sharedComponents.reminderTaskDialog.snooze')"
                 (click)="data.snooze()"
             >
                 <mat-icon>pending_actions</mat-icon>
@@ -669,7 +675,7 @@
                 mat-raised-button
                 mat-icon-button
                 class="bg-warning"
-                matTooltip="Snooze"
+                [matTooltip]="locale('sharedComponents.reminderTaskDialog.snooze')"
                 [matMenuTriggerFor]="menu"
             >
                 <mat-icon>pending_actions</mat-icon>

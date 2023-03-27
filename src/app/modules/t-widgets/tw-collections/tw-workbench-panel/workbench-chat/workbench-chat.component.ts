@@ -17,7 +17,7 @@ import { groupBy, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { Subscription, timer } from 'rxjs';
 import { filter } from 'rxjs/operators';
-
+import { TranslocoService } from '@ngneat/transloco';
 type ApiCalls = 'search' | 'pull' | 'push';
 type CallStates = 'loading' | 'error' | 'initial' | 'completed';
 
@@ -124,7 +124,8 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
         // private _fuseConfigService: FuseConfigService,
         private _fuseFacadeService: FuseFacadeService,
         private _appUiService: AppUiService,
-        private _matDialog: MatDialog
+        private _matDialog: MatDialog,
+        private translocoService: TranslocoService
     ) {
         super('WorkbenchChatComponent');
         const today = new Date();
@@ -230,7 +231,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                 })
                 .subscribe((res: any) => {
                     if (!res || res.status !== 'SUCCESS') {
-                        this._appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+                        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.advanceSearchFailed'), 'failure');
                         return;
                     }
                     this.queuedChats = res.result;
@@ -281,7 +282,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                 });
         } catch (e) {
             console.error(e);
-            this._appUiService.showSnackbar('Unable to complete advanced search', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.advanceSearchFailed'), 'failure');
         }
     }
 
@@ -343,15 +344,15 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                 })
                 .subscribe((res: any) => {
                     if (res && res.status !== 'FAILED') {
-                        this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pullChatSuccess'), 'success');
                         return;
                     }
-                    this._appUiService.showSnackbar('Unable to Pull chat', 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pullChatFailed'), 'failure');
                 });
         };
         try {
             if (this.channelConf.Config.AskPullConfirmation) {
-                const confirmDialogRef = this._appUiService.showAppConfirmDialog('generic', 'Pull Chat', 'Are you sure you want to pull this chat ?');
+                const confirmDialogRef = this._appUiService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.workbench.pullChatConfirmTitle'),this.translocoService.translate('widgets.workbench.pullChatConfirmMsg'));
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         pullFunc();
@@ -362,7 +363,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
             }
         } catch (e) {
             console.error(e);
-            this._appUiService.showSnackbar('Chat Pull failed', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pullChatError'), 'failure');
         }
     }
 
@@ -430,7 +431,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                 Callback: ({ callbackData }) => {
                     const { TmacServer, LoginID } = callbackData.selectedRow;
                     const { channel, itemID: itemid } = node;
-                    this._appUiService.showSnackbar('Pushing Chat', 'loading');
+                    this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatLoading'), 'loading');
                     this.http
                         .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
                             tmacServer: TmacServer,
@@ -440,10 +441,10 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                         })
                         .subscribe((res: any) => {
                             if (res && res.status !== 'FAILED') {
-                                this._appUiService.showSnackbar('Chat Pushed successfuly', 'success');
+                                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatSuccess'), 'success');
                                 return;
                             }
-                            this._appUiService.showSnackbar('Unable to push chat', 'failure');
+                            this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatFailed'), 'failure');
                         });
                 }
             };
@@ -457,7 +458,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
             });
         } catch (e) {
             console.error(e);
-            this._appUiService.showSnackbar('Chat Push failed', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatError'), 'failure');
         }
     }
 

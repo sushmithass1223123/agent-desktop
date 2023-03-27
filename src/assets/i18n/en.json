@@ -36,7 +36,17 @@
         "videoStartErrorMessage": "Error occured while starting the video",
         "auxCodes": "AUX codes",
         "agentProfile": "Agent Profile",
-        "teamName": "Team Name"
+        "teamName": "Team Name",
+        "openInteractionWarningMsg": "Please complete the interaction before logging out!",
+        "logoutLoading": "Please wait, logging out...",
+        "logoutSuccess": "Logged out successfully",
+        "logoutFailed": "Logout failed, please try again",
+        "loadAuxCodesError": "Error in loading aux codes",
+        "agentSettingUpdated": "Agent setting has been updated!",
+        "reloadAuxCodesSuccess": "Aux Codes reloaded successfully",
+        "agentDataLoading": "Please wait...",
+        "changeStatusFailed": "Change status failed, please try again!",
+        "changeStatusError": "Change status error, please try again!"
     },
     "global": {
         "commonErrorMessage": "Something went wrong",
@@ -88,7 +98,14 @@
         "saveICFailed": "Interaction comment save failed",
         "saveICError": "Error in saving interaction comment",
         "addComment": "Add new comment:",
-        "makeCall": "Make Call"
+        "makeCall": "Make Call",
+        "disconnectCallFailed": "Disconnect call failed",
+        "customerOnHoldMessage": "Interaction #interactionID with [#customerName] and Session ID [#sessionID] is on hold for #holdTime",
+        "holdCallFailed": "Hold call failed",
+        "unHoldCallFailed": "Unhold call failed",
+        "makeCallSuccess": "Make call to #callerID successful",
+        "makeCallFailed": "Make call failed, ",
+        "makeCallError": "Make call error, please try again"
     },
     "channels": {
         "voice": "Voice",
@@ -120,7 +137,8 @@
         "labels": "Labels",
         "noCIQ": "No Calls in Queue",
         "noChannels": "No Active Channels",
-        "transcriptsNotFound": "No Transcripts Available"
+        "transcriptsNotFound": "No Transcripts Available",
+        "wbWidgetsNotFound": "No workbench widgets found!"
     },
     "widgets": {
         "workbench": {
@@ -130,7 +148,17 @@
             "fromDate": "From Date",
             "fromTime": "From Time",
             "toDate": "To Date",
-            "toTime": "To Time"
+            "toTime": "To Time",
+            "advanceSearchFailed": "Unable to complete advanced search",
+            "pullChatSuccess": "Chat Pulled successfuly",
+            "pullChatFailed": "Unable to Pull chat",
+            "pullChatConfirmTitle": "Pull Chat",
+            "pullChatConfirmMsg": "Are you sure you want to pull this chat ?",
+            "pullChatError": "Chat Pull failed",
+            "pushChatLoading": "Pushing Chat",
+            "pushChatSuccess": "Chat Pushed successfuly",
+            "pushChatFailed": "Unable to push chat",
+            "pushChatError": "Chat Push failed"
         },
         "workcodes": {
             "searchWorkcodes": "Search Workcodes...",
@@ -166,7 +194,29 @@
             "call": "Call",
             "currentlyPlaying": "Currently Playing",
             "callFlow": "Call Flow",
-            "ivrHistory": "IVR History"
+            "ivrHistory": "IVR History",
+            "incomingCallDesktopMsg": "You have a new incoming call from ",
+            "conferenceError": "Error in conference confirm, call lines are not available!",
+            "playCannedAudioError": "Error in playing canned audio ",
+            "playCannedAudioSuccess": "Canned audio #fileName started playing",
+            "answerCallFailed": "Answer call failed",
+            "holdUnholdSecondaryCallError": "Error in hold/unhold secondary call",
+            "transferInteractionSuccess": "Interaction transfer completed successfully",
+            "transferInteractionFailed": "Interaction transfer completion failed",
+            "transferInteractionError": "Error in interaction transfer complete",
+            "cancelTransferInteractionSuccess": "Interaction transfer cancelled successfully",
+            "cancelTransferInteractionFailed": "Interaction transfer cancel failed",
+            "cancelTransferInteractionError": "Error in interaction transfer cancel",
+            "conferenceInteractionSuccess": "Interaction conference completed successfully",
+            "conferenceInteractionFailed": "Interaction conference completion failed",
+            "conferenceInteractionError": "Error in interaction conference complete",
+            "cancelConferenceSuccess": "Interaction conference cancel successful",
+            "cancelConferenceFailed": "Interaction conference cancel failed",
+            "cancelConferenceError": "Error in interaction conference cancel",
+            "sendDTMFFailed": "DTMF send failed",
+            "sendDTMFError": "Error in sending DTMF",
+            "ivrTransferSuccess": "Transferred to IVR successfully",
+            "ivrTransferError": "Error in transfer to IVR"
         },
         "userLocation": {
             "locationNotFound": "Location not found",
@@ -340,12 +390,7 @@
         },
         "composeMessage": {
             "toPlaceholder": "To Number",
-            "departments": "Departments",
-            "groups": "Groups",
-            "messagePlaceholder": "Please select a template or enter message...",
             "clearAll": "Clear All",
-            "departmentRequired": "Department is required",
-            "groupRequired": " Groups is required",
             "getSMSTemplateError": "Error in fetching SMS templates",
             "sendMsgSuccess": "Message sent to #toNumber successfully",
             "sendMsgFailed": "Message send failed to #toNumber",
@@ -398,7 +443,6 @@
             "whiteboardRequestReceived": "Whiteboard request received by customer",
             "whiteboardRequestAccepted": "Whiteboard request accepted by customer",
             "whiteboardRequestRejected": "Whiteboard request rejected by customer",
-            "customerOnHoldMessage": "Interaction #interactionID with [#customerName] and Session ID [#sessionID] is on hold for #holdTime",
             "disconnectByCustomer": "Interaction disconnected by customer",
             "disconnectByAgent": "Interaction disconnected by agent",
             "transferSuccess": "Interaction transferred to agent successfully",
@@ -609,6 +653,14 @@
             "interactionID": "InteractionID",
             "feedback": "Feedback",
             "score": "Score"
+        },
+        "adCallbacks": {
+            "callbackWith": "Callback with ",
+            "callbacksNotFound": "No Callbacks Yet!",
+            "handled": "Handled",
+            "missed": "Missed",
+            "pending": "Pending",
+            "getContactSessionFailed": "Unable to fetch contact session"
         }
     },
     "generalFormFields": {
@@ -616,6 +668,115 @@
         "nameRequired": "Name Required",
         "url": "URL",
         "urlRequired": "URL is Required"
+    },
+    "wrapperComponent": {
+        "widgetPinned": "Widget added to pinned list",
+        "widgetUnPinned": "Widget removed from pinned list",
+        "cancelResize": "Cancel Resize",
+        "resize": "Resize",
+        "refresh": "Refresh",
+        "maximize": "Maximize",
+        "float": "Float",
+        "expand": "Expand",
+        "collapse": "Collapse",
+        "restore": "Restore",
+        "close": "Close"
+    },
+    "sharedComponents": {
+        "aotWidgets": "AOT Widgets",
+        "clearAll": "Clear All",
+        "widget": "Widget",
+        "agentSkillList": {
+            "commentsPlaceholder": "Enter comments here...",
+            "edit": "Edit",
+            "clear": "Clear",
+            "blind": "Blind",
+            "skillPlaceholder": "Select Skill...",
+            "reloadAgents": "Reload Agent List",
+            "selectSkill": "Select Skill",
+            "getAgentListError": "Error in loading agent list",
+            "consultTransfer": "Consult transfer ",
+            "blindTransfer": "Blind transfer ",
+            "transferCallSuccess": "#transferType call initiated to #transferTo successfully",
+            "transferCallFailed": "#transferType call initiation failed, please try again!",
+            "transferCallError": "#transferType call initiation error, please try again!",
+            "conferenceCallSuccess": "#conferenceType call initiated to #conferenceTo successfully",
+            "conferenceCallFailed": "#conferenceType call initiation failed, please try again!",
+            "conferenceCallError": "#conferenceType call initiation error, please try again!",
+            "sendTransferNotificationSuccess": "Chat #type notification sent to remote agent, Please wait for response.",
+            "sendTransferNotificationFailed": "Chat #type notification failed, please try again",
+            "tranferTextChatFailed": "Chat #type failed, ",
+            "tranferTextChatError": "Chat #type error, please try again",
+            "transferTextChatToQueueFailed": "Chat #type to queue failed, ",
+            "transferTextChatToQueueError": "Chat #type to queue error, please try again",
+            "transferChatDefaultError": "Error: No row selected to transfer chat",
+            "transferEmailSuccess": "Email transferred to #transferTo successfully",
+            "transferEmailAgentStateInvalid": "Agent #agentName is not in valid state",
+            "transferEmailFailed": "Email transfer failed",
+            "transferEmailError": "Error in email transfer",
+            "loadSpeedDialError": "Error in loading speed dial",
+            "getAgentCurrentStateError": "Error in getting agent #agentName's current state",
+            "agentLoggedOut": "Agent #agentName has logged out",
+            "agentStateInvalid": "Agent #agentName is not in valid state",
+            "selectSkillMinStaffLimit": "Unabled to select the skill, Minimum Staffed Agents should be ",
+            "selectSkillMaxStaffLimit": "Unabled to select the skill, Maximum Staffed Agents should be ",
+            "selectSkillMinAvailableAgentLimit": "Unabled to select the skill, Minimum Available Agents should be ",
+            "selectSkillMaxAvailableAgentLimit": "Unabled to select the skill, Maximum Available Agents should be ",
+            "selectSkillMinCIQLimit": "Unabled to select the skill, Minimum Calls In Queue should be ",
+            "selectSkillMaxCIQLimit": "Unabled to select the skill, Maximum Calls In Queue should be ",
+            "getSkillFailed": "Failed to get skill ",
+            "getSkillError": "Error in getting skill ",
+            "executeActionDefaultError": "Error: NotImplementedException"
+        },
+        "textTemplates": {
+            "departments": "Departments",
+            "groups": "Groups",
+            "messagePlaceholder": "Please select a template or enter message...",
+            "send": "Send",
+            "templates": "Templates",
+            "departmentRequired": "Department is required",
+            "groupRequired": " Groups is required",
+            "getSMSTemplatesError": "Error in fetching SMS templates"
+        },
+        "table": {
+            "actions": "Actions",
+            "sentimentDashboard": "Sentiment Dashboard",
+            "noDataWithFilters": "No data with applied filters available",
+            "advanceSearch": "Advanced Search",
+            "reset": "Reset",
+            "startDate": "Start date",
+            "endDate": "End date"
+        },
+        "resourceNotFound": {
+            "subtitle": "Oops!",
+            "title": "404",
+            "pageNotFound": "PAGE NOT FOUND",
+            "loginRedirectMsg": "Go to login page"
+        },
+        "reminderTaskDialog": {
+            "accept": "Accept",
+            "reject": "Reject",
+            "snooze": "Snooze"
+        },
+        "email": {
+            "getFrequentlyUsedEmailFailed": "Unable to fetch frequently used email addresses",
+            "uploadFileLoading": "Uploading File",
+            "uploadFileSizeWarning": "File too large",
+            "uploadFileFailed": "Failed to upload file",
+            "invalidEmailAddress": "Please enter a valid email address",
+            "downloadFileFailed": "Download file failed",
+            "loadEmailFailed": "Unable to load email",
+            "emailFrom": "From",
+            "emailTo": "To",
+            "emailCcBcc": "CC/BCC",
+            "emailCc": "CC",
+            "emailBcc": "BCC",
+            "emailSubject": "Subject",
+            "attachFile": "Attach file",
+            "sendEmail": "Send Email",
+            "send": "Send",
+            "showMore": "Show More"
+        }
     }
 
 }

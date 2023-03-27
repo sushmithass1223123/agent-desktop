@@ -2165,7 +2165,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         ];
         
         this._appUIService.showAppSnackbar({
-            message: this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.customerOnHoldMessage'),dynamicLabels),
+            message: this.getUpdatedLabel(this.translocoService.translate('interactionComponent.customerOnHoldMessage'),dynamicLabels),
             state: evt.ColorCode,
             onClick: () => {
                 const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];

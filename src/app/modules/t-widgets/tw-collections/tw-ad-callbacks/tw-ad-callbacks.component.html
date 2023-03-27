@@ -1,4 +1,4 @@
-<tw-wrapper [data]="data" (maximizeEvent)="this.maximized = $event">
+<tw-wrapper [data]="data" *transloco="let locale" (maximizeEvent)="this.maximized = $event">
     <div
         *ngIf="!getDashboardDataRes.loading && !getDashboardDataRes.error"
         class="twd-w-full twd-h-full p-8 twd-flex twd-flex-1 twd-flex-row twd-justify-around"
@@ -13,7 +13,7 @@
                         <div mat-card-avatar class="border-info" [ngClass]="'bg-' + cb.uiState" [matTooltip]="cb.status">
                             <mat-icon> phone_callback </mat-icon>
                         </div>
-                        <span class="font-weight-600"> Callback with {{ cb.contact.name }} </span>
+                        <span class="font-weight-600"> {{ locale('widgets.adCallbacks.callWith') }} {{ cb.contact.name }} </span>
                     </div>
                     <small class="twd-flex-1 twd-max-w-4/12 font-weight-600 twd-text-center">
                         {{ cb.contact.scheduleTime }}
@@ -26,7 +26,7 @@
                         class="twd-w-full box-shadow-3d"
                         [ngClass]="{ 'twd-h-11/12': maximized, 'twd-h-10/12': !maximized }"
                     />
-                    <p class="text-center mat-title m-0">No Callbacks Yet!</p>
+                    <p class="text-center mat-title m-0">{{ locale('widgets.adCallbacks.callbacksNotFound') }}</p>
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@
                     </div>
                 </span>
                 <strong class="twd-flex-1 twd-max-w-6/12">
-                    <span> Handled </span>
+                    <span>{{ locale('widgets.adCallbacks.handled') }} </span>
                 </strong>
                 <strong class="text-center twd-flex-1 twd-max-w-2/12"> {{ getDashboardDataRes.data.handled }} </strong>
             </div>
@@ -65,7 +65,7 @@
                     </div>
                 </span>
                 <strong class="twd-flex-1 twd-max-w-6/12">
-                    <span> Missed </span>
+                    <span>{{ locale('widgets.adCallbacks.missed') }} </span>
                 </strong>
                 <strong class="text-center twd-flex-1 twd-max-w-2/12"> {{ getDashboardDataRes.data.missed }} </strong>
             </div>
@@ -81,7 +81,7 @@
                     </div>
                 </span>
                 <strong class="twd-flex-1 twd-max-w-6/12">
-                    <span> Pending </span>
+                    <span>{{ locale('widgets.adCallbacks.pending') }} </span>
                 </strong>
                 <strong class="text-center twd-flex-1 twd-max-w-2/12"> {{ getDashboardDataRes.data.pending }} </strong>
             </div>
@@ -96,6 +96,6 @@
         <p class="mat-title twd-mb-3">
             {{ getDashboardDataRes.msg }}
         </p>
-        <button mat-raised-button color="primary" (click)="fetchCallbacks()">Retry</button>
+        <button mat-raised-button color="primary" (click)="fetchCallbacks()">{{ locale('global.retry') }}</button>
     </div>
 </tw-wrapper>

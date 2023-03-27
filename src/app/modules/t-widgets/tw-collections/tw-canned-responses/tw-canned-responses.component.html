@@ -25,7 +25,7 @@
             <div fxFill fxFlex="50" class="mr-4">
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
-                        [placeholder]="locale('widgets.composeMessage.departments')"
+                        [placeholder]="locale('sharedComponents.textTemplates.departments')"
                         [(ngModel)]="selectedDepartment"
                         (selectionChange)="onSelectDepartment($event)"
                         [disabled]="responseMode === 'auto'"
@@ -33,13 +33,13 @@
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of departments" [value]="item.ID">{{ item.Name }}</mat-option>
                     </mat-select>
-                    <mat-error> {{ locale('widgets.composeMessage.departmentRequired') }} </mat-error>
+                    <mat-error> {{ locale('sharedComponents.textTemplates.departmentRequired') }} </mat-error>
                 </mat-form-field>
             </div>
             <div fxFill fxFlex="50">
                 <mat-form-field fxFill class="custom select-box" appearance="outline">
                     <mat-select
-                        [placeholder]="locale('widgets.composeMessage.groups')"
+                        [placeholder]="locale('sharedComponents.textTemplates.groups')"
                         [disabled]="!selectedDepartment && responseMode === 'manual'"
                         [(ngModel)]="selectedGroup"
                         (selectionChange)="onSelectGroups($event)"
@@ -47,7 +47,7 @@
                         <mat-option>None</mat-option>
                         <mat-option *ngFor="let item of groups" [value]="item.Name">{{ item.Name }}</mat-option>
                     </mat-select>
-                    <mat-error> {{ locale('widgets.composeMessage.groupRequired') }} </mat-error>
+                    <mat-error> {{ locale('sharedComponents.textTemplates.groupRequired') }} </mat-error>
                 </mat-form-field>
             </div>
         </div>
