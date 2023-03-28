@@ -12,13 +12,19 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import { InstantMessagingComponent } from './instant-messaging.component';
 import { InstantMessagingService } from './instant-messaging.service';
 import { SharedModule } from '@modules/shared/shared.module';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../../transloco-root.module';
+
 
 /**
  * Instant messaging component
  */
 @NgModule({
     declarations: [InstantMessagingComponent],
-    providers: [InstantMessagingService],
+    providers: [InstantMessagingService, {
+        provide: TRANSLOCO_SCOPE,
+        useValue: 'default'
+    }],
     imports: [
         MatButtonModule,
         MatFormFieldModule,
@@ -28,7 +34,8 @@ import { SharedModule } from '@modules/shared/shared.module';
         MatTooltipModule,
         MatRippleModule,
         FuseSharedModule,
-        SharedModule
+        SharedModule,
+        TranslocoRootModule
     ],
     exports: [InstantMessagingComponent]
 })

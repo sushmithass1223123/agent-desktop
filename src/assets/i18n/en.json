@@ -22,7 +22,21 @@
         "signIn": "SIGN IN",
         "copyWriteTetherfi": "Copyright Tetherfi",
         "ui": "UI",
-        "server": "Server"
+        "server": "Server",
+        "linkExpired": "Sorry, the link has expired, Please login again.",
+        "captureImageFailed": "Login failed, Unable to capture image, make sure you provide access to camera",
+        "faceAuthenticationLoading": "Please wait, Face authentication in progress",
+        "faceAuthServerNotReachable": "Login failed, Unable to reach face authentication server. Please contact the administrator",
+        "faceAuthError": "Error in face authentication",
+        "faceAuthSuccess": "Face authentication success, trying to login",
+        "faceAuthFailed": "Face authentication failed",
+        "faceAuthInvalid": "Face authentication: Invalid response from server",
+        "loginFailed": "Login failed, Please try again",
+        "lanIdInvalid": "Login failed, Invalid LAN ID detected. Please provide agent ID",
+        "lanIdError": "Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access",
+        "unknownError": "Login failed, Unknown response from server",
+        "loginFailedGenericError": "Login failed, Please contact the administrator",
+        "ssoTypeInvalid": "SSO type #ssoType is not a valid, please contact the administrator!"
     },
     "toolbarComponent": {
         "notifications": "Notifications",
@@ -873,6 +887,58 @@
     "mainComponent": {
         "loadConfigFailed": "Unable to load the config for main, please contact the administrator.",
         "welcomeMsg": "Hello, Welcome to Agent Desktop"
+    },
+    "themeOptions": {
+        "themeOptionTitle": "Theme Options",
+        "defaultLight": "Default Light",
+        "defaultLight2": "Default Light 2",
+        "defaultLight3": "Default Light 3",
+        "tealRedLight": "Teal-Red Light",
+        "cyanOrangeLight": "Cyan-Orange Light",
+        "indigoDeepOrangeLight": "Indigo-Deep Orange Light",
+        "defaultDark": "Default Dark",
+        "blueGreyDark": "Blue-Grey Dark",
+        "pinkGreyDark": "Pink-Grey Dark",
+        "webFonts": "Web Fonts",
+        "muli": "Muli (Default)",
+        "montserrat": "Montserrat",
+        "sansPro": "Source Sans Pro",
+        "flatTheme": "Flat theme",
+        "enableFlatTheme": "Enable flat theme",
+        "layoutStyles": "Layout Styles",
+        "navbar": "Navbar",
+        "position": "Position",
+        "left": "Left",
+        "right": "Right",
+        "useCustomBGColor": "Use custom background color",
+        "bgColor": "Background color",
+        "toolbar": "Toolbar",
+        "content": "Content",
+        "anchorWidget": "Anchor Widget",
+        "bodyBGColor": "Body background color",
+        "headerBGColor": "Header background color",
+        "contentBGColor": "Content background color",
+        "widget": "Widget"
+    },
+    "quickPanel": {
+        "today": "Today",
+        "quickSettings": "Quick Settings",
+        "browserNotifications": "Browser Notifications",
+        "notificationSound": "Notifications Sound",
+        "pinnedWidgets": "Pinned Widgets",
+        "page": "Page",
+        "pageRequired": "Page is required",
+        "addWidgetConfigPlaceholder": "Add widget json...",
+        "add": "ADD",
+        "addNewLinkSuccess": "New link #linkName added successfully",
+        "addWidgetSuccess": "AOT widget added successfully to #widgetPage page",
+        "addWidgetError": "Error in adding widget, please verify the JSON!"
+    },
+    "IM": {
+        "teamChat": "Team Chat",
+        "moreActions": "More Actions",
+        "startChatMsg": "Start a conversation by typing your message below.",
+        "selectContactToChat": "Select a contact to start a conversation."
     }
 
 }

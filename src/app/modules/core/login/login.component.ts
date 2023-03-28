@@ -20,6 +20,7 @@ import { merge, set } from 'lodash';
 import moment from 'moment';
 import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * LoginComponent
@@ -35,7 +36,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Unsubscribe all subject
      */
-    private _unsubscribeAll: Subject<any>;
+    private _unsubscribeAll: Subject<any>; 
     /**
      * Used for auto login
      */
@@ -247,7 +248,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private fuseSplashService: FuseSplashScreenService,
         private _tmacEventService: TMACEventService,
-        private _msTeamsAuthSerivce: MsTeamsAuthService
+        private _msTeamsAuthSerivce: MsTeamsAuthService,
+        private translocoService: TranslocoService
     ) {
         super('LoginComponent');
 
@@ -407,7 +409,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                                 state: {
                                     subtitle: 'Oops',
                                     title: '404',
-                                    description: 'Sorry, the link has expired, Please login again.',
+                                    description: this.translocoService.translate('loginComponent.linkExpired'),
                                     login: false
                                 },
                                 queryParamsHandling: 'preserve'
@@ -678,11 +680,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
             if (!base64) {
                 // face authentication failed
-                this._appUIService.showSnackbar('Login failed, Unable to capture image, make sure you provide access to camera', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.captureImageFailed'), 'failure');
                 return false;
             }
 
-            this._appUIService.showSnackbar('Please wait, Face authentication in progress', 'loading', 'top', 'right');
+            this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.faceAuthenticationLoading'), 'loading', 'top', 'right');
 
             // send request to face auth server
             // get the login json from proxy
@@ -708,7 +710,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             // check for valid response from server
             if (!result) {
                 this._appUIService.showSnackbar(
-                    'Login failed, Unable to reach face authentication server. Please contact the administrator',
+                    this.translocoService.translate('loginComponent.faceAuthServerNotReachable'),
                     'failure'
                 );
                 ret = false;
@@ -721,23 +723,23 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 // check if the returned data has face authentication properties
                 if (!response.hasOwnProperty('face_found_in_image') || !response.hasOwnProperty('face_authenticated_percentage')) {
                     // login error
-                    this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
+                    this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.faceAuthError'), 'failure', 'top', 'right');
                     ret = false;
                 }
 
                 // check if the response
                 if (response.face_found_in_image === true && response.face_authenticated_percentage >= 80 && response.face_isreal === 1) {
                     // face authentication sucess
-                    this._appUIService.showSnackbar('Face authentication success, trying to login', 'success', 'top', 'right');
+                    this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.faceAuthSuccess'), 'success', 'top', 'right');
                     ret = true;
                 } else {
                     // face authentication failed
-                    this._appUIService.showSnackbar('Face authentication failed', 'failure', 'top', 'right');
+                    this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.faceAuthFailed'), 'failure', 'top', 'right');
                     ret = false;
                 }
             } else {
                 // login error
-                this._appUIService.showSnackbar('Face authentication: Invalid response from server', 'failure', 'top', 'right');
+                this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.faceAuthInvalid'), 'failure', 'top', 'right');
                 ret = false;
             }
 
@@ -748,7 +750,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
             return ret;
         } catch (error) {
-            this._appUIService.showSnackbar('Error in face authentication', 'failure', 'top', 'right');
+            this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.faceAuthError'), 'failure', 'top', 'right');
         }
         return false;
     }
@@ -902,7 +904,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 // set loading to false
                 this.loading = false;
                 // login error
-                this._appUIService.showSnackbar('Login failed, Please try again', 'failure', 'top', 'right');
+                this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.loginFailed'), 'failure', 'top', 'right');
             });
     }
 
@@ -991,7 +993,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 } else if (response.ResultCode === -3) {
                     // invalid Lan id check whether to prompt agent Id
                     if (this.promptAgentIdOnInvalidLanId) {
-                        this.errorMessage = 'Login failed, Invalid LAN ID detected. Please provide agent ID';
+                        this.errorMessage = this.translocoService.translate('loginComponent.lanIdInvalid');
                         this.agentIdEnabled = true;
                         this.loginForm.controls.agentId.setValidators(Validators.required);
                         this.loginForm.controls.agentId.updateValueAndValidity();
@@ -1000,7 +1002,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                         });
                     } else {
                         // login failed, invalid lan Id
-                        this.errorMessage = 'Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access';
+                        this.errorMessage = this.translocoService.translate('loginComponent.lanIdError');
                     }
                 } else {
                     // login failed
@@ -1008,10 +1010,10 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                         ? response.ErrorDetails
                         : response.ResultMessage
                         ? response.ResultMessage
-                        : 'Login failed, Unknown response from server';
+                        : this.translocoService.translate('loginComponent.unknownError');
                 }
             } else {
-                this.errorMessage = 'Login failed, Please contact the administrator';
+                this.errorMessage = this.translocoService.translate('loginComponent.loginFailedGenericError');
             }
             // check if any error message then alert
             if (this.errorMessage) {
@@ -1089,7 +1091,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 return true;
             } else {
                 this.logger.warn(`ssoLogin: SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, false);
-                this._appUIService.showSnackbar(`SSO type "${this.ssoType}" is not a valid, please contact the administrator!`, 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('loginComponent.ssoTypeInvalid').replace('#ssoType', this.ssoType), 'failure');
             }
         } catch (error) {
             this.logger.error(`ssoLogin: Fail to authenticate`, error.error, false);
