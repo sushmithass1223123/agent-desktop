@@ -9,7 +9,7 @@ import { AppConfigsModel, LoginWidgetModel } from 'app/models';
 import { formatJsonData, getFuseConfigByTheme } from 'app/utils';
 import { environment } from 'environments/environment';
 import { merge } from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import packageInfo from '../../../package.json';
 import { FuseFacadeService } from './fuse-facade.service';
@@ -41,6 +41,15 @@ export class AppDataService extends SharedWrapper {
      * App version
      */
     private _appVersion: string;
+    /**
+     * 
+    To detect label config errors
+    */
+   appLabelSubject = new Subject();
+
+   appLabelError;
+
+
 
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -357,4 +366,17 @@ export class AppDataService extends SharedWrapper {
         });
         return updatedLabel;
     }
+
+    public observeAppLabelErrors(): Observable<any>{
+      return  this.appLabelSubject.asObservable();
+    }
+
+    public getErrorInAppLabels(){
+        return  this.appLabelError;
+    }
+  
+      public setErrorInAppLabels(error) {
+          this.appLabelError = error;
+      }
+
 }

@@ -114,7 +114,7 @@
     <!-- / Contacts -->
 
     <!-- Chat -->
-    <div id="chat" class="twd-flex twd-flex-col twd-flex-auto">
+    <div id="chat" *transloco="let locale" class="twd-flex twd-flex-col twd-flex-auto">
         <div id="messages" #messages class="messages custom-scroll-adjust twd-flex-auto">
             <ng-container *ngIf="selectedContact && chat && chat.dialog && chat.dialog.length > 0">
                 <div

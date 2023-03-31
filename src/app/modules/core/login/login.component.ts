@@ -239,6 +239,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         }
     }
 
+    appLabelsError: any;
+
+    languageSelectionEnabled = false;
+    languages = ["en", "de", "zh"];
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _formBuilder: FormBuilder,
@@ -252,6 +257,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         private translocoService: TranslocoService
     ) {
         super('LoginComponent');
+
+        this._appDataService.observeAppLabelErrors().subscribe(data => {
+            this.appLabelsError = data;
+            this._appDataService.setErrorInAppLabels(data);
+        });
 
         // Configure the layout
         this._fuseFacadeService.setConfig = {
@@ -298,7 +308,10 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             }
 
             const agentId = paramMap.has('agentId') ? paramMap.get('agentId') : undefined;
-            this.loadConfig(agentId);
+            if(!this.appLabelsError) {
+                this.loadConfig(agentId);
+            }
+            
         });
     }
 
@@ -555,14 +568,21 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         }
 
         this.appConfig = config;
+        this.languageSelectionEnabled = this.appConfig?.Login?.enableLanguageSelection;
         this.configLoaded(config);
-        await this.getTMACVersion();
-        this._appUIService.checkForDisplayResolution();
+        if(!this.appLabelsError) {
+            await this.getTMACVersion();
+            this._appUIService.checkForDisplayResolution();   
+        }
     }
 
     retryLoadConfig(): void {
         this.configError.retrying = true;
         this.loadConfig(this.configError.agentId);
+    }
+
+    changeLanguage(lang) {
+        this.translocoService.setActiveLang(lang);
     }
 
     /**

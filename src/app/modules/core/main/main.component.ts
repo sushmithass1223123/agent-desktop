@@ -100,6 +100,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         return true;
     }
 
+    appLabelsError;
+
     /**
      * Constructor
      */
@@ -117,6 +119,10 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _fuseSplashService: FuseSplashScreenService,
         private translocoService: TranslocoService
     ) {
+        this._appDataService.observeAppLabelErrors().subscribe(data => {
+            this.appLabelsError = data;
+            this._appDataService.setErrorInAppLabels(data);
+        });
         // set the private defaults
         this._unsubscribeAll = new Subject();
 

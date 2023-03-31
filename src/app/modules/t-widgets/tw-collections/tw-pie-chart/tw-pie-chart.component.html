@@ -49,7 +49,7 @@
 </tw-wrapper>
 
 <ng-template #noData>
-    <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
+    <div *transloco="let locale" class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
         <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
         <p class="text-center m-0">{{ locale('contentComponent.noDataAvailable') }}</p>
     </div>

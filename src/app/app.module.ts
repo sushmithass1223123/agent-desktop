@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -14,7 +14,6 @@ import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { TranslocoRootModule } from './transloco-root.module';
-
 /**
  * App module
  */

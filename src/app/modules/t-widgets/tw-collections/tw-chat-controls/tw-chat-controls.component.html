@@ -13,7 +13,6 @@
         let-messageAction="messageAction"
         let-mode="mode"
         let-replied="replied"
-        *transloco="let locale"
     >
         <ng-container *ngIf="message">
             <div
@@ -46,7 +45,7 @@
                 </div>
 
                 <div *ngIf="messageAction" class="actions">
-                    <div class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
+                    <div *transloco="let locale" class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
                         <div>
                             <mat-icon
                                 *ngIf="message?.attachment?.type === 'image'"
@@ -283,7 +282,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="locale('interactionComopnent.transfer')"
+                            [matTooltip]="locale('interactionComponent.transfer')"
                             (click)="openTransferConferenceDialog('transfer')"
                         >
                             <mat-icon>forward</mat-icon>
@@ -295,7 +294,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="locale('interactionComopnent.conference')"
+                            [matTooltip]="locale('interactionComponent.conference')"
                             (click)="openTransferConferenceDialog('conference')"
                         >
                             <mat-icon>group</mat-icon>
