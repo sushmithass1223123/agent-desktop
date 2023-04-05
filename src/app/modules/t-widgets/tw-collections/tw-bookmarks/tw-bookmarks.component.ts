@@ -728,6 +728,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
                     ids: [this.addBookmarkData?.id ?? ''],
                     bookmarkName: this.addBookmarkData.name,
                     bookmarkData: this.addBookmarkData.data,
+                    bookmarkStatus: 1,
                     updatedBy: userId
                 },
                 header: {
