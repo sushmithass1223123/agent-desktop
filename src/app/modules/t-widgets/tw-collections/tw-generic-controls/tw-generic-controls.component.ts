@@ -12,6 +12,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { InteractionRef } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Generic Controls Components
@@ -73,6 +74,7 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         private _contentPageService: ContentPageService,
         private _fuseFacadeService: FuseFacadeService,
         private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService
     ) {
         super('TwGenericControlsComponent');
     }
@@ -179,16 +181,16 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
             .then((dt: IResponse) => {
                 this.toggleButton(false, btn);
                 if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed successfully');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     // remove the interaction reference
                     this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 } else {
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
                     this.toggleButton(false, btn);
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
                 this.toggleButton(false, btn);
             });
     }

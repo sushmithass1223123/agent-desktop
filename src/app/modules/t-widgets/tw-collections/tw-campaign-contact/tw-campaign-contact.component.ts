@@ -13,7 +13,7 @@ import { CustomerInfo } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { take, takeUntil } from 'rxjs/operators';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Campaign Contact Component
  */
@@ -117,7 +117,8 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
-        private _formBuilder: FormBuilder
+        private _formBuilder: FormBuilder,
+        private translocoService: TranslocoService
     ) {
         super('TwCampaignContactComponent');
         this.showMakeCall = false;
@@ -266,8 +267,8 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
 
         // check for valid response from server
         if (!result || !result.response) {
-            this._appUIService.showSnackbar('Unable to reach fetch contact information', 'failure');
-            this.contactData.errorMessage = 'Unable to reach fetch contact information';
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.getContactInfoFailed'), 'failure');
+            this.contactData.errorMessage = this.translocoService.translate('widgets.campaignContact.getContactInfoFailed');
         }
 
         // store the data
@@ -329,10 +330,10 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                     this.showMakeCall = true;
                 }
             } else {
-                this._appUIService.showSnackbar('Failed to assign the direct agent item to campaign manager', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.assignToCampaignManagerFailed'), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar('Error in assigning the direct agent item to campaign manager', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.assignToCampaignManagerError'), 'failure');
         }
     }
 
@@ -368,7 +369,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      * To confirm make call
      */
     confirmMakeCall(): void {
-        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Make Call', `Are you sure to make call to ${this.phoneNumber}`);
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic',this.translocoService.translate('widgets.campaignContact.confirmToMakeCallTitle'), this.translocoService.translate('widgets.campaignContact.confirmToMakeCallMsg') + this.phoneNumber);
         this.dialogRef.afterClosed().subscribe((res) => {
             if (res) {
                 // send end chat to server
@@ -399,13 +400,15 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         })
             .then((dt) => {
                 if (dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar(`Make call to ${this.phoneNumber} successful`);
+                    let dynamicLabel = this.translocoService.translate('widgets.campaignContact.callSuccess');
+                    dynamicLabel = dynamicLabel.replace('#phoneNumber', this.phoneNumber),
+                    this._appUIService.showSnackbar(dynamicLabel);
                 } else {
-                    this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.callFailed') + dt.response.ResultMessage, 'failure');
                 }
             })
             .catch((err) => {
-                this._appUIService.showSnackbar('Make call error', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.callError'), 'failure');
                 this.logger.error('Error in makeCallToCustomer', err);
             });
     }
@@ -447,7 +450,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
      * To submit a callback with status
      */
     submitCallback(btn: MatButton): void {
-        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Submit', `Are you sure to submit`);
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic',this.translocoService.translate('widgets.campaignContact.confirmSubmitTitle'), this.translocoService.translate('widgets.campaignContact.confirmSubmitMsg'));
         this.dialogRef.afterClosed().subscribe(async (res) => {
             if (res) {
                 btn.disabled = true;
@@ -460,16 +463,16 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
                     });
 
                     if (resp.response?.d?.resultCode === 1) {
-                        this._appUIService.showSnackbar('Callback status updated successfully');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.callbackStatusSuccess'));
                         if (this.interaction) {
                             SDKClient.closeInteraction(this.interaction.InteractionID.toString());
                         }
                     } else {
-                        this._appUIService.showSnackbar('Failed to update callback status', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.callbackStatusFailed'), 'failure');
                         btn.disabled = false;
                     }
                 } catch (error) {
-                    this._appUIService.showSnackbar('Error in updating callback status', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.campaignContact.callbackStatusError'), 'failure');
                     btn.disabled = false;
                 }
             }

@@ -11,6 +11,7 @@ import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Observable, Subject, timer } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * QuickPanelComponent
@@ -105,7 +106,8 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         private _fuseSidebarService: FuseSidebarService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
-        private _matDialog: MatDialog
+        private _matDialog: MatDialog,
+        private translocoService: TranslocoService
     ) {
         // init the subject
         this.unsubscribeAll = new Subject();
@@ -185,7 +187,7 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
         };
         // hide progress bar
         this._fuseProgressBarService.hide();
-        this._appUIService.showSnackbar(`New link '${this.linkName}' added successfully`);
+        this._appUIService.showSnackbar(this.translocoService.translate('quickPanel.addNewLinkSuccess').replace('#linkName', this.linkName));
         this.linkName = '';
         this.newLink = '';
         this.openAddLink = false;
@@ -222,9 +224,9 @@ export class QuickPanelComponent implements OnInit, OnDestroy {
                 const resp = this._aotWidgetService.addNewWidget(this.newWidget.page.toLowerCase(), this.newWidget.json);
                 if (resp) {
                     this._fuseSidebarService.getSidebar('quickPanel').close();
-                    this._appUIService.showSnackbar(`AOT widget added successfully to ${this.newWidget.page} page`);
+                    this._appUIService.showSnackbar(this.translocoService.translate('quickPanel.addWidgetSuccess').replace('#widgetPage', this.newWidget.page));
                 } else {
-                    this._appUIService.showSnackbar('Error in adding widget, please verify the JSON!', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('quickPanel.addWidgetError'), 'failure');
                 }
             }
         });

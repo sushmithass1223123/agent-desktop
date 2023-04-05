@@ -1,6 +1,6 @@
-<div class="theme-options-panel custom-scroll-adjust">
+<div *transloco="let locale" class="theme-options-panel custom-scroll-adjust">
     <div class="header">
-        <span class="title">Theme Options</span>
+        <span class="title">{{ locale('themeOptions.themeOptionTitle') }}</span>
 
         <button mat-icon-button class="close-button" (click)="toggleSidebarOpen('themeOptionsPanel')">
             <mat-icon>close</mat-icon>
@@ -13,38 +13,38 @@
             <h2>Color themes</h2>
 
             <mat-radio-group class="twd-flex twd-flex-col twd-justify-start twd-items-start" formControlName="colorTheme">
-                <mat-radio-button class="mb-12" value="theme-default">Default Light</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-default-2">Default Light 2</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-default-3">Default Light 3</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-teal-red">Teal-Red Light</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-cyan-orange">Cyan-Orange Light</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-indigo-deeporange">Indigo-Deep Orange Light</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-default-dark">Default Dark</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-blue-grey-dark">Blue-Grey Dark</mat-radio-button>
-                <mat-radio-button class="mb-12" value="theme-pink-grey-dark">Pink-Grey Dark</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-default">{{ locale('themeOptions.defaultLight') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-default-2">{{ locale('themeOptions.defaultLight2') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-default-3">{{ locale('themeOptions.defaultLight3') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-teal-red">{{ locale('themeOptions.tealRedLight') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-cyan-orange">{{ locale('themeOptions.cyanOrangeLight') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-indigo-deeporange">{{ locale('themeOptions.indigoDeepOrangeLight') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-default-dark">{{ locale('themeOptions.defaultDark') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-blue-grey-dark">{{ locale('themeOptions.blueGreyDark') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="theme-pink-grey-dark">{{ locale('themeOptions.pinkGreyDark') }}</mat-radio-button>
             </mat-radio-group>
         </div>
 
         <!-- WEB FONT -->
         <div class="group">
-            <h2>Web Fonts</h2>
+            <h2>{{ locale('themeOptions.webFonts') }}</h2>
 
             <mat-radio-group class="twd-flex twd-flex-col twd-justify-start twd-items-start" formControlName="webFont">
-                <mat-radio-button class="mb-12" value="wf-muli">Muli (Default)</mat-radio-button>
-                <mat-radio-button class="mb-12" value="wf-montserrat">Montserrat</mat-radio-button>
-                <mat-radio-button class="mb-12" value="wf-source-sans-pro">Source Sans Pro</mat-radio-button>
+                <mat-radio-button class="mb-12" value="wf-muli">{{ locale('themeOptions.muli') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="wf-montserrat">{{ locale('themeOptions.montserrat') }}</mat-radio-button>
+                <mat-radio-button class="mb-12" value="wf-source-sans-pro">{{ locale('themeOptions.sansPro') }}</mat-radio-button>
             </mat-radio-group>
         </div>
 
         <!-- Flat theme -->
         <div class="group">
-            <h2>Flat theme</h2>
-            <mat-slide-toggle class="mb-12" formControlName="flatTheme"> Enable flat theme </mat-slide-toggle>
+            <h2>{{ locale('themeOptions.flatTheme') }}</h2>
+            <mat-slide-toggle class="mb-12" formControlName="flatTheme">{{ locale('themeOptions.enableFlatTheme') }} </mat-slide-toggle>
         </div>
 
         <!-- LAYOUT STYLES -->
         <div class="group" formGroupName="layout">
-            <h2>Layout Styles</h2>
+            <h2>{{ locale('themeOptions.layoutStyles') }}</h2>
 
             <div>
                 <ng-container [ngSwitch]="layoutStyle">
@@ -54,69 +54,79 @@
 
                         <!-- NAVBAR -->
                         <div class="group" formGroupName="navbar">
-                            <h2>Navbar</h2>
+                            <h2>{{ locale('themeOptions.navbar') }}</h2>
 
-                            <h3 class="mt-24">Position:</h3>
+                            <h3 class="mt-24">{{ locale('themeOptions.position') }}:</h3>
                             <mat-radio-group class="twd-flex twd-flex-col twd-justify-start twd-items-start" formControlName="position">
-                                <mat-radio-button class="mb-16" value="left">Left</mat-radio-button>
-                                <mat-radio-button class="mb-16" value="right">Right</mat-radio-button>
+                                <mat-radio-button class="mb-16" value="left">{{ locale('themeOptions.left') }}</mat-radio-button>
+                                <mat-radio-button class="mb-16" value="right">{{ locale('themeOptions.right') }}</mat-radio-button>
                             </mat-radio-group>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-16 mb-8">Background color:</h3>
+                            <h3 class="mt-16 mb-8">{{ locale('themeOptions.bgColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="background"> </fuse-material-color-picker>
                         </div>
 
                         <!-- TOOLBAR -->
                         <div class="group" formGroupName="toolbar">
-                            <h2>Toolbar</h2>
+                            <h2>{{ locale('themeOptions.toolbar') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bgColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="background"> </fuse-material-color-picker>
                         </div>
 
                         <!-- CONTENT -->
                         <div class="group" formGroupName="content">
-                            <h2>Content</h2>
+                            <h2>{{ locale('themeOptions.content') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bgColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="background"> </fuse-material-color-picker>
                         </div>
 
                         <!-- ANCHOR WIDGET -->
                         <div class="group" formGroupName="anchorWidget">
-                            <h2>Anchor Widget</h2>
+                            <h2>{{ locale('themeOptions.anchorWidget') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Body background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bodyBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="bodyBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Header background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.headerBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="headerBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Content background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.contentBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="contentBackground"> </fuse-material-color-picker>
                         </div>
 
                         <!-- WIDGET -->
                         <div class="group" formGroupName="widget">
-                            <h2>Widget</h2>
+                            <h2>{{ locale('themeOptions.widget') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Body background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bodyBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="bodyBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Header background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.headerBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="headerBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Content background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.contentBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="contentBackground"> </fuse-material-color-picker>
                         </div>
                     </ng-container>
@@ -127,61 +137,69 @@
 
                         <!-- NAVBAR -->
                         <div class="group" formGroupName="navbar">
-                            <h2>Navbar</h2>
+                            <h2>{{ locale('themeOptions.navbar') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-16 mb-8">Background color:</h3>
+                            <h3 class="mt-16 mb-8">{{ locale('themeOptions.bgColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="background"> </fuse-material-color-picker>
                         </div>
 
                         <!-- TOOLBAR -->
                         <div class="group" formGroupName="toolbar">
-                            <h2>Toolbar</h2>
+                            <h2>{{ locale('themeOptions.toolbar') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bgColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="background"> </fuse-material-color-picker>
                         </div>
 
                         <!-- CONTENT -->
                         <div class="group" formGroupName="content">
-                            <h2>Content</h2>
+                            <h2>{{ locale('themeOptions.content') }}</h2>
 
-                            <h3 class="mt-24 mb-8">Background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bgColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="background"> </fuse-material-color-picker>
                         </div>
 
                         <!-- ANCHOR WIDGET -->
                         <div class="group" formGroupName="anchorWidget">
-                            <h2>Anchor Widget</h2>
+                            <h2>{{ locale('themeOptions.anchorWidget') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"
+                                >{{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Body background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bodyBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="bodyBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Header background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.headerBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="headerBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Content background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.contentBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="contentBackground"> </fuse-material-color-picker>
                         </div>
 
                         <!-- WIDGET -->
                         <div class="group" formGroupName="widget">
-                            <h2>Widget</h2>
+                            <h2>{{ locale('themeOptions.widget') }}</h2>
 
-                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor"> Use custom background color </mat-checkbox>
+                            <mat-checkbox class="mt-24" formControlName="customBackgroundColor">
+                                {{ locale('themeOptions.useCustomBGColor') }}
+                            </mat-checkbox>
 
-                            <h3 class="mt-24 mb-8">Body background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.bodyBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="bodyBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Header background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.headerBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="headerBackground"> </fuse-material-color-picker>
 
-                            <h3 class="mt-24 mb-8">Content background color:</h3>
+                            <h3 class="mt-24 mb-8">{{ locale('themeOptions.contentBGColor') }}:</h3>
                             <fuse-material-color-picker class="mb-16" formControlName="contentBackground"> </fuse-material-color-picker>
                         </div>
                     </ng-container>

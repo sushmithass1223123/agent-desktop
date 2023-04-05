@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { SDKClient } from '@tmac/sdk';
 import { EmailService } from '../email.service';
-
+import { TranslocoService } from '@ngneat/transloco';
 @Component({
     selector: 'app-mailbox-settings',
     templateUrl: './mailbox-settings.component.html',
@@ -33,7 +33,8 @@ export class MailboxSettingsComponent implements OnInit {
              */
             close: () => void;
         },
-        private _appUiService: AppUiService
+        private _appUiService: AppUiService,
+        private translocoService: TranslocoService
     ) {}
 
     /**
@@ -86,16 +87,16 @@ export class MailboxSettingsComponent implements OnInit {
      * Sends request  to copmpose a new email
      */
     composeEmail(btn: MatButton): void {
-        this._appUiService.showSnackbar('Sending request for new email', 'loading');
+        this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestLoading'), 'loading');
         btn.disabled = true;
         SDKClient.composeNewEmail(this.mailboxes.form.controls.default.value)
             .then((res) => {
-                this._appUiService.showSnackbar('Request sent for a new email');
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestSuccess'));
                 this.data.close();
             })
             .catch((e) => {
                 console.error(e);
-                this._appUiService.showSnackbar('Error while composing new email');
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestError'));
             })
             .finally(() => {
                 btn.disabled = false;

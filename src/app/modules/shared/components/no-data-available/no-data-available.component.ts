@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Display when no dta aavailable in widget to show
  */
@@ -12,13 +12,15 @@ export class NoDataAvailableComponent implements OnInit {
     /**
      * Custom message
      */
-    @Input() msg = 'No data available';
+    @Input() msg;
 
-    constructor() {}
+    constructor(private translocoService: TranslocoService) {}
 
     /**
      * Llifecycle hoook
      * @method
      */
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.msg = this.translocoService.translate('contentComponent.noDataAvailable');
+    }
 }

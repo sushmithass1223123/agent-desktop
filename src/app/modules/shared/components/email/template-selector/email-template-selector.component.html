@@ -1,8 +1,9 @@
 <button
+    *transloco="let locale"
     mat-raised-button
     mat-icon-button
     color="primary"
-    matTooltip="Templates"
+    [matTooltip]="locale('sharedComponents.emailTemplateSelector.templates')"
     [disabled]="disabled"
     [matMenuTriggerFor]="departmentMenu"
     class="mx-4"
@@ -11,7 +12,7 @@
     <mat-icon>description</mat-icon>
 </button>
 
-<mat-menu yPosition="above" #departmentMenu="matMenu">
+<mat-menu yPosition="above" *transloco="let locale" #departmentMenu="matMenu">
     <ng-template matMenuContent>
         <ng-container *ngIf="availableTemplates.departments | keyvalue as departments">
             <ng-container *ngFor="let dept of departments">
@@ -39,7 +40,9 @@
                                                 {{ template.value.Name }}
                                             </button>
                                         </ng-container>
-                                        <button mat-menu-item disabled *ngIf="!group.value.templates && !loading">No templates for this group</button>
+                                        <button mat-menu-item disabled *ngIf="!group.value.templates && !loading">
+                                            {{ locale('sharedComponents.emailTemplateSelector.templatesNotFound') }}
+                                        </button>
                                         <button mat-menu-item disabled *ngIf="!group.value.templates && loading">
                                             <skeleton></skeleton>
                                         </button>
@@ -47,14 +50,18 @@
                                 </mat-menu>
                             </button>
                         </ng-container>
-                        <button mat-menu-item disabled *ngIf="!(dept.value.groups || loading)">No groups for this department</button>
+                        <button mat-menu-item disabled *ngIf="!(dept.value.groups || loading)">
+                            {{ locale('sharedComponents.emailTemplateSelector.groupsNotFound') }}
+                        </button>
                         <button mat-menu-item disabled *ngIf="!dept.value.groups && loading">
                             <skeleton></skeleton>
                         </button>
                     </ng-template>
                 </mat-menu>
             </ng-container>
-            <button mat-menu-item disabled *ngIf="!departments.length">No Departments Found</button>
+            <button mat-menu-item disabled *ngIf="!departments.length">
+                {{ locale('sharedComponents.emailTemplateSelector.departmentsNotFound') }}
+            </button>
         </ng-container>
     </ng-template>
 </mat-menu>

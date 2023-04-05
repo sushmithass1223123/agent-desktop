@@ -45,8 +45,8 @@
     </div>
 
     <ng-template #noData>
-        <div class="twd-flex twd-flex-1 twd-flex-col twd-justify-center twd-items-center border-radius-20 border-md-primary">
-            <span class="mat-title m-0">No preview</span>
+        <div *transloco="let locale" class="twd-flex twd-flex-1 twd-flex-col twd-justify-center twd-items-center border-radius-20 border-md-primary">
+            <span class="mat-title m-0">{{ locale('contentComponent.noPreview') }}</span>
         </div>
     </ng-template>
 

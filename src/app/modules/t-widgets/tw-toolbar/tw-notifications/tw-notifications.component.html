@@ -1,4 +1,4 @@
-<div class="">
+<div class="" *transloco="let locale">
     <button
         mat-icon-button
         class="notification-btn"
@@ -7,7 +7,7 @@
         aria-label="Notification dropdown"
         (menuOpened)="menuOpened(true)"
         (menuClosed)="menuOpened(false)"
-        matTooltip="Notifications"
+        [matTooltip]="locale('toolbarComponent.notifications')"
     >
         <mat-icon class="primary-text" [matBadge]="unreadCount || ''" matBadgePosition="after">{{
             notifications.length === 0 ? 'notifications' : 'notifications_active'
@@ -15,14 +15,14 @@
     </button>
 </div>
 
-<mat-menu class="tw-notification-list" #menu="matMenu" xPosition="before">
+<mat-menu *transloco="let locale" class="tw-notification-list" #menu="matMenu" xPosition="before">
     <div
         fxLayout="row"
         fxLayoutAlign="{{ notifications.length === 0 ? 'center' : 'space-between' }} center"
         class="mat-title p-16 m-0 w-100-p text-center text-uppercase notification-header"
         (click)="$event.stopPropagation()"
     >
-        Notifications
+        {{ locale('toolbarComponent.notifications') }}
         <button mat-icon-button matTooltip="Clear All" (click)="clearAllNotifications()" *ngIf="notifications.length > 0">
             <mat-icon>clear_all</mat-icon>
         </button>
@@ -61,7 +61,7 @@
                 <mat-icon mat-list-icon color="primary">announcement</mat-icon>
             </div>
             <div fxLayout="column" fxLayoutAlign="center none" class="message">
-                <div class="mat-title m-0">No notifications yet!</div>
+                <div class="mat-title m-0">{{ locale('toolbarComponent.noNotificationsMsg') }}</div>
             </div>
         </div>
     </div>

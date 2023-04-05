@@ -1,4 +1,4 @@
-<tw-wrapper twChart [data]="data" (maximizeEvent)="maximized = $event">
+<tw-wrapper *transloco="let locale" twChart [data]="data" (maximizeEvent)="maximized = $event">
     <div *ngIf="data.Data?.Type === 'grid'" class="twd-w-full twd-h-full">
         <ad-table></ad-table>
     </div>
@@ -55,14 +55,14 @@
                 class="twd-absolute twd-bottom-2.5 twd-left-2.5 twd-scale-75"
                 [(ngModel)]="data.Data.Label"
             >
-                Labels
+                {{ locale('contentComponent.labels') }}
             </mat-checkbox>
         </div>
 
         <ng-template #noData>
             <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
                 <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
-                <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized }">No data available</p>
+                <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized }">{{ locale('contentComponent.noDataAvailable') }}</p>
             </div>
         </ng-template>
     </div>

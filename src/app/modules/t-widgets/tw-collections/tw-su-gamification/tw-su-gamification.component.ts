@@ -7,6 +7,7 @@ import { ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
 import { TwSuGamification } from '@ad/types';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Supervisor Gamification Component
@@ -64,7 +65,8 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
     /**
      * Constructor
      */
-    constructor(private _http: HttpClient) {
+    constructor(private _http: HttpClient,
+        private translocoService: TranslocoService) {
         super('TwSuGamificationComponent');
     }
 
@@ -105,7 +107,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
      */
     setupLeaderBoard(): void {
         if (!this.data.Data.GamificationProxyUrl) {
-            this.gamificationReqStatus = { msg: 'GamificationProxyUrl missing in app config', error: true, loading: false };
+            this.gamificationReqStatus = { msg: this.translocoService.translate('widgets.gamification.proxyurlMissing'), error: true, loading: false };
             return;
         }
         this._http
@@ -122,7 +124,7 @@ export class TwSuGamificationComponent extends TWidgetWrapper implements OnInit,
                     this.gamificationReqStatus = { msg: '', error: false, loading: false };
                 },
                 () => {
-                    this.gamificationReqStatus = { msg: 'Unable to fetch leaderboard details', error: true, loading: false };
+                    this.gamificationReqStatus = { msg: this.translocoService.translate('widgets.gamification.unableToGetLeaderboardData'), error: true, loading: false };
                 }
             );
     }

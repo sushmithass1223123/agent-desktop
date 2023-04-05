@@ -123,7 +123,7 @@
             </div>
         </div> -->
 
-        <div class="video twd-w-full twd-h-full twd-flex twd-flex-max">
+        <div *transloco="let locale" class="video twd-w-full twd-h-full twd-flex twd-flex-max">
             <div class="video-controls twd-relative twd-w-full twd-h-full twd-flex twd-flex-col twd-justify-between twd-items-stretch twd-flex-max">
                 <div
                     class="remote-video-container twd-w-full twd-flex twd-flex-max twd-flex-row twd-flex-wrap twd-justify-center twd-items-start twd-rounded-20 twd-overflow-auto"
@@ -151,7 +151,7 @@
                                 class="twd-z-[1]"
                                 initialClass="!twd-text-5xl"
                                 classes="!twd-w-48 !twd-h-48 border-radius-100 fuse-white mat-elevation-z2"
-                                [matTooltip]="user.streamInfo.user || 'User'"
+                                [matTooltip]="user.streamInfo.user || locale('interactionComponent.user')"
                                 [ngClass]="{ talking: user.level > 0 }"
                             ></avatar>
                         </div>
@@ -171,7 +171,7 @@
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold || snapshotRequested"
-                                matTooltip="Take Snapshot"
+                                [matTooltip]="locale('widgets.audioVideoControls.takeSnapshot')"
                                 (click)="takeSnapShot(user)"
                             >
                                 <mat-icon> camera </mat-icon>
@@ -182,7 +182,7 @@
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold"
-                                matTooltip="Stats"
+                                [matTooltip]="locale('widgets.audioVideoControls.stats')"
                                 (click)="showWebRTCStats()"
                             >
                                 <mat-icon> event_note </mat-icon>
@@ -232,7 +232,9 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
-                            [matTooltip]="audioMuted ? 'Unmute Audio' : 'Mute Audio'"
+                            [matTooltip]="
+                                audioMuted ? locale('widgets.audioVideoControls.unmuteAudio') : locale('widgets.audioVideoControls.muteAudio')
+                            "
                             (click)="muteUnmuteAudioCall()"
                             [ngClass]="{ 'mat-warn': audioMuted }"
                         >
@@ -244,7 +246,9 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
-                            [matTooltip]="videoMuted ? 'Unmute Video' : 'Mute Video'"
+                            [matTooltip]="
+                                videoMuted ? locale('widgets.audioVideoControls.unmuteVideo') : locale('widgets.audioVideoControls.muteVideo')
+                            "
                             (click)="muteUnmuteVideoCall()"
                             [ngClass]="{ 'mat-warn': videoMuted }"
                         >
@@ -257,7 +261,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || onCallHoldEvent"
-                            matTooltip="Change to Video"
+                            [matTooltip]="locale('widgets.audioVideoControls.switchToVideo')"
                             (click)="changeToVideo(upgradeToVideoBtn)"
                         >
                             <mat-icon> video_call </mat-icon>
@@ -268,7 +272,11 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
-                            [matTooltip]="screenSharing ? 'Stop Screen Share' : 'Screen Share'"
+                            [matTooltip]="
+                                screenSharing
+                                    ? locale('widgets.audioVideoControls.stopScreenShare')
+                                    : locale('widgets.audioVideoControls.screenShare')
+                            "
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="shareScreen()"
                         >
@@ -280,7 +288,7 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || onCallHoldEvent"
-                            matTooltip="Toggle User Camera"
+                            [matTooltip]="locale('widgets.audioVideoControls.toggleRemoteCamera')"
                             [matMenuTriggerFor]="userCameraMenu"
                         >
                             <mat-icon> cameraswitch </mat-icon>
@@ -298,7 +306,11 @@
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
-                            [matTooltip]="userView === 'call' ? 'Change to chat view' : 'Change to call view'"
+                            [matTooltip]="
+                                userView === 'call'
+                                    ? locale('widgets.audioVideoControls.switchToChatView')
+                                    : locale('widgets.audioVideoControls.switchToCallView')
+                            "
                             (click)="toggleUserView()"
                         >
                             <mat-icon> {{ userView === 'call' ? 'view_carousel' : 'wysiwyg' }} </mat-icon>
@@ -312,13 +324,19 @@
                             mat-flat-button
                             mat-icon-button
                             [class]="hold ? 'success' : 'warning'"
-                            [matTooltip]="hold ? 'Unhold Call' : 'Hold Call'"
+                            [matTooltip]="hold ? locale('widgets.audioVideoControls.unholdCall') : locale('widgets.audioVideoControls.holdCall')"
                             (click)="holdUnholdCall()"
                         >
                             <mat-icon>{{ hold ? 'phone_in_talk' : 'phone_paused' }}</mat-icon>
                         </button>
 
-                        <button mat-flat-button mat-icon-button color="warn" matTooltip="End Call" (click)="endCall()">
+                        <button
+                            mat-flat-button
+                            mat-icon-button
+                            color="warn"
+                            [matTooltip]="locale('widgets.audioVideoControls.endCall')"
+                            (click)="endCall()"
+                        >
                             <mat-icon>call_end</mat-icon>
                         </button>
                     </div>

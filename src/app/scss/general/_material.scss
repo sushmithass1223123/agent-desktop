@@ -16,6 +16,7 @@
 .custom-btn,
 .mat-custom-btn {
     height: 36px;
+
     &.mat-button-disabled {
         background-color: rgba(0, 0, 0, 0.12) !important;
         color: rgba(0, 0, 0, 0.26) !important;
@@ -54,6 +55,7 @@
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
 }
+
 .rotate-90 {
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
@@ -61,6 +63,7 @@
     -o-transform: rotate(90deg);
     transform: rotate(90deg);
 }
+
 .rotate-180 {
     -webkit-transform: rotate(180deg);
     -moz-transform: rotate(180deg);
@@ -68,6 +71,7 @@
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
 }
+
 .rotate-animation {
     -webkit-animation: spin 4s linear infinite;
     -moz-animation: spin 4s linear infinite;
@@ -79,17 +83,20 @@
         -moz-transform: rotate(360deg);
     }
 }
+
 @-webkit-keyframes spin {
     100% {
         -webkit-transform: rotate(360deg);
     }
 }
+
 @keyframes spin {
     100% {
         -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
+
 // mat icon
 
 // mat table
@@ -129,19 +136,23 @@
 
     th.mat-header {
         color: currentColor !important;
+
         &.mat-header-cell {
             border-color: transparent !important;
             align-items: center;
             justify-content: flex-end;
+
             span {
                 flex: 1;
                 text-align: center;
             }
+
             mat-menu {
                 width: 20vw;
                 height: 30vh;
             }
         }
+
         .mat-sort-header-arrow {
             margin: 0 6px 0px 3px;
         }
@@ -149,15 +160,17 @@
 
     tr.mat-row {
         & {
-            height: 3rem !important ;
+            height: 3rem !important;
         }
 
         td.mat-cell {
             border: none;
+
             &:first-child {
                 border-top-left-radius: 20px;
                 border-bottom-left-radius: 20px;
             }
+
             &:last-child {
                 border-top-right-radius: 20px;
                 border-bottom-right-radius: 20px;
@@ -238,11 +251,13 @@
         }
     }
 }
+
 // mat table
 
 // mat paginator
 mat-paginator {
     border-radius: 2rem;
+
     .mat-paginator-container {
         min-height: 40px;
     }
@@ -251,10 +266,12 @@ mat-paginator {
 .mat-paginator {
     background: transparent !important;
 }
+
 // mat paginator
 
 // mat form field
 mat-form-field {
+
     textarea,
     input {
         box-sizing: border-box !important;
@@ -362,12 +379,14 @@ mat-form-field {
         margin: 13px auto;
     }
 }
+
 // mat form field
 
 // mat-select-panel
 .mat-select-panel {
     border-radius: 20px !important;
 }
+
 // mat-select-panel
 
 // mat chip
@@ -376,10 +395,12 @@ mat-chip {
         border-radius: 10px;
         padding: 10px;
     }
+
     // mat-icon {
     //     color: white !important;
     // }
 }
+
 // mat chip
 
 // mat dialog
@@ -387,6 +408,7 @@ mat-dialog-container {
     position: relative;
     border-radius: 10px !important;
 }
+
 // mat dialog
 
 // mat tooltip
@@ -395,6 +417,7 @@ mat-dialog-container {
     white-space: pre-line;
     word-wrap: normal;
 }
+
 // mat tooltip
 
 .mat-badge-content {
@@ -432,4 +455,9 @@ mat-dialog-container {
             }
         }
     }
+}
+
+
+.mat-card-header-text {
+    width: 100%;
 }

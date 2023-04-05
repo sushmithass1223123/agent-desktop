@@ -1,7 +1,7 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data" (maximizeEvent)="maximized = $event">
+<tw-wrapper *transloco="let locale" [data]="data" (maximizeEvent)="maximized = $event">
     <div
         *ngIf="!gamificationReqStatus.loading && !gamificationReqStatus.error"
         fxLayout="column"
@@ -10,7 +10,7 @@
         "
         class="h-100-p w-100-p px-16 custom-scroll-adjust"
     >
-        <p *ngIf="(performanceChartProgress.goal | keyvalue).length" class="my-16 text-bold">KPI Goals :</p>
+        <p *ngIf="(performanceChartProgress.goal | keyvalue).length" class="my-16 text-bold">{{ locale('widgets.adPerformance.kpiGoals') }}</p>
 
         <div *ngFor="let g of performanceChartProgress.goal | keyvalue" class="mb-28">
             <div class="mb-8">{{ g.key }} : {{ g.value.current }} / {{ g.value.max }}</div>
@@ -22,7 +22,7 @@
             class="w-100-p h-100-p"
         >
             <img src="assets/images/vectors/no-data-1.svg" class="w-100-p box-shadow-3d" [ngClass]="{ 'h-95-p': maximized, ' h-80-p': !maximized }" />
-            <p class="text-center mat-title m-0">No data available</p>
+            <p class="text-center mat-title m-0">{{ locale('contentComponent.noDataAvailable') }}</p>
         </div>
     </div>
 
@@ -32,6 +32,6 @@
 
     <div *ngIf="gamificationReqStatus.error" fxLayout="column" fxLayoutAlign="center center" class="w-100-p h-100-p text-center">
         <span class="mb-16">{{ gamificationReqStatus.msg }}</span>
-        <button mat-raised-button color="primary" (click)="setChartData()">Retry</button>
+        <button mat-raised-button color="primary" (click)="setChartData()">{{ locale('global.retry') }}</button>
     </div>
 </tw-wrapper>

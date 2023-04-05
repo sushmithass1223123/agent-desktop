@@ -8,6 +8,8 @@ import { IResponse, IUIEvent, SDKClient } from '@tmac/sdk';
 import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
+
 
 /**
  * Tw Compose Messaging Component
@@ -69,7 +71,8 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
      */
     interaction: IUIEvent;
 
-    constructor(private _appUIService: AppUiService, private _tmacEventService: TMACEventService) {
+    constructor(private _appUIService: AppUiService, private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService) {
         super('TwComposeMessagingComponent');
     }
 
@@ -97,7 +100,7 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
                 this.departments = result.response.filter((d) => d.Channel.toLowerCase() === 'sms');
             })
             .catch((err) => {
-                this._appUIService.showSnackbar('Error in fetching SMS templates', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.composeMessage.getSMSTemplateError'), 'failure');
                 this.logger.error('Error in fetching SMS templates', err, false);
             })
             .finally(() => {
@@ -258,7 +261,7 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
 
             // check the response
             if (resp?.response > 0) {
-                this._appUIService.showSnackbar(`Message sent to ${this.toNumber} successfully`, 'success');
+                this._appUIService.showSnackbar(this.getMessageWithToNumber(this.translocoService.translate('widgets.composeMessage.sendMsgSuccess')), 'success');
                 // clear data
                 this.clearAllData();
                 this.toNumber = '';
@@ -267,10 +270,10 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
                     this.data.destroy();
                 }
             } else {
-                this._appUIService.showSnackbar(`Message send failed to ${this.toNumber}`, 'failure');
+                this._appUIService.showSnackbar(this.getMessageWithToNumber(this.translocoService.translate('widgets.composeMessage.sendMsgFailed')), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar(`Message send error to ${this.toNumber}`, 'failure');
+            this._appUIService.showSnackbar(this.getMessageWithToNumber(this.translocoService.translate('widgets.composeMessage.sendMsgError')), 'failure');
         }
         this.loading = false;
     }
@@ -287,6 +290,10 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
             return false;
         }
         return true;
+    }
+
+    getMessageWithToNumber(msg) {
+        return msg?.replace('#toNumber', this.toNumber);
     }
 }
 

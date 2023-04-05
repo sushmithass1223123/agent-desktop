@@ -48,6 +48,7 @@ img {
 
 .custom-scroll {
     overflow: auto;
+
     &-adjust {
         overflow: auto;
     }
@@ -75,6 +76,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
     height: 20px;
     opacity: 0.8;
 }
+
 
 // .k-chart {
 //     background: transparent !important;

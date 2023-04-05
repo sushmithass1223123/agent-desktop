@@ -31,7 +31,7 @@
                 <mat-icon>grading</mat-icon>
                 <div>{{ displayData.intent }}</div>
             </div>
-            <div fxLayout="row" fxLayoutAlign=" center">
+            <div *transloco="let locale" fxLayout="row" fxLayoutAlign=" center">
                 <button
                     *ngIf="closeInteractionAllowed"
                     mat-raised-button
@@ -39,9 +39,9 @@
                     color="warn"
                     #closeBtn
                     (click)="confirmCloseInteraction(closeBtn)"
-                    matTooltip="Close Interaction"
+                    [matTooltip]="locale('interactionComponent.closeInteraction')"
                 >
-                    Close
+                    {{ locale('interactionComponent.close') }}
                 </button>
             </div>
         </div>

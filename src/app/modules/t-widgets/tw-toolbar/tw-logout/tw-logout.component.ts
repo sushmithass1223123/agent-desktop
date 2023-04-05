@@ -7,7 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Logout button component
  */
@@ -43,7 +43,8 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
-        private _activatedRouter: ActivatedRoute
+        private _activatedRouter: ActivatedRoute,
+        private translocoService: TranslocoService
     ) {
         super('TwLogoutComponent');
         this.logoutAux = [];
@@ -140,7 +141,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     logout(): void {
         //
         if (!this.data.Data.AllowLogoutOnOpenInteractions && SDKClient.getInteractions().length) {
-            this._appUIService.showSnackbar('Please complete the interaction before logging out!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.openInteractionWarningMsg'), 'failure');
             return;
         }
 
@@ -149,7 +150,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // logout error
-                this._appUIService.showSnackbar('Please wait, logging out...', 'loading');
+                this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutLoading'), 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 SDKClient.logout(
@@ -163,12 +164,12 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         this._fuseProgressBarService.hide();
                         // check if the logout is success
                         if (dt.response && dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Logged out successfully');
+                            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutSuccess'));
                             // route back to login page
                             this._appDataService.routeToPath([`login${this.agentIdRouteParam ? '/' + this.agentIdRouteParam : ''}`]);
                         } else {
                             // logout error
-                            this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
                         }
 
                         // emit login event
@@ -183,7 +184,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         });
                     })
                     .catch(() => {
-                        this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
                     });
             }
         });

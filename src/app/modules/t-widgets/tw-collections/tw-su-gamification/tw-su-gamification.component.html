@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data" (maximizeEvent)="maximizeEvent($event)">
+<tw-wrapper [data]="data" *transloco="let locale" (maximizeEvent)="maximizeEvent($event)">
     <!-- your code goes here -->
 
     <div *ngIf="gamificationReqStatus.error" fxLayout fxLayoutAlign="center center" class="w-100-p h-100-p text-center">
@@ -26,7 +26,7 @@
             </ng-container>
 
             <ng-container matColumnDef="AgentName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Agent</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ locale('global.agent') }}</mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <div fxLayout fxLayoutAlign="start center" class="p-4">
                         <img [src]="element.ProfilePic" width="40" style="border-radius: 50%" />
@@ -36,12 +36,12 @@
             </ng-container>
 
             <ng-container matColumnDef="TeamName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Team</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ locale('widgets.gamification.team') }}</mat-header-cell>
                 <mat-cell *matCellDef="let element">{{ element.TeamName }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="TotalBadges">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Badges</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ locale('widgets.gamification.badges') }}</mat-header-cell>
                 <mat-cell class="w-40-p" mat-cell *matCellDef="let element">
                     <div fxLayout="row wrap">
                         <img
@@ -60,7 +60,7 @@
                             class="ml-4"
                             mat-ripple
                         >
-                            + {{ element.TotalBadges.length - 10 }} more
+                            + {{ element.TotalBadges.length - 10 }} {{ locale('widgets.gamification.more') }}
                         </span>
                         <mat-menu backdropClass="badges-menu" #badgesMenu class="custom-scroll-adjust">
                             <div fxLayout="row wrap" flexLayoutAlign="space-evenly" class="p-4">
@@ -77,7 +77,7 @@
             </ng-container>
 
             <ng-container matColumnDef="TotalPoints">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Points</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ locale('widgets.gamification.points') }}</mat-header-cell>
                 <mat-cell *matCellDef="let element">{{ element.TotalPoints }}</mat-cell>
             </ng-container>
 

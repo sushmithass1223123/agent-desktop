@@ -7,6 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { TwWidgetModel } from 'app/models';
 import { EmailService } from '../email.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector: 'email-template-selector',
@@ -56,7 +57,8 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
         private ref: ChangeDetectorRef,
         private aotService: AOTWidgetService,
         private matDialog: MatDialog,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private translocoService: TranslocoService
     ) {}
 
     /**
@@ -72,7 +74,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             })
             .catch((err) => {
                 console.error(err);
-                this.appUiService.showSnackbar('Unable to fetch departments', 'failure');
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.emailTemplateSelector.getDepartmentsFailed'), 'failure');
             })
             .finally(() => {
                 this.loading = false;
@@ -102,7 +104,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 })
                 .catch((err) => {
                     console.error(err);
-                    this.appUiService.showSnackbar('Unable to fetch groups', 'failure');
+                    this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.emailTemplateSelector.getGroupsFailed'), 'failure');
                 })
                 .finally(() => {
                     this.loading = false;
@@ -128,7 +130,7 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
                 })
                 .catch((err) => {
                     console.error(err);
-                    this.appUiService.showSnackbar('Unable to fetch templates', 'failure');
+                    this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.emailTemplateSelector.getTemplatesFailed'), 'failure');
                 })
                 .finally(() => {
                     this.loading = false;
