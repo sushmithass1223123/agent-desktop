@@ -610,6 +610,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         });
 
+        //observe ui control events from custom widgets
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            try {
+            if(data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
+                this.handleUIControls(data);
+            }  } catch(e) {
+                console.log('Error occured on UIControl event received');
+            }
+        });
+
         this.agentFeatures = {
             audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
             videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
@@ -618,7 +628,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
             attachments: this.widgetData.AttachmentAllowed ?? false,
             emoji: this.widgetData.EmojiAllowed ?? false,
-            chatReply: this.widgetData.ReplyOnChatAllowed ?? false,
+            chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
             conference: this.widgetData.Conference?.Allowed ?? false,
             transfer: this.widgetData.Transfer?.Allowed ?? false,
             chatTemplate: this.widgetData.ChatTemplate?.Allowed ?? false,
@@ -813,7 +823,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this.agentFeatures.emoji = f.IsEnabled;
                     break;
                 case AGENT_FEATURES.IsReplyOnChatEnabled:
-                    this.agentFeatures.chatReply = f.IsEnabled;
+                    this.agentFeatures.chatReply = f.IsEnabled && this.canReplyToChat();
                     break;
                 case AGENT_FEATURES.IsChatConferenceEnabled:
                     this.agentFeatures.conference = f.IsEnabled;
@@ -1130,7 +1140,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To send reply to customer message
      * @param template Message template
      */
-    private sendMessage(template: any): void {
+    private sendMessage(template: any, isAutomated?): void {
         // get the typed message
         const inputMessage = template?.Text || this.replyForm.form.value.message;
         const messageId = `a_${TUtils.Generic.uuid()}`;
@@ -1211,8 +1221,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // send done typing
         this.doneTyping();
 
-        // Reset the reply form
-        this.replyForm?.reset();
+        if(!isAutomated) {
+            // Reset the reply form
+            this.replyForm?.reset();
+        }
 
         // set ready to reply
         this.readyToReply();
@@ -1690,6 +1702,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.channel = evt.Channel.toLowerCase() || 'textchat';
         // check social media
         this.isSMM = evt.IsSMM || false;
+
+        this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
+
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
@@ -1917,7 +1932,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sendMessage({
             Text: evt.AutoResponseTemplate,
             ID: evt.AutoResponseTemplateId
-        });
+        },true);
 
         // if this is the final auto response then disconnect the chat
         if (evt.IsFinal) {
@@ -2188,6 +2203,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.ConferenceType !== 'silent') {
             switch (evt.Reason.toLowerCase()) {
                 case 'remoteendclosed':
+                case 'logout':
                     alertMessage = 'Interaction disconnected by customer';
                     break;
                 case 'agentchatdisconnected':
@@ -2207,6 +2223,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
                 case 'supervisortakeover':
                     alertMessage = 'Interaction disconnected by supervisor - Supervisor Takeover';
+                    break;
+                default: alertMessage = 'Interaction disconnected';
                     break;
             }
         }
@@ -2266,7 +2284,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         // send the selected template
-        this.sendMessage({ ...evt.Data.Template, Type: '' });
+        this.sendMessage({ ...evt.Data.Template, Type: '' },true);
     }
 
     /**
@@ -2390,7 +2408,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         return i === 0 || (this.chatTranscripts[i - 1] && this.chatTranscripts[i - 1].who !== message.who);
     }
 
-    /**
+    public canReplyToChat(): boolean {
+       return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
+    }
+
+    /** 
      * Check if the given message is the last message of a group
      *
      * @param message
@@ -3095,9 +3117,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 widget.Config.Anchor = true;
                 widget.Config.Position.W = 800;
                 widget.Config.Position.H = 550;
+                widget.InteractionDetails = {
+                    InteractionID: this.interaction.InteractionID
+                };
                 widget.Data = {
                     AutoOpen: false,
-                    Url: agentWhiteboardUrl.toString()
+                    Url: agentWhiteboardUrl.toString(),
+                    NotifyTypeOnClose: 'closeWhiteboard'
                 };
                 this._aotWidgetService.addWidget(widget);
                 snackRef.dismiss();
@@ -3280,6 +3306,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.previewMediaDialogData.otherData.scale += 0.25;
         } else {
             this.previewMediaDialogData.otherData.scale -= 0.25;
+        }
+    }
+
+    /**
+     * Method to manipulate chat controls based on the custom events
+     * @param data 
+     */
+    handleUIControls(data) {
+        if(data.eventName === 'disableCloseInteraction') {
+            this.closeButton.disabled = true;
+        }
+        if(data.eventName === 'enableCloseInteraction') {
+            this.closeButton.disabled = false;
         }
     }
 }

@@ -1,5 +1,5 @@
 import { TwGenericControls } from '@ad/types';
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -8,6 +8,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { InteractionRef } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -63,12 +64,15 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         widget$: this._fuseFacadeService.widgetBgClasses$
     };
 
+    @ViewChild('closeBtn') closeButton: MatButton;
+
     constructor(
         private _appUIService: AppUiService,
         private _interactionManagerService: InteractionManagerService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _contentPageService: ContentPageService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private _tmacEventService: TMACEventService,
     ) {
         super('TwGenericControlsComponent');
     }
@@ -99,6 +103,17 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'generic');
+        });
+
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            try{
+                if(data && data.interactionID?.toString() === this.interactionId.toString()) {
+                    this.handleUIControls(data);
+                }
+            } catch(e) {
+                console.log('Error occured on UIControl event received');
+            }
+             
         });
     }
 
@@ -207,5 +222,18 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true
         });
+    }
+
+    /**
+     * Method to manipulate interaction controls based on the custom events
+     * @param data 
+     */
+     handleUIControls(data) {
+        if(data.eventName === 'disableCloseInteraction') {
+            this.closeButton.disabled = true;
+        }
+        if(data.eventName === 'enableCloseInteraction') {
+            this.closeButton.disabled = false;
+        }
     }
 }

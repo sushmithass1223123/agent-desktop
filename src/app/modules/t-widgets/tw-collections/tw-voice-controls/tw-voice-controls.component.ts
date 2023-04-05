@@ -312,6 +312,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     callConnected: boolean;
 
+    /**
+     * counter for failed scenarios for answer / disconnect call 
+     */
+    failedCounter = 0;
+    @ViewChild('closeBtn') closeButton: MatButton;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -355,6 +361,17 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
             this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'voice');
+        });
+
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            try{
+                if(data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
+                    this.handleUIControls(data);
+                }
+            } catch(e) {
+                console.log('Error occured on UIControl event received');
+            }
+             
         });
 
         this.interaction = this.data.InteractionDetails;
@@ -733,11 +750,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 } else {
                     this.toggleButton(false, btn);
                     this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                    this.handleCallFailure('Disconnect call');
                 }
             })
             .catch(() => {
                 this._appUIService.showSnackbar('Disconnect call failed', 'failure');
                 this.toggleButton(false, btn);
+                this.handleCallFailure('Disconnect call');
             });
     }
 
@@ -1408,7 +1427,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // answer call success
             } else {
                 this._appUIService.showSnackbar('Answer call failed', 'failure');
+                this.handleCallFailure('Answer call');
             }
+        })
+        .catch(() => {
+            this._appUIService.showSnackbar('Answer call failed', 'failure');
+            this.handleCallFailure('Answer call');
         });
     }
 
@@ -2023,5 +2047,28 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         };
 
         dialogRef.componentInstance.data = widget;
+    }
+
+    /**
+     * Method to manipulate interaction controls based on the custom events
+     * @param data 
+     */
+     handleUIControls(data) {
+        if(data.eventName === 'disableCloseInteraction') {
+            this.closeButton.disabled = true;
+        }
+        if(data.eventName === 'enableCloseInteraction') {
+            this.closeButton.disabled = false;
+        }
+    }
+
+    handleCallFailure(operation) {
+        this.failedCounter++;
+        if(this.failedCounter >= 3) {
+            this.handleUIControls({
+                eventName: 'enableCloseInteraction'
+            });
+            this.logger.debug(`Enabling force close as ${operation} failed more than 3 times`);
+        }
     }
 }

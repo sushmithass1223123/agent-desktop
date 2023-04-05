@@ -31,7 +31,7 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AV_ERRORS } from 'app/constants';
+import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
 import { SnackbarStateTypes } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -273,6 +273,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         audio: [],
         video: []
     };
+
+    confirmDialogRef;
 
     /**
      * Constructor
@@ -616,17 +618,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     };
 
                     // config incoming call
-                    const confirmDialogRef = this._appUIService.showCustomDialog(
+                    this.confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
                         `${param} call requested by ${this.interactionDetails.CustomerName}, Do you want to accept it?`,
                         '',
                         null,
                         {
-                            disableClose: false
+                            disableClose: true
                         }
                     );
-
-                    confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
+                    this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
 
                     break;
                 case 'onTrace':
@@ -640,12 +641,17 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.status = `Error : ${error}`;
                     this._appUIService.showSnackbar(error, 'failure');
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
+
+                    if(evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {
+                        return;
+                    }
                     this.endCall(true, 'Something went wrong');
                     // close the widget
                     this.destroyWidget();
                     break;
                 case 'onAVStats':
                     this.status = evt.data;
+                    this.sendAVStatusToServer();
                     break;
                 case 'onConnected':
                     this.connected = true;
@@ -716,11 +722,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // show the error
                     this.connected = false;
                     this.status = 'failed';
-                    if (evt.data.code === TEnums.WrcCodes.Rejected) {
+                    if (evt.data.code === 'CALL_REJECTED') {
                         this._appUIService.showSnackbar('User has rejected your request', 'failure');
+                    } else if (evt.data.code === 'CALL_NOT_ANSWERED') {
+                        this._appUIService.showSnackbar('Call was not answered by the Customer', 'failure');
                     } else {
                         this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
                     }
+                    this.confirmDialogRef?.close();
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -796,6 +805,26 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.logger.error('Error in onAVEvent', error);
         }
     };
+
+    /**
+     * To send av status to the server for logging & reporting purpose 
+     */
+
+    sendAVStatusToServer() {
+        try{
+            const requestArgs = {
+                interactionId : this.interactionId.toString(),
+                type : 'avcallstatus',
+                message: JSON.stringify({
+                    param: this.status,
+                    callType: this.callType,
+                })
+            };
+            SDKClient.sendAVControlMessage(requestArgs);
+        } catch(e) {
+            this.logger.error('Error occured on sending AV status to server', e, true);
+        }
+    }
 
     /**
      * To handles custom DisconnectAVEvent
