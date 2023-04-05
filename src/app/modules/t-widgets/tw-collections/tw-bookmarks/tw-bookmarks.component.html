@@ -357,7 +357,7 @@
     </div>
 </tw-wrapper>
 
-<ng-template #addBookmarkDataDialog class="custom">
+<ng-template #addBookmarkDataDialog *transloco="let locale" class="custom">
     <div *ngIf="addBookmarkData" class="twd-w-full twd-h-full">
         <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
             <p class="mat-title m-0">{{ addBookmarkData.title }}</p>
