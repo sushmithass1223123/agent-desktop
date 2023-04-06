@@ -71,7 +71,11 @@
                 </mat-card-header>
                 <mat-divider></mat-divider>
                 <mat-card-content class="my-12 h-48">
-                    <p [innerHTML]="locale('loginComponent.configErrorInfo')"></p>
+                    <p
+                        [innerHTML]="
+                            configError.section === 'main' ? locale('loginComponent.mainConfigErrorInfo') : locale('loginComponent.configErrorInfo')
+                        "
+                    ></p>
                 </mat-card-content>
                 <mat-card-actions fxLayout fxLayoutAlign="end ">
                     <button mat-raised-button class="border-radius-30" color="primary" (click)="retryLoadConfig()" [disabled]="configError.retrying">

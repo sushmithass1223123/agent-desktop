@@ -193,6 +193,10 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
          * Agent id from route param to get config if any
          */
         agentId?: string;
+        /**
+         * Reason can be 'main' | 'login'
+         */
+        section?:string;
     };
     /**
      * Lan Id input children ref
@@ -962,6 +966,15 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                             this._appDataService.config = JSON.parse(response.OtherData.ItemTwo);
                             this.logger.debug('App config updated!', false);
                         } else {
+                            if(this.appConfig?.ConfigMode === 'remote' && (!(response.OtherData.ItemTwo) ||  response.OtherData.ItemTwo == '')) {
+                                this.configError = {
+                                    errored: true,
+                                    retrying: false,
+                                    section: 'main'
+                                };
+                                this.logger.debug('Error occured in getting main content configuration!', false);
+                                return;
+                            }
                             this.logger.debug('Using developement/login config only!', false);
                         }
                         // get the agent ID
