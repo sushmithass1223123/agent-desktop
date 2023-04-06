@@ -25,7 +25,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
         this.errorHandler(labelError);
         return;
       }
-      return this.http.get<Translation>(`/assets/i18n/${lang}.json`).pipe(catchError(this.errorHandler));
+      return this.http.get<Translation>(`assets/i18n/${lang}.json`).pipe(catchError(this.errorHandler));
     }  catch(e) {
       console.log('Error occured while fetching file in getTranslation', e);
     }
