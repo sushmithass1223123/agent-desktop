@@ -9,6 +9,7 @@
         "retryNow": "RETRY NOW",
         "configError": "Config Error",
         "configErrorInfo": "Unable to load the config for login.<br />Please contact the administrator.",
+        "mainConfigErrorInfo": "Content configurations not available!! <br>Please contact the administrator.",
         "otpRequired": "OTP is required",
         "domainNameNone": "None",
         "domainNameRequired": "Domain Name is required",
