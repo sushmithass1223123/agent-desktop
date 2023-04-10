@@ -419,7 +419,7 @@
                     mat-raised-button
                     color="primary"
                     [matTooltip]="locale('global.save')"
-                    [disabled]="addBookmarkData.name === '' || addBookmarkData.data === ''"
+                    [disabled]="addBookmarkData.name?.trim() === '' || addBookmarkData.data?.trim() === ''"
                     (click)="addBookmarkData.source === 'add' ? saveBookmark() : updateBookmark()"
                     mat-dialog-close
                 >
