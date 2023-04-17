@@ -659,7 +659,7 @@
     </tw-wrapper>
 
     <ng-template #previewMediaDialog>
-        <div class="twd-flex twd-justify-between twd-items-center twd-h-16">
+        <div *transloco="let locale" class="twd-flex twd-justify-between twd-items-center twd-h-16">
             <div class="twd-flex twd-flex-col twd-gap-1">
                 <span class="twd-font-bold">{{ previewMediaDialogData?.user }}</span>
                 <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
@@ -720,7 +720,7 @@
             </div>
         </div>
 
-        <div mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
+        <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
             <drag-scroll scrollbar-hidden>
                 <div
                     class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
