@@ -99,7 +99,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
                 this.departments = result.response.filter((d) => d.Channel.toLowerCase().includes('chat'));
             })
             .catch((err) => {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.cannedResponse.getChatTemplatesError'), 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.cannedResponses.getChatTemplatesError'), 'failure');
                 this.logger.error('Error in fetching chat templates', err, false);
             })
             .finally(() => {
