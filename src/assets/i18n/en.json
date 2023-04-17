@@ -418,7 +418,9 @@
             "edit": "Edit",
             "preview": "Preview",
             "uploadFileFailed": "Failed to upload file",
-            "msURLNotFound": "File upload failed, URL [MediaStreamer] not found, Please contact the administrator"
+            "msURLNotFound": "File upload failed, URL [MediaStreamer] not found, Please contact the administrator",
+            "send": "Send",
+            "close": "Close"
         },
         "chatControls": {
             "rotate": "Rotate",

@@ -16,7 +16,7 @@
 >
     <div *transloco="let locale" fxLayout="row" fxLayoutAlign="space-between none" class="preview-header mat-elevation-z1 pl-16 pr-8 py-4">
         <div fxLayout fxLayoutAlign="center center">
-            <button mat-icon-button (click)="closeAttachments.emit()">
+            <button [matTooltip]="locale('widgets.chatAttachments.close')" mat-icon-button (click)="closeAttachments.emit()">
                 <mat-icon> close </mat-icon>
             </button>
             <div fxLayout fxLayoutAlign="center center" class="mat-title m-0 ml-4">
@@ -52,7 +52,12 @@
                 <mat-icon> edit </mat-icon>
             </button>
 
-            <button *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'" mat-icon-button (click)="send()">
+            <button
+                [matTooltip]="locale('widgets.chatAttachments.send')"
+                *ngIf="attachPreviewMode === 'preview' || attachPreviewMode === 'previewCapture'"
+                mat-icon-button
+                (click)="send()"
+            >
                 <mat-icon> send </mat-icon>
             </button>
         </div>
