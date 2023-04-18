@@ -174,7 +174,12 @@
             "pushChatLoading": "Pushing Chat",
             "pushChatSuccess": "Chat Pushed successfuly",
             "pushChatFailed": "Unable to push chat",
-            "pushChatError": "Chat Push failed"
+            "pushChatError": "Chat Push failed",
+            "emailId": "Email ID",
+            "subject": "Subject",
+            "content": "Content",
+            "assignedTo": "Assigned To (by agentID)",
+            "sessionId": "Session Id"
         },
         "workcodes": {
             "searchWorkcodes": "Search Workcodes...",
