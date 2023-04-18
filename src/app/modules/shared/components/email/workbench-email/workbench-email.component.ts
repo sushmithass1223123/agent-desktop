@@ -687,7 +687,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     hasAttachments: 2,
                     replied: 2,
                     closed: 2,
-                    assigned: 2
+                    assigned: 2,
+                    startDate: searchFields.startDate,
+                    endDate: searchFields.endDate,
+                    skills: []
                 };
                 requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
             }
