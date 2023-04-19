@@ -127,7 +127,7 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
             taskDataControl.setValue('');
             taskTypeControl.setValidators(Validators.nullValidator);
             taskDataControl.setValidators(Validators.nullValidator);
-            titleControl.setValidators([Validators.required]);
+            titleControl.setValidators([Validators.required, this.noWhitespaceValidator]);
         }
         titleControl.updateValueAndValidity();
         taskTypeControl.updateValueAndValidity();
@@ -197,5 +197,14 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
         });
 
         return formGroup;
+    }
+
+    /**
+     * Custom validation function to prevent white spaces in title field
+     */
+    noWhitespaceValidator(control: FormControl) {
+        const isWhitespace = (control.value || '').trim().length === 0;
+        const isValid = !isWhitespace;
+        return isValid ? null : { 'whitespace': true };
     }
 }
