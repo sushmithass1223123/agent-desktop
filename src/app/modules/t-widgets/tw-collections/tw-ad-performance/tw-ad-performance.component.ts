@@ -7,6 +7,7 @@ import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SDKClient } from '@tmac/sdk';
 import { TwPerformance } from '@ad/types';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Performance chart data
@@ -54,7 +55,8 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
      * Constructor
      * @param {HttpClient} _http
      */
-    constructor(private _http: HttpClient) {
+    constructor(private _http: HttpClient,
+        private translocoService: TranslocoService) {
         super('TwAdPerformanceComponent');
     }
 
@@ -104,7 +106,7 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
      */
     setChartData = (): void => {
         if (!this.data.Data.AgentProgressUrl) {
-            this.gamificationReqStatus = { loading: false, error: true, msg: 'AgentProgressUrl is not provided in app config' };
+            this.gamificationReqStatus = { loading: false, error: true, msg: this.translocoService.translate('widgets.adPerformance.agentProgressUrlNotFound') };
             return;
         }
 
@@ -136,12 +138,12 @@ export class TwAdPerformanceComponent extends TWidgetWrapper implements OnInit, 
                         });
                     } catch (e) {
                         console.error(e);
-                        this.gamificationReqStatus = { loading: false, error: true, msg: 'Looks like something went wrong' };
+                        this.gamificationReqStatus = { loading: false, error: true, msg: this.translocoService.translate('global.commonErrorMessage')};
                     }
                 },
                 (err) => {
                     console.error(err);
-                    this.gamificationReqStatus = { loading: false, error: true, msg: 'Something went wrong while fetching progress' };
+                    this.gamificationReqStatus = { loading: false, error: true, msg: this.translocoService.translate('widgets.adPerformance.getProgressFailed') };
                 }
             );
     };

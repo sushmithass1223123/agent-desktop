@@ -6,6 +6,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
 import * as moment from 'moment';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Pending Callbacks widget
@@ -67,7 +68,8 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
      * @param {http} HttpClient
      * @param {appUiService} AppUiService
      */
-    constructor(private http: HttpClient, private appUiService: AppUiService) {
+    constructor(private http: HttpClient, private appUiService: AppUiService,
+        private translocoService: TranslocoService) {
         super('TwPendingCallbacksComponent');
         this.pendingCallbacksTable = {
             source: new MatTableDataSource([]),
@@ -91,7 +93,7 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
         const url = this.dataConfig.TCMProxyUrl;
 
         if (!url) {
-            this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Missing TCMProxy in config', data: false };
+            this.getPendingCallbacksReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.registerCallback.tcmProxyUrlNotFound'), data: false };
             return;
         }
 
@@ -130,12 +132,12 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                 },
                 error: (err) => {
                     console.error({ err });
-                    this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Unable to fetch pending callbacks', data: false };
+                    this.getPendingCallbacksReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.fetchPendingCallbacksFailed'), data: false };
                 }
             });
         } catch (err) {
             console.error({ err });
-            this.getPendingCallbacksReq = { loading: false, error: true, msg: 'Unable to fetch pending callbacks', data: false };
+            this.getPendingCallbacksReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.fetchPendingCallbacksFailed'), data: false };
         }
     }
 
@@ -167,14 +169,14 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                     },
                     error: (err) => {
                         console.error({ err });
-                        this.changeContactStatusReq = { loading: false, error: true, msg: 'Unable to close callback' };
-                        this.appUiService.showSnackbar('Unable to close callback', 'failure');
+                        this.changeContactStatusReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.closeCallbacksFailed') };
+                        this.appUiService.showSnackbar(this.translocoService.translate('widgets.pendingCallback.closeCallbacksFailed') , 'failure');
                     }
                 });
         } catch (err) {
             console.error({ err });
-            this.changeContactStatusReq = { loading: false, error: true, msg: 'Unable to close callback' };
-            this.appUiService.showSnackbar('Unable to close callback', 'failure');
+            this.changeContactStatusReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.closeCallbacksFailed')  };
+            this.appUiService.showSnackbar(this.translocoService.translate('widgets.pendingCallback.closeCallbacksFailed') , 'failure');
         }
     }
 }

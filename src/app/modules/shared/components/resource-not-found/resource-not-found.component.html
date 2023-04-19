@@ -1,13 +1,15 @@
-<div class="not-found animate__animated animate__fadeIn">
+<div *transloco="let locale" class="not-found animate__animated animate__fadeIn">
     <img src="assets/images/logos/tetherfi.png" class="logo" width="180" />
     <div class="content">
         <img src="assets/images/vectors/not-found.svg" />
         <div class="desc">
-            <div class="subtitle">{{ subtitle || 'Oops!' }}</div>
-            <div class="title">{{ title || '404' }}</div>
-            <div class="description">{{ description || 'PAGE NOT FOUND' }}</div>
-            <button *ngIf="login" mat-raised-button color="primary" class="mt-12" (click)="routeBack()">Go to login page</button>
-            <button *ngIf="route" mat-raised-button color="primary" class="mt-12" (click)="routeBack()">Retry</button>
+            <div class="subtitle">{{ subtitle || locale('sharedComponents.resourceNotFound.subtitle') }}</div>
+            <div class="title">{{ title || locale('sharedComponents.resourceNotFound.title') }}</div>
+            <div class="description">{{ description || locale('sharedComponents.resourceNotFound.pageNotFound') }}</div>
+            <button *ngIf="login" mat-raised-button color="primary" class="mt-12" (click)="routeBack()">
+                {{ locale('sharedComponents.resourceNotFound.loginRedirectMsg') }}
+            </button>
+            <button *ngIf="route" mat-raised-button color="primary" class="mt-12" (click)="routeBack()">{{ locale('global.retry') }}</button>
         </div>
     </div>
 </div>

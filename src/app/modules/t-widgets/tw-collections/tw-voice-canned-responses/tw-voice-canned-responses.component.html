@@ -3,7 +3,7 @@
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <div class="px-8 twd-h-full twd-flex twd-flex-col twd-overflow-y-auto" *ngIf="voiceTemplates | keyvalue as templateList">
         <mat-list *ngFor="let group of templateList" class="position-relative w-100-p">
             <div mat-subheader class="py-0 h-32">{{ group.key }}</div>
@@ -20,7 +20,7 @@
                         *ngIf="audioPlayer._adpState === 'paused'"
                         mat-icon-button
                         class="!twd-mr-1 bg-success custom-btn"
-                        matTooltip="Play"
+                        [matTooltip]="locale('interactionComponent.play')"
                         (click)="voiceControlsService.playerAction(1)"
                     >
                         <mat-icon>play_circle_outline</mat-icon>
@@ -29,23 +29,30 @@
                         *ngIf="audioPlayer._adpState === 'playing'"
                         mat-icon-button
                         class="!twd-mr-1 bg-warning custom-btn"
-                        matTooltip="Pause"
+                        [matTooltip]="locale('interactionComponent.pause')"
                         (click)="voiceControlsService.playerAction(2)"
                     >
                         <mat-icon>pause_circle_outline</mat-icon>
                     </button>
-                    <button mat-icon-button class="bg-danger custom-btn" matTooltip="Stop" (click)="voiceControlsService.playerAction(3)">
+                    <button
+                        mat-icon-button
+                        class="bg-danger custom-btn"
+                        [matTooltip]="locale('interactionComponent.stop')"
+                        (click)="voiceControlsService.playerAction(3)"
+                    >
                         <mat-icon>stop</mat-icon>
                     </button>
                 </div>
                 <ng-template #initButton>
-                    <button mat-flat-button mat-icon-button class="" matTooltip="Play" (click)="sendItem(template)">
+                    <button mat-flat-button mat-icon-button class="" [matTooltip]="locale('interactionComponent.play')" (click)="sendItem(template)">
                         <mat-icon>play_circle_outline</mat-icon>
                     </button>
                 </ng-template>
             </mat-list-item>
             <!-- <mat-divider></mat-divider> -->
         </mat-list>
-        <p *ngIf="!templateList.length" fxLayout fxLayoutAlign="center center" class="text-center m-0 mat-title h-100-p">No data available</p>
+        <p *ngIf="!templateList.length" fxLayout fxLayoutAlign="center center" class="text-center m-0 mat-title h-100-p">
+            {{ locale('contentComponent.noDataAvailable') }}
+        </p>
     </div>
 </tw-wrapper>

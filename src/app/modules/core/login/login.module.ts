@@ -7,7 +7,8 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import { SharedModule } from '@modules/shared/shared.module';
 import { MsTeamsOAuthSettings } from 'app/constants';
 import { LoginComponent } from './login.component';
-
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../../transloco-root.module';
 let msalInstance: IPublicClientApplication | undefined;
 
 /**
@@ -41,8 +42,12 @@ function MSALInstanceFactory(): IPublicClientApplication {
             provide: MSAL_INSTANCE,
             useFactory: MSALInstanceFactory
         },
-        MsalService
+        MsalService,
+        {
+            provide: TRANSLOCO_SCOPE,
+            useValue: 'default'
+        }
     ],
-    imports: [FuseProgressBarModule, FuseSharedModule, FuseSidebarModule, CommonModule, SharedModule, MsalModule]
+    imports: [FuseProgressBarModule, FuseSharedModule, FuseSidebarModule, CommonModule, SharedModule, MsalModule,TranslocoRootModule]
 })
 export class LoginModule {}

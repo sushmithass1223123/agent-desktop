@@ -11,12 +11,9 @@
         (floatEvent)="floatEvent.emit($event)"
     >
         <div class="twd-w-full twd-h-full twd-flex twd-flex-col voice-controls">
-            <div class="twd-flex twd-flex-full twd-flex-row twd-h-9/12">
+            <div *transloco="let locale" class="twd-flex twd-flex-full twd-flex-row twd-h-9/12">
                 <div
-                    class="
-                        twd-flex twd-flex-col twd-items-center twd-w-[64px] twd-overscroll-y-auto twd-overflow-x-hidden twd-h-full twd-py-2 twd-mt-2
-                        interactions
-                    "
+                    class="twd-flex twd-flex-col twd-items-center twd-w-[64px] twd-overscroll-y-auto twd-overflow-x-hidden twd-h-full twd-py-2 twd-mt-2 interactions"
                 >
                     <avatar
                         *ngFor="let item of interactionList"
@@ -81,7 +78,7 @@
                                     *ngIf="audioPlayer._adpState === 'paused'"
                                     mat-icon-button
                                     class="!twd-mr-1 bg-success custom-btn"
-                                    matTooltip="Play"
+                                    [matTooltip]="locale('interactionComponent.play')"
                                     (click)="voiceControlsService.playerAction(1)"
                                 >
                                     <mat-icon>play_circle_outline</mat-icon>
@@ -90,7 +87,7 @@
                                     *ngIf="audioPlayer._adpState === 'playing'"
                                     mat-icon-button
                                     class="!twd-mr-1 bg-warning custom-btn"
-                                    matTooltip="Pause"
+                                    [matTooltip]="locale('interactionComponent.pause')"
                                     (click)="voiceControlsService.playerAction(2)"
                                 >
                                     <mat-icon>pause_circle_outline</mat-icon>
@@ -98,12 +95,14 @@
                                 <button
                                     mat-icon-button
                                     class="!twd-mr-1 bg-danger custom-btn"
-                                    matTooltip="Stop"
+                                    [matTooltip]="locale('interactionComponent.stop')"
                                     (click)="voiceControlsService.playerAction(3)"
                                 >
                                     <mat-icon>stop</mat-icon>
                                 </button>
-                                <marquee direction="left">Currently playing '{{ audioPlayer.fileName }}'</marquee>
+                                <marquee direction="left"
+                                    >{{ locale('widgets.voiceControls.currentlyPlaying') }} '{{ audioPlayer.fileName }}'</marquee
+                                >
                             </div>
                         </ng-container>
                     </div>
@@ -112,7 +111,9 @@
                         *ngIf="!voiceControlsService.cannedAudioPlayer && widgetData.IVR?.MenuEnabled"
                         class="twd-flex twd-flex-row twd-flex-full px-12 border-radius-30 position-relative ivr-history"
                     >
-                        <div class="ivr-label">{{ direction === 'Out' ? 'Call Flow' : 'IVR History' }}</div>
+                        <div class="ivr-label">
+                            {{ direction === 'Out' ? locale('widgets.voiceControls.callFlow') : locale('widgets.voiceControls.ivrHistory') }}
+                        </div>
                         <!-- <ul class="breadcrumbs">
                             <li>
                                 <span>{{ last4IVR[0] || 'NA' }}</span>
@@ -134,37 +135,10 @@
                                 *ngFor="let menu of last4IVR; let i = index"
                             >
                                 <div
-                                    class="
-                                        timeline-bar
-                                        twd-relative twd-h-[16px] twd-mb-4 twd-text-center
-                                        after:twd-absolute
-                                        after:twd-left-0
-                                        after:twd-bottom-0
-                                        after:twd-w-0
-                                        after:twd-h-0
-                                        after:twd-border-solid
-                                        after:twd-border-t-8
-                                        after:twd-border-b-8
-                                        after:twd-border-l-[9px]
-                                        after:twd-border-transparent
-                                        before:twd-absolute
-                                        before:twd-right-[-9px]
-                                        before:twd-bottom-0
-                                        before:twd-w-0
-                                        before:twd-h-0
-                                        before:twd-border-solid
-                                        before:twd-border-t-8
-                                        before:twd-border-b-8
-                                        before:twd-border-l-[9px]
-                                        before:twd-border-transparent
-                                    "
+                                    class="timeline-bar twd-relative twd-h-[16px] twd-mb-4 twd-text-center after:twd-absolute after:twd-left-0 after:twd-bottom-0 after:twd-w-0 after:twd-h-0 after:twd-border-solid after:twd-border-t-8 after:twd-border-b-8 after:twd-border-l-[9px] after:twd-border-transparent before:twd-absolute before:twd-right-[-9px] before:twd-bottom-0 before:twd-w-0 before:twd-h-0 before:twd-border-solid before:twd-border-t-8 before:twd-border-b-8 before:twd-border-l-[9px] before:twd-border-transparent"
                                 >
                                     <div
-                                        class="
-                                            timeline-info-connect-line
-                                            twd-w-2 twd-h-2 twd-bg-white twd-inline-block twd-absolute twd-top-1 twd-rounded-full
-                                            after:twd-w-1 after:twd-h-4 after:twd-absolute after:twd-top-3 after:twd-left-[2px]
-                                        "
+                                        class="timeline-info-connect-line twd-w-2 twd-h-2 twd-bg-white twd-inline-block twd-absolute twd-top-1 twd-rounded-full after:twd-w-1 after:twd-h-4 after:twd-absolute after:twd-top-3 after:twd-left-[2px]"
                                     ></div>
                                 </div>
                                 <div
@@ -185,7 +159,7 @@
                             class="success mat-elevation-z2"
                             [disabled]="status !== 'incoming'"
                             #answerBtn
-                            matTooltip="Answer"
+                            [matTooltip]="locale('widgets.voiceControls.answer')"
                             (click)="answerCall(answerBtn)"
                         >
                             <mat-icon>call</mat-icon>
@@ -198,7 +172,7 @@
                             class="mat-elevation-z2"
                             [disabled]="status !== 'connected' && status !== 'outgoing'"
                             #disconnectBtn
-                            matTooltip="Disconnect"
+                            [matTooltip]="locale('interactionComponent.disconnect')"
                             (click)="confirmDisconnectCall(disconnectBtn)"
                         >
                             <mat-icon>call_end</mat-icon>
@@ -211,7 +185,7 @@
                             class="warning mat-elevation-z2"
                             [disabled]="status !== 'connected' || callLines.length > 1"
                             #holdBtn
-                            matTooltip="Hold"
+                            [matTooltip]="locale('interactionComponent.hold')"
                             (click)="holdCall(holdBtn)"
                         >
                             <mat-icon>phone_paused</mat-icon>
@@ -223,7 +197,7 @@
                             color="default"
                             class="success mat-elevation-z2"
                             #unHoldBtn
-                            matTooltip="Unhold"
+                            [matTooltip]="locale('interactionComponent.unhold')"
                             [disabled]="tempCallRef"
                             (click)="unHoldCall(unHoldBtn)"
                         >
@@ -237,7 +211,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            [matTooltip]="muted ? 'Un Mute' : 'Mute'"
+                            [matTooltip]="muted ? locale('widgets.voiceControls.unmute') : locale('widgets.voiceControls.mute')"
                             (click)="muteUnMuteCall()"
                             [ngClass]="{ 'mat-warn': muted }"
                         >
@@ -251,7 +225,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            matTooltip="Transfer"
+                            [matTooltip]="locale('interactionComopnent.transfer')"
                             (click)="openTransferConferenceDialog('transfer')"
                         >
                             <mat-icon>phone_forwarded</mat-icon>
@@ -264,7 +238,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            matTooltip="Conference"
+                            [matTooltip]="locale('interactionComopnent.conference')"
                             (click)="openTransferConferenceDialog('conference')"
                         >
                             <mat-icon>group</mat-icon>
@@ -277,7 +251,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            matTooltip="IVR Transfer"
+                            [matTooltip]="locale('widgets.voiceControls.ivrTransfer')"
                             [matMenuTriggerFor]="ivrMenu"
                         >
                             <mat-icon>phonelink_ring</mat-icon>
@@ -297,7 +271,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected' || (tempCallRef?.isConsult && tempCallRef?.status !== 'connected')"
-                            matTooltip="Dialpad"
+                            [matTooltip]="locale('widgets.voiceControls.dialpad')"
                             (click)="openDialpad = !openDialpad"
                             cdkOverlayOrigin
                             #dialpadMenu="cdkOverlayOrigin"
@@ -314,11 +288,7 @@
                             >
                                 <div class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col">
                                     <div
-                                        class="
-                                            twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1
-                                            border border-radius-20
-                                            twd-flex twd-flex-row twd-justify-between twd-items-center
-                                        "
+                                        class="twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1 border border-radius-20 twd-flex twd-flex-row twd-justify-between twd-items-center"
                                     >
                                         <div>
                                             {{ dialedNumbers }}
@@ -343,7 +313,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             color="default"
-                            matTooltip="Make Call"
+                            [matTooltip]="locale('interactionComponent.makeCall')"
                             (click)="makeCall()"
                         >
                             <mat-icon>call</mat-icon>
@@ -355,7 +325,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             color="default"
-                            matTooltip="Send SMS"
+                            [matTooltip]="locale('widgets.voiceControls.sendSMS')"
                             (click)="sendSMS()"
                         >
                             <mat-icon>sms</mat-icon>
@@ -369,7 +339,7 @@
                             [ngClass]="
                                 customFuse.anchor?.body + (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
                             "
-                            matTooltip="Interaction Comment"
+                            [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="commentsAdded = false; saveInteractionComments()"
                         >
                             <mat-icon>comment</mat-icon>
@@ -382,9 +352,9 @@
                             color="warn"
                             #closeBtn
                             (click)="confirmCloseInteraction(closeBtn)"
-                            matTooltip="Close Interaction"
+                            [matTooltip]="locale('interactionComponent.closeInteraction')"
                         >
-                            Close
+                            {{ failedCounter >= 3 ? locale('widgets.voiceControls.forceClose') : locale('interactionComponent.close') }}
                         </button>
 
                         <br />
@@ -410,9 +380,9 @@
                             color="primary"
                             #confirmBtn
                             (click)="confirmCallFn(true, confirmBtn)"
-                            matTooltip="Confirm"
+                            [matTooltip]="locale('widgets.voiceControls.confirm')"
                         >
-                            Confirm
+                            {{ locale('widgets.voiceControls.confirm') }}
                         </button>
 
                         <!-- [disabled]="tempCallRef.status !== 'connected'" -->
@@ -423,9 +393,9 @@
                             color="warn"
                             #cancelBtn
                             (click)="confirmCallFn(false, cancelBtn)"
-                            matTooltip="Cancel"
+                            [matTooltip]="locale('interactionComponent.cancel')"
                         >
-                            Cancel
+                            {{ locale('interactionComponent.cancel') }}
                         </button>
                     </div>
                 </divD>
@@ -440,14 +410,14 @@
 
     <ng-template #makeCallDialog>
         <shared-wrapper icon="call" title="Make Call" [loading]="false">
-            <div [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+            <div *transloco="let locale" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                 <form (ngSubmit)="makeCallDialogRef?.close(true)" class="twd-flex twd-items-center twd-gap-2">
                     <mat-form-field class="form-field custom pb-0 with-border twd-pb-0 twd-flex-1 twd-max-w-9/12" appearance="outline">
                         <input
                             class="login-input"
                             matInput
                             required
-                            placeholder="Number"
+                            [placeholder]="locale('widgets.voiceControls.number')"
                             name="number"
                             (keypress)="numberOnly($event)"
                             [(ngModel)]="callerID"
@@ -466,7 +436,9 @@
                         </button>
                     </mat-form-field>
 
-                    <button mat-raised-button color="primary" class="border-radius-20 twd-flex-1 twd-max-w-3/12">Call</button>
+                    <button mat-raised-button color="primary" class="border-radius-20 twd-flex-1 twd-max-w-3/12">
+                        {{ locale('widgets.voiceControls.call') }}
+                    </button>
                 </form>
             </div>
         </shared-wrapper>

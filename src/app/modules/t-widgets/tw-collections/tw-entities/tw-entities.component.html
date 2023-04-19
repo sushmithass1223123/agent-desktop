@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <!-- your code goes here -->
     <div class="p-12 custom-scroll-adjust" fxLayout="row wrap">
         <ng-container *ngIf="entities$ | async as entities">
@@ -19,9 +19,9 @@
                     </div>
                 </div>
             </div>
-            <p *ngIf="!entities.length" class="text-center mat-title w-100-p mt-20">No entities available</p>
+            <p *ngIf="!entities.length" class="text-center mat-title w-100-p mt-20">{{ locale('contentComponent.noDataAvailable') }}</p>
         </ng-container>
-        <p *ngIf="!(entities$ | async)" class="text-center mat-title w-100-p mt-20">No entities available</p>
+        <p *ngIf="!(entities$ | async)" class="text-center mat-title w-100-p mt-20">{{ locale('contentComponent.noDataAvailable') }}</p>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

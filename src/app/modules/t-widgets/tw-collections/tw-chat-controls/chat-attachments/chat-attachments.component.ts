@@ -3,7 +3,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppUiService } from '@services/app-ui.service';
 import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
 import { MediaStreamerResponse } from 'app/interfaces';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Chat attachment module
  */
@@ -86,7 +86,8 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
     }[] = [];
 
 
-    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {}
+    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService,
+        private translocoService: TranslocoService) {}
 
     /**
      * On init
@@ -183,7 +184,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             }
         } catch (e) {
             console.error(e);
-            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
         }
     }
 
@@ -283,7 +284,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 // added new file upload url MediaStreamer
                 // keeping "SMM" for backward compatibility
                 if (!this.fileUploadUrl.SMM && !this.fileUploadUrl.MediaStreamer) {
-                    this._appUIService.showSnackbar('File upload failed, URL [MediaStreamer] not found, Please contact the administrator', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.msURLNotFound'), 'failure');
                     this.attachPreviewMode = '';
                     this.uploadingFiles = [];
                     return;
@@ -322,7 +323,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 interactionId: response.result.interaction_id
                             });
                         } else {
-                            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         }
 
                         // remove the item from list
@@ -330,7 +331,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                         this._fuseProgressBarService.hide();
                     } catch (error) {
-                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
                     }
@@ -363,7 +364,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 size: file.size
                             });
                         } else {
-                            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         }
 
                         // remove the item from list
@@ -371,7 +372,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                         this._fuseProgressBarService.hide();
                     } catch (error) {
-                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
                     }

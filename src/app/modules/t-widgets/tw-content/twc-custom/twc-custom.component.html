@@ -1,5 +1,5 @@
 <tw-wrapper [data]="widgetData" (refreshEvent)="onRefreshEvent()">
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" class="position-relative">
+    <div fxFlex fxFill fxLayout="row" *transloco="let locale" fxLayoutAlign="center center" class="position-relative">
         <div
             class="spinner"
             [ngClass]="{
@@ -11,7 +11,7 @@
         </div>
 
         <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">
-            <span class="mat-display-1 mb-0"> Custom URL not found! </span>
+            <span class="mat-display-1 mb-0"> {{ locale('contentComponent.customURLNotFound') }} </span>
         </div>
 
         <iframe
@@ -31,7 +31,7 @@
 
         <ng-template #noURL>
             <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">
-                <span class="mat-display-1 mb-0"> Custom URL not found! </span>
+                <span class="mat-display-1 mb-0"> {{ locale('contentComponent.customURLNotFound') }} </span>
             </div>
         </ng-template>
     </div>

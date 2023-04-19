@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use '@angular/material'as mat;
 @import 'src/@fuse/scss/fuse';
 
 login {
@@ -166,6 +166,7 @@ login {
                         // }
 
                         .mat-form-field-wrapper {
+
                             .mat-select-arrow,
                             .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
                             .mat-select-placeholder,
@@ -270,5 +271,20 @@ login {
                 }
             }
         }
+    }
+
+    .lang-selection {
+        float: right;
+        padding: 5px 10px 0px 0px;
+        width: 10em;
+    }
+}
+
+.label-error-layout {
+    width: 60%;
+    margin: 30% auto;
+
+    strong {
+        background: yellow;
     }
 }

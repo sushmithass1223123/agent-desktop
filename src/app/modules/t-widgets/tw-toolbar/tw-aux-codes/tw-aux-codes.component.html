@@ -1,4 +1,4 @@
-<div class="">
+<div class="" *transloco="let locale">
     <button
         mat-icon-button
         class="aux-codes-btn"
@@ -7,7 +7,7 @@
         (menuOpened)="opened = true"
         (menuClosed)="opened = false"
         aria-label="AUX Codes dropdown"
-        matTooltip="AUX codes"
+        [matTooltip]="locale('toolbarComponent.auxCodes')"
     >
         <mat-icon>expand_more</mat-icon>
     </button>

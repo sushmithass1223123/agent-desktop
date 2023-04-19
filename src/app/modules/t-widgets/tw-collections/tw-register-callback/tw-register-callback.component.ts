@@ -15,6 +15,7 @@ import { uniq } from 'lodash';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { TwRegisterCallback } from '@ad/types';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Register Callback Widget component
@@ -175,7 +176,8 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
         private matDialog: MatDialog,
         private _appUiService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService
     ) {
         super('TwRegisterCallbackComponent');
     }
@@ -263,7 +265,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     this.getCampaignsReq = {
                         error: true,
                         loading: false,
-                        msg: 'Unable to fetch campaigns'
+                        msg: this.translocoService.translate('widgets.registerCallback.fetchCampaignFailed')
                     };
                 }
             );
@@ -271,7 +273,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
             this.getCampaignsReq = {
                 error: true,
                 loading: false,
-                msg: 'TCMProxyUrl not found'
+                msg: this.translocoService.translate('widgets.registerCallback.tcmProxyUrlNotFound')
             };
         }
     }
@@ -331,7 +333,7 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                         msg: ''
                     };
                     this.matDialog.closeAll();
-                    this._appUiService.showSnackbar('Added contact successfully', 'success');
+                    this._appUiService.showSnackbar(this.translocoService.translate('widgets.registerCallback.addContactSuccess'), 'success');
                     this.addContactFormGroup.reset();
                     // check if the AOT widget
                     if (this.data.Config.AOT) {
@@ -342,16 +344,16 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
                     this.addCampaingReq = {
                         error: true,
                         loading: false,
-                        msg: 'Unable to add new contact'
+                        msg: this.translocoService.translate('widgets.registerCallback.addContactFailed')
                     };
-                    this._appUiService.showSnackbar('Unable to add new contact', 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('widgets.registerCallback.addContactFailed'), 'failure');
                 }
             );
         } else {
             this.getCampaignsReq = {
                 error: true,
                 loading: false,
-                msg: 'TCMProxyUrl not found'
+                msg: this.translocoService.translate('widgets.registerCallback.tcmProxyUrlNotFound')
             };
         }
     }

@@ -1,4 +1,4 @@
-<div class="annotate-overlay">
+<div class="annotate-overlay" *transloco="let locale">
     <div class="annotate-container" (touchend)="setPenInactive()" (mouseup)="isPenActive && setPenInactive()">
         <div class="image-container" #imageContainer>
             <div class="annotate-controls">
@@ -6,7 +6,7 @@
                     <div (click)="this.activeTool = 'pen'" class="control" [ngClass]="{ 'active-control': activeTool == 'pen' }">
                         <mat-icon>edit</mat-icon>
                     </div>
-                    <p>Sketch</p>
+                    <p>{{ locale('sharedComponents.annotation.sketch') }}</p>
                 </div>
                 <div class="control-flex">
                     <div
@@ -24,19 +24,19 @@
                             </div>
                         </div>
                     </div>
-                    <p>Shapes</p>
+                    <p>{{ locale('sharedComponents.annotation.shapes') }}</p>
                 </div>
                 <div class="control-flex">
                     <div (click)="canvasCtxDataArray.length > 1 && undoCanvas()" class="control">
                         <mat-icon>undo</mat-icon>
                     </div>
-                    <p>Undo</p>
+                    <p>{{ locale('sharedComponents.annotation.undo') }}</p>
                 </div>
                 <div class="control-flex">
                     <div (click)="clearCanvas()" class="control">
                         <mat-icon>clear</mat-icon>
                     </div>
-                    <p>Clear</p>
+                    <p>{{ locale('sharedComponents.annotation.clear') }}</p>
                 </div>
                 <div class="control-flex">
                     <div (click)="this.showPenControls = !this.showPenControls" class="control" [ngClass]="{ 'active-control': showPenControls }">
@@ -98,11 +98,11 @@
                         </div>
                         <mat-icon>lens</mat-icon>
                     </div>
-                    <p>Size</p>
+                    <p>{{ locale('sharedComponents.annotation.size') }}</p>
                 </div>
                 <div class="control-flex">
                     <input [(ngModel)]="annotatePenColor" type="color" />
-                    <p>Color</p>
+                    <p>{{ locale('sharedComponents.annotation.color') }}</p>
                 </div>
             </div>
             <img id="imageToAnnotate-{{ sessionID }}" (load)="setCanvasSize()" src="{{ sourceImage }}" alt="" />
@@ -116,8 +116,8 @@
                     id="anotateCanvas-{{ sessionID }}"
                 ></canvas>
                 <div class="twd-flex twd-gap-2">
-                    <button mat-raised-button color="warn" (click)="onDoneAnnotate(false)">Cancel</button>
-                    <button mat-raised-button color="primary" (click)="onDoneAnnotate(true)">Save</button>
+                    <button mat-raised-button color="warn" (click)="onDoneAnnotate(false)">{{ locale('sharedComponents.annotation.cancel') }}</button>
+                    <button mat-raised-button color="primary" (click)="onDoneAnnotate(true)">{{ locale('sharedComponents.annotation.save') }}</button>
                 </div>
             </div>
         </div>

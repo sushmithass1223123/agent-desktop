@@ -16,13 +16,14 @@
             <widget-fab [aotFABDrag]="aotFABDrag" [fabWidgets]="aotWidgets"></widget-fab>
         </div>
     </div>
-
-    <twc-not-found
-        *ngIf="!staticWidgets || !staticWidgets.length"
-        class="tw-widget-container"
-        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
-        title="No Widgets"
-        type="widget"
-        message="No workbench widgets found!"
-    ></twc-not-found>
+    <ng-container *transloco="let locale">
+        <twc-not-found
+            *ngIf="!staticWidgets || !staticWidgets.length"
+            class="tw-widget-container"
+            [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
+            [title]="locale('contentComponent.noWidgets')"
+            type="widget"
+            [message]="locale('contentComponent.wbWidgetsNotFound')"
+        ></twc-not-found>
+    </ng-container>
 </div>

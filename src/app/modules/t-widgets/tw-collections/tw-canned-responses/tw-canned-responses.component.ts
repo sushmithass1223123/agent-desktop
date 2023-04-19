@@ -9,7 +9,7 @@ import { sortBy, uniqBy } from 'lodash';
 import { merge, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TwCannedResponses } from '@ad/types';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * TW canned Responses
  */
@@ -76,7 +76,8 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
+    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService,
+        private translocoService: TranslocoService) {
         super('TwCannedResponsesComponent');
     }
 
@@ -98,7 +99,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
                 this.departments = result.response.filter((d) => d.Channel.toLowerCase().includes('chat'));
             })
             .catch((err) => {
-                this._appUIService.showSnackbar('Error in fetching chat templates', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.cannedResponses.getChatTemplatesError'), 'failure');
                 this.logger.error('Error in fetching chat templates', err, false);
             })
             .finally(() => {

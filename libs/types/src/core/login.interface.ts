@@ -47,6 +47,10 @@ export type LoginConfig = {
      * Url to route on logout
      */
     LogoutUrl: string;
+    /**
+     * to enable selection of languages for lables in the application
+     */
+     enableLanguageSelection: boolean;
 };
 
 /**

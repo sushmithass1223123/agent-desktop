@@ -23,6 +23,8 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 import { TableComponent } from '../table/table.component';
+import { TranslocoService } from '@ngneat/transloco';
+import { AppDataService } from '@services/app-data.service';
 
 type ISwitch = {
     placeholder: string;
@@ -191,7 +193,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         @Inject(MAT_DIALOG_DATA) public _dialogData: AgentSkillListData,
         // private _fuseConfigService: FuseConfigService,
         private fuseFacadeService: FuseFacadeService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService,
+        private appDataService: AppDataService
     ) {
         this.selectedItem = '';
         this.comments = '';
@@ -731,7 +735,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 console.error(e);
                 this.loading -= 1;
                 console.error(e);
-                this._appUIService.showSnackbar('Error in loading agent list', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.getAgentListError'), 'failure');
             })
             .finally(() => {
                 this.loading -= 1;
@@ -779,18 +783,24 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.loading -= 1;
                 // check the response
                 if (dt.response.ResultCode === 0) {
+                    const dynamicLabels = [
+                        {
+                            key: '#callerID',
+                            value: dialTo
+                        }
+                    ];
                     // make call success
-                    this._appUIService.showSnackbar(`Make call initiated to ${dialTo} successfully`);
+                    this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('interactionComponent.makeCallSuccess'),dynamicLabels));
                     this.close(true);
                 } else {
                     // make call failed
-                    this._appUIService.showSnackbar(`Make call initiated failed, ${dt.response.ResultMessage}`, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallFailed') + dt.response.ResultMessage, 'failure');
                 }
             })
             .catch(() => {
                 this.loading -= 1;
                 // make call error
-                this._appUIService.showSnackbar('Make call initiated error, please try again', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallError'), 'failure');
             });
     }
 
@@ -799,6 +809,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     private async transferCall(): Promise<void> {
         this.loading += 1;
+        
         try {
             // init response
             let result: IResponseData<CommandResultEvent>;
@@ -823,25 +834,38 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     number: transferTo
                 });
             }
-
+            const dynamicLabels = [
+                {
+                    key: '#transferTo',
+                    value: transferTo
+                },
+                {
+                    key: '#transferType',
+                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultTransfer'): this.translocoService.translate('sharedComponents.agentSkillList.blindTransfer')
+                }
+            ];
+            
             // check the response
             if (result.response?.ResultCode === 0) {
                 // transfer call success
-                this._appUIService.showSnackbar(
-                    `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiated to ${transferTo} successfully`
-                );
+                this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferCallSuccess'),dynamicLabels));
                 this.close(true);
             } else {
                 // transfer call failed
-                this._appUIService.showSnackbar(
-                    `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation failed, please try again!`,
+                this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferCallFailed'),dynamicLabels),
                     'failure'
                 );
             }
         } catch (error) {
+            const dynamicLabels = [
+                {
+                    key: '#transferType',
+                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultTransfer'): this.translocoService.translate('sharedComponents.agentSkillList.blindTransfer')
+                }
+            ]
             //     // transfer call error
-            this._appUIService.showSnackbar(
-                `${this.isConsult ? 'Consult transfer' : 'Blind transfer'} call initiation error, please try again!`,
+            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferCallError')
+                ,dynamicLabels),
                 'failure'
             );
         }
@@ -880,24 +904,39 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 });
             }
 
+            const dynamicLabels = [
+                {
+                    key: '#conferenceTo',
+                    value: conferenceTo
+                },
+                {
+                    key: '#conferenceType',
+                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultTransfer'): this.translocoService.translate('sharedComponents.agentSkillList.blindTransfer')
+                }
+            ];
+
             // check the response
             if (result.response?.ResultCode === 0) {
                 // transfer call success
-                this._appUIService.showSnackbar(
-                    `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiated to ${conferenceTo} successfully`
+                this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.conferenceCallSuccess'),dynamicLabels)
                 );
                 this.close(true);
             } else {
                 // transfer call failed
-                this._appUIService.showSnackbar(
+                this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.conferenceCallFailed',dynamicLabels))
                     `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation failed, please try again!`,
                     'failure'
                 );
             }
         } catch (error) {
+            const dynamicLabels = [
+                {
+                    key: '#conferenceType',
+                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultTransfer'): this.translocoService.translate('sharedComponents.agentSkillList.blindTransfer')
+                }
+            ];
             //     // transfer call error
-            this._appUIService.showSnackbar(
-                `${this.isConsult ? 'Consult conference' : 'Blind conference'} call initiation error, please try again!`,
+            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.conferenceCallError',dynamicLabels)),
                 'failure'
             );
         }
@@ -913,6 +952,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.loading += 1;
         const type = this._dialogData.OtherData.type === 'conf' ? 'conference' : this._dialogData.OtherData.type;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
+        const dynamicLabels = [
+            {
+                key: '#type',
+                value: type
+            }
+        ];
         // agent transfer/conf
         if (this.selectedRow?.type === 'Agent List') {
             // if consault transfer/conf
@@ -932,14 +977,14 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     .then((dt) => {
                         this.loading -= 1;
                         if (dt.response.ResultCode >= 0) {
-                            this._appUIService.showSnackbar(`Chat ${type} notification sent to remote agent, Please wait for response.`);
+                            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.sendTransferNotificationSuccess'),dynamicLabels));
                         } else {
                             this._appUIService.showSnackbar(dt.response.ResultMessage, 'failure');
                         }
                     })
                     .catch(() => {
                         this.loading -= 1;
-                        this._appUIService.showSnackbar(`Chat ${type} notification failed, please try again`, 'failure');
+                        this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.sendTransferNotificationFailed'),dynamicLabels), 'failure');
                     });
             }
             // blind transfer/confks
@@ -962,12 +1007,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                         }
                         // transfer error
                         else {
-                            this._appUIService.showSnackbar(`Chat ${type} failed, ${dt.response.ResultMessage}`, 'failure');
+                            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.tranferTextChatFailed'),dynamicLabels) + dt.response.ResultMessage, 'failure');
                         }
                     })
                     .catch(() => {
                         this.loading -= 1;
-                        this._appUIService.showSnackbar(`Chat ${type} error, please try again`, 'failure');
+                        this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.tranferTextChatError'),dynamicLabels), 'failure');
                     });
             }
         }
@@ -985,16 +1030,16 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     if (dt.response.ResultCode >= 0) {
                         this.close(true);
                     } else {
-                        this._appUIService.showSnackbar(`Chat ${type} to queue failed, ${dt.response.ResultMessage}`, 'failure');
+                        this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferTextChatToQueueFailed'),dynamicLabels) + dt.response.ResultMessage, 'failure');
                     }
                 })
                 .catch(() => {
                     this.loading -= 1;
-                    this._appUIService.showSnackbar(`Chat ${type} to queue error, please try again`, 'failure');
+                    this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferTextChatToQueueError'),dynamicLabels), 'failure');
                 });
         } else {
             // no row selected
-            this._appUIService.showSnackbar('Error: No row selected to transfer chat', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferChatDefaultError'), 'failure');
             this.close(false);
         }
     }
@@ -1019,21 +1064,31 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 })
                     .then((res) => {
                         this.loading -= 1;
+                        const dynamicLabels = [
+                            {
+                                key: '#tranferTo',
+                                value: transferTo
+                            },
+                            {
+                                key: '#agentName',
+                                value: this.selectedRow.row.AgentName
+                            }
+                        ];
                         if (res.response > 0) {
-                            this._appUIService.showSnackbar(`Email transferred to ${transferTo} successfully`, 'success');
+                            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailSuccess'),dynamicLabels), 'success');
                             this.close(true);
                         } else if ([-2, -3].includes(res.response)) {
                             console.error(res);
-                            this._appUIService.showSnackbar(`Agent ${this.selectedRow.row.AgentName} is not in valid state`, 'failure');
+                            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailAgentStateInvalid'),dynamicLabels), 'failure');
                         } else {
                             console.error(res);
-                            this._appUIService.showSnackbar(`Email transfer failed`, 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailFailed'), 'failure');
                         }
                     })
                     .catch((err) => {
                         this.loading -= 1;
                         console.error(err);
-                        this._appUIService.showSnackbar('Error in email transfer', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailError'), 'failure');
                     });
             });
         } else {
@@ -1046,18 +1101,24 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 })
                     .then((res) => {
                         this.loading -= 1;
+                        const dynamicLabels = [
+                            {
+                                key: '#tranferTo',
+                                value: transferTo
+                            }
+                        ];
                         if (res.response > 0) {
-                            this._appUIService.showSnackbar(`Email transferred to ${transferTo} successfully`, 'success');
+                            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailSuccess'),dynamicLabels), 'success');
                             this.close(true);
                         } else {
                             console.error(res);
-                            this._appUIService.showSnackbar('Email transfer failed', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailFailed'), 'failure');
                         }
                     })
                     .catch((err) => {
                         this.loading -= 1;
                         console.error(err);
-                        this._appUIService.showSnackbar('Error in email transfer', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferEmailError'), 'failure');
                     });
             });
         }
@@ -1241,7 +1302,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             })
             .catch((e) => {
                 console.error(e);
-                this._appUIService.showSnackbar('Error in loading speed dial', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.loadSpeedDialError'), 'failure');
             });
     }
 
@@ -1249,6 +1310,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * To process agent selected from list
      */
     selectAgent = async (row: AgentModel): Promise<void> => {
+        
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         if (this.loading) {
             return;
@@ -1259,6 +1321,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         const currentStatus = row.CurrentAgentStatus;
         row.CurrentAgentStatus = 'loading';
         row.AgentName = row.FirstName + ' ' + row.LastName;
+        const dynamicLabels = [
+            {
+                key: '#agentName',
+                value: row.AgentName
+            }
+        ];
         // get agent's current status
         const dt = await SDKClient.getAgentStatus({
             agentId: row.LoginID,
@@ -1267,14 +1335,14 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         })
             .catch((e) => {
                 console.error(e);
-                this._appUIService.showSnackbar(`Error in getting agent ${row.AgentName}'s current state`, 'failure');
+                this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.getAgentCurrentStateError'),dynamicLabels), 'failure');
             })
             .finally(() => {
                 this.loading -= 1;
                 row.CurrentAgentStatus = currentStatus;
             });
         if (!dt || !dt.response) {
-            this._appUIService.showSnackbar(`Agent '${row.AgentName}' has logged out`, 'failure');
+            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.agentLoggedOut'),dynamicLabels), 'failure');
             return;
         }
         // get the allowed state list
@@ -1305,7 +1373,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             // assign the selected row
             this.selectedRow = { type: 'Agent List', row };
         } else {
-            this._appUIService.showSnackbar(`Agent ${row.AgentName} is not in valid state`, 'failure');
+            this._appUIService.showSnackbar(this.appDataService.getUpdatedLabel(this.translocoService.translate('sharedComponents.agentSkillList.agentStateInvalid'),dynamicLabels), 'failure');
         }
     };
 
@@ -1376,31 +1444,31 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     if (rules.Enabled) {
                         if (rules.STF.Enabled) {
                             if (rules.STF.Min > -1 && !(STF >= rules.STF.Min)) {
-                                return this.skillSelecteFailed(`Unabled to select the skill, Minimum Staffed Agents should be ${rules.STF.Min}`);
+                                return this.skillSelecteFailed(this.translocoService.translate('sharedComponents.agentSkillList.selectSkillMinStaffLimit') + rules.STF.Min);
                             }
 
                             if (rules.STF.Max > -1 && !(STF <= rules.STF.Max)) {
-                                return this.skillSelecteFailed(`Unabled to select the skill, Maximum Staffed Agents should be ${rules.STF.Max}`);
+                                return this.skillSelecteFailed(this.translocoService.translate('sharedComponents.agentSkillList.selectSkillMaxStaffLimit') + rules.STF.Max);
                             }
                         }
 
                         if (rules.AVL.Enabled) {
                             if (rules.AVL.Min > -1 && !(AVL >= rules.AVL.Min)) {
-                                return this.skillSelecteFailed(`Unabled to select the skill, Minimum Available Agents should be ${rules.AVL.Min}`);
+                                return this.skillSelecteFailed(this.translocoService.translate('sharedComponents.agentSkillList.selectSkillMinAvailableAgentLimit') + rules.AVL.Min);
                             }
 
                             if (rules.AVL.Max > -1 && !(AVL <= rules.AVL.Max)) {
-                                return this.skillSelecteFailed(`Unabled to select the skill, Maximum Available Agents should be ${rules.AVL.Max}`);
+                                return this.skillSelecteFailed(this.translocoService.translate('sharedComponents.agentSkillList.selectSkillMaxAvailableAgentLimit') + rules.AVL.Max);
                             }
                         }
 
                         if (rules.CIQ.Enabled) {
                             if (rules.CIQ.Min > -1 && !(CIQ >= rules.CIQ.Min)) {
-                                return this.skillSelecteFailed(`Unabled to select the skill, Minimum Calls In Queue should be ${rules.CIQ.Min}`);
+                                return this.skillSelecteFailed(this.translocoService.translate('sharedComponents.agentSkillList.selectSkillMinCIQLimit') + rules.CIQ.Min);
                             }
 
                             if (rules.CIQ.Max > -1 && !(CIQ <= rules.CIQ.Max)) {
-                                return this.skillSelecteFailed(`Unabled to select the skill, Maximum Calls In Queue should be ${rules.CIQ.Max}`);
+                                return this.skillSelecteFailed(this.translocoService.translate('sharedComponents.agentSkillList.selectSkillMaxCIQLimit') + rules.CIQ.Max);
                             }
                         }
                     }
@@ -1423,14 +1491,14 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     // assign the selected row
                     this.selectedRow = { type: 'Skill List', row };
                 } else {
-                    this._appUIService.showSnackbar(`Failed to get skill ${row.ID} status`, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.getSkillFailed'), 'failure');
                     row.Stf = 'NA';
                     row.Avl = 'NA';
                     row.CIQ = 'NA';
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar(`Error in getting skill ${row.ID} status`, 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.getSkillError'), 'failure');
                 row.Stf = 'NA';
                 row.Avl = 'NA';
                 row.CIQ = 'NA';
@@ -1505,7 +1573,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.close(true);
                 break;
             default:
-                this._appUIService.showSnackbar('Error: NotImplementedException', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.executeActionDefaultError'), 'failure');
                 this.close(false);
                 break;
         }

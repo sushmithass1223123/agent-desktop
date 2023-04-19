@@ -54,6 +54,8 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelModule } from './tw-workbench-panel/tw-workbench-panel.module';
 
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../../transloco-root.module';
 /**
  * Collections components
  */
@@ -114,7 +116,11 @@ const collectionComponents = [
  */
 @NgModule({
     declarations: collectionComponents,
-    imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule],
+    providers: [{
+        provide: TRANSLOCO_SCOPE,
+        useValue: 'default'
+    }],
+    imports: [SharedModule, TwWrapperModule, TwChatControlsModule, TwWorkbenchPanelModule, TwCalendarModule,TranslocoRootModule],
     exports: collectionComponents
 })
 export class TwCollectionsModule {}

@@ -41,7 +41,7 @@
                     {{ s.InteractionDate | date: 'dd/MM/yyyy, hh:mm:ss a' }}
                 </small>
             </div>
-            <div class="twd-w-10/12 twd-pl-3 twd-flex twd-justify-between twd-items-center">
+            <div class="twd-w-10/12 twd-pl-3 twd-flex twd-justify-between twd-items-center" *transloco="let locale">
                 <div class="twd-flex-1 twd-flex twd-items-center twd-px-1 twd-truncate">
                     <div
                         mat-card-avatar
@@ -55,17 +55,17 @@
                         </ng-template>
                     </div>
                     <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
-                        <ng-container *ngSwitchCase="'voice'"> Voice with </ng-container>
-                        <ng-container *ngSwitchCase="'chat'"> Chat with </ng-container>
-                        <ng-container *ngSwitchCase="'textchat'"> Chat with </ng-container>
-                        <ng-container *ngSwitchCase="'audiochat'"> Audio Call with </ng-container>
-                        <ng-container *ngSwitchCase="'videochat'"> Video Call with </ng-container>
-                        <ng-container *ngSwitchCase="'sms'"> SMS chat with </ng-container>
-                        <ng-container *ngSwitchCase="'email'"> Email with </ng-container>
-                        <ng-container *ngSwitchCase="'fax'"> Fax with </ng-container>
-                        <ng-container *ngSwitchCase="'line'"> Line chat with </ng-container>
-                        <ng-container *ngSwitchCase="'services'"> Serviced by </ng-container>
-                        <ng-container *ngSwitchDefault> {{ s.Channel }} with </ng-container>
+                        <ng-container *ngSwitchCase="'voice'"> {{ locale('widgets.customerJourney.voiceWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'chat'"> {{ locale('widgets.customerJourney.chatWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'textchat'"> {{ locale('widgets.customerJourney.chatWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'audiochat'"> {{ locale('widgets.customerJourney.audioCallWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'videochat'"> {{ locale('widgets.customerJourney.videoCallWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'sms'"> {{ locale('widgets.customerJourney.smsChatWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'email'"> {{ locale('widgets.customerJourney.emailWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'fax'"> {{ locale('widgets.customerJourney.faxWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'line'"> {{ locale('widgets.customerJourney.lineChatWith') }} </ng-container>
+                        <ng-container *ngSwitchCase="'services'"> {{ locale('widgets.customerJourney.servicedBy') }} </ng-container>
+                        <ng-container *ngSwitchDefault> {{ s.Channel }} {{ locale('widgets.customerJourney.with') }} </ng-container>
                         {{ s.LastServicedAgentName || s.AgentName }}
                     </span>
                 </div>
@@ -83,11 +83,7 @@
             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
         >
             <div
-                class="
-                    twd-z-30 twd-text-xl twd-font-bold twd-top-0 twd-shadow-md
-                    bg-inherit
-                    twd-flex twd-justify-between twd-p-2 twd-items-center twd-sticky
-                "
+                class="twd-z-30 twd-text-xl twd-font-bold twd-top-0 twd-shadow-md bg-inherit twd-flex twd-justify-between twd-p-2 twd-items-center twd-sticky"
             >
                 <span class="twd-flex-1 twd-text-left"> {{ payload.action }} </span>
                 <div class="twd-relative">
@@ -121,12 +117,7 @@
                         <div *ngIf="!actionsReq.data?.length" class="text-center mt-40 mat-headline">No data available</div>
                         <div
                             *ngFor="let action of actionsReq.data"
-                            class="
-                                action-item
-                                twd-mb-1 twd-pb-1
-                                mat-elevation-z1
-                                twd-text-base twd-font-semibold twd-rounded-3xl twd-flex twd-items-center
-                            "
+                            class="action-item twd-mb-1 twd-pb-1 mat-elevation-z1 twd-text-base twd-font-semibold twd-rounded-3xl twd-flex twd-items-center"
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                         >
                             <div class="twd-w-3/12 step-time p-8 twd-flex twd-items-center twd-justify-center">
@@ -228,7 +219,7 @@
                             <div class="w-25-p mx-auto mb-20">
                                 <img src="assets/images/vectors/no-data-1.svg" class="box-shadow-3d" />
                             </div>
-                            <p class="text-center mat-title m-0">No Transcripts Available</p>
+                            <p class="text-center mat-title m-0">{{ locale('contentComponent.transcriptsNotFound') }}</p>
                         </div>
                     </ng-container>
                 </ng-container>
@@ -246,15 +237,20 @@
                             id="emailInfo"
                             class="twd-flex twd-justify-between twd-overflow-hidden twd-transition-all"
                         >
-                            <div fxFlex="80" class="twd-flex">
+                            <div fxFlex="80" *transloco="let locale" class="twd-flex">
                                 <div class="twd-flex-1">
-                                    <p class="text-bold my-4">To: {{ emailInfo.ToList || 'NA' }}</p>
-                                    <p class="my-4 text-bold">From: {{ emailInfo.From || 'NA' }}</p>
-                                    <p class="text-bold my-4" *ngIf="emailInfo.CCList">Cc: {{ emailInfo.CCList }}</p>
-                                    <p *ngIf="emailInfo.Intent" matTooltip="Intent">
-                                        <span class="text-bold"> Intent: {{ emailInfo.Intent || 'NA' }}</span>
+                                    <p class="text-bold my-4">{{ locale('widgets.customerJourney.to') }}: {{ emailInfo.ToList || 'NA' }}</p>
+                                    <p class="my-4 text-bold">{{ locale('widgets.customerJourney.from') }}: {{ emailInfo.From || 'NA' }}</p>
+                                    <p class="text-bold my-4" *ngIf="emailInfo.CCList">
+                                        {{ locale('widgets.customerJourney.cc') }}: {{ emailInfo.CCList }}
                                     </p>
-                                    <p class="my-4 text-bold">Replied Status: {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}</p>
+                                    <p *ngIf="emailInfo.Intent" [matTooltip]="locale('widgets.customerJourney.intent')">
+                                        <span class="text-bold"> {{ locale('widgets.customerJourney.intent') }}: {{ emailInfo.Intent || 'NA' }}</span>
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('widgets.customerJourney.repliedStatus') }}:
+                                        {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                    </p>
                                     <ng-container *ngIf="emailInfo.AddedTime">
                                         <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
                                         <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
@@ -262,10 +258,13 @@
                                 </div>
 
                                 <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
-                                    <p class="my-4 text-bold">Status: {{ emailInfo.CurrentStatus || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Priority: {{ emailInfo.Priority || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Agent: {{ emailInfo.AgentName || 'NA' }}</p>
-                                    <p class="my-4 text-bold">Closed Status: {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}</p>
+                                    <p class="my-4 text-bold">{{ locale('interactionComponent.status') }}: {{ emailInfo.CurrentStatus || 'NA' }}</p>
+                                    <p class="my-4 text-bold">{{ locale('interactionComopnent.priority') }}: {{ emailInfo.Priority || 'NA' }}</p>
+                                    <p class="my-4 text-bold">{{ locale('global.agent') }}: {{ emailInfo.AgentName || 'NA' }}</p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('widgets.customerJourney.closedStatus') }}:
+                                        {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>

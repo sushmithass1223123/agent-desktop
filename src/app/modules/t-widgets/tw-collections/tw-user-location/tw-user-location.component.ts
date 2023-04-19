@@ -5,7 +5,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
 import * as L from 'leaflet';
 import { takeUntil } from 'rxjs/operators';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * User location widget
  */
@@ -41,7 +41,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
     @ViewChild('mapContainer')
     mapContainerRef: ElementRef<HTMLDivElement>;
 
-    constructor(private _tmacEventService: TMACEventService) {
+    constructor(private _tmacEventService: TMACEventService, private translocoService: TranslocoService) {
         super('TwUserLocationComponent');
     }
 
@@ -54,7 +54,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
 
         this.loading = true;
         this.loadingRef = setTimeout(() => {
-            this.error = 'Location not found';
+            this.error = this.translocoService.translate('widgets.userLocation.locationNotFound');
             this.loading = false;
         }, 5000);
 
@@ -66,7 +66,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
         const interactionId = this.data?.InteractionDetails?.InteractionID;
         if (!interactionId) {
             this.logger.error('Interaction details not found!', null);
-            this.error = 'Unable to set location';
+            this.error = this.translocoService.translate('widgets.userLocation.unableToSetLocation');
         }
         this._tmacEventService
             .getInteractionEvents(['TextChatRemoteUserConnectedEvent'], interactionId)
@@ -104,7 +104,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
             const location = (JSON.parse(pLocationJson).pLocation || '').replaceAll(' ', '');
 
             if (!location || location.includes('undefined')) {
-                this.error = 'Undefined location';
+                this.error = this.translocoService.translate('widgets.userLocation.locationUndefined');
                 this.clearLoading();
                 return;
             }
@@ -113,7 +113,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
             this.setLocation(lat, long);
         } catch (e) {
             this.logger.error('Unable to set location', e);
-            this.error = 'Unable to set location';
+            this.error = this.translocoService.translate('widgets.userLocation.unableToSetLocation');
         }
     }
 

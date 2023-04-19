@@ -233,6 +233,10 @@ export type TwChatControlsData = {
      */
     ReplyOnChatAllowed: boolean;
     /**
+     * To allow reply to a chat at SMM channel level 
+     */
+    ReplyOnSMM: TReplyOnSMM;
+    /**
      * Flag to allow voice note
      */
     VoiceNoteAllowed: boolean;
@@ -406,3 +410,7 @@ export type TwChatControlsData = {
      */
     ToggleUserViewAllowed: boolean;
 };
+
+export type TReplyOnSMM = {
+    channels: string
+}

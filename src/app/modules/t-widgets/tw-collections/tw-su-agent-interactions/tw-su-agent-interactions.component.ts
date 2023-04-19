@@ -11,6 +11,7 @@ import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { TwSuAgentInteractions } from '@ad/types';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Supervisor Agent Interactions Component
@@ -78,7 +79,8 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         private _dashboardService: DashboardService,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService
     ) {
         super('TwSuAgentInteractionsComponent');
         this.agentData = SDKClient.getAgentData();
@@ -126,7 +128,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * @param {InteractionDataModel} item Interaction data
      */
     private performChatBargeIn(type: 'silent' | 'whisper' | 'conf', item: InteractionDataModel): void {
-        this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
+        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.connectingMsg'), 'loading');
         // send request to server
         SDKClient.transferTextChat({
             agentId: this.configData.AgentLoginID,

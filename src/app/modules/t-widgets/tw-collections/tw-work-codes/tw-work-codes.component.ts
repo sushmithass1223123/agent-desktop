@@ -12,7 +12,7 @@ import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Work codes Component
  */
@@ -89,7 +89,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Constructor
      */
-    constructor(private _appUiService: AppUiService, private _tmacEventService: TMACEventService, private matDialog: MatDialog) {
+    constructor(private _appUiService: AppUiService, private _tmacEventService: TMACEventService, private matDialog: MatDialog,
+       private translocoService: TranslocoService) {
         super('TwWorkCodesComponent');
     }
 
@@ -170,7 +171,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Unable to get workcodes';
+            this.loadWorkCodesReq.msg = this.translocoService.translate('widgets.workcodes.notFoundError');
         }
     }
 
@@ -239,7 +240,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Role not provided / Role Source';
+            this.loadWorkCodesReq.msg = this.translocoService.translate('widgets.workcodes.roleError');
         }
 
         // if subscription is not null then subscribe to it
@@ -254,7 +255,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {MatAutocompleteSelectedEvent} option
      */
     public setWorkCode(option: WorkCode, group: string): void {
-        this._appUiService.showSnackbar('Setting work code', 'loading');
+        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.settingWC'), 'loading');
         SDKClient.setCallWorkCode(
             {
                 code: option.Code,
@@ -275,12 +276,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 } else {
                     this.loadWorkCodesReq.data['Workcode List'] = this.loadWorkCodesReq.data['Workcode List'].filter((x) => x.Code !== option.Code);
                 }
-                this._appUiService.showSnackbar('Work code set successfully', 'success');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcSetSuccess'), 'success');
                 this.workCodeInput.nativeElement.value = '';
                 this.workCodeCtrl.setValue('');
             })
             .catch(() => {
-                this._appUiService.showSnackbar('Unable to set workcode', 'failure');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcSetFail'), 'failure');
             });
     }
 
@@ -290,7 +291,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {WorkCode} option
      */
     public removeWorkCode(option: WorkCode): void {
-        this._appUiService.showSnackbar('Removing work code', 'loading');
+        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.removeWC'), 'loading');
 
         SDKClient.removeCallWorkCode(
             {
@@ -310,10 +311,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                         this.loadWorkCodesReq.data['Workcode List'].push(option);
                     }
                 }
-                this._appUiService.showSnackbar('Work code removed successfully', 'success');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcRemoveSuccess'), 'success');
             })
             .catch((ex) => {
-                this._appUiService.showSnackbar('Unable to remove workcode', 'failure');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcRemoveFail'), 'failure');
                 console.error(ex);
             });
     }

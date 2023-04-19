@@ -8,7 +8,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { setStringVars } from '@tmac/operators';
-import { SDKClient } from '@tmac/sdk';
+import { SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
@@ -243,6 +243,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
+        if(this.data.Data.NotifyTypeOnClose) {
+            this.sendActionOnClose()
+        }
         this.destroyWrapper();
         this.dialogRef?.close();
     }
@@ -334,5 +337,23 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
     processUIControlEvents(message:IPostMessage) {
         this._tmacEventService._uiControlsEvents.next(message.data);
+    }
+
+    /**
+     * Method to send action message to customer on close of custom widget, based on configured type to notify
+     */
+    sendActionOnClose() {
+        SDKClient.sendActionMessage({
+            interactionId: this.interactionId.toString(),
+            message: JSON.stringify({
+                source: 'agent',
+                options: {},
+                data: {},
+                status: 'request',
+                type: this.data.Data.NotifyTypeOnClose,
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+            })
+        });
     }
 }
