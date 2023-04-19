@@ -199,7 +199,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 (f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
             )?.[0];
             this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -446,7 +446,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             case AGENT_FEATURES.AllowSupervisorToLogout:
                 // check the agent's current status
                 if (agent.CurrentAgentStatus.toLowerCase().includes('on call')) {
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutNotAllowed') + `${agent.AgentName}` +  this.translocoService.translate('widgets.activeAgents.isOnCall'), 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutNotAllowed') + `${agent.AgentName}` + this.translocoService.translate('widgets.activeAgents.isOnCall'), 'failure');
                     return;
                 }
                 // confirm logout
@@ -514,7 +514,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {SuAgentModel} item
      */
     public viewInteractions(item: SuAgentModel): void {
-        const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions');
+        const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions', null, item.AgentLoginID);
         widget.Config.Anchor = true;
         widget.Config.Position.W = 800;
         widget.Config.Position.H = 300;
@@ -551,7 +551,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess');
                     // check if the agent is on call
                     if (agent.CurrentAgentStatus.includes('On Call')) {
-                        message = this.translocoService.translate('widgets.activeAgents.statusChangeRequestSuccess');  
+                        message = this.translocoService.translate('widgets.activeAgents.statusChangeRequestSuccess');
                         message = message?.replace('#agentName', agent.AgentName);
                         notification += ', will be reflecting after the interaction';
                     }
@@ -696,8 +696,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check the type
-        
-        if (evt.Type === 'CustomerOnHold') { 
+
+        if (evt.Type === 'CustomerOnHold') {
             this.agentListOnHold.push(evt.FromAgentId);
             this.updateOnHoldAgentList(evt.FromAgentId);
         }
