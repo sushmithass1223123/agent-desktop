@@ -121,7 +121,7 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
             titleControl.setValue('');
             titleControl.setValidators([Validators.nullValidator]);
             taskTypeControl.setValidators(Validators.required);
-            taskDataControl.setValidators(Validators.required);
+            taskDataControl.setValidators([Validators.required, this.noWhitespaceValidator]);
         } else {
             taskTypeControl.setValue('');
             taskDataControl.setValue('');
