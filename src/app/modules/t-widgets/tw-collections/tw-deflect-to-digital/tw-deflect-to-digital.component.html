@@ -28,6 +28,11 @@
                 </div>
             </div>
         </div>
-        <text-templates #templatesRef class="twd-w-7/12 twd-pt-1" (sendTemplate)="sendTemplate($event)"></text-templates>
+        <text-templates
+            #templatesRef
+            class="twd-w-7/12 twd-pt-1"
+            [editAllowed]="data?.Data?.EditAllowed"
+            (sendTemplate)="sendTemplate($event)"
+        ></text-templates>
     </div>
 </tw-wrapper>

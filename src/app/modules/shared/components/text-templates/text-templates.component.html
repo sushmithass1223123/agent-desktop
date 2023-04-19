@@ -84,6 +84,7 @@
                         [placeholder]="locale('sharedComponents.textTemplates.messagePlaceholder')"
                         [(ngModel)]="template"
                         [disabled]="loading"
+                        [readonly]="!editAllowed"
                     ></textarea>
                 </mat-form-field>
                 <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-3 twd-right-3">

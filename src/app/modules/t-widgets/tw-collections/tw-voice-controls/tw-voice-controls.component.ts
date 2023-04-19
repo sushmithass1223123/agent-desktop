@@ -387,7 +387,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sessionID = this.interaction.UCID || 'NA';
             // set the process media messages flag
             this.processMediaMessages = !this.isManualAnswer;
-
             // check the event name
             if (this.interaction.EventName === 'IncomingCallEvent') {
                 this.interaction = this.data.InteractionDetails as IncomingCallEvent;
