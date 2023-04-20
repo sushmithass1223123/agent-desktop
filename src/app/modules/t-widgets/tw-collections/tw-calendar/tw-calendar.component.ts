@@ -356,10 +356,11 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      * @param event
      */
     deleteEvent(event: CustomCalendarEvent): void {
+        const alertType = event.type === 'executetask' ? 'Task' : 'Event';
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.calendar.confirmDeleteTitle'), this.translocoService.translate('widgets.calendar.confirmDeleteMsg'));
         this.confirmDialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.deleteEventLoading'), 'loading');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.deleteEventLoading').replace("%s", alertType), 'loading');
                 // delete the remider from server
                 SDKClient.updateAgentReminder({
                     id: event.id.toString(),
@@ -370,16 +371,16 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 })
                     .then((x) => {
                         if (x.response > 0) {
-                            this._appUIService.showSnackbar('Event deleted successfully');
+                            this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.deleteEventSuccess'));
                             const eventIndex = this.events.indexOf(event);
                             this.events.splice(eventIndex, 1);
                             this.refresh.next(true);
                         } else {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.deleteEventFailed'), 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.deleteEventFailed').replace("%s", alertType), 'failure');
                         }
                     })
                     .catch(() => {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.deleteEventError'), 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.deleteEventError').replace("%s", alertType), 'failure');
                     });
             }
             this.confirmDialogRef = null;
@@ -394,6 +395,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     editEvent(action: string, event: CustomCalendarEvent): void {
         const eventIndex = this.events.indexOf(event);
+        const alertType = event.type === 'executetask' ? 'Task' : 'Event';
 
         this.dialogRef = this._matDialog.open(CalendarEventFormDialogComponent, {
             panelClass: 'event-form-dialog',
@@ -426,11 +428,11 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 case 'save':
                     // validate the date
                     if (isBefore(formValue.start, new Date())) {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventInvalidDateMsg'), 'failure');
+                        this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.eventInvalidDateMsg'), 'failure');
                         return;
                     }
 
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventUpdateLoading'), 'loading');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventUpdateLoading').replace("%s", alertType), 'loading');
 
                     SDKClient.updateAgentReminder({
                         id: event.id.toString(),
@@ -441,15 +443,15 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                     })
                         .then((x) => {
                             if (x.response > 0) {
-                                this._appUIService.showSnackbar('Event updated successfully');
+                                this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.updateEventSuccess'));
                                 this.events[eventIndex] = Object.assign(this.events[eventIndex], formValue);
                                 this.refresh.next(true);
                             } else {
-                                this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventUpdateFailed'), 'failure');
+                                this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventUpdateFailed').replace("%s", alertType), 'failure');
                             }
                         })
                         .catch(() => {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventUpdateError'), 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventUpdateError').replace("%s", alertType), 'failure');
                         });
                     break;
                 /**
@@ -591,7 +593,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
 
                     this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.addEventSuccess'));
                 } else {
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.addEventFailed'), 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.addEventFailed').replace("%s", alertType), 'failure');
                 }
             });
         } catch (error) {
