@@ -667,7 +667,7 @@
         </ng-template>
 
         <ng-template #emailListRef let-emailList="emailList">
-            <div class="twd-flex twd-items-center">
+            <div *transloco="let locale" class="twd-flex twd-items-center">
                 <cdk-virtual-scroll-viewport
                     [itemSize]="64"
                     [minBufferPx]="488"
