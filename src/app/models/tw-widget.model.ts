@@ -43,7 +43,7 @@ export class TwWidgetModel {
 
     constructor(name: string, type: string, icon?: string, id?: string) {
         this.Name = name || 'Widget';
-        this.ID = id ? id + '_' + type : TUtils.Generic.uuid();
+        this.ID = id ? id.concat('_', type) : TUtils.Generic.uuid();
         this.Description = '';
         this.Type = type || '';
         this.Config = {
