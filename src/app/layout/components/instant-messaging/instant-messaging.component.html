@@ -176,6 +176,7 @@
                         [rows]="1"
                         [matTextareaAutosize]="true"
                         [disabled]="selectedContact.status === 'Not Logged In'"
+                    
                     ></textarea>
                 </mat-form-field>
 
@@ -184,7 +185,7 @@
                     mat-icon-button
                     type="submit"
                     aria-label="Send message"
-                    [disabled]="selectedContact.status === 'Not Logged In'"
+                    [disabled]="selectedContact.status === 'Not Logged In' ||!replyInput.value.trim() " 
                 >
                     <mat-icon class="secondary-text">send</mat-icon>
                 </button>
