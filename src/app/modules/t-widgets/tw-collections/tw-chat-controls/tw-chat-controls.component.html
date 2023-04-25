@@ -484,16 +484,15 @@
 
                     <!-- CHAT FOOTER -->
                     <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
-                        <!-- CHAT TYPING -->
-                        <div
-                            *ngIf="remoteTyping && remoteTyping.typing"
-                            class="twd-absolute twd--top-5 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
-                        >
-                            {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
-                        </div>
-                        <!-- CHAT TYPING -->
                         <!-- REPLY FORM -->
                         <div class="reply-form">
+                        <!-- CHAT TYPING -->
+                             <div
+                            *ngIf="remoteTyping && remoteTyping.typing"
+                            class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-warn-700 twd-font-semibold twd-italic">
+                            {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
+                        </div>
+                         <!-- CHAT TYPING -->
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
                                 <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
                                     <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
