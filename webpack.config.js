@@ -12,5 +12,12 @@ module.exports = (config) => {
     //     tailwindConfig,
     //     patchComponentsStyles: true
     // });
+
+    config.resolve.fallback = { 
+        "url": require.resolve("url/"),
+        "util": require.resolve("util/"),
+        "http": require.resolve("stream-http"),
+        "https": require.resolve("https-browserify")
+    };
     return config;
 };
