@@ -74,7 +74,8 @@
         "submit": "Submit",
         "agent": "Agent",
         "reload": "Reload",
-        "save": "Save"
+        "save": "Save",
+        "teamName": "Team Name"
     },
     "interactionComponent": {
         "hold": "Hold",
@@ -275,7 +276,8 @@
             "supervisor": "SUPERVISOR",
             "webphone": "Webphone",
             "noAgentsFound": "No active agents found!",
-            "agentSortMsg": "Agent list is sorted by",
+            "agentSortMsg": "Agent list is sorted by ",
+            "agentGroupMsg": "Agent list is grouped by ",
             "total": "Total:",
             "agentDataReloadSuccess": "Agent data is reloaded",
             "agentDataloadingMsg": "Please wait, retrieving information...",
@@ -297,7 +299,9 @@
             "broadCastSending": "Sending Broadcast",
             "broadCastMsgFailed": "Broadcast message sending failed for ",
             "broadCaseMsgSuccess": "Broadcast sent",
-            "broadCaseMsgFailedGeneric": "Something went wrong while sending broacast"
+            "broadCaseMsgFailedGeneric": "Something went wrong while sending broacast",
+            "removeGroupBy": "Clear grouping filter",
+            "groupAgents": "Group Agents"
 
         },
         "registerCallback": {
