@@ -40,12 +40,34 @@ tw-su-active-agents {
                             &.success {
                                 background: $tw-alt-success;
                             }
+
                             &.warning {
                                 background: $tw-alt-warning;
                             }
+
                             &.danger {
                                 background: $tw-alt-danger;
                             }
+                        }
+                    }
+
+                    .grouped {
+                        .mat-expansion-panel-header {
+                            padding: 0px 10px;
+                        }
+
+                        .mat-expansion-panel-spacing {
+                            margin: 0;
+                        }
+
+                        .group-size {
+                            padding: 0px 5px;
+                            font-size: 12px;
+                            font-weight: bold;
+                        }
+
+                        .mat-content {
+                            align-items: center;
                         }
                     }
                 }
@@ -59,6 +81,7 @@ tw-su-active-agents {
                 .channel-list {
                     transition: opacity 0.3s;
                     opacity: 1;
+
                     .mat-card-avatar {
                         .mat-badge-content {
                             top: -6px;

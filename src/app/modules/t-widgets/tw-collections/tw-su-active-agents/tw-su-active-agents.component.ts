@@ -28,6 +28,8 @@ import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { from } from 'rxjs';
+import { groupBy, mergeMap, toArray } from 'rxjs/operators';
 
 /**
  * Active agents component widget
@@ -116,6 +118,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     allowBroadcast: boolean;
 
     agentListOnHold: String[] = [];
+
+    groupedAgentList = [];
+
+    groupedBy;
 
     /**
      * Constructor
@@ -255,6 +261,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.reload = false;
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataReloadSuccess'));
         }
+
+        if(this.groupedBy) {
+            this.groupAgentListBy(this.groupedBy['groupAttribute'], this.groupedBy['groupTitle']);
+        }
     }
 
     /**
@@ -284,6 +294,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         // sort agent list
         this.sortAgentList();
+
+        if(this.groupedBy) {
+            this.groupAgentListBy(this.groupedBy['groupAttribute'], this.groupedBy['groupTitle']);
+        }
     }
 
     /**
@@ -702,11 +716,44 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.updateOnHoldAgentList(evt.FromAgentId);
         }
     };
-
+    
+    /**
+     * 
+     * @param agentId ID of agent who has kept customer on hold
+     * removing the user from the list after sometime since we do not receive unhold notification yet, this logic can be removed after unhold
+     * - logic is implemented 
+     */
     updateOnHoldAgentList(agentId) {
         setTimeout(() => {
             this.agentListOnHold.splice(this.agentListOnHold.indexOf(agentId), 1);
         }, 9900);
+    }
+
+    /**
+     * 
+     * @param groupAttribute : An attribute by which to group the agents
+     * @param groupTitle : A readable attribute as a title on the group to display
+     */
+    groupAgentListBy(groupAttribute, groupTitle) {
+        this.groupedBy = { "groupTitle": groupTitle, "groupAttribute": groupAttribute };
+        this.groupedAgentList = [];
+        const source = from(this.filteredAgents);
+        const values = source.pipe(
+            groupBy(a => a[groupAttribute]),
+            mergeMap(group => group.pipe(toArray()))
+        );
+        values.subscribe(val=> {
+            const group = {
+                "groupName": val[0][groupTitle] ? val[0][groupTitle] : val[0][groupAttribute],
+                "list": val,
+                "size": val? val.length : 0  
+            };
+            this.groupedAgentList.push(group);
+        });
+    }
+
+    clearGroup() {
+        this.groupedBy = undefined;
     }
 }
 

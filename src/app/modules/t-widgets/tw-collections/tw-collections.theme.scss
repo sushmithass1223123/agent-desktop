@@ -8,7 +8,7 @@
 
     tw-voice-controls {
         .interaction-details {
-            @if ($is-dark == true) {
+            @if ($is-dark==true) {
                 background-color: map-get($background, hover);
             }
 
@@ -51,7 +51,7 @@
         }
 
         .chat-content {
-            @if ($is-dark == true) {
+            @if ($is-dark==true) {
                 background-color: map-get($background, hover);
             }
         }
@@ -70,17 +70,21 @@
                     }
 
                     &.right {
-                        @if ($is-dark == true) {
+                        @if ($is-dark==true) {
                             background-color: map-get($background, card);
-                        } @else {
+                        }
+
+                        @else {
                             color: rgba(0, 0, 0, 0.87);
                             background-color: #e0e0e0;
                         }
 
                         .replied {
-                            @if ($is-dark == true) {
+                            @if ($is-dark==true) {
                                 background-color: map-get($background, app-bar);
-                            } @else {
+                            }
+
+                            @else {
                                 color: rgba(0, 0, 0, 0.87);
                                 background-color: #c0c0c0;
                             }
@@ -101,9 +105,11 @@
                     .mat-form-field-wrapper {
                         .mat-form-field-flex {
                             .mat-form-field-infix {
-                                @if ($is-dark == true) {
+                                @if ($is-dark==true) {
                                     background-color: map-get($background, divider);
-                                } @else {
+                                }
+
+                                @else {
                                     background-color: white;
                                 }
                             }
@@ -114,7 +120,7 @@
                 .send-message-button,
                 .emoji-button {
                     mat-icon {
-                        @if ($is-dark == true) {
+                        @if ($is-dark==true) {
                             color: #fff;
                         }
                     }
@@ -124,26 +130,32 @@
 
         .attach-content {
             .preview-header {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     background-color: rgb(158 158 158);
                     color: white;
-                } @else {
+                }
+
+                @else {
                     background-color: map-get($primary, 800);
                     color: map-get($primary, default-contrast);
                 }
             }
 
             .preview-content {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     background-color: #303030;
-                } @else {
+                }
+
+                @else {
                     background-color: white;
                 }
 
                 .preview-file-name {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         color: rgba(0, 0, 0, 0.87);
-                    } @else {
+                    }
+
+                    @else {
                         color: white;
                     }
                 }
@@ -157,7 +169,9 @@
                 .mat-form-field-outline {
                     @if ($is-dark) {
                         background-color: map-get($background, hover);
-                    } @else {
+                    }
+
+                    @else {
                         background-color: #ffffff;
                     }
                 }
@@ -166,10 +180,16 @@
             .sort-label {
                 @if ($is-dark) {
                     color: rgba(255, 255, 255, 0.7);
-                } @else {
+                }
+
+                @else {
                     color: rgb(0 0 0 / 70%);
                 }
             }
+        }
+
+        .group-active {
+            background: map-get($mat-warn, default);
         }
 
         .agent-list {
@@ -181,12 +201,29 @@
                 avatar {
                     .avatar-content {
                         color: map-get($foreground, text);
+
                         @if ($is-dark) {
                             background-color: map-get($accent, default) !important;
-                        } @else {
+                        }
+
+                        @else {
                             background-color: #ffffff !important;
                         }
                     }
+                }
+            }
+
+            .grouped {
+                .group-icon {
+                    color: map-get($primary, text);
+                }
+
+                .group-size {
+                    background: map-get($primary, 100);
+                }
+
+                .agent-item {
+                    border: 1px solid map-get($primary, 300);
                 }
             }
         }
@@ -195,7 +232,9 @@
             .mat-card-avatar {
                 @if ($is-dark) {
                     background-color: map-get($background, hover);
-                } @else {
+                }
+
+                @else {
                     background-color: #ffffff;
                 }
             }
@@ -204,7 +243,7 @@
 
     tw-ad-callbacks {
         .callback-total {
-            & > * {
+            &>* {
                 @if ($is-dark) {
                     background-color: map-get($background, hover);
                 }
@@ -212,7 +251,9 @@
                 &.selected {
                     @if ($is-dark) {
                         background-color: map-get($background, app-bar);
-                    } @else {
+                    }
+
+                    @else {
                         background-color: map-get($background, hover);
                     }
                 }
@@ -233,18 +274,22 @@
             .message-row {
                 .bubble {
                     &.left {
-                        @if ($is-dark == true) {
+                        @if ($is-dark==true) {
                             background-color: map-get($background, hover);
-                        } @else {
+                        }
+
+                        @else {
                             background-color: map-get($primary, 700);
                             color: mat-contrast($primary, 700);
                         }
                     }
 
                     &.right {
-                        @if ($is-dark == true) {
+                        @if ($is-dark==true) {
                             background-color: map-get($background, hover);
-                        } @else {
+                        }
+
+                        @else {
                             color: rgba(0, 0, 0, 0.87);
                             background-color: #e0e0e0;
                         }
@@ -256,16 +301,18 @@
 
     tw-workbench-panel {
         .mat-tab-label {
-            @if ($is-dark == true) {
+            @if ($is-dark==true) {
                 color: #fafafa;
                 background-color: map-get($background, hover);
-            } @else {
+            }
+
+            @else {
                 color: rgba(0, 0, 0, 0.87);
                 background-color: #fafafa;
             }
 
             &-active {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     background-color: map-get($background, hover);
                 }
             }
@@ -273,17 +320,19 @@
 
         workbench-email {
             .theme-bg {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     color: #fafafa;
                     background-color: map-get($background, hover);
-                } @else {
+                }
+
+                @else {
                     color: rgba(0, 0, 0, 0.87);
                     background-color: #fafafa;
                 }
             }
 
             .email-workbench {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     background-color: map-get($background, hover);
                 }
 
@@ -296,9 +345,11 @@
                 // }
 
                 .email-list {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         background-color: #303030;
-                    } @else {
+                    }
+
+                    @else {
                         background-color: #fafafa;
                     }
 
@@ -310,21 +361,23 @@
                 }
 
                 .email-open {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         background-color: #303030;
-                    } @else {
+                    }
+
+                    @else {
                         background-color: #fafafa;
                     }
 
                     &__body {
-                        @if ($is-dark == true) {
+                        @if ($is-dark==true) {
                             background-color: map-get($background, hover);
                         }
                     }
                 }
 
                 .email-open {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         background-color: #303030;
                     }
                 }
@@ -333,24 +386,28 @@
 
         workbench-chat {
             .theme-bg {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     color: #fafafa;
                     background-color: map-get($background, hover);
-                } @else {
+                }
+
+                @else {
                     color: rgba(0, 0, 0, 0.87);
                     background-color: #fafafa;
                 }
             }
 
             .chat-workbench {
-                @if ($is-dark == true) {
+                @if ($is-dark==true) {
                     background-color: map-get($background, hover);
                 }
 
                 .chat-list {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         background-color: #303030;
-                    } @else {
+                    }
+
+                    @else {
                         background-color: #fafafa;
                     }
 
@@ -362,21 +419,23 @@
                 }
 
                 .chat-open {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         background-color: #303030;
-                    } @else {
+                    }
+
+                    @else {
                         background-color: #fafafa;
                     }
 
                     &__body {
-                        @if ($is-dark == true) {
+                        @if ($is-dark==true) {
                             background-color: map-get($background, hover);
                         }
                     }
                 }
 
                 .chat-open {
-                    @if ($is-dark == true) {
+                    @if ($is-dark==true) {
                         background-color: #303030;
                     }
                 }
@@ -386,13 +445,14 @@
 
     tw-email-controls {
         .email-controls {
-            @if ($is-dark == true) {
+            @if ($is-dark==true) {
                 background-color: map-get($background, hover);
             }
         }
     }
 
     tw-calendar {
+
         // Month view
         .cal-month-view {
             background: transparent !important;
@@ -449,11 +509,13 @@
             .cal-open-day-events {
                 @if ($is-dark) {
                     background: map-get($background, app-bar);
-                } @else {
+                }
+
+                @else {
                     background: map-get($accent, default);
                 }
 
-                > div {
+                >div {
                     background: map-get($background, card);
 
                     .cal-event-title {
