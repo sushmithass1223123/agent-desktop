@@ -698,11 +698,20 @@
                     <mat-icon>rotate_90_degrees_ccw</mat-icon>
                 </button>
                 <button
+                    *ngIf="previewMediaDialogData?.attachment?.type === 'image'"
+                    mat-icon-button
+                    color="primary"
+                    tabindex="-1"
+                    [matTooltip]="locale('widgets.chatControls.edit')"
+                >
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button
                     *ngIf="agentFeatures.mediaDownload"
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    [matTooltip]="locale('interactionComopnent.download')"
+                    [matTooltip]="locale('interactionComponent.download')"
                     (click)="downloadAttachment(previewMediaDialogData?.attachment?.src)"
                 >
                     <mat-icon>download</mat-icon>
@@ -713,7 +722,7 @@
                     mat-dialog-close
                     (click)="previewMediaDialogData = null"
                     tabindex="-1"
-                    [matTooltip]="locale('interactionComopnent.close')"
+                    [matTooltip]="locale('interactionComponent.close')"
                 >
                     <mat-icon>close</mat-icon>
                 </button>
@@ -740,6 +749,11 @@
                             'rotate-90': previewMediaDialogData?.attachment?.angle === 3
                         }"
                     />
+                    <ng-container *ngIf="">
+                        <ng-container *ngFor="let item of uploadingFiles; let i = index">
+                            <app-annotation [sessionID]="sessionID" [sourceImage]="item.base64" (annotatedImage)="save($event, i)"></app-annotation>
+                        </ng-container>
+                    </ng-container>
                 </div>
                 <video
                     *ngIf="previewMediaDialogData?.attachment?.type === 'video'"

@@ -3397,4 +3397,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
         return updatedLabel;
     }
+
+
+    getImageURL(url) {
+        if(url.startsWith('http')) {
+            return url;
+        } else {
+            return window.origin + url;
+        }
+    }
 }
