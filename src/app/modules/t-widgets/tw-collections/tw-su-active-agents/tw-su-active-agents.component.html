@@ -581,7 +581,7 @@
 
             <div *ngIf="agentList && agentList.length" class="twd-flex twd-justify-between twd-pt-2 twd-px-2">
                 <p *ngIf="filteredAgents.length && !groupedBy" class="text-center twd-inset-x-0">
-                    {{ locale('widgets.activeAgents.agentSortMsg') }} {{ sortType }}
+                    {{ locale('widgets.activeAgents.agentSortMsg') }} {{ sortBy }} in {{ sortType }}
                     <!--<b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order-->
                 </p>
                 <p *ngIf="groupedBy" class="text-center twd-inset-x-0">

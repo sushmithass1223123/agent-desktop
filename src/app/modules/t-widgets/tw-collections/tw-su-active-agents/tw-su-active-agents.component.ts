@@ -332,7 +332,22 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
 
         // sort the agent list by type
-        this.filteredAgents = orderBy(this.filteredAgents, this.sortBy, this.sortType);
+        // use lodash orderBy function and customized it. used "parseInt" to handle integers and used "toLowerCase" to handle uppercase and lowercase 
+        function orderByKey(users: Array<any>, sortBy: string, sortType: 'asc' | 'desc') {
+            return orderBy(
+                users,
+                [
+                    ({ [sortBy]: item }) => {
+                        const itemValue = parseInt(item);
+                        return isNaN(itemValue) ? Infinity : itemValue;
+                    },
+                    ({ [sortBy]: item }) => item.toLowerCase(),
+                ],
+                [sortType]
+            );
+        }
+
+        this.filteredAgents = orderByKey(this.filteredAgents, this.sortBy, this.sortType);
     }
 
     /**
