@@ -121,13 +121,13 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
             titleControl.setValue('');
             titleControl.setValidators([Validators.nullValidator]);
             taskTypeControl.setValidators(Validators.required);
-            taskDataControl.setValidators(Validators.required);
+            taskDataControl.setValidators([Validators.required, this.noWhitespaceValidator]);
         } else {
             taskTypeControl.setValue('');
             taskDataControl.setValue('');
             taskTypeControl.setValidators(Validators.nullValidator);
             taskDataControl.setValidators(Validators.nullValidator);
-            titleControl.setValidators([Validators.required]);
+            titleControl.setValidators([Validators.required, this.noWhitespaceValidator]);
         }
         titleControl.updateValueAndValidity();
         taskTypeControl.updateValueAndValidity();
@@ -197,5 +197,13 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
         });
 
         return formGroup;
+    }
+
+    /**
+     * Custom validation function to prevent white spaces in title field
+     */
+    noWhitespaceValidator(control: FormControl) {
+        const isWhitespace = (control.value || '').trim().length === 0;
+        return !isWhitespace ? null : { 'whitespace': true };
     }
 }
