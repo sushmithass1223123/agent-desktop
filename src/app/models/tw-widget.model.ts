@@ -41,9 +41,9 @@ export class TwWidgetModel {
      */
     OnDestroy?: () => boolean;
 
-    constructor(name: string, type: string, icon?: string) {
+    constructor(name: string, type: string, icon?: string, id?: string) {
         this.Name = name || 'Widget';
-        this.ID = TUtils.Generic.uuid();
+        this.ID = id ? id.concat('_', type) : TUtils.Generic.uuid();
         this.Description = '';
         this.Type = type || '';
         this.Config = {
