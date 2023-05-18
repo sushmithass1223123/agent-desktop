@@ -97,7 +97,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     sortBy: string;
     /**
-     * To display sorted agent
+     * To display sorted value
      */
     sortedName: string;
     /**
