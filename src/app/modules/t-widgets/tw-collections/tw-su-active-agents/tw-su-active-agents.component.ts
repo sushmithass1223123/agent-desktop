@@ -97,6 +97,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     sortBy: string;
     /**
+     * To display sorted agent
+     */
+    sortedName: string;
+    /**
      * Sort type
      */
     sortType: 'desc' | 'asc';
@@ -159,6 +163,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
+        this.sortedName = this.data.Data.SortBy ?? 'Agent Name';
 
         this._tmacEventService
             .getNonInteractionEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
@@ -262,7 +267,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataReloadSuccess'));
         }
 
-        if(this.groupedBy) {
+        if (this.groupedBy) {
             this.groupAgentListBy(this.groupedBy['groupAttribute'], this.groupedBy['groupTitle']);
         }
     }
@@ -295,7 +300,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // sort agent list
         this.sortAgentList();
 
-        if(this.groupedBy) {
+        if (this.groupedBy) {
             this.groupAgentListBy(this.groupedBy['groupAttribute'], this.groupedBy['groupTitle']);
         }
     }
@@ -321,7 +326,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      *
      * @param {string} by
      */
-    public sortAgentList(by?: string): void {
+    public sortAgentList(by?: string, sortedName?: string): void {
         // check the sort type
         if (this.sortBy === by) {
             this.sortType = this.sortType === 'desc' ? 'asc' : 'desc';
@@ -329,6 +334,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // check if type is provided
         else if (by) {
             this.sortBy = by;
+            this.sortedName = sortedName;
         }
 
         // sort the agent list by type
@@ -731,7 +737,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.updateOnHoldAgentList(evt.FromAgentId);
         }
     };
-    
+
     /**
      * 
      * @param agentId ID of agent who has kept customer on hold
@@ -757,11 +763,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             groupBy(a => a[groupAttribute]),
             mergeMap(group => group.pipe(toArray()))
         );
-        values.subscribe(val=> {
+        values.subscribe(val => {
             const group = {
                 "groupName": val[0][groupTitle] ? val[0][groupTitle] : val[0][groupAttribute],
                 "list": val,
-                "size": val? val.length : 0  
+                "size": val ? val.length : 0
             };
             this.groupedAgentList.push(group);
         });
