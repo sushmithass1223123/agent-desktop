@@ -377,7 +377,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
                     lastUpdateDateTime: Date.now()
                 };
             }
-        } catch (error) {}
+        } catch (error) { }
         return contact;
     }
 
@@ -432,6 +432,10 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      */
     async reply(event): Promise<void> {
         event.preventDefault();
+        if (this._replyForm.form.value.message.trim() == "") {
+            return;
+        }
+
         if (!this._replyForm.form.value.message) {
             return;
         }
