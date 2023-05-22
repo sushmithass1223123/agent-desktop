@@ -13,6 +13,25 @@ import { BookmarkItem } from 'app/interfaces';
 import { orderBy } from 'lodash';
 import { TranslocoService } from '@ngneat/transloco';
 
+const regexEscapeCharacters = {
+    "\\": "\\\\",
+    "[": "\\]",
+    "]": "\\]",
+    "$": "\\$",
+    "(": "\\(",
+    ")": "\\)",
+    "{": "\\{",
+    "}": "\\}",
+    "*": "\\*",
+    "&": "\\&",
+    ",": "\\,",
+    "|": "\\|",
+    "?": "\\?",
+    "+": "\\+",
+    ".": "\\.",
+    "^": "\\^"
+};
+
 /**
  * Bookmarks Component
  */
@@ -144,8 +163,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Constructor
      */
-    constructor(private _appUIService: AppUiService, private _matDialog: MatDialog,
-        private translocoService: TranslocoService) {
+    constructor(private _appUIService: AppUiService, private _matDialog: MatDialog, private translocoService: TranslocoService) {
         super('TwBookmarksComponent');
 
         this.treeControl = new FlatTreeControl<BookmarkFlatNode>(this.getLevel, this.isExpandable);
@@ -468,8 +486,12 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
         if (searchTerm) {
             this.serachData = this.bookmarkData.filter((f) => {
-                if (f.bookmarkType === 'url') {
-                    const re = new RegExp(searchTerm as string, 'i');
+                if (f.bookmarkType === 'url') {                    
+
+                    const replacedString = searchTerm.replace(/./g, (char) => {
+                        return regexEscapeCharacters[char] || char;
+                    });
+                    const re = new RegExp(replacedString as string, 'i');
                     return f.bookmarkName?.match(re);
                 }
                 return false;
@@ -552,9 +574,11 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
                                 key: '#name',
                                 value: node.name
                             }
-                        ]
+                        ];
 
-                        this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.deleteBookmarkSuccess'),dynamicLabels));
+                        this._appUIService.showSnackbar(
+                            this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.deleteBookmarkSuccess'), dynamicLabels)
+                        );
 
                         // remove the deleted items from bookmarks data
                         this.bookmarkData = this.bookmarkData.filter((i) => !ids.includes(i.id));
@@ -592,7 +616,10 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         if (source === 'add') {
             // init add bookmark data
             this.addBookmarkData = {
-                title: type === 'url' ?this.translocoService.translate('widgets.bookmarks.addBookmark') : this.translocoService.translate('widgets.bookmarks.addFolder'),
+                title:
+                    type === 'url'
+                        ? this.translocoService.translate('widgets.bookmarks.addBookmark')
+                        : this.translocoService.translate('widgets.bookmarks.addFolder'),
                 id: node?.id ?? '',
                 name: '',
                 type,
@@ -604,7 +631,10 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         else {
             // init add bookmark data
             this.addBookmarkData = {
-                title: type === 'url' ? this.translocoService.translate('widgets.bookmarks.editBookmark') :this.translocoService.translate('widgets.bookmarks.editFolder'),
+                title:
+                    type === 'url'
+                        ? this.translocoService.translate('widgets.bookmarks.editBookmark')
+                        : this.translocoService.translate('widgets.bookmarks.editFolder'),
                 id: node.id,
                 name: node.name,
                 type,
@@ -633,7 +663,10 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         ];
         try {
             if (this.apiUrls.length === 0) {
-                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkFailedAPINotFound'),dynamicLabels), 'failure');
+                this._appUIService.showSnackbar(
+                    this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkFailedAPINotFound'), dynamicLabels),
+                    'failure'
+                );
                 return;
             }
 
@@ -648,7 +681,10 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             const userId = SDKClient.getAgentData().agentId;
 
-            this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkLoading'),dynamicLabels), 'loading');
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkLoading'), dynamicLabels),
+                'loading'
+            );
 
             this.progressLoading = true;
 
@@ -687,9 +723,14 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.formatBookmarkData();
 
-            this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkSuccess'),dynamicLabels));
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkSuccess'), dynamicLabels)
+            );
         } catch (error) {
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.bookmarks.addBookmarkError') + this.addBookmarkData.type, 'failure');
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('widgets.bookmarks.addBookmarkError') + this.addBookmarkData.type,
+                'failure'
+            );
             console.error(error);
         } finally {
             this.addBookmarkData = null;
@@ -711,13 +752,19 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
         ];
         try {
             if (this.apiUrls.length === 0) {
-                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkFailedAPINotFound'),dynamicLabels), 'failure');
+                this._appUIService.showSnackbar(
+                    this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkFailedAPINotFound'), dynamicLabels),
+                    'failure'
+                );
                 return;
             }
 
             const userId = SDKClient.getAgentData().agentId;
 
-            this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkLoading'),dynamicLabels), 'loading');
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkLoading'), dynamicLabels),
+                'loading'
+            );
 
             this.progressLoading = true;
 
@@ -751,9 +798,14 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             this.formatBookmarkData();
 
-            this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkSuccess'),dynamicLabels));
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkSuccess'), dynamicLabels)
+            );
         } catch (error) {
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.bookmarks.updateBookmarkError') + this.addBookmarkData.type, 'failure');
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('widgets.bookmarks.updateBookmarkError') + this.addBookmarkData.type,
+                'failure'
+            );
             console.error(error);
         } finally {
             this.addBookmarkData = null;
@@ -774,8 +826,8 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
     getUpdatedLabel(msg, labels = []) {
         let updatedLabel = msg;
-        labels?.forEach(ele => {
-            updatedLabel = updatedLabel.replace(ele.key,ele.value);
+        labels?.forEach((ele) => {
+            updatedLabel = updatedLabel.replace(ele.key, ele.value);
         });
         return updatedLabel;
     }
