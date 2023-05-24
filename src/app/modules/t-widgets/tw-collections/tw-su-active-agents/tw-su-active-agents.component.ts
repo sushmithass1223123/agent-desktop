@@ -341,7 +341,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         const itemValue = parseInt(item);
                         return isNaN(itemValue) ? Infinity : itemValue;
                     },
-                    ({ [sortBy]: item }) => item.toLowerCase(),
+                    ({ [sortBy]: item }) => typeof item === 'number' ? item : item.toLowerCase(),
                 ],
                 [sortType]
             );
