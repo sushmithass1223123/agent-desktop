@@ -97,10 +97,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     sortBy: string;
     /**
-     * To display sorted value
-     */
-    sortedName: string;
-    /**
      * Sort type
      */
     sortType: 'desc' | 'asc';
@@ -163,7 +159,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
         this.sortBy = this.data.Data.SortBy ?? 'AgentName';
         this.sortType = this.data.Data.SortType ?? 'asc';
-        this.sortedName = this.data.Data.SortBy ?? 'Agent Name';
 
         this._tmacEventService
             .getNonInteractionEvents(['SupervisorAgentListEvent', 'TeamAgentListDataEvent'])
@@ -326,7 +321,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      *
      * @param {string} by
      */
-    public sortAgentList(by?: string, sortedName?: string): void {
+    public sortAgentList(by?: string): void {
         // check the sort type
         if (this.sortBy === by) {
             this.sortType = this.sortType === 'desc' ? 'asc' : 'desc';
@@ -334,7 +329,6 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // check if type is provided
         else if (by) {
             this.sortBy = by;
-            this.sortedName = sortedName;
         }
 
         // sort the agent list by type
@@ -353,7 +347,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             );
         }
 
-        this.filteredAgents = orderByKey(this.filteredAgents, this.sortBy, this.sortType);
+        let sortedList = orderByKey(this.filteredAgents, this.sortBy, 'asc');
+        if (this.sortType === 'asc') {
+            this.filteredAgents = sortedList;
+        } else {
+            this.filteredAgents = sortedList.reverse();
+        }
     }
 
     /**
