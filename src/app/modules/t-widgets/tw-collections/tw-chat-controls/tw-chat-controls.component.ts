@@ -260,6 +260,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     showAttachOverlay = false;
     /**
+     * whiteBoard Widget ID
+     */
+    whiteBoardWidgetId: string;
+    /**
      * Attachment actions
      */
     attachActions: {
@@ -2036,6 +2040,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     } else if (msg.status === 'accepted') {
                         this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
                     } else {
+                        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
                         this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
                     }
                     break;
@@ -3193,6 +3198,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     Url: agentWhiteboardUrl.toString(),
                     NotifyTypeOnClose: 'closeWhiteboard'
                 };
+                this.whiteBoardWidgetId = widget.ID;
                 this._aotWidgetService.addWidget(widget);
                 snackRef.dismiss();
             } else {
