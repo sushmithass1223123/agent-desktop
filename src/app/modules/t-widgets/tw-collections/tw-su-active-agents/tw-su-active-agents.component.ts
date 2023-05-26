@@ -78,6 +78,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Selected Agent
      */
     selectedAgent: string;
+
+     /**
+     * Selected group
+     */
+    selectedGroup: string;
     /**
      * Agent features
      */
@@ -369,6 +374,19 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.selectedAgent = null;
         } else {
             this.selectedAgent = agent.AgentLoginID;
+        }
+    }
+
+    /**
+     * Select an agent
+     * @method selectAgent
+     * @param {any} agent
+     */
+     public selectGroup(group: any): void {
+        if (this.selectedGroup === group.groupName) {
+            this.selectedGroup = null;
+        } else {
+            this.selectedGroup = group.groupName;
         }
     }
 
