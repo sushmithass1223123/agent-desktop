@@ -174,6 +174,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     case 'getagentdata':
                         this.sendDataToWindow(message.callback, SDKClient.getAgentData(), message.userObject);
                         break;
+                    case 'gettmaccommands': 
+                        this.sendDataToWindow('onTMACCommand', this._tmacEventService.getTmacCommandsArray());     
+                        break;
                 }
                 this.logger.info('Message received from custom frame -' + message.name + ':'+ JSON.stringify(message),true);
             } catch (error) {
@@ -317,6 +320,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this.loaded = true;
             });
         }
+
+        // can add a UI config here whether to send data or not
+        this.sendDataToWindow('onTMACCommand', this._tmacEventService.getTmacCommandsArray());
     };
 
     /**
