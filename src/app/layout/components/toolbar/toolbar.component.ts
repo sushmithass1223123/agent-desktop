@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
+import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { SDKClient, SDKConnectivityStatusEvent } from '@tmac/sdk';
@@ -18,7 +19,7 @@ import { takeUntil } from 'rxjs/operators';
     styleUrls: ['./toolbar.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class ToolbarComponent implements OnInit, OnDestroy {
+export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Horizontal Navbar
      */
@@ -66,6 +67,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      */
     private infoLoading: boolean;
 
+    private appConfig;
+
+    private reloginDialog;
+
     /**
      * Constructor
      *
@@ -79,6 +84,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _appDataService: AppDataService,
         private _appUIService: AppUiService
     ) {
+        super('ToolbarComponent');
         // Set the private defaults
         this._unsubscribeAll = new Subject();
     }
@@ -115,10 +121,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                         this.toolbarMenuWidget = widget;
                     }
                 });
+
+                this.appConfig = config?.AppConfigs;
             }
         });
 
         SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
+        SDKClient.events.on('SignalRErrorEvent', this.onSignalRError);
+
     }
 
     /**
@@ -138,10 +148,41 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      * @param data
      */
     private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
-        setTimeout(() => {
-            this.connectivityStatus = evt;
-        }, 100);
+        try{
+            if(evt.Message?.trim() !== '' && this.appConfig?.Notifications?.AppAlertOnConnectivityStatus) {
+                this._appUIService.showAppSnackbar({
+                    'message': evt.Message,
+                    'state': Number(evt.Status) === 1 ? 'success' : 'warning', 
+                    'vPos':'top',
+                    'hPos':'center',
+                    'duration': 5000
+                });
+            }
+            setTimeout(() => {
+                this.connectivityStatus = evt;
+            }, 100);
+        } catch(e) {
+            this.logger.error('Error occured on setting connectivity status in AD', e);
+        }
     };
+
+
+    private onSignalRError = () => {
+        this.logger.info('SignalRError event captured at AD, configured fallback:' + this.appConfig?.SDK?.signalRProxy?.fallback);
+
+        if(this.appConfig?.EnableReloginOnConnectionError && !this.appConfig?.SDK?.signalRProxy?.fallback && !this.reloginDialog) {
+            try {
+                this.reloginDialog = this._appUIService.showCustomDialog('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost in on re-login] ', 'Re-login');
+                this.reloginDialog.afterClosed().subscribe((res) => {
+                    if(res) {
+                        location.reload();
+                    }
+                });
+            } catch(e) {
+                this.logger.debug('Error occured on handling SignalRError:' +e);
+            }
+        }
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
