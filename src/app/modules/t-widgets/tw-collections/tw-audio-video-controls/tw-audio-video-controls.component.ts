@@ -276,9 +276,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
-     * Total interaction list
+     * The current interaction
      */
-    interactionList: InteractionRef[];
+    myInteraction: InteractionRef;
 
     confirmDialogRef;
 
@@ -328,8 +328,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // subscribe to interaction manager service
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // filter out the textchat interactions
-            this.interactionList = interactions.filter((i: InteractionRef) => i.type === 'textchat');
+            //find out the current interaction
+            this.myInteraction = interactions.find((i: InteractionRef) => i.interactionId === this.interactionId);
         });
 
         // set defaults
@@ -613,10 +613,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // swtich the av events
             switch (evt.event) {
                 case 'onIncoming':
-                    //Search for the interaction in the interaction List array where the 'interactionId' matches the assigned 'interactionID' value
-                    const interactionID = this.interactionId;
-                    const interaction = Object.values(this.interactionList).find(item => item.interactionId === interactionID);
-                    if(interaction?.status === 'hold'){
+                    //Check whether the type and status of myInteraction matches to 'textchat' and 'hold' 
+                    if(this.myInteraction?.type === 'textchat' && this.myInteraction?.status === 'hold'){
                         // reject request
                         evt.data.response(false);
                         // close the call widget
