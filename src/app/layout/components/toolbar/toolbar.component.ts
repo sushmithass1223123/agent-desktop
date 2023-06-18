@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
@@ -69,7 +70,17 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
 
     private appConfig;
 
-    private reloginDialog;
+    private reloginDialog: MatDialogRef<any>;
+
+    private showReloginOnMaxRetryExceed;
+
+    private reloginTimerStarted;
+
+    public isForceRelogin;
+
+    private isInitial = true;
+
+    connectivityStatusMessages = [];
 
     /**
      * Constructor
@@ -127,7 +138,11 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         });
 
         SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
-        SDKClient.events.on('SignalRErrorEvent', this.onSignalRError);
+        
+        if(this.appConfig?.EnableReloginOnConnectionError && !this.appConfig?.SDK?.signalRProxy?.fallback) {
+            SDKClient.events.on('SignalRErrorEvent', this.onSignalRError);
+        }
+        SDKClient.events.on('SignalRConnectedEvent', this.onSignalRConnect);
 
     }
 
@@ -149,14 +164,9 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
      */
     private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
         try{
-            if(evt.Message?.trim() !== '' && this.appConfig?.Notifications?.AppAlertOnConnectivityStatus) {
-                this._appUIService.showAppSnackbar({
-                    'message': evt.Message,
-                    'state': Number(evt.Status) === 1 ? 'success' : 'warning', 
-                    'vPos':'top',
-                    'hPos':'center',
-                    'duration': 5000
-                });
+            if(evt.Message?.trim() !== '' && this.appConfig?.Notifications?.AppAlertOnConnectivityStatus && !this.isForceRelogin) {
+                this.connectivityStatusMessages.push(evt);
+                this.squentialSnackbar();
             }
             setTimeout(() => {
                 this.connectivityStatus = evt;
@@ -166,23 +176,98 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         }
     };
 
+    /**
+     * Snackbars to be shown in sequential order which can avoid missing of snackbar display in case of
+     * quicker events
+     * @returns snackbars in order
+     */
 
-    private onSignalRError = () => {
-        this.logger.info('SignalRError event captured at AD, configured fallback:' + this.appConfig?.SDK?.signalRProxy?.fallback);
-
-        if(this.appConfig?.EnableReloginOnConnectionError && !this.appConfig?.SDK?.signalRProxy?.fallback && !this.reloginDialog) {
-            try {
-                this.reloginDialog = this._appUIService.showCustomDialog('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost in on re-login] ', 'Re-login');
-                this.reloginDialog.afterClosed().subscribe((res) => {
-                    if(res) {
-                        location.reload();
-                    }
-                });
-            } catch(e) {
-                this.logger.debug('Error occured on handling SignalRError:' +e);
+    public squentialSnackbar = () => {
+        if(this.connectivityStatusMessages[0]['processed']) {
+            return
+        };
+        this.connectivityStatusMessages[0]['processed'] = true;
+        const evt = this.connectivityStatusMessages[0];
+        this._appUIService.showAppSnackbar({
+            'message': evt.Message,
+            'state': Number(evt.Status) === 1 ? 'success' : 'warning',
+            'vPos':'top',
+            'hPos': 'center',
+            'duration': 4000
+        }).afterDismissed().subscribe(res => {
+            this.connectivityStatusMessages.shift();
+            if(this.connectivityStatusMessages.length > 0) {
+                this.squentialSnackbar();
             }
+        })
+    };
+
+    /**
+     * Method to capture signalR Error event and ask user to relogin to get new connection if fallback is disabled
+     */
+    private onSignalRError = () => {
+        if(!this.reloginTimerStarted && !this.isForceRelogin) {
+            
+            this.reloginTimerStarted = true;
+            setTimeout(() => {
+                !this.isForceRelogin ? this.confirmRelogin('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost on re-login] ') : '';
+                this.reloginTimerStarted = false;
+                this.isInitial = false;
+                if(!this.showReloginOnMaxRetryExceed) {
+                    this.signalRStopRetry(true);
+                }
+            },this.isInitial ? 10 : this.appConfig?.SDK?.signalRProxy?.timeout*1000);
         }
     }
+
+    /**
+     * 
+     * @param type Type of custom dialog to be displayed - 'confirm' / 'alert'
+     * @param msg  Message to be displayed in custom dialog
+     */
+    
+    private confirmRelogin = (type, msg) => {
+        try {
+            
+            this.reloginDialog?.close();
+            this.reloginDialog = this._appUIService.showCustomDialog(type, msg, 'Re-login', {},{disableClose: true});
+            this.reloginDialog.afterClosed().subscribe((res) => {
+                if(res) {
+                    location.reload();
+                } 
+            });
+        } catch(e) {
+            this.logger.debug('Error occured on handling SignalRError:' +e);
+        }
+    }
+
+    /**
+     * method to capture if signalR get connected back, so if any error msgs were being displayed 
+     * it has to be closed and to stop timer
+     */
+
+    private onSignalRConnect = () => {
+        this.reloginDialog?.close();
+        this.reloginDialog = undefined;
+        this.signalRStopRetry(false);
+    }
+
+
+    /**
+     * 
+     * @param isStart - whether to start / stop timer to force UI relogin popup
+     */
+    private signalRStopRetry = (isStart) => {
+        if(isStart) {
+            this.showReloginOnMaxRetryExceed = setTimeout(() => {
+                    this.confirmRelogin('alert', 'Connection failed, please relogin to continue.<br> [Note: Current session will not be lost on re-login] ');
+                    this.isForceRelogin = true;
+            }, this.appConfig?.SDK?.signalRProxy?.maxConnectivityRetryTimeOut*1000);
+        } else {
+            clearTimeout(this.showReloginOnMaxRetryExceed);
+            this.showReloginOnMaxRetryExceed = undefined;
+        }
+    };
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
