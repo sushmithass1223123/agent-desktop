@@ -92,6 +92,13 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     @HostListener('window:beforeunload', ['$event'])
     pageBeforeUnload(event: any): boolean {
+        /**
+         * Check if window is being refreshed on re-login request on agent's consent.
+         * if Yes then do not restrict at browser level
+         */
+        if(this._appUIService._reloginTriggered) {
+            return true;
+        }
         if (environment.production) {
             event?.preventDefault();
             return false;

@@ -82,6 +82,8 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
 
     connectivityStatusMessages = [];
 
+    private stopTimer = false;
+
     /**
      * Constructor
      *
@@ -143,6 +145,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
             SDKClient.events.on('SignalRErrorEvent', this.onSignalRError);
         }
         SDKClient.events.on('SignalRConnectedEvent', this.onSignalRConnect);
+        SDKClient.events.on('SignalRReconnectedEvent', this.onSignalRConnect);
 
     }
 
@@ -165,6 +168,9 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
     private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
         try{
             if(evt.Message?.trim() !== '' && this.appConfig?.Notifications?.AppAlertOnConnectivityStatus && !this.isForceRelogin) {
+                if(Number(evt.Status) === 1) {
+                    this.removeAllErrorMessages();
+                }
                 this.connectivityStatusMessages.push(evt);
                 this.squentialSnackbar();
             }
@@ -175,6 +181,10 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
             this.logger.error('Error occured on setting connectivity status in AD', e);
         }
     };
+
+    removeAllErrorMessages() {
+        this.connectivityStatusMessages = this.connectivityStatusMessages.filter(msgEvt => Number(msgEvt.Status) !== 2);
+    }
 
     /**
      * Snackbars to be shown in sequential order which can avoid missing of snackbar display in case of
@@ -192,8 +202,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
             'message': evt.Message,
             'state': Number(evt.Status) === 1 ? 'success' : 'warning',
             'vPos':'top',
-            'hPos': 'center',
-            'duration': 4000
+            'hPos': 'center'
         }).afterDismissed().subscribe(res => {
             this.connectivityStatusMessages.shift();
             if(this.connectivityStatusMessages.length > 0) {
@@ -209,6 +218,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         if(!this.reloginTimerStarted && !this.isForceRelogin) {
             
             this.reloginTimerStarted = true;
+            this.stopTimer = false;
             setTimeout(() => {
                 !this.isForceRelogin ? this.confirmRelogin('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost on re-login] ') : '';
                 this.reloginTimerStarted = false;
@@ -228,17 +238,29 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
     
     private confirmRelogin = (type, msg) => {
         try {
-            
-            this.reloginDialog?.close();
-            this.reloginDialog = this._appUIService.showCustomDialog(type, msg, 'Re-login', {},{disableClose: true});
-            this.reloginDialog.afterClosed().subscribe((res) => {
-                if(res) {
-                    location.reload();
-                } 
-            });
+            if(!this.stopTimer) {
+                this.reloginDialog?.close();
+                this.reloginDialog = this._appUIService.showCustomDialog(type, msg, 'Re-login', {},{disableClose: true});
+                this.reloginDialog.afterClosed().subscribe((res) => {
+                    if(res) {
+                        this.resetAllErrorNotifications();
+                        this._appUIService._reloginTriggered = true;
+                        location.reload();
+                    } 
+                });
+            }
         } catch(e) {
             this.logger.debug('Error occured on handling SignalRError:' +e);
         }
+    }
+
+    private resetAllErrorNotifications() {
+        this.reloginDialog?.close();
+
+        this.stopTimer = true;
+        this.isForceRelogin = false;
+        this.reloginTimerStarted = false;
+        this.signalRStopRetry(false);
     }
 
     /**
@@ -247,9 +269,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
      */
 
     private onSignalRConnect = () => {
-        this.reloginDialog?.close();
-        this.reloginDialog = undefined;
-        this.signalRStopRetry(false);
+        this.resetAllErrorNotifications();
     }
 
 
@@ -261,7 +281,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         if(isStart) {
             this.showReloginOnMaxRetryExceed = setTimeout(() => {
                     this.confirmRelogin('alert', 'Connection failed, please relogin to continue.<br> [Note: Current session will not be lost on re-login] ');
-                    this.isForceRelogin = true;
+                    this.isForceRelogin = this.stopTimer ? false : true;
             }, this.appConfig?.SDK?.signalRProxy?.maxConnectivityRetryTimeOut*1000);
         } else {
             clearTimeout(this.showReloginOnMaxRetryExceed);

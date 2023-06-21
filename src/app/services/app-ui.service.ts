@@ -87,6 +87,8 @@ export class AppUiService extends SharedWrapper {
         data?: any;
     }>;
 
+    _reloginTriggered: boolean = false;
+
     /**
      * Constructor
      * @param {MatSnackBar} _matSnackBar
