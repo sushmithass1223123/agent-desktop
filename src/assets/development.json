@@ -47,7 +47,7 @@
                                 "Description": "",
                                 "Type": "tw-logout",
                                 "Config": { "Enabled": true },
-                                "Data": { "LogoutAux": ["logout"], "AllowLogoutOnOpenInteractions": true, "AllowLogoutOnAvailable": false }
+                                "Data": { "LogoutAux": [], "AllowLogoutOnOpenInteractions": true, "AllowLogoutOnAvailable": false }
                             },
                             {
                                 "Name": "Agent IM",
@@ -2757,8 +2757,8 @@
                 "logging": true,
                 "protocol": "webSockets",
                 "timeout": 10,
-                "fallback": true,
-                "maxConnectivityRetryTimeOut": 60
+                "fallback": false,
+                "maxConnectivityRetryTimeOut": 30
             },
             "logging": {
                 "enabled": true,
@@ -2775,5 +2775,5 @@
             ]
         }
     },
-    "Version": "5.1.11.3005"
+    "Version": "5.1.11.3006"
 }

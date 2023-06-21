@@ -72,7 +72,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
 
     private reloginDialog: MatDialogRef<any>;
 
-    private showReloginOnMaxRetryExceed;
+    private showReloginOnMaxRetryExceed = null;
 
     private reloginTimerStarted;
 
@@ -158,6 +158,11 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         this._unsubscribeAll.complete();
 
         SDKClient.events.off('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
+        SDKClient.events.off('SignalRErrorEvent', this.onSignalRError);
+        SDKClient.events.off('SignalRConnectedEvent', this.onSignalRConnect);
+        SDKClient.events.off('SignalRReconnectedEvent', this.onSignalRConnect);
+
+        this.resetAllErrorNotifications();
     }
 
     /**
@@ -223,7 +228,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
                 !this.isForceRelogin ? this.confirmRelogin('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost on re-login] ') : '';
                 this.reloginTimerStarted = false;
                 this.isInitial = false;
-                if(!this.showReloginOnMaxRetryExceed) {
+                if(this.showReloginOnMaxRetryExceed == null) {
                     this.signalRStopRetry(true);
                 }
             },this.isInitial ? 10 : this.appConfig?.SDK?.signalRProxy?.timeout*1000);
@@ -278,14 +283,14 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
      * @param isStart - whether to start / stop timer to force UI relogin popup
      */
     private signalRStopRetry = (isStart) => {
+        clearTimeout(this.showReloginOnMaxRetryExceed);
         if(isStart) {
             this.showReloginOnMaxRetryExceed = setTimeout(() => {
-                    this.confirmRelogin('alert', 'Connection failed, please relogin to continue.<br> [Note: Current session will not be lost on re-login] ');
-                    this.isForceRelogin = this.stopTimer ? false : true;
+                this.confirmRelogin('alert', 'Connection failed, please relogin to continue.<br> [Note: Current session will not be lost on re-login] ');
+                this.isForceRelogin = this.stopTimer ? false : true;
             }, this.appConfig?.SDK?.signalRProxy?.maxConnectivityRetryTimeOut*1000);
         } else {
-            clearTimeout(this.showReloginOnMaxRetryExceed);
-            this.showReloginOnMaxRetryExceed = undefined;
+            this.showReloginOnMaxRetryExceed = null;
         }
     };
 
@@ -341,4 +346,5 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
 
         this.infoLoading = false;
     }
+
 }
