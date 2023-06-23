@@ -619,9 +619,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         //observe ui control events from custom widgets
         this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
             try {
-            if(data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
-                this.handleUIControls(data);
-            }  } catch(e) {
+                if (data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
+                    this.handleUIControls(data);
+                }
+            } catch (e) {
                 console.log('Error occured on UIControl event received');
             }
         });
@@ -736,7 +737,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // play new chat sound
         this._appUIService.playAudio('new-chat', 0.5, false);
-        this._appUIService.showDesktopAlert(this.translocoService.translate('widgets.chatControls.incomingChatTitle'),this.translocoService.translate('widgets.chatControls.incomingChatMessage'), false);
+        this._appUIService.showDesktopAlert(this.translocoService.translate('widgets.chatControls.incomingChatTitle'), this.translocoService.translate('widgets.chatControls.incomingChatMessage'), false);
 
         this.replyInput = this.replyInputField.nativeElement;
         this.readyToReply();
@@ -1026,7 +1027,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // to show message alert
         this._appUIService.showDesktopAlert(this.translocoService.translate('widgets.chatControls.newMessageTitle'),
-        this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.newMessageInfo'),dynamicLabels), true, 'message');
+            this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.newMessageInfo'), dynamicLabels), true, 'message');
     }
 
     /**
@@ -1235,7 +1236,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // send done typing
         this.doneTyping();
 
-        if(!isAutomated) {
+        if (!isAutomated) {
             // Reset the reply form
             this.replyForm?.reset();
         }
@@ -1807,7 +1808,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         value: evt.AgentName
                     }
                 ]
-                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'),dynamicLabels), 'info');
+                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels), 'info');
             }
         } catch (error) { }
 
@@ -1952,7 +1953,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sendMessage({
             Text: evt.AutoResponseTemplate,
             ID: evt.AutoResponseTemplateId
-        },true);
+        }, true);
 
         // if this is the final auto response then disconnect the chat
         if (evt.IsFinal) {
@@ -2105,7 +2106,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -2141,7 +2142,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -2168,9 +2169,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 value: evt.HoldTimeString
             }
         ];
-        
+
         this._appUIService.showAppSnackbar({
-            message: this.getUpdatedLabel(this.translocoService.translate('interactionComponent.customerOnHoldMessage'),dynamicLabels),
+            message: this.getUpdatedLabel(this.translocoService.translate('interactionComponent.customerOnHoldMessage'), dynamicLabels),
             state: evt.ColorCode,
             onClick: () => {
                 const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
@@ -2308,7 +2309,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     value: evt.AgentName
                 }
             ];
-            this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'),dynamicLabels), 'info');
+            this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'), dynamicLabels), 'info');
         }
 
         // if any tempates then clear
@@ -2330,7 +2331,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         // send the selected template
-        this.sendMessage({ ...evt.Data.Template, Type: '' },true);
+        this.sendMessage({ ...evt.Data.Template, Type: '' }, true);
     }
 
     /**
@@ -2464,7 +2465,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     public canReplyToChat(): boolean {
-       return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
+        return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
     }
 
     /** 
@@ -2597,7 +2598,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 } else {
                     // enable the button
                     btn.disabled = false;
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.chatAnswerFailed') +dt.response.ResultMessage, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.chatAnswerFailed') + dt.response.ResultMessage, 'failure');
                 }
             })
             .catch(() => {
@@ -2694,7 +2695,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         value: confirmType
                     }
                 ];
-                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.changeModeLoading'),dynamicLabels), 'loading');
+                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.changeModeLoading'), dynamicLabels), 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 // disable the button
@@ -2721,7 +2722,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                                 value: resp.response
                             }
                         ];
-                        this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.incomingChatTitle'),dynamicLabels));
+                        this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.incomingChatTitle'), dynamicLabels));
                     })
                     .catch(() => {
                         // enable if something goes wrong
@@ -2733,7 +2734,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                                 value: confirmType
                             }
                         ]
-                        this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.incomingChatTitle'),dynamicLabels), 'failure');
+                        this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.incomingChatTitle'), dynamicLabels), 'failure');
                     });
             }
         });
@@ -3376,10 +3377,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To zoom in or zoom out
      */
     zoomInOut(zoomIn: boolean): void {
+        var scrollContainer = document.querySelector('.drag-scroll-content') as HTMLDivElement;
+        var originContainer = document.querySelector('.twd-origin-top-left') as HTMLDivElement;
+
         if (zoomIn) {
             this.previewMediaDialogData.otherData.scale += 0.25;
+            scrollContainer.style.overflow = 'auto';
+            originContainer.style.transformOrigin = 'top left';
         } else {
             this.previewMediaDialogData.otherData.scale -= 0.25;
+            if (this.previewMediaDialogData.otherData.scale <= 1) {
+                scrollContainer.style.overflow = 'hidden';
+                originContainer.style.transformOrigin = 'bottom right';
+            } else {
+                scrollContainer.style.overflow = 'auto';
+                originContainer.style.transformOrigin = 'top left';
+            }
         }
     }
 
@@ -3388,10 +3401,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param data 
      */
     handleUIControls(data) {
-        if(data.eventName === 'disableCloseInteraction') {
+        if (data.eventName === 'disableCloseInteraction') {
             this.closeButton.disabled = true;
         }
-        if(data.eventName === 'enableCloseInteraction') {
+        if (data.eventName === 'enableCloseInteraction') {
             this.closeButton.disabled = false;
         }
     }
@@ -3399,7 +3412,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     getUpdatedLabel(msg, labels = []) {
         let updatedLabel = msg;
         labels?.forEach(ele => {
-            updatedLabel = updatedLabel.replace(ele.key,ele.value);
+            updatedLabel = updatedLabel.replace(ele.key, ele.value);
         });
         return updatedLabel;
     }
