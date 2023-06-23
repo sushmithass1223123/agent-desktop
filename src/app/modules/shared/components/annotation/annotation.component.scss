@@ -7,6 +7,8 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    overflow: scroll;
+    height: 100%;
 }
 
 .annotate-container {
@@ -14,7 +16,7 @@
     border-radius: 15px;
 
     .image-container {
-        display: flex;
+        display: block;
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -158,7 +160,7 @@
 
         .canvas-layout {
             position: absolute;
-            top: 5em;
+            top: 0em;
             display: flex;
             flex-direction: column;
             align-items: center;

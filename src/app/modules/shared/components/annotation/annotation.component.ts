@@ -24,16 +24,16 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   isRectPenTouched: boolean = false;
   isCirclePenTouched: boolean = false;
   showShapeControls: boolean = false;
-  @Output() annotatedImage = new EventEmitter(); 
+  @Output() annotatedImage = new EventEmitter();
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
-    this.annotateCanvas = document.getElementById('anotateCanvas-'+this.sessionID);
-    setTimeout(() => {}, 200);
+    this.annotateCanvas = document.getElementById('anotateCanvas-' + this.sessionID);
+    setTimeout(() => { }, 200);
     this.annotateCtx = this.annotateCanvas.getContext('2d');
     this.cdr.detectChanges();
   }
@@ -44,26 +44,31 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   }
 
   setCanvasSize(isResize?: boolean) {
-    const image = document.getElementById('imageToAnnotate-'+this.sessionID);
+    // const image = document.getElementById('imageToAnnotate-' + this.sessionID);
 
-    this.annotateCanvas.width = image?.width * window.devicePixelRatio;
-    this.annotateCanvas.height = image?.height * window.devicePixelRatio;
+    const img = new Image();
+    img.src = this.sourceImage;
 
-    this.annotateCanvas.style.width = `${image?.width}px`;
-    this.annotateCanvas.style.height = `${image?.height}px`;
-    
+
+    this.annotateCanvas.width = img?.width * window.devicePixelRatio;
+    this.annotateCanvas.height = img?.height * window.devicePixelRatio;
+
+    this.annotateCanvas.style.width = `${img?.width}px`;
+    this.annotateCanvas.style.height = `${img?.height}px`;
+
     this.annotateCtx = this.annotateCanvas.getContext('2d');
     this.annotateCtx.mozImageSmoothingEnabled = false;
     this.annotateCtx.webkitImageSmoothingEnabled = false;
     this.annotateCtx.msImageSmoothingEnabled = false;
     this.annotateCtx.imageSmoothingEnabled = false;
+    this.annotateCtx.imageSmoothingQuality = 'high'
     this.annotateCtx.drawImage(
-      image, 0, 0, 
-      image.width * window.devicePixelRatio, 
-      image.height * window.devicePixelRatio
+      img, 0, 0,
+      img.width * window.devicePixelRatio,
+      img.height * window.devicePixelRatio
     );
-    
-    if(!isResize){
+
+    if (!isResize) {
       this.canvasCtxDataArray.push(
         this.annotateCtx.getImageData(0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
       );
@@ -164,19 +169,19 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async onDoneAnnotate (isSubmit){
-    if(isSubmit) {
+  async onDoneAnnotate(isSubmit) {
+    if (isSubmit) {
       const base64 = this.annotateCanvas.toDataURL();
-      
+
       this.annotateCanvas.toBlob((blob) => {
-         let file = new File([blob], `image_${new Date().getTime()}.png`, { type: "image/png" });
-         file['base64'] = base64;
-         this.annotatedImage.emit(file);
+        let file = new File([blob], `image_${new Date().getTime()}.png`, { type: "image/png" });
+        file['base64'] = base64;
+        this.annotatedImage.emit(file);
       }, 'image/png');
-      
+
     } else {
       this.annotatedImage.emit(false);
     }
-    
+
   }
 }
