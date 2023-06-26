@@ -266,7 +266,6 @@
             "TVirtualStoreNotFound": "Missing TVirtualStore in app config",
             "badgesNotFound": "You Have No Badges!",
             "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config"
-
         },
         "activeAgents": {
             "agentStatus": "Agent Status",
@@ -302,13 +301,10 @@
             "broadCaseMsgFailedGeneric": "Something went wrong while sending broacast",
             "removeGroupBy": "Clear grouping filter",
             "groupAgents": "Group Agents"
-
         },
         "registerCallback": {
             "campaignNotFound": "No Campaigns Found!",
-
             "phone": "Phone",
-
             "phoneRequired": "Phone Number Required",
             "dateRequired": "Date Required",
             "timeRequired": "Time Required",
@@ -371,13 +367,10 @@
             "markSpamLoading": "Spamming email",
             "markSpamSuccess": "Email marked as spam",
             "markSpamFailed": "Unable to spam the email",
-
             "emailDownloadLoading": "Downloading email",
             "emailDownloadFailed": "Unable to download email"
-
         },
         "deflectToDigital": {
-
             "commentPlaceholder": "Please enter comment...",
             "toFieldRequiredMsg": "Please provide the number to deflect",
             "deflectLoading": "Deflecting",
@@ -506,7 +499,8 @@
             "department": "Department",
             "messagePlaceholder": "Please select a template...",
             "select": "Select",
-            "getChatTemplatesError": "Error in fetching chat templates"
+            "getChatTemplatesError": "Error in fetching chat templates",
+            "timeExceededMsg": "Cannot use response before or after the start or end time"
         },
         "campaignContact": {
             "reason": "Reason",
@@ -523,7 +517,6 @@
             "callbackStatusSuccess": "Callback status updated successfully",
             "callbackStatusFailed": "Failed to update callback status",
             "callbackStatusError": "Error in updating callback status"
-
         },
         "calendar": {
             "copy": "Copy",
@@ -890,7 +883,6 @@
             "color": "Color",
             "cancel": "Cancel",
             "save": "Save"
-
         }
     },
     "widgetPreview": {
@@ -954,5 +946,4 @@
         "startChatMsg": "Start a conversation by typing your message below.",
         "selectContactToChat": "Select a contact to start a conversation."
     }
-
 }

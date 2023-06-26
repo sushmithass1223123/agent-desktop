@@ -10,6 +10,7 @@ import { merge, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TwCannedResponses } from '@ad/types';
 import { TranslocoService } from '@ngneat/transloco';
+import moment from 'moment';
 /**
  * TW canned Responses
  */
@@ -265,8 +266,14 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      * @param template
      */
     onTemplateSelect(template: any): void {
-        this.selectedTemplate = template;
-        this.templateText = template.Text;
+        if (this.cannedMsgValidate(template?.StartTime, template?.EndTime)) {
+            this.selectedTemplate = template;
+            this.templateText = template.Text;
+        } else {
+            this.templateText = '';
+            this.selectedTemplate = null;
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.cannedResponses.timeExceededMsg'), 'failure');
+        }
     }
 
     /**
@@ -275,6 +282,7 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
      * @param {sendTemplate} template
      */
     sendTemplate(template: any): void {
+        // if(this.selectedTemplate.EndTime) {
         // check if any interaction is present
         if (!this.interactionId) {
             return;
@@ -316,6 +324,20 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
             this._tmacEventSub$ = this._tmacEvents$.subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
         this.clearAllData();
+    }
+
+    cannedMsgValidate(startTime: string, endTime: string): Boolean {
+        const format = 'HH:mm:ss';
+
+        const targetStartTime = moment(startTime, format);
+        const targetEndTime = moment(endTime, format);
+        const currentTime = moment();
+
+        if (currentTime.isAfter(targetStartTime) && currentTime.isBefore(targetEndTime)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
