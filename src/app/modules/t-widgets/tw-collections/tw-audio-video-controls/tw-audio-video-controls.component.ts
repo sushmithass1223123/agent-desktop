@@ -32,7 +32,7 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
-import { SnackbarStateTypes } from 'app/interfaces';
+import { SnackbarStateTypes, InteractionRef } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { map } from 'lodash';
@@ -275,6 +275,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         video: []
     };
 
+    /**
+     * The current interaction
+     */
+    myInteraction: InteractionRef;
+
     confirmDialogRef;
 
     /**
@@ -319,6 +324,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
+        });
+
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            //find out the current interaction
+            this.myInteraction = interactions.find((i: InteractionRef) => i.interactionId === this.interactionId);
         });
 
         // set defaults
@@ -602,6 +613,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // swtich the av events
             switch (evt.event) {
                 case 'onIncoming':
+                    //Check whether the type and status of myInteraction matches to 'textchat' and 'hold' 
+                    if(this.myInteraction?.type === 'textchat' && this.myInteraction?.status === 'hold'){
+                        // reject request
+                        evt.data.response(false);
+                        // close the call widget
+                        this.destroyWidget();
+                        return;
+                    }
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
@@ -640,7 +659,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     );
                     this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
+                    
                     break;
                 case 'onTrace':
                     this.logger.info('onAVEvent.onTrace: ' + evt.data);
