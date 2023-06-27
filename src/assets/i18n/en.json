@@ -478,7 +478,7 @@
             "trasferToQueueSuccess": "Interaction transferred to queue successfully",
             "supervisorTakeover": "Interaction disconnected by supervisor - Supervisor Takeover",
             "interactionDisconnect": "Interaction disconnected",
-            "agentDisconnectedMsg": "#agentName is disconnected from chat",
+            "agentDisconnectedMsg": "#agentName has disconnected from chat",
             "agentRequestRejected": "#agentName has rejected your request with comment: #comment",
             "freezeAutoResponseFailed": "Freeze auto response failed!",
             "freezeAutoResponseError": "Error in freezing auto response failed!",
