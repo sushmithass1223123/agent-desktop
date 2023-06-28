@@ -2758,7 +2758,8 @@
                 "protocol": "webSockets",
                 "timeout": 10,
                 "fallback": false,
-                "maxConnectivityRetryTimeOut": 30
+                "maxConnectivityRetryTimeOut": 30,
+                "customApiURL": "https://dice.tetherfi.cloud/customapi/changetracing/?enable=1&agentid=${tmacData.AgentId}&tmacServer=${tmacData.TmacServer}"
             },
             "logging": {
                 "enabled": true,
@@ -2775,5 +2776,5 @@
             ]
         }
     },
-    "Version": "5.1.11.3006"
+    "Version": "5.1.11.3007"
 }

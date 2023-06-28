@@ -76,13 +76,15 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
 
     private reloginTimerStarted;
 
-    public isForceRelogin;
+    public isStopRetry;
 
     private isInitial = true;
 
     connectivityStatusMessages = [];
 
     private stopTimer = false;
+
+    private isForceRelogin = false;
 
     /**
      * Constructor
@@ -146,6 +148,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         }
         SDKClient.events.on('SignalRConnectedEvent', this.onSignalRConnect);
         SDKClient.events.on('SignalRReconnectedEvent', this.onSignalRConnect);
+        SDKClient.events.on('ReloginOnSignalRConnectivityError', this.onForceRelogin);
 
     }
 
@@ -161,7 +164,9 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         SDKClient.events.off('SignalRErrorEvent', this.onSignalRError);
         SDKClient.events.off('SignalRConnectedEvent', this.onSignalRConnect);
         SDKClient.events.off('SignalRReconnectedEvent', this.onSignalRConnect);
+        SDKClient.events.off('ReloginOnSignalRConnectivityError', this.onForceRelogin);
 
+        this.isForceRelogin = false;
         this.resetAllErrorNotifications();
     }
 
@@ -172,7 +177,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
      */
     private connectivityStatusEvent = (evt: SDKConnectivityStatusEvent) => {
         try{
-            if(evt.Message?.trim() !== '' && this.appConfig?.Notifications?.AppAlertOnConnectivityStatus && !this.isForceRelogin) {
+            if(evt.Message?.trim() !== '' && this.appConfig?.Notifications?.AppAlertOnConnectivityStatus && !this.isStopRetry) {
                 if(Number(evt.Status) === 1) {
                     this.removeAllErrorMessages();
                 }
@@ -220,12 +225,12 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
      * Method to capture signalR Error event and ask user to relogin to get new connection if fallback is disabled
      */
     private onSignalRError = () => {
-        if(!this.reloginTimerStarted && !this.isForceRelogin) {
+        if(!this.reloginTimerStarted && !this.isStopRetry) {
             
             this.reloginTimerStarted = true;
             this.stopTimer = false;
             setTimeout(() => {
-                !this.isForceRelogin ? this.confirmRelogin('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost on re-login] ') : '';
+                !this.isStopRetry ? this.confirmRelogin('confirm', 'Something went wrong, do you wish to relogin ? <br> [Note: Current session will not be lost on re-login] ') : '';
                 this.reloginTimerStarted = false;
                 this.isInitial = false;
                 if(this.showReloginOnMaxRetryExceed == null) {
@@ -260,12 +265,14 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
     }
 
     private resetAllErrorNotifications() {
-        this.reloginDialog?.close();
+        if(!this.isForceRelogin) {
+            this.reloginDialog?.close();
 
-        this.stopTimer = true;
-        this.isForceRelogin = false;
-        this.reloginTimerStarted = false;
-        this.signalRStopRetry(false);
+            this.stopTimer = true;
+            this.isStopRetry = false;
+            this.reloginTimerStarted = false;
+            this.signalRStopRetry(false);
+        }
     }
 
     /**
@@ -287,12 +294,19 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         if(isStart) {
             this.showReloginOnMaxRetryExceed = setTimeout(() => {
                 this.confirmRelogin('alert', 'Connection failed, please relogin to continue.<br> [Note: Current session will not be lost on re-login] ');
-                this.isForceRelogin = this.stopTimer ? false : true;
+                this.isStopRetry = this.stopTimer ? false : true;
             }, this.appConfig?.SDK?.signalRProxy?.maxConnectivityRetryTimeOut*1000);
         } else {
             this.showReloginOnMaxRetryExceed = null;
         }
     };
+
+    private onForceRelogin = () => {
+        this.stopTimer = false;
+        this.isStopRetry = true;
+        this.isForceRelogin = true;
+        this.confirmRelogin('alert', 'Observing a connectivity glitch, please relogin to continue. <br> [Note: Current session will not be lost on re-login] ');
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
