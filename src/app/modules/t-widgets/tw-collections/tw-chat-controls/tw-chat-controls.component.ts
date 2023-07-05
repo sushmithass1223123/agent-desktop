@@ -893,7 +893,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             value: msg.data.agentName
                         }
                     ];
-                    //display toaster when a conference is disconnected
+                    //displays toaster when a conference is disconnected
                     this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'),dynamicLabels), 'info');
                     break;
             }
