@@ -890,6 +890,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case 'clientreloaded':
                     this.callWidget?.destroy();
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.remoteBrowserRefreshMsg'), 'warning');
+                case 'conferencedisconnected':
+                    const dynamicLabels = [
+                        {
+                            key: '#agentName',
+                            value: msg.data.agentName
+                        }
+                    ];
+                    //displays toaster when a conference is disconnected
+                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'),dynamicLabels), 'info');
+                    break;
             }
             return;
         }
