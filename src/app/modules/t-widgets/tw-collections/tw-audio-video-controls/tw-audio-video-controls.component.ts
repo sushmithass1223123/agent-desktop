@@ -268,6 +268,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     interactionDetails: IInteractionDetails = {} as IInteractionDetails;
 
     /**
+     * Flag on displaying toasters
+     */
+    displayToasters: boolean;
+
+    /**
      * Audio muted users
      */
     mutedRemoteUsers = {
@@ -308,6 +313,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
+        this.displayToasters = true;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -914,6 +920,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             this.callType = requestType;
                             this.startAVCall();
                             break;
+            case 'addscreenshare':
+                             this.displayToasters = false;
+                             break;
+            case 'endscreenshare':
+                            this.displayToasters = false;
+                            break;
             case 'mute':
             case 'unmute':
                         this.updateMuteUnmuteUserList(requestType, evt);
@@ -970,7 +982,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 value: type
             }
         ]
-        this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'),dynamicLabels), 'warning');
+        if(this.displayToasters){
+            this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'),dynamicLabels), 'warning');
+        }
+        this.displayToasters = true;
     }
 
     /**
