@@ -75,7 +75,8 @@ type ComponentActions =
     | 'email/polling/active'
     | 'email/polling/failed'
     | 'email/polling/inactive'
-    | 'emails/search';
+    | 'emails/search'
+    | 'emails/search/failure';
 
 /**
  * Available tabs of the email workbench
@@ -664,9 +665,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const errorInDate = this.checkForErrorInDate()
             if(errorInDate) {
                 switch(errorInDate.type) {
-                   case 'INVALID_RANGE':  this.setComponentState('emails/search', { msg: 'From date can not be greater than To Date, Please select valid dates'});
+                   case 'INVALID_RANGE':  this.setComponentState('emails/search/failure', { msg: 'From date can not be greater than To Date, Please select valid dates'});
                         return;
-                   case 'OUT_OF_RANGE': this.setComponentState('emails/search', { msg: 'Please select dates within the range of '+ (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange})
+                   case 'OUT_OF_RANGE': this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of '+ (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange})
                         return;
                 }
             }
@@ -744,8 +745,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 .pipe(
                     timeout(50000),
                     map((res: any) => {
-                        if (res.find((x: any) => x.status !== 'SUCCESS')) {
-                            const resultStr = JSON.parse(JSON.stringify(res)?.toLowerCase());
+                        if (res.find((x) => x.status !== 'SUCCESS')) {
+                            const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
                             
                             if(resultStr?.errorcode && resultStr.errorcode == '-101') {
                                 this.appUiService.showSnackbar('Number of emails present in the search has reached maximum limit, Please select a shorter date range', 'warning');
@@ -1323,9 +1324,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     setComponentState(action: ComponentActions, payload?: any): void {
         switch (action) {
-            case 'emails/search': 
+            case 'emails/search/failure': 
                 this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(payload?.msg, 'failure');
-                break;
+                return;
             case 'emails/loading':
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
