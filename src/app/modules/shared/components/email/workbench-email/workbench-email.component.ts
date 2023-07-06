@@ -667,7 +667,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 switch(errorInDate.type) {
                    case 'INVALID_RANGE':  this.setComponentState('emails/search/failure', { msg: 'From date can not be greater than To Date, Please select valid dates'});
                         return;
-                   case 'OUT_OF_RANGE': this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of '+ (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange})
+                   case 'OUT_OF_RANGE': 
+                        const searchRange = ((this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange) ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange : 30;
+                        this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of '+ searchRange + ' days'})
                         return;
                 }
             }
@@ -1654,9 +1656,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     checkForErrorInDate = () => {
         try {
-            const config = this.channelConf.Config as TwEmailWorkbenchConfig;
+            const searchRange = ((this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange) ? 
+            (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange : 30;
             const searchValues = this.advancedSearch.form?.value;
-            if(config.MaxSearchRange && searchValues) {
+            if(searchRange && searchValues) {
                 const fromDateTime: Date = this.getUpdatedDateTime(searchValues.fromDate, searchValues.fromTime);
                 const toDateTime: Date = this.getUpdatedDateTime(searchValues.toDate, searchValues.toTime);
 
@@ -1666,7 +1669,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
 
                 const dateRange = Math.round((toDateTime.getTime() - fromDateTime.getTime()) / (1000 * 3600 * 24));
 
-                if(dateRange > Number(config.MaxSearchRange)) {
+                if(dateRange > Number(searchRange)) {
                     return { type: 'OUT_OF_RANGE' };
                 } 
                 
