@@ -74,7 +74,8 @@ type ComponentActions =
     | 'email/open/failure'
     | 'email/polling/active'
     | 'email/polling/failed'
-    | 'email/polling/inactive';
+    | 'email/polling/inactive'
+    | 'emails/search';
 
 /**
  * Available tabs of the email workbench
@@ -660,6 +661,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     doAdvancedSearch(silent = false): void {
         try {
+            const errorInDate = this.checkForErrorInDate()
+            if(errorInDate) {
+                switch(errorInDate.type) {
+                   case 'INVALID_RANGE':  this.setComponentState('emails/search', { msg: 'From date can not be greater than To Date, Please select valid dates'});
+                        return;
+                   case 'OUT_OF_RANGE': this.setComponentState('emails/search', { msg: 'Please select dates within the range of '+ (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange})
+                        return;
+                }
+            }
+
             if (!this.data.Data.WorkbenchUrl) {
                 this.setComponentState('emails/failure', { msg: 'WorkbenchUrl not provided', silent });
                 return;
@@ -734,6 +745,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     timeout(50000),
                     map((res: any) => {
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
+                            const resultStr = JSON.parse(JSON.stringify(res)?.toLowerCase());
+                            
+                            if(resultStr?.errorcode && resultStr.errorcode == '-101') {
+                                this.appUiService.showSnackbar('Number of emails present in the search has reached maximum limit, Please select a shorter date range', 'warning');
+                            }
                             throwADError(
                                 'Error in WorkbenchEmailComponent.doAdvancedSearch',
                                 `Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`
@@ -1307,6 +1323,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     setComponentState(action: ComponentActions, payload?: any): void {
         switch (action) {
+            case 'emails/search': 
+                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(payload?.msg, 'failure');
+                break;
             case 'emails/loading':
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
@@ -1626,6 +1645,45 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             messageClasses: 'twd-whitespace-pre-line twd-break-words'
         });
     };
+
+    /**
+     * Method to check if max search range for dates is configured, if yes then check if dates selected in 
+     * advance search is within the given range 
+     * @returns True / False 
+     */
+    checkForErrorInDate = () => {
+        try {
+            const config = this.channelConf.Config as TwEmailWorkbenchConfig;
+            const searchValues = this.advancedSearch.form?.value;
+            if(config.MaxSearchRange && searchValues) {
+                const fromDateTime: Date = this.getUpdatedDateTime(searchValues.fromDate, searchValues.fromTime);
+                const toDateTime: Date = this.getUpdatedDateTime(searchValues.toDate, searchValues.toTime);
+
+                if(toDateTime.getTime() < fromDateTime.getTime()) {
+                    return { type: 'INVALID_RANGE' };
+                }
+
+                const dateRange = Math.round((toDateTime.getTime() - fromDateTime.getTime()) / (1000 * 3600 * 24));
+
+                if(dateRange > Number(config.MaxSearchRange)) {
+                    return { type: 'OUT_OF_RANGE' };
+                } 
+                
+                return false;
+            }
+            return false;
+        } catch(e) {
+            this.logger.error('Error occured while validating dates in advance search', e, true);
+            return false;
+        }
+    }
+    
+    getUpdatedDateTime = (date: Date, time) => {
+        date.setHours(time?.split(':')[0] || '00');
+        date.setMinutes(time?.split(':')[1] || '00');
+        date.setSeconds(0);
+        return date;
+    }
 }
 
 // for more info visit - https://angular.io/api/core

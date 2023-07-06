@@ -1,13 +1,13 @@
 {
     "name": "agent-desktop",
-    "version": "5.1.9.30-patch.1",
+    "version": "5.1.9.3001",
     "license": "",
     "scripts": {
         "ng": "nx",
         "commit": "cz",
         "postinstall": "node ./decorate-angular-cli.js && npm run husky-install && ngcc --properties es2015 browser module main",
         "husky-install": "npx husky install",
-        "start": "ng serve --open",
+        "start": "ng serve --open --ssl",
         "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
         "start:ssl": "ng serve --open --ssl",
         "start:mem:ssl": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open --ssl",
