@@ -35,7 +35,7 @@ import { EmailService, initEmailSearchState } from '../email.service';
 /**
  * Type of the mail node
  */
-type Mail = {
+export class Mail {
     Mailbox: string;
     ToList: string;
     Skill: string;
@@ -142,6 +142,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Email bodies
      */
     emailBodies: Record<string, any> = {};
+
+    selectedEmailInSessionId : string;
+    selectedEmailOutSessionId : string;
+    selectedEmailRouteReason : string;
     /**
      * Email reply dialog ref
      */
@@ -752,7 +756,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             
                             if(resultStr?.errorcode && resultStr.errorcode == '-101') {
                                 this.appUiService.showSnackbar('Number of emails present in the search has reached maximum limit, Please select a shorter date range', 'warning');
-                                return res;
+                                return;
                             }
                             throwADError(
                                 'Error in WorkbenchEmailComponent.doAdvancedSearch',
@@ -902,6 +906,27 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         }
     }
 
+    async getValidDataForSelectedEmail() {
+        try{
+            const inboxRes: EmailInboxModel = (await SDKClient.getInboxEmail(this.selectedEmailInSessionId)).response;
+            const outboxRes: EmailOutboxModel = (await SDKClient.getOutboxEmail(this.selectedEmailOutSessionId)).response;
+            const emailData: Mail = new Mail();
+            
+            emailData.Mailbox = inboxRes.Mailbox;
+            emailData.RouteId = inboxRes.RouteId;
+            emailData.InSessionId = inboxRes.SessionID;
+            emailData.ConversationID = inboxRes.ConversationID;
+            emailData.OutSessionId = outboxRes?.SessionID;
+            emailData.RouteReason = this.selectedEmailRouteReason;
+            emailData.uiId = inboxRes.SessionID;
+            emailData.EmailType = inboxRes.EmailType;
+            this.pullEmails([emailData]);
+        } catch(e) {
+            this.logger.error('Error occured while getting valid data for selected email:', JSON.stringify(e),true);
+        }
+        
+    }
+
     /**
      * Pull email
      * @method pullEmail
@@ -910,6 +935,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         const loader = this.appUiService.showSnackbar('Pulling email', 'loading');
         try {
             const { agentId, tmacServer } = SDKClient.getAgentData();
+
+            if(emails.find(email => !email.InSessionId)) {
+                this.getValidDataForSelectedEmail();
+                return;
+            }
+
             const { items, uiIds } = emails.reduce(
                 (acc, curr) => {
                     const item = {
@@ -986,6 +1017,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     async openEmail(email: Mail): Promise<void> {
         try {
+            console.log('Initial value of Email', email);
             this.openEmailRes.data.next(Object.assign(email, { Body: '' }, { currentTab: this.currentTab }));
             this.setComponentState('email/open/loading');
             let fetchFromOutbox =
@@ -1024,12 +1056,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 // and if so, logging an error since the UI is requiesting dummy email which is "server user only"
                 //  and try to fetch the email from outbox
                 if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
+                    console.log('inbox response', inboxRes);
                     if (this.currentTab === 'queue') {
                         fetchFromOutbox = true;
                     } else if (!fetchFromOutbox) {
                         throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
                     }
                 } else {
+                    console.log('Entered Emailbody update');
                     this.emailBodies = Object.assign(this.emailBodies, {
                         [email.InSessionId]: {
                             Files: getAttachments(inboxRes.Attachments),
@@ -1051,6 +1085,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             InternetHeaders: inboxRes.InternetHeaders
                         }
                     });
+                    console.log('Entered Emailbody update post data', this.emailBodies);
+                    this.selectedEmailInSessionId = email.InSessionId;
+                    this.selectedEmailOutSessionId = email.OutSessionId;
+                    this.selectedEmailRouteReason = email.RouteReason;
                 }
             }
 
