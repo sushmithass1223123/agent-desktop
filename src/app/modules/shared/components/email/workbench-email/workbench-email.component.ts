@@ -752,6 +752,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             
                             if(resultStr?.errorcode && resultStr.errorcode == '-101') {
                                 this.appUiService.showSnackbar('Number of emails present in the search has reached maximum limit, Please select a shorter date range', 'warning');
+                                return res;
                             }
                             throwADError(
                                 'Error in WorkbenchEmailComponent.doAdvancedSearch',
