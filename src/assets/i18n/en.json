@@ -147,6 +147,7 @@
         "widgetsFound": "widgets found!",
         "widgetsNotFound": "No widgets found!",
         "noInteractions": "No Interaction",
+        "noInteractionsYetMsg": "No #type interaction yet!",
         "noWidgets": "No Widgets",
         "customURLNotFound": "Custom URL not found!",
         "noPreview": "No preview",
