@@ -7,6 +7,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { UIActionEventService } from '@services/ui-action-event.service';
 import { setStringVars } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -99,7 +100,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
         private _fuseFacadeService: FuseFacadeService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _uiActionEventService: UIActionEventService
     ) {
         super('TwCustomComponent');
 
@@ -239,6 +241,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this.fuseConfigRef = config;
                 this.sendDataToWindow('onThemeChange', config);
             });
+        this._uiActionEventService.onUIActionEvent().pipe(takeUntil(this.unsubscribeAll)).subscribe(data => {
+            this.sendDataToWindow('onUIActionEvent', [data]);
+        });
     }
 
     /**
@@ -323,6 +328,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
         // can add a UI config here whether to send data or not
         this.sendDataToWindow('onTMACCommand', this._tmacEventService.getTmacCommandsArray());
+
+        this.sendDataToWindow('onUIActionEvent', this._uiActionEventService.getUIEvents());
     };
 
     /**

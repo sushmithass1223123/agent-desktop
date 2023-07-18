@@ -1007,7 +1007,7 @@ export class TMACEventService extends SharedWrapper {
             }
         ]);
 
-        this.addTMACCommandListener()
+        this.addTMACCommandListener();
 
     }
 
