@@ -60,6 +60,11 @@ export type TwEmailWorkbenchConfig = {
      * @default false
      */
     TemplatesByHierarchy: boolean;
+    /**
+     * Max limit of search range in days
+     */
+     MaxSearchRange: number;
+
 };
 
 /**
