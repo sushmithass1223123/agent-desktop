@@ -40,6 +40,7 @@ import { merge } from 'lodash';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { UIActionEventService } from '@services/ui-action-event.service';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
 
@@ -236,7 +237,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _contentPageService: ContentPageService,
         private _fuseFacadeService: FuseFacadeService,
         private _emailService: EmailService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private uiActionEventService: UIActionEventService
     ) {
         super('TwEmailControlsComponent');
     }
@@ -333,6 +335,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             .getInteractionEvents(['InteractionDataEvent', 'UpdateEmailEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+        
+        this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
     }
 
     /**
@@ -416,6 +420,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        this.uiActionEventService.removeUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
     }
 
     // -----------------------------------------------------------------------------------------------------
