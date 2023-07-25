@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { MatDialogRef } from '@angular/material/dialog';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Toolbar component
@@ -98,7 +99,8 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         private _fuseFacadeService: FuseFacadeService,
         private _fuseSidebarService: FuseSidebarService,
         private _appDataService: AppDataService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService
     ) {
         super('ToolbarComponent');
         // Set the private defaults
@@ -142,13 +144,7 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
             }
         });
 
-        SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
-        if(this.appConfig?.EnableReloginOnConnectionError && !this.appConfig?.SDK?.signalRProxy?.fallback) {
-            SDKClient.events.on('SignalRErrorEvent', this.onSignalRError);
-        }
-        SDKClient.events.on('SignalRConnectedEvent', this.onSignalRConnect);
-        SDKClient.events.on('SignalRReconnectedEvent', this.onSignalRConnect);
-        SDKClient.events.on('ReloginOnSignalRConnectivityError', this.onForceRelogin);
+        this.registerToSDKEvents();
     }
 
     /**
@@ -168,6 +164,17 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         this.isForceRelogin = false;
         this.resetAllErrorNotifications();
 
+    }
+
+    registerToSDKEvents() {
+        SDKClient.events.on('SDKConnectivityStatusEvent', this.connectivityStatusEvent);
+        if(this.appConfig?.EnableReloginOnConnectionError && !this.appConfig?.SDK?.signalRProxy?.fallback) {
+            SDKClient.events.on('SignalRErrorEvent', this.onSignalRError);
+        }
+        SDKClient.events.on('SignalRConnectedEvent', this.onSignalRConnect);
+        SDKClient.events.on('SignalRReconnectedEvent', this.onSignalRConnect);
+        SDKClient.events.on('ReloginOnSignalRConnectivityError', this.onForceRelogin);
+        SDKClient.events.on('MSStatusEvent', this.onMSStatusEvent);
     }
 
     /**
@@ -308,6 +315,43 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
         this.isStopRetry = true;
         this.isForceRelogin = true;
         this.confirmRelogin('alert', 'Observing a connectivity glitch, please relogin to continue. <br> [Note: Current session will not be lost on re-login] ');
+    }
+
+    /**
+     * Method is to indicate agents about the status of the Media Server
+     * @param evt MSStatus event data
+     */
+    private onMSStatusEvent = (evt) => {
+        this._appUIService.showAppSnackbar({
+            'message': this.getMSStatusMessage(evt),
+            'state': this.getMSStatus(evt),
+            'vPos':'top',
+            'hPos': 'center'
+        });
+    }
+
+    private getMSStatus(evt) {
+        if(evt?.Status === 'Failed') {
+            return 'danger';
+        }
+
+        if(evt?.Status === 'Reconnected') {
+            return 'success';
+        }
+
+        return 'warning';
+    }
+
+    private getMSStatusMessage(evt) {
+        if(evt?.Status === 'Failed') {
+            return this.translocoService.translate('toolbarComponent.msDisconnectedMsg');
+        }
+
+        if(evt?.Status === 'Reconnected') {
+            return this.translocoService.translate('toolbarComponent.msReconnectedMsg');
+        }
+
+        return this.translocoService.translate('toolbarComponent.msStatusWarningMsg');
     }
 
 

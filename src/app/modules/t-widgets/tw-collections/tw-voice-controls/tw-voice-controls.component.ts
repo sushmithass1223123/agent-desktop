@@ -508,6 +508,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
 
+        // stop audio
+        this.voiceControlsService.cannedAudioPlayer?.stop();
+        
         // stop duration timer
         this.stopTimer.next(null);
     }

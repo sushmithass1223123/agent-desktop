@@ -61,7 +61,10 @@
         "reloadAuxCodesSuccess": "Aux Codes reloaded successfully",
         "agentDataLoading": "Please wait...",
         "changeStatusFailed": "Change status failed, please try again!",
-        "changeStatusError": "Change status error, please try again!"
+        "changeStatusError": "Change status error, please try again!",
+        "msDisconnectedMsg": "Media Server disconnected !! Please wait...",
+        "msReconnectedMsg": "Media Server re-connected successfully",
+        "msStatusWarningMsg": "Something went wrong with Media server !! Please wait..."
     },
     "global": {
         "commonErrorMessage": "Something went wrong",

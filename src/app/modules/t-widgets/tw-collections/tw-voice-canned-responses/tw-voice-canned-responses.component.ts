@@ -32,6 +32,9 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
      */
     selectedItem: AgentInteractionTemplate;
 
+    /** timeout method */
+    playInLoop: any;
+
     /**
      * Constructor
      */
@@ -60,8 +63,44 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
             // check the response
             if (response.length > 0) {
                 this.voiceTemplates = groupBy(response, 'Category');
+                this.checkForAutoPlay();
             }
         });
+
+    }
+
+    /**
+     * Check if there is a category to play the audio automatically without agent's intervention
+     */
+    checkForAutoPlay() {
+        try{
+            const templatesToAutoPlay = this.voiceTemplates['autoplay'];
+            if(templatesToAutoPlay.length > 0) {
+                const autoPlayDelay = this.data.Data?.autoPlayAfterTime ? this.data.Data.autoPlayAfterTime : 10;
+                setTimeout(() => {
+                    this.sendItem(templatesToAutoPlay[0]);
+                }, autoPlayDelay);
+
+                this.checkToPlayInLoop(templatesToAutoPlay[0]);
+            }
+        } catch(e) {
+            this.logger.error('Error occured in check for auto play', e, true);
+        }
+    }
+
+    /**
+     * Check if the audio to be played in loop based on the UI configuration `autoPlayLoopEnabled`.
+     * @param template - voice template
+     */
+    checkToPlayInLoop(template) {
+        if(this.data.Data?.autoPlayLoopEnabled) {
+            const playInLoopDelay = this.data.Data?.autoPlauLoopPlaytime ? this.data.Data.autoPlauLoopPlaytime : 20;
+            clearTimeout(this.playInLoop);
+            this.playInLoop = setTimeout(() => {
+                this.sendItem(template);
+                this.checkToPlayInLoop(template);
+            }, playInLoopDelay);
+        }
     }
 
     /**
