@@ -34,4 +34,8 @@ export type TwVoiceCannedResponses = InteractionWidget<TwVoiceCannedResponsesDat
 /**
  * Voice canned response widget's data config
  */
-export interface TwVoiceCannedResponsesData {}
+export interface TwVoiceCannedResponsesData {
+    autoPlayAfterTime?: number;
+    autoPlayLoopEnabled?: boolean;
+    autoPlauLoopPlaytime?: number;
+}

@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <!-- your code goes here -->
     <div class="twd-w-full twd-h-full p-8 twd-overflow-y-auto" *ngIf="nlpData.length > 0; else noData">
         <mat-chip-list>
@@ -25,7 +25,7 @@
         </mat-chip-list>
     </div>
     <ng-template #noData>
-        <div fxFill fxLayout fxLayoutAlign="center center" class="mat-title">No data available</div>
+        <div fxFill fxLayout fxLayoutAlign="center center" class="mat-title">{{ locale('contentComponent.noDataAvailable') }}</div>
     </ng-template>
     <!-- your code goes here -->
 </tw-wrapper>

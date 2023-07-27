@@ -1,85 +1,104 @@
-<div
-    *ngIf="{
-        anchor: (customFuse.anchor$ | async),
-        widget: (customFuse.widget$ | async)
-    } as customFuse"
-    class="twd-w-full twd-h-full twd-flex twd-flex-col"
->
-    <div class="twd-w-full twd-flex twd-gap-x-1 twd-gap-y-2">
-        <mat-form-field class="custom select-box twd-w-6/12" appearance="outline">
-            <mat-select placeholder="Department" [(ngModel)]="selectedDepartment" (selectionChange)="onSelectDepartment($event)">
-                <mat-select-trigger>
-                    <span class="twd-truncate"> {{ selectedDepartment?.Name }} </span>
-                </mat-select-trigger>
-                <mat-option>None</mat-option>
-                <mat-option *ngFor="let item of departments" [value]="item">{{ item.Name }}</mat-option>
-            </mat-select>
-            <mat-error> Department is required </mat-error>
-        </mat-form-field>
-        <mat-form-field class="custom select-box twd-w-6/12" appearance="outline">
-            <mat-select
-                placeholder="Groups"
-                [disabled]="!selectedDepartment || loading"
-                [(ngModel)]="selectedGroup"
-                (selectionChange)="onSelectGroups($event)"
-            >
-                <mat-select-trigger>
-                    <span class="twd-truncate"> {{ selectedGroup?.Name }} </span>
-                </mat-select-trigger>
-                <mat-option>None</mat-option>
-                <mat-option *ngFor="let item of groups" [value]="item">{{ item.Name }}</mat-option>
-            </mat-select>
-            <mat-error> Groups is required </mat-error>
-        </mat-form-field>
-        <button mat-icon-button *ngIf="selectedDepartment" color="warn" (click)="clearAllData()" [disabled]="loading" matTooltip="Clear All">
-            <mat-icon>close</mat-icon>
-        </button>
-    </div>
-    <div class="twd-flex-1 twd-relative">
-        <div
-            *ngIf="showTemplates"
-            [ngClass]="customFuse.anchor?.body"
-            class="twd-bg-opacity-30 border-radius-20 twd-absolute twd-w-full twd-z-10 twd-h-full twd-mt-2 twd-overflow-y-hidden"
-        >
-            <div class="twd-flex twd-flex-col twd-gap-1 twd-p-1 twd-overflow-auto twd-h-full twd-overflow-y-auto">
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="border-radius-20 template"
-                    *ngFor="let template of templates"
-                    (click)="onTemplateSelect(template)"
-                    [matTooltip]="template.Name"
+<ng-container *transloco="let locale">
+    <div
+        *ngIf="{
+            anchor: (customFuse.anchor$ | async),
+            widget: (customFuse.widget$ | async)
+        } as customFuse"
+        class="twd-w-full twd-h-full twd-flex twd-flex-col"
+    >
+        <div class="twd-w-full twd-flex twd-gap-x-1 twd-gap-y-2">
+            <mat-form-field class="custom select-box twd-w-6/12" appearance="outline">
+                <mat-select
+                    [placeholder]="locale('sharedComponents.textTemplates.departments')"
+                    [(ngModel)]="selectedDepartment"
+                    (selectionChange)="onSelectDepartment($event)"
                 >
-                    {{ template.Name }}
-                </button>
-            </div>
-        </div>
-
-        <div class="twd-flex twd-h-full twd-w-full">
-            <div *ngIf="templates.length" class="twd-grid twd-place-content-center">
-                <mat-icon class="twd-cursor-pointer" (click)="showTemplates = true" matTooltip="Templates">chevron_left</mat-icon>
-            </div>
-
-            <mat-form-field class="twd-h-full twd-w-full custom pb-0 twd-relative border-radius-20 with-border" appearance="outline">
-                <textarea
-                    class="twd-resize-none twd-flex-1 twd-p-3"
-                    matInput
-                    placeholder="Please select a template or enter message..."
-                    [(ngModel)]="template"
-                    [disabled]="loading"
-                ></textarea>
+                    <mat-select-trigger>
+                        <span class="twd-truncate"> {{ selectedDepartment?.Name }} </span>
+                    </mat-select-trigger>
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let item of departments" [value]="item">{{ item.Name }}</mat-option>
+                </mat-select>
+                <mat-error> {{ locale('sharedComponents.textTemplates.departmentRequired') }} </mat-error>
             </mat-form-field>
-            <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-3 twd-right-3">
-                <button
-                    mat-raised-button
-                    color="primary"
-                    class="border-radius-20 twd-mr-auto"
-                    [disabled]="!template || loading"
-                    (click)="emitSendTemplate()"
+            <mat-form-field class="custom select-box twd-w-6/12" appearance="outline">
+                <mat-select
+                    [placeholder]="locale('sharedComponents.textTemplates.groups')"
+                    [disabled]="!selectedDepartment || loading"
+                    [(ngModel)]="selectedGroup"
+                    (selectionChange)="onSelectGroups($event)"
                 >
-                    Send
-                </button>
+                    <mat-select-trigger>
+                        <span class="twd-truncate"> {{ selectedGroup?.Name }} </span>
+                    </mat-select-trigger>
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let item of groups" [value]="item">{{ item.Name }}</mat-option>
+                </mat-select>
+                <mat-error> {{ locale('sharedComponents.textTemplates.groupRequired') }} </mat-error>
+            </mat-form-field>
+            <button
+                mat-icon-button
+                *ngIf="selectedDepartment"
+                color="warn"
+                (click)="clearAllData()"
+                [disabled]="loading"
+                [matTooltip]="locale('sharedComponents.clearAll')"
+            >
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <div class="twd-flex-1 twd-relative">
+            <div
+                *ngIf="showTemplates"
+                [ngClass]="customFuse.anchor?.body"
+                class="twd-bg-opacity-30 border-radius-20 twd-absolute twd-w-full twd-z-10 twd-h-full twd-mt-2 twd-overflow-y-hidden"
+            >
+                <div class="twd-flex twd-flex-col twd-gap-1 twd-p-1 twd-overflow-auto twd-h-full twd-overflow-y-auto">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="border-radius-20 template"
+                        *ngFor="let template of templates"
+                        (click)="onTemplateSelect(template)"
+                        [matTooltip]="template.Name"
+                    >
+                        {{ template.Name }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="twd-flex twd-h-full twd-w-full">
+                <div *ngIf="templates.length" class="twd-grid twd-place-content-center">
+                    <mat-icon
+                        class="twd-cursor-pointer"
+                        (click)="showTemplates = true"
+                        [matTooltip]="locale('sharedComponents.textTemplates.templates')"
+                        >chevron_left</mat-icon
+                    >
+                </div>
+
+                <mat-form-field class="twd-h-full twd-w-full custom pb-0 twd-relative border-radius-20 with-border" appearance="outline">
+                    <textarea
+                        class="twd-resize-none twd-flex-1 twd-p-3"
+                        matInput
+                        [placeholder]="locale('sharedComponents.textTemplates.messagePlaceholder')"
+                        [(ngModel)]="template"
+                        [disabled]="loading"
+                        [readonly]="!editAllowed"
+                    ></textarea>
+                </mat-form-field>
+                <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-3 twd-right-3">
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        class="border-radius-20 twd-mr-auto"
+                        [disabled]="!template || loading"
+                        (click)="emitSendTemplate()"
+                    >
+                        {{ locale('sharedComponents.textTemplates.send') }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</ng-container>

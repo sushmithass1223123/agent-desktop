@@ -11,6 +11,7 @@ import { TwWidgetModel } from 'app/models';
 import { sortBy } from 'lodash';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 type Coin = {
     /**
@@ -153,7 +154,8 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         private _http: HttpClient,
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService
     ) {
         super('TwGamificationComponent');
     }
@@ -245,7 +247,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
         try {
             // const missingConfigs = this.getMissingConfigs();
             if (!this.data.Data.GamificationProxyUrl) {
-                this.dashboardState = { loading: false, error: true, msg: 'GamificationProxyUrl missing in app config' };
+                this.dashboardState = { loading: false, error: true, msg: this.translocoService.translate('widgets.gamification.proxyurlMissing') };
             } else {
                 if (this.polling) {
                     this.polling.unsubscribe();
@@ -312,13 +314,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.leaderBoardRes = { loading: false, error: true };
-                        this.dashboardState.msg = 'Unable to fetch leaderboard details';
+                        this.dashboardState.msg = this.translocoService.translate('widgets.gamification.unableToGetLeaderboardData');
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.leaderBoardRes = { loading: false, error: true };
-                    this.dashboardState.msg = 'Unable to fetch leaderboard details';
+                    this.dashboardState.msg =this.translocoService.translate('widgets.gamification.unableToGetLeaderboardData');
                 }
             );
     }
@@ -356,13 +358,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                         // this.setCurrenAgentLevel();
                     } catch (e) {
                         this.getAgentProgressRes = { loading: false, error: true };
-                        this.dashboardState.msg = `Unable to fetch agent's progress`;
+                        this.dashboardState.msg = this.translocoService.translate('widgets.gamification.fetchAgentProgressFailed') ;
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getAgentProgressRes = { loading: false, error: true };
-                    this.dashboardState.msg = `Unable to fetch agent's progress`;
+                    this.dashboardState.msg = this.translocoService.translate('widgets.gamification.fetchAgentProgressFailed');
                 }
             );
     }
@@ -394,13 +396,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.getAgentLevelsRes = { loading: false, error: true };
-                        this.dashboardState.msg = `Unable to get Agent levels`;
+                        this.dashboardState.msg = this.translocoService.translate('widgets.gamification.fetchAgentLevelFailed');
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getAgentLevelsRes = { loading: false, error: true };
-                    this.dashboardState.msg = `Unable to get Agent levels`;
+                    this.dashboardState.msg = this.translocoService.translate('widgets.gamification.fetchAgentLevelFailed');
                 }
             );
     }
@@ -428,13 +430,13 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
                     } catch (e) {
                         console.error(e);
                         this.getQuizInfoRes = { loading: false, error: true };
-                        this.dashboardState.msg = 'Unable to fetch quiz info';
+                        this.dashboardState.msg =  this.translocoService.translate('widgets.gamification.fetchQuizInfoFailed');
                     }
                 },
                 (err) => {
                     console.error(err);
                     this.getQuizInfoRes = { loading: false, error: true };
-                    this.dashboardState.msg = 'Unable to fetch quiz info';
+                    this.dashboardState.msg = this.translocoService.translate('widgets.gamification.fetchQuizInfoFailed');
                 }
             );
     }
@@ -501,7 +503,7 @@ export class TwGamificationComponent extends TWidgetWrapper implements OnInit, O
      */
     redeem(): void {
         if (!this.data.Data.TVirtualStoreUrl) {
-            this._appUIService.showSnackbar('Missing TVirtualStore in app config', 'failure');
+            this._appUIService.showSnackbar( this.translocoService.translate('widgets.gamification.TVirtualStoreNotFound'), 'failure');
             return;
         }
         const title = `TVirtualStore`;

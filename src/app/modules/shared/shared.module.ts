@@ -29,6 +29,8 @@ import { EmailModule } from './components/email/email.module';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
 import { CustomDatePipe } from './pipes';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../transloco-root.module';
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.legend.position = 'right';
@@ -77,7 +79,11 @@ const sharedComponents = [
  */
 @NgModule({
     declarations: sharedComponents,
-    imports: [CommonModule, ...sharedModules],
+    imports: [CommonModule, ...sharedModules,TranslocoRootModule],
+    providers: [{
+        provide: TRANSLOCO_SCOPE,
+        useValue: 'default'
+    }],
     exports: [...sharedModules, ...sharedComponents]
 })
 export class SharedModule {}

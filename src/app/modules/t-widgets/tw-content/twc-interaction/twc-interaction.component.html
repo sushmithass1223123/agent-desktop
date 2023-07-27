@@ -1,12 +1,14 @@
 <!-- No interaction template -->
-<twc-not-found
-    *ngIf="interactions.length === 0"
-    class="tw-widget-container"
-    [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
-    title="No Interaction"
-    type="interaction"
-    [message]="'No ' + type + ' interaction yet!'"
-></twc-not-found>
+<ng-container *transloco="let locale">
+    <twc-not-found
+        *ngIf="interactions.length === 0"
+        class="tw-widget-container"
+        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
+        [title]="locale('contentComponent.noInteractions')"
+        type="interaction"
+        [message]="locale('contentComponent.noInteractionsYetMsg').replace('#type', type)"
+    ></twc-not-found>
+</ng-container>
 
 <!-- Interaction template -->
 <ng-container *ngFor="let item of interactions; index as i">
@@ -53,12 +55,14 @@
     </div>
 
     <!-- No widget for interaction -->
-    <twc-not-found
-        *ngIf="!item.widgets.static.length && !item.widgets.dynamic.length"
-        class="tw-widget-container"
-        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
-        title="No Widgets"
-        type="widget"
-        [message]="'No ' + type + ' widgets found!'"
-    ></twc-not-found>
+    <ng-container *transloco="let locale">
+        <twc-not-found
+            *ngIf="!item.widgets.static.length && !item.widgets.dynamic.length"
+            class="tw-widget-container"
+            [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
+            [title]="locale('contentComponent.noWidgets')"
+            type="widget"
+            [message]="locale('contentComponent.no') + type + locale('contentComponent.widgetsFound')"
+        ></twc-not-found>
+    </ng-container>
 </ng-container>

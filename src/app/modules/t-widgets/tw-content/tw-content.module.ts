@@ -10,7 +10,8 @@ import { TwcNotFoundComponent } from './twc-not-found/twc-not-found.component';
 import { TwcSupervisorComponent } from './twc-supervisor/twc-supervisor.component';
 import { TwcUnknownComponent } from './twc-unknown/twc-unknown.component';
 import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
-
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../../transloco-root.module';
 /**
  * Tw Content Module
  */
@@ -25,7 +26,11 @@ import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
         TwcUnknownComponent,
         TwcNotFoundComponent
     ],
-    imports: [SharedModule, TwTemplateModule, TwWrapperModule],
+    providers: [{
+        provide: TRANSLOCO_SCOPE,
+        useValue: 'default'
+    }],
+    imports: [SharedModule, TwTemplateModule, TwWrapperModule,TranslocoRootModule],
     exports: [TwcNotFoundComponent]
 })
 export class TwContentModule {}

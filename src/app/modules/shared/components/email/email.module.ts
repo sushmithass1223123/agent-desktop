@@ -11,6 +11,8 @@ import { EmailTemplateSelectorComponent } from './template-selector/email-templa
 import { EmailEditorModule } from './tinymce-email.module';
 import { WorkbenchEmailComponent } from './workbench-email/workbench-email.component';
 
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TranslocoRootModule } from '../../../../transloco-root.module';
 const shared = [EmailComponent, EmailTemplateSelectorComponent, SkeletonComponent, MailboxSettingsComponent, WorkbenchEmailComponent];
 
 /**
@@ -19,12 +21,16 @@ const shared = [EmailComponent, EmailTemplateSelectorComponent, SkeletonComponen
 @NgModule({
     declarations: shared,
     exports: shared,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, EmailEditorModule, ScrollingModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, EmailEditorModule, ScrollingModule,TranslocoRootModule],
     providers: [
         {
             provide: APP_BASE_HREF,
             useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
             deps: [PlatformLocation]
+        },
+        {
+            provide: TRANSLOCO_SCOPE,
+            useValue: 'default'
         }
     ]
 })

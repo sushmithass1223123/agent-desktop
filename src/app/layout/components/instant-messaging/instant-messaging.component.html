@@ -1,8 +1,8 @@
-<div class="header mat-elevation-z4 twd-flex twd-flex-row twd-justify-between twd-items-center">
+<div *transloco="let locale" class="header mat-elevation-z4 twd-flex twd-flex-row twd-justify-between twd-items-center">
     <ng-container *ngIf="!selectedContact">
         <div class="title ml-16 twd-flex twd-flex-row twd-justify-start twd-items-center" (click)="toggleSidebarOpen()">
             <mat-icon class="s-32">chat</mat-icon>
-            <h3 class="ml-12">Team Chat</h3>
+            <h3 class="ml-12">{{ locale('IM.teamChat') }}</h3>
         </div>
     </ng-container>
 
@@ -32,7 +32,7 @@
                 cdkOverlayOrigin
                 #actionList="cdkOverlayOrigin"
                 (click)="openActions = !openActions"
-                matTooltip="More Actions"
+                [matTooltip]="locale('IM.moreActions')"
             >
                 <mat-icon [@fabToggler180]="{ value: openActions ? 'active' : 'inactive' }"> expand_more </mat-icon>
             </button>
@@ -114,7 +114,7 @@
     <!-- / Contacts -->
 
     <!-- Chat -->
-    <div id="chat" class="twd-flex twd-flex-col twd-flex-auto">
+    <div id="chat" *transloco="let locale" class="twd-flex twd-flex-col twd-flex-auto">
         <div id="messages" #messages class="messages custom-scroll-adjust twd-flex-auto">
             <ng-container *ngIf="selectedContact && chat && chat.dialog && chat.dialog.length > 0">
                 <div
@@ -140,7 +140,7 @@
                     <mat-icon class="s-128 fade-text">chat</mat-icon>
                 </div>
 
-                <div class="no-messages secondary-text">Start a conversation by typing your message below.</div>
+                <div class="no-messages secondary-text">{{ locale('IM.startChatMsg') }}</div>
             </ng-container>
 
             <ng-container *ngIf="!selectedContact">
@@ -149,7 +149,7 @@
                         <mat-icon class="s-128 fade-text">chat</mat-icon>
                     </div>
 
-                    <div class="no-contact secondary-text">Select a contact to start a conversation.</div>
+                    <div class="no-contact secondary-text">{{ locale('IM.selectContactToChat') }}</div>
                 </div>
             </ng-container>
         </div>
@@ -176,6 +176,7 @@
                         [rows]="1"
                         [matTextareaAutosize]="true"
                         [disabled]="selectedContact.status === 'Not Logged In'"
+                    
                     ></textarea>
                 </mat-form-field>
 
@@ -184,7 +185,7 @@
                     mat-icon-button
                     type="submit"
                     aria-label="Send message"
-                    [disabled]="selectedContact.status === 'Not Logged In'"
+                    [disabled]="selectedContact.status === 'Not Logged In' ||!replyInput.value.trim() " 
                 >
                     <mat-icon class="secondary-text">send</mat-icon>
                 </button>

@@ -1,14 +1,36 @@
-<!-- PROGRESS BAR -->
-<fuse-progress-bar></fuse-progress-bar>
-<!-- / PROGRESS BAR -->
+<ng-container *ngIf="!appLabelsError">
+    <!-- PROGRESS BAR -->
+    <fuse-progress-bar></fuse-progress-bar>
+    <!-- / PROGRESS BAR -->
 
-<!-- VERTICAL LAYOUT -->
-<ng-container *ngIf="(customFuse$ | async).layoutStyle === 'vertical-layout' && loaded">
-    <vertical-layout></vertical-layout>
+    <!-- VERTICAL LAYOUT -->
+    <ng-container *ngIf="(customFuse$ | async).layoutStyle === 'vertical-layout' && loaded">
+        <vertical-layout></vertical-layout>
+    </ng-container>
+    <!-- / VERTICAL LAYOUT -->
+
+    <fuse-sidebar name="themeOptionsPanel" class="theme-options-sidebar" position="right" [invisibleOverlay]="true">
+        <app-theme-options></app-theme-options>
+    </fuse-sidebar>
+    <!-- / THEME OPTIONS PANEL -->
 </ng-container>
-<!-- / VERTICAL LAYOUT -->
 
-<fuse-sidebar name="themeOptionsPanel" class="theme-options-sidebar" position="right" [invisibleOverlay]="true">
-    <app-theme-options></app-theme-options>
-</fuse-sidebar>
-<!-- / THEME OPTIONS PANEL -->
+<div *ngIf="appLabelsError">
+    <div class="overlay">
+        <mat-card class="p-28 border-radius-30 label-error-layout">
+            <mat-card-header>
+                <mat-card-title fxLayout="row" class="twd-w-full" fxLayoutAlign="space-between center">
+                    <span><mat-icon color="warn" class="mr-4 twd-align-middle">error</mat-icon>Labels Error!!</span>
+                    <mat-icon class="twd-cursor-pointer" [title]="appLabelsError.error?.error?.message || appLabelsError.message">info</mat-icon>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-divider></mat-divider>
+            <mat-card-content class="my-12 h-48">
+                <p>
+                    Oops!! application labels are not loaded correctly, Agent Desktop version <strong>5.2.3.30</strong> and above requires language
+                    files, Please contact admin.
+                </p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

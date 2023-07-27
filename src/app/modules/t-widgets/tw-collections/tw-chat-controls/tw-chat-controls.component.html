@@ -45,13 +45,13 @@
                 </div>
 
                 <div *ngIf="messageAction" class="actions">
-                    <div class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
+                    <div *transloco="let locale" class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
                         <div>
                             <mat-icon
                                 *ngIf="message?.attachment?.type === 'image'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="rotateImage(message.attachment)"
-                                matTooltip="Rotate"
+                                [matTooltip]="locale('widgets.chatControls.rotate')"
                                 >rotate_90_degrees_ccw</mat-icon
                             >
                         </div>
@@ -60,7 +60,7 @@
                                 *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
-                                matTooltip="Reply"
+                                [matTooltip]="locale('interactionComponent.reply')"
                                 >reply</mat-icon
                             >
                         </div>
@@ -183,6 +183,7 @@
         (maximizeEvent)="onMaximized($event)"
         (collapseEvent)="collapseEvent.emit($event)"
         (floatEvent)="floatEvent.emit($event)"
+        *transloco="let locale"
     >
         <div class="w-100-p h-100-p chat-controls">
             <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
@@ -198,7 +199,7 @@
                     </div>
                     <div *ngIf="asyncChatRef.isAsync" class="twd-flex twd-items-center">
                         <mat-icon>sync_alt</mat-icon>
-                        <span class="text-bold ml-4">Async Chat</span>
+                        <span class="text-bold ml-4">{{ locale('widgets.chatControls.asyncChat') }}</span>
                     </div>
 
                     <div class="twd-flex twd-items-center">
@@ -233,7 +234,7 @@
                             mat-mini-fab
                             #answerBtn
                             (click)="answerChat(answerBtn)"
-                            matTooltip="Answer Chat"
+                            [matTooltip]="locale('widgets.chatControls.answerChat')"
                         >
                             <mat-icon>done</mat-icon>
                         </button>
@@ -244,7 +245,7 @@
                             mat-mini-fab
                             color="warn"
                             [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                            matTooltip="Freeze Auto Response"
+                            [matTooltip]="locale('widgets.chatControls.freezeAutoResponse')"
                             (click)="freezeAutoResponse()"
                         >
                             <mat-icon>sync_disabled</mat-icon>
@@ -281,7 +282,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Transfer"
+                            [matTooltip]="locale('interactionComponent.transfer')"
                             (click)="openTransferConferenceDialog('transfer')"
                         >
                             <mat-icon>forward</mat-icon>
@@ -293,7 +294,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Conference"
+                            [matTooltip]="locale('interactionComponent.conference')"
                             (click)="openTransferConferenceDialog('conference')"
                         >
                             <mat-icon>group</mat-icon>
@@ -307,7 +308,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Escalate to Audio"
+                            [matTooltip]="locale('widgets.chatControls.escalateToAudio')"
                             (click)="escalateToAV('audio')"
                         >
                             <mat-icon>call</mat-icon>
@@ -321,7 +322,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Escalate to Video"
+                            [matTooltip]="locale('widgets.chatControls.escalateToVideo')"
                             (click)="escalateToAV('video')"
                         >
                             <mat-icon>video_call</mat-icon>
@@ -339,10 +340,10 @@
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
                             [matTooltip]="
                                 conferenceType === 'silent'
-                                    ? 'Convert to Whisper'
+                                    ? locale('widgets.chatControls.convertToWhisper')
                                     : conferenceType === 'whisper'
-                                    ? 'Convert to Conference'
-                                    : 'Takeover'
+                                    ? locale('widgets.chatControls.convertToConference')
+                                    : locale('widgets.chatControls.takeOver')
                             "
                             #changeModeBtn
                             (click)="changeConferenceType(changeModeBtn)"
@@ -359,7 +360,7 @@
                                 cdkOverlayOrigin
                                 #actionList="cdkOverlayOrigin"
                                 (click)="openMoreActions = !openMoreActions"
-                                matTooltip="More Actions"
+                                [matTooltip]="locale('toolbarComponent.moreActions')"
                             >
                                 <mat-icon [@fabToggler]="{ value: openMoreActions ? 'active' : 'inactive' }"> add </mat-icon>
                             </button>
@@ -397,7 +398,7 @@
                             color="warn"
                             #endBtn
                             (click)="confirmEndChat()"
-                            matTooltip="End Chat"
+                            [matTooltip]="locale('widgets.chatControls.endChat')"
                         >
                             <mat-icon>close</mat-icon>
                         </button>
@@ -410,7 +411,7 @@
                                 (status === 'connected' ? ' mat-elevation-z2' : '') +
                                 (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
                             "
-                            matTooltip="Interaction Comment"
+                            [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="commentsAdded = false; saveInteractionComments()"
                         >
                             <mat-icon>comment</mat-icon>
@@ -423,9 +424,9 @@
                             color="warn"
                             #closeBtn
                             (click)="confirmCloseInteraction()"
-                            matTooltip="Close Interaction"
+                            [matTooltip]="locale('interactionComponent.closeInteraction')"
                         >
-                            Close
+                            {{ locale('interactionComponent.close') }}
                         </button>
                     </div>
 
@@ -483,16 +484,16 @@
 
                     <!-- CHAT FOOTER -->
                     <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
-                        <!-- CHAT TYPING -->
-                        <div
-                            *ngIf="remoteTyping && remoteTyping.typing"
-                            class="twd-absolute twd--top-5 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
-                        >
-                            {{ remoteTyping.name }} is typing...
-                        </div>
-                        <!-- CHAT TYPING -->
                         <!-- REPLY FORM -->
                         <div class="reply-form">
+                            <!-- CHAT TYPING -->
+                            <div
+                                *ngIf="remoteTyping && remoteTyping.typing"
+                                class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
+                            >
+                                {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
+                            </div>
+                            <!-- CHAT TYPING -->
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
                                 <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
                                     <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
@@ -539,7 +540,7 @@
                                     type="button"
                                     mat-icon-button
                                     aria-label="Select Emoji"
-                                    matTooltip="Emoji"
+                                    [matTooltip]="locale('widgets.chatControls.emoji')"
                                 >
                                     <mat-icon>sentiment_satisfied_alt</mat-icon>
                                     <ng-template
@@ -569,7 +570,7 @@
                                     mat-icon-button
                                     class="rotate-45"
                                     aria-label="Select Attachment"
-                                    matTooltip="Attach"
+                                    [matTooltip]="locale('widgets.chatControls.attach')"
                                 >
                                     <!-- <button
                                 *ngIf="agentFeatures.attachments"
@@ -614,7 +615,7 @@
                                         [disabled]="status !== 'connected'"
                                         matInput
                                         #replyInput
-                                        placeholder="Type your message"
+                                        [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
                                         ngModel
                                         name="message"
                                         matTextareaAutosize
@@ -630,7 +631,7 @@
                                     mat-icon-button
                                     type="submit"
                                     aria-label="Send message"
-                                    matTooltip="Send"
+                                    [matTooltip]="locale('widgets.chatControls.send')"
                                 >
                                     <mat-icon>send</mat-icon>
                                 </button>
@@ -658,7 +659,7 @@
     </tw-wrapper>
 
     <ng-template #previewMediaDialog>
-        <div class="twd-flex twd-justify-between twd-items-center twd-h-16">
+        <div *transloco="let locale" class="twd-flex twd-justify-between twd-items-center twd-h-16">
             <div class="twd-flex twd-flex-col twd-gap-1">
                 <span class="twd-font-bold">{{ previewMediaDialogData?.user }}</span>
                 <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
@@ -670,7 +671,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Zoom In"
+                    [matTooltip]="locale('widgets.chatControls.zoomIn')"
                     (click)="zoomInOut(true)"
                 >
                     <mat-icon>zoom_in</mat-icon>
@@ -681,7 +682,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Zoom Out"
+                    [matTooltip]="locale('widgets.chatControls.zoomOut')"
                     (click)="zoomInOut(false)"
                 >
                     <mat-icon>zoom_out</mat-icon>
@@ -691,7 +692,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Rotate"
+                    [matTooltip]="locale('widgets.chatControls.rotate')"
                     (click)="rotateImage(previewMediaDialogData?.attachment)"
                 >
                     <mat-icon>rotate_90_degrees_ccw</mat-icon>
@@ -701,18 +702,25 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Download"
+                    [matTooltip]="locale('interactionComponent.download')"
                     (click)="downloadAttachment(previewMediaDialogData?.attachment?.src)"
                 >
                     <mat-icon>download</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" mat-dialog-close (click)="previewMediaDialogData = null" tabindex="-1" matTooltip="Close">
+                <button
+                    mat-icon-button
+                    color="warn"
+                    mat-dialog-close
+                    (click)="previewMediaDialogData = null"
+                    tabindex="-1"
+                    [matTooltip]="locale('interactionComponent.close')"
+                >
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
         </div>
 
-        <div mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
+        <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
             <drag-scroll scrollbar-hidden>
                 <div
                     class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"

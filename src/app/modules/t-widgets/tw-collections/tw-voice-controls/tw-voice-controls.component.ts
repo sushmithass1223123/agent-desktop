@@ -50,6 +50,7 @@ import { Subject, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControlsService } from './tw-voice-controls.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Voice Controls Component
@@ -318,6 +319,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     failedCounter = 0;
     @ViewChild('closeBtn') closeButton: MatButton;
 
+    /** to track Media server session ID in case of MS call */
+    msSessionId;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -328,7 +332,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private _aotWidgetService: AOTWidgetService,
         private _matDialog: MatDialog,
         private _contentPageService: ContentPageService,
-        public voiceControlsService: TwVoiceControlsService
+        public voiceControlsService: TwVoiceControlsService,
+        private translocoService: TranslocoService
     ) {
         super('TwVoiceControlsComponent');
     }
@@ -385,19 +390,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.sessionID = this.interaction.UCID || 'NA';
             // set the process media messages flag
             this.processMediaMessages = !this.isManualAnswer;
-
             // check the event name
             if (this.interaction.EventName === 'IncomingCallEvent') {
                 this.interaction = this.data.InteractionDetails as IncomingCallEvent;
                 // set the manual anser flag
                 this.isManualAnswer = this.interaction.IsManualAnswer || false;
+                // set the process media messages flag
+                this.processMediaMessages = !this.isManualAnswer;
                 // set the direction
                 this.direction = this.interaction.Direction ?? 'In';
                 // set the status
                 this.status = 'incoming';
                 // assign the last 4 IVR, if default is configured
                 this.last4IVR = this.widgetData.IVR?.DefaultMenu || this.last4IVR;
-                this._appUIService.showDesktopAlert('Incoming Call', `You have a new incoming call from ${this.interaction.PhoneNumber}`, false);
+                this._appUIService.showDesktopAlert('Incoming Call', this.translocoService.translate('widgets.voiceControls.incomingCallDesktopMsg') + this.interaction.PhoneNumber, false);
                 // add the subtype
                 this.subType = this.interaction.SubType?.toLowerCase();
             } else {
@@ -502,6 +508,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
 
+        // stop audio
+        this.voiceControlsService.cannedAudioPlayer?.stop();
+        
         // stop duration timer
         this.stopTimer.next(null);
     }
@@ -615,7 +624,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onEnd':
                 // remove the av reference on end
-                delete this.avConns[evt.sessionId];
+                // delete this.avConns[evt.sessionId];
+                delete this.getAVConnection;
                 // get the index of session id from call line list
                 const index = this.callLines.indexOf(evt.sessionId);
                 // if found, then remove
@@ -655,7 +665,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     this.callLines.splice(index, 1);
                 }
                 // close the av connection
-                this.avConns[sessionId]?.close();
+                // this.avConns[sessionId]?.close();
+                this.getAVConnection(sessionId)?.close();
                 // check if the disconnect is for transfer/conference call
                 if (sessionId === this.tempCallRef?.sessionID) {
                     this.tempCallRef = null;
@@ -715,16 +726,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             .then((dt: IResponse) => {
                 this.toggleButton(false, btn);
                 if (dt.response && dt.response.ResultCode === 0) {
-                    this._appUIService.showSnackbar('Interaction closed successfully');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     // remove the interaction reference
                     this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                 } else {
-                    this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
                     this.toggleButton(false, btn);
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar('Close interaction failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionError'), 'failure');
                 this.toggleButton(false, btn);
             });
     }
@@ -749,12 +760,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     }
                 } else {
                     this.toggleButton(false, btn);
-                    this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.disconnectCallFailed'), 'failure');
                     this.handleCallFailure('Disconnect call');
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.disconnectCallFailed'), 'failure');
                 this.toggleButton(false, btn);
                 this.handleCallFailure('Disconnect call');
             });
@@ -765,12 +776,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private handleConferenceMixer(): void {
         // get the main line and conference line
-        const mainLine = this.avConns[this.callLines[0]];
-        const conferenceLine = this.avConns[this.tempCallRef.sessionID];
+        const mainLine = this.getAVConnection();
+        // this.avConns[this.callLines[0]];
+        const conferenceLine = this.getAVConnection(this.tempCallRef.sessionID);
+        // this.avConns[this.tempCallRef.sessionID];
 
         // check if the referece is found, else return
         if (!mainLine || !conferenceLine) {
-            this._appUIService.showSnackbar('Error in conference confirm, call lines are not available!');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceError'));
             return;
         }
 
@@ -1098,7 +1111,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // check if muted then unmute
             if (this.muted) {
                 // get the connection
-                const connection: AVChannel = this.avConns[this.callLines[0]];
+                const connection: AVChannel = this.getAVConnection(); 
+                // this.avConns[this.callLines[0]];
                 // un mute the call
                 connection.unMute(true, false);
                 // change the mute flag
@@ -1127,7 +1141,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // check if muted then unmute
             if (this.muted) {
                 // so we use mute/unmute instead
-                const connection: AVChannel = this.avConns[this.callLines[0]];
+                const connection: AVChannel = this.getAVConnection();
+                //this.avConns[this.callLines[0]];
                 // un mute the call
                 connection.unMute(true, false);
                 // change the mute flag
@@ -1190,9 +1205,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     break;
                 default:
             }
-
+            
+            this.msSessionId = evt.SessionID;
             // get the connection based on session id
-            connection = this.avConns[evt.SessionID];
+            connection = this.getAVConnection(evt.SessionID);
+            // this.avConns[evt.SessionID];
+
 
             // check if the connection is added
             if (connection) {
@@ -1237,11 +1255,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // }
 
         // get the connection based on session id and play the buffer
-        this.voiceControlsService.cannedAudioPlayer = this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
+        this.voiceControlsService.cannedAudioPlayer = this.getAVConnection()?.playAudio(evt.AudioBuffer);
+        
+        //this.avConns[this.sessionID]?.playAudio(evt.AudioBuffer);
 
         // check if played
         if (!this.voiceControlsService.cannedAudioPlayer) {
-            this._appUIService.showSnackbar(`Error in playing canned audio '${evt.Item.Name}'`, 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.playCannedAudioError') + evt.Item.Name, 'failure');
             return;
         }
 
@@ -1256,9 +1276,14 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.voiceControlsService.cannedAudioPlayer.onEnd = () => {
             this.voiceControlsService.cannedAudioPlayer = null;
         };
-
+        const dynamicLabels = [
+            {
+                key: '#fileName',
+                value: evt.Item.Name
+            }
+        ]
         // show a success alert
-        this._appUIService.showSnackbar(`Canned audio '${evt.Item.Name}' started playing`);
+        this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.voiceControls.playCannedAudioSuccess'),dynamicLabels));
 
         // create custom event and send
         // SDKClient.events.emit('VoiceCannedResponseAckEvent', {
@@ -1358,8 +1383,26 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {HoldTimerEvent} evt
      */
     HoldTimerEvent(evt: HoldTimerEvent): void {
+        const dynamicLabels = [
+            {
+                key: '#interactionID',
+                value: this.interaction.InteractionID
+            },
+            {
+                key: '#customerName',
+                value: this.callerID
+            },
+            {
+                key: '#sessionID',
+                value: this.sessionID
+            },
+            {
+                key: '#holdTime',
+                value: evt.HoldTimeString
+            }
+        ];
         this._appUIService.showAppSnackbar({
-            message: `Interaction ${this.interaction.InteractionID} with [${this.callerID}] and Session ID [${this.sessionID}] is on hold for ${evt.HoldTimeString}`,
+            message: this._appDataService.getUpdatedLabel(this.translocoService.translate('interactionComponent.customerOnHoldMessage'),dynamicLabels),
             state: evt.ColorCode,
             onClick: () => {
                 const interaction = this.interactionList.filter((i) => i.interactionId === evt.InteractionID)[0];
@@ -1396,11 +1439,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
             // get the connection variable
-            let connection: AVChannel = this.avConns[this.sessionID];
+            let connection: AVChannel = this.getAVConnection();
+            // this.avConns[this.sessionID];
             // check if the connection found for session id
             if (!connection) {
                 // get connection by first callLines
-                connection = this.avConns[this.callLines[0]];
+                connection = this.getAVConnection(this.callLines[0]);
+                // this.avConns[this.callLines[0]];
             }
             // check if the connection is there and media server messages are there
             if (connection && this.mediaServerMessages.length > 0) {
@@ -1426,12 +1471,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (dt.response && dt.response.ResultCode === 0) {
                 // answer call success
             } else {
-                this._appUIService.showSnackbar('Answer call failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
                 this.handleCallFailure('Answer call');
             }
         })
         .catch(() => {
-            this._appUIService.showSnackbar('Answer call failed', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
             this.handleCallFailure('Answer call');
         });
     }
@@ -1465,7 +1510,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // mute all call lines
         this.callLines.forEach((sessionId) => {
             // get the connection variable
-            const connection: AVChannel = this.avConns[sessionId];
+            const connection: AVChannel = this.getAVConnection(sessionId);
+            // this.avConns[sessionId];
             // check the muted flag
             if (this.muted) {
                 // un mute the call
@@ -1493,7 +1539,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // hold all call lines
             this.callLines.forEach((sessionId) => {
                 // get the connection variable
-                const connection: AVChannel = this.avConns[sessionId];
+                const connection: AVChannel = this.getAVConnection(sessionId);
+                //this.avConns[sessionId];
                 // check if the connection is there and interaction is not on hold
                 if (connection && this.status !== 'hold') {
                     connection.hold();
@@ -1508,7 +1555,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (dt.response && dt.response.ResultCode === 0) {
                 // disconnect call success
             } else {
-                this._appUIService.showSnackbar('Hold call failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.holdCallFailed'), 'failure');
             }
         });
     }
@@ -1525,7 +1572,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // unhold all call lines
             this.callLines.forEach((sessionId) => {
                 // get the connection variable
-                const connection: AVChannel = this.avConns[sessionId];
+                const connection: AVChannel = this.getAVConnection(sessionId);
+                // this.avConns[sessionId];
                 // check if the connection is there and interaction is on hold
                 if (connection && this.status === 'hold') {
                     connection.unHold();
@@ -1540,7 +1588,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             if (dt.response && dt.response.ResultCode === 0) {
                 // disconnect call success
             } else {
-                this._appUIService.showSnackbar('Unhold call failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
             }
         });
     }
@@ -1603,16 +1651,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                             User: SDKClient.getAgentData().agentName
                         });
                         if (resp2.response > 0) {
-                            this._appUIService.showSnackbar('Interaction comment saved successfully');
+                            this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.saveICSuccess'));
                         } else {
-                            this._appUIService.showSnackbar('Interaction comment save failed', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.saveICFailed'), 'failure');
                         }
 
                         this._fuseProgressBarService.hide();
                     })
                     .catch(() => {
                         this._fuseProgressBarService.hide();
-                        this._appUIService.showSnackbar('Error in saving interaction comment', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.saveICError'), 'failure');
                     });
             }
         });
@@ -1776,7 +1824,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // get the connection variable for main line
                     // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
                     // so we use mute/unmute instead
-                    const connection: AVChannel = this.avConns[this.callLines[0]];
+                    const connection: AVChannel = this.getAVConnection();
+                    //this.avConns[this.callLines[0]];
                     // mute the call
                     connection.mute(true, false);
                     // mute flag
@@ -1809,14 +1858,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // toggle the button
         this.toggleButton(true, btn);
         // get the connection variable
-        const connection: AVChannel = this.avConns[this.tempCallRef.sessionID];
+        const connection: AVChannel = this.getAVConnection(this.tempCallRef.sessionID);
+        //this.avConns[this.tempCallRef.sessionID];
         // check if the connection is there and interaction is not on hold
         if (connection && this.tempCallRef.status === 'connected') {
             connection.hold();
         } else if (connection && this.tempCallRef.status === 'hold') {
             connection.unHold();
         } else {
-            this._appUIService.showSnackbar('Error in hold/unhold secondary call', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.holdUnholdSecondaryCallError'), 'failure');
         }
         setTimeout(() => {
             // toggle the button
@@ -1842,15 +1892,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // toggle the button
                         this.toggleButton(false, btn);
                         if (dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Interaction transfer completed successfully');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.transferInteractionSuccess'));
                         } else {
-                            this._appUIService.showSnackbar('Interaction transfer completion failed', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.transferInteractionFailed'), 'failure');
                         }
                     })
                     .catch(() => {
                         // toggle the button
                         this.toggleButton(false, btn);
-                        this._appUIService.showSnackbar('Error in interaction transfer complete', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.transferInteractionError'), 'failure');
                     });
             } else {
                 SDKClient.transferCancel(this.interaction.InteractionID.toString())
@@ -1858,15 +1908,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // toggle the button
                         this.toggleButton(false, btn);
                         if (dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Interaction transfer cancelled successfully');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.cancelTransferInteractionSuccess'));
                         } else {
-                            this._appUIService.showSnackbar('Interaction transfer cancel failed', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.cancelTransferInteractionFailed'), 'failure');
                         }
                     })
                     .catch(() => {
                         // toggle the button
                         this.toggleButton(false, btn);
-                        this._appUIService.showSnackbar('Error in interaction transfer cancel', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.cancelTransferInteractionError'), 'failure');
                     });
             }
         }
@@ -1884,15 +1934,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // toggle the button
                         this.toggleButton(false, btn);
                         if (dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Interaction conference completed successfully');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceInteractionSuccess'));
                         } else {
-                            this._appUIService.showSnackbar('Interaction conference completion failed');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceInteractionFailed'));
                         }
                     })
                     .catch(() => {
                         // toggle the button
                         this.toggleButton(false, btn);
-                        this._appUIService.showSnackbar('Error in interaction conference complete', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceInteractionError'), 'failure');
                     });
             } else {
                 SDKClient.conferenceCancel(this.interaction.InteractionID.toString())
@@ -1900,15 +1950,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // toggle the button
                         this.toggleButton(false, btn);
                         if (dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Interaction conference cancel successful');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.cancelConferenceSuccess'));
                         } else {
-                            this._appUIService.showSnackbar('Interaction conference cancel failed');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.cancelConferenceFailed'));
                         }
                     })
                     .catch(() => {
                         // toggle the button
                         this.toggleButton(false, btn);
-                        this._appUIService.showSnackbar('Error in interaction conference cancel', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.cancelConferenceError'), 'failure');
                     });
             }
         }
@@ -1923,18 +1973,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         // check if MS call
         if (this.isMSCall) {
             // get the connection variable
-            let connection: AVChannel = this.avConns[this.callLines[0]];
+            let connection: AVChannel = this.getAVConnection();
+            //this.avConns[this.callLines[0]];
             // check if the connection found for session id
             if (this.callLines.length > 1) {
                 // get connection by first callLines
-                connection = this.avConns[this.callLines[this.callLines.length - 1]];
+                connection = this.getAVConnection(this.callLines.length - 1);
+                //this.avConns[this.callLines[this.callLines.length - 1]];
             }
             // check for conection again
             if (connection) {
                 // send DTMF
                 connection.sendDtmf(dtmfTone.value);
             } else {
-                this._appUIService.showSnackbar('DTMF send failed, connection not available', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.sendDTMFFailed'), 'failure');
             }
         } else {
             SDKClient.sendDTMF({
@@ -1945,11 +1997,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     if (x.response && x.response.ResultCode === 0) {
                         // success
                     } else {
-                        this._appUIService.showSnackbar('DTMF send failed', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.sendDTMFFailed'), 'failure');
                     }
                 })
                 .catch(() => {
-                    this._appUIService.showSnackbar('Error in sending DTMF', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.sendDTMFError'), 'failure');
                 });
         }
     }
@@ -1969,13 +2021,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
             // check the response
             if (response.ResultCode === 0) {
-                this._appUIService.showSnackbar('Transferred to IVR successfully');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.ivrTransferSuccess'));
             } else {
                 this._appUIService.showSnackbar(response.ResultMessage, 'failure');
             }
         } catch (error) {
             console.error(error);
-            this._appUIService.showSnackbar('Error in transfer to IVR', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.ivrTransferError'), 'failure');
         }
     }
 
@@ -2011,14 +2063,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     sourceId: ''
                 })
                     .then((dt) => {
+                        const dynamicLabels = [
+                            {
+                                key: '#callerID',
+                                value: this.callerID
+                            }
+                        ];
                         if (dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar(`Make call to ${this.callerID} successful`);
+                            this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('interactionComponent.makeCallSuccess'),dynamicLabels));
                         } else {
-                            this._appUIService.showSnackbar(`Make call failed, ${dt.response.ResultMessage}`, 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallFailed') + dt.response.ResultMessage, 'failure');
                         }
                     })
                     .catch((err) => {
-                        this._appUIService.showSnackbar('Make call error', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallError'), 'failure');
                         this.logger.error('Error in makeCall', err);
                     });
             }
@@ -2070,5 +2128,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             });
             this.logger.debug(`Enabling force close as ${operation} failed more than 3 times`);
         }
+    }
+
+    /** method to check if to consider MS session id or SessionId which contains UCID  */
+    getAVConnection = (sessionId?): AVChannel => {
+        console.log('MS-SessionID:'+ this.msSessionId + ' SessionID:'+ this.sessionID);
+        try {
+            if(sessionId) {
+                return this.avConns[sessionId] ? this.avConns[sessionId] :
+                (this.avConns[this.msSessionId] ?  this.avConns[this.msSessionId]: this.avConns[this.sessionID]);
+            }
+            return this.avConns[this.msSessionId] ?  this.avConns[this.msSessionId]: this.avConns[this.sessionID];
+        } catch(e) {
+            console.log('Error occured while getting the AV connection', e);
+        }
+        return this.avConns[this.sessionID];
     }
 }

@@ -243,6 +243,31 @@
                             ],
                             "Dynamic": [
                                 {
+                                    "Name": "Bookmarks",
+                                    "Description": "",
+                                    "Key": "Bookmarks",
+                                    "Type": "tw-bookmarks",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "bookmarks",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 2 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "BookmarksApiUrls": ["https://dicedev.tetherfi.cloud:8097/api/v1/bookmarks"],
+                                        "DataLevel": "agent_orgunit"
+                                    }
+                                },
+                                {
                                     "Name": "All Interactions",
                                     "Description": "",
                                     "Key": "AllInteractions",
@@ -1239,7 +1264,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": {}
+                                    "Data": { "autoPlayAfterTime": 10, "autoPlayLoopEnabled": true, "autoPlauLoopPlaytime": 20 }
                                 },
                                 {
                                     "Name": "Agent Assist",
@@ -1430,7 +1455,8 @@
                                                         "CustomerAudio": true,
                                                         "CustomerVideo": false
                                                     },
-                                                    "ToggleUserViewAllowed": true
+                                                    "ToggleUserViewAllowed": true,
+                                                    "MuteVideoOnInitiateCall": true
                                                 }
                                             },
                                             {
@@ -2418,7 +2444,8 @@
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false
+                                                    "TemplatesByHierarchy": false,
+                                                    "MaxSearchRange": 30
                                                 }
                                             },
                                             {
@@ -2547,28 +2574,6 @@
                             ]
                         }
                     }
-                },
-                {
-                    "Name": "Bookmarks",
-                    "Description": "",
-                    "Key": "Bookmarks",
-                    "Type": "tw-bookmarks",
-                    "Config": {
-                        "Enabled": false,
-                        "Hidden": false,
-                        "Static": false,
-                        "Anchor": false,
-                        "AOT": false,
-                        "AutoOpen": false,
-                        "Icon": "bookmarks",
-                        "Class": "",
-                        "Position": { "X": 2, "Y": 2 },
-                        "Actions": ["maximize", "float"],
-                        "ViewState": "restore",
-                        "Header": true,
-                        "Pinned": false
-                    },
-                    "Data": { "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit" }
                 }
             ]
         },
@@ -2681,7 +2686,15 @@
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
         "AddAOTWidgetEnabled": true,
-        "Notifications": { "Sounds": true, "SoundLevel": 1, "DesktopAlerts": true, "DesktopAlertTimeout": 5000, "AppAlertTimeout": 5000 },
+        "EnableReloginOnConnectionError": true,
+        "Notifications": {
+            "Sounds": true,
+            "SoundLevel": 1,
+            "DesktopAlerts": true,
+            "DesktopAlertTimeout": 5000,
+            "AppAlertTimeout": 5000,
+            "AppAlertOnConnectivityStatus": true
+        },
         "CheckForResolution": true,
         "AV": {
             "webRTCConfig": {
@@ -2709,7 +2722,17 @@
                 "type": "soap",
                 "timeout": 60
             },
-            "signalRProxy": { "enabled": true, "logging": true, "protocol": "webSockets", "timeout": 10, "fallback": true },
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true,
+                "maxConnectivityRetryTimeOut": 60,
+                "signalRReconnectThresholdCount": 3,
+                "signalRReconnectThresholdTime": 120,
+                "customApiURL": ""
+            },
             "logging": {
                 "enabled": true,
                 "level": { "debug": true, "info": true, "warn": true, "error": true },
@@ -2726,5 +2749,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.1.30"
+    "Version": "5.2.7.30"
 }

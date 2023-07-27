@@ -1,15 +1,17 @@
-<div *ngIf="!loading" class="tw-widget-container w-100-p h-100-p twd-flex twd-flex-1 twd-justify-center twd-items-center p-md-36 twd-p-8">
-    <tw-template *ngIf="widgets.length" class="dynamic-widget-grid twd-overflow-auto twd-m-0 twd-gap-1.5" [widgets]="widgets"></tw-template>
+<ng-container *transloco="let locale">
+    <div *ngIf="!loading" class="tw-widget-container w-100-p h-100-p twd-flex twd-flex-1 twd-justify-center twd-items-center p-md-36 twd-p-8">
+        <tw-template *ngIf="widgets.length" class="dynamic-widget-grid twd-overflow-auto twd-m-0 twd-gap-1.5" [widgets]="widgets"></tw-template>
 
-    <twc-not-found
-        *ngIf="!widgets.length"
-        class="w-100-p h-100-p"
-        [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
-        title="No Widgets"
-        type="widget"
-        message="No preview widgets found!"
-    ></twc-not-found>
-</div>
+        <twc-not-found
+            *ngIf="!widgets.length"
+            class="w-100-p h-100-p"
+            [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
+            [title]="locale('contentComponent.noWidgets')"
+            type="widget"
+            [message]="locale('contentComponent.noPreview') + ' ' + locale('contentComponent.widgetsFound')"
+        ></twc-not-found>
+    </div>
+</ng-container>
 
 <div *ngIf="loading" class="spinner">
     <mat-spinner></mat-spinner>

@@ -1,0 +1,14 @@
+{
+  "headerComponent": {
+    "chooseLocale": "Wählen Sie Ihr Gebietsschema",
+    "i18nEnglish": "Englisch(United States)",
+    "i18nGerman": "Deutsch(Standard)",
+    "i18nChinese": "Chinesisch(Singapore)"
+  },
+  "captchaComponent": {
+    "securityVerification": "Sicherheitscheck",
+    "formLabel": "Geben Sie das Captcha ein",
+    "formPlaceholder": "Bitte geben Sie die im obigen Bild angezeigten Zeichen ein",
+    "buttonText": "Vorgehen"
+  }
+}

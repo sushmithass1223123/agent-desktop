@@ -32,12 +32,13 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
-import { SnackbarStateTypes } from 'app/interfaces';
+import { SnackbarStateTypes, InteractionRef } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Audio Video Controls
@@ -267,12 +268,22 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     interactionDetails: IInteractionDetails = {} as IInteractionDetails;
 
     /**
+     * Flag on displaying toasters
+     */
+    displayToasters: boolean;
+
+    /**
      * Audio muted users
      */
     mutedRemoteUsers = {
         audio: [],
         video: []
     };
+
+    /**
+     * The current interaction
+     */
+    myInteraction: InteractionRef;
 
     confirmDialogRef;
 
@@ -288,7 +299,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _tmacEventService: TMACEventService,
         private _agentFeaturesService: AgentFeaturesService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _interactionManagerService: InteractionManagerService
+        private _interactionManagerService: InteractionManagerService,
+        private translocoService: TranslocoService
     ) {
         super('TwAudioVideoControlsComponent');
 
@@ -301,6 +313,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
+        this.displayToasters = true;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -317,6 +330,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.appConfig = config;
+        });
+
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            //find out the current interaction
+            this.myInteraction = interactions.find((i: InteractionRef) => i.interactionId === this.interactionId);
         });
 
         // set defaults
@@ -519,7 +538,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.showUI = true;
                 })
                 .catch((error) => {
-                    this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.startCallError') + error, 'failure');
                 });
         }
 
@@ -600,6 +619,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // swtich the av events
             switch (evt.event) {
                 case 'onIncoming':
+                    //Check whether the type and status of myInteraction matches to 'textchat' and 'hold' 
+                    if(this.myInteraction?.type === 'textchat' && this.myInteraction?.status === 'hold'){
+                        // reject request
+                        evt.data.response(false);
+                        // close the call widget
+                        this.destroyWidget();
+                        return;
+                    }
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
@@ -616,11 +643,21 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             this.destroyWidget();
                         }
                     };
+                    const dynamicLabels = [
+                        {
+                            key: '#callType',
+                            value: param
+                        },
+                        {
+                            key: '#customerName',
+                            value: this.interactionDetails.CustomerName
+                        }
+                    ]
 
                     // config incoming call
                     this.confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
-                        `${param} call requested by ${this.interactionDetails.CustomerName}, Do you want to accept it?`,
+                        this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.callRequestConfirmMsg'),dynamicLabels),
                         '',
                         null,
                         {
@@ -628,13 +665,13 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     );
                     this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
+                    
                     break;
                 case 'onTrace':
                     this.logger.info('onAVEvent.onTrace: ' + evt.data);
                     break;
                 case 'onError':
-                    let error = evt.data?.error || 'Error occured in AV connection';
+                    let error = evt.data?.error || this.translocoService.translate('widgets.audioVideoControls.avConnectionError');
                     if (evt.data?.code in AV_ERRORS) {
                         error = AV_ERRORS[evt.data.code];
                     }
@@ -645,7 +682,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     if(evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {
                         return;
                     }
-                    this.endCall(true, 'Something went wrong');
+                    this.endCall(true, this.translocoService.translate('global.commonErrorMessage'));
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -723,11 +760,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.connected = false;
                     this.status = 'failed';
                     if (evt.data.code === 'CALL_REJECTED') {
-                        this._appUIService.showSnackbar('User has rejected your request', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'), 'failure');
                     } else if (evt.data.code === 'CALL_NOT_ANSWERED') {
-                        this._appUIService.showSnackbar('Call was not answered by the Customer', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callNotAnsweredByremote'), 'failure');
                     } else {
-                        this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callFailed') + evt.data.error, 'failure');
                     }
                     this.confirmDialogRef?.close();
                     // close the widget
@@ -736,7 +773,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'onDisconnected':
                     this.connected = false;
                     this.status = 'disconnected';
-                    this._appUIService.showSnackbar('Call disconnected, unexpected end!', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callDisconnectedError'), 'failure');
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -764,7 +801,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'onEnd':
                     this.connected = false;
                     this.status = 'ended';
-                    this._appUIService.showSnackbar('User has ended the call', 'info');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callEndedByRemote'), 'info');
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -883,6 +920,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             this.callType = requestType;
                             this.startAVCall();
                             break;
+            case 'addscreenshare':
+                             this.displayToasters = false;
+                             break;
+            case 'endscreenshare':
+                            this.displayToasters = false;
+                            break;
             case 'mute':
             case 'unmute':
                         this.updateMuteUnmuteUserList(requestType, evt);
@@ -925,7 +968,24 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             }
             break;
         }
-        this._appUIService.showSnackbar(userName + ' ' + data.Type + 'd the ' +type , 'warning');
+        const dynamicLabels = [
+            {
+                key: '#userName',
+                value: userName
+            },
+            {
+                key: '#muteType',
+                value: data.Type
+            },
+            {
+                key: '#streamType',
+                value: type
+            }
+        ]
+        if(this.displayToasters){
+            this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'),dynamicLabels), 'warning');
+        }
+        this.displayToasters = true;
     }
 
     /**
@@ -1013,25 +1073,25 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
                         switch (msgStatus) {
                             case 'ack':
-                                message = 'Snapshot request sent successfully';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotRequestSuccess');
                                 status = 'success';
                                 break;
                             case 'snapshotrequestack':
                             case 'accept':
-                                message = 'Retreiving snapshot...';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotLoading');
                                 status = 'loading';
                                 break;
                             case 'reject':
-                                message = 'Snapshot request is rejected by customer!';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotRequestRejectedByRemote');
                                 status = 'failure';
                                 break;
                             case 'response':
                             case 'success':
-                                message = 'Snapshot received';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotSuccess');
                                 status = 'success';
                                 break;
                             default:
-                                message = 'Unable to take snapshot';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotFailed');
                                 status = 'failure';
                                 break;
                         }
@@ -1079,24 +1139,30 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'togglecamera':
                 case 'toggleview':
                     {
+                        const dynamicLabels = [
+                            {
+                                key: '#toggleViewType',
+                                value: type.replace('toggle', '')
+                            }
+                        ];
                         switch (msg.status) {
                             case 'ack':
                                 break;
                             case 'accepted':
-                                this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is accepted by customer`);
+                                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestAccepted'),dynamicLabels));
                                 break;
                             case 'rejected':
-                                this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is rejected by customer!`, 'failure');
+                                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestRejected'),dynamicLabels), 'failure');
                                 break;
                             case 'success':
-                                this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggled successfully`);
+                                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.toggleViewSuccess'),dynamicLabels));
                                 // set camera selected for 'togglecamera'
                                 if (type === 'togglecamera') this.setCameraSelected(msg.data.deviceId);
                                 // set user view for 'toggleview'
                                 else if (type === 'toggleview') this.userView = msg.data.view;
                                 break;
                             case 'failed':
-                                this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggle failed!`, 'failure');
+                                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.toggleViewFailed'),dynamicLabels), 'failure');
                                 break;
                         }
                     }
@@ -1365,7 +1431,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     const confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
                         `<img src="${base64}" width="640" height="320" />`,
-                        'Confirm Snapshot',
+                        this.translocoService.translate('widgets.audioVideoControls.confirmSnapshotTitle'),
                         null,
                         {
                             disableClose: false
@@ -1373,7 +1439,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     );
                     confirmDialogRef.afterClosed().subscribe((resp) => {
                         if (resp) {
-                            this._appUIService.showSnackbar('Saving ...', 'loading');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.saveSnapshotLoading'), 'loading');
                             // send snapshot
                             SDKClient.saveVideoSnap(
                                 {
@@ -1390,7 +1456,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                 .then((result: IResponse) => {
                                     if (result.response && result.response.ImageUrl) {
                                         // snapsot saved sucessfully
-                                        this._appUIService.showSnackbar('Snapshot saved successfully!', 'success');
+                                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.snapshotSaveSuccess'), 'success');
 
                                         // create the message to emit
                                         const message = JSON.stringify({
@@ -1419,11 +1485,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                             log: true
                                         });
                                     } else {
-                                        this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
+                                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.snapshotSaveFailed'), 'failure');
                                     }
                                 })
                                 .catch(() => {
-                                    this._appUIService.showSnackbar('Snapshot save failed', 'failure');
+                                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.snapshotSaveFailed'), 'failure');
                                 });
                         }
                     });
@@ -1431,7 +1497,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
         } else if (this.data.Data.Snapshot?.Source?.toLowerCase() === 'remote') {
             try {
-                const snackRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
+                const snackRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.snapshotRequestLoading'), 'loading');
 
                 try {
                     await SDKClient.sendActionMessage({
@@ -1485,7 +1551,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             });
                         } catch (error) {}
 
-                        this._appUIService.showSnackbar('Snapshot request timed out', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.snapshotRequestTimeout'), 'failure');
                         console.error('Snapshot request timed out');
                     });
             } catch (e) {
@@ -1625,7 +1691,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     public async changeToVideo(btn: MatButton): Promise<void> {
         btn.disabled = true;
         if (!(await this.avConn.upgradeToVideo())) {
-            this._appUIService.showSnackbar('Upgrade to Video failed!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.upgradeToVideoFailed'), 'failure');
         } else {
             this.selfVideo.type = 'video';
             this.agentFeatures.oneWayVideo = false;
@@ -1657,12 +1723,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
 
             if (response.ResultCode === 1) {
-                this._appUIService.showSnackbar('Toggle camera request sent successfully');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleCamRequestSuccess'));
             } else {
-                this._appUIService.showSnackbar('Toggle camera request failed!', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleCamRequestFailed'), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar('Toggle camera request error!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleCamRequestError'), 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.toggleUserCamera', error);
         } finally {
             this._fuseProgressBarService.hide();
@@ -1692,12 +1758,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
 
             if (response.ResultCode === 1) {
-                this._appUIService.showSnackbar('Toggle view request sent successfully');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestSuccess'));
             } else {
-                this._appUIService.showSnackbar('Toggle view request failed!', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestFailed'), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar('Toggle view request error!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestError'), 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.toggleUserView', error);
         } finally {
             this._fuseProgressBarService.hide();
@@ -1709,6 +1775,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param message
      */
     public async requestMuteUnmuteCustomerAV(source: 'AV' | 'audio' | 'video', type: 'mute' | 'unmute', message: any): Promise<void> {
+        const dynamicLabels = [
+            {
+                key: '#streamType',
+                value: source
+            },
+            {
+                key: '#muteType',
+                value: type
+            }
+        ]
         try {
             this._fuseProgressBarService.show();
 
@@ -1718,10 +1794,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
 
             if (response.ResultCode !== 1) {
-                this._appUIService.showSnackbar(`Customer ${source} ${type} request failed!`, 'failure');
+                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeRequestFailed'),dynamicLabels), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar(`Customer ${source} ${type} request error!`, 'failure');
+            this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeRequestError'),dynamicLabels), 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.requestMuteUnmuteCustomerAV', error);
         } finally {
             this._fuseProgressBarService.hide();

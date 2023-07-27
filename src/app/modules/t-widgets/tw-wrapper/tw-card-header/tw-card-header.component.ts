@@ -6,6 +6,7 @@ import { IWidget } from 'app/interfaces';
 import { map } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Card header component
@@ -75,7 +76,8 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
      */
     private _appConfig: any;
 
-    constructor(private _aotWidgetService: AOTWidgetService, private _appDataService: AppDataService, private _appUIService: AppUiService) {
+    constructor(private _aotWidgetService: AOTWidgetService,
+        private translocoService: TranslocoService, private _appDataService: AppDataService, private _appUIService: AppUiService) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -147,7 +149,7 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
 
         // check if pinned
         if (this.data.Config.Pinned) {
-            this._appUIService.showSnackbar('Widget added to pinned list');
+            this._appUIService.showSnackbar(this.translocoService.translate('wrapperComponent.widgetPinned'));
             // check widget in AOT list
             if (thisInAOT) {
                 aots = map(aots, (widget: IWidget) => {
@@ -160,7 +162,7 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
                 aots.push(this.data);
             }
         } else {
-            this._appUIService.showSnackbar('Widget removed from pinned list');
+            this._appUIService.showSnackbar(this.translocoService.translate('wrapperComponent.widgetUnPinned'));
             // check widget in AOT list
             if (thisInAOT) {
                 aots = map(aots, (widget: IWidget) => {

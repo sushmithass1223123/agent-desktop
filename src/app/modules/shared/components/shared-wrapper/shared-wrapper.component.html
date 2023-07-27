@@ -1,5 +1,5 @@
 <!-- We are writing a wrapper over material card -->
-<div class="tw-shared-wrapper">
+<div class="tw-shared-wrapper" *transloco="let locale">
     <ng-container *ngIf="customFuse$ | async as customFuse">
         <mat-card class="widget-card" [ngClass]="customFuse.body">
             <!-- Wrapper to wrap header and body -->
@@ -9,9 +9,9 @@
                         <mat-icon *ngIf="icon.indexOf('custom') < 0">{{ icon || 'widgets' }}</mat-icon>
                         <mat-icon [svgIcon]="icon" *ngIf="icon.indexOf('custom') >= 0"></mat-icon>
                     </div>
-                    <mat-card-title>{{ title || 'Widget' }}</mat-card-title>
+                    <mat-card-title>{{ title || locale('sharedComponents.widget') }}</mat-card-title>
                     <span class="spacer"></span>
-                    <button mat-icon-button matTooltip="Close" mat-dialog-close #closeBtn tabindex="-1">
+                    <button mat-icon-button [matTooltip]="locale('wrapperComponent.close')" mat-dialog-close #closeBtn tabindex="-1">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-card-header>

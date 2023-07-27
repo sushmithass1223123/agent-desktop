@@ -15,6 +15,7 @@ import { AUX_STATUSES } from 'app/constants';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * MainComponent
@@ -92,12 +93,22 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      */
     @HostListener('window:beforeunload', ['$event'])
     pageBeforeUnload(event: any): boolean {
+        /**
+         * Check if window is being refreshed on re-login request on agent's consent.
+         * if Yes then do not restrict at browser level
+         */
+         if(this._appUIService._reloginTriggered) {
+            return true;
+        }
+
         if (environment.production) {
             event?.preventDefault();
             return false;
         }
         return true;
     }
+
+    appLabelsError;
 
     /**
      * Constructor
@@ -113,8 +124,13 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         private _interactionManagerService: InteractionManagerService,
         private _activatedRouter: ActivatedRoute,
         private _titleService: Title,
-        private _fuseSplashService: FuseSplashScreenService
+        private _fuseSplashService: FuseSplashScreenService,
+        private translocoService: TranslocoService
     ) {
+        this._appDataService.observeAppLabelErrors().subscribe(data => {
+            this.appLabelsError = data;
+            this._appDataService.setErrorInAppLabels(data);
+        });
         // set the private defaults
         this._unsubscribeAll = new Subject();
 
@@ -236,7 +252,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
                         state: {
                             subtitle: 'Oops',
                             title: '404',
-                            description: 'Unable to load the config for main, please contact the administrator.',
+                            description: this.translocoService.translate('mainComponent.loadConfigFailed'),
                             login: false
                         },
                         queryParamsHandling: 'preserve'
@@ -282,7 +298,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
      * To poll for TMAC events
      */
     private pollForEvent(): void {
-        this._appUIService.showSnackbar('Hello, Welcome to Agent Desktop', 'info');
+        this._appUIService.showSnackbar(this.translocoService.translate('mainComponent.welcomeMsg'), 'info');
 
         // set the loaded to true
         this.loaded = true;

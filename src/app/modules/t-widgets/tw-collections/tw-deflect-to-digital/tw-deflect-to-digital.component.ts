@@ -7,6 +7,7 @@ import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector: 'tw-deflect-to-digital',
@@ -45,7 +46,8 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
+    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService,
+        private translocoService: TranslocoService) {
         super('TwDeflectToDigitalComponent');
     }
 
@@ -119,11 +121,11 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
 
             if (!this.toNumber) {
-                this._appUIService.showSnackbar('Please provide the number to deflect', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
                 return;
             }
 
-            this._appUIService.showSnackbar('Deflecting', 'loading');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectLoading'), 'loading');
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
                 customerContact: this.toNumber,
@@ -149,9 +151,9 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
         } catch (e) {
             console.error(e);
             if (e instanceof ADError) {
-                this._appUIService.showSnackbar(`Unable to Deflect: ${e.message}`, 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectError') + e.message, 'failure');
             } else {
-                this._appUIService.showSnackbar('Deflecting failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectFailed'), 'failure');
             }
         }
     }

@@ -22,7 +22,9 @@
             <button class="add-workcode" mat-button mat-raised-button color="accent" mat-icon-button (click)="openAddWorkCodeModal()">
                 <mat-icon>add</mat-icon>
             </button>
-            <p *ngIf="!selectedWorkCodes.length" class="text-center mat-title mt-40">No work code selected</p>
+            <ng-template *transloco="let locale">
+                <p *ngIf="!selectedWorkCodes.length" class="text-center mat-title mt-40">{{ locale('widgets.workcodes.noWorkCodeSelected') }}</p>
+            </ng-template>
         </div>
 
         <div *ngIf="widgetData.Role === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
@@ -44,7 +46,9 @@
 
             <div *ngIf="selectedWorkCodes.length === 0" class="w-100-p h-90-p">
                 <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-100-p box-shadow-3d" />
-                <p class="text-center mat-title m-0">No data available</p>
+                <p class="text-center mat-title m-0" *transloco="let locale">
+                    {{ locale('contentComponent.noDataAvailable') }}
+                </p>
             </div>
         </div>
     </div>
@@ -55,15 +59,17 @@
 
     <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout="column" fxLayoutAlign="center center">
         <p>{{ loadWorkCodesReq.msg }}</p>
-        <button mat-button mat-raised-button color="primary" class="ml-8" (click)="setup()">Retry</button>
+        <button mat-button mat-raised-button color="primary" class="ml-8" *transloco="let locale" (click)="setup()">
+            {{ locale('global.retry') }}
+        </button>
     </div>
 
     <!-- your code goes here -->
 </tw-wrapper>
 
 <ng-template #addWorkcodeModalRef>
-    <div class="twd-sticky twd-top-0 twd-left-0">
-        <p class="mat-title">Select Work Codes</p>
+    <div *transloco="let locale" class="twd-sticky twd-top-0 twd-left-0">
+        <p class="mat-title">{{ locale('widgets.workcodes.selectWorkcodes') }}</p>
         <mat-form-field class="w-100-p" appearance="outline">
             <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
                 <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
@@ -71,7 +77,12 @@
                     {{ workCode.Name }}
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
-                <input #workCodeInput placeholder="Search Workcodes..." [formControl]="workCodeCtrl" [matChipInputFor]="selectedWorkCodesRef" />
+                <input
+                    #workCodeInput
+                    [placeholder]="locale('widgets.workcodes.searchWorkcodes')"
+                    [formControl]="workCodeCtrl"
+                    [matChipInputFor]="selectedWorkCodesRef"
+                />
             </mat-chip-list>
         </mat-form-field>
     </div>

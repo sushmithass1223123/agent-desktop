@@ -12,6 +12,8 @@ import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerRespo
 import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
+import { UIActionEvent, UIActionEventService } from '@services/ui-action-event.service';
 
 @Component({
     selector: 'email',
@@ -121,7 +123,9 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     constructor(
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private translocoService: TranslocoService,
+        private uiActionEventService: UIActionEventService
     ) {}
 
     /**
@@ -204,7 +208,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             .catch((e) => {
                 console.error(e);
                 if (e instanceof ADError) {
-                    this._appUiService.showSnackbar('Unable to fetch frequently used email addresses', 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.getFrequentlyUsedEmailFailed'), 'failure');
                 }
             });
     }
@@ -214,6 +218,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     _setEditForm(): void {
         if (this.email) {
+            this.notifyEmailAction();
             const email = JSON.parse(JSON.stringify(this.email));
             const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox, BCC } = email;
             const bodyBreak = `
@@ -307,9 +312,9 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             let resVal: Partial<EmailFile>;
             if (input.files && input.files.length) {
                 const f = input.files[0];
-                const ref = this._appUiService.showSnackbar(`Uploading ${f.name || 'File'}`, 'loading');
+                const ref = this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileLoading'), 'loading');
                 if (f.size > this.maxFileSize) {
-                    this._appUiService.showSnackbar('File too large', 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'), 'failure');
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
@@ -370,7 +375,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             }
         } catch (e) {
             console.error(e);
-            this._appUiService.showSnackbar('Failed to upload file', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileFailed'), 'failure');
         }
     }
 
@@ -442,7 +447,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     validateEmailIdAndPush(key: string, emailId: string): boolean {
         if (!validateEmail(emailId)) {
-            this._appUiService.showSnackbar('Please enter a valid email address', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.invalidEmailAddress'), 'failure');
             return false;
         }
 
@@ -491,10 +496,26 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             })
             .catch((e) => {
                 console.error(e);
-                this._appUiService.showSnackbar(`Download for ${file.Name} failed`, 'failure');
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.downloadFileFailed'), 'failure');
             })
             .finally(() => {
                 this._fuseProgressBarService.hide();
             });
+    }
+
+    /**
+     * Method is to notify agent has come to edit mode in Email section
+     */
+    notifyEmailAction() {
+        this.email['type'] = this.mode;
+        const emailActionData: UIActionEvent = {
+            eventName: 'EmailAction',
+            sessionID: this.email.SessionID,
+            data: this.email,
+            eventType: 'onUIActionEvent'
+          };
+
+
+        this.uiActionEventService.emitUIActionEvent(emailActionData);
     }
 }
