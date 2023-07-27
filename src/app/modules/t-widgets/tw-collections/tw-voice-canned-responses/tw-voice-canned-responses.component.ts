@@ -79,7 +79,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
                 const autoPlayDelay = this.data.Data?.autoPlayAfterTime ? this.data.Data.autoPlayAfterTime : 10;
                 setTimeout(() => {
                     this.sendItem(templatesToAutoPlay[0]);
-                }, autoPlayDelay);
+                }, autoPlayDelay*1000);
 
                 this.checkToPlayInLoop(templatesToAutoPlay[0]);
             }
@@ -99,7 +99,7 @@ export class TwVoiceCannedResponsesComponent extends TWidgetWrapper implements O
             this.playInLoop = setTimeout(() => {
                 this.sendItem(template);
                 this.checkToPlayInLoop(template);
-            }, playInLoopDelay);
+            }, playInLoopDelay*1000);
         }
     }
 
