@@ -68,6 +68,11 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
     resizeMode: boolean;
 
     /**
+     * Resize button visibility
+     */
+    hideResizeButton: boolean = false;
+
+    /**
      * Un subscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
@@ -109,6 +114,19 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
      * Maximize method
      */
     maximizeWidget(): void {
+        if (this.widgetState.maximized) {
+            this.hideResizeButton = false;
+            if (this.resizeMode) {
+                this.resize.emit();
+            }
+
+        } else {
+            this.hideResizeButton = true;
+            if (this.resizeMode) {
+                this.resize.emit();
+            }
+
+        }
         this.maximize.emit();
     }
 
