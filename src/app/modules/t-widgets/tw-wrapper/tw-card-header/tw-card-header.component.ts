@@ -119,7 +119,6 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
             if (this.resizeMode) {
                 this.resize.emit();
             }
-
         } else {
             this.hideResizeButton = true;
             if (this.resizeMode) {
