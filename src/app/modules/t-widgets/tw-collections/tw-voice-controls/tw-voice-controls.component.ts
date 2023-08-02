@@ -313,6 +313,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     callConnected: boolean;
 
+    disableResetCall:boolean; 
+
     /**
      * counter for failed scenarios for answer / disconnect call 
      */
@@ -352,6 +354,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         this.widgetData = this.data.Data;
 
+        this.disableResetCall = this.widgetData.disableResetCall;
         // get the user info
         this.user = SDKClient.getAgentData() || null;
 
@@ -1456,7 +1459,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // clear the array after processing
                 this.mediaServerMessages = [];
             } else {
-                this.logger.warn(`answerCall: AV connection is not found - ${this.sessionID}`);
+                this.logger.warn(`answerCall: AV connection is not found - ${this.msSessionId}`, true);
+                this._appUIService.showAppSnackbar({
+                    'message': this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ' <br> AV Connection not found !!',
+                    'state': 'danger',
+                    'vPos':'top',
+                    'hPos': 'center'
+                });
             }
             // set the process media message to true for further messages
             this.processMediaMessages = true;
@@ -1473,11 +1482,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             } else {
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
                 this.handleCallFailure('Answer call');
+                this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ':' + JSON.stringify(dt),true);
             }
         })
-        .catch(() => {
+        .catch((e) => {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
             this.handleCallFailure('Answer call');
+            this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
         });
     }
 
@@ -2126,7 +2137,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.handleUIControls({
                 eventName: 'enableCloseInteraction'
             });
-            this.logger.debug(`Enabling force close as ${operation} failed more than 3 times`);
+            this.logger.debug(`Enabling force close as ${operation} failed more than 3 times`, true);
         }
     }
 
@@ -2143,5 +2154,38 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             console.log('Error occured while getting the AV connection', e);
         }
         return this.avConns[this.sessionID];
+    }
+
+    resetCall = () => {
+        this.logger.info(`Reset Call trggered`, true);
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.voiceControls.resetCallTitle'), this.translocoService.translate('widgets.voiceControls.resetCallMsg'));
+        this.dialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                this.logger.info(`Reset Call trggered confirmed`, true);
+                this.continueToResetCall();
+            } else {
+                this.logger.info(`Reset Call cancelled by agent`, true);
+            }
+        });
+    }
+
+    continueToResetCall = () => {
+        try{
+            const requestArgs = {
+                interactionId : this.interaction?.InteractionID.toString(),
+                type : 'RESETWEBPHONE',
+                message: 'Reset webphone'
+            };
+            SDKClient.sendAVControlMessage(requestArgs).then(response => {
+                this.logger.info('AV control message resetting webphone success:' + JSON.stringify(response), true);
+                this.CallDisconnectedEvent(<CallDisconnectedEvent>{
+                    InteractionID: this.interaction?.InteractionID
+                });
+            }).catch(e => {
+                this.logger.info('Error occured while resetting webphone:' + JSON.stringify(e), true);
+            });
+        } catch(e) {
+            this.logger.error('Error occured on resetting web phone', e, true);
+        }
     }
 }

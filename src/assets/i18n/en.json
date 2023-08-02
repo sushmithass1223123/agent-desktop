@@ -208,6 +208,9 @@
             "agentSkillUpdateSuccessMsg": "Agent skills has been updated!"
         },
         "voiceControls": {
+            "reset": "Reset",
+            "resetCallTitle": "Rest Call",
+            "resetCallMsg": "Are you sure to reset call ?",
             "answer": "Answer",
             "mute": "Mute",
             "unmute": "Unmute",
@@ -752,7 +755,10 @@
             "selectSkillMaxCIQLimit": "Unabled to select the skill, Maximum Calls In Queue should be ",
             "getSkillFailed": "Failed to get skill ",
             "getSkillError": "Error in getting skill ",
-            "executeActionDefaultError": "Error: NotImplementedException"
+            "executeActionDefaultError": "Error: NotImplementedException",
+            "transferCallInitFailed": "Transfer call initiate failed!!",
+            "conferenceCallInitFailed": "Conference call initate failed!!",
+            "callInitFailed": "Call initate failed !!"
         },
         "textTemplates": {
             "departments": "Departments",

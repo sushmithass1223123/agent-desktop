@@ -197,7 +197,7 @@
                             color="default"
                             class="success mat-elevation-z2"
                             #unHoldBtn
-                            [matTooltip]="locale('interactionComponent.unhold')"
+                            [matTooltip]="locale('interactionComponent.unHold')"
                             [disabled]="tempCallRef"
                             (click)="unHoldCall(unHoldBtn)"
                         >
@@ -216,6 +216,18 @@
                             [ngClass]="{ 'mat-warn': muted }"
                         >
                             <mat-icon> mic_off </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="isMSCall && !disableResetCall"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            [matTooltip]="locale('widgets.voiceControls.reset')"
+                            (click)="resetCall()"
+                        >
+                            {{ locale('widgets.voiceControls.reset') }}
                         </button>
 
                         <button
