@@ -213,6 +213,13 @@ export type TwVoiceControlsDataConfig = {
      * @default false
      */
     CloseInteractionOnEnd: boolean;
+
+    /**
+     * Flag to disable reset call feature
+     * @type {boolean} true/false
+     * @default false
+     */
+     disableResetCall: boolean;
 };
 
 /**

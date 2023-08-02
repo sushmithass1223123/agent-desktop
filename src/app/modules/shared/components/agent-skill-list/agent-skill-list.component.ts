@@ -410,6 +410,24 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.actionTooltip = '';
                 break;
         }
+
+        SDKClient.events.on('OutgoingCallFailedEvent', this.onOutgoingCallFailed);
+    }
+
+    onOutgoingCallFailed(evt) {
+        if(evt) {
+            if(evt.IsTransfer || evt.isTransfer) {
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferCallInitFailed'));
+                return;
+            }
+
+            if(evt.IsConference || evt.isConference) {
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.conferenceCallInitFailed'));
+                return;
+            }
+
+            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.callInitFailed'));
+        }
     }
 
     /**
