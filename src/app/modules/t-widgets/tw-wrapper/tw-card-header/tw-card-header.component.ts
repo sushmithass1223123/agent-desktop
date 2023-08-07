@@ -124,7 +124,6 @@ export class TwCardHeaderComponent implements OnInit, OnDestroy {
             if (this.resizeMode) {
                 this.resize.emit();
             }
-
         }
         this.maximize.emit();
     }
