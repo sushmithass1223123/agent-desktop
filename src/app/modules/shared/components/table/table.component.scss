@@ -4,10 +4,16 @@ ad-table {
     overflow-x: hidden;
     background: inherit;
 
+    .bg-inherit {
+        z-index: 0;
+
+    }
+
     .expanded-details-row {
         margin-bottom: 0 !important;
         min-height: 0px;
         transition: max-height 0.5s;
+
         &.expanded {
             overflow: auto;
             min-height: 30px;
@@ -28,6 +34,7 @@ ad-table {
 .ad-table-advancedsearch-form .mat-dialog-container {
     padding: 0px;
     border-radius: 20px !important;
+
     form {
         max-height: 60vh;
         overflow-y: auto;
