@@ -390,6 +390,8 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
                 userId += '_' + SDKClient.getAgentData().teamId;
             }
 
+            // clear ui data before get the data from server
+            this.dataSource.data = [];
             // get the data from server
             const { response }: IResponse = await TUtils.HttpClient.sendRequest({
                 urls: [...this.apiUrls],
@@ -486,7 +488,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
         if (searchTerm) {
             this.serachData = this.bookmarkData.filter((f) => {
-                if (f.bookmarkType === 'url') {                    
+                if (f.bookmarkType === 'url') {
 
                     const replacedString = searchTerm.replace(/./g, (char) => {
                         return regexEscapeCharacters[char] || char;
@@ -602,7 +604,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
                     }
                 }
             });
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
