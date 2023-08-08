@@ -48,7 +48,7 @@ instant-messaging {
             flex-direction: column;
             align-items: center;
 
-            > div {
+            >div {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -282,8 +282,8 @@ instant-messaging {
                     }
                 }
 
-                &.contact + .me,
-                &.me + .contact {
+                &.contact+.me,
+                &.me+.contact {
                     padding-top: 20px;
                     margin-top: 20px;
                 }
@@ -359,6 +359,8 @@ instant-messaging {
                                 padding: 0;
                                 border: none;
                                 border-radius: 20px;
+                                max-height: 80vh;
+                                overflow: auto;
                                 // @include mat.elevation(2);
 
                                 textarea {
@@ -410,6 +412,7 @@ fuse-sidebar {
 
         &.left-instant-messaging {
             .header {
+
                 .toggle-sidebar-folded,
                 .toggle-sidebar-open {
                     mat-icon {
