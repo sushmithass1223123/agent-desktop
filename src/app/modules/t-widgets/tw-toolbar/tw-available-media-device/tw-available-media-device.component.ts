@@ -130,7 +130,7 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
     async setAvailableDevices(): Promise<void> {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                this.logger.error('Error in setAvailableDevices', 'enumerateDevices() not supported', false);
+                this.logger.error('Error in setAvailableDevices', 'enumerateDevices() not supported', true);
                 return;
             }
             this.setComponentState('availableDevices/fetching');

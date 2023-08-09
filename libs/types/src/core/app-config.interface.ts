@@ -101,6 +101,10 @@ export type AppConfigs = {
      * SDK config
      */
     SDK: SDK & IConfig;
+    /**
+     * Flag to check for device permission in case of webphone call
+     */
+    DisableCheckForDevicePermission: boolean;
 };
 
 /**
