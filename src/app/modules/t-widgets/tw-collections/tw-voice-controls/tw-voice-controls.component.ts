@@ -315,6 +315,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     disableResetCall:boolean; 
 
+    isAnswerLoading = false;
+
     /**
      * counter for failed scenarios for answer / disconnect call 
      */
@@ -1439,6 +1441,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {MatButton} btn
      */
     answerCall(btn: MatButton): void {
+        this.isAnswerLoading = true;
+        // toggle the button
+        this.toggleButton(true, btn);
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
             // get the connection variable
@@ -1469,11 +1474,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             // set the process media message to true for further messages
             this.processMediaMessages = true;
+            this.isAnswerLoading = false;
             return;
         }
-        // toggle the button
-        this.toggleButton(true, btn);
+        
         SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+            this.isAnswerLoading = false;
             // toggle the button
             this.toggleButton(false, btn);
             // check for the response
@@ -1489,6 +1495,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
             this.handleCallFailure('Answer call');
             this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
+            this.isAnswerLoading = false;
         });
     }
 
