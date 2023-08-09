@@ -22,6 +22,7 @@ import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 
+declare const navigator: Navigator | any;
 /**
  * LoginComponent
  */
@@ -870,6 +871,11 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         // clear error message if any
         this.errorMessage = '';
 
+        // check if permission access given in case of MS
+        if(this.msChecked && !(this.appConfig?.AppConfigs?.DisableCheckForDevicePermission)) {
+            await this.checkForDevicePermission();
+        } 
+
         // check if face auth is needed
         if (!force && this.faceAuthEnabled && !(await this.doFaceAuthentication())) {
             this.loading = false;
@@ -1142,4 +1148,31 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             this._msTeamsAuthSerivce.signOut();
         }
     }
+
+
+    /**
+     * method to check if mic access given in case of webphone calls
+     * @returns true or false
+     */
+    private async checkForDevicePermission(): Promise<boolean> {
+        try {
+          // get the stream based on constrains
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    
+          // if success, stop all the tracks
+          stream.getTracks().forEach((track: MediaStreamTrack) => {
+            track.stop();
+          });
+    
+          // if success, return promise resolved
+          return Promise.resolve(true);
+        } catch (err) {
+          // if failed, return promise reject
+          this._appUIService.showSnackbar('Please provide microphone access to continue', 'failure');
+          this.loading = false;
+          return Promise.reject(err);
+        }
+    }
+
+
 }
