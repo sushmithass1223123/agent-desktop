@@ -317,6 +317,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     isAnswerLoading = false;
 
+    connectionTimeout = null;
+
     /**
      * counter for failed scenarios for answer / disconnect call 
      */
@@ -518,6 +520,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         
         // stop duration timer
         this.stopTimer.next(null);
+
+        this.resetConnectionTimeout();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -755,6 +759,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.toggleButton(true, btn);
         SDKClient.disconnectCall(this.interaction.InteractionID.toString(), null)
             .then((dt: IResponse) => {
+                this.resetConnectionTimeout();
                 // toggle the button
                 this.toggleButton(false, btn);
                 // check for the response
@@ -1475,6 +1480,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // set the process media message to true for further messages
             this.processMediaMessages = true;
             this.isAnswerLoading = false;
+            this.toggleButton(false, btn);
+            this.checkIfConnected();
             return;
         }
         
@@ -1497,6 +1504,30 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
             this.isAnswerLoading = false;
         });
+    }
+
+    checkIfConnected() {
+        try{
+            if(this.connectionTimeout !== null) {
+                return;
+            }
+    
+            const timeout = this.data?.Data?.connectionTimeout ? this.data.Data.connectionTimeout : 10;
+            this.connectionTimeout = setTimeout(() => {
+                if(this.status !== 'connected') {
+                    this._appUIService.showSnackbar(this.translocoService.translate('voiceControls.connectionTimedOut'), 'failure');
+                    this.continueToResetCall(true);
+                }
+            }, timeout*1000);
+        } catch(e) {
+            console.log('error occured while checking if call connected', e);
+        }
+        
+    }
+
+    resetConnectionTimeout() {
+        clearTimeout(this.connectionTimeout);
+        this.connectionTimeout = null;
     }
 
     /**
@@ -2176,7 +2207,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
-    continueToResetCall = () => {
+    continueToResetCall = (isAutoReset?) => {
         try{
             const requestArgs = {
                 interactionId : this.interaction?.InteractionID.toString(),
@@ -2184,7 +2215,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 message: 'Reset webphone'
             };
             SDKClient.sendAVControlMessage(requestArgs).then(response => {
-                this.logger.info('AV control message resetting webphone success:' + JSON.stringify(response), true);
+                this.logger.info('AV control message resetting webphone '+ isAutoReset ? '[connection timed out]' : '' + ' success:' + JSON.stringify(response), true);
                 this.CallDisconnectedEvent(<CallDisconnectedEvent>{
                     InteractionID: this.interaction?.InteractionID
                 });

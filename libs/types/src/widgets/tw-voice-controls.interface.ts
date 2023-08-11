@@ -220,6 +220,8 @@ export type TwVoiceControlsDataConfig = {
      * @default false
      */
      disableResetCall: boolean;
+
+     connectionTimeout: number;
 };
 
 /**
