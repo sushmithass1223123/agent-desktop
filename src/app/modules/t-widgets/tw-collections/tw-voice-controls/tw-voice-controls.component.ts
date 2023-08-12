@@ -325,6 +325,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     failedCounter = 0;
     @ViewChild('closeBtn') closeButton: MatButton;
 
+    @ViewChild('answerBtn') answerButton: MatButton;
+
     /** to track Media server session ID in case of MS call */
     msSessionId;
 
@@ -904,8 +906,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.duration = val;
             });
 
+        this._fuseProgressBarService.hide();
+
         // set the status
         this.status = 'connected';
+        
 
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
@@ -1480,7 +1485,6 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // set the process media message to true for further messages
             this.processMediaMessages = true;
             this.isAnswerLoading = false;
-            this.toggleButton(false, btn);
             this.checkIfConnected();
             return;
         }
@@ -1514,8 +1518,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     
             const timeout = this.data?.Data?.connectionTimeout ? this.data.Data.connectionTimeout : 10;
             this.connectionTimeout = setTimeout(() => {
-                if(this.status !== 'connected') {
-                    this._appUIService.showSnackbar(this.translocoService.translate('voiceControls.connectionTimedOut'), 'failure');
+                if(this.status === 'incoming') {
+                    this.toggleButton(false, this.answerButton);
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.connectionTimedOut'), 'failure');
                     this.continueToResetCall(true);
                 }
             }, timeout*1000);
