@@ -2752,5 +2752,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.7.3002-beta.2"
+    "Version": "5.2.7.3002"
 }
