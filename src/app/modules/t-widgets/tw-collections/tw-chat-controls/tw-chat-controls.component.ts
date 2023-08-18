@@ -26,6 +26,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SharedService } from '@services/shared.service';
 import { isStringHtml, urlify } from '@tmac/operators';
 import {
     ActionMessageReceivedEvent,
@@ -543,7 +544,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _appUIService: AppUiService,
         private _fuseFacadeService: FuseFacadeService,
         private _agentFeaturesService: AgentFeaturesService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private sharedService: SharedService
     ) {
         super('TwChatControlsComponent');
 
@@ -568,6 +570,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        //trigger holdmethod
+        this.sharedService.getHoldMethod().subscribe(() => {
+            this.holdInteraction();
+        });
 
         this.widgetData = this.data.Data;
 
@@ -898,7 +905,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         }
                     ];
                     //displays toaster when a conference is disconnected
-                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'),dynamicLabels), 'info');
+                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'), dynamicLabels), 'info');
                     break;
             }
             return;
