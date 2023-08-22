@@ -208,7 +208,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     /**
      * To destroy the supervisor interaction details widget
      */
-    destroySupervisorInteractionWidget() {
+    destroySupervisorInteractionWidget(): void {
         const supervisorInteractionWidgetID = this.widgetIDs?.find((widgetID) => widgetID.includes('tw-su-agent-interactions'));
         if(supervisorInteractionWidgetID){
             this._aotWidgetService.destroyWidget(supervisorInteractionWidgetID);
