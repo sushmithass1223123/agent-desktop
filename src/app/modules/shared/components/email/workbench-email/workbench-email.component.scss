@@ -58,6 +58,7 @@ workbench-email {
         display: flex;
         justify-content: center;
         align-items: center;
+
         .mx-auto {
             margin: auto;
         }
@@ -78,6 +79,7 @@ workbench-email {
         & li.active {
             position: relative;
             overflow: hidden;
+
             &::before {
                 content: '';
                 width: 2px;
@@ -99,7 +101,7 @@ workbench-email {
     }
 
     .mat-nested-tree-node {
-        & > li > ul:not(.no-scroll) {
+        &>li>ul:not(.no-scroll) {
             max-height: 500px;
             overflow: auto;
         }
@@ -108,6 +110,7 @@ workbench-email {
     mat-tree-node {
         cursor: pointer;
         padding-left: 0 !important;
+
         ul {
             padding-inline-start: 0px !important;
         }
@@ -140,16 +143,27 @@ workbench-email {
     width: 523px;
     max-height: 70vh;
     background-color: inherit;
+
     form {
         padding: 10px;
     }
+
     .form-field {
         margin-bottom: 8px;
     }
+
     .mat-form-field-infix {
         align-items: center;
     }
+
     .twd-hidden {
         display: none !important;
     }
+}
+
+.twd-spinner {
+    position: fixed;
+    top: 45vh;
+    left: 22vw;
+    z-index: 100%;
 }
