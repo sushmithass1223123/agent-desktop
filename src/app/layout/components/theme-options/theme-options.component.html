@@ -8,6 +8,19 @@
     </div>
 
     <form [formGroup]="form">
+        <!-- LANGUAGES -->
+        <div *ngIf="languageSelectionEnabled">
+            <div class="group">
+                <h2>{{ locale('themeOptions.language') }}</h2>
+                 
+                <mat-select class="lang-selection" (selectionChange)="changeLanguage($event.value)" [(value)]="selectedLanguage">
+                    <mat-option *ngFor="let lang of languages" [value]="lang">
+                         {{ lang }}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        
         <!-- COLOR THEME -->
         <div class="group">
             <h2>Color themes</h2>

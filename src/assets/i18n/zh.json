@@ -1,9 +1,9 @@
 {
 
     "loginComponent": {
-        "welcome": "欢迎使用代理桌面",
+        "welcome": "欢迎使用代理桌面！",
         "lanId": "Lan ID",
-        "lanIdRequiredText": "LAN ID is required",
+        "lanIdRequiredText": "需要 LAN ID",
         "connectivityError": "Trying to reach server",
         "retrying": "Retrying...",
         "retryingIn": "Retrying in",
@@ -12,9 +12,22 @@
         "retryNow": "RETRY NOW",
         "configError": "Config Error",
         "configErrorInfo": "Unable to load the config for login.<br />Please contact the administrator.",
-        "otpRequired": "OTP is required"
+        "otpRequired": "OTP is required",
+        "loginToPBX": "登录 PBX",
+        "loginToWebPhone": "登录网络电话",
+        "login": "登录",
+        "isRequired": "是必须的"
+    },
+    "global": {
+        "lanId": "局域网ID"
     },
     "navbarComponent": {
 
+    },
+    "wrapperComponent": {
+        "maximize": "欢迎使用代理桌面"
+    },
+    "contentComponent": {
+        "noDataAvailable": "欢迎使用代理桌面"
     }
 }
