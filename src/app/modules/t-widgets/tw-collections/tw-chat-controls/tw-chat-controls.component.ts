@@ -898,7 +898,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         }
                     ];
                     //displays toaster when a conference is disconnected
-                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'),dynamicLabels), 'info');
+                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'), dynamicLabels), 'info');
                     break;
             }
             return;
@@ -2662,6 +2662,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         this.previewMediaDialogRef = this._matDialog.open(this.previewMediaDialog, {
             panelClass: 'preview-media-dialog'
+        });
+        this.previewMediaDialogRef.afterOpened().subscribe(() => {
+            if (previewData.attachment.type === 'video') {
+                const scrollContainer = document.querySelector('.drag-scroll-content') as HTMLDivElement;
+                if (scrollContainer) {
+                    scrollContainer.style.overflow = 'auto';
+                    scrollContainer.style.height = '';
+                    scrollContainer.style.height = '100%';
+                    scrollContainer.style.minHeight = '100px';
+                    scrollContainer.style.maxHeight = '600px';
+                    scrollContainer.style.width = '';
+                    scrollContainer.style.maxWidth = '800px';
+                    scrollContainer.style.display = 'flex';
+
+                }
+            }
         });
     }
 
