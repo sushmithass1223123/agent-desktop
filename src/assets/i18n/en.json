@@ -197,7 +197,8 @@
             "removeWC": "Removing work code",
             "wcRemoveSuccess": "Work code removed successfully",
             "wcRemoveFail": "Unable to remove workcode",
-            "noWorkCodeSelected": "No work code selected"
+            "noWorkCodeSelected": "No work code selected",
+            "noWorkCodeToDisplay": "No matching work codes for search criteria"
         },
         "wallboard": {
             "skillName": "Skill Name",
