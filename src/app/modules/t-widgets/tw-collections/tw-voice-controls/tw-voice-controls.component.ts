@@ -565,7 +565,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     ...this.tempCallRef,
                     status: 'init',
                     sessionID: sessionId,
-                    type: ''
+                    type: this.tempCallRef.type ?  this.tempCallRef.type : ''
                 };
             }
 
