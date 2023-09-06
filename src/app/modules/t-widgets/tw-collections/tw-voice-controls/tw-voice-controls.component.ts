@@ -635,8 +635,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onEnd':
                 // remove the av reference on end
-                // delete this.avConns[evt.sessionId];
-                delete this.getAVConnection;
+                // delete this.avConns[evt.sessionId]; // to do: remove AVConnections of valid session ids to be removed on End
+                // delete this.getAVConnection();
                 // get the index of session id from call line list
                 const index = this.callLines.indexOf(evt.sessionId);
                 // if found, then remove
@@ -788,7 +788,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private handleConferenceMixer(): void {
         // get the main line and conference line
-        const mainLine = this.getAVConnection();
+        const mainLine = this.getAVConnection(this.callLines[0]);
         // this.avConns[this.callLines[0]];
         const conferenceLine = this.getAVConnection(this.tempCallRef.sessionID);
         // this.avConns[this.tempCallRef.sessionID];
@@ -1156,7 +1156,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // check if muted then unmute
             if (this.muted) {
                 // so we use mute/unmute instead
-                const connection: AVChannel = this.getAVConnection();
+                const connection: AVChannel = this.getAVConnection(this.callLines[0]);
                 //this.avConns[this.callLines[0]];
                 // un mute the call
                 connection.unMute(true, false);
