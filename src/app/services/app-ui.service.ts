@@ -73,6 +73,8 @@ export class AppUiService extends SharedWrapper {
      * Notification reference
      */
     private _notificationRef: Notification;
+
+    _reloginTriggered: boolean = false;
     /**
      * UI channel subject
      */

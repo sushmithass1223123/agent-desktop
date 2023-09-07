@@ -197,7 +197,7 @@
                             color="default"
                             class="success mat-elevation-z2"
                             #unHoldBtn
-                            [matTooltip]="locale('interactionComponent.unhold')"
+                            [matTooltip]="locale('interactionComponent.unHold')"
                             [disabled]="tempCallRef"
                             (click)="unHoldCall(unHoldBtn)"
                         >
@@ -219,13 +219,25 @@
                         </button>
 
                         <button
+                            *ngIf="isMSCall && !disableResetCall"
+                            mat-mini-fab
+                            color="default"
+                            class="mat-elevation-z2"
+                            [ngClass]="customFuse.anchor?.body"
+                            [matTooltip]="locale('widgets.voiceControls.reset')"
+                            (click)="resetCall()"
+                        >
+                            {{ locale('widgets.voiceControls.reset') }}
+                        </button>
+
+                        <button
                             *ngIf="widgetData?.Transfer.Allowed && status !== 'disconnected'"
                             mat-mini-fab
                             color="default"
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            [matTooltip]="locale('interactionComopnent.transfer')"
+                            [matTooltip]="locale('interactionComponent.transfer')"
                             (click)="openTransferConferenceDialog('transfer')"
                         >
                             <mat-icon>phone_forwarded</mat-icon>
@@ -238,7 +250,7 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            [matTooltip]="locale('interactionComopnent.conference')"
+                            [matTooltip]="locale('interactionComponent.conference')"
                             (click)="openTransferConferenceDialog('conference')"
                         >
                             <mat-icon>group</mat-icon>

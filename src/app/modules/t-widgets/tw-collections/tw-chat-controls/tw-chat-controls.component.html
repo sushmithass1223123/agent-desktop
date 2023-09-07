@@ -486,13 +486,14 @@
                     <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
                         <!-- REPLY FORM -->
                         <div class="reply-form">
-                        <!-- CHAT TYPING -->
-                             <div
-                            *ngIf="remoteTyping && remoteTyping.typing"
-                            class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic">
-                            {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
-                        </div>
-                         <!-- CHAT TYPING -->
+                            <!-- CHAT TYPING -->
+                            <div
+                                *ngIf="remoteTyping && remoteTyping.typing"
+                                class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
+                            >
+                                {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
+                            </div>
+                            <!-- CHAT TYPING -->
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
                                 <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
                                     <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
@@ -701,7 +702,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    [matTooltip]="locale('interactionComopnent.download')"
+                    [matTooltip]="locale('interactionComponent.download')"
                     (click)="downloadAttachment(previewMediaDialogData?.attachment?.src)"
                 >
                     <mat-icon>download</mat-icon>
@@ -712,7 +713,7 @@
                     mat-dialog-close
                     (click)="previewMediaDialogData = null"
                     tabindex="-1"
-                    [matTooltip]="locale('interactionComopnent.close')"
+                    [matTooltip]="locale('interactionComponent.close')"
                 >
                     <mat-icon>close</mat-icon>
                 </button>

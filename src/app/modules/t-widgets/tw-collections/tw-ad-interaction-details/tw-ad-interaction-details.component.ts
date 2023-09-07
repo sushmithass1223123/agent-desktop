@@ -206,7 +206,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      */
     maximizeEvent(state: boolean): void {
         if (!state) {
-            this.table.advancedSearchForm = {};
             this.table.doAdvancedSearch();
             this.table.source.paginator.firstPage();
         }

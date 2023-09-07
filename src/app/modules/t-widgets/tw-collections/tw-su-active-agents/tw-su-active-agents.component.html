@@ -17,19 +17,19 @@
                 <button mat-icon-button [matMenuTriggerFor]="sortMenu">
                     <mat-icon>sort</mat-icon>
                     <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
-                        <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
+                        <button mat-menu-item (click)="sortAgentList('AgentLoginID', locale('global.agentId'))">
                             <span>{{ locale('global.agentId') }}</span>
                             <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('AgentName')">
+                        <button mat-menu-item (click)="sortAgentList('AgentName', locale('global.agentName'))">
                             <span>{{ locale('global.agentName') }}</span>
                             <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus')">
+                        <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))">
                             <span>{{ locale('widgets.activeAgents.agentStatus') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration')">
+                        <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration', locale('widgets.activeAgents.statusDuration'))">
                             <span>{{ locale('widgets.activeAgents.statusDuration') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{
                                 sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
@@ -335,7 +335,13 @@
                 [@animateStagger]="{ value: '50' }"
             >
                 <mat-accordion class="twd-flex twd-flex-col twd-gap-2 grouped">
-                    <mat-expansion-panel *ngFor="let group of groupedAgentList" class="" hideToggle>
+                    <mat-expansion-panel
+                        (click)="selectGroup(group)"
+                        *ngFor="let group of groupedAgentList"
+                        class=""
+                        [expanded]="selectedGroup === group.groupName"
+                        hideToggle
+                    >
                         <mat-expansion-panel-header class="twd-flex twd-items-center">
                             <mat-panel-title class="twd-flex twd-items-center twd-gap-2"
                                 ><mat-icon class="group-icon">groups</mat-icon>
@@ -581,7 +587,7 @@
 
             <div *ngIf="agentList && agentList.length" class="twd-flex twd-justify-between twd-pt-2 twd-px-2">
                 <p *ngIf="filteredAgents.length && !groupedBy" class="text-center twd-inset-x-0">
-                    {{ locale('widgets.activeAgents.agentSortMsg') }} {{ sortBy }} in {{ sortType }}
+                    {{ locale('widgets.activeAgents.agentSortMsg') }} {{ sortedName }} in {{ sortType }}
                     <!--<b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order-->
                 </p>
                 <p *ngIf="groupedBy" class="text-center twd-inset-x-0">

@@ -293,7 +293,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 searchable: true
             },
             OverallSentiment: {
-                title: this.translocoService.translate('interactionComopnent.sentiment')
+                title: this.translocoService.translate('interactionComponent.sentiment')
             },
             Actions: {
                 title: '',

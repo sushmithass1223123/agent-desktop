@@ -36,7 +36,7 @@ import { TranslocoService } from '@ngneat/transloco';
 /**
  * Type of the mail node
  */
-type Mail = {
+export class Mail {
     Mailbox: string;
     ToList: string;
     Skill: string;
@@ -75,7 +75,9 @@ type ComponentActions =
     | 'email/open/failure'
     | 'email/polling/active'
     | 'email/polling/failed'
-    | 'email/polling/inactive';
+    | 'email/polling/inactive'
+    | 'emails/search'
+    | 'emails/search/failure';
 
 /**
  * Available tabs of the email workbench
@@ -141,6 +143,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Email bodies
      */
     emailBodies: Record<string, any> = {};
+
+    selectedEmailInSessionId: string;
+    selectedEmailOutSessionId: string;
+    selectedEmailRouteReason: string;
+
     /**
      * Email reply dialog ref
      */
@@ -185,11 +192,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             }
         >
     > = {
-        error: false,
-        loading: false,
-        msg: '',
-        data: new BehaviorSubject(null)
-    };
+            error: false,
+            loading: false,
+            msg: '',
+            data: new BehaviorSubject(null)
+        };
 
     /**
      * Global search form control and cached data for each category
@@ -324,6 +331,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     showInternetHeaders = false;
 
+    /**
+     * Disable advance Search submit button 
+     */
+    disableBtn: Boolean = false;
     /**
      * Constructor
      */
@@ -502,7 +513,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (isCurrentTabDisabled) {
                 this.currentTab = firstAvailableTab;
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -572,6 +583,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param mails
      */
     groupNodes(mails?: Mail[]): void {
+
+        this.disableBtn = false
+
         if (!mails) {
             mails = this.getAllEmailNodes();
         }
@@ -662,6 +676,19 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     doAdvancedSearch(silent = false): void {
         try {
+
+            const errorInDate = this.checkForErrorInDate()
+            if (errorInDate) {
+                switch (errorInDate.type) {
+                    case 'INVALID_RANGE': this.setComponentState('emails/search/failure', { msg: 'From date can not be greater than To Date, Please select valid dates' });
+                        return;
+                    case 'OUT_OF_RANGE': const searchRange = ((this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange) ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange : 30;
+                        this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of ' + searchRange + ' days' });
+                        return;
+                }
+            }
+
+
             if (!this.data.Data.WorkbenchUrl) {
                 this.setComponentState('emails/failure', { msg: this.translocoService.translate('sharedComponents.email.workbenchURLNotFound'), silent });
                 return;
@@ -732,6 +759,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     timeout(50000),
                     map((res: any) => {
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
+                            const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
+
+                            if (resultStr?.errorcode && resultStr.errorcode == '-101') {
+                                this.appUiService.showSnackbar('Number of emails present in the search has reached maximum limit, Please select a shorter date range', 'warning');
+                                return;
+                            }
+
                             throwADError(
                                 'Error in WorkbenchEmailComponent.doAdvancedSearch',
                                 `Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(res, null, 2)}`
@@ -763,6 +797,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         this.setComponentState('email/polling/inactive', { silent });
                     }
                 });
+            this.disableBtn = true;
+
         } catch (e) {
             console.error(e);
             this.setComponentState('emails/failure', { silent });
@@ -888,6 +924,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailLoading'), 'loading');
         try {
             const { agentId, tmacServer } = SDKClient.getAgentData();
+            if (emails.find(email => !email.InSessionId)) {
+                this.getValidDataForSelectedEmail();
+                return;
+            }
             const { items, uiIds } = emails.reduce(
                 (acc, curr) => {
                     const item = {
@@ -1029,6 +1069,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             InternetHeaders: inboxRes.InternetHeaders
                         }
                     });
+                    this.selectedEmailInSessionId = email.InSessionId;
+                    this.selectedEmailOutSessionId = email.OutSessionId;
+                    this.selectedEmailRouteReason = email.RouteReason;
                 }
             }
 
@@ -1280,7 +1323,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     fromTime: format(fromDate, 'HH:mm')
                 };
             }
-        } catch (error) {}
+        } catch (error) { }
 
         this._emailService.resetEmailState(updateValue);
 
@@ -1305,6 +1348,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     setComponentState(action: ComponentActions, payload?: any): void {
         switch (action) {
+            case 'emails/search/failure':
+                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(payload?.msg, 'failure');
+                return;
+
             case 'emails/loading':
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
@@ -1624,6 +1671,69 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             messageClasses: 'twd-whitespace-pre-line twd-break-words'
         });
     };
+
+    /**
+     * Method to check if max search range for dates is configured, if yes then check if dates selected in 
+     * advance search is within the given range 
+     * @returns True / False 
+     */
+    checkForErrorInDate = () => {
+        try {
+            const searchRange = ((this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange) ?
+                (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange : 30;
+            const searchValues = this.advancedSearch.form?.value;
+            if (searchRange && searchValues) {
+                const fromDateTime: Date = this.getUpdatedDateTime(searchValues.fromDate, searchValues.fromTime);
+                const toDateTime: Date = this.getUpdatedDateTime(searchValues.toDate, searchValues.toTime);
+
+                if (toDateTime.getTime() < fromDateTime.getTime()) {
+                    return { type: 'INVALID_RANGE' };
+                }
+
+                const dateRange = Math.round((toDateTime.getTime() - fromDateTime.getTime()) / (1000 * 3600 * 24));
+
+                if (dateRange > Number(searchRange)) {
+                    return { type: 'OUT_OF_RANGE' };
+                }
+
+                return false;
+            }
+            return false;
+        } catch (e) {
+            this.logger.error('Error occured while validating dates in advance search', e, true);
+            return false;
+        }
+    }
+
+    getUpdatedDateTime = (date: Date, time) => {
+        date.setHours(time?.split(':')[0] || '00');
+        date.setMinutes(time?.split(':')[1] || '00');
+        date.setSeconds(0);
+        return date;
+    }
+
+    async getValidDataForSelectedEmail() {
+        try {
+            const inboxRes: EmailInboxModel = (await SDKClient.getInboxEmail(this.selectedEmailInSessionId)).response;
+            const outboxRes: EmailOutboxModel = (await SDKClient.getOutboxEmail(this.selectedEmailOutSessionId)).response;
+            const emailData: Mail = new Mail();
+
+            emailData.Mailbox = inboxRes.Mailbox;
+            emailData.RouteId = inboxRes.RouteId;
+            emailData.InSessionId = inboxRes.SessionID;
+            emailData.ConversationID = inboxRes.ConversationID;
+            emailData.OutSessionId = outboxRes?.SessionID;
+            emailData.RouteReason = this.selectedEmailRouteReason;
+            emailData.uiId = inboxRes.SessionID;
+            emailData.EmailType = inboxRes.EmailType;
+            this.pullEmails([emailData]);
+        } catch (e) {
+            this.logger.error('Error occured while getting valid data for selected email:', JSON.stringify(e), true);
+        }
+
+    }
+
+
 }
 
 // for more info visit - https://angular.io/api/core

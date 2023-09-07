@@ -61,7 +61,10 @@
         "reloadAuxCodesSuccess": "Aux Codes reloaded successfully",
         "agentDataLoading": "Please wait...",
         "changeStatusFailed": "Change status failed, please try again!",
-        "changeStatusError": "Change status error, please try again!"
+        "changeStatusError": "Change status error, please try again!",
+        "msDisconnectedMsg": "Media Server disconnected !! Please wait...",
+        "msReconnectedMsg": "Media Server re-connected successfully",
+        "msStatusWarningMsg": "Something went wrong with Media server !! Please wait..."
     },
     "global": {
         "commonErrorMessage": "Something went wrong",
@@ -147,6 +150,7 @@
         "widgetsFound": "widgets found!",
         "widgetsNotFound": "No widgets found!",
         "noInteractions": "No Interaction",
+        "noInteractionsYetMsg": "No #type interaction yet!",
         "noWidgets": "No Widgets",
         "customURLNotFound": "Custom URL not found!",
         "noPreview": "No preview",
@@ -193,7 +197,8 @@
             "removeWC": "Removing work code",
             "wcRemoveSuccess": "Work code removed successfully",
             "wcRemoveFail": "Unable to remove workcode",
-            "noWorkCodeSelected": "No work code selected"
+            "noWorkCodeSelected": "No work code selected",
+            "noWorkCodeToDisplay": "No matching work codes for search criteria"
         },
         "wallboard": {
             "skillName": "Skill Name",
@@ -204,6 +209,9 @@
             "agentSkillUpdateSuccessMsg": "Agent skills has been updated!"
         },
         "voiceControls": {
+            "reset": "Reset",
+            "resetCallTitle": "Rest Call",
+            "resetCallMsg": "Are you sure to reset call ?",
             "answer": "Answer",
             "mute": "Mute",
             "unmute": "Unmute",
@@ -266,7 +274,6 @@
             "TVirtualStoreNotFound": "Missing TVirtualStore in app config",
             "badgesNotFound": "You Have No Badges!",
             "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config"
-
         },
         "activeAgents": {
             "agentStatus": "Agent Status",
@@ -302,13 +309,10 @@
             "broadCaseMsgFailedGeneric": "Something went wrong while sending broacast",
             "removeGroupBy": "Clear grouping filter",
             "groupAgents": "Group Agents"
-
         },
         "registerCallback": {
             "campaignNotFound": "No Campaigns Found!",
-
             "phone": "Phone",
-
             "phoneRequired": "Phone Number Required",
             "dateRequired": "Date Required",
             "timeRequired": "Time Required",
@@ -371,13 +375,10 @@
             "markSpamLoading": "Spamming email",
             "markSpamSuccess": "Email marked as spam",
             "markSpamFailed": "Unable to spam the email",
-
             "emailDownloadLoading": "Downloading email",
             "emailDownloadFailed": "Unable to download email"
-
         },
         "deflectToDigital": {
-
             "commentPlaceholder": "Please enter comment...",
             "toFieldRequiredMsg": "Please provide the number to deflect",
             "deflectLoading": "Deflecting",
@@ -478,7 +479,7 @@
             "trasferToQueueSuccess": "Interaction transferred to queue successfully",
             "supervisorTakeover": "Interaction disconnected by supervisor - Supervisor Takeover",
             "interactionDisconnect": "Interaction disconnected",
-            "agentDisconnectedMsg": "#agentName is disconnected from chat",
+            "agentDisconnectedMsg": "#agentName has disconnected from chat",
             "agentRequestRejected": "#agentName has rejected your request with comment: #comment",
             "freezeAutoResponseFailed": "Freeze auto response failed!",
             "freezeAutoResponseError": "Error in freezing auto response failed!",
@@ -506,7 +507,8 @@
             "department": "Department",
             "messagePlaceholder": "Please select a template...",
             "select": "Select",
-            "getChatTemplatesError": "Error in fetching chat templates"
+            "getChatTemplatesError": "Error in fetching chat templates",
+            "timeExceededMsg": "Cannot use response before or after the start or end time"
         },
         "campaignContact": {
             "reason": "Reason",
@@ -523,7 +525,6 @@
             "callbackStatusSuccess": "Callback status updated successfully",
             "callbackStatusFailed": "Failed to update callback status",
             "callbackStatusError": "Error in updating callback status"
-
         },
         "calendar": {
             "copy": "Copy",
@@ -755,7 +756,10 @@
             "selectSkillMaxCIQLimit": "Unabled to select the skill, Maximum Calls In Queue should be ",
             "getSkillFailed": "Failed to get skill ",
             "getSkillError": "Error in getting skill ",
-            "executeActionDefaultError": "Error: NotImplementedException"
+            "executeActionDefaultError": "Error: NotImplementedException",
+            "transferCallInitFailed": "Transfer call initiate failed!!",
+            "conferenceCallInitFailed": "Conference call initate failed!!",
+            "callInitFailed": "Call initate failed !!"
         },
         "textTemplates": {
             "departments": "Departments",
@@ -890,7 +894,6 @@
             "color": "Color",
             "cancel": "Cancel",
             "save": "Save"
-
         }
     },
     "widgetPreview": {
@@ -954,5 +957,4 @@
         "startChatMsg": "Start a conversation by typing your message below.",
         "selectContactToChat": "Select a contact to start a conversation."
     }
-
 }

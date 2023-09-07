@@ -13,6 +13,7 @@ import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/ut
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { UIActionEvent, UIActionEventService } from '@services/ui-action-event.service';
 
 @Component({
     selector: 'email',
@@ -123,7 +124,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appDataService: AppDataService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private uiActionEventService: UIActionEventService
     ) {}
 
     /**
@@ -216,6 +218,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     _setEditForm(): void {
         if (this.email) {
+            this.notifyEmailAction();
             const email = JSON.parse(JSON.stringify(this.email));
             const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox, BCC } = email;
             const bodyBreak = `
@@ -498,5 +501,21 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             .finally(() => {
                 this._fuseProgressBarService.hide();
             });
+    }
+
+    /**
+     * Method is to notify agent has come to edit mode in Email section
+     */
+    notifyEmailAction() {
+        this.email['type'] = this.mode;
+        const emailActionData: UIActionEvent = {
+            eventName: 'EmailAction',
+            sessionID: this.email.SessionID,
+            data: this.email,
+            eventType: 'onUIActionEvent'
+          };
+
+
+        this.uiActionEventService.emitUIActionEvent(emailActionData);
     }
 }

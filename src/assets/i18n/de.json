@@ -1,4 +1,18 @@
-{
+{ 
+  "loginComponent": {
+        "welcome": "Willkommen bei Agent Desktop!",
+        "isRequired": "erforderlich",
+        "loginToPBX": "Melden Sie sich bei der PBX an",
+        "loginToWebPhone": "Melden Sie sich bei Webphone an",
+        "login": "ANMELDUNG",
+        "signIn": "SIGN IN"
+  },
+  "global": {
+    "lanId": "LAN-ID",
+    "lanIdRequiredText": "Lan-ID ist erforderlich",
+    "agentId": "Agent ID",
+    "stationId": "Station ID"
+  },
   "headerComponent": {
     "chooseLocale": "Wählen Sie Ihr Gebietsschema",
     "i18nEnglish": "Englisch(United States)",
@@ -10,5 +24,8 @@
     "formLabel": "Geben Sie das Captcha ein",
     "formPlaceholder": "Bitte geben Sie die im obigen Bild angezeigten Zeichen ein",
     "buttonText": "Vorgehen"
+  },
+  "contentComponent": {
+      "noDataAvailable": "keine Daten verfügbar"
   }
 }

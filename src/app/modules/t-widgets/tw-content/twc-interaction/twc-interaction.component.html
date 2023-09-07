@@ -6,7 +6,7 @@
         [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
         [title]="locale('contentComponent.noInteractions')"
         type="interaction"
-        [message]="locale('contentComponent.no') + type + locale('contentComponent.interactionYet')"
+        [message]="locale('contentComponent.noInteractionsYetMsg').replace('#type', type)"
     ></twc-not-found>
 </ng-container>
 

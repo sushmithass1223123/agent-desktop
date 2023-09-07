@@ -78,6 +78,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * Selected Agent
      */
     selectedAgent: string;
+
+     /**
+     * Selected group
+     */
+    selectedGroup: string;
     /**
      * Agent features
      */
@@ -205,7 +210,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 (f) => f.Feature.toLowerCase() === AGENT_FEATURES.IsSetBroadcastEnabled && f.IsEnabled
             )?.[0];
             this.allowBroadcast = (SDKClient.getAgentData().agentProfile === 'S' && checkFeature?.IsEnabled) ?? false;
-        } catch (error) { }
+        } catch (error) {}
     }
 
     /**
@@ -262,7 +267,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataReloadSuccess'));
         }
 
-        if(this.groupedBy) {
+        if (this.groupedBy) {
             this.groupAgentListBy(this.groupedBy['groupAttribute'], this.groupedBy['groupTitle']);
         }
     }
@@ -295,7 +300,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // sort agent list
         this.sortAgentList();
 
-        if(this.groupedBy) {
+        if (this.groupedBy) {
             this.groupAgentListBy(this.groupedBy['groupAttribute'], this.groupedBy['groupTitle']);
         }
     }
@@ -332,22 +337,21 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         }
 
         // sort the agent list by type
-        // use lodash orderBy function and customized it. used "parseInt" to handle integers and used "toLowerCase" to handle uppercase and lowercase 
-        function orderByKey(users: Array<any>, sortBy: string, sortType: 'asc' | 'desc') {
-            return orderBy(
-                users,
-                [
-                    ({ [sortBy]: item }) => {
-                        const itemValue = parseInt(item);
-                        return isNaN(itemValue) ? Infinity : itemValue;
-                    },
-                    ({ [sortBy]: item }) => item.toLowerCase(),
-                ],
-                [sortType]
-            );
-        }
-
-        this.filteredAgents = orderByKey(this.filteredAgents, this.sortBy, this.sortType);
+        this.filteredAgents = this.filteredAgents.sort((a, b) => {
+            if (this.sortType === 'asc') {
+                if (typeof a[this.sortBy] === 'string' && typeof b[this.sortBy] === 'string') {
+                    return a[this.sortBy].localeCompare(b[this.sortBy], undefined, { numeric: true });
+                } else {
+                    return a[this.sortBy] > b[this.sortBy] ? 1 : a[this.sortBy] < b[this.sortBy] ? -1 : 0;
+                }
+            } else {
+                if (typeof a[this.sortBy] === 'string' && typeof b[this.sortBy] === 'string') {
+                    return b[this.sortBy].localeCompare(a[this.sortBy], undefined, { numeric: true });
+                } else {
+                    return b[this.sortBy] > a[this.sortBy] ? 1 : b[this.sortBy] < a[this.sortBy] ? -1 : 0;
+                }
+            }
+        });
     }
 
     /**
@@ -370,6 +374,19 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.selectedAgent = null;
         } else {
             this.selectedAgent = agent.AgentLoginID;
+        }
+    }
+
+    /**
+     * Select an agent
+     * @method selectAgent
+     * @param {any} agent
+     */
+     public selectGroup(group: any): void {
+        if (this.selectedGroup === group.groupName) {
+            this.selectedGroup = null;
+        } else {
+            this.selectedGroup = group.groupName;
         }
     }
 
@@ -475,7 +492,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             case AGENT_FEATURES.AllowSupervisorToLogout:
                 // check the agent's current status
                 if (agent.CurrentAgentStatus.toLowerCase().includes('on call')) {
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutNotAllowed') + `${agent.AgentName}` + this.translocoService.translate('widgets.activeAgents.isOnCall'), 'failure');
+                    this._appUIService.showSnackbar(
+                        this.translocoService.translate('widgets.activeAgents.logoutNotAllowed') +
+                            `${agent.AgentName}` +
+                            this.translocoService.translate('widgets.activeAgents.isOnCall'),
+                        'failure'
+                    );
                     return;
                 }
                 // confirm logout
@@ -701,14 +723,20 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                                 }
                             });
                             if (!erroredSnackbarMessage) {
-                                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCaseMsgSuccess'), 'success');
+                                this._appUIService.showSnackbar(
+                                    this.translocoService.translate('widgets.activeAgents.broadCaseMsgSuccess'),
+                                    'success'
+                                );
                             } else {
                                 throw new Error(erroredSnackbarMessage);
                             }
                         }
                     } catch (e) {
                         if (!erroredSnackbarMessage) {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCaseMsgFailedGeneric'), 'failure');
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('widgets.activeAgents.broadCaseMsgFailedGeneric'),
+                                'failure'
+                            );
                             console.error(e);
                         }
                     }
@@ -722,7 +750,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * AgentNotificaitonEvent Handler
      * @method AgentNotificaitonEvent
      * @param {AgentNotificaitonEvent} evt
-    */
+     */
     private AgentNotificaitonEvent = (evt: AgentNotificaitonEvent) => {
         // check the type
 
@@ -731,12 +759,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.updateOnHoldAgentList(evt.FromAgentId);
         }
     };
-    
+
     /**
-     * 
+     *
      * @param agentId ID of agent who has kept customer on hold
      * removing the user from the list after sometime since we do not receive unhold notification yet, this logic can be removed after unhold
-     * - logic is implemented 
+     * - logic is implemented
      */
     updateOnHoldAgentList(agentId) {
         setTimeout(() => {
@@ -745,23 +773,23 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     }
 
     /**
-     * 
+     *
      * @param groupAttribute : An attribute by which to group the agents
      * @param groupTitle : A readable attribute as a title on the group to display
      */
     groupAgentListBy(groupAttribute, groupTitle) {
-        this.groupedBy = { "groupTitle": groupTitle, "groupAttribute": groupAttribute };
+        this.groupedBy = { groupTitle: groupTitle, groupAttribute: groupAttribute };
         this.groupedAgentList = [];
         const source = from(this.filteredAgents);
         const values = source.pipe(
-            groupBy(a => a[groupAttribute]),
-            mergeMap(group => group.pipe(toArray()))
+            groupBy((a) => a[groupAttribute]),
+            mergeMap((group) => group.pipe(toArray()))
         );
-        values.subscribe(val=> {
+        values.subscribe((val) => {
             const group = {
-                "groupName": val[0][groupTitle] ? val[0][groupTitle] : val[0][groupAttribute],
-                "list": val,
-                "size": val? val.length : 0  
+                groupName: val[0][groupTitle] ? val[0][groupTitle] : val[0][groupAttribute],
+                list: val,
+                size: val ? val.length : 0
             };
             this.groupedAgentList.push(group);
         });
