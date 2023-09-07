@@ -404,6 +404,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.startAVCall();
         }
 
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            //find out the current interaction
+            this.myInteraction = interactions.find((i: InteractionRef) => i.interactionId === this.interactionId);
+        });
+
         // listen to tmac interaction events
         // SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         // SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
@@ -665,7 +671,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     );
                     this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
+                    
                     break;
                 case 'onTrace':
                     this.logger.info('onAVEvent.onTrace: ' + evt.data);
