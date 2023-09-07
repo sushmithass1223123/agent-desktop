@@ -9,6 +9,7 @@ import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Navbar component
@@ -85,7 +86,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
         private _fuseSidebarService: FuseSidebarService,
-        private _interactionManagerService: InteractionManagerService
+        private _interactionManagerService: InteractionManagerService,
+        private sharedService: SharedService
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -177,6 +179,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * @param {any} item
      */
     selectTab(item: any): void {
+        //triggerHoldMethod added in order to invoke holdinteraction method in tw-chat-controls.component.
+        if (item.Name.toLowerCase() != 'textchat') {
+            this.sharedService.triggerHoldMethod();
+        }
         this._contentPageService.mode = item.Data.Path;
     }
 
