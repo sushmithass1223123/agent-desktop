@@ -29,6 +29,7 @@
         "DevToolsDisabled": false,
         "Notifications": { "Sounds": true, "SoundLevel": 1, "DesktopAlerts": true, "DesktopAlertTimeout": 5000, "AppAlertTimeout": 5000 },
         "CheckForResolution": false,
+        "DisableCheckForDevicePermission": false,
         "AV": {
             "webRTCConfig": {
                 "iceServers": [{ "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
@@ -66,5 +67,5 @@
             ]
         }
     },
-    "Version": "5.2.7.3001"
+    "Version": "5.2.7.3003"
 }

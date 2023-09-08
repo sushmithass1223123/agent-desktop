@@ -909,7 +909,8 @@
                                                     "MakeCallAllowed": true,
                                                     "SendSMSAllowed": true,
                                                     "CloseInteractionOnEnd": false,
-                                                    "disableResetCall": true
+                                                    "disableResetCall": true,
+                                                    "connectionTimeout": 10
                                                 }
                                             },
                                             {
@@ -2689,6 +2690,7 @@
         "DevToolsDisabled": false,
         "AddAOTWidgetEnabled": true,
         "EnableReloginOnConnectionError": true,
+        "DisableCheckForDevicePermission": false,
         "Notifications": {
             "Sounds": true,
             "SoundLevel": 1,
@@ -2751,5 +2753,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.7.3001"
+    "Version": "5.2.7.3003"
 }

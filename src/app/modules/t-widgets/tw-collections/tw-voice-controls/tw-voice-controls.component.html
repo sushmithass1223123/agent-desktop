@@ -162,7 +162,8 @@
                             [matTooltip]="locale('widgets.voiceControls.answer')"
                             (click)="answerCall(answerBtn)"
                         >
-                            <mat-icon>call</mat-icon>
+                            <mat-icon *ngIf="!isAnswerLoading">call</mat-icon>
+                            <mat-spinner [diameter]="15" *ngIf="isAnswerLoading"></mat-spinner>
                         </button>
 
                         <button
@@ -227,7 +228,7 @@
                             [matTooltip]="locale('widgets.voiceControls.reset')"
                             (click)="resetCall()"
                         >
-                            {{ locale('widgets.voiceControls.reset') }}
+                            <mat-icon> refresh </mat-icon>
                         </button>
 
                         <button

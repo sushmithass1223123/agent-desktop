@@ -929,7 +929,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 },
                 {
                     key: '#conferenceType',
-                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultTransfer'): this.translocoService.translate('sharedComponents.agentSkillList.blindTransfer')
+                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultConference'): this.translocoService.translate('sharedComponents.agentSkillList.blindConference')
                 }
             ];
 
@@ -950,7 +950,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             const dynamicLabels = [
                 {
                     key: '#conferenceType',
-                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultTransfer'): this.translocoService.translate('sharedComponents.agentSkillList.blindTransfer')
+                    value: this.isConsult ? this.translocoService.translate('sharedComponents.agentSkillList.consultConference'): this.translocoService.translate('sharedComponents.agentSkillList.blindConference')
                 }
             ];
             //     // transfer call error

@@ -315,11 +315,17 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
     disableResetCall:boolean; 
 
+    isAnswerLoading = false;
+
+    connectionTimeout = null;
+
     /**
      * counter for failed scenarios for answer / disconnect call 
      */
     failedCounter = 0;
     @ViewChild('closeBtn') closeButton: MatButton;
+
+    @ViewChild('answerBtn') answerButton: MatButton;
 
     /** to track Media server session ID in case of MS call */
     msSessionId;
@@ -516,6 +522,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         
         // stop duration timer
         this.stopTimer.next(null);
+
+        this.resetConnectionTimeout();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -557,7 +565,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     ...this.tempCallRef,
                     status: 'init',
                     sessionID: sessionId,
-                    type: ''
+                    type: this.tempCallRef.type ?  this.tempCallRef.type : ''
                 };
             }
 
@@ -627,8 +635,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onEnd':
                 // remove the av reference on end
-                // delete this.avConns[evt.sessionId];
-                delete this.getAVConnection;
+                // delete this.avConns[evt.sessionId]; // to do: remove AVConnections of valid session ids to be removed on End
+                // delete this.getAVConnection();
                 // get the index of session id from call line list
                 const index = this.callLines.indexOf(evt.sessionId);
                 // if found, then remove
@@ -753,6 +761,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.toggleButton(true, btn);
         SDKClient.disconnectCall(this.interaction.InteractionID.toString(), null)
             .then((dt: IResponse) => {
+                this.resetConnectionTimeout();
                 // toggle the button
                 this.toggleButton(false, btn);
                 // check for the response
@@ -779,7 +788,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private handleConferenceMixer(): void {
         // get the main line and conference line
-        const mainLine = this.getAVConnection();
+        const mainLine = this.getAVConnection(this.callLines[0]);
         // this.avConns[this.callLines[0]];
         const conferenceLine = this.getAVConnection(this.tempCallRef.sessionID);
         // this.avConns[this.tempCallRef.sessionID];
@@ -897,8 +906,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.duration = val;
             });
 
+        this._fuseProgressBarService.hide();
+
         // set the status
         this.status = 'connected';
+        
 
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
@@ -1144,7 +1156,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // check if muted then unmute
             if (this.muted) {
                 // so we use mute/unmute instead
-                const connection: AVChannel = this.getAVConnection();
+                const connection: AVChannel = this.getAVConnection(this.callLines[0]);
                 //this.avConns[this.callLines[0]];
                 // un mute the call
                 connection.unMute(true, false);
@@ -1439,6 +1451,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {MatButton} btn
      */
     answerCall(btn: MatButton): void {
+        this.isAnswerLoading = true;
+        // toggle the button
+        this.toggleButton(true, btn);
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
             // get the connection variable
@@ -1469,11 +1484,13 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             // set the process media message to true for further messages
             this.processMediaMessages = true;
+            this.isAnswerLoading = false;
+            this.checkIfConnected();
             return;
         }
-        // toggle the button
-        this.toggleButton(true, btn);
+        
         SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+            this.isAnswerLoading = false;
             // toggle the button
             this.toggleButton(false, btn);
             // check for the response
@@ -1489,7 +1506,33 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
             this.handleCallFailure('Answer call');
             this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
+            this.isAnswerLoading = false;
         });
+    }
+
+    checkIfConnected() {
+        try{
+            if(this.connectionTimeout !== null) {
+                return;
+            }
+    
+            const timeout = this.data?.Data?.connectionTimeout ? this.data.Data.connectionTimeout : 10;
+            this.connectionTimeout = setTimeout(() => {
+                if(this.status === 'incoming') {
+                    this.toggleButton(false, this.answerButton);
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.connectionTimedOut'), 'failure');
+                    this.continueToResetCall(true);
+                }
+            }, timeout*1000);
+        } catch(e) {
+            console.log('error occured while checking if call connected', e);
+        }
+        
+    }
+
+    resetConnectionTimeout() {
+        clearTimeout(this.connectionTimeout);
+        this.connectionTimeout = null;
     }
 
     /**
@@ -2169,7 +2212,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         });
     }
 
-    continueToResetCall = () => {
+    continueToResetCall = (isAutoReset?) => {
         try{
             const requestArgs = {
                 interactionId : this.interaction?.InteractionID.toString(),
@@ -2177,7 +2220,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 message: 'Reset webphone'
             };
             SDKClient.sendAVControlMessage(requestArgs).then(response => {
-                this.logger.info('AV control message resetting webphone success:' + JSON.stringify(response), true);
+                this.logger.info('AV control message resetting webphone '+ isAutoReset ? '[connection timed out]' : '' + ' success:' + JSON.stringify(response), true);
                 this.CallDisconnectedEvent(<CallDisconnectedEvent>{
                     InteractionID: this.interaction?.InteractionID
                 });
