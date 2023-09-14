@@ -16,18 +16,207 @@
         "loginToPBX": "登录 PBX",
         "loginToWebPhone": "登录网络电话",
         "login": "登录",
-        "isRequired": "是必须的"
+        "isRequired": "是必须的",
+        "copyWriteTetherfi": "版权所有 Tetherfi",
+        "ui": "用户界面",
+        "server": "服务器",
+        "lanIdError": "登录失败，检测到无效的 LAN ID。 请联系管理员获取 TMAC 访问权限"
     },
     "global": {
-        "lanId": "局域网ID"
+        "lanId": "局域网ID",
+        "retry": "重试",
+        "search": "搜索"
     },
     "navbarComponent": {
 
     },
     "wrapperComponent": {
-        "maximize": "欢迎使用代理桌面"
+        "widgetPinned": "小部件已添加到固定列表",
+        "widgetUnPinned": "小部件已从固定列表中删除",
+        "cancelResize": "取消调整大小",
+        "resize": "调整大小",
+        "refresh": "刷新",
+        "maximize": "最大化",
+        "float": "漂浮",
+        "expand": "扩张",
+        "collapse": "坍塌",
+        "restore": "恢复",
+        "close": "关闭"
     },
     "contentComponent": {
-        "noDataAvailable": "欢迎使用代理桌面"
+        "noDataAvailable": "欢迎使用代理桌面",
+        "labels": "标签",
+        "noInteractions": "无互动",
+        "noInteractionsYetMsg": "不 #type 互动尚未!"
+    },
+    "widgets": {
+        "adCallbacks": {
+          "getContactSessionFailed": "无法获取联系人会话"
+        },
+        "chatControls": {
+          "messagePlaceholder": "输入您的消息"
+        },
+        "cannedResponses": {
+            "mode": "模式",
+            "modeAuto": "汽车",
+            "modeManual": "手动的",
+            "department": "部门",
+            "messagePlaceholder": "请选择一个模板...",
+            "select": "选择",
+            "getChatTemplatesError": "获取聊天模板时出错",
+            "timeExceededMsg": "无法在开始时间或结束时间之前或之后使用响应"
+        },
+        "audioVideoControls": {
+            "takeSnapshot": "拍摄快照",
+            "stats": "统计数据",
+            "unmuteAudio": "取消音频静音",
+            "muteAudio": "静音",
+            "unmuteVideo": "取消视频静音",
+            "muteVideo": "静音视频",
+            "switchToVideo": "更改为视频",
+            "stopScreenShare": "停止屏幕共享",
+            "screenShare": "屏幕共享",
+            "toggleRemoteCamera": "切换用户相机",
+            "switchToChatView": "更改为聊天视图",
+            "switchToCallView": "更改为通话视图",
+            "unholdCall": "取消保留通话",
+            "holdCall": "保持通话",
+            "endCall": "结束通话",
+            "startCallError": "启动呼叫时出错：",
+            "callRequestConfirmMsg": "#customerName 请求 #callType 呼叫，您要接受吗？",
+            "avConnectionError": "AV 连接发生错误",
+            "callRejectedByRemote": "用户拒绝了您的请求",
+            "callNotAnsweredByremote": "客户未接听电话",
+            "callFailed": "呼叫失败：",
+            "callDisconnectedError": "通话断线，意外结束！",
+            "callEndedByRemote": "用户已结束通话",
+            "remoteMuteTypeMsg": "#userName  #muteTyped the #streamType",
+            "snapshotRequestSuccess": "快照请求发送成功",
+            "snapshotLoading": "Retreiving snapshot...",
+            "snapshotRequestRejectedByRemote": "Snapshot request is rejected by customer!",
+            "snapshotSuccess": "Snapshot received",
+            "snapshotFailed": "Unable to take snapshot",
+            "toggleViewRequestAccepted": "Toggle #toggleViewType request is accepted by customer",
+            "toggleViewRequestRejected": "Toggle #toggleViewType request is rejected by customer!",
+            "toggleViewSuccess": "Customer #toggleViewType toggled successfully",
+            "toggleViewFailed": "Customer #toggleViewType toggle failed!",
+            "confirmSnapshotTitle": "Confirm Snapshot",
+            "saveSnapshotLoading": "Saving ...",
+            "snapshotSaveSuccess": "Snapshot saved successfully!",
+            "snapshotSaveFailed": "Snapshot save failed!",
+            "snapshotRequestLoading": "Requesting customer for snapshot",
+            "snapshotRequestTimeout": "Snapshot request timed out",
+            "upgradeToVideoFailed": "Upgrade to Video failed!",
+            "toggleCamRequestSuccess": "Toggle camera request sent successfully",
+            "toggleCamRequestFailed": "Toggle camera request failed!",
+            "toggleCamRequestError": "Toggle camera request error!",
+            "toggleViewRequestSuccess": "Toggle view request sent successfully",
+            "toggleViewRequestFailed": "Toggle view request failed!",
+            "toggleViewRequestError": "Toggle view request error!",
+            "remoteMuteTypeRequestFailed": "Customer #streamType #muteType request failed!",
+            "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!"
+        },
+        "wallboard": {
+            "skillName": "技能名称",
+            "agentsStaffed": "斯特夫",
+            "agentAvailable": "平均",
+            "callsInQueue": "检验检疫局",
+            "serviceLevel": "止损%",
+            "agentSkillUpdateSuccessMsg": "特工技能已更新！"
+        },
+        "activeAgents": {
+            "agentSortMsg": "代理列表排序依据",
+            "total": "全部的:"
+        },
+        "AHTTransferConference": {
+            "Channel": "渠道",
+            "AHT": "甲HT",
+            "Transfer": "转移",
+            "Conference": "会议"
+        },
+        "adInteractionDetails": {
+            "Channel": "渠道",
+            "SubChannel": "子频道",
+            "Direction": "方向",
+            "CreatedDateTime": "创建于",
+            "ClosedDateTime": "关闭时间",
+            "AgentComment": "评论",
+            "User": "用户",
+            "Dnis": "DNIS",
+            "Intent": "意图",
+            "ActiveTime": "活动时间"
+        }
+    },
+    "sharedComponents": {
+      "customDialog": {
+        "alert": "警报",
+        "confirm": "确认",
+        "promptPlaceholder": "在这里输入...",
+        "cancel": "取消",
+        "ok": "好的",
+        "done": "完毕"
+     }
+    },
+    "interactionComponent": {
+      "customerOnHoldMessage": "相互作用 #interactionID 和 [#customerName] 和会话 ID [#sessionID] 已暂停 #holdTime"
+    },
+    "widgets_common": {
+        "header": {
+            "title": {
+                "Wallboard": "墙板",
+                "Bookmarks": "书签",
+                "All Interactions": "所有互动",
+                "AHT/Transfer/Conference": "甲HT/转会/会议",
+                "Aux Status": "辅助状态",
+                "Interaction Details": "互动详情",
+                "Calendar": "日历",
+                "Call-back Details": "回电详情",
+                "AHT/Tran./Conf.": "甲HT/翻译/会议",
+                "Active Agents": "活性剂",
+                "Calls in Queue": "队列中的呼叫",
+                "Intent List": "意向清单",
+                "Skill Dashboard": "技能仪表板",
+                "Channels": "渠道",
+                "Status": "地位",
+                "Work Codes": "工作代码",
+                "No Interaction": "无互动",
+                "Test Page 1": "测试页1",
+                "Chat Controls": "聊天控制",
+                "Canned Responses": "预设回复",
+                "Customer Details": "顾客信息",
+                "Customer Journey": "客户旅程"
+            }
+        }
+    },
+    "dynamic_labels": {
+        "audioVideoControls": {
+            "callType": {
+                "Audio": "声音的",
+                "Video": "视频"
+            },
+            "customerName": {
+                "Customer": "顾客"
+            }
+        }
+    },
+    "dialogConstants": {
+        "appConfirm": {
+            "title": {
+                "takeoverSessionTitle": "确认登录",
+                "endInteractionTitle": "确认结束",
+                "closeInteractionTitle": "确认关闭",
+                "logoutTitle": "确认退出",
+                "genericTitle": "确认"
+            },
+            "message": {
+                "takeoverSessionMessage": "检测到另一个会话。 你想接管它吗？",
+                "endInteractionMessage": "您确定要结束本次互动吗？",
+                "closeInteractionMessage": "您确定关闭此交互吗？",
+                "logoutMessage": "您确定要退出吗？",
+                "genericMessage": "你确定吗"
+            }
+            
+            
+        }
     }
 }

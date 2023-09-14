@@ -676,7 +676,17 @@
             "getProgressFailed": "Something went wrong while fetching progress"
         },
         "adInteractionDetails": {
-            "viewComments": "View Comments"
+            "viewComments": "View Comments",
+            "Channel": "Channel",
+            "SubChannel": "SubChannel",
+            "Direction": "Direction",
+            "CreatedDateTime": "Created On",
+            "ClosedDateTime": "Closed On",
+            "AgentComment": "Comments",
+            "User": "User",
+            "Dnis": "DNIS",
+            "Intent": "Intent",
+            "ActiveTime": "ActiveTime"
         },
         "adFeedback": {
             "customerFeedback": "Customer Feedback",
@@ -692,6 +702,12 @@
             "missed": "Missed",
             "pending": "Pending",
             "getContactSessionFailed": "Unable to fetch contact session"
+        },
+        "AHTTransferConference": {
+            "Channel": "Channel",
+            "AHT": "AHT",
+            "Transfer": "Transfer",
+            "Conference": "Conference"
         }
     },
     "generalFormFields": {
@@ -959,5 +975,49 @@
         "moreActions": "More Actions",
         "startChatMsg": "Start a conversation by typing your message below.",
         "selectContactToChat": "Select a contact to start a conversation."
+    },
+    "widgets_common": {
+        "header": {
+            "title": {
+                "Wallboard": "Wallboard",
+                "Bookmarks": "Bookmarks",
+                "All Interactions": "All Interactions",
+                "AHT/Transfer/Conference": "AHT/Transfer/Conference",
+                "Aux Status": "Aux Status",
+                "Interaction Details": "Interaction Details",
+                "Calendar": "Calendar",
+                "Call-back Details": "Call-back Details"
+            }
+        }
+    },
+    "dynamic_labels": {
+        "audioVideoControls": {
+            "callType": {
+                "Audio": "Audio",
+                "Video": "Video"
+            },
+            "customerName": {
+                "Customer": "Customer"
+            }
+        }
+    },
+    "dialogConstants": {
+        "appConfirm": {
+            "title": {
+                "takeoverSessionTitle": "Confirm Login",
+                "endInteractionTitle": "Confirm End",
+                "closeInteractionTitle": "Confirm Close",
+                "logoutTitle": "Confirm Logout",
+                "genericTitle": "Confirm"
+            },
+            "message": {
+                "takeoverSessionMessage": "Another session detected. Do you want to take it over?",
+                "endInteractionMessage": "Are you sure to end this interaction?",
+                "closeInteractionMessage": "Are you sure to close this interaction?",
+                "logoutMessage": "Are you sure you want to logout?",
+                "genericMessage": "Are you sure?"
+            }
+        }
     }
+
 }

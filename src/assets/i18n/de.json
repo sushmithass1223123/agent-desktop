@@ -5,13 +5,19 @@
         "loginToPBX": "Melden Sie sich bei der PBX an",
         "loginToWebPhone": "Melden Sie sich bei Webphone an",
         "login": "ANMELDUNG",
-        "signIn": "SIGN IN"
+        "signIn": "SIGN IN",
+        "copyWriteTetherfi": "Urheberrecht Tetherfi",
+        "ui": "Benutzeroberfläche",
+        "server": "服务器",
+        "lanIdError": "Anmeldung fehlgeschlagen, ungültige LAN-ID erkannt. Bitte wenden Sie sich für den TMAC-Zugriff an den Administrator"
   },
   "global": {
     "lanId": "LAN-ID",
     "lanIdRequiredText": "Lan-ID ist erforderlich",
     "agentId": "Agent ID",
-    "stationId": "Station ID"
+    "stationId": "Station ID",
+    "retry": "Wiederholen",
+    "search": "Suchen"
   },
   "headerComponent": {
     "chooseLocale": "Wählen Sie Ihr Gebietsschema",
@@ -26,6 +32,102 @@
     "buttonText": "Vorgehen"
   },
   "contentComponent": {
-      "noDataAvailable": "keine Daten verfügbar"
+      "noDataAvailable": "keine Daten verfügbar",
+      "labels": "Etiketten",
+      "noInteractions": "Keine Interaktion",
+      "noInteractionsYetMsg": "NEIN #type Interaktion noch!"
+  },
+  "widgets": {
+    "adCallbacks": {
+      "getContactSessionFailed": "Kontaktsitzung konnte nicht abgerufen werden"
+    },
+    "chatControls": {
+      "messagePlaceholder": "Geben Sie Ihre Nachricht ein"
+    },
+    "cannedResponses": {
+        "mode": "Modus",
+        "modeAuto": "Auto",
+        "modeManual": "Handbuch",
+        "department": "Abteilung",
+        "messagePlaceholder": "Bitte wählen Sie eine Vorlage aus...",
+        "select": "Wählen",
+        "getChatTemplatesError": "Fehler beim Abrufen der Chat-Vorlagen",
+        "timeExceededMsg": "Die Antwort kann nicht vor oder nach der Start- oder Endzeit verwendet werden"
+    },
+    "audioVideoControls": {
+        "takeSnapshot": "Schnappschuss machen",
+        "stats": "Statistiken",
+        "unmuteAudio": "Stummschaltung für Audio aufheben",
+        "muteAudio": "Audio stumm schalten",
+        "unmuteVideo": "Stummschaltung des Videos aufheben",
+        "muteVideo": "Video stumm schalten",
+        "switchToVideo": "更改为视频",
+        "stopScreenShare": "Stoppen Sie die Bildschirmfreigabe",
+        "screenShare": "Bildschirm teilen",
+        "toggleRemoteCamera": "Benutzerkamera umschalten",
+        "switchToChatView": "Wechseln Sie zur Chat-Ansicht",
+        "switchToCallView": "Wechseln Sie zur Anrufansicht",
+        "unholdCall": "Anruf zurückhalten",
+        "holdCall": "Anruf halten",
+        "endCall": "Anruf beenden",
+        "startCallError": "Fehler beim Starten des Anrufs:",
+        "callRequestConfirmMsg": "#callType Anruf angefordert von #customerName. Möchten Sie ihn annehmen?",
+        "avConnectionError": "Bei der AV-Verbindung ist ein Fehler aufgetreten",
+        "callRejectedByRemote": "Der Benutzer hat Ihre Anfrage abgelehnt",
+        "callNotAnsweredByremote": "Der Anruf wurde vom Kunden nicht beantwortet",
+        "callFailed": "Anruf fehlgeschlagen:",
+        "callDisconnectedError": "Anruf getrennt, unerwartetes Ende!",
+        "callEndedByRemote": "Der Benutzer hat den Anruf beendet",
+        "remoteMuteTypeMsg": "#userName  #muteTyped the #streamType",
+        "snapshotRequestSuccess": "Snapshot-Anfrage erfolgreich gesendet",
+        "snapshotLoading": "Retreiving snapshot...",
+        "snapshotRequestRejectedByRemote": "Snapshot request is rejected by customer!",
+        "snapshotSuccess": "Snapshot received",
+        "snapshotFailed": "Unable to take snapshot",
+        "toggleViewRequestAccepted": "Toggle #toggleViewType request is accepted by customer",
+        "toggleViewRequestRejected": "Toggle #toggleViewType request is rejected by customer!",
+        "toggleViewSuccess": "Customer #toggleViewType toggled successfully",
+        "toggleViewFailed": "Customer #toggleViewType toggle failed!",
+        "confirmSnapshotTitle": "Confirm Snapshot",
+        "saveSnapshotLoading": "Saving ...",
+        "snapshotSaveSuccess": "Snapshot saved successfully!",
+        "snapshotSaveFailed": "Snapshot save failed!",
+        "snapshotRequestLoading": "Requesting customer for snapshot",
+        "snapshotRequestTimeout": "Snapshot request timed out",
+        "upgradeToVideoFailed": "Upgrade to Video failed!",
+        "toggleCamRequestSuccess": "Toggle camera request sent successfully",
+        "toggleCamRequestFailed": "Toggle camera request failed!",
+        "toggleCamRequestError": "Toggle camera request error!",
+        "toggleViewRequestSuccess": "Toggle view request sent successfully",
+        "toggleViewRequestFailed": "Toggle view request failed!",
+        "toggleViewRequestError": "Toggle view request error!",
+        "remoteMuteTypeRequestFailed": "Customer #streamType #muteType request failed!",
+        "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!"
+    },
+    "wallboard": {
+        "skillName": "Fertigkeitsname",
+        "agentsStaffed": "Stf",
+        "agentAvailable": "Avl",
+        "callsInQueue": "CIQ",
+        "serviceLevel": "SL %",
+        "agentSkillUpdateSuccessMsg": "Agentenfähigkeiten wurden aktualisiert!"
+    },
+    "activeAgents": {
+      "agentSortMsg": "Die Agentenliste ist sortiert nach",
+      "total": "Gesamt:"
+    }
+  },
+  "sharedComponents": {
+    "customDialog": {
+      "alert": "Alarm",
+      "confirm": "Bestätigen",
+      "promptPlaceholder": "Hier eintreten...",
+      "cancel": "Stornieren",
+      "ok": "OK",
+      "done": "Erledigt"
+   }
+  },
+  "interactionComponent": {
+    "customerOnHoldMessage": "Interaktion #interactionID mit [#customerName] und Sitzungs-ID [#sessionID] liegt in der Warteschleife #holdTime"
   }
 }
