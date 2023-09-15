@@ -1133,12 +1133,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // change the mute flag
                 this.muted = false;
             }
+
+            /*
             // set the status
             this.status = 'connected';
             // update the interaction status
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 status: 'connected'
             });
+            */
         }
     }
 
@@ -1153,6 +1156,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
             // so we use mute/unmute instead
 
+            /* temp commented for testing
             // check if muted then unmute
             if (this.muted) {
                 // so we use mute/unmute instead
@@ -1162,6 +1166,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 connection.unMute(true, false);
                 // change the mute flag
                 this.muted = false;
+            } */
+
+            if(this.status === 'hold') {
+                const connection: AVChannel = this.getAVConnection(this.callLines[0]);
+                connection.unHold();
             }
             // // do conference mixing
             this.handleConferenceMixer();
@@ -1880,10 +1889,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // so we use mute/unmute instead
                     const connection: AVChannel = this.getAVConnection();
                     //this.avConns[this.callLines[0]];
+                    
+                    /* commented temp for testing
                     // mute the call
                     connection.mute(true, false);
                     // mute flag
                     this.muted = true;
+                    */
+
+                    connection.hold();
+
                     // change status for hold temp.
                     this.status = 'hold';
                     // update the interaction status
