@@ -1242,7 +1242,8 @@
                                                                 "Max": 0
                                                             }
                                                         }
-                                                    }
+                                                    },
+                                                    "EnableMuteOnInitiation": true
                                                 },
                                                 "IVR": {
                                                     "MenuEnabled": true,
@@ -3474,7 +3475,7 @@
         "AV": {
             "webRTCConfig": {
                 "iceServers": [{
-                    "urls": "turn:44.195.212.90:3579",
+                    "urls": "turn:dicedev.tetherfi.cloud:3585",
                     "username": "tetherfi",
                     "credential": "nuwan"
                 }],
@@ -3518,7 +3519,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://testlabsd.productqa.tetherfi.cloud/SDKProxy/TmacProxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -3560,5 +3561,5 @@
             }
         }
     },
-    "Version": "5.2.7.3004-beta.1"
+    "Version": "5.2.7.3004-beta.2"
 }

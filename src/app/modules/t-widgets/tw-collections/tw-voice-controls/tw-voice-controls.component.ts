@@ -1156,7 +1156,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
             // so we use mute/unmute instead
 
-            /* temp commented for testing
+            
             // check if muted then unmute
             if (this.muted) {
                 // so we use mute/unmute instead
@@ -1166,7 +1166,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 connection.unMute(true, false);
                 // change the mute flag
                 this.muted = false;
-            } */
+            }
 
             if(this.status === 'hold') {
                 const connection: AVChannel = this.getAVConnection(this.callLines[0]);
@@ -1887,17 +1887,19 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // get the connection variable for main line
                     // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
                     // so we use mute/unmute instead
-                    const connection: AVChannel = this.getAVConnection();
+                    const connection: AVChannel = this.getAVConnection(this.callLines[0]);
                     //this.avConns[this.callLines[0]];
                     
-                    /* commented temp for testing
-                    // mute the call
-                    connection.mute(true, false);
-                    // mute flag
-                    this.muted = true;
-                    */
-
-                    connection.hold();
+                    
+                    if(this.widgetData.Conference?.EnableMuteOnInitiation) {
+                        // mute the call
+                        connection.mute(true, false);
+                        // mute flag
+                        this.muted = true;
+                    } else {
+                        connection.hold();
+                    }
+                    
 
                     // change status for hold temp.
                     this.status = 'hold';
