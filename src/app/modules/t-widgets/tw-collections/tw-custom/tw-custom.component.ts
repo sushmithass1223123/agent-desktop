@@ -3,6 +3,7 @@ import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular
 import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseConfig } from '@fuse/types';
+import { TranslocoService } from '@ngneat/transloco';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
@@ -13,6 +14,7 @@ import { SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { isEqual } from 'lodash';
 import { Subscription } from 'rxjs';
@@ -101,7 +103,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _tmacEventService: TMACEventService,
         private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService,
-        private _uiActionEventService: UIActionEventService
+        private _uiActionEventService: UIActionEventService,
+        private translocoService: TranslocoService
     ) {
         super('TwCustomComponent');
 
@@ -170,17 +173,20 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     case 'uicontrolevents':
                         this.processUIControlEvents(message);
                         break;
-                    case 'notificationmessage': 
+                    case 'notificationmessage':
                         this._appUIService.showSnackbar(message.data?.message, message.data?.type);
                         break;
                     case 'getagentdata':
                         this.sendDataToWindow(message.callback, SDKClient.getAgentData(), message.userObject);
                         break;
-                    case 'gettmaccommands': 
-                        this.sendDataToWindow('onTMACCommand', this._tmacEventService.getTmacCommandsArray());     
+                    case 'gettmaccommands':
+                        this.sendDataToWindow('onTMACCommand', this._tmacEventService.getTmacCommandsArray());
+                        break;
+                    case 'showcustompopup':
+                        this.showCustomPopup(message.data);
                         break;
                 }
-                this.logger.info('Message received from custom frame -' + message.name + ':'+ JSON.stringify(message),true);
+                this.logger.info('Message received from custom frame -' + message.name + ':' + JSON.stringify(message), true);
             } catch (error) {
                 this.logger.error('Error in TwCustomComponent.postMessage', error, false);
             }
@@ -251,7 +257,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     ngOnDestroy(): void {
         // call the wrapper destroy method
-        if(this.data.Data.NotifyTypeOnClose) {
+        if (this.data.Data.NotifyTypeOnClose) {
             this.sendActionOnClose()
         }
         this.destroyWrapper();
@@ -348,7 +354,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         );
     }
 
-    processUIControlEvents(message:IPostMessage) {
+    processUIControlEvents(message: IPostMessage) {
         this._tmacEventService._uiControlsEvents.next(message.data);
     }
 
@@ -369,4 +375,51 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             })
         });
     }
+
+    showCustomPopup(data: any) {
+        // check if the url to be taken from param
+        let url = data.url;
+
+        // check if url is provided
+        if (!url) {
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.customDialog.urlNotFound'), 'failure');
+            return;
+        }
+
+
+        // get assist widget config
+        const title = `${data.Title}`;
+        const icon = data.icon || '';
+        const actions = data.actions || ['destroy'];
+        const viewState = data.viewState || 'restore';
+
+        const width = data.width || 500;
+        const height = data.Height || 500;
+
+        // create a widget model
+        const widget = new TwWidgetModel(title, 'tw-custom', icon);
+        widget.Config.Position.W = width;
+        widget.Config.Position.H = height;
+        widget.Config.Actions = actions;
+        widget.Config.ViewState = viewState;
+        widget.Data.Url = url;
+
+        // if mandatory, pop a confiration and destroy
+        if (data.confirmOnClose) {
+            widget.OnDestroy = () => {
+                // get confiration before close
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.agentAssist.confirmCloseTitle'), this.translocoService.translate('widgets.agentAssist.confirmCloseMsg'));
+                confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        widget.destroy();
+                    }
+                });
+                return false;
+            };
+        }
+
+        // add to AOT widget service
+        this._aotWidgetService.addWidget(widget as AOTWidget);
+    }
+
 }
