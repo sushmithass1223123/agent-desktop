@@ -10,7 +10,7 @@
         "MultiWindowMode": { "Enabled": false, "Width": 100, "Height": 100, "PixelDimension": false },
         "SSOLinkExpiry": 10,
         "LogoutUrl": "",
-        "enableLanguageSelection":false
+        "enableLanguageSelection": false
     },
     "Main": {
         "Toolbar": {

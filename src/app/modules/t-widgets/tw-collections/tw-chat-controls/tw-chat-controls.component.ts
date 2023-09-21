@@ -1622,9 +1622,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private pushToTranscript(transcript: ChatTranscripts): void {
         // check for message has link
-        if (transcript.message && !isStringHtml(transcript.message)) {
-            transcript.message = urlify(transcript.message);
+        let templateMsg = null;
+        try{
+            templateMsg = JSON.parse(transcript.message);
+        }catch(ex){
         }
+
+        if(templateMsg && templateMsg.contentType === 'interactive'){
+            console.info('Template message found');
+            transcript.customTemplate = templateMsg;
+        }else{
+            if (transcript.message && !isStringHtml(transcript.message)) {
+                transcript.message = urlify(transcript.message);
+            }
+        }
+
         this.chatTranscripts.push(transcript);
     }
 
