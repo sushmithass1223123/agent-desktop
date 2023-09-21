@@ -203,6 +203,10 @@ export interface ChatTranscripts {
         angle: number;
     };
     /**
+     * Attachment
+     */
+    customTemplate?: any;
+    /**
      * Divider message
      */
     dividerMessage?: boolean;
