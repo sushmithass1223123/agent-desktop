@@ -652,11 +652,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     const dynamicLabels = [
                         {
                             key: '#callType',
-                            value: param
+                            value: this.translocoService.translate('dynamic_labels.audioVideoControls.callType.' + param)
                         },
                         {
                             key: '#customerName',
-                            value: this.interactionDetails.CustomerName
+                            value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName)
                         }
                     ]
 
