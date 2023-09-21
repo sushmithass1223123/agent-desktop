@@ -1,4 +1,4 @@
-import { TwCustom } from '@ad/types';
+import { AOTWidget, TwCustom } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
