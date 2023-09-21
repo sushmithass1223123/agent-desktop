@@ -215,7 +215,7 @@
                             *ngFor="let item of interactionList"
                             name="{{ item.user }}"
                             [ngClass]="item.status + ' ' + (item.interactionId === interaction.InteractionID ? 'active' : '')"
-                            matTooltip="{{ item.user }}"
+                            [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
                             matTooltipPosition="after"
                             (click)="selectInteraction(item)"
                             matBadge="{{ item.interactionId !== interaction.InteractionID ? item.otherData.unreadCount || '' : '' }}"

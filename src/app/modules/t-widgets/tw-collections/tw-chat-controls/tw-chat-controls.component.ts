@@ -2097,6 +2097,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldEvent(evt: CallHoldEvent): void {
         this.interactionOnHold = holdState;
+        this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.unHold');
         this.status = 'hold';
         this.interactionOnHold.loading = false;
         // update the interaction status
@@ -2133,6 +2134,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         this.interactionOnHold = unHoldState;
+        this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
         this.status = 'connected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {

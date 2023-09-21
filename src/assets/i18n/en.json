@@ -40,6 +40,7 @@
         "ssoTypeInvalid": "SSO type #ssoType is not a valid, please contact the administrator!"
     },
     "toolbarComponent": {
+        "appInfo": "App Information",
         "notifications": "Notifications",
         "noNotificationsMsg": "No notifications yet!",
         "logout": "Logout",
@@ -184,7 +185,9 @@
             "subject": "Subject",
             "content": "Content",
             "assignedTo": "Assigned To (by agentID)",
-            "sessionId": "Session Id"
+            "sessionId": "Session Id",
+            "Email": "Email",
+            "Chat": "Chat"
         },
         "workcodes": {
             "searchWorkcodes": "Search Workcodes...",
@@ -274,7 +277,10 @@
             "fetchQuizInfoFailed": "Unable to fetch quiz info",
             "TVirtualStoreNotFound": "Missing TVirtualStore in app config",
             "badgesNotFound": "You Have No Badges!",
-            "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config"
+            "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config",
+            "noviceBadge": "Novice",
+            "influencerBadge": "Influencer",
+            "masterBadge": "Master"
         },
         "activeAgents": {
             "agentStatus": "Agent Status",
@@ -877,7 +883,10 @@
             "replyEmailLoading": "Replying to email",
             "replyEmailSuccess": "Replied to emails",
             "replyEmailFailed": "Unable to reply",
-            "openEmailFailed": "Unable to open email"
+            "queueLabel": "Queue",
+            "inboxLabel": "Inbox",
+            "sentLabel": "Sent",
+            "draftsLabel": "Drafts"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
@@ -925,6 +934,8 @@
         "welcomeMsg": "Hello, Welcome to Agent Desktop"
     },
     "themeOptions": {
+        "language": "Language",
+        "colorThemeTitle": "Color Themes",
         "themeOptionTitle": "Theme Options",
         "defaultLight": "Default Light",
         "defaultLight2": "Default Light 2",

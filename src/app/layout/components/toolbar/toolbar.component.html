@@ -1,5 +1,5 @@
 <mat-toolbar class="pl-20 pr-32">
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
+    <div *transloco="let locale" fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
         <div fxLayout="row" fxLayoutAlign="start center" class="twd-flex twd-flex-1 twd-max-w-5/12 twd-h-full">
             <button
                 mat-icon-button
@@ -37,7 +37,7 @@
             <mat-icon
                 *ngIf="connectivityStatus?.Status > -1"
                 class="connectivityStatus"
-                matTooltip="App Information"
+                [matTooltip]="locale('toolbarComponent.appInfo')"
                 (click)="showAppInfo()"
                 [ngClass]="{
                     'text-warning': connectivityStatus?.Status === 0,

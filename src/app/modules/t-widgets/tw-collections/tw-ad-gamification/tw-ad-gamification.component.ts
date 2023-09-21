@@ -122,19 +122,19 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                                   ...currentAgentData,
                                   TotalBadges: [
                                       {
-                                          BadgeName: 'Novice',
+                                          BadgeName: this.translocoService.translate('widgets.gamification.noviceBadge'),
                                           BadgeId: 0,
                                           BadgeUrl: currentAgentData.NoviceBadgeUrl,
                                           BadgePoints: currentAgentData.NoviceBadges
                                       },
                                       {
-                                          BadgeName: 'Influencer',
+                                          BadgeName: this.translocoService.translate('widgets.gamification.influencerBadge'),
                                           BadgeId: 1,
                                           BadgeUrl: currentAgentData.InfluencerBadgeUrl,
                                           BadgePoints: currentAgentData.InfluencerBadges
                                       },
                                       {
-                                          BadgeName: 'Master',
+                                          BadgeName: this.translocoService.translate('widgets.gamification.masterBadge'),
                                           BadgeId: 2,
                                           BadgeUrl: currentAgentData.MasterBadgeUrl,
                                           BadgePoints: currentAgentData.MasterBadges
