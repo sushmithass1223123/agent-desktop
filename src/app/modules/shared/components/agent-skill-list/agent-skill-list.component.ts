@@ -1084,7 +1084,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                         this.loading -= 1;
                         const dynamicLabels = [
                             {
-                                key: '#tranferTo',
+                                key: '#transferTo',
                                 value: transferTo
                             },
                             {
@@ -1121,7 +1121,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                         this.loading -= 1;
                         const dynamicLabels = [
                             {
-                                key: '#tranferTo',
+                                key: '#transferTo',
                                 value: transferTo
                             }
                         ];
