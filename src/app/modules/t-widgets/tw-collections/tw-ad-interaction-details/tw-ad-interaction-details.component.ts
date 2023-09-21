@@ -122,51 +122,57 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         };
         this.table.config = {
             Channel: {
+                title: this.translocoService.translate('widgets.adInteractionDetails.Channel'),
                 searchable: true,
                 tooltip: true,
                 width: '120px',
                 icon: (el: any) => ({ name: iconMap[(el.Channel || '').toLowerCase()] || 'feed', only: true })
             },
             SubChannel: {
+                title: this.translocoService.translate('widgets.adInteractionDetails.SubChannel'),
                 searchable: true,
                 tooltip: true,
                 icon: (el: any) => ({ name: iconMap[(el.SubChannel || '').toLowerCase()] || 'feed', only: true })
             },
             Direction: {
+                title: this.translocoService.translate('widgets.adInteractionDetails.Direction'),
                 searchable: true,
                 uppercase: true,
                 icon: (el: any) => ({ name: iconMap[(el.Direction || '').toLowerCase()] || 'feed', color: 'accent' })
             },
             CreatedDateTime: {
                 searchable: true,
-                title: 'Created On',
+                title: this.translocoService.translate('widgets.adInteractionDetails.CreatedDateTime'),
                 type: 'date'
             },
             ClosedDateTime: {
                 searchable: true,
-                title: 'Closed On',
+                title: this.translocoService.translate('widgets.adInteractionDetails.ClosedDateTime'),
                 type: 'date'
             },
             AgentComment: {
-                title: 'Comments',
+                title: this.translocoService.translate('widgets.adInteractionDetails.AgentComment'),
                 searchable: true,
                 custom: this.agentCommentRef
             },
             User: {
+                title: this.translocoService.translate('widgets.adInteractionDetails.User'),
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             Dnis: {
-                title: 'DNIS',
+                title: this.translocoService.translate('widgets.adInteractionDetails.Dnis'),
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             Intent: {
+                title: this.translocoService.translate('widgets.adInteractionDetails.Intent'),
                 searchable: true
             },
             ActiveTime: {
+                title: this.translocoService.translate('widgets.adInteractionDetails.ActiveTime'),
                 value: (el: any) => el.ActiveTime
             }
         };

@@ -293,10 +293,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Available tabs ref
      */
     availableTabs = [
-        { label: 'Queue', enabled: true, icon: 'queue', key: 'queue' },
-        { label: 'Inbox', enabled: true, icon: 'mail', key: 'inbox' },
-        { label: 'Sent', enabled: true, icon: 'mark_email_read', key: 'sentitem' },
-        { label: 'Drafts', enabled: true, icon: 'drafts', key: 'draft' }
+        { label: this.translocoService.translate('sharedComponents.email.queueLabel'), enabled: true, icon: 'queue', key: 'queue' },
+        { label: this.translocoService.translate('sharedComponents.email.inboxLabel'), enabled: true, icon: 'mail', key: 'inbox' },
+        { label: this.translocoService.translate('sharedComponents.email.sentLabel'), enabled: true, icon: 'mark_email_read', key: 'sentitem' },
+        { label: this.translocoService.translate('sharedComponents.email.draftsLabel'), enabled: true, icon: 'drafts', key: 'draft' }
     ];
 
     /**

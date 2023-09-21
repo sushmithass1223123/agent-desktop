@@ -8,7 +8,12 @@
     </div>
 
     <!-- Add titile if provided in config or add widget by default -->
-    <mat-card-title>{{ data.Name || 'Widget' }}</mat-card-title>
+    <!-- <mat-card-title>{{ data.Name || 'Widget' }}</mat-card-title> -->
+    <mat-card-title>{{
+
+        locale('widgets_common.header.title.' + data.Name) !== 'widgets_common.header.title.' + data.Name ? locale('widgets_common.header.title.' + data.Name) : data.Name ? data.Name : 'Widget'
+
+    }}</mat-card-title>
 
     <span class="spacer"></span>
 
