@@ -1047,33 +1047,24 @@
         }
     },
     "tableFields_common": {
-        "Channel": "Channel",
-        "Channel:": "Channel:",
-        "AHT": "AHT",
-        "Transfer": "Transfer",
-        "Conference": "Conference",
-        "User": "User",
-        "Created On": "Created On",
-        "Skill Name": "Skill Name",
-        "Stf": "Stf",
-        "Avl": "Avl",
-        "Queue time:": "Queue time:",
-        "Mobile:": "Mobile:",
-        "Name:": "Name:",
-        "Auth Type:": "Auth Type:",
-        "Auth Status:": "Auth Status:",
-        "Email:": "Email:",
-        "Address:": "Address:",
-        "NRIC:": "NRIC:",
-        "Account Number:": "Account Number:",
-        "CIQ": "CIQ",
-        "SubChannel": "SubChannel",
-        "Direction": "Direction",
-        "Dnis": "Dnis",
-        "Intent": "Intent",
-        "Closed On": "Closed On",
-        "ActiveTime": "ActiveTime",
-        "Comments": "Comments"
+        "InteractionDetails": {
+            "Channel": "Channel",
+            "SubChannel": "SubChannel",
+            "Direction": "Direction",
+            "CreatedDateTime": "Created On",
+            "ClosedDateTime": "Closed On",
+            "ActiveTime": "ActiveTime",
+            "AgentComment": "Comments",
+            "User": "User",
+            "Dnis": "Dnis",
+            "Intent": "Intent"
+        },
+        "AHTTransferConference": {
+            "Channel": "Channel",
+            "AHT": "AHT",
+            "Transfer": "Transfer",
+            "Conference": "Conference"
+        }
     }
 
 }

@@ -36,7 +36,7 @@ The actual rendered columns are set as a property on the row definition" -->
                             [style.max-width]="conf.value?.width"
                             [ngClass]="{ 'max-flex': conf.value?.width }"
                         >
-                            {{ locale('tableFields_common.' + (conf.value?.title ?? conf.key)) !== 'tableFields_common.' + (conf.value?.title ?? conf.key) ? locale('tableFields_common.' + (conf.value?.title ?? conf.key)) : (conf.value?.title ?? conf.key) ? (conf.value?.title ?? conf.key) : 'Field' }}
+                            {{ locale(conf.value?.langCode) !== conf.value?.langCode? locale(conf.value?.langCode) : conf.value?.title ?? conf.key }}
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element" [style.max-width]="conf.value?.width" [ngClass]="{ 'max-flex': conf.value?.width }">
                             <ng-container *ngIf="getColumnConfig(conf.key, conf.value, element) as cell">

@@ -128,15 +128,23 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         };
         this.table.config = {
             Channel: {
+                langCode: 'tableFields_common.AHTTransferConference.Channel',
                 tooltip: true,
                 icon: (el: any) => ({
                     name: iconMap[el.Channel?.toLowerCase()] || 'feed',
                     only: true
                 })
             },
-            AverageHandleTime: { title: 'AHT' },
-            Transfer: {},
-            Conference: {}
+            AverageHandleTime: { 
+                langCode: 'tableFields_common.AHTTransferConference.AHT',
+                title: 'AHT' 
+            },
+            Transfer: {
+                langCode: 'tableFields_common.AHTTransferConference.Transfer'
+            },
+            Conference: {
+                langCode: 'tableFields_common.AHTTransferConference.Conference'
+            }
         };
         this.table.columns = ['Channel', 'AverageHandleTime', 'Transfer', 'Conference'];
         this.table.sort = true;

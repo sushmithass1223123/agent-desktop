@@ -705,33 +705,24 @@
         "field": "Field"
     },
     "tableFields_common": {
-        "Channel": "渠道",
-        "Channel:": "渠道:",
-        "AHT": "甲HT",
-        "Transfer": "转移",
-        "Conference": "会议",
-        "User": "用户",
-        "Created On": "创建于",
-        "Skill Name": "技能名称",
-        "Stf": "斯特夫",
-        "Avl": "平均",
-        "Queue time:": "排队时间：",
-        "Mobile:": "移动的:",
-        "Name:": "姓名:",
-        "Auth Type:": "验证类型:",
-        "Auth Status:": "验证状态:",
-        "Email:": "电子邮件:",
-        "Address:": "地址:",
-        "NRIC:": "身份证:",
-        "Account Number:": "帐号:",
-        "CIQ": "检验检疫局",
-        "SubChannel": "子频道",
-        "Direction": "方向",
-        "Dnis": "德尼斯",
-        "Intent": "意图",
-        "Closed On": "关闭时间",
-        "ActiveTime": "活动时间",
-        "Comments": "评论"
+        "InteractionDetails": {
+            "Channel": "渠道",
+            "SubChannel": "子频道",
+            "Direction": "方向",
+            "CreatedDateTime": "创建于",
+            "ClosedDateTime": "关闭时间",
+            "ActiveTime": "活动时间",
+            "AgentComment": "评论",
+            "User": "用户",
+            "Dnis": "德尼斯",
+            "Intent": "意图"
+        },
+        "AHTTransferConference": {
+            "Channel": "渠道",
+            "AHT": "甲HT",
+            "Transfer": "转移",
+            "Conference": "会议"
+        }
     }
 }
     
