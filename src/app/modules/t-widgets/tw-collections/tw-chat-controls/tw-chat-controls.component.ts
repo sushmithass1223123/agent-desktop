@@ -26,6 +26,7 @@ import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SharedService } from '@services/shared.service';
 import { isStringHtml, urlify } from '@tmac/operators';
 import {
     ActionMessageReceivedEvent,
@@ -543,7 +544,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _appUIService: AppUiService,
         private _fuseFacadeService: FuseFacadeService,
         private _agentFeaturesService: AgentFeaturesService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private sharedService: SharedService
     ) {
         super('TwChatControlsComponent');
 
@@ -568,6 +570,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnInit(): void {
         // call the wrapper init method
         this.initWrapper(this.data);
+
+        //trigger holdmethod
+        this.sharedService.getHoldMethod().subscribe(() => {
+            this.holdInteraction();
+        });
 
         this.widgetData = this.data.Data;
 
@@ -898,7 +905,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         }
                     ];
                     //displays toaster when a conference is disconnected
-                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'),dynamicLabels), 'info');
+                    this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.agentDisconnectedMsg'), dynamicLabels), 'info');
                     break;
             }
             return;
@@ -1615,9 +1622,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private pushToTranscript(transcript: ChatTranscripts): void {
         // check for message has link
-        if (transcript.message && !isStringHtml(transcript.message)) {
-            transcript.message = urlify(transcript.message);
+        let templateMsg = null;
+        try{
+            templateMsg = JSON.parse(transcript.message);
+        }catch(ex){
         }
+
+        if(templateMsg && templateMsg.contentType === 'interactive'){
+            console.info('Template message found');
+            transcript.customTemplate = templateMsg;
+        }else{
+            if (transcript.message && !isStringHtml(transcript.message)) {
+                transcript.message = urlify(transcript.message);
+            }
+        }
+
         this.chatTranscripts.push(transcript);
     }
 
@@ -2090,6 +2109,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldEvent(evt: CallHoldEvent): void {
         this.interactionOnHold = holdState;
+        this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.unHold');
         this.status = 'hold';
         this.interactionOnHold.loading = false;
         // update the interaction status
@@ -2126,6 +2146,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         this.interactionOnHold = unHoldState;
+        this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
         this.status = 'connected';
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
@@ -2168,7 +2189,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             },
             {
                 key: '#customerName',
-                value: this.customerName
+                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.customerName)
             },
             {
                 key: '#sessionID',
@@ -2662,6 +2683,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         this.previewMediaDialogRef = this._matDialog.open(this.previewMediaDialog, {
             panelClass: 'preview-media-dialog'
+        });
+        this.previewMediaDialogRef.afterOpened().subscribe(() => {
+            if (previewData.attachment.type === 'video') {
+                const scrollContainer = document.querySelector('.drag-scroll-content') as HTMLDivElement;
+                if (scrollContainer) {
+                    scrollContainer.style.overflow = 'auto';
+                    scrollContainer.style.height = '';
+                    scrollContainer.style.height = '100%';
+                    scrollContainer.style.minHeight = '100px';
+                    scrollContainer.style.maxHeight = '600px';
+                    scrollContainer.style.width = '';
+                    scrollContainer.style.maxWidth = '800px';
+                    scrollContainer.style.display = 'flex';
+
+                }
+            }
         });
     }
 

@@ -1414,7 +1414,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             },
             {
                 key: '#customerName',
-                value: this.callerID
+                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.callerID)
             },
             {
                 key: '#sessionID',

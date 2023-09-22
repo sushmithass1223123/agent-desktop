@@ -1,5 +1,7 @@
 {
     "loginComponent": {
+        "lanId": "Lan ID",
+        "lanIdRequiredText": "Lan-ID is required",
         "welcome": "Welcome to Agent Desktop!",
         "connectivityError": "Trying to reach server",
         "retrying": "Retrying...",
@@ -40,6 +42,7 @@
         "ssoTypeInvalid": "SSO type #ssoType is not a valid, please contact the administrator!"
     },
     "toolbarComponent": {
+        "appInfo": "App Information",
         "notifications": "Notifications",
         "noNotificationsMsg": "No notifications yet!",
         "logout": "Logout",
@@ -184,7 +187,9 @@
             "subject": "Subject",
             "content": "Content",
             "assignedTo": "Assigned To (by agentID)",
-            "sessionId": "Session Id"
+            "sessionId": "Session Id",
+            "Email": "Email",
+            "Chat": "Chat"
         },
         "workcodes": {
             "searchWorkcodes": "Search Workcodes...",
@@ -197,7 +202,8 @@
             "removeWC": "Removing work code",
             "wcRemoveSuccess": "Work code removed successfully",
             "wcRemoveFail": "Unable to remove workcode",
-            "noWorkCodeSelected": "No work code selected"
+            "noWorkCodeSelected": "No work code selected",
+            "noWorkCodeToDisplay": "No matching work codes for search criteria"
         },
         "wallboard": {
             "skillName": "Skill Name",
@@ -273,7 +279,10 @@
             "fetchQuizInfoFailed": "Unable to fetch quiz info",
             "TVirtualStoreNotFound": "Missing TVirtualStore in app config",
             "badgesNotFound": "You Have No Badges!",
-            "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config"
+            "urlsMissing": "LeaderBoardUrl / AgentProgressUrl not provided in app config",
+            "noviceBadge": "Novice",
+            "influencerBadge": "Influencer",
+            "masterBadge": "Master"
         },
         "activeAgents": {
             "agentStatus": "Agent Status",
@@ -675,7 +684,17 @@
             "getProgressFailed": "Something went wrong while fetching progress"
         },
         "adInteractionDetails": {
-            "viewComments": "View Comments"
+            "viewComments": "View Comments",
+            "Channel": "Channel",
+            "SubChannel": "SubChannel",
+            "Direction": "Direction",
+            "CreatedDateTime": "Created On",
+            "ClosedDateTime": "Closed On",
+            "AgentComment": "Comments",
+            "User": "User",
+            "Dnis": "DNIS",
+            "Intent": "Intent",
+            "ActiveTime": "ActiveTime"
         },
         "adFeedback": {
             "customerFeedback": "Customer Feedback",
@@ -691,6 +710,12 @@
             "missed": "Missed",
             "pending": "Pending",
             "getContactSessionFailed": "Unable to fetch contact session"
+        },
+        "AHTTransferConference": {
+            "Channel": "Channel",
+            "AHT": "AHT",
+            "Transfer": "Transfer",
+            "Conference": "Conference"
         }
     },
     "generalFormFields": {
@@ -860,6 +885,10 @@
             "replyEmailLoading": "Replying to email",
             "replyEmailSuccess": "Replied to emails",
             "replyEmailFailed": "Unable to reply",
+            "queueLabel": "Queue",
+            "inboxLabel": "Inbox",
+            "sentLabel": "Sent",
+            "draftsLabel": "Drafts",
             "openEmailFailed": "Unable to open email"
         },
         "emailTemplateSelector": {
@@ -908,6 +937,8 @@
         "welcomeMsg": "Hello, Welcome to Agent Desktop"
     },
     "themeOptions": {
+        "language": "Language",
+        "colorThemeTitle": "Color Themes",
         "themeOptionTitle": "Theme Options",
         "defaultLight": "Default Light",
         "defaultLight2": "Default Light 2",
@@ -958,5 +989,92 @@
         "moreActions": "More Actions",
         "startChatMsg": "Start a conversation by typing your message below.",
         "selectContactToChat": "Select a contact to start a conversation."
+    },
+    "widgets_common": {
+        "header": {
+            "title": {
+                "Wallboard": "Wallboard",
+                "Bookmarks": "Bookmarks",
+                "All Interactions": "All Interactions",
+                "AHT/Transfer/Conference ": "AHT/Transfer/Conference ",
+                "Aux Status": "Aux Status",
+                "Interaction Details": "Interaction Details",
+                "Calendar": "Calendar",
+                "Call-back Details": "Call-back Details",
+                "AHT/Tran./Conf.": "AHT/Tran./Conf.",
+                "Active Agents": "Active Agents",
+                "Calls in Queue": "Calls in Queue",
+                "Intent List": "Intent List",
+                "Skill Dashboard": "Skill Dashboard",
+                "Channels": "Channels",
+                "Status": "Status",
+                "Work Codes": "Work Codes",
+                "No Interaction": "No Interaction",
+                "Test Page 1": "Test Page 1",
+                "Test Page 2": "Test Page 2",
+                "Chat Controls": "Chat Controls",
+                "Canned Responses": "Canned Responses",
+                "Customer Details": "Customer Details",
+                "User location": "User Location",
+                "Realtime Customer Sentiment": "Realtime Customer Sentiment",
+                "AMDOC-BCC": "AMDOC-BCC",
+                "Live Chat Summary": "Live Chat Summary",
+                "Performance": "Performance",
+                "Coins and Badges": "Coins and Badges",
+                "Call-backs": "Call-backs",
+                "Feedback": "Feedback",
+                "Score": "Score"
+            }
+        }
+    },
+    "dynamic_labels": {
+        "audioVideoControls": {
+            "callType": {
+                "Audio": "Audio",
+                "Video": "Video"
+            },
+            "customerName": {
+                "Customer": "Customer"
+            }
+        }
+    },
+    "dialogConstants": {
+        "appConfirm": {
+            "title": {
+                "takeoverSessionTitle": "Confirm Login",
+                "endInteractionTitle": "Confirm End",
+                "closeInteractionTitle": "Confirm Close",
+                "logoutTitle": "Confirm Logout",
+                "genericTitle": "Confirm"
+            },
+            "message": {
+                "takeoverSessionMessage": "Another session detected. Do you want to take it over?",
+                "endInteractionMessage": "Are you sure to end this interaction?",
+                "closeInteractionMessage": "Are you sure to close this interaction?",
+                "logoutMessage": "Are you sure you want to logout?",
+                "genericMessage": "Are you sure?"
+            }
+        }
+    },
+    "tableFields_common": {
+        "InteractionDetails": {
+            "Channel": "Channel",
+            "SubChannel": "SubChannel",
+            "Direction": "Direction",
+            "CreatedDateTime": "Created On",
+            "ClosedDateTime": "Closed On",
+            "ActiveTime": "ActiveTime",
+            "AgentComment": "Comments",
+            "User": "User",
+            "Dnis": "Dnis",
+            "Intent": "Intent"
+        },
+        "AHTTransferConference": {
+            "Channel": "Channel",
+            "AHT": "AHT",
+            "Transfer": "Transfer",
+            "Conference": "Conference"
+        }
     }
+
 }

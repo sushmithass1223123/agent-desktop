@@ -83,7 +83,39 @@
                     </div>
                 </div>
 
-                <p class="m-0">
+                <p class="m-0" *ngIf="message.customTemplate">
+                    <ng-container *ngIf="message.customTemplate?.interactive?.components?.header?.type === 'image'">
+                        <div class="attachments">
+                            <div class="image">
+                                <img
+                                    title=""
+                                    [ngClass]="{
+                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]': mode === 'reply' || replied,
+                                        '!twd-min-h-[64px]': replied
+                                    }"
+                                    [src]="message.customTemplate?.interactive?.components?.header?.image?.url"
+                                />
+                            </div>
+
+                        </div>
+                    </ng-container>
+                    <br>
+                    <ng-container *ngIf="message.customTemplate?.interactive?.components?.body?.type === 'text'">
+                        <span [innerHTML]="message.customTemplate?.interactive?.components?.body?.text"></span>
+                    </ng-container>
+                    <br>
+                    <ng-container *ngIf="message.customTemplate?.interactive?.components?.buttons?.length > 0">
+                        <ng-container *ngFor="let btn of message.customTemplate?.interactive?.components?.buttons">
+                            <span [innerHTML]="btn?.reply?.title">                         
+                            </span>
+                            <br>
+                        </ng-container>
+                        
+                    </ng-container>
+
+                </p>
+
+                <p class="m-0" *ngIf="!message.customTemplate">
                     <ng-container *ngIf="!message.attachment?.src">
                         <span [innerHTML]="message.message"></span>
                         <span *ngIf="!replied" class="spacer"></span>
@@ -215,7 +247,7 @@
                             *ngFor="let item of interactionList"
                             name="{{ item.user }}"
                             [ngClass]="item.status + ' ' + (item.interactionId === interaction.InteractionID ? 'active' : '')"
-                            matTooltip="{{ item.user }}"
+                            [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
                             matTooltipPosition="after"
                             (click)="selectInteraction(item)"
                             matBadge="{{ item.interactionId !== interaction.InteractionID ? item.otherData.unreadCount || '' : '' }}"

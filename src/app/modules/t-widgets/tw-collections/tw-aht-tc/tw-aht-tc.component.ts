@@ -11,6 +11,7 @@ import { intervalToDuration } from 'date-fns';
 import { formatDuration } from 'app/utils/';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 type Dataset = { category: string; value: number };
 
 /**
@@ -60,8 +61,9 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
      * Ad table's component ref
      */
     @ViewChild(TableComponent) table: TableComponent;
-
-    constructor(private _tmacEventService: TMACEventService) {
+    
+    constructor(private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService) {
         super('TwAhtTcComponent');
     }
 
@@ -126,15 +128,23 @@ export class TwAhtTcComponent extends TWidgetWrapper implements OnInit, OnDestro
         };
         this.table.config = {
             Channel: {
+                langCode: 'tableFields_common.AHTTransferConference.Channel',
                 tooltip: true,
                 icon: (el: any) => ({
                     name: iconMap[el.Channel?.toLowerCase()] || 'feed',
                     only: true
                 })
             },
-            AverageHandleTime: { title: 'AHT' },
-            Transfer: {},
-            Conference: {}
+            AverageHandleTime: { 
+                langCode: 'tableFields_common.AHTTransferConference.AHT',
+                title: 'AHT' 
+            },
+            Transfer: {
+                langCode: 'tableFields_common.AHTTransferConference.Transfer'
+            },
+            Conference: {
+                langCode: 'tableFields_common.AHTTransferConference.Conference'
+            }
         };
         this.table.columns = ['Channel', 'AverageHandleTime', 'Transfer', 'Conference'];
         this.table.sort = true;

@@ -386,7 +386,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             return;
         }
 
-
         // get assist widget config
         const title = `${data.Title}`;
         const icon = data.icon || '';
@@ -421,5 +420,4 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         // add to AOT widget service
         this._aotWidgetService.addWidget(widget as AOTWidget);
     }
-
 }

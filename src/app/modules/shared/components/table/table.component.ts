@@ -18,6 +18,10 @@ type BaseTableConfig = {
      * Width of the column
      */
     width?: string;
+    /**
+     * language code to display field name
+     */
+    langCode?: any | null;
 };
 export interface SelectedPayload {
     /**
@@ -293,6 +297,13 @@ export class TableComponent implements OnInit {
     }
 
     /**
+     * Escape special characters in Regular Expressions
+     */
+    regExpEscape = (s) => {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    /**
      * Custom filter method fot Angular Material Datatable
      */
     filterPredicate = (data: any, filterStr: string): boolean => {
@@ -310,7 +321,9 @@ export class TableComponent implements OnInit {
             if (dateColKey) {
                 return this.compareDates(key, filters[key], data[dateColKey]);
             } else {
-                const re = new RegExp(value as string, 'i');
+                //creating regular expression after escaping special characters in the filter value
+                const escapedValue = this.regExpEscape(value as string);
+                const re = new RegExp(escapedValue, 'i');
                 return data[key]?.match(re);
             }
         });

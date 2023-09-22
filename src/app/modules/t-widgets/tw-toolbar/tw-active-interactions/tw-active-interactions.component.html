@@ -65,7 +65,7 @@
                 }"
                 [matIcon]="item.otherData.icon || 'chat'"
                 classes="w-44 h-44 border-radius-100"
-                [matTooltip]="item.user"
+                [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
                 [circleColor]="item.status === 'disconnected' ? 'bg-danger' : item.status === 'hold' ? 'bg-warning' : 'twd-bg-primary-700'"
                 [matBadge]="item.otherData.unreadCount || ''"
                 matBadgePosition="after"

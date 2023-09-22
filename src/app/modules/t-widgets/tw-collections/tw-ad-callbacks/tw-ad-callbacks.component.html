@@ -94,7 +94,7 @@
 
     <div *ngIf="getDashboardDataRes.error" class="twd-w-full twd-h-full text-center twd-flex twd-flex-col twd-justify-center twd-items-center">
         <p class="mat-title twd-mb-3">
-            {{ getDashboardDataRes.msg }}
+            {{ locale(getDashboardDataRes.msg) }}
         </p>
         <button mat-raised-button color="primary" (click)="fetchCallbacks()">{{ locale('global.retry') }}</button>
     </div>
