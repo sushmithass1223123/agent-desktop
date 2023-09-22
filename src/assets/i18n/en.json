@@ -684,7 +684,17 @@
             "getProgressFailed": "Something went wrong while fetching progress"
         },
         "adInteractionDetails": {
-            "viewComments": "View Comments"
+            "viewComments": "View Comments",
+            "Channel": "Channel",
+            "SubChannel": "SubChannel",
+            "Direction": "Direction",
+            "CreatedDateTime": "Created On",
+            "ClosedDateTime": "Closed On",
+            "AgentComment": "Comments",
+            "User": "User",
+            "Dnis": "DNIS",
+            "Intent": "Intent",
+            "ActiveTime": "ActiveTime"
         },
         "adFeedback": {
             "customerFeedback": "Customer Feedback",

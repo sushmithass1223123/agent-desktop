@@ -143,13 +143,13 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             CreatedDateTime: {
                 langCode: 'tableFields_common.InteractionDetails.CreatedDateTime',
                 searchable: true,
-                title: 'Created On',
+                title: this.translocoService.translate('widgets.adInteractionDetails.CreatedDateTime'),
                 type: 'date'
             },
             ClosedDateTime: {
                 langCode: 'tableFields_common.InteractionDetails.ClosedDateTime',
                 searchable: true,
-                title: 'Closed On',
+                title: this.translocoService.translate('widgets.adInteractionDetails.ClosedDateTime'),
                 type: 'date'
             },
             AgentComment: {
