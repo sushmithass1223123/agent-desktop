@@ -894,7 +894,8 @@
                                                                 "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
                                                                 "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                             }
-                                                        }
+                                                        },
+                                                        "EnableMuteOnInitiation": true
                                                     },
                                                     "IVR": {
                                                         "MenuEnabled": true,
@@ -2753,5 +2754,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.7.3003"
+    "Version": "5.2.7.3004"
 }

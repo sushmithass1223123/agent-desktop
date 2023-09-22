@@ -340,4 +340,8 @@ export type AgentSkillConfig = {
      * Speed Dial Transfer/Conference config
      */
     SpeedDial: SpeedDialTransferConferenceConfig;
+    /**
+     * Flag to enable auto Mute / Unmute main line during conference  
+     */
+     EnableMuteOnInitiation: boolean;
 };

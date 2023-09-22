@@ -1,5 +1,4 @@
 import { AOTWidget, AppRootConfig, WidgetAction } from '@ad/types';
-import { U } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
