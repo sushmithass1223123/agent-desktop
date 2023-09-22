@@ -122,57 +122,60 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         };
         this.table.config = {
             Channel: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.Channel'),
+                langCode: 'tableFields_common.InteractionDetails.Channel',
                 searchable: true,
                 tooltip: true,
                 width: '120px',
                 icon: (el: any) => ({ name: iconMap[(el.Channel || '').toLowerCase()] || 'feed', only: true })
             },
             SubChannel: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.SubChannel'),
+                langCode: 'tableFields_common.InteractionDetails.SubChannel',
                 searchable: true,
                 tooltip: true,
                 icon: (el: any) => ({ name: iconMap[(el.SubChannel || '').toLowerCase()] || 'feed', only: true })
             },
             Direction: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.Direction'),
+                langCode: 'tableFields_common.InteractionDetails.Direction',
                 searchable: true,
                 uppercase: true,
                 icon: (el: any) => ({ name: iconMap[(el.Direction || '').toLowerCase()] || 'feed', color: 'accent' })
             },
             CreatedDateTime: {
+                langCode: 'tableFields_common.InteractionDetails.CreatedDateTime',
                 searchable: true,
                 title: this.translocoService.translate('widgets.adInteractionDetails.CreatedDateTime'),
                 type: 'date'
             },
             ClosedDateTime: {
+                langCode: 'tableFields_common.InteractionDetails.ClosedDateTime',
                 searchable: true,
                 title: this.translocoService.translate('widgets.adInteractionDetails.ClosedDateTime'),
                 type: 'date'
             },
             AgentComment: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.AgentComment'),
+                langCode: 'tableFields_common.InteractionDetails.AgentComment',
+                title: 'Comments',
                 searchable: true,
                 custom: this.agentCommentRef
             },
             User: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.User'),
+                langCode: 'tableFields_common.InteractionDetails.User',
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             Dnis: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.Dnis'),
+                langCode: 'tableFields_common.InteractionDetails.Dnis',
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             Intent: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.Intent'),
+                langCode: 'tableFields_common.InteractionDetails.Intent',
                 searchable: true
             },
             ActiveTime: {
-                title: this.translocoService.translate('widgets.adInteractionDetails.ActiveTime'),
+                langCode: 'tableFields_common.InteractionDetails.ActiveTime',
                 value: (el: any) => el.ActiveTime
             }
         };

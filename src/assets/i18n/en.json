@@ -1,5 +1,7 @@
 {
     "loginComponent": {
+        "lanId": "Lan ID",
+        "lanIdRequiredText": "Lan-ID is required",
         "welcome": "Welcome to Agent Desktop!",
         "connectivityError": "Trying to reach server",
         "retrying": "Retrying...",
@@ -886,7 +888,8 @@
             "queueLabel": "Queue",
             "inboxLabel": "Inbox",
             "sentLabel": "Sent",
-            "draftsLabel": "Drafts"
+            "draftsLabel": "Drafts",
+            "openEmailFailed": "Unable to open email"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
@@ -993,11 +996,34 @@
                 "Wallboard": "Wallboard",
                 "Bookmarks": "Bookmarks",
                 "All Interactions": "All Interactions",
-                "AHT/Transfer/Conference": "AHT/Transfer/Conference",
+                "AHT/Transfer/Conference ": "AHT/Transfer/Conference ",
                 "Aux Status": "Aux Status",
                 "Interaction Details": "Interaction Details",
                 "Calendar": "Calendar",
-                "Call-back Details": "Call-back Details"
+                "Call-back Details": "Call-back Details",
+                "AHT/Tran./Conf.": "AHT/Tran./Conf.",
+                "Active Agents": "Active Agents",
+                "Calls in Queue": "Calls in Queue",
+                "Intent List": "Intent List",
+                "Skill Dashboard": "Skill Dashboard",
+                "Channels": "Channels",
+                "Status": "Status",
+                "Work Codes": "Work Codes",
+                "No Interaction": "No Interaction",
+                "Test Page 1": "Test Page 1",
+                "Test Page 2": "Test Page 2",
+                "Chat Controls": "Chat Controls",
+                "Canned Responses": "Canned Responses",
+                "Customer Details": "Customer Details",
+                "User location": "User Location",
+                "Realtime Customer Sentiment": "Realtime Customer Sentiment",
+                "AMDOC-BCC": "AMDOC-BCC",
+                "Live Chat Summary": "Live Chat Summary",
+                "Performance": "Performance",
+                "Coins and Badges": "Coins and Badges",
+                "Call-backs": "Call-backs",
+                "Feedback": "Feedback",
+                "Score": "Score"
             }
         }
     },
@@ -1028,6 +1054,26 @@
                 "logoutMessage": "Are you sure you want to logout?",
                 "genericMessage": "Are you sure?"
             }
+        }
+    },
+    "tableFields_common": {
+        "InteractionDetails": {
+            "Channel": "Channel",
+            "SubChannel": "SubChannel",
+            "Direction": "Direction",
+            "CreatedDateTime": "Created On",
+            "ClosedDateTime": "Closed On",
+            "ActiveTime": "ActiveTime",
+            "AgentComment": "Comments",
+            "User": "User",
+            "Dnis": "Dnis",
+            "Intent": "Intent"
+        },
+        "AHTTransferConference": {
+            "Channel": "Channel",
+            "AHT": "AHT",
+            "Transfer": "Transfer",
+            "Conference": "Conference"
         }
     }
 
