@@ -20,7 +20,8 @@
         "copyWriteTetherfi": "版权所有 Tetherfi",
         "ui": "用户界面",
         "server": "服务器",
-        "lanIdError": "登录失败，检测到无效的 LAN ID。 请联系管理员获取 TMAC 访问权限"
+        "lanIdError": "登录失败，检测到无效的 LAN ID。 请联系管理员获取 TMAC 访问权限",
+        "stationIdRequired": "需要站 ID"
     },
     "global": {
         "lanId": "局域网ID",
@@ -35,9 +36,6 @@
         "save": "节省",
         "teamName": "队名",
         "reload": "重新加载"
-    },
-    "navbarComponent": {
-
     },
     "wrapperComponent": {
         "widgetPinned": "小部件已添加到固定列表",
@@ -245,16 +243,7 @@
             "Conference": "会议"
         },
         "adInteractionDetails": {
-            "Channel": "渠道",
-            "SubChannel": "子频道",
-            "Direction": "方向",
-            "CreatedDateTime": "创建于",
-            "ClosedDateTime": "关闭时间",
-            "AgentComment": "评论",
-            "User": "用户",
-            "Dnis": "DNIS",
-            "Intent": "意图",
-            "ActiveTime": "活动时间"
+            "viewComments": "查看评论"
         },
         "bookmarks": {
             "exitSearch": "Exit Search",
@@ -339,7 +328,7 @@
             "invalidTime": "Invalid time",
             "addContact": "Add Contact",
             "fetchCampaignFailed": "无法获取广告活动",
-            "tcmProxyUrlNotFound": "TCMProxyUrl not found",
+            "tcmProxyUrlNotFound": "未找到 TCMProxyUrl",
             "addContactFailed": "Unable to add new contact",
             "addContactSuccess": "Added contact successfully"
         },
@@ -399,33 +388,32 @@
             "caseNotesPlaceholder": "在此输入案例注释...",
             "open": "打开"
         },
-        "widgets": {
-            "workbench": {
-                "refresh": "Refresh",
-                "advanceSearch": "Advance Search",
-                "skill": "Skill",
-                "fromDate": "From Date",
-                "fromTime": "From Time",
-                "toDate": "To Date",
-                "toTime": "To Time",
-                "advanceSearchFailed": "Unable to complete advanced search",
-                "pullChatSuccess": "Chat Pulled successfuly",
-                "pullChatFailed": "Unable to Pull chat",
-                "pullChatConfirmTitle": "Pull Chat",
-                "pullChatConfirmMsg": "Are you sure you want to pull this chat ?",
-                "pullChatError": "Chat Pull failed",
-                "pushChatLoading": "Pushing Chat",
-                "pushChatSuccess": "Chat Pushed successfuly",
-                "pushChatFailed": "Unable to push chat",
-                "pushChatError": "Chat Push failed",
-                "emailId": "Email ID",
-                "subject": "Subject",
-                "content": "Content",
-                "assignedTo": "Assigned To (by agentID)",
-                "sessionId": "Session Id",
-                "Email": "电子邮件",
-                "Chat": "聊天"
-            }
+        "workbench": {
+            "refresh": "Refresh",
+            "advanceSearch": "Advance Search",
+            "skill": "Skill",
+            "fromDate": "From Date",
+            "fromTime": "From Time",
+            "toDate": "To Date",
+            "toTime": "To Time",
+            "advanceSearchFailed": "Unable to complete advanced search",
+            "pullChatSuccess": "Chat Pulled successfuly",
+            "pullChatFailed": "Unable to Pull chat",
+            "pullChatConfirmTitle": "Pull Chat",
+            "pullChatConfirmMsg": "Are you sure you want to pull this chat ?",
+            "pullChatError": "Chat Pull failed",
+            "pushChatLoading": "Pushing Chat",
+            "pushChatSuccess": "Chat Pushed successfuly",
+            "pushChatFailed": "Unable to push chat",
+            "pushChatError": "Chat Push failed",
+            "emailId": "Email ID",
+            "subject": "Subject",
+            "content": "Content",
+            "assignedTo": "Assigned To (by agentID)",
+            "sessionId": "Session Id",
+            "Email": "电子邮件",
+            "Chat": "聊天"
+        }
     },
     "sharedComponents": {
         "aotWidgets": "AOT 小工具",
@@ -506,7 +494,7 @@
             "replyEmailLoading": "Replying to email",
             "replyEmailSuccess": "Replied to emails",
             "replyEmailFailed": "Unable to reply",
-            "openEmailFailed": "Unable to open email",
+            "openEmailFailed": "无法打开电子邮件",
             "queueLabel": "队列",
             "inboxLabel": "收件箱",
             "sentLabel": "发送",
@@ -594,7 +582,7 @@
                 "Chat Controls": "聊天控制",
                 "Canned Responses": "预设回复",
                 "Customer Details": "顾客信息",
-                "User Location": "用户位置",
+                "User location": "用户位置",
                 "Realtime Customer Sentiment": "实时客户情绪",
                 "AMDOC-BCC": "AMDOC-BCC",
                 "Live Chat Summary": "实时聊天摘要",
@@ -715,5 +703,26 @@
         "telegram": "Telegram",
         "store": "Store",
         "field": "Field"
+    },
+    "tableFields_common": {
+        "InteractionDetails": {
+            "Channel": "渠道",
+            "SubChannel": "子频道",
+            "Direction": "方向",
+            "CreatedDateTime": "创建于",
+            "ClosedDateTime": "关闭时间",
+            "ActiveTime": "活动时间",
+            "AgentComment": "评论",
+            "User": "用户",
+            "Dnis": "德尼斯",
+            "Intent": "意图"
+        },
+        "AHTTransferConference": {
+            "Channel": "渠道",
+            "AHT": "甲HT",
+            "Transfer": "转移",
+            "Conference": "会议"
+        }
     }
 }
+    

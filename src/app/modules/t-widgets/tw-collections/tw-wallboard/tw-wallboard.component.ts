@@ -104,11 +104,21 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     setupAdTable(): void {
         this.table.config = {
-            SkillName: { title: this.translocoService.translate('widgets.wallboard.skillName'), width: '40%' },
-            AgentsStaffed: { title: this.translocoService.translate('widgets.wallboard.agentsStaffed'), custom: this.customAgentStaffedCountCell },
-            AgentAvailable: { title: this.translocoService.translate('widgets.wallboard.agentAvailable'), custom: this.customSAgentAvailableCountCell },
-            CallsInQueue: { title: this.translocoService.translate('widgets.wallboard.callsInQueue'), custom: this.customCallsInQueueCountCell },
-            ServiceLevel: { title: this.translocoService.translate('widgets.wallboard.serviceLevel'), custom: this.customServiceLevelCell }
+            SkillName: { 
+                langCode: 'widgets.wallboard.skillName',
+                title: this.translocoService.translate('widgets.wallboard.skillName'), width: '40%' },
+            AgentsStaffed: { 
+                langCode: 'widgets.wallboard.agentsStaffed',
+                title: this.translocoService.translate('widgets.wallboard.agentsStaffed'), custom: this.customAgentStaffedCountCell },
+            AgentAvailable: { 
+                langCode: 'widgets.wallboard.agentAvailable',
+                title: this.translocoService.translate('widgets.wallboard.agentAvailable'), custom: this.customSAgentAvailableCountCell },
+            CallsInQueue: { 
+                langCode: 'widgets.wallboard.callsInQueue',
+                title: this.translocoService.translate('widgets.wallboard.callsInQueue'), custom: this.customCallsInQueueCountCell },
+            ServiceLevel: { 
+                langCode: 'widgets.wallboard.serviceLevel',
+                title: this.translocoService.translate('widgets.wallboard.serviceLevel'), custom: this.customServiceLevelCell }
         };
         this.table.sort = true;
         this.table.footer = 'disabled';

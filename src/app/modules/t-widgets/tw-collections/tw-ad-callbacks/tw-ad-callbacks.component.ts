@@ -119,7 +119,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             this.getDashboardDataRes = {
                 error: true,
                 loading: false,
-                msg: this.translocoService.translate('widgets.registerCallback.tcmProxyUrlNotFound')
+                msg: 'widgets.registerCallback.tcmProxyUrlNotFound'
             };
             return;
         }
@@ -134,7 +134,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 this.getDashboardDataRes = {
                     error: true,
                     loading: false,
-                    msg: this.translocoService.translate('widgets.adCallbacks.getContactSessionFailed')
+                    msg: 'widgets.adCallbacks.getContactSessionFailed'
                 };
             }
         });

@@ -18,6 +18,10 @@ type BaseTableConfig = {
      * Width of the column
      */
     width?: string;
+    /**
+     * language code to display field name
+     */
+    langCode?: any | null;
 };
 export interface SelectedPayload {
     /**
