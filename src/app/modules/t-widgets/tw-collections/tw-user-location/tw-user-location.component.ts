@@ -145,7 +145,10 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
      */
     setLocation(lat: number, long: number): void {
         try {
-            this.error = '';
+            if(this.map){
+                this.map.remove();
+            }            
+            this.error = undefined;
             this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(this.map);
             const icon = L.icon({
