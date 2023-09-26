@@ -318,7 +318,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
-                if (this.fileUploadUrl?.MediaStreamer) {
+                if (this.fileUploadUrl?.MediaUploader) {
                     const formData = new FormData();
                     formData.append('file', f);
                     formData.append('interaction_id', TUtils.Generic.uuid());

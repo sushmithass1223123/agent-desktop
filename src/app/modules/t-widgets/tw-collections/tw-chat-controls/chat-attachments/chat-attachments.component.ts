@@ -279,18 +279,18 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
             // check if SMM
             // check if MediaStreamer is configured, then use MediaStreamer for upload
-            if (this.isSMM || this.fileUploadUrl.MediaStreamer) {
+            if (this.isSMM || this.fileUploadUrl.MediaUploader) {
                 // check if the URL is configured
                 // added new file upload url MediaStreamer
                 // keeping "SMM" for backward compatibility
-                if (!this.fileUploadUrl.SMM && !this.fileUploadUrl.MediaStreamer) {
+                if (!this.fileUploadUrl.SMM && !this.fileUploadUrl.MediaUploader) {
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.msURLNotFound'), 'failure');
                     this.attachPreviewMode = '';
                     this.uploadingFiles = [];
                     return;
                 }
 
-                const uploadURLs = this.fileUploadUrl.SMM || this.fileUploadUrl.MediaStreamer;
+                const uploadURLs = this.fileUploadUrl.SMM || this.fileUploadUrl.MediaUploader;
 
                 // get the files and upload
                 this.uploadingFiles.forEach(async (file) => {
