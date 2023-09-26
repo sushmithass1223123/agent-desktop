@@ -877,6 +877,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
+    private isValidURL(url: string) {
+        try {
+          new URL(url);
+          return true;
+        } catch (error) {
+          return false;
+        }
+    }
+
     /**
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
@@ -955,8 +964,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     data.replyId = json.replyId;
                     data.attachment = json.attachment ? json.attachment : null;
 
-                    if (json.uploader === 'MediaStreamer') {
-                        // do not modify use as is
+                    if(json?.attachment?.uploader === 'MediaStreamer'){
+                        const mediaStreamerUrl: string = this.fileUploadUrl?.MediaStreamer;                     
+                        if(mediaStreamerUrl && !this.isValidURL(json?.attachment?.src)){
+                            //set url
+                            data.attachment.src = `${mediaStreamerUrl}/stream/media/${json?.attachment?.src}`;
+                        }
+                    }else if (json.uploader === 'MediaStreamer') {
+                        // do not modify use as is                       
                     } else {
                         // get the file upload url
                         const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
@@ -1199,7 +1214,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if ((attachment || this.agentFeatures.chatReply) && !this.isSMM) {
             if (attachment) {
                 // if the uploader is "MediaStreamer" then change the uploader
-                if (this.fileUploadUrl.MediaStreamer) {
+                if (this.fileUploadUrl.MediaUploader) {
                     attachment.uploader = 'MediaStreamer';
                 }
                 // if the uploader is "MediaProxy" then remove the source

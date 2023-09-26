@@ -224,10 +224,16 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     }
 
     async loadConfig(): Promise<void> {
+
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // check if the config is not null
+            this.appConfig = config;
+            this.languageSelectionEnabled = this.appConfig?.Login?.enableLanguageSelection;
+        });
         // load the config
-        const config = await this._appDataService.getJsonConfig();
+        /* const config = await this._appDataService.getJsonConfig();
         this.appConfig = config;
-        this.languageSelectionEnabled = this.appConfig?.Login?.enableLanguageSelection;
+        this.languageSelectionEnabled = this.appConfig?.Login?.enableLanguageSelection; */
     }
 
     // -----------------------------------------------------------------------------------------------------

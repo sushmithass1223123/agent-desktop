@@ -2312,6 +2312,7 @@
             "DashboardServerUrls": ["https://mx.tetherfi.cloud/SignalRDashboard1", "https://mx.tetherfi.cloud/SignalRDashboard2"],
             "FileServerUrl": {
                 "MediaStreamer": "https://mx.tetherfi.cloud:13019/upload",
+                "MediaUploader": "https://mx.tetherfi.cloud:13022",
                 "MediaProxy": "https://mx.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://mx.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
