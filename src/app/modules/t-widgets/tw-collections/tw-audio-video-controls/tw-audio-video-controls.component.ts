@@ -681,13 +681,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     if (evt.data?.code in AV_ERRORS) {
                         error = AV_ERRORS[evt.data.code];
                     }
-                    this.status = `Error : ${error}`;
-                    this._appUIService.showSnackbar(error, 'failure');
+                    this.status = `Error : ${error}`;                    
+                    if(error){
+                        this._appUIService.showSnackbar(error, 'failure');
+                    }
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
 
                     if (evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {
                         return;
                     }
+                    this.logger.info('onAVEvent.onError - Trying to ending call');
                     this.endCall(true, this.translocoService.translate('global.commonErrorMessage'));
                     // close the widget
                     this.destroyWidget();
@@ -1620,8 +1623,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     public async endCall(endOnly = false, reason = ''): Promise<boolean> {
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
+            this.logger.info('endCall - droping call');
             this.avConn.dropCall(reason);
         } else {
+            this.logger.info('endCall - ending call');
             this.avConn.endCall(this.wrcCallType, reason);
         }
 
