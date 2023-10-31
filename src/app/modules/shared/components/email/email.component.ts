@@ -208,7 +208,10 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             .catch((e) => {
                 console.error(e);
                 if (e instanceof ADError) {
-                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.getFrequentlyUsedEmailFailed'), 'failure');
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.email.getFrequentlyUsedEmailFailed'),
+                        'failure'
+                    );
                 }
             });
     }
@@ -329,7 +332,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
                     // upload the file
                     const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
-                        urls: [this.fileUploadUrl.MediaStreamer],
+                        urls: [this.fileUploadUrl.MediaUploader],
                         method: 'POST',
                         responseType: 'json',
                         formData
@@ -513,8 +516,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             sessionID: this.email.SessionID,
             data: this.email,
             eventType: 'onUIActionEvent'
-          };
-
+        };
 
         this.uiActionEventService.emitUIActionEvent(emailActionData);
     }
