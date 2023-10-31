@@ -758,7 +758,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.screenSharing = false;
                     break;
                 case 'onScreenshareDisconnected':
-                    this.status = 'ss-disconnected';
+                    this.status = evt.data ? evt.data :'ss-disconnected';
                     this.remoteScreenSharing = false;
                     this.remoateScreenshareRef = null;
                     // remove the screenshare user
