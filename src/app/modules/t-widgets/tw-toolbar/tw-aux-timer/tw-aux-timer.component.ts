@@ -107,8 +107,11 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
     private AgentStatusChangeEvent = (evt: AgentStatusChangeEvent) => {
         // check if on call isn't sent again before restarting timer
         if (!evt.Status.includes('On Call') || !this.lastStatus.includes('On Call')) {
-            // this.restartTimer$.next(evt.CreatedTime);
-            this.restartTimer$.next(Date.now());
+            // check if the current aux status is equal to the previous status
+            if (this.lastStatus && !evt.Status.includes(this.lastStatus)){
+                // this.restartTimer$.next(evt.CreatedTime);
+                this.restartTimer$.next(Date.now());
+            }
         }
         // update last status
         this.lastStatus = evt.Status;
