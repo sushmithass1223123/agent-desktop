@@ -247,7 +247,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     appLabelsError: any;
 
     languageSelectionEnabled = false;
-    languages = ["en", "de", "zh"];
+    languages = this.translocoService.getAvailableLangs();
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
