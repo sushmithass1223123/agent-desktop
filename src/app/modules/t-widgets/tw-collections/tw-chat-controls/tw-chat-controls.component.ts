@@ -1936,6 +1936,31 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
                 }
 
+                if (attachment) {
+                    //check if attachment is uploaded to media streamer
+                    if (attachment?.uploader === 'MediaStreamer') {
+                        //build proper media streamer url
+                        const mediaStreamerUrl: string = this.fileUploadUrl?.MediaStreamer;
+                        if (mediaStreamerUrl && !this.isValidURL(attachment?.src)) {
+                            //set url
+                            attachment.src = `${mediaStreamerUrl}/stream/media/${attachment?.src}`;
+                        }
+                    } else {
+                        // get the file upload url
+                        const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
+
+                        // check if we need to get full path of attachment
+                        if (
+                            !attachment.src && // check if src is not found
+                            attachment.name && // check if name is provided
+                            fileServerUrl // check if file server URL is configured
+                        ) {
+                            // get the attachment src
+                            attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
+                        }
+                    }
+                }
+
                 // add message to the transcripts
                 if (user) {
                     this.pushToTranscript({
