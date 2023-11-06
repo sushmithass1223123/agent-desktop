@@ -36,7 +36,13 @@ The actual rendered columns are set as a property on the row definition" -->
                             [style.max-width]="conf.value?.width"
                             [ngClass]="{ 'max-flex': conf.value?.width }"
                         >
-                            {{ conf.value?.langCode ? (locale(conf.value?.langCode) !== conf.value?.langCode ? locale(conf.value?.langCode) : conf.value?.title ?? conf.key) : conf.value?.title ?? conf.key }}
+                            {{
+                                conf.value?.langCode
+                                    ? locale(conf.value?.langCode) !== conf.value?.langCode
+                                        ? locale(conf.value?.langCode)
+                                        : conf.value?.title ?? conf.key
+                                    : conf.value?.title ?? conf.key
+                            }}
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element" [style.max-width]="conf.value?.width" [ngClass]="{ 'max-flex': conf.value?.width }">
                             <ng-container *ngIf="getColumnConfig(conf.key, conf.value, element) as cell">
@@ -215,33 +221,51 @@ The actual rendered columns are set as a property on the row definition" -->
                     <ng-container *ngFor="let col of columns">
                         <ng-container *ngIf="config[col] as item">
                             <ng-container *ngIf="item.searchable">
-                                <mat-form-field *ngIf="item.type === 'date'; else textFormRef">
-                                    <mat-label>{{ item.title || col }}</mat-label>
-                                    <mat-date-range-input [rangePicker]="timePicker">
-                                        <input
-                                            matStartDate
-                                            [placeholder]="locale('sharedComponents.table.startDate')"
-                                            [(ngModel)]="advancedSearchForm[col + '_Start']"
-                                            [name]="col + '_Start'"
-                                        />
-                                        <input
-                                            matEndDate
-                                            [placeholder]="locale('sharedComponents.table.endDate')"
-                                            [(ngModel)]="advancedSearchForm[col + '_End']"
-                                            [name]="col + '_End'"
-                                        />
-                                    </mat-date-range-input>
-                                    <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
-                                    <mat-date-range-picker #timePicker></mat-date-range-picker>
-                                </mat-form-field>
-                                <ng-template #textFormRef>
-                                    <mat-form-field>
-                                        <mat-label>
-                                            {{ item.title || col }}
-                                        </mat-label>
-                                        <input matInput type="text" [(ngModel)]="advancedSearchForm[col]" [name]="col" />
-                                    </mat-form-field>
-                                </ng-template>
+                                <ng-container [ngSwitch]="item.type">
+                                    <ng-container *ngSwitchCase="'date_single'">
+                                        <mat-form-field>
+                                            <mat-label>{{ item.title || col }}</mat-label>
+                                            <input
+                                                matInput
+                                                [matDatepicker]="datePicker"
+                                                [placeholder]="locale('sharedComponents.table.startDate')"
+                                                [(ngModel)]="advancedSearchForm[col]"
+                                                [name]="col"
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #datePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'date'">
+                                        <mat-form-field>
+                                            <mat-label>{{ item.title || col }}</mat-label>
+                                            <mat-date-range-input [rangePicker]="timePicker">
+                                                <input
+                                                    matStartDate
+                                                    [placeholder]="locale('sharedComponents.table.startDate')"
+                                                    [(ngModel)]="advancedSearchForm[col + '_Start']"
+                                                    [name]="col + '_Start'"
+                                                />
+                                                <input
+                                                    matEndDate
+                                                    [placeholder]="locale('sharedComponents.table.endDate')"
+                                                    [(ngModel)]="advancedSearchForm[col + '_End']"
+                                                    [name]="col + '_End'"
+                                                />
+                                            </mat-date-range-input>
+                                            <mat-datepicker-toggle matSuffix [for]="timePicker"></mat-datepicker-toggle>
+                                            <mat-date-range-picker #timePicker></mat-date-range-picker>
+                                        </mat-form-field>
+                                    </ng-container>
+                                    <ng-container *ngSwitchDefault>
+                                        <mat-form-field>
+                                            <mat-label>
+                                                {{ item.title || col }}
+                                            </mat-label>
+                                            <input matInput type="text" [(ngModel)]="advancedSearchForm[col]" [name]="col" />
+                                        </mat-form-field>
+                                    </ng-container>
+                                </ng-container>
                             </ng-container>
                         </ng-container>
                     </ng-container>
@@ -257,6 +281,9 @@ The actual rendered columns are set as a property on the row definition" -->
                             {{ locale('sharedComponents.table.reset') }}
                         </button>
                         <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary">{{ locale('global.search') }}</button>
+                        <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary" (click)="closeAdvancedSearch()">
+                            {{ locale('global.close') }}
+                        </button>
                     </div>
                 </form>
             </div>
