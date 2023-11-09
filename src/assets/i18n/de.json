@@ -43,7 +43,10 @@
             "getContactSessionFailed": "Kontaktsitzung konnte nicht abgerufen werden"
         },
         "chatControls": {
-            "messagePlaceholder": "Geben Sie Ihre Nachricht ein"
+            "messagePlaceholder": "Geben Sie Ihre Nachricht ein",
+            "requestForAudioCallSent": "Audio call request sent",
+            "requestForVideoCallSent": "Video call request sent",
+            "errorInCallRequest": "Call request failed"
         },
         "cannedResponses": {
             "mode": "Modus",
@@ -65,6 +68,7 @@
             "switchToVideo": "更改为视频",
             "stopScreenShare": "Stoppen Sie die Bildschirmfreigabe",
             "screenShare": "Bildschirm teilen",
+            "requestScreenShare": "Request Screen Share",
             "toggleRemoteCamera": "Benutzerkamera umschalten",
             "switchToChatView": "Wechseln Sie zur Chat-Ansicht",
             "switchToCallView": "Wechseln Sie zur Anrufansicht",
@@ -103,7 +107,10 @@
             "toggleViewRequestFailed": "Toggle view request failed!",
             "toggleViewRequestError": "Toggle view request error!",
             "remoteMuteTypeRequestFailed": "Customer #streamType #muteType request failed!",
-            "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!"
+            "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!",
+            "screenshareAlreadyInProgress": "Bildschirmfreigabe bereits im Gange!",
+            "screenshareReqSent": "Anfrage zur Bildschirmfreigabe gesendet",
+            "screenshareReqError": "Fehler beim Senden der Bildschirmfreigabeanfrage"
         },
         "wallboard": {
             "skillName": "Fertigkeitsname",

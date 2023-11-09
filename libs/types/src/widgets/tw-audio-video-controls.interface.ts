@@ -152,6 +152,10 @@ export type TwAudioVideoControlsData = {
      */
     ScreenShareAllowed: boolean;
     /**
+     * [STANDALONE] Flag to allow screenshare requesting
+     */
+    ReqScreenShareAllowed: boolean;
+    /**
      * [STANDALONE] Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;

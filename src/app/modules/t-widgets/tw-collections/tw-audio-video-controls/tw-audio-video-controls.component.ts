@@ -198,6 +198,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
          */
         screenshare: boolean;
         /**
+         * Request Screenshare
+         */
+        reqScreenshare: boolean;
+        /**
          * WebRTC test
          */
         webrtcTest: boolean;
@@ -344,6 +348,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             oneWayVideo: false,
             hold: this.data.Data.HoldInteractionAllowed ?? false,
             screenshare: this.data.Data.ScreenShareAllowed ?? false,
+            reqScreenshare: this.data.Data.ReqScreenShareAllowed ?? false,
             snapshot: this.data.Data.Snapshot?.Allowed ?? false,
             toggleUserView: this.data.Data.ToggleUserViewAllowed ?? false,
             webrtcTest: this.data.Data.WebRTCTest?.Allowed ?? false
@@ -483,6 +488,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // get the featue
             const feature = f.Feature.toLowerCase();
 
+            //TODO: Req Screenshare is not added
+
             // switch the feature
             switch (feature) {
                 case AGENT_FEATURES.IsAudioToVideoEscalateEnabled:
@@ -499,6 +506,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     break;
                 case AGENT_FEATURES.IsChatScreenshareEnabled:
                     this.agentFeatures.screenshare = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsReqScreenshareEnabled:
+                    this.agentFeatures.reqScreenshare = f.IsEnabled;
                     break;
                 case AGENT_FEATURES.IsToggleChatUserViewEnabled:
                     this.agentFeatures.toggleUserView = f.IsEnabled;
@@ -1147,6 +1157,15 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     }
                     break;
+                case 'request_screenshare':
+                    {
+                        if(msg.status === 'accepted'){
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareAccepted'));
+                        }else if (msg.status === 'rejected'){
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareRejected'));
+                        }
+                    }
+                    break;
                 case 'togglecamera':
                 case 'toggleview':
                     {
@@ -1401,6 +1420,40 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
+    }
+
+    /**
+     * Request To Share Screen
+     * @method requestToShareScreen
+     */
+    public requestToShareScreen(): void {
+        // check if there is an ongoing screenshare already
+        if (this.screenSharing) {
+            // screen share already in progress - send warning popup
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.screenshareAlreadyInProgress'), 'warning');
+        } else {
+            // request customer to initiate screenshare
+            SDKClient.sendActionMessage({
+                interactionId: this.interactionId as any,
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interactionId
+                    },
+                    status: 'request',
+                    type: 'request_screenshare',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            }).then(res => {
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.screenshareReqSent'));
+
+            }).catch(ex => {
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.screenshareReqError'), 'failure');                
+            });    
+            
+        }
     }
 
     /**

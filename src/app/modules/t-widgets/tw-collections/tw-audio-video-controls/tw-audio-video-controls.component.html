@@ -284,6 +284,18 @@
                         </button>
 
                         <button
+                            *ngIf="agentFeatures.reqScreenshare"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            [matTooltip]="locale('widgets.audioVideoControls.requestScreenShare')"
+                            [ngClass]="{ 'bg-alt-danger': screenSharing }"
+                            (click)="requestToShareScreen()"
+                        >
+                            <mat-icon> {{ screenSharing ? 'tv' : 'tv' }} </mat-icon>
+                        </button>
+
+                        <button
                             *ngIf="userCameraList?.length"
                             mat-flat-button
                             mat-icon-button

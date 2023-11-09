@@ -101,6 +101,10 @@
             "webrtcRequestAccepted": "Webrtc troubleshoot request is accepted by customer",
             "webrtcRequestReceived": "Webrtc troubleshoot request is received by customer",
             "webrtcRequestRejected": "Webrtc troubleshoot request is rejected by customer",
+            "audioCallRequestAccepted": "Audio call request is accepted by customer",
+            "audioCallRequestRejected": "Audio call request is rejected by customer",
+            "videoCallRequestAccepted": "Video call request is accepted by customer",
+            "videoCallRequestRejected": "Video call request is rejected by customer",
             "whiteboardRequestReceived": "Whiteboard request received by customer",
             "whiteboardRequestAccepted": "Whiteboard request accepted by customer",
             "whiteboardRequestRejected": "Whiteboard request rejected by customer",
@@ -131,7 +135,10 @@
             "whiteboardLoading": "Opening whiteboard",
             "whiteboardLoadingError": "Error occured while opening whiteboard",
             "agentCustomerURLsNotFound": "Agent and Customer Urls are not provided in Config",
-            "coBrowseLoading": "Opening Co-browse"
+            "coBrowseLoading": "Opening Co-browse",
+            "requestForAudioCallSent": "Audio call request sent",
+            "requestForVideoCallSent": "Video call request sent",
+            "errorInCallRequest": "Call request failed"
         },
         "cannedResponses": {
             "mode": "模式",
@@ -153,6 +160,7 @@
             "switchToVideo": "更改为视频",
             "stopScreenShare": "停止屏幕共享",
             "screenShare": "屏幕共享",
+            "requestScreenShare": "请求屏幕共享",
             "toggleRemoteCamera": "切换用户相机",
             "switchToChatView": "更改为聊天视图",
             "switchToCallView": "更改为通话视图",
@@ -191,7 +199,12 @@
             "toggleViewRequestFailed": "Toggle view request failed!",
             "toggleViewRequestError": "Toggle view request error!",
             "remoteMuteTypeRequestFailed": "Customer #streamType #muteType request failed!",
-            "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!"
+            "remoteMuteTypeRequestError": "Customer #streamType #muteType request error!",
+            "screenshareAlreadyInProgress": "屏幕共享已经在进行中",
+            "screenshareReqSent": "已发送屏幕共享请求",
+            "screenshareReqError": "发送屏幕共享请求时出错",
+            "requestScreenShareAccepted": "Customer has accepted request to screen share",
+            "requestScreenShareRejected": "Customer has rejected request to screen share"
         },
         "wallboard": {
             "skillName": "技能名称",
