@@ -477,6 +477,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * To toggle user view mode
          */
         toggleUserView: boolean;
+        /**
+         * Audio call request
+         */
+        reqAudioCall: boolean;
+        /**
+         * Video call request
+         */
+        reqVideoCall: boolean;
     };
     /**
      * Connected event ref
@@ -657,7 +665,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
             webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
             mediaDownload: false,
-            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false
+            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false,
+            reqAudioCall: this.widgetData.RequestAudioCallAllowed ?? false,
+            reqVideoCall: this.widgetData.RequestVideoCallAllowed ?? false
         };
 
         // set the user info
@@ -718,6 +728,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 label: 'Start Co-browsing',
                 icon: 'people',
                 type: 'cobrowse'
+            })
+        }
+
+        if (this.agentFeatures.reqAudioCall) {
+            this.moreActions.push({
+                label: 'Request Audio Call',
+                icon: 'phone_callback',
+                type: 'reqAudioCall'
+            })
+        }
+
+        if (this.agentFeatures.reqVideoCall) {
+            this.moreActions.push({
+                label: 'Request Video Call',
+                icon: 'ondemand_video',
+                type: 'reqVideoCall'
             })
         }
     }
@@ -2093,6 +2119,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             let status: SnackbarStateTypes = 'success';
 
             switch (msg.type.toLowerCase()) {
+                case 'request_audio_call':
+                    {
+                        if(msg.status === 'accepted'){
+                            message = this.translocoService.translate('widgets.chatControls.audioCallRequestAccepted');
+                        }else if(msg.status === 'rejected'){
+                            message = this.translocoService.translate('widgets.chatControls.audioCallRequestRejected');
+                            status = 'failure';
+                        }
+                        
+                    }
+                    break;   
+                case 'request_video_call':
+                    {
+                        if(msg.status === 'accepted'){
+                            message = this.translocoService.translate('widgets.chatControls.videoCallRequestAccepted');
+                       }else if(msg.status === 'rejected'){
+                            message = this.translocoService.translate('widgets.chatControls.videoCallRequestRejected');
+                            status = 'failure';
+                       }
+
+                    }                    
+                    break;               
                 case 'webrtctroubleshoot':
                     if (msg.status === 'accepted') {
                         message = this.translocoService.translate('widgets.chatControls.webrtcRequestAccepted');
@@ -3360,6 +3408,56 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    async sendRequestForCall(callType: string): Promise<boolean> {
+        try {
+            if(callType === 'AUDIO'){
+                await SDKClient.sendActionMessage({
+                    interactionId: this.interaction.InteractionID.toString(),
+                    message: JSON.stringify({
+                        source: 'agent',
+                        options: {},
+                        data: {
+                            interactionId: this.interaction.InteractionID.toString()
+                        },
+                        status: 'request',
+                        type: 'request_audio_call',
+                        eventName: 'ActionMessage',
+                        id: TUtils.Generic.uuid()
+                    })
+                })
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.requestForAudioCallSent'));
+                return true;
+    
+            }else if(callType === 'VIDEO'){
+                await SDKClient.sendActionMessage({
+                    interactionId: this.interaction.InteractionID.toString(),
+                    message: JSON.stringify({
+                        source: 'agent',
+                        options: {},
+                        data: {
+                            interactionId: this.interaction.InteractionID.toString()
+                        },
+                        status: 'request',
+                        type: 'request_video_call',
+                        eventName: 'ActionMessage',
+                        id: TUtils.Generic.uuid()
+                    })
+                })
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.requestForVideoCallSent'));
+                return true;
+    
+            }else{
+                return false;    
+            }
+            
+        } catch (error) {
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.errorInCallRequest'), 'failure');
+            return false; 
+        }
+        
+
+    }
+
     /**
      * To execute action
      */
@@ -3373,6 +3471,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 break;
             case 'cobrowse':
                 this.openCobrowse();
+            case 'reqAudioCall':
+                this.sendRequestForCall('AUDIO');
+            case 'reqVideoCall':
+                this.sendRequestForCall('VIDEO');
             default:
         }
         // close the more actions overlay

@@ -267,6 +267,7 @@ export const AGENT_FEATURES = {
     IsVideoSnapshotEnabled: 'isvideosnapshotenabled',
     IsChatVoiceNoteEnabled: 'ischatvoicenoteenabled',
     IsChatScreenshareEnabled: 'ischatscreenshareenabled',
+    IsReqScreenshareEnabled: 'isreqscreenshareenabled',
     IsFaxOutEnabled: 'isfaxoutenabled',
     IsSMSOutEnabled: 'issmsoutenabled',
     IsWhatsAppOutEnabled: 'iswhatsappoutenabled',

@@ -217,9 +217,17 @@ export type TwChatControlsData = {
      */
     AudioEscalateAllowed: boolean;
     /**
+     * Flag to allow audio call request
+     */
+    RequestAudioCallAllowed: boolean;
+    /**
      * Flag to allow esacalation to video
      */
     VideoEscalateAllowed: boolean;
+    /**
+     * Flag to allow video call request
+     */
+    RequestVideoCallAllowed: boolean;
     /**
      * Flag to enable signature
      */
