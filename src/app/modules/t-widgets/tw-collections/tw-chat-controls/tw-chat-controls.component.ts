@@ -3471,11 +3471,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 break;
             case 'cobrowse':
                 this.openCobrowse();
+                break;
             case 'reqAudioCall':
                 this.sendRequestForCall('AUDIO');
+                break;
             case 'reqVideoCall':
                 this.sendRequestForCall('VIDEO');
+                break;
             default:
+                break;
         }
         // close the more actions overlay
         this.openMoreActions = false;
