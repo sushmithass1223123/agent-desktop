@@ -13,7 +13,10 @@ import {
     OutgoingCallEvent,
     OutgoingEmailEvent,
     TextChatIncomingEvent,
-    TUtils
+    TUtils,
+    EmailSendingStatusEvent,
+    SDKClient,
+    IResponse
 } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
@@ -23,6 +26,8 @@ import { throwADError } from 'app/utils';
 import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
+import { AppUiService } from '@services/app-ui.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * TwcInteractionComponent
@@ -59,7 +64,9 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         public contentPageService: ContentPageService,
         private _interactionManagerService: InteractionManagerService,
         private _tmacEventService: TMACEventService,
-        private _aotWidgetService: AOTWidgetService
+        private _aotWidgetService: AOTWidgetService,
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService,
     ) {
         super('TwcInteractionComponent', hostElement, contentPageService);
     }
@@ -111,7 +118,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 eventNames = ['TextChatIncomingEvent'];
                 break;
             case 'email':
-                eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent'];
+                eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent', 'EmailSendingStatusEvent'];
                 break;
             case 'fax':
                 eventNames = ['FaxReceivedEvent'];
@@ -233,7 +240,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             isActive: this.interactions.length === 1 ?? forceActive,
             user: user || 'Customer',
             path: this.data.Data.Path,
-            otherData: otherData
+            otherData: otherData,
+            isEmailSent: null
         });
     }
 
@@ -296,6 +304,37 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     GenericInteractionEvent(evt: GenericInteractionEvent): void {
         this.createWidgetList(evt, 'connected', evt.Item.CustomerIdentifier, false, {});
+    }
+
+    /**
+     * To Process Interaction Sending Status Event
+     */
+    EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
+        let emailMeta = JSON.parse(evt.JsonData);
+        if(emailMeta?.outboundData?.currentStatus === 'SentToCustomer'){
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                isEmailSent: true
+            });
+            this._appUIService.showSnackbar(`Email sent to customer`);
+            SDKClient.closeInteraction(evt.InteractionID.toString(), null)
+            .then((dt: IResponse) => {
+                // check the response
+                if (dt.response && dt.response.ResultCode === 0) {
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+                    // remove the interaction reference
+                    this._interactionManagerService.removeInteraction(dt.response.InteractionID);
+                } else {
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
+                }
+            })
+            .catch(() => {
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
+            })
+
+        }else{
+            this._appUIService.showSnackbar(`Error sending email to customer`, 'failure');
+        }
+        
     }
 
     /**

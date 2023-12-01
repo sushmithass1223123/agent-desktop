@@ -161,7 +161,14 @@ export class TMACEventService extends SharedWrapper {
             this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
         }
         // notify the observers
-        this._interactionEvent$.next([evt]);
+        if(evt.EventName === 'EmailSendingStatusEvent'){
+            evt.IsInteractionConstructEvent = true;
+            this._interactionEvent$.next([evt]);
+
+        }else{
+            this._interactionEvent$.next([evt]);
+        }
+        
         // emit events to launcher
         this.emitEventsToLauncher(evt);
     }

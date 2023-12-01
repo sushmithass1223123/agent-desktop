@@ -268,7 +268,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         user: i.user,
                         status: i.status,
                         isActive: i.isActive,
-                        interactionId: i.interactionId
+                        interactionId: i.interactionId,
+                        isEmailSent: i.isEmailSent
                     };
                 });
         });
@@ -323,7 +324,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
             // play new email sound
             this._appUIService.playAudio('new-email', 0.5, false);
-            this._appUIService.showDesktopAlert('Incoming Email', this.translocoService.translate('widgets.emailControls.incomingEmailNotification') + ' ' + this.currentInteraction.From, false);
+            this._appUIService.showDesktopAlert(
+                'Incoming Email',
+                this.translocoService.translate('widgets.emailControls.incomingEmailNotification') + ' ' + this.currentInteraction.From,
+                false
+            );
         } else {
             this.showComposeEditor();
         }
@@ -335,7 +340,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             .getInteractionEvents(['InteractionDataEvent', 'UpdateEmailEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
-        
+
         this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
     }
 
@@ -348,6 +353,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
         this.replyInfo$.next(this.getReplyInfo());
+    }
+
+    /**
+     * Checks if email is sent or not
+     */
+    isEmailSent(interactionId: any): boolean {
+        let interaction = this.interactionList.find((i) => i.interactionId === interactionId);
+
+        if (interaction && interaction.isEmailSent === false) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -837,7 +854,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 btn.disabled = false;
             }
             this.sendingEmailAsMaker = false;
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.messageSentSuccess') + ' ' + currentStatusMsg, 'success');
+            this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                isEmailSent: false
+            });
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('widgets.emailControls.messageSentSuccess') + ' ' + currentStatusMsg,
+                'success'
+            );
             this.draftPolling$?.unsubscribe();
             this.emailRef.mode = 'preview';
             // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
@@ -863,7 +886,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         try {
             btn.disabled = true;
             const { InSessionId, CurrOutSessionId, RouteId, Body, Subject, CCList, BCCList, To, AttachmetList } = this.currentInteraction;
-            const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Approve', this.translocoService.translate('widgets.emailControls.approveEmailConfirmMsg'));
+            const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+                'generic',
+                'Confirm Approve',
+                this.translocoService.translate('widgets.emailControls.approveEmailConfirmMsg')
+            );
             const dialogResult: boolean = await confirmDialogRef.afterClosed().toPromise();
             if (dialogResult) {
                 // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
@@ -988,6 +1015,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
         );
         confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
+            this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                isEmailSent: true
+            });
             if (dialogResult) {
                 this.saveEmailAsDraft(closeEmail, btn);
                 // this.replyInfo = null;
@@ -1057,7 +1087,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Marks currently selected email as spam
      */
     markAsSpam(): void {
-        const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Spam',this.translocoService.translate('widgets.emailControls.markSpamConfirmMsg'));
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+            'generic',
+            'Confirm Spam',
+            this.translocoService.translate('widgets.emailControls.markSpamConfirmMsg')
+        );
         confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
                 // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
