@@ -522,6 +522,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     }
                     item.Ext = item.Name.split('.').pop();
                     item.Icon = maticonByExtension(item.Ext);
+                    item.Status = 'ARCHIVED';
                 });
             }
 
@@ -927,6 +928,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 if (reasonCodeMsg !== 'success') {
                     throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
                 }
+                this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                    isEmailSent: false
+                });
                 this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
                 this.draftPolling$?.unsubscribe();
                 sendLoader?.dismiss();
