@@ -8,7 +8,7 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
-import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse } from 'app/interfaces';
+import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse, MediaStreamerSingleResponse } from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -296,6 +296,30 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 this.setEmailBody();
             }
         }
+    }
+
+    /**
+     * Restore method for archived file
+     */
+    async restoreFromArchive(file: any): Promise<void> {
+        try {
+            if (file && file.FileId) {
+                const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerSingleResponse<any>>({
+                    urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
+                    method: 'PUT',
+                    responseType: 'json'
+                });
+                if (response && response.isSuccess) {
+                    //success
+                    file.RestoreStatus = true;
+                    this._appUiService.showSnackbar('File restore initiated');
+                } else {
+                    this._appUiService.showSnackbar('Error occurred restoring file', 'failure');
+                }
+            } else {
+                this._appUiService.showSnackbar('File id not found cannot restore', 'failure');
+            }
+        } catch (error) {}
     }
 
     /**

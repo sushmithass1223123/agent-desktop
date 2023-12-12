@@ -118,7 +118,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 eventNames = ['TextChatIncomingEvent'];
                 break;
             case 'email':
-                eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent', 'EmailSendingStatusEvent'];
+                eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent'];
                 break;
             case 'fax':
                 eventNames = ['FaxReceivedEvent'];
@@ -126,6 +126,17 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             case 'generic':
                 eventNames = ['GenericInteractionEvent'];
                 break;
+        }
+
+        if(this.type.toLowerCase() === 'email'){
+            this._tmacEventService
+            .getAllSubscribedEvents<IUIEvent>(['EmailSendingStatusEvent'])
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) =>
+                evts.forEach((evt) => {
+                    this[evt.EventName](evt);
+                })
+            );
         }
 
         if (eventNames.length) {
@@ -333,6 +344,9 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
         }else{
             this._appUIService.showSnackbar(`Error sending email to customer`, 'failure');
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                isEmailSent: true
+            });
         }
         
     }

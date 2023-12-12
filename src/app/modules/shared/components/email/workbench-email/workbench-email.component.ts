@@ -21,9 +21,10 @@ import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
+import { AppDataService } from '@services/app-data.service';
+import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
 import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
-import { EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
+import { EmailComponentInputs, IWidget, ResData, MediaStreamerMultiResponse, MediaStreamerMetaResponse } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { addHours, format, format as formatDate } from 'date-fns';
@@ -336,6 +337,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     disableBtn: Boolean = false;
     /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
+    /**
      * Constructor
      */
     constructor(
@@ -344,11 +349,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private http: HttpClient,
         private appUiService: AppUiService,
         private matDialog: MatDialog,
+        private emailDialog: MatDialog,
         private _emailService: EmailService,
         private _aotWidgetService: AOTWidgetService,
         private _agentFeaturesService: AgentFeaturesService,
         private _appUIService: AppUiService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _appDataService: AppDataService
     ) {
         super('WorkbenchEmailComponent');
     }
@@ -386,6 +393,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (change) {
                 this.checkAgentFeatures();
             }
+        });
+
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
 
         // check for the agent features
@@ -928,91 +939,172 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Pull email
      * @method pullEmail
      */
-    pullEmails(emails: Mail[]): void {
-        const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailLoading'), 'loading');
-        try {
-            const { agentId, tmacServer } = SDKClient.getAgentData();
-            if (emails.find((email) => !email.InSessionId)) {
-                this.getValidDataForSelectedEmail();
-                return;
+    async pullEmails(emails: Mail[]): Promise<void> {
+        let archivedAttachments = emails.find((e) => {
+            let filesInArchive = e.Files.find((f) => {
+                return f.ArchiveStatus === true;
+            });
+            if (filesInArchive) {
+                return true;
+            } else {
+                return false;
             }
-            const { items, uiIds } = emails.reduce(
-                (acc, curr) => {
-                    const item = {
-                        routeId: curr.RouteId || '',
-                        sessionId: curr.InSessionId,
-                        inSessionId: curr.InSessionId,
-                        conversationId: curr.ConversationID || '',
-                        mailbox: curr.Mailbox
-                    };
-                    if (this.currentTab === 'draft') {
-                        item.sessionId = curr.OutSessionId;
-                    } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
-                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
-                    } else if (this.currentTab === 'sentitem') {
-                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
-                        // item.inSessionId = curr.OutSessionId;
-                    }
-                    delete this.emailBodies[curr.InSessionId];
-                    delete this.emailBodies[curr.OutSessionId];
-                    acc.items.push(item);
-                    acc.uiIds.push(curr.uiId);
-                    return acc;
-                },
-                { items: [], uiIds: [] }
-            );
-            this.http
-                .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
-                    tmacServer,
-                    agentId,
-                    items
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        if (res.status === 'FAILED') {
-                            // console.error(res);
-                            loader.dismiss();
-                            const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
-                            if (isAlreadyPulled.length) {
-                                if (isAlreadyPulled.length > 1) {
-                                    if (isAlreadyPulled.length === emails.length) {
-                                        this.appUiService.showSnackbar(
-                                            this.translocoService.translate('sharedComponents.email.emailsAssigned'),
-                                            'failure'
-                                        );
+        });
+
+        let pullEmailOp = () => {
+            const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailLoading'), 'loading');
+            try {
+                const { agentId, tmacServer } = SDKClient.getAgentData();
+                if (emails.find((email) => !email.InSessionId)) {
+                    this.getValidDataForSelectedEmail();
+                    return;
+                }
+                const { items, uiIds } = emails.reduce(
+                    (acc, curr) => {
+                        const item = {
+                            routeId: curr.RouteId || '',
+                            sessionId: curr.InSessionId,
+                            inSessionId: curr.InSessionId,
+                            conversationId: curr.ConversationID || '',
+                            mailbox: curr.Mailbox
+                        };
+                        if (this.currentTab === 'draft') {
+                            item.sessionId = curr.OutSessionId;
+                        } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
+                            item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                        } else if (this.currentTab === 'sentitem') {
+                            item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                            // item.inSessionId = curr.OutSessionId;
+                        }
+                        delete this.emailBodies[curr.InSessionId];
+                        delete this.emailBodies[curr.OutSessionId];
+                        acc.items.push(item);
+                        acc.uiIds.push(curr.uiId);
+                        return acc;
+                    },
+                    { items: [], uiIds: [] }
+                );
+                this.http
+                    .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
+                        tmacServer,
+                        agentId,
+                        items
+                    })
+                    .subscribe({
+                        next: (res: any) => {
+                            if (res.status === 'FAILED') {
+                                // console.error(res);
+                                loader.dismiss();
+                                const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
+                                if (isAlreadyPulled.length) {
+                                    if (isAlreadyPulled.length > 1) {
+                                        if (isAlreadyPulled.length === emails.length) {
+                                            this.appUiService.showSnackbar(
+                                                this.translocoService.translate('sharedComponents.email.emailsAssigned'),
+                                                'failure'
+                                            );
+                                        } else {
+                                            this.appUiService.showSnackbar(
+                                                this.translocoService.translate('sharedComponents.email.someEmailsAssigned'),
+                                                'failure'
+                                            );
+                                        }
                                     } else {
                                         this.appUiService.showSnackbar(
-                                            this.translocoService.translate('sharedComponents.email.someEmailsAssigned'),
+                                            this.translocoService.translate('sharedComponents.email.emailsAssigned'),
                                             'failure'
                                         );
                                     }
                                 } else {
                                     this.appUiService.showSnackbar(
-                                        this.translocoService.translate('sharedComponents.email.emailsAssigned'),
+                                        this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
                                         'failure'
                                     );
                                 }
-                            } else {
-                                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+                                return;
                             }
-                            return;
+                            if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
+                                this.openEmailRes.data.next(null);
+                            }
+                            loader.dismiss();
+                            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailSuccess'), 'success');
+                        },
+                        error: (err) => {
+                            console.error(err);
+                            loader.dismiss();
+                            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
                         }
-                        if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
-                            this.openEmailRes.data.next(null);
+                    });
+            } catch (e) {
+                console.error(e);
+                loader.dismiss();
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+            }
+        };
+
+        if (archivedAttachments) {
+            const confirmDialogRef = this.appUiService.showAppConfirmDialog(
+                'generic',
+                'Email Pull Confirmation',
+                'There are archived attachments in this email and needs to be restored before sending'
+            );
+
+            const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
+            if (dialogResult) {
+                pullEmailOp();
+            }
+        } else {
+            pullEmailOp();
+        }
+    }
+
+    /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: any[]): Promise<any> {
+        try {
+            //extract file id's
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.URL.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId });
+                        } else {
+                            acc.att.push({ ...cur });
                         }
-                        loader.dismiss();
-                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailSuccess'), 'success');
-                    },
-                    error: (err) => {
-                        console.error(err);
-                        loader.dismiss();
-                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+                    } else {
+                        acc.att.push({ ...cur });
                     }
+                    return acc;
+                },
+                { ids: [], att: [] }
+            );
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
+                    urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                    method: 'GET',
+                    responseType: 'json'
                 });
-        } catch (e) {
-            console.error(e);
-            loader.dismiss();
-            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+
+                if (response?.result?.length > 0) {
+                    attachmentMap.att.forEach((cur) => {
+                        if (cur.IsCloud) {
+                            let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                            if (fileMeta) {
+                                cur.ArchiveStatus = fileMeta.archiveStatus;
+                                cur.RestoreStatus = fileMeta.restoreStatus;
+                            }
+                        }
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
         }
     }
 
@@ -1033,6 +1125,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const getAttachments = (attachments: any[]): any[] => {
                 // check if attachements are there
                 if (attachments && attachments.length) {
+                    // request meta data from media streamer
+
                     return attachments.map((item: any) => {
                         let uploadedName = item.URL.split('/').pop();
                         if (!item.Name) {
@@ -1042,7 +1136,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         }
                         item.Ext = item.Name.split('.').pop();
                         item.Icon = maticonByExtension(item.Ext);
-                        item.Status = 'ARCHIVED';
                         return item;
                     });
                 }
@@ -1066,9 +1159,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
                     }
                 } else {
+                    let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
                     this.emailBodies = Object.assign(this.emailBodies, {
                         [email.InSessionId]: {
-                            Files: getAttachments(inboxRes.Attachments),
+                            Files: getAttachments(tempAttachments),
                             AgentName: inboxRes.AgentName,
                             Intent: inboxRes.Intent,
                             RepliedStatus:
@@ -1101,10 +1195,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchEmailComponent.getOutboxEmail', 'Unexpected Response from server');
                 }
+                let tempAttachments = await this.requestAttachmentData(outboxRes.Attachments);
 
                 this.emailBodies = Object.assign(this.emailBodies, {
                     [email.OutSessionId]: {
-                        Files: getAttachments(outboxRes.Attachments),
+                        Files: getAttachments(tempAttachments),
                         AgentName: outboxRes.AgentName,
                         ConversationID: outboxRes.ConversationID,
                         CurrentStatus: outboxRes.CurrentStatus,

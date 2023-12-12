@@ -32,7 +32,17 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
-import { EmailComponentInputs, EmailComponentMode, EmailFile, InteractionComment, InteractionRef, IWidget, ResData } from 'app/interfaces';
+import {
+    EmailComponentInputs,
+    EmailComponentMode,
+    EmailFile,
+    InteractionComment,
+    InteractionRef,
+    IWidget,
+    ResData,
+    MediaStreamerMultiResponse,
+    MediaStreamerMetaResponse
+} from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
@@ -41,6 +51,7 @@ import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { UIActionEventService } from '@services/ui-action-event.service';
+import { AppDataService } from '@services/app-data.service';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
 
@@ -74,6 +85,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Mat dialog ref for closing
      */
     rejectEmailDialogRef: MatDialogRef<any>;
+
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
 
     /**
      * Reject reason form inputs
@@ -238,7 +254,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _fuseFacadeService: FuseFacadeService,
         private _emailService: EmailService,
         private translocoService: TranslocoService,
-        private uiActionEventService: UIActionEventService
+        private uiActionEventService: UIActionEventService,
+        private _appDataService: AppDataService
     ) {
         super('TwEmailControlsComponent');
     }
@@ -272,6 +289,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         isEmailSent: i.isEmailSent
                     };
                 });
+        });
+
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
 
         // -----------------------------------------------------------------------------------------------------
@@ -489,6 +510,56 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: any[]): Promise<any> {
+        try {
+            //extract file id's
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.URL.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId });
+                        } else {
+                            acc.att.push({ ...cur });
+                        }
+                    } else {
+                        acc.att.push({ ...cur });
+                    }
+                    return acc;
+                },
+                { ids: [], att: [] }
+            );
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
+                    urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                    method: 'GET',
+                    responseType: 'json'
+                });
+
+                if (response?.result?.length > 0) {
+                    attachmentMap.att.forEach((cur) => {
+                        if (cur.IsCloud) {
+                            let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                            if (fileMeta) {
+                                cur.ArchiveStatus = fileMeta.archiveStatus;
+                                cur.RestoreStatus = fileMeta.restoreStatus;
+                            }
+                        }
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
+        }
+    }
+
+    /**
      * Sets email's body and some other details
      */
     async setEmailDetails(retry = false): Promise<void> {
@@ -580,6 +651,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         if (res1) {
             inboxRes = res1.response;
             if (inboxRes.EmailType !== 'Dummy') {
+                let attch = await this.requestAttachmentData(inboxRes.Attachments);
+                inboxRes.Attachments = attch;
                 successCallback(inboxRes, this.currentInteraction.InSessionId);
             } else {
                 this.currentInteraction.showReplyEmailEnabled = false;
@@ -594,6 +667,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             });
             if (res2) {
                 outboxRes = res2.response;
+                let attch = await this.requestAttachmentData(outboxRes.Attachments);
+                outboxRes.Attachments = attch;
                 successCallback(outboxRes, this.currentInteraction.OutSessionId);
             }
         }
@@ -840,7 +915,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
             // Display the message in snackbar accordingly
-            const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+            let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+            if (res.response.CurrentStatus === 'EmailSending') {
+                reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
+            }
+
             const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
             if (!reasonCodeMsg) {
                 throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Reason Code');

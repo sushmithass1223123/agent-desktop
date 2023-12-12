@@ -222,24 +222,33 @@
         <mat-chip-list class="attachments-summary">
             <mat-chip
                 *ngFor="let file of attachments | slice: 0:2"
+                [ngClass]="{
+                    'email-attachment-available': !file.ArchiveStatus,
+                    'email-attachment-archived': file.ArchiveStatus && !file.RestoreStatus,
+                    'email-attachment-restoring': file.ArchiveStatus && file.RestoreStatus,
+                    'email-attachment-failed': file.Failed
+                }"
                 [removable]="removable"
                 class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                [matTooltip]="file.Name"                
+                [matTooltip]="file.Name"
                 (removed)="removeFiles(file.Id)"
             >
-                <div *ngIf="file.Status === 'AVAILABLE'" (click)="openFile(file)" class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
+                <div *ngIf="!file.ArchiveStatus" (click)="openFile(file)" class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
                     <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                     <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
                     <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                 </div>
-                <div *ngIf="file.Status === 'ARCHIVED'" [matMenuTriggerFor]="attachOptList" class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
+                <div
+                    *ngIf="file.ArchiveStatus"
+                    [matMenuTriggerFor]="file.ArchiveStatus && !file.RestoreStatus ? attachOptList : null"
+                    class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                >
                     <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                     <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
                     <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                 </div>
                 <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
-                    <button mat-menu-item>Open</button>
-                    <button mat-menu-item>Restore</button>
+                    <button mat-menu-item (click)="restoreFromArchive(file)">Restore</button>
                 </mat-menu>
             </mat-chip>
             <mat-chip
@@ -253,8 +262,7 @@
         </mat-chip-list>
 
         <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
-            <button mat-menu-item>Open</button>
-            <button mat-menu-item>Restore</button>
+            <button mat-menu-item (click)="restoreFromArchive(file)">Restore</button>
         </mat-menu>
 
         <mat-menu class="custom attachment-overlay" #attachList="matMenu">
@@ -262,25 +270,37 @@
                 <mat-chip-list class="mat-chip-list-stacked">
                     <mat-chip
                         *ngFor="let file of attachments | slice: 2:attachments.length"
+                        [ngClass]="{
+                            'email-attachment-available': !file.ArchiveStatus,
+                            'email-attachment-archived': file.ArchiveStatus && !file.RestoreStatus,
+                            'email-attachment-restoring': file.ArchiveStatus && file.RestoreStatus,
+                            'email-attachment-failed': file.Failed
+                        }"
                         [removable]="removable"
                         class="border-radius-20 twd-flex twd-items-center twd-justify-between"
                         [matTooltip]="file.Name"
-                        (click)="openFile(file)"
                         (removed)="removeFiles(file.Id)"
                     >
-                        <div *ngIf="file.Status === 'AVAILABLE'" class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
+                        <div
+                            *ngIf="!file.ArchiveStatus"
+                            class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                            (click)="openFile(file)"
+                        >
                             <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                             <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
                             <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                         </div>
-                        <div *ngIf="file.Status === 'ARCHIVED'" [matMenuTriggerFor]="attachOptListSecondary" class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
+                        <div
+                            *ngIf="file.ArchiveStatus"
+                            [matMenuTriggerFor]="file.ArchiveStatus && !file.RestoreStatus ? attachOptListSecondary : null"
+                            class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                        >
                             <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                             <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
                             <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                         </div>
                         <mat-menu class="custom attachment-overlay" #attachOptListSecondary="matMenu">
-                            <button mat-menu-item>Open</button>
-                            <button mat-menu-item>Restore</button>
+                            <button mat-menu-item (click)="restoreFromArchive(file)">Restore</button>
                         </mat-menu>
                     </mat-chip>
                 </mat-chip-list>
