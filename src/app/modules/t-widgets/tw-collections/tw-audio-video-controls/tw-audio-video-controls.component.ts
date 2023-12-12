@@ -651,7 +651,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         error = AV_ERRORS[evt.data.code];
                     }
                     this.status = `Error : ${error}`;
-                    this._appUIService.showSnackbar(error, 'failure');
+                    if(error){
+                        this._appUIService.showSnackbar(error, 'failure');
+                    }
+                    
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
 
                     if(evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {

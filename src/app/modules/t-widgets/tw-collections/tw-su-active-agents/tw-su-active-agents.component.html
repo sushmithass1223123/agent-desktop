@@ -335,14 +335,8 @@
                 [@animateStagger]="{ value: '50' }"
             >
                 <mat-accordion class="twd-flex twd-flex-col twd-gap-2 grouped">
-                    <mat-expansion-panel
-                        (click)="selectGroup(group)"
-                        *ngFor="let group of groupedAgentList"
-                        class=""
-                        [expanded]="selectedGroup === group.groupName"
-                        hideToggle
-                    >
-                        <mat-expansion-panel-header class="twd-flex twd-items-center">
+                    <mat-expansion-panel *ngFor="let group of groupedAgentList" class="" [expanded]="selectedGroup === group.groupName" hideToggle>
+                        <mat-expansion-panel-header (click)="selectGroup(group)" class="twd-flex twd-items-center">
                             <mat-panel-title class="twd-flex twd-items-center twd-gap-2"
                                 ><mat-icon class="group-icon">groups</mat-icon>
                                 <span>{{ group.groupName }}</span>
