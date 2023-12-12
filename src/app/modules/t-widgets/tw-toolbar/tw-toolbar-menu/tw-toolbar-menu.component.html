@@ -19,5 +19,6 @@
         <tw-logout [data]="widget" *ngIf="widget.Type === 'tw-logout' && widget.Config.Enabled"></tw-logout>
         <tw-broadcast [data]="widget" *ngIf="widget.Type === 'tw-broadcast' && widget.Config.Enabled" fxHide fxShow.gt-sm></tw-broadcast>
         <tw-create-interaction [data]="widget" *ngIf="widget.Type === 'tw-create-interaction' && widget.Config.Enabled"></tw-create-interaction>
+        <tw-toolbar-custom [data]="widget" *ngIf="widget.Type === 'tw-toolbar-custom' && widget.Config.Enabled"></tw-toolbar-custom>
     </div>
 </div>
