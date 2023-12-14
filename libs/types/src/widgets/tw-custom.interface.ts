@@ -59,4 +59,6 @@ export type TwCustomData = {
      * This is a type of action message to send to customer when custom widget is closed
      */
      NotifyTypeOnClose: boolean;
+
+     GetAllTMACEvents: boolean;
 };
