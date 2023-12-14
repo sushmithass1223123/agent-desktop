@@ -548,6 +548,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                             if (fileMeta) {
                                 cur.ArchiveStatus = fileMeta.archiveStatus;
                                 cur.RestoreStatus = fileMeta.restoreStatus;
+                                cur.FileError = fileMeta.fileError;
                             }
                         }
                     }, []);
@@ -871,81 +872,104 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
             const { BCC, CC, To, Subject, Files, Body } = email || this.emailRef.getEmail();
 
-            let confirmSend = true;
-            if (!Subject) {
-                confirmSend = await this._appUIService
-                    .showAppConfirmDialog('generic', 'Confirm Send', this.translocoService.translate('widgets.emailControls.noSubjectWarning'))
-                    .afterClosed()
-                    .pipe(take(1))
-                    .toPromise();
-            }
-            if (!confirmSend) {
-                return;
-            }
-
-            if (!To.length) {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.recipientMissingError'), 'failure');
-                return;
-            }
-
-            if (btn) {
-                btn.disabled = true;
-            }
-            this.sendingEmailAsMaker = true;
-            // this._fuseProgressBarService.show();
-            const ref = this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.sendEmailLoading'), 'loading');
-            const res = await SDKClient.sendEmail({
-                attachmentFileList: Files && Files.length ? JSON.stringify(Files) : '',
-                bccList: BCC.join(','),
-                toList: To.join(','),
-                ccList: CC.join(','),
-                body: Body,
-                inboxSessionId: InSessionId,
-                outboxSessionId: CurrOutSessionId || '',
-                routeId: RouteId || '',
-                subject: Subject,
-                // the replace is done so that if the mode is 'reply-all', the '-all' is removed
-                typeOfResponse: this.emailRef.mode.replace('-all', '')
-            }).catch((e) => errCallback(e));
-            // this._fuseProgressBarService.hide();
-            ref.dismiss();
-            if (!res || !res.response) {
-                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
-                return;
-            }
-            // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
-            // Display the message in snackbar accordingly
-            let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
-            if (res.response.CurrentStatus === 'EmailSending') {
-                reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
-            }
-
-            const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
-            if (!reasonCodeMsg) {
-                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Reason Code');
-            }
-            if (!currentStatusMsg) {
-                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Current Status');
-            }
-            if (reasonCodeMsg !== 'success') {
-                throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
-            }
-            if (btn) {
-                btn.disabled = false;
-            }
-            this.sendingEmailAsMaker = false;
-            this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
-                isEmailSent: false
+            let filesInArchive = Files.find((f: any) => {
+                return f.ArchiveStatus || f.FileError;
             });
-            this._appUIService.showSnackbar(
-                this.translocoService.translate('widgets.emailControls.messageSentSuccess') + ' ' + currentStatusMsg,
-                'success'
-            );
-            this.draftPolling$?.unsubscribe();
-            this.emailRef.mode = 'preview';
-            // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
-            //     this.deleteDraftEmail();
-            // }
+
+            let sendEmailProcess = async () => {
+                let confirmSend = true;
+                if (!Subject) {
+                    confirmSend = await this._appUIService
+                        .showAppConfirmDialog('generic', 'Confirm Send', this.translocoService.translate('widgets.emailControls.noSubjectWarning'))
+                        .afterClosed()
+                        .pipe(take(1))
+                        .toPromise();
+                }
+                if (!confirmSend) {
+                    return;
+                }
+
+                if (!To.length) {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.recipientMissingError'), 'failure');
+                    return;
+                }
+
+                if (btn) {
+                    btn.disabled = true;
+                }
+                this.sendingEmailAsMaker = true;
+                // this._fuseProgressBarService.show();
+                const ref = this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.sendEmailLoading'), 'loading');
+                const res = await SDKClient.sendEmail({
+                    attachmentFileList: Files && Files.length ? JSON.stringify(Files) : '',
+                    bccList: BCC.join(','),
+                    toList: To.join(','),
+                    ccList: CC.join(','),
+                    body: Body,
+                    inboxSessionId: InSessionId,
+                    outboxSessionId: CurrOutSessionId || '',
+                    routeId: RouteId || '',
+                    subject: Subject,
+                    // the replace is done so that if the mode is 'reply-all', the '-all' is removed
+                    typeOfResponse: this.emailRef.mode.replace('-all', '')
+                }).catch((e) => errCallback(e));
+                // this._fuseProgressBarService.hide();
+                ref.dismiss();
+                if (!res || !res.response) {
+                    throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
+                    return;
+                }
+                // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
+                // Display the message in snackbar accordingly
+                let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+                if (res.response.CurrentStatus === 'EmailSending') {
+                    reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
+                }
+
+                const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
+                if (!reasonCodeMsg) {
+                    throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Reason Code');
+                }
+                if (!currentStatusMsg) {
+                    throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unable to send email. Invalid Current Status');
+                }
+                if (reasonCodeMsg !== 'success') {
+                    throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
+                }
+                if (btn) {
+                    btn.disabled = false;
+                }
+                this.sendingEmailAsMaker = false;
+                if (res.response.CurrentStatus === 'EmailSending') {
+                    this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                        isEmailSent: false
+                    });
+                }
+                this._appUIService.showSnackbar(
+                    this.translocoService.translate('widgets.emailControls.messageSentSuccess') + ' ' + currentStatusMsg,
+                    'success'
+                );
+                this.draftPolling$?.unsubscribe();
+                this.emailRef.mode = 'preview';
+                // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
+                //     this.deleteDraftEmail();
+                // }
+            };
+
+            if (filesInArchive) {
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+                    'generic',
+                    this.translocoService.translate('sharedComponents.email.emailSendConfirmHeader'),
+                    this.translocoService.translate('sharedComponents.email.emailConfirmBody')
+                );
+
+                const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
+                if (dialogResult) {
+                    sendEmailProcess();
+                }
+            } else {
+                sendEmailProcess();
+            }
         } catch (err) {
             errCallback(err);
         }
@@ -976,44 +1000,69 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // const currentInteraction = this.getInboxMessageReq.data[this.interactionId];
                 // const { Files: AttachmetList, Body, To: toList, CC, BCC, Subject } = this.getReplyInfo();
                 sendLoader = this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.approveEmailLoading'), 'loading');
-                const res = await SDKClient.sendEmail({
-                    attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
-                    bccList: BCCList || '',
-                    body: Body,
-                    ccList: CCList || '',
-                    inboxSessionId: InSessionId,
-                    outboxSessionId: CurrOutSessionId || '',
-                    routeId: RouteId || '',
-                    subject: Subject,
-                    toList: To || '',
-                    typeOfResponse: 'approve'
-                }).catch((e) => errCallback(e));
-                // this._fuseProgressBarService.hide();
-                if (!res || !res.response) {
-                    throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unexpected response from Server');
-                    return;
-                }
 
-                // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
-                // Display the message in snackbar accordingly
-                const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
-                const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
-                if (!reasonCodeMsg) {
-                    throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Reason Code');
-                }
-                if (!currentStatusMsg) {
-                    throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Current Status');
-                }
-                if (reasonCodeMsg !== 'success') {
-                    throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
-                }
-                this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
-                    isEmailSent: false
+                let filesInArchive = AttachmetList.find((f: any) => {
+                    return f.ArchiveStatus || f.FileError;
                 });
-                this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
-                this.draftPolling$?.unsubscribe();
-                sendLoader?.dismiss();
-                btn.disabled = false;
+
+                let sendEmailProcess = async () => {
+                    const res = await SDKClient.sendEmail({
+                        attachmentFileList: AttachmetList && AttachmetList.length ? JSON.stringify(AttachmetList) : '',
+                        bccList: BCCList || '',
+                        body: Body,
+                        ccList: CCList || '',
+                        inboxSessionId: InSessionId,
+                        outboxSessionId: CurrOutSessionId || '',
+                        routeId: RouteId || '',
+                        subject: Subject,
+                        toList: To || '',
+                        typeOfResponse: 'approve'
+                    }).catch((e) => errCallback(e));
+                    // this._fuseProgressBarService.hide();
+                    if (!res || !res.response) {
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unexpected response from Server');
+                        return;
+                    }
+
+                    // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
+                    // Display the message in snackbar accordingly
+                    const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+                    const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
+                    if (!reasonCodeMsg) {
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Reason Code');
+                    }
+                    if (!currentStatusMsg) {
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Current Status');
+                    }
+                    if (reasonCodeMsg !== 'success') {
+                        throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
+                    }
+                    this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                        isEmailSent: false
+                    });
+                    this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
+                    this.draftPolling$?.unsubscribe();
+                    sendLoader?.dismiss();
+                    btn.disabled = false;
+                };
+
+                if (filesInArchive) {
+                    const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+                        'generic',
+                        this.translocoService.translate('sharedComponents.email.emailSendConfirmHeader'),
+                        this.translocoService.translate('sharedComponents.email.emailConfirmBody')
+                    );
+
+                    const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
+
+                    if (dialogResult) {
+                        sendEmailProcess();
+                    } else {
+                        btn.disabled = false;
+                    }
+                } else {
+                    sendEmailProcess();
+                }
             } else {
                 btn.disabled = false;
             }

@@ -16,7 +16,7 @@
         <ng-template matMenuContent>
             <ng-container *ngIf="availableTemplates.departments | keyvalue as departments">
                 <ng-container *ngFor="let dept of departments">
-                    <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
+                    <button [matTooltip]="dept.value.Name" mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
                         {{ dept.value.Name }}
                     </button>
                     <mat-menu yPosition="above" #groupMenu="matMenu">
@@ -28,7 +28,7 @@
                                     *ngFor="let group of dept.value.groups | keyvalue"
                                     (menuOpened)="setTemplates(dept.value.ID, group.key)"
                                 >
-                                    {{ group.value.Name }}
+                                    <div [matTooltip]="group.value.Name">{{ group.value.Name }}</div>
                                     <mat-menu yPosition="above" #templateMenu="matMenu">
                                         <ng-template matMenuContent>
                                             <ng-container *ngIf="group.value.templates">

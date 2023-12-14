@@ -55,21 +55,41 @@ email-editor {
 }
 
 .email-attachment-available {
-    background-color: #a5dda4 !important;
-    color: black !important;
+    background-color: #028a00 !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
 }
 
 .email-attachment-archived {
-    background-color: rgb(245, 216, 161) !important;
-    color: black !important;
+    background-color: rgb(241, 177, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
+}
+
+.email-attachment-deep-archived {
+    background-color: rgb(207, 66, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
 }
 
 .email-attachment-restoring {
     background-color: rgb(148, 164, 255) !important;
     color: rgb(0, 0, 0) !important;
+    mat-icon {
+        color: black !important;
+    }
 }
 
 .email-attachment-failed {
-    background-color: rgb(185, 0, 0) !important;
-    color: rgb(0, 0, 0) !important;
+    background-color: rgb(255, 0, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
 }

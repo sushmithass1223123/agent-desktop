@@ -720,9 +720,13 @@ export interface MediaStreamerMetaResponse {
     /**
      * Archived status of the file
      */
-    archiveStatus: boolean | undefined | null;
+    archiveStatus: string | undefined | null;
     /**
      * Restore status of the file
      */
     restoreStatus: boolean | undefined | null;
+    /**
+     * File file is not able to retrieve
+     */
+    fileError: boolean | undefined | null;
 }

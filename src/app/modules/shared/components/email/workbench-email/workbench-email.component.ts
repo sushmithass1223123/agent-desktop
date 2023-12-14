@@ -942,7 +942,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async pullEmails(emails: Mail[]): Promise<void> {
         let archivedAttachments = emails.find((e) => {
             let filesInArchive = e.Files.find((f) => {
-                return f.ArchiveStatus === true;
+                return f.ArchiveStatus || f.FileError;
             });
             if (filesInArchive) {
                 return true;
@@ -1045,8 +1045,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         if (archivedAttachments) {
             const confirmDialogRef = this.appUiService.showAppConfirmDialog(
                 'generic',
-                'Email Pull Confirmation',
-                'There are archived attachments in this email and needs to be restored before sending'
+                this.translocoService.translate('sharedComponents.email.emailPullConfirmHeader'),
+                this.translocoService.translate('sharedComponents.email.emailConfirmBody')
             );
 
             const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
@@ -1097,6 +1097,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             if (fileMeta) {
                                 cur.ArchiveStatus = fileMeta.archiveStatus;
                                 cur.RestoreStatus = fileMeta.restoreStatus;
+                                cur.FileError = fileMeta.fileError;
                             }
                         }
                     }, []);

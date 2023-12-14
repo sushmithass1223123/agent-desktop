@@ -903,7 +903,19 @@
             "inboxLabel": "Inbox",
             "sentLabel": "Sent",
             "draftsLabel": "Drafts",
-            "openEmailFailed": "Unable to open email"
+            "openEmailFailed": "Unable to open email",
+            "fileUnavailable": "File access unavailable",
+            "fileAvailable": "File is available",
+            "fileArchiveRestore": "File is in archive and in the process of restoring",
+            "fileArchived": "File is in archive and requires restoring",
+            "fileDeepArchiveRestore": "File is in deep archive and in the process of restoring",
+            "fileDeepArchived": "File is in deep archive and requires restoring",
+            "fileRestoreInitiated": "File restore initiated",
+            "fileRestoreFailed": "Error occurred restoring file",
+            "fileRestoreNotFound": "File id not found cannot restore",
+            "emailPullConfirmHeader": "Email Pull Confirmation",
+            "emailSendConfirmHeader": "Email Send Confirmation",
+            "emailConfirmBody": "There are attachments that are unavailable in this email. Do you still want to continue ?"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

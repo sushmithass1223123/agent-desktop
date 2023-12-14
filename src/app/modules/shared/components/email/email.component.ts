@@ -299,6 +299,43 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
+     * Method to get the tool tip for file attachments
+     */
+    getAttachmentToolTip(file: any): string {
+        if (file.FileError) {
+            return `${file.Name}
+
+            ${this.translocoService.translate('sharedComponents.email.fileUnavailable')}`;
+        }
+        if (!file.ArchiveStatus) {
+            return `${file.Name}
+
+            ${this.translocoService.translate('sharedComponents.email.fileAvailable')}`;
+        } else if (file.ArchiveStatus === 'ARCHIVE_ACCESS') {
+            if (file.RestoreStatus) {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileArchiveRestore')}`;
+            } else {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileArchived')}`;
+            }
+        } else if (file.ArchiveStatus === 'DEEP_ARCHIVE_ACCESS') {
+            if (file.RestoreStatus) {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileDeepArchiveRestore')}`;
+            } else {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileDeepArchived')}`;
+            }
+        }
+        return '';
+    }
+
+    /**
      * Restore method for archived file
      */
     async restoreFromArchive(file: any): Promise<void> {
@@ -312,12 +349,12 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 if (response && response.isSuccess) {
                     //success
                     file.RestoreStatus = true;
-                    this._appUiService.showSnackbar('File restore initiated');
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiated'));
                 } else {
-                    this._appUiService.showSnackbar('Error occurred restoring file', 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
                 }
             } else {
-                this._appUiService.showSnackbar('File id not found cannot restore', 'failure');
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreNotFound'), 'failure');
             }
         } catch (error) {}
     }
@@ -505,29 +542,31 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * @param {any} fileUrl
      */
     async openFile(file: any): Promise<void> {
-        this._fuseProgressBarService.show();
-        await fetch(file.URL)
-            .then((response) => response.blob())
-            .then((blob) => {
-                const blobUrl = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.setAttribute('download', file.Name);
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-                setTimeout(() => {
-                    window.URL.revokeObjectURL(blobUrl);
-                }, 60000);
-                link.remove();
-            })
-            .catch((e) => {
-                console.error(e);
-                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.downloadFileFailed'), 'failure');
-            })
-            .finally(() => {
-                this._fuseProgressBarService.hide();
-            });
+        if (!file.FileError) {
+            this._fuseProgressBarService.show();
+            await fetch(file.URL)
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.setAttribute('download', file.Name);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode.removeChild(link);
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(blobUrl);
+                    }, 60000);
+                    link.remove();
+                })
+                .catch((e) => {
+                    console.error(e);
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.downloadFileFailed'), 'failure');
+                })
+                .finally(() => {
+                    this._fuseProgressBarService.hide();
+                });
+        }
     }
 
     /**
