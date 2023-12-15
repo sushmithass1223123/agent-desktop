@@ -241,6 +241,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     isInteractionActive = false;
 
+    /**
+     * Send Timer ref
+     */
+    sendTimerId: any;
+
     @ViewChild(EmailComponent)
     emailRef: EmailComponent;
 
@@ -459,6 +464,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         // call the wrapper destroy method
         this.destroyWrapper();
         this.uiActionEventService.removeUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
+        this.sendTimerId && clearTimeout(this.sendTimerId);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -923,6 +929,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // Display the message in snackbar accordingly
                 let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
                 if (res.response.CurrentStatus === 'EmailSending') {
+                    let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
+                    this.sendTimerId = setTimeout(() => {
+                        this.closeInteraction(null, true);
+                    }, timerTime);
                     reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
                 }
 
@@ -945,10 +955,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         isEmailSent: false
                     });
                 }
-                this._appUIService.showSnackbar(
-                    this.translocoService.translate('widgets.emailControls.messageSentSuccess') + ' ' + currentStatusMsg,
-                    'success'
-                );
+                this._appUIService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
                 this.draftPolling$?.unsubscribe();
                 this.emailRef.mode = 'preview';
                 // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
@@ -1026,7 +1033,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
                     // Check if the request was sucessful by checking SendStatus,CurrentStatus in repsonse
                     // Display the message in snackbar accordingly
-                    const reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+                    let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+                    if (res.response.CurrentStatus === 'EmailSending') {
+                        let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
+                        this.sendTimerId = setTimeout(() => {
+                            this.closeInteraction(null, true);
+                        }, timerTime);
+                        reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
+                    }
+
                     const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
                     if (!reasonCodeMsg) {
                         throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unable to send email. Invalid Reason Code');
@@ -1037,10 +1052,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     if (reasonCodeMsg !== 'success') {
                         throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', `${reasonCodeMsg} [${res.response.SendStatus}]`);
                     }
-                    this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
-                        isEmailSent: false
-                    });
-                    this._appUIService.showSnackbar(`Message sent ${currentStatusMsg}`, 'success');
+
+                    if (res.response.CurrentStatus === 'EmailSending') {
+                        this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                            isEmailSent: false
+                        });
+                    }
+                    this._appUIService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
                     this.draftPolling$?.unsubscribe();
                     sendLoader?.dismiss();
                     btn.disabled = false;

@@ -30,7 +30,7 @@ export const EMAIL_REASONCODE_VALUES = {
 };
 
 export const EMAIL_CURRENTSTATUS_CODES = {
-    SentToCustomer: 'to customer',
-    SentToCheckerSession: 'to checker',
-    EmailSending: 'sending email asynchronously'
+    SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
+    SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    EmailSending: 'sharedComponents.email.emailIsBeingSent'
 };

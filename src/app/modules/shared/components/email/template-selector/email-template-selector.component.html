@@ -37,7 +37,7 @@
                                                     *ngFor="let template of group.value.templates | keyvalue"
                                                     (click)="emitSelectTemplate(template.value)"
                                                 >
-                                                    {{ template.value.Name }}
+                                                    <div [matTooltip]="template.value.Name">{{ template.value.Name }}</div>
                                                 </button>
                                             </ng-container>
                                             <button mat-menu-item disabled *ngIf="!group.value.templates && !loading">

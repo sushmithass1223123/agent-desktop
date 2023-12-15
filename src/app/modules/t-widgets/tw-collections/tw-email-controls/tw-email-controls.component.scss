@@ -13,10 +13,16 @@
 }
 
 .loading-spinner-email {
+    display: flex;
+    align-items: center;
     margin-top: 16px;
     transform: translate(-50%, -50%);
     z-index: 1000; /* Make sure the spinner is on top of the overlay */
     /* Add styling for the loading spinner and text */
+}
+
+.loading-text-email {
+    margin-right: 10px; /* Adjust the spacing between the text and spinner as needed */
 }
 
 .spinner-email {

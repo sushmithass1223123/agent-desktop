@@ -1627,7 +1627,8 @@
                                                     "DraftPollingInterval": 10000,
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false
+                                                    "TemplatesByHierarchy": false,
+                                                    "AsyncEmailSendTimeout": 60000
                                                 }
                                             },
                                             {

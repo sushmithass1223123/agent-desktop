@@ -915,7 +915,12 @@
             "fileRestoreNotFound": "File id not found cannot restore",
             "emailPullConfirmHeader": "Email Pull Confirmation",
             "emailSendConfirmHeader": "Email Send Confirmation",
-            "emailConfirmBody": "There are attachments that are unavailable in this email. Do you still want to continue ?"
+            "emailConfirmBody": "There are attachments that are unavailable in this email. Do you still want to continue ?",
+            "asyncEmailSemdSuccess": "Email sent to customer",
+            "asyncEmailSendFail": "Error sending email to customer",
+            "emailSendToCustomer": "Email sent to customer",
+            "emailSendToChecker": "Email sent to checker",
+            "emailIsBeingSent": "Email is being sent. please wait"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

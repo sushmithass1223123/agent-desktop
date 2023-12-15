@@ -109,4 +109,9 @@ export interface TwEmailControlsData {
      * @default false
      */
     TemplatesByHierarchy: boolean;
+    /**
+     * Asynchronous email send timeout
+     * @default 60000
+     */
+    AsyncEmailSendTimeout: number;
 }
