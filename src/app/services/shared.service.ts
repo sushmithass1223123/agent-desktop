@@ -8,9 +8,9 @@ export class SharedService {
     constructor() {}
 
     private holdMethodSubject = new Subject<void>();
-    private emailErrorNotifySubject = new Subject<string>();
+    private emailErrorNotifySubject = new Subject<number>();
 
-    triggerEmailFailure(interactionId: string) {
+    triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
     }
 

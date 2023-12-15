@@ -282,7 +282,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.data.Data.TemplatesByTeam;
         this._emailService.emailTemplatesDepartmentsByHierarchy = !!this.data.Data.TemplatesByHierarchy;
 
-        this._sharedService.getEmailFailure().subscribe((interactionId: string) => {
+        this._sharedService.getEmailFailure().subscribe((interactionId: number) => {
             if (this.currentInteraction.InteractionID === interactionId) {
                 clearTimeout(this.sendTimerId);
             }

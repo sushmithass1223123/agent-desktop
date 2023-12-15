@@ -28,6 +28,7 @@ import { cloneDeep } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * TwcInteractionComponent
@@ -66,7 +67,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         private _tmacEventService: TMACEventService,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService
     ) {
         super('TwcInteractionComponent', hostElement, contentPageService);
     }
@@ -322,10 +324,11 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
         let emailMeta = JSON.parse(evt.JsonData);
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            isEmailSent: true
+        });
+        this._sharedService.triggerEmailFailure(evt.InteractionID);
         if (emailMeta?.outboundData?.currentStatus === 'SentToCustomer') {
-            this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                isEmailSent: true
-            });
             this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSemdSuccess'));
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
@@ -334,8 +337,6 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                         this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                         // remove the interaction reference
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
-                    } else {
-                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
                     }
                 })
                 .catch(() => {
@@ -343,9 +344,6 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 });
         } else {
             this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSendFail'), 'failure');
-            this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                isEmailSent: true
-            });
         }
     }
 
