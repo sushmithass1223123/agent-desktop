@@ -188,26 +188,27 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         this.showCustomPopup(message.data);
                         break;
                     case 'getOtherTMACEvents':
+                        // allow custom widget to listen to all tmac events
                         this._tmacEventService.addTMACEventListener([
                             {
                                 label: 'OnTMACEvent',
                                 callback: evts => this.sendDataToWindow('onTMACEvent', evts)
                             }
                         ]);
-
-
                         break;
                     case 'emitTMACEvent':
+                        // allow custom widget to emit tmac events in agent desktop
                         window.__TMACSDK.SDKClient.events.emit('ontmacevent', message.data?.event);
                         break;
                     case 'selectInteraction':
+                        // sample data json
                         // {
                         //     isActive: true,
                         //     otherData: {
                         //         unreadCount: 0
                         //     }
                         // }
-                        // update is active
+                        // allow custom widget to switch interaction tab in agent desktop
                         this._interactionManagerService.updateInteraction(message.data?.interactionId, message.data?.data);
                 }
                 this.logger.info('Message received from custom frame -' + message.name + ':' + JSON.stringify(message), true);
