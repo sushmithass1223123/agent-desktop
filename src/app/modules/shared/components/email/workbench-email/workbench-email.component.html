@@ -1,8 +1,11 @@
-<ng-container *ngIf="{
+<ng-container
+    *ngIf="{
         anchor: (customFuse.anchor$ | async),
         widget: (customFuse.widget$ | async)
-    } as customFuse">
-    <ng-container *ngIf="{
+    } as customFuse"
+>
+    <ng-container
+        *ngIf="{
             bulkSelection: !['sentitem'].includes(currentTab) && (state?.allowQueueTransfer || state?.deleteAllowed || currentTab === 'queue'),
             deleteAllowed: deleteAllowed && currentTab !== 'sentitem' && currentTab !== 'queue',
             hideCategoryMenu: false,
@@ -16,19 +19,29 @@
                 form: advancedSearch.data[currentTab]?.changed
             },
             openEmailResData: openEmailRes.data | async
-        } as state">
-        <div *transloco="let locale" #emailWorkBench
+        } as state"
+    >
+        <div
+            *transloco="let locale"
+            #emailWorkBench
             class="email-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
-            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-            <div *ngIf="!state.hideCategoryMenu && !noTabsAvailable"
-                class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
+            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+        >
+            <div *ngIf="!state.hideCategoryMenu && !noTabsAvailable" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
                 <div class="h-100-p py-20 twd-flex twd-flex-col twd-justify-between">
                     <div class="tab-menu twd-flex twd-flex-col twd-gap-4">
                         <ng-container *ngFor="let tab of availableTabs">
-                            <button class="twd-mb-3 pb-20" mat-button *ngIf="tab.enabled" [matTooltip]="tab.label"
-                                (click)="switchTab(tab.key)" [disabled]="emailSearchRes.loading"
-                                matTooltipPosition="right" [ngClass]="{ 'mat-raised-button': currentTab === tab.key }"
-                                [color]="currentTab === tab.key && 'accent'">
+                            <button
+                                class="twd-mb-3 pb-20"
+                                mat-button
+                                *ngIf="tab.enabled"
+                                [matTooltip]="tab.label"
+                                (click)="switchTab(tab.key)"
+                                [disabled]="emailSearchRes.loading"
+                                matTooltipPosition="right"
+                                [ngClass]="{ 'mat-raised-button': currentTab === tab.key }"
+                                [color]="currentTab === tab.key && 'accent'"
+                            >
                                 <mat-icon>{{ tab.icon }}</mat-icon>
                                 <div>{{ tab.label }}</div>
                             </button>
@@ -38,75 +51,106 @@
             </div>
 
             <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
-                <div *ngIf="getEmailChecks() as selectedMails"
+                <div
+                    *ngIf="getEmailChecks() as selectedMails"
                     class="theme-bg border-radius-20 twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
                     [ngClass]="{
                         'twd-justify-center': noTabsAvailable
-                    }">
+                    }"
+                >
                     <ng-container *ngIf="!noTabsAvailable">
                         <div class="theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
-                            <div
-                                class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
-                                <button class="lg:twd-hidden" #expandableButton
-                                    (click)="state.hideCategoryMenu = !state.hideCategoryMenu">
+                            <div class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
+                                <button class="lg:twd-hidden" #expandableButton (click)="state.hideCategoryMenu = !state.hideCategoryMenu">
                                     <mat-icon>{{ state.hideCategoryMenu ? 'menu' : 'menu_open' }}</mat-icon>
                                 </button>
-                                <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1"
-                                    (ngSubmit)="submitGlobalSearchForm()">
+                                <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1" (ngSubmit)="submitGlobalSearchForm()">
                                     <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
-                                        <input class="login-input" matInput [placeholder]="
+                                        <input
+                                            class="login-input"
+                                            matInput
+                                            [placeholder]="
                                                 currentTab === 'queue' ? locale('sharedComponents.email.searchBySubject') : locale('global.search')
-                                            " [formControl]="globalSearch.form" />
-                                        <button *ngIf="state.search.global.empty" mat-icon-button matSuffix disabled
-                                            type="button">
+                                            "
+                                            [formControl]="globalSearch.form"
+                                        />
+                                        <button *ngIf="state.search.global.empty" mat-icon-button matSuffix disabled type="button">
                                             <mat-icon matSuffix>search</mat-icon>
                                         </button>
-                                        <button *ngIf="state.search.global.edited" mat-button color="primary" matSuffix
-                                            mat-icon-button aria-label="Go"
-                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }">
+                                        <button
+                                            *ngIf="state.search.global.edited"
+                                            mat-button
+                                            color="primary"
+                                            matSuffix
+                                            mat-icon-button
+                                            aria-label="Go"
+                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                        >
                                             <mat-icon>east</mat-icon>
                                         </button>
-                                        <button *ngIf="!state.search.global.empty && !state.search.global.edited"
-                                            type="button" mat-button color="accent" matSuffix mat-icon-button
+                                        <button
+                                            *ngIf="!state.search.global.empty && !state.search.global.edited"
+                                            type="button"
+                                            mat-button
+                                            color="accent"
+                                            matSuffix
+                                            mat-icon-button
                                             aria-label="Clear"
                                             [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
-                                            (click)="resetGlobalSearchForm(); doAdvancedSearch()">
+                                            (click)="resetGlobalSearchForm(); doAdvancedSearch()"
+                                        >
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </mat-form-field>
                                 </form>
-                                <button mat-icon-button (click)="doAdvancedSearch()"
-                                    [ngClass]="{ 'twd-animate-spin': polling.active }" [disabled]="polling.active"
-                                    [matTooltip]="locale('widgets.workbench.refresh')">
+                                <button
+                                    mat-icon-button
+                                    (click)="doAdvancedSearch()"
+                                    [ngClass]="{ 'twd-animate-spin': polling.active }"
+                                    [disabled]="polling.active"
+                                    [matTooltip]="locale('widgets.workbench.refresh')"
+                                >
                                     <mat-icon>refresh</mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="advancedSearch.show = !advancedSearch.show"
-                                    cdkOverlayOrigin #advancedSearchMenu="cdkOverlayOrigin" class="twd-relative"
-                                    [matTooltip]="locale('widgets.workbench.advanceSearch')">
-                                    <span *ngIf="state.search.form"
-                                        class="twd-absolute twd-h-2 twd-w-2 twd-top-1.5 twd-right-1.5 twd-rounded-full twd-bg-primary-default"></span>
+                                <button
+                                    mat-icon-button
+                                    (click)="advancedSearch.show = !advancedSearch.show"
+                                    cdkOverlayOrigin
+                                    #advancedSearchMenu="cdkOverlayOrigin"
+                                    class="twd-relative"
+                                    [matTooltip]="locale('widgets.workbench.advanceSearch')"
+                                >
+                                    <span
+                                        *ngIf="state.search.form"
+                                        class="twd-absolute twd-h-2 twd-w-2 twd-top-1.5 twd-right-1.5 twd-rounded-full twd-bg-primary-default"
+                                    ></span>
                                     <mat-icon> more_vert </mat-icon>
 
-                                    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="advancedSearchMenu"
-                                        [cdkConnectedOverlayOpen]="advancedSearch.show" cdkConnectedOverlayHasBackdrop
+                                    <ng-template
+                                        cdkConnectedOverlay
+                                        [cdkConnectedOverlayOrigin]="advancedSearchMenu"
+                                        [cdkConnectedOverlayOpen]="advancedSearch.show"
+                                        cdkConnectedOverlayHasBackdrop
                                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                         (backdropClick)="advancedSearch.show = false"
-                                        [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]">
+                                        [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
+                                    >
                                         <div class="advanced-search-form mat-elevation-z2 border-radius-20">
                                             <p class="text-center text-bold twd-py-4 twd-h-[52px] border-bottom">
                                                 {{ locale('widgets.workbench.advanceSearch') }}
                                             </p>
 
-
-
-                                            <form [formGroup]="advancedSearch.form"
+                                            <form
+                                                [formGroup]="advancedSearch.form"
                                                 [style.pointer-events]="this.disableBtn ? 'none' : 'auto'"
                                                 class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto"
-                                                (ngSubmit)="submitAdvanceSearchForm()" novalidate>
-
-
-                                                <div *ngIf="disableBtn === true"
-                                                    class="twd-col-span-2 twd-flex twd-justify-center twd-items-center twd-spinner">
+                                                (ngSubmit)="submitAdvanceSearchForm()"
+                                                novalidate
+                                            >
+                                                <div
+                                                    *ngIf="disableBtn === true"
+                                                    class="twd-col-span-2 twd-flex twd-justify-center twd-items-center twd-spinner"
+                                                >
                                                     <mat-spinner></mat-spinner>
                                                 </div>
 
@@ -116,10 +160,8 @@
                                                 </mat-form-field>
                                                 <mat-form-field class="twd-text-sm" appearance="outline">
                                                     <mat-label>{{ locale('widgets.workbench.fromDate') }} </mat-label>
-                                                    <input matInput formControlName="fromDate"
-                                                        [matDatepicker]="fromDatePicker" />
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="fromDatePicker"></mat-datepicker-toggle>
+                                                    <input matInput formControlName="fromDate" [matDatepicker]="fromDatePicker" />
+                                                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
                                                     <mat-datepicker #fromDatePicker></mat-datepicker>
                                                 </mat-form-field>
                                                 <mat-form-field class="twd-text-sm" appearance="outline">
@@ -129,10 +171,8 @@
 
                                                 <mat-form-field class="twd-text-sm" appearance="outline">
                                                     <mat-label>{{ locale('widgets.workbench.toDate') }} </mat-label>
-                                                    <input matInput formControlName="toDate"
-                                                        [matDatepicker]="toDatePicker" />
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="toDatePicker"></mat-datepicker-toggle>
+                                                    <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" />
+                                                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
                                                     <mat-datepicker #toDatePicker></mat-datepicker>
                                                 </mat-form-field>
                                                 <mat-form-field class="twd-text-sm" appearance="outline">
@@ -149,29 +189,33 @@
                                                     <input matInput formControlName="content" type="text" />
                                                 </mat-form-field>
 
-                                                <mat-form-field class="twd-text-sm"
+                                                <mat-form-field
+                                                    class="twd-text-sm"
                                                     [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }"
-                                                    appearance="outline">
+                                                    appearance="outline"
+                                                >
                                                     <mat-label>
                                                         {{ locale('widgets.workbench.assignedTo') }}
                                                     </mat-label>
                                                     <input matInput formControlName="assignedTo" type="text" />
                                                 </mat-form-field>
 
-                                                <mat-form-field class="twd-text-sm" appearance="outline"
-                                                    [ngClass]="{ 'twd-hidden': currentTab === 'queue' }">
+                                                <mat-form-field
+                                                    class="twd-text-sm"
+                                                    appearance="outline"
+                                                    [ngClass]="{ 'twd-hidden': currentTab === 'queue' }"
+                                                >
                                                     <mat-label>{{ locale('widgets.workbench.sessionId') }} </mat-label>
                                                     <input matInput formControlName="inSessionId" type="text" />
                                                 </mat-form-field>
 
                                                 <mat-form-field appearance="outline" class="twd-text-sm twd-col-span-2">
-                                                    <ng-container
-                                                        *ngIf="advancedSearch.form.controls.listOfMailboxes?.value as selectedMailboxes">
+                                                    <ng-container *ngIf="advancedSearch.form.controls.listOfMailboxes?.value as selectedMailboxes">
                                                         <mat-label>
                                                             {{
-                                                            selectedMailboxes && selectedMailboxes.length
-                                                            ? locale('sharedComponents.email.listOfMailBoxes')
-                                                            : locale('sharedComponents.email.mailBoxesNotFound')
+                                                                selectedMailboxes && selectedMailboxes.length
+                                                                    ? locale('sharedComponents.email.listOfMailBoxes')
+                                                                    : locale('sharedComponents.email.mailBoxesNotFound')
                                                             }}
                                                         </mat-label>
                                                         <mat-select formControlName="listOfMailboxes" multiple>
@@ -179,112 +223,101 @@
                                                                 {{ selectedMailboxes ? selectedMailboxes[0] : '' }}
                                                                 <span *ngIf="selectedMailboxes?.length > 1">
                                                                     (+{{ selectedMailboxes.length - 1 }}
-                                                                    {{ selectedMailboxes?.length === 2 ? 'other' :
-                                                                    'others' }})
+                                                                    {{ selectedMailboxes?.length === 2 ? 'other' : 'others' }})
                                                                 </span>
                                                             </mat-select-trigger>
-                                                            <mat-option *ngFor="let mailbox of availableMailboxes"
-                                                                [value]="mailbox">{{
+                                                            <mat-option *ngFor="let mailbox of availableMailboxes" [value]="mailbox">{{
                                                                 mailbox
-                                                                }}</mat-option>
+                                                            }}</mat-option>
                                                         </mat-select>
                                                     </ng-container>
                                                 </mat-form-field>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex"
-                                                    [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
                                                     <span class="mat-subheading-2 m-0 twd-w-4/12">
                                                         {{ locale('sharedComponents.email.attachments') }}:
                                                     </span>
-                                                    <input matInput
-                                                        [placeholder]="locale('sharedComponents.email.input')"
-                                                        class="twd-hidden" />
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3"
-                                                        formControlName="hasAttachments">
-                                                        <mat-radio-button [value]="2">{{
-                                                            locale('sharedComponents.email.optionAny') }}
+                                                    <input matInput [placeholder]="locale('sharedComponents.email.input')" class="twd-hidden" />
+                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="hasAttachments">
+                                                        <mat-radio-button [value]="2"
+                                                            >{{ locale('sharedComponents.email.optionAny') }}
                                                         </mat-radio-button>
                                                         <mat-radio-button [value]="1">{{
                                                             locale('sharedComponents.email.optionYes')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                         <mat-radio-button [value]="0">{{
                                                             locale('sharedComponents.email.optionNo')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex"
-                                                    [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12">{{
-                                                        locale('sharedComponents.email.replied') }}:
+                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"
+                                                        >{{ locale('sharedComponents.email.replied') }}:
                                                     </span>
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3"
-                                                        formControlName="replied">
-                                                        <mat-radio-button [value]="2">{{
-                                                            locale('sharedComponents.email.optionAny') }}
+                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="replied">
+                                                        <mat-radio-button [value]="2"
+                                                            >{{ locale('sharedComponents.email.optionAny') }}
                                                         </mat-radio-button>
                                                         <mat-radio-button [value]="1">{{
                                                             locale('sharedComponents.email.optionYes')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                         <mat-radio-button [value]="0">{{
                                                             locale('sharedComponents.email.optionNo')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex"
-                                                    [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12">{{
-                                                        locale('sharedComponents.email.closed') }}:
+                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"
+                                                        >{{ locale('sharedComponents.email.closed') }}:
                                                     </span>
-                                                    <input matInput
-                                                        [placeholder]="locale('sharedComponents.email.input')"
-                                                        class="twd-hidden" />
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3"
-                                                        formControlName="closed">
-                                                        <mat-radio-button [value]="2">{{
-                                                            locale('sharedComponents.email.optionAny') }}
+                                                    <input matInput [placeholder]="locale('sharedComponents.email.input')" class="twd-hidden" />
+                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="closed">
+                                                        <mat-radio-button [value]="2"
+                                                            >{{ locale('sharedComponents.email.optionAny') }}
                                                         </mat-radio-button>
                                                         <mat-radio-button [value]="1">{{
                                                             locale('sharedComponents.email.optionYes')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                         <mat-radio-button [value]="0">{{
                                                             locale('sharedComponents.email.optionNo')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
 
-                                                <div class="my-16 twd-col-span-2 twd-flex"
-                                                    [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
-                                                    <span class="mat-subheading-2 m-0 twd-w-4/12">{{
-                                                        locale('sharedComponents.email.assigned') }}:
+                                                <div class="my-16 twd-col-span-2 twd-flex" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }">
+                                                    <span class="mat-subheading-2 m-0 twd-w-4/12"
+                                                        >{{ locale('sharedComponents.email.assigned') }}:
                                                     </span>
-                                                    <input matInput
-                                                        [placeholder]="locale('sharedComponents.email.input')"
-                                                        class="twd-hidden" />
-                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3"
-                                                        formControlName="assigned">
-                                                        <mat-radio-button [value]="2">{{
-                                                            locale('sharedComponents.email.optionAny') }}
+                                                    <input matInput [placeholder]="locale('sharedComponents.email.input')" class="twd-hidden" />
+                                                    <mat-radio-group class="twd-flex-1 twd-grid twd-grid-cols-3" formControlName="assigned">
+                                                        <mat-radio-button [value]="2"
+                                                            >{{ locale('sharedComponents.email.optionAny') }}
                                                         </mat-radio-button>
                                                         <mat-radio-button [value]="1">{{
                                                             locale('sharedComponents.email.optionYes')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                         <mat-radio-button [value]="0">{{
                                                             locale('sharedComponents.email.optionNo')
-                                                            }}</mat-radio-button>
+                                                        }}</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
                                                 <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
-                                                    <button mat-raised-button
+                                                    <button
+                                                        mat-raised-button
                                                         class="adv-search-btn h-40 mb-8 border-radius-20"
-                                                        [disabled]="this.disableBtn">
+                                                        [disabled]="this.disableBtn"
+                                                    >
                                                         {{ locale('global.search') }}
                                                     </button>
-                                                    <button mat-raised-button
-                                                        class="adv-search-btn h-40 mb-8 border-radius-20" type="button"
+                                                    <button
+                                                        mat-raised-button
+                                                        class="adv-search-btn h-40 mb-8 border-radius-20"
+                                                        type="button"
                                                         (click)="resetForm(); doAdvancedSearch()"
-                                                        [disabled]="this.disableBtn">
+                                                        [disabled]="this.disableBtn"
+                                                    >
                                                         {{ locale('sharedComponents.email.reset') }}
                                                     </button>
                                                 </div>
@@ -294,33 +327,47 @@
                                 </button>
                             </div>
 
-                            <div id="sortControls" class="twd-flex twd-items-center twd-justify-end twd-px-2 twd-pt-2"
-                                [ngClass]="{ 'twd-justify-between': state.bulkSelection }">
-                                <mat-checkbox *ngIf="state.bulkSelection" id="selectAllCtrl"
-                                    (change)="selectEmails($event.checked)" [indeterminate]="selectedMails.some"
-                                    [checked]="selectedMails.all" [disabled]="!dataSource.data?.length">
+                            <div
+                                id="sortControls"
+                                class="twd-flex twd-items-center twd-justify-end twd-px-2 twd-pt-2"
+                                [ngClass]="{ 'twd-justify-between': state.bulkSelection }"
+                            >
+                                <mat-checkbox
+                                    *ngIf="state.bulkSelection"
+                                    id="selectAllCtrl"
+                                    (change)="selectEmails($event.checked)"
+                                    [indeterminate]="selectedMails.some"
+                                    [checked]="selectedMails.all"
+                                    [disabled]="!dataSource.data?.length"
+                                >
                                     {{ locale('sharedComponents.email.selectAll') }}
                                 </mat-checkbox>
                                 <div class="twd-flex twd-items-center">
                                     <div class="twd-font-bold twd-text-sm">
-                                        <button id="sortKeyBtn" mat-button class="twd-px-1.5"
-                                            [matMenuTriggerFor]="sortMenu" [disabled]="!dataSource.data?.length">
-                                            <span>{{ locale('sharedComponents.email.sortBy') }} {{ sortControls.sortBy
-                                                }} </span>
+                                        <button
+                                            id="sortKeyBtn"
+                                            mat-button
+                                            class="twd-px-1.5"
+                                            [matMenuTriggerFor]="sortMenu"
+                                            [disabled]="!dataSource.data?.length"
+                                        >
+                                            <span>{{ locale('sharedComponents.email.sortBy') }} {{ sortControls.sortBy }} </span>
                                             <mat-menu class="custom" #sortMenu="matMenu">
-                                                <button mat-menu-item
-                                                    (click)="sortControls.sortBy = 'Subject'; groupNodes()">
+                                                <button mat-menu-item (click)="sortControls.sortBy = 'Subject'; groupNodes()">
                                                     <span>{{ locale('sharedComponents.email.emailSubject') }}</span>
                                                 </button>
-                                                <button mat-menu-item
-                                                    (click)="sortControls.sortBy = 'Date'; groupNodes()">
+                                                <button mat-menu-item (click)="sortControls.sortBy = 'Date'; groupNodes()">
                                                     <span>{{ locale('sharedComponents.email.date') }}</span>
                                                 </button>
                                             </mat-menu>
                                         </button>
-                                        <button id="sortOrderBtn" mat-button
+                                        <button
+                                            id="sortOrderBtn"
+                                            mat-button
                                             (click)="sortControls.ascending = !sortControls.ascending; groupNodes()"
-                                            class="twd-max-w-min twd-px-0" [disabled]="!dataSource.data?.length">
+                                            class="twd-max-w-min twd-px-0"
+                                            [disabled]="!dataSource.data?.length"
+                                        >
                                             <mat-icon>
                                                 {{ sortControls.ascending ? 'arrow_upward' : 'arrow_downward' }}
                                             </mat-icon>
@@ -329,29 +376,42 @@
                                 </div>
                             </div>
 
-                            <div *ngIf="selectedMails.some || selectedMails.all"
-                                class="bulk-operations twd-mt-3 twd-mb-2 twd-flex twd-gap-1">
-                                <button mat-raised-button
+                            <div *ngIf="selectedMails.some || selectedMails.all" class="bulk-operations twd-mt-3 twd-mb-2 twd-flex twd-gap-1">
+                                <button
+                                    mat-raised-button
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                    *ngIf="currentTab === 'queue'" (click)="replyToSelectedEmails(getSelectedEmails())">
+                                    *ngIf="currentTab === 'queue'"
+                                    (click)="replyToSelectedEmails(getSelectedEmails())"
+                                >
                                     {{ locale('widgets.emailControls.replyAll') }}
                                 </button>
 
-                                <button mat-raised-button
+                                <button
+                                    mat-raised-button
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                    *ngIf="state.allowQueueTransfer" (click)="transferEmail(getSelectedEmails())">
+                                    *ngIf="state.allowQueueTransfer"
+                                    (click)="transferEmail(getSelectedEmails())"
+                                >
                                     {{ locale('sharedComponents.email.transferAll') }}
                                 </button>
 
-                                <button mat-raised-button color="primary" *ngIf="currentTab === 'queue'"
+                                <button
+                                    mat-raised-button
+                                    color="primary"
+                                    *ngIf="currentTab === 'queue'"
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                    (click)="closeEmails(getSelectedEmails())">
+                                    (click)="closeEmails(getSelectedEmails())"
+                                >
                                     {{ locale('sharedComponents.email.closeEmails') }}
                                 </button>
 
-                                <button mat-raised-button color="accent"
+                                <button
+                                    mat-raised-button
+                                    color="accent"
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                    *ngIf="state.deleteAllowed" (click)="deleteEmails(getSelectedEmails())">
+                                    *ngIf="state.deleteAllowed"
+                                    (click)="deleteEmails(getSelectedEmails())"
+                                >
                                     {{ locale('sharedComponents.email.deleteEmails') }}
                                 </button>
                             </div>
@@ -364,16 +424,16 @@
                         }" -->
                         <div *ngIf="dataSource.data.length && !emailSearchRes.error" class="twd-flex-1 twd-relative">
                             <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
-                                <ng-container
-                                    *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
+                                <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: dataSource.data }"></ng-container>
                             </div>
                         </div>
 
                         <div class="twd-p-3" *ngIf="emailSearchRes.loading && !dataSource.data.length">
-                            <div [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                                class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2">
-                                <span
-                                    class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
+                            <div
+                                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                                class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
+                            >
+                                <span class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
                                     <mat-icon> arrow_drop_down </mat-icon>
                                 </span>
                                 <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
@@ -381,42 +441,53 @@
                         </div>
                     </ng-container>
 
-                    <div *ngIf="!dataSource.data.length && !emailSearchRes.loading && !emailSearchRes.error"
-                        class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center">
+                    <div
+                        *ngIf="!dataSource.data.length && !emailSearchRes.loading && !emailSearchRes.error"
+                        class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center"
+                    >
                         <span class="twd-text-2xl">{{ locale('sharedComponents.email.emailsNotFound') }} </span>
                     </div>
 
-                    <div *ngIf="!emailSearchRes.loading && emailSearchRes.error"
-                        class="h-80-p twd-flex twd-justify-center twd-items-center">
+                    <div *ngIf="!emailSearchRes.loading && emailSearchRes.error" class="h-80-p twd-flex twd-justify-center twd-items-center">
                         <div class="twd-w-5/12">
                             <no-data-available [msg]="emailSearchRes.msg"></no-data-available>
-                            <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary"
-                                (click)="doAdvancedSearch()">
+                            <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary" (click)="doAdvancedSearch()">
                                 {{ locale('global.retry') }}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div *ngIf="openEmailRes.loading || state.openEmailResData as selectedEmail"
-                    class="email-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto">
+                <div
+                    *ngIf="openEmailRes.loading || state.openEmailResData as selectedEmail"
+                    class="email-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto"
+                >
                     <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
                         <button
                             *ngIf="showInternetHeaders && ['queue', 'inbox'].includes(currentTab) && selectedEmail?.InternetHeaders"
-                            mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="showHeaders(selectedEmail?.InternetHeaders)">
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            (click)="showHeaders(selectedEmail?.InternetHeaders)"
+                        >
                             {{ locale('widgets.emailControls.internetHeaders') }}
                         </button>
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            *ngIf="state.allowQueueTransfer" (click)="transferEmail([selectedEmail])">
+                        <button
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            *ngIf="state.allowQueueTransfer"
+                            (click)="transferEmail([selectedEmail])"
+                        >
                             {{ locale('interactionComponent.transfer') }}
                         </button>
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="pullEmails([selectedEmail])">
+                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" (click)="pullEmails([selectedEmail])">
                             {{ locale('sharedComponents.email.pull') }}
                         </button>
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            *ngIf="state.deleteAllowed" (click)="deleteEmails([selectedEmail])">
+                        <button
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            *ngIf="state.deleteAllowed"
+                            (click)="deleteEmails([selectedEmail])"
+                        >
                             {{ locale('sharedComponents.email.delete') }}
                         </button>
                         <!-- <button
@@ -427,12 +498,16 @@
                         >
                             Reply
                         </button> -->
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="closeEmails([selectedEmail])">
+                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" (click)="closeEmails([selectedEmail])">
                             {{ locale('interactionComponent.close') }}
                         </button>
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" color="accent"
-                            *ngIf="currentTab === 'inbox'" (click)="markAsSpam(selectedEmail)">
+                        <button
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            color="accent"
+                            *ngIf="currentTab === 'inbox'"
+                            (click)="markAsSpam(selectedEmail)"
+                        >
                             {{ locale('widgets.emailControls.markAsSpam') }}
                         </button>
                         <button mat-icon-button (click)="openEmailRes.data.next(null)">
@@ -440,42 +515,42 @@
                         </button>
                     </div>
 
-                    <div class="email-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                        <email class="twd-h-full" mode="preview" [email]="state.openEmailResData"
+                    <div
+                        class="email-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                    >
+                        <email
+                            class="twd-h-full"
+                            mode="preview"
+                            [email]="state.openEmailResData"
                             [state]="openEmailRes.error ? 'error' : openEmailRes.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"
-                            (retry)="openEmail(selectedEmail)">
+                            (retry)="openEmail(selectedEmail)"
+                        >
                             <div id="emailInfo">
                                 <div class="twd-flex twd-justify-between twd-px-7">
                                     <div fxFlex="80">
-                                        <p class="text-bold my-4">{{ locale('sharedComponents.email.emailTo') }}: {{
-                                            selectedEmail.ToList }}</p>
+                                        <p class="text-bold my-4">{{ locale('sharedComponents.email.emailTo') }}: {{ selectedEmail.ToList }}</p>
                                         <p class="text-bold my-4" *ngIf="selectedEmail.CCList">
                                             {{ locale('sharedComponents.email.emailCc') }} : {{ selectedEmail.CCList }}
                                         </p>
                                         <p class="my-4 text-bold">
-                                            {{ locale('sharedComponents.email.emailFrom') }}: {{ selectedEmail.From ||
-                                            'NA' }}
+                                            {{ locale('sharedComponents.email.emailFrom') }}: {{ selectedEmail.From || 'NA' }}
                                         </p>
                                         <p class="my-4 text-bold">
-                                            {{ locale('interactionComponent.status') }}: {{ selectedEmail.CurrentStatus
-                                            || 'NA' }}
+                                            {{ locale('interactionComponent.status') }}: {{ selectedEmail.CurrentStatus || 'NA' }}
                                         </p>
-                                        <p class="my-4 text-bold">{{ locale('global.agent') }}: {{
-                                            selectedEmail.AgentName || 'NA' }}</p>
+                                        <p class="my-4 text-bold">{{ locale('global.agent') }}: {{ selectedEmail.AgentName || 'NA' }}</p>
 
                                         <p class="my-4 text-bold">
                                             {{ locale('sharedComponents.email.closedStatus') }}:
-                                            {{ selectedEmail.ClosedBy ? 'Closed by ' + selectedEmail.ClosedBy : 'Open'
-                                            }}
+                                            {{ selectedEmail.ClosedBy ? 'Closed by ' + selectedEmail.ClosedBy : 'Open' }}
                                         </p>
 
                                         <p class="my-4 text-bold" *ngIf="selectedEmail.Priority">
                                             {{ locale('interactionComponent.priority') }}: {{ selectedEmail.Priority }}
                                         </p>
                                         <p class="my-4 text-bold" *ngIf="selectedEmail.RepliedStatus">
-                                            {{ locale('sharedComponents.email.repliedStatus') }}: {{
-                                            selectedEmail.RepliedStatus }}
+                                            {{ locale('sharedComponents.email.repliedStatus') }}: {{ selectedEmail.RepliedStatus }}
                                         </p>
                                         <p class="my-4 text-bold" *ngIf="selectedEmail.Intent">
                                             {{ locale('sharedComponents.email.intent') }}: {{ selectedEmail.Intent }}
@@ -487,17 +562,26 @@
                                     </div>
                                 </div>
 
-                                <div *ngIf="
+                                <div
+                                    *ngIf="
                                         state.showEmailSwitcher &&
                                         this.emailBodies[selectedEmail.InSessionId] &&
                                         this.emailBodies[selectedEmail.OutSessionId]
-                                    " class="twd-p-3 twd-mt-1">
-                                    <a *ngIf="latestEmailPreview" class="twd-cursor-pointer"
-                                        (click)="latestEmailPreview = !latestEmailPreview; openEmail(selectedEmail)">
+                                    "
+                                    class="twd-p-3 twd-mt-1"
+                                >
+                                    <a
+                                        *ngIf="latestEmailPreview"
+                                        class="twd-cursor-pointer"
+                                        (click)="latestEmailPreview = !latestEmailPreview; openEmail(selectedEmail)"
+                                    >
                                         {{ locale('widgets.emailControls.viewOriginal') }}
                                     </a>
-                                    <a *ngIf="!latestEmailPreview" class="twd-cursor-pointer"
-                                        (click)="latestEmailPreview = !latestEmailPreview; openEmail(selectedEmail)">
+                                    <a
+                                        *ngIf="!latestEmailPreview"
+                                        class="twd-cursor-pointer"
+                                        (click)="latestEmailPreview = !latestEmailPreview; openEmail(selectedEmail)"
+                                    >
                                         {{ locale('widgets.emailControls.viewCheckerEmail') }} View Checker Email
                                     </a>
                                 </div>
@@ -506,8 +590,10 @@
                     </div>
                 </div>
 
-                <div *ngIf="!state.openEmailResData && !openEmailRes.loading"
-                    class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center">
+                <div
+                    *ngIf="!state.openEmailResData && !openEmailRes.loading"
+                    class="email-open twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
+                >
                     <div class="twd-flex twd-flex-col twd-justify-center">
                         <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> email </mat-icon>
                         <span class="twd-text-2xl">{{ locale('sharedComponents.email.selectEmailLabel') }} </span>
@@ -518,19 +604,27 @@
 
         <ng-template #replyDialog>
             <div class="twd-h-full twd-w-full twd-flex twd-flex-col twd-relative twd-p-2">
-                <email class="twd-h-full" mode="quick-reply" (sendEmail)="replyEditorModal.sendEmail($event)"
+                <email
+                    class="twd-h-full"
+                    mode="quick-reply"
+                    (sendEmail)="replyEditorModal.sendEmail($event)"
                     [email]="state.openEmailResData"
                     [state]="openEmailRes.error ? 'error' : openEmailRes.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"
-                    (retry)="openEmail(selectedEmail)">
+                    (retry)="openEmail(selectedEmail)"
+                >
                 </email>
             </div>
         </ng-template>
 
         <ng-template let-treeNode="treeNode" #treeNodeRef>
-            <div [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+            <div
+                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                 class="twd-grid twd-w-full twd-rounded-3xl twd-pl-2 twd-mb-2"
-                *ngFor="let node of treeNode; trackBy: trackBy">
-                <div class="border-radius-20 twd-py-2" [ngClass]="
+                *ngFor="let node of treeNode; trackBy: trackBy"
+            >
+                <div
+                    class="border-radius-20 twd-py-2"
+                    [ngClass]="
                         customFuse.anchor?.body ||
                         customFuse.widget?.body +
                             ' ' +
@@ -543,21 +637,24 @@
                                         : ' twd-text-primary-default'
                                     : ''
                                 : '')
-                    ">
+                    "
+                >
                     <div class="twd-flex twd-items-center">
-                        <div
-                            *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected">
-                            <mat-checkbox [indeterminate]="selected.some" [checked]="selected.all"
-                                (change)="selectEmails($event.checked, node.children)"></mat-checkbox>
+                        <div *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected">
+                            <mat-checkbox
+                                [indeterminate]="selected.some"
+                                [checked]="selected.all"
+                                (change)="selectEmails($event.checked, node.children)"
+                            ></mat-checkbox>
                         </div>
-                        <div class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
+                        <div
+                            class="twd-flex-1 twd-flex twd-items-center twd-justify-between twd-cursor-pointer"
                             (click)="
                                 node.expanded = !node.expanded; childrenRef.classList.toggle('twd-h-0'); iconRef.classList.toggle('twd--rotate-90')
-                            ">
+                            "
+                        >
                             <div class="twd-flex twd-items-center twd-truncate twd-max-w-11/12">
-                                <span
-                                    class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center"
-                                    #iconRef>
+                                <span class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center" #iconRef>
                                     <mat-icon> arrow_drop_down </mat-icon>
                                 </span>
                                 <span class="twd-flex-1 font-weight-700 twd-truncate">
@@ -573,13 +670,11 @@
 
                 <div class="twd-transition-all twd-h-0 twd-overflow-hidden" #childrenRef>
                     <ng-container *ngIf="node.grandChildren">
-                        <ng-container
-                            *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
+                        <ng-container *ngTemplateOutlet="treeNodeRef; context: { treeNode: node.children }"></ng-container>
                     </ng-container>
 
                     <ng-container *ngIf="!node.grandChildren">
-                        <ng-container
-                            *ngTemplateOutlet="emailListRef; context: { emailList: node.children }"></ng-container>
+                        <ng-container *ngTemplateOutlet="emailListRef; context: { emailList: node.children }"></ng-container>
                     </ng-container>
                 </div>
             </div>
@@ -587,30 +682,41 @@
 
         <ng-template #emailListRef let-emailList="emailList">
             <div *transloco="let locale" class="twd-flex twd-items-center">
-                <cdk-virtual-scroll-viewport [itemSize]="64" [minBufferPx]="488" [maxBufferPx]="512"
+                <cdk-virtual-scroll-viewport
+                    [itemSize]="64"
+                    [minBufferPx]="488"
+                    [maxBufferPx]="512"
                     class="twd-w-full twd-min-h-[74px] twd-max-h[512px]"
-                    [ngStyle]="{ 'height.px': emailList.length * 74 > 512 ? 512 : emailList.length * 76 }">
-                    <div [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                        class="twd-flex twd-rounded-3xl twd-pl-2" [ngClass]="{ 'twd-pb-[1px]': emailList.length === 1 }"
-                        *cdkVirtualFor="let node of emailList" [cdkVirtualForTrackBy]="trackBy">
+                    [ngStyle]="{ 'height.px': emailList.length * 74 > 512 ? 512 : emailList.length * 76 }"
+                >
+                    <div
+                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                        class="twd-flex twd-rounded-3xl twd-pl-2"
+                        [ngClass]="{ 'twd-pb-[1px]': emailList.length === 1 }"
+                        *cdkVirtualFor="let node of emailList"
+                        [cdkVirtualForTrackBy]="trackBy"
+                    >
                         <div *ngIf="!node.children" class="twd-pl-3 twd-pr-2 twd-w-full">
-                            <div class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0 mat-elevation-z1"
+                            <div
+                                class="twd-rounded-3xl twd-w-full twd-flex twd-items-center twd-transition-all twd-border-2 twd-border-opacity-0 mat-elevation-z1"
                                 [ngClass]="
                                     state.openEmailResData?.uiId === node.uiId
                                         ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
                                         : ' theme-bg'
-                                ">
+                                "
+                            >
                                 <div class="twd-p-3" *ngIf="state.bulkSelection">
                                     <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
                                 </div>
 
-                                <div mat-ripple
+                                <div
+                                    mat-ripple
                                     class="twd-flex-1 twd-flex twd-flex-wrap 2xl:twd-flex-nowrap twd-justify-between twd-px-2 twd-py-1 twd-overflow-hidden"
-                                    (click)="latestEmailPreview = true; openEmail(node)">
+                                    (click)="latestEmailPreview = true; openEmail(node)"
+                                >
                                     <div class="twd-w-full 2xl:twd-max-w-9/12">
                                         <p class="font-weight-600 my-4 twd-break-all 2xl:twd-w-10/12">
-                                            {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) ||
-                                            'NA' }}
+                                            {{ (['sentitem', 'draft'].includes(currentTab) ? node.ToList : node.From) || 'NA' }}
                                         </p>
                                         <p class="my-4 twd-truncate twd-max-w-[180px]">
                                             {{ locale('sharedComponents.email.emailSubject') }}:

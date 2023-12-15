@@ -25,10 +25,12 @@ export const EMAIL_REASONCODE_VALUES = {
     27: 'EMM not started',
     28: 'No email account found',
     29: 'Generic main exception',
-    30: 'Provided email account not found'
+    30: 'Provided email account not found',
+    100: 'success'
 };
 
 export const EMAIL_CURRENTSTATUS_CODES = {
-    SentToCustomer: 'to customer',
-    SentToCheckerSession: 'to checker'
+    SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
+    SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    EmailSending: 'sharedComponents.email.emailIsBeingSent'
 };

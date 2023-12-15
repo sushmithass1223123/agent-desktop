@@ -53,3 +53,43 @@ email-editor {
     min-height: 200px;
     text-align: initial;
 }
+
+.email-attachment-available {
+    background-color: #028a00 !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
+}
+
+.email-attachment-archived {
+    background-color: rgb(241, 177, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
+}
+
+.email-attachment-deep-archived {
+    background-color: rgb(207, 66, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
+}
+
+.email-attachment-restoring {
+    background-color: rgb(148, 164, 255) !important;
+    color: rgb(0, 0, 0) !important;
+    mat-icon {
+        color: black !important;
+    }
+}
+
+.email-attachment-failed {
+    background-color: rgb(255, 0, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    mat-icon {
+        color: rgb(255, 255, 255) !important;
+    }
+}
