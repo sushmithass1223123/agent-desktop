@@ -931,7 +931,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 if (res.response.CurrentStatus === 'EmailSending') {
                     let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
                     this.sendTimerId = setTimeout(() => {
-                        this.closeInteraction(null, true);
+                        let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
+                        if (!isSent) {
+                            this.closeInteraction(null, true);
+                        }
                     }, timerTime);
                     reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
                 }
@@ -1037,7 +1040,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     if (res.response.CurrentStatus === 'EmailSending') {
                         let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
                         this.sendTimerId = setTimeout(() => {
-                            this.closeInteraction(null, true);
+                            let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
+                            if (!isSent) {
+                                this.closeInteraction(null, true);
+                            }
                         }, timerTime);
                         reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
                     }
