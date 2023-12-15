@@ -2,21 +2,27 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/internal/Subject';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
-
 export class SharedService {
+    constructor() {}
 
-  constructor() { }
+    private holdMethodSubject = new Subject<void>();
+    private emailErrorNotifySubject = new Subject<string>();
 
+    triggerEmailFailure(interactionId: string) {
+        this.emailErrorNotifySubject.next(interactionId);
+    }
 
-  private holdMethodSubject = new Subject<void>();
+    getEmailFailure() {
+        return this.emailErrorNotifySubject.asObservable();
+    }
 
-  triggerHoldMethod() {
-    this.holdMethodSubject.next();
-  }
+    triggerHoldMethod() {
+        this.holdMethodSubject.next();
+    }
 
-  getHoldMethod() {
-    return this.holdMethodSubject.asObservable();
-  }
+    getHoldMethod() {
+        return this.holdMethodSubject.asObservable();
+    }
 }

@@ -141,7 +141,7 @@
                                 (click)="closeEditor(closeEditorBtn)"
                                 #closeEditorBtn
                                 [matTooltip]="locale('widgets.emailControls.closeEditor')"
-                                [disabled]="sendingEmailAsMaker"
+                                [disabled]="sendingEmailAsMaker || isEmailSent(currentInteraction.InteractionID) === false"
                             >
                                 {{ locale('interactionComponent.cancel') }}
                             </button>

@@ -52,6 +52,7 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { UIActionEventService } from '@services/ui-action-event.service';
 import { AppDataService } from '@services/app-data.service';
+import { SharedService } from '@services/shared.service';
 
 type EmailEventGeneric = IncomingEmailEvent | OutgoingEmailEvent;
 
@@ -260,7 +261,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _emailService: EmailService,
         private translocoService: TranslocoService,
         private uiActionEventService: UIActionEventService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _sharedService: SharedService
     ) {
         super('TwEmailControlsComponent');
     }
@@ -279,6 +281,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.data.Data.TemplatesByTeam;
         this._emailService.emailTemplatesDepartmentsByHierarchy = !!this.data.Data.TemplatesByHierarchy;
+
+        this._sharedService.getEmailFailure().subscribe((interactionId: string) => {
+            if (this.currentInteraction.InteractionID === interactionId) {
+                clearTimeout(this.sendTimerId);
+            }
+        });
 
         this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
             // filter out the textchat interaction
@@ -932,8 +940,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
                     this.sendTimerId = setTimeout(() => {
                         let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
-                        if (!isSent) {
-                            this.closeInteraction(null, true);
+                        if (!isSent && this.currentInteraction.InteractionID) {
+                            this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                                isEmailSent: true
+                            });
                         }
                     }, timerTime);
                     reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
@@ -1041,8 +1051,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
                         this.sendTimerId = setTimeout(() => {
                             let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
-                            if (!isSent) {
-                                this.closeInteraction(null, true);
+                            if (!isSent && this.currentInteraction.InteractionID) {
+                                this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                                    isEmailSent: true
+                                });
                             }
                         }, timerTime);
                         reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];

@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.3.0-alpha.3",
+    "version": "5.3.0-beta.1",
     "license": "",
     "scripts": {
         "ng": "nx",
@@ -82,6 +82,7 @@
         "ng2-charts": "2.4.0",
         "ngx-color-picker": "12.0.1",
         "ngx-drag-scroll": "13.0.1",
+        "orderedmap": "^1.1.7",
         "rxjs": "6.5.3",
         "tinymce": "5.10.5",
         "tslib": "2.4.0",
