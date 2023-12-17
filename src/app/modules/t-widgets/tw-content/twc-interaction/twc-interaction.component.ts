@@ -328,7 +328,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             isEmailSent: true
         });
         this._sharedService.triggerEmailFailure(evt.InteractionID);
-        if (emailMeta?.outboundData?.currentStatus === 'SentToCustomer') {
+        if (emailMeta?.OutboundData?.CurrentStatus === 'SentToCustomer') {
             this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSemdSuccess'));
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
