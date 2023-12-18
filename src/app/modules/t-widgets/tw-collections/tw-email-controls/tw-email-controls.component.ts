@@ -937,6 +937,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // Display the message in snackbar accordingly
                 let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
                 if (res.response.CurrentStatus === 'EmailSending') {
+                    if (res.response.CurrentStatus === 'EmailSending') {
+                        this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                            isEmailSent: false
+                        });
+                    }
                     let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
                     this.sendTimerId = setTimeout(() => {
                         let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
@@ -963,11 +968,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     btn.disabled = false;
                 }
                 this.sendingEmailAsMaker = false;
-                if (res.response.CurrentStatus === 'EmailSending') {
-                    this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
-                        isEmailSent: false
-                    });
-                }
+
                 this._appUIService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
                 this.draftPolling$?.unsubscribe();
                 this.emailRef.mode = 'preview';
