@@ -8,7 +8,15 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
-import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse, MediaStreamerSingleResponse } from 'app/interfaces';
+import {
+    EmailComponentInputs,
+    EmailComponentMode,
+    EmailFile,
+    MediaStreamerResponse,
+    MediaStreamerSingleResponse,
+    MediaStreamerMultiResponse,
+    MediaStreamerMetaResponse
+} from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -336,6 +344,30 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
+     * Retry method for failed files
+     */
+    async getMetaDataForFile(file: any): Promise<void> {
+        try {
+            const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
+                urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${file.FileId}`],
+                method: 'GET',
+                responseType: 'json'
+            });
+
+            if (response.isSuccess && response?.result?.length > 0) {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaSuccess'));
+                file.ArchiveStatus = response.result[0].archiveStatus;
+                file.RestoreStatus = response.result[0].restoreStatus;
+                file.FileError = response.result[0].fileError;
+            } else {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaError'), 'failure');
+            }
+        } catch (error) {
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaError'), 'failure');
+        }
+    }
+
+    /**
      * Restore method for archived file
      */
     async restoreFromArchive(file: any): Promise<void> {
@@ -351,12 +383,15 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     file.RestoreStatus = true;
                     this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiated'));
                 } else {
-                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiated'));
+                    //this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
                 }
             } else {
                 this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreNotFound'), 'failure');
             }
-        } catch (error) {}
+        } catch (error) {
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
+        }
     }
 
     /**
