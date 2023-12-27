@@ -913,6 +913,8 @@
             "fileRestoreInitiated": "File restore initiated",
             "fileRestoreFailed": "Error occurred restoring file",
             "fileRestoreNotFound": "File id not found cannot restore",
+            "fileMetaSuccess": "File meta data retrieved",
+            "fileMetaError": "Error accessing meta data for file",
             "emailPullConfirmHeader": "Email Pull Confirmation",
             "emailSendConfirmHeader": "Email Send Confirmation",
             "emailConfirmBody": "There are attachments that are unavailable in this email. Do you still want to continue ?",

@@ -234,7 +234,7 @@
                 (removed)="removeFiles(file.Id)"
             >
                 <div
-                    *ngIf="!file.ArchiveStatus || file.FileError"
+                    *ngIf="!file.ArchiveStatus && !file.FileError"
                     (click)="openFile(file)"
                     class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
                 >
@@ -243,8 +243,8 @@
                     <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                 </div>
                 <div
-                    *ngIf="file.ArchiveStatus && !file.FileError"
-                    [matMenuTriggerFor]="file.ArchiveStatus && !file.RestoreStatus ? attachOptList : null"
+                    *ngIf="file.ArchiveStatus || file.FileError"
+                    [matMenuTriggerFor]="(file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptList : null"
                     class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
                 >
                     <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
@@ -252,9 +252,13 @@
                     <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                 </div>
                 <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
-                    <button mat-menu-item (click)="restoreFromArchive(file)">
+                    <button *ngIf="file.ArchiveStatus" mat-menu-item (click)="restoreFromArchive(file)">
                         <mat-icon>restore</mat-icon>
                         Restore
+                    </button>
+                    <button *ngIf="file.FileError" mat-menu-item (click)="getMetaDataForFile(file)">
+                        <mat-icon>refresh</mat-icon>
+                        Retry
                     </button>
                 </mat-menu>
             </mat-chip>
@@ -268,12 +272,12 @@
             </mat-chip>
         </mat-chip-list>
 
-        <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
+        <!-- <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
             <button mat-menu-item (click)="restoreFromArchive(file)">
                 <mat-icon>restore</mat-icon>
                 Restore
             </button>
-        </mat-menu>
+        </mat-menu> -->
 
         <mat-menu class="custom attachment-overlay" #attachList="matMenu">
             <div class="attachment-menu twd-mx-2">
@@ -292,7 +296,7 @@
                         (removed)="removeFiles(file.Id)"
                     >
                         <div
-                            *ngIf="!file.ArchiveStatus || file.FileError"
+                            *ngIf="!file.ArchiveStatus && !file.FileError"
                             class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
                             (click)="openFile(file)"
                         >
@@ -301,8 +305,8 @@
                             <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                         </div>
                         <div
-                            *ngIf="file.ArchiveStatus && !file.FileError"
-                            [matMenuTriggerFor]="file.ArchiveStatus && !file.RestoreStatus ? attachOptListSecondary : null"
+                            *ngIf="file.ArchiveStatus || file.FileError"
+                            [matMenuTriggerFor]="(file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptListSecondary : null"
                             class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
                         >
                             <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
@@ -310,9 +314,13 @@
                             <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                         </div>
                         <mat-menu class="custom attachment-overlay" #attachOptListSecondary="matMenu">
-                            <button mat-menu-item (click)="restoreFromArchive(file)">
+                            <button *ngIf="file.ArchiveStatus" mat-menu-item (click)="restoreFromArchive(file)">
                                 <mat-icon>restore</mat-icon>
                                 Restore
+                            </button>
+                            <button *ngIf="file.FileError" mat-menu-item (click)="getMetaDataForFile(file)">
+                                <mat-icon>refresh</mat-icon>
+                                Retry
                             </button>
                         </mat-menu>
                     </mat-chip>
