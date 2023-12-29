@@ -381,10 +381,14 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 if (response && response.isSuccess) {
                     //success
                     file.RestoreStatus = true;
-                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiated'));
+                    if (file.ArchiveStatus === 'ARCHIVE_ACCESS') {
+                        this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiatedArchive'));
+                    }
+                    if (file.ArchiveStatus === 'DEEP_ARCHIVE_ACCESS') {
+                        this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiatedDeepArchive'));
+                    }
                 } else {
-                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiated'));
-                    //this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
                 }
             } else {
                 this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreNotFound'), 'failure');
