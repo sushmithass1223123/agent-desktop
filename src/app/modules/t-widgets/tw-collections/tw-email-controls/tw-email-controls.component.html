@@ -38,12 +38,17 @@
             >
                 <div class="twd-flex twd-flex-wrap twd-gap-3 twd-pb-2 twd-justify-end">
                     <ng-container *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'">
+                        <div *ngIf="isEmailSent(currentInteraction.InteractionID) === false" class="loading-spinner-email">
+                            <div class="loading-text-email">{{ locale('sharedComponents.email.emailIsBeingSent') }}</div>
+                            <div class="spinner-email"></div>
+                        </div>
                         <button
                             *ngIf="data.Data?.InteractionCommentAllowed && emailComponentMode !== 'preview'"
                             mat-raised-button
                             class="border-radius-20"
                             [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="saveInteractionComments()"
+                            [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                         >
                             <mat-icon>comment</mat-icon>
                         </button>
@@ -51,7 +56,11 @@
                             *ngIf="emailComponentMode !== 'preview'"
                             mat-raised-button
                             class="border-radius-20"
-                            [disabled]="(draftPollDuration && !currentInteraction.CurrOutSessionId) || sendingEmailAsMaker"
+                            [disabled]="
+                                (draftPollDuration && !currentInteraction.CurrOutSessionId) ||
+                                sendingEmailAsMaker ||
+                                isEmailSent(currentInteraction.InteractionID) === false
+                            "
                             (click)="saveEmailAsDraft(true, saveAsDraft)"
                             #saveAsDraft
                         >
@@ -64,6 +73,7 @@
                             (click)="closeEditor(closeBtn, true)"
                             #closeBtn
                             [matTooltip]="locale('interactionComponent.close')"
+                            [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                         >
                             {{ locale('interactionComponent.close') }}
                         </button>

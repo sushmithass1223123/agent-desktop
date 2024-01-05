@@ -256,7 +256,12 @@
                         <mat-icon>restore</mat-icon>
                         Restore
                     </button>
-                    <button *ngIf="file.FileError" mat-menu-item (click)="getMetaDataForFile(file)">
+                    <button
+                        *ngIf="file.FileError"
+                        mat-menu-item
+                        (click)="getMetaDataForFile(file)"
+                        [matTooltip]="locale('sharedComponents.email.fileRetryTooltip')"
+                    >
                         <mat-icon>refresh</mat-icon>
                         Retry
                     </button>
@@ -318,7 +323,12 @@
                                 <mat-icon>restore</mat-icon>
                                 Restore
                             </button>
-                            <button *ngIf="file.FileError" mat-menu-item (click)="getMetaDataForFile(file)">
+                            <button
+                                *ngIf="file.FileError"
+                                mat-menu-item
+                                (click)="getMetaDataForFile(file)"
+                                [matTooltip]="locale('sharedComponents.email.fileRetryTooltip')"
+                            >
                                 <mat-icon>refresh</mat-icon>
                                 Retry
                             </button>

@@ -13,8 +13,8 @@ import {
     OutgoingCallEvent,
     OutgoingEmailEvent,
     TextChatIncomingEvent,
-    TUtils,
     EmailSendingStatusEvent,
+    TUtils,
     SDKClient,
     IResponse
 } from '@tmac/sdk';
@@ -29,6 +29,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
+import { EMAIL_SEND_STATUS } from 'app/constants';
 
 /**
  * TwcInteractionComponent
@@ -324,11 +325,11 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
         let emailMeta = JSON.parse(evt.JsonData);
-        this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            isEmailSent: true
-        });
-        this._sharedService.triggerEmailFailure(evt.InteractionID);
-        if (emailMeta?.OutboundData?.CurrentStatus === 'SentToCustomer') {
+        if (EMAIL_SEND_STATUS[emailMeta?.StatusCode] === 'Success') {
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                isEmailSent: true
+            });
+            this._sharedService.triggerEmailFailure(evt.InteractionID);
             this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSemdSuccess'));
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
@@ -343,7 +344,22 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                     this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
                 });
         } else {
-            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSendFail'), 'failure');
+            let errReason = '';
+            let errorMsg = EMAIL_SEND_STATUS[emailMeta?.StatusCode] ? EMAIL_SEND_STATUS[emailMeta?.StatusCode] : 'Unknown';
+
+            if (errorMsg === 'FailedWithServerBusyException') {
+                try {
+                    errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail${errorMsg}`)}${Math.floor(
+                        parseInt(emailMeta.StatusMessage) / 1000
+                    )} ${this.translocoService.translate('sharedComponents.email.seconds')}`;
+                } catch (err) {
+                    errorMsg = 'Unknown';
+                    errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail${errorMsg}`)}`;
+                }
+            } else {
+                errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail${errorMsg}`)}`;
+            }
+            this._appUIService.showSnackbar(`${this.translocoService.translate('sharedComponents.email.asyncEmailSendFail')}${errReason}`, 'failure');
         }
     }
 

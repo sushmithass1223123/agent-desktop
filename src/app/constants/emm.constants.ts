@@ -29,6 +29,19 @@ export const EMAIL_REASONCODE_VALUES = {
     100: 'success'
 };
 
+export const EMAIL_SEND_STATUS = {
+    '1': 'Success',
+    '0': 'Success',
+    '-1': 'Fail',
+    '-2': 'Fail',
+    '-3': 'FailedWithServerBusyException',
+    '-4': 'ExchangeAuthenticationError',
+    '-5': 'ExchangeServiceObjectNotCreated',
+    '-6': 'ExchangeMessageNotCreated',
+    '-8': 'MailboxInstanceCreationError',
+    '-9': 'EwsApiAdaptorDown'
+};
+
 export const EMAIL_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
     SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',

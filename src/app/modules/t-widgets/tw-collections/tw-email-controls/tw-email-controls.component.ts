@@ -930,6 +930,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // this._fuseProgressBarService.hide();
                 ref.dismiss();
                 if (!res || !res.response) {
+                    this.sendingEmailAsMaker = false;
+                    this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailSendConnectionError'), 'failure');
                     throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
                     return;
                 }
@@ -937,15 +939,18 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 // Display the message in snackbar accordingly
                 let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
                 if (res.response.CurrentStatus === 'EmailSending') {
-                    if (res.response.CurrentStatus === 'EmailSending') {
-                        this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
-                            isEmailSent: false
-                        });
-                    }
+                    this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
+                        isEmailSent: false
+                    });
                     let timerTime = this.data.Data.AsyncEmailSendTimeout ? this.data.Data.AsyncEmailSendTimeout : 60000;
                     this.sendTimerId = setTimeout(() => {
                         let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
                         if (!isSent && this.currentInteraction.InteractionID) {
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('sharedComponents.email.emailSendTimeoutMessage'),
+                                'failure'
+                            );
+
                             this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
                                 isEmailSent: true
                             });
@@ -970,8 +975,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.sendingEmailAsMaker = false;
 
                 this._appUIService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
-                this.draftPolling$?.unsubscribe();
-                this.emailRef.mode = 'preview';
+
+                if (res.response.CurrentStatus !== 'EmailSending') {
+                    this.draftPolling$?.unsubscribe();
+                    this.emailRef.mode = 'preview';
+                }
+
                 // if (this.currentInteraction.RouteReason === 'AgentDraftPull') {
                 //     this.deleteDraftEmail();
                 // }
@@ -1041,6 +1050,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     }).catch((e) => errCallback(e));
                     // this._fuseProgressBarService.hide();
                     if (!res || !res.response) {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('sharedComponents.email.emailSendConnectionError'),
+                            'failure'
+                        );
                         throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unexpected response from Server');
                         return;
                     }
@@ -1053,6 +1066,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this.sendTimerId = setTimeout(() => {
                             let isSent = this.isEmailSent(this.currentInteraction?.InteractionID);
                             if (!isSent && this.currentInteraction.InteractionID) {
+                                this._appUIService.showSnackbar(
+                                    this.translocoService.translate('sharedComponents.email.emailSendTimeoutMessage'),
+                                    'failure'
+                                );
                                 this._interactionManagerService.updateInteraction(this.currentInteraction.InteractionID, {
                                     isEmailSent: true
                                 });

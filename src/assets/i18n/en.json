@@ -386,7 +386,8 @@
             "markSpamSuccess": "Email marked as spam",
             "markSpamFailed": "Unable to spam the email",
             "emailDownloadLoading": "Downloading email",
-            "emailDownloadFailed": "Unable to download email"
+            "emailDownloadFailed": "Unable to download email",
+            "emailSendConnectionError": "Error connecting to email server"
         },
         "deflectToDigital": {
             "commentPlaceholder": "Please enter comment...",
@@ -915,15 +916,26 @@
             "fileRestoreFailed": "Error occurred restoring file",
             "fileRestoreNotFound": "File id not found cannot restore",
             "fileMetaSuccess": "File meta data retrieved",
-            "fileMetaError": "Error accessing meta data for file",
+            "fileMetaError": "Error occurred while connecting to file server - if it fails again please raise as an incident",
+            "fileRetryTooltip": "Retry is required, if still fails please raise as an incident",
             "emailPullConfirmHeader": "Email Pull Confirmation",
             "emailSendConfirmHeader": "Email Send Confirmation",
             "emailConfirmBody": "There are attachments that are unavailable in this email. Do you still want to continue ?",
             "asyncEmailSemdSuccess": "Email sent to customer",
-            "asyncEmailSendFail": "Error sending email to customer",
+            "asyncEmailSendFail": "Error sending email to customer - reason : ",
             "emailSendToCustomer": "Email sent to customer",
             "emailSendToChecker": "Email sent to checker",
-            "emailIsBeingSent": "Email is being sent. please wait"
+            "emailIsBeingSent": "Email is being sent. please wait",
+            "emailSendTimeoutMessage": "Email sending has timed out, please verify if the email was sent in sent items",
+            "emailSendErrorFail": "General Failure",
+            "emailSendErrorFailedWithServerBusyException": "Server Busy - ",
+            "emailSendErrorExchangeAuthenticationError": "Exchange Auth Error",
+            "emailSendErrorExchangeServiceObjectNotCreated": "Exchange Service Object Not Created",
+            "emailSendErrorExchangeMessageNotCreated": "Exchange Message Not Created",
+            "emailSendErrorMailboxInstanceCreationError": "Mailbox Creation Error",
+            "emailSendErrorUnknown": "Unknown",
+            "emailSendErrorEwsApiAdaptorDown": "EWS Adapter Down",
+            "seconds": "Seconds"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
