@@ -257,6 +257,10 @@ export type TwChatControlsData = {
      */
     HoldInteractionAllowed: boolean;
     /**
+     * Hides audio mute button
+     */
+    MuteAudioHidden: boolean;
+    /**
      * Whiteboard reference
      */
     Whiteboard: {

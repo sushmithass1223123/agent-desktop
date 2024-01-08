@@ -91,6 +91,7 @@
         "ScreenShareAllowed": true,
         "InteractionCommentAllowed": true,
         "HoldInteractionAllowed": true,
+        "MuteAudioHidden": true,
         "Whiteboard": {
             "Allowed": true,
             "Url": ""

@@ -228,7 +228,7 @@
 
                 <div class="call-controls twd-flex twd-flex-row twd-flex-wrap">
                     <div class="actions-1 twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-max twd-max-w-5/12">
-                        <button
+                        <button *ngIf="!muteAudioHidden"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"

@@ -155,4 +155,8 @@ export type TwAudioVideoControlsData = {
      * [STANDALONE] Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /**
+     * [STANDALONE] To hide audio mute button or not
+     */
+    MuteAudioHidden: boolean;
 };
