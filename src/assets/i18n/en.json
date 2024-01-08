@@ -921,7 +921,7 @@
             "emailPullConfirmHeader": "Email Pull Confirmation",
             "emailSendConfirmHeader": "Email Send Confirmation",
             "emailConfirmBody": "There are attachments that are unavailable in this email. Do you still want to continue ?",
-            "asyncEmailSemdSuccess": "Email sent to customer",
+            "asyncEmailSendSuccess": "Email sent to customer",
             "asyncEmailSendFail": "Error sending email to customer - reason : ",
             "emailSendToCustomer": "Email sent to customer",
             "emailSendToChecker": "Email sent to checker",
