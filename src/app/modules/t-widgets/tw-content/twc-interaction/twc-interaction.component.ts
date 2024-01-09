@@ -359,7 +359,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             } else {
                 errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
             }
-            this._appUIService.showSnackbar(`${this.translocoService.translate(`sharedComponents.email.emailSendError${errReason}`)}`, 'failure');
+            this._appUIService.showSnackbar(`${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail`)}${errReason}`, 'failure');
         }
     }
 
