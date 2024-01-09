@@ -931,7 +931,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ref.dismiss();
                 if (!res || !res.response) {
                     this.sendingEmailAsMaker = false;
-                    this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailSendConnectionError'), 'failure');
+                    this._appUIService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.emailControls.emailSendConnectionError'),
+                        'failure'
+                    );
                     throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
                     return;
                 }
@@ -1051,7 +1054,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     // this._fuseProgressBarService.hide();
                     if (!res || !res.response) {
                         this._appUIService.showSnackbar(
-                            this.translocoService.translate('sharedComponents.email.emailSendConnectionError'),
+                            this.translocoService.translate('sharedComponents.emailControls.emailSendConnectionError'),
                             'failure'
                         );
                         throwADError('Error in TwEmailControlsComponent.sendEmailAsChecker', 'Unexpected response from Server');

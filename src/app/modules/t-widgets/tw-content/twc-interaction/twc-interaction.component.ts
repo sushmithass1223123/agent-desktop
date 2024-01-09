@@ -349,20 +349,17 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
             if (errorMsg === 'FailedWithServerBusyException') {
                 try {
-                    errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendError${errorMsg}`)}${Math.floor(
+                    errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}${Math.floor(
                         parseInt(emailMeta.StatusMessage) / 1000
                     )} ${this.translocoService.translate('sharedComponents.email.seconds')}`;
                 } catch (err) {
                     errorMsg = 'Unknown';
-                    errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendError${errorMsg}`)}`;
+                    errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
                 }
             } else {
-                errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendError${errorMsg}`)}`;
+                errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
             }
-            this._appUIService.showSnackbar(
-                `${this.translocoService.translate('sharedComponents.email.asyncEmailSendError')}${errReason}`,
-                'failure'
-            );
+            this._appUIService.showSnackbar(`${this.translocoService.translate(`sharedComponents.email.emailSendError${errReason}`)}`, 'failure');
         }
     }
 
