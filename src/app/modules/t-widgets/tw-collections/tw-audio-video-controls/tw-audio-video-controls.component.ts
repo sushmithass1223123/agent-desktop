@@ -977,7 +977,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             }
 
             // forward the av messages to av channel
-            this.avConn?.onMessage(evt.Message);
+            this.avConn?.onMessage(
+                evt.Type === 'addscreenshare'
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    : evt.Message
+            );
         } catch (e) {
             this.logger.error('error occured in AVControlMessageReceivedEvent', e, false);
         }
