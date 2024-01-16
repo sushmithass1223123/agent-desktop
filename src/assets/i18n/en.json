@@ -928,15 +928,14 @@
             "emailIsBeingSent": "Email is being sent. please wait",
             "emailSendTimeoutMessage": "Email sending has timed out, please verify if the email was sent in sent items",
             "emailSendErrorFail": "General failure",
-            "emailSendErrorFailedWithServerBusyException": "Server busy - ",
+            "emailSendErrorFailedWithServerBusyException": "Email Service is busy and not able to send for {1}. Please resend later.",
             "emailSendErrorExchangeAuthenticationError": "Exchange auth error",
             "emailSendErrorExchangeServiceObjectNotCreated": "Exchange service object not created",
             "emailSendErrorExchangeMessageNotCreated": "Exchange message not created",
             "emailSendErrorMailboxInstanceCreationError": "Mailbox creation error",
             "emailSendErrorUnknown": "Unknown",
             "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
-            "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute",
-            "seconds": "Seconds"
+            "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
