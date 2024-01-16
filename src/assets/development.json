@@ -1419,6 +1419,7 @@
                                                     "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
+                                                    "MuteAudioHidden": false,
                                                     "ReplyOnSMM": { "channels": "Whatsapp" },
                                                     "Whiteboard": {
                                                         "Allowed": true,
