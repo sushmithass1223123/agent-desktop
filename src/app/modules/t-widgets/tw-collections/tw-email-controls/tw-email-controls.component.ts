@@ -931,10 +931,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ref.dismiss();
                 if (!res || !res.response) {
                     this.sendingEmailAsMaker = false;
-                    this._appUIService.showSnackbar(
-                        this.translocoService.translate('sharedComponents.emailControls.emailSendConnectionError'),
-                        'failure'
-                    );
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.emailSendConnectionError'), 'failure');
                     throwADError('Error in TwEmailControlsComponent.sendEmailAsMaker', 'Unexpected response from Server');
                     return;
                 }
