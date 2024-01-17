@@ -2369,6 +2369,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case 'logout':
                     alertMessage = this.translocoService.translate('widgets.chatControls.disconnectByCustomer');
                     break;
+                case 'customer ended':
+                    alertMessage = this.translocoService.translate('widgets.chatControls.disconnectByCustomer');
+                    break;
                 case 'agentchatdisconnected':
                     alertMessage = this.translocoService.translate('widgets.chatControls.disconnectByAgent');
                     break;
