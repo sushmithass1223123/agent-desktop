@@ -1109,6 +1109,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             switch (type) {
                 case 'snapshot':
                     {
+                        if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         let message = '';
                         const msgStatus = msg.status.toLowerCase();
                         let status: SnackbarStateTypes = 'success';
