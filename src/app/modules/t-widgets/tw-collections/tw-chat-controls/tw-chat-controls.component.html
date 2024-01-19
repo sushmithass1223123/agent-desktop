@@ -302,7 +302,7 @@
                                     (status === 'connected' ? 'mat-elevation-z2' : '')
                                 "
                                 [matTooltip]="interactionOnHold.buttonTooltip"
-                                (click)="holdUnhold()"
+                                (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                             >
                                 <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
                             </button>
