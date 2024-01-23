@@ -988,6 +988,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         this.confirmDialogRef?.close();
                     }
                     break;
+                case 'mute':
                 case 'unmute':
                     this.updateMuteUnmuteUserList(requestType, evt);
                     break;
