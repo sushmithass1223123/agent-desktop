@@ -2334,7 +2334,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         // check if its a av request
-        if (evt.Type === 'requestav') {
+        if (evt.Type === 'requestav' && this.conferenceType !== 'silent') {
             // check the type
             const type = JSON.parse(evt.Message).param;
             // open the call widget
