@@ -648,7 +648,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         return;
                     }
                     // If the incoming call is done by agent, return. Because this is handled in requestav
-                    if (evt.data?.owner) return;
+                    // Validate this only if the call is triggered through TwChatControlsComponent
+                    if (evt.data?.owner && this.data?.Data?.Source === 'TwChatControlsComponent') return;
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
