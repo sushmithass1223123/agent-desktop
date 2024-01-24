@@ -673,9 +673,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         },
                         {
                             key: '#customerName',
-                            value: this.translocoService.translate(
-                                'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
-                            )
+                            value:
+                                evt.data?.owner && evt.data.owner
+                                    ? evt.data.owner.split('_').pop()
+                                    : this.translocoService.translate(
+                                          'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
+                                      )
                         }
                     ];
 
