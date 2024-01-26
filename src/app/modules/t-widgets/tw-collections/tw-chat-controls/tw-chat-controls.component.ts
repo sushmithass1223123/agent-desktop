@@ -2505,10 +2505,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 value: evt.Comment
             }
         ]
-        this._appUIService.showSnackbar(
+
+        const updatedLabel = this._appDataService.getUpdatedLabel(
             this.translocoService.translate('widgets.chatControls.agentRequestRejected'),
-            'failure'
+            dynamicLabels
         );
+
+        this._appUIService.showSnackbar(updatedLabel, 'failure');
     }
 
     /**
