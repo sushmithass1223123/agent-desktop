@@ -325,12 +325,12 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
         let emailMeta = JSON.parse(evt.JsonData);
+        this._interactionManagerService.updateInteraction(evt.InteractionID, {
+            isEmailSent: true
+        });
         if (EMAIL_SEND_STATUS[emailMeta?.StatusCode] === 'Success') {
-            this._interactionManagerService.updateInteraction(evt.InteractionID, {
-                isEmailSent: true
-            });
             this._sharedService.triggerEmailFailure(evt.InteractionID);
-            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSemdSuccess'));
+            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess'));
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
                     // check the response
@@ -349,17 +349,17 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
             if (errorMsg === 'FailedWithServerBusyException') {
                 try {
-                    errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail${errorMsg}`)}${Math.floor(
-                        parseInt(emailMeta.StatusMessage) / 1000
-                    )} ${this.translocoService.translate('sharedComponents.email.seconds')}`;
+                    let outData = emailMeta.OutboundData;
+                    errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
+                    errReason = errReason.replaceAll('{1}', outData.Mailbox);
                 } catch (err) {
                     errorMsg = 'Unknown';
-                    errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail${errorMsg}`)}`;
+                    errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
                 }
             } else {
-                errReason = `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail${errorMsg}`)}`;
+                errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
             }
-            this._appUIService.showSnackbar(`${this.translocoService.translate('sharedComponents.email.asyncEmailSendFail')}${errReason}`, 'failure');
+            this._appUIService.showSnackbar(`${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail`)}${errReason}`, 'failure');
         }
     }
 

@@ -1220,6 +1220,7 @@
                                                     "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
+                                                    "MuteAudioHidden": false,
                                                     "Whiteboard": { "Allowed": true, "Url": "https://mx.tetherfi.cloud/Whiteboard/ui/index.html" },
                                                     "Snapshot": {
                                                         "Allowed": true,

@@ -285,6 +285,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
+     * Whether audio mute button is allowed or not
+     */
+    muteAudioHidden: boolean;
+
+    /**
      * The current interaction
      */
     myInteraction: InteractionRef;
@@ -317,6 +322,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
+        this.muteAudioHidden = false;
         this.displayToasters = true;
     }
 
@@ -527,6 +533,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     private startAVCall(): void {
         const widgetData = this.data.Data;
 
+        this.muteAudioHidden = widgetData.MuteAudioHidden;
+
         // create the AV channel connection
         this.createAVConnection();
 
@@ -701,6 +709,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         this.status = `${error}`;
                     } else {
                         this.status = `Error : ${error}`;
+                        if (error === 'Screenshare Was Cancelled') {
+                            this.status = `${error}`;
+                        }
                     }
 
                     if (error) {
