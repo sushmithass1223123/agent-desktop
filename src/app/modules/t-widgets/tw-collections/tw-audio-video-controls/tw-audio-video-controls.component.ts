@@ -440,6 +440,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
 
+        // Close the active dialogs
+        this.confirmDialogRef?.close();
+
         // listen to tmac interaction events
         // SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         // SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
