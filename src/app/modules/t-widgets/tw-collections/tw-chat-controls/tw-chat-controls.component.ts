@@ -535,6 +535,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     previewMediaDialogData: any;
 
+    /**
+     * Manual hold flag
+     */
+    isForceHold: boolean = false;
+
     @ViewChild('endBtn') endButton: MatButton;
 
     @ViewChild('closeBtn') closeButton: MatButton;
@@ -2237,6 +2242,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {CallHoldReconnectEvent} evt
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+        // If the chat is put on hold manually, then return and don't auto unhold
+        if(this.isForceHold) return;
+
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
         this.status = 'connected';
