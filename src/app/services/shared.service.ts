@@ -9,6 +9,7 @@ export class SharedService {
 
     private holdMethodSubject = new Subject<void>();
     private emailErrorNotifySubject = new Subject<number>();
+    private appConfirmDialog = new Subject<void>();
 
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
@@ -25,4 +26,11 @@ export class SharedService {
     getHoldMethod() {
         return this.holdMethodSubject.asObservable();
     }
+    triggerAppConfirmDialogClose(){
+        this.appConfirmDialog.next();
+    }
+    getAppConfirmDialogClose() {
+        return this.appConfirmDialog.asObservable();
+    }
 }
+
