@@ -61,6 +61,7 @@
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
                                 [matTooltip]="locale('interactionComponent.reply')"
+                                [ngClass]="{ 'disabled': status !== 'connected' }"
                                 >reply</mat-icon
                             >
                         </div>
