@@ -331,8 +331,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this._unsubscribeAll = new Subject();
 
         // If transfer is being triggered, then end the call 
-        this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-            this.endCall(true);
+        this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe((interactionId: number) => {
+            if(interactionId === this.interactionId) this.endCall(true);
         })
     }
 

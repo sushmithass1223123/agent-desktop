@@ -9,7 +9,7 @@ export class SharedService {
     constructor() {}
 
     private holdMethodSubject = new Subject<void>();
-    private transferMethodSubject = new Subject<void>();
+    private transferMethodSubject = new Subject<number>();
     private emailErrorNotifySubject = new Subject<number>();
 
     triggerEmailFailure(interactionId: number) {
@@ -24,8 +24,8 @@ export class SharedService {
         this.holdMethodSubject.next();
     }
 
-    triggerTransferMethod(): void {
-        this.transferMethodSubject.next();
+    triggerTransferMethod(interactionId: number): void {
+        this.transferMethodSubject.next(interactionId);
     }
 
     getTransferMethod(): Observable<any> {
