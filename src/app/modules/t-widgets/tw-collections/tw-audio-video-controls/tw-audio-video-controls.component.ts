@@ -296,6 +296,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
     confirmDialogRef;
 
+    manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
+
     /**
      * Constructor
      */
@@ -1339,14 +1341,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.onCallHoldEvent = false;
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted) {
+            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
                 this.avConn.unMute(true, true);
                 this.audioMuted = false;
                 this.videoMuted = false;
-            } else if (this.muteAVOnHold.agentAudio && this.audioMuted) {
+            } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
                 this.avConn.unMute(true, false);
                 this.audioMuted = false;
-            } else if (this.muteAVOnHold.agentVideo && this.videoMuted) {
+            } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
                 this.avConn.unMute(false, true);
                 this.videoMuted = false;
             }
@@ -1461,6 +1463,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.audioMuted = !this.audioMuted;
+        this.manualMuteFlags.audio = (this.audioMuted === true);
     }
 
     /**
@@ -1478,6 +1481,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
+        this.manualMuteFlags.video = (this.videoMuted === true);
     }
 
     /**
