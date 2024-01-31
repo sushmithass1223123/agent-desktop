@@ -374,13 +374,17 @@ tw-chat-controls {
                                         border: none;
                                         border-radius: 20px;
 
-                                        textarea {
+                                        textarea.custom-textarea {
                                             overflow: hidden;
                                             margin: 16px 48px 16px 16px;
                                             width: calc(100% - 64px);
                                             padding: 0;
+                                            resize: vertical; 
+                                            overflow-y: hidden; 
+                                            min-height: 10px;
+                                            max-height: 200px; 
                                         }
-                                    }
+                                                                            }
                                 }
 
                                 .mat-form-field-underline {

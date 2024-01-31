@@ -653,10 +653,11 @@
                                         matTextareaAutosize
                                         matAutosizeMinRows="1"
                                         matAutosizeMaxRows="5"
+                                        class="custom-textarea"
                                         (keyup)="onKeyUp($event)"
                                     ></textarea>
                                 </mat-form-field>
-
+                                
                                 <button
                                     [disabled]="status !== 'connected'"
                                     class="send-message-button"
