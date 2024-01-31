@@ -2729,7 +2729,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://testlabsd.productqa.tetherfi.cloud/SDKProxy/TmacProxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
