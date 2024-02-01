@@ -2130,6 +2130,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         if(msg.status === 'accepted'){
                             message = this.translocoService.translate('widgets.chatControls.audioCallRequestAccepted');
                         }else if(msg.status === 'rejected'){
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('widgets.chatControls.audioCallRequestRejected'),
+                                'failure'
+                            );
                             message = this.translocoService.translate('widgets.chatControls.audioCallRequestRejected');
                             status = 'failure';
                         }
@@ -2141,6 +2145,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         if(msg.status === 'accepted'){
                             message = this.translocoService.translate('widgets.chatControls.videoCallRequestAccepted');
                        }else if(msg.status === 'rejected'){
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('widgets.chatControls.videoCallRequestRejected'),
+                                'failure'
+                            );
                             message = this.translocoService.translate('widgets.chatControls.videoCallRequestRejected');
                             status = 'failure';
                        }
