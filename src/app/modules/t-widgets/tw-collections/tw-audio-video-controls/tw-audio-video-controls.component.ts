@@ -10,6 +10,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { SharedService } from '@services/shared.service';
 import {
     ActionMessageReceivedEvent,
     AgentAVMessageEvent,
@@ -311,7 +312,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _agentFeaturesService: AgentFeaturesService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _interactionManagerService: InteractionManagerService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private sharedService: SharedService
     ) {
         super('TwAudioVideoControlsComponent');
 
@@ -324,7 +326,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
-        this.muteAudioHidden = false;
+this.muteAudioHidden = false;
         this.displayToasters = true;
     }
 
@@ -648,7 +650,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // swtich the av events
             switch (evt.event) {
                 case 'onIncoming':
-                    //Check whether the type and status of myInteraction matches to 'textchat' and 'hold'
+                   //Check whether the type and status of myInteraction matches to 'textchat' and 'hold'
                     if (this.myInteraction?.type === 'textchat' && this.myInteraction?.status === 'hold') {
                         // reject request
                         evt.data.response(false);
@@ -699,7 +701,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     );
                     this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
+                    //this is used in order to close appconfirmdialog in twchatcontrolcomponent
+                    this.sharedService.triggerAppConfirmDialogClose();
                     break;
                 case 'onTrace':
                     this.logger.info('onAVEvent.onTrace: ' + evt.data);
@@ -711,7 +714,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         this.status = `${error}`;
                     } else {
                         this.status = `Error : ${error}`;
-                        if (error === 'Screenshare Was Cancelled') {
+if (error === 'Screenshare Was Cancelled') {
                             this.status = `${error}`;
                         }
                     }
@@ -1125,7 +1128,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             switch (type) {
                 case 'snapshot':
                     {
-                        if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
+if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         let message = '';
                         const msgStatus = msg.status.toLowerCase();
                         let status: SnackbarStateTypes = 'success';
@@ -2022,3 +2025,4 @@ interface IInteractionDetails {
 }
 
 // for more info visit - https://angular.io/api/core
+

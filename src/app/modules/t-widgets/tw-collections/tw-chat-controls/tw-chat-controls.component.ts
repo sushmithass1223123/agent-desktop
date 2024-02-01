@@ -2662,6 +2662,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public confirmEndChat(): void {
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        //subscribe to the observable for dialog close
+        this.sharedService.getAppConfirmDialogClose().subscribe(() => {
+            this.confirmDialogRef.close(false);
+        })
         this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
             if (dialogResult) {
                 this.endChat('AgentChatDisconnected');
@@ -2669,7 +2673,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
     }
 
-    /**
+     /**
      * To confirm close interaction
      */
     public confirmCloseInteraction(): void {
