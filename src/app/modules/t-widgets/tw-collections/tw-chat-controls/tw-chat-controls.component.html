@@ -57,7 +57,7 @@
                         </div>
                         <div>
                             <mat-icon
-                                *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
+                            *ngIf="conferenceType !== 'silent' && replyAble && message.status !== 'init' && message.status !== 'failed'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
                                 [matTooltip]="locale('interactionComponent.reply')"
