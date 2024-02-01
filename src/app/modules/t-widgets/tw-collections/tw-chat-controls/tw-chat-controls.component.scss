@@ -164,6 +164,11 @@ tw-chat-controls {
                                         display: inline-block;
                                         vertical-align: middle;
                                     }
+                                    /* Add this to disable the reply icon after end chat is confirmed */
+                                    .disabled {
+                                        pointer-events: none;
+                                        opacity: 0.5; 
+                                    }
 
                                     .attachments {
                                         display: flex;
