@@ -57,7 +57,7 @@
                         </div>
                         <div>
                             <mat-icon
-                            *ngIf="conferenceType !== 'silent' && replyAble && message.status !== 'init' && message.status !== 'failed'"
+                            *ngIf="replyAble && conferenceType !== 'silent' && message.status !== 'init' && message.status !== 'failed'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
                                 [matTooltip]="locale('interactionComponent.reply')"
@@ -645,17 +645,17 @@
 
                                 <mat-form-field class="custom message-text twd-flex-1" floatLabel="never" appearance="standard">
                                     <textarea
-                                        [disabled]="status !== 'connected'"
-                                        matInput
-                                        #replyInput
-                                        [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
-                                        ngModel
-                                        name="message"
-                                        matTextareaAutosize
-                                        matAutosizeMinRows="1"
-                                        matAutosizeMaxRows="5"
-                                        (keyup)="onKeyUp($event)"
-                                    ></textarea>
+                                    [disabled]="status !== 'connected'"
+                                    matInput
+                                    #replyInput
+                                    [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
+                                    ngModel
+                                    name="message"
+                                    matTextareaAutosize
+                                    matAutosizeMinRows="1"
+                                    matAutosizeMaxRows="5"
+                                                                        (keyup)="onKeyUp($event)"
+                                ></textarea>
                                 </mat-form-field>
 
                                 <button
