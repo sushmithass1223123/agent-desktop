@@ -645,17 +645,18 @@
 
                                 <mat-form-field class="custom message-text twd-flex-1" floatLabel="never" appearance="standard">
                                     <textarea
-                                    [disabled]="status !== 'connected'"
-                                    matInput
-                                    #replyInput
-                                    [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
-                                    ngModel
-                                    name="message"
-                                    matTextareaAutosize
-                                    matAutosizeMinRows="1"
-                                    matAutosizeMaxRows="5"
-                                                                        (keyup)="onKeyUp($event)"
-                                ></textarea>
+                                        [disabled]="status !== 'connected'"
+                                        matInput
+                                        #replyInput
+                                        [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
+                                        ngModel
+                                        name="message"
+                                        cdkTextareaAutosize
+                                        #autosize="cdkTextareaAutosize"
+                                        cdkAutosizeMinRows="1"
+                                        cdkAutosizeMaxRows="5"
+                                        (keyup)="onKeyUp($event)"
+                                    ></textarea>
                                 </mat-form-field>
 
                                 <button

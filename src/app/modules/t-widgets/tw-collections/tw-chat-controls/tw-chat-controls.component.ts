@@ -71,6 +71,7 @@ import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -91,6 +92,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     // @Input() data: IWidget<TextChatIncomingEvent, IWidgetData>;
     @Input() data: TwChatControls<TextChatIncomingEvent>;
+
+    // Child observer for text area auto increase size
+    @ViewChild('autosize') autosize: CdkTextareaAutosize;
     /**
      * Widget data ref
      */
