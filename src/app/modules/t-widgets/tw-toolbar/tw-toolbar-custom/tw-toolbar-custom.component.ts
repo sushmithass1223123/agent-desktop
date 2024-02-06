@@ -1,77 +1,59 @@
-import { AOTWidget, TwCustom } from '@ad/types';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
+import { TWidgetWrapper } from '@twidgets/utils';
+import { Subscription, timer } from 'rxjs';
+import { SDKClient, AgentStatusChangeEvent } from '@tmac/sdk';
+import { Subject } from 'rxjs';
+import { intervalToDuration } from 'date-fns';
+import { TMACEventService } from '@services/tmac-event.service';
 import { MatDialogRef } from '@angular/material/dialog';
-import { DomSanitizer } from '@angular/platform-browser';
+import { AppUiService } from '@services/app-ui.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
+import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { FuseConfig } from '@fuse/types';
 import { TranslocoService } from '@ngneat/transloco';
-import { AOTWidgetService } from '@services/aot-widget.service';
-import { AppUiService } from '@services/app-ui.service';
-import { FuseFacadeService } from '@services/fuse-facade.service';
-import { InteractionManagerService } from '@services/interaction-manager.service';
-import { TMACEventService } from '@services/tmac-event.service';
-import { UIActionEventService } from '@services/ui-action-event.service';
 import { setStringVars } from '@tmac/operators';
-import { SDKClient, TUtils } from '@tmac/sdk';
-import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { EXCLUDED_TMAC_EVENT } from 'app/constants';
-import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
-import { TwWidgetModel } from 'app/models';
-import { throwADError } from 'app/utils';
-import { isEqual } from 'lodash';
-import { Subscription } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
+import { FuseFacadeService } from '@services/fuse-facade.service';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { isEqual } from 'lodash';
+import { UIActionEventService } from '@services/ui-action-event.service';
+import { throwADError } from 'app/utils';
+import { TwWidgetModel } from 'app/models';
+import { AOTWidget, TwCustom } from '@ad/types';
 
 /**
- * TwCustomComponent
+ * Aux timer component
  */
 @Component({
-    selector: 'tw-custom',
-    templateUrl: './tw-custom.component.html',
-    styleUrls: ['./tw-custom.component.scss'],
+    selector: 'tw-toolbar-custom',
+    templateUrl: './tw-toolbar-custom.component.html',
+    styleUrls: ['./tw-toolbar-custom.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwToolbarCustomComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
-     * Holds all the data related to this widget from the config
+     * App config json data
      */
-    @Input() data: TwCustom;
-
+    @Input() data: any;
     /**
-     * Fuse Config
-     */
+        * Fuse Config
+        */
     // fuseConfig: FuseConfig;
     /**
      * Fuse custom config
      */
     customFuse$ = this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme', webFont: 'webFont' });
-    /**
-     * Window pop widget
-     */
-    oinWidget: any;
-    /**
-     * Url loaded flag
-     */
-    loaded = false;
-    /**
-     * Custome frame URL
-     */
-    url: any;
+
+    url: string;
     /**
      * Id and name of frame
      */
     idName: string;
     /**
-     * Flag to show the UI or not
-     */
-    show: boolean;
-    /**
-     * If this widget is opened for an interaction
-     */
-    interactionId: number;
+         * Window pop widget
+         */
+    oinWidget: any;
 
-    /**
-     * subscriptions
-     */
     subscriptions: Partial<{
         /**
          * Events by Id
@@ -82,50 +64,43 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
          */
         allEvents: Subscription;
     }>;
-
-    /**
-     * Excluded events to emit
-     */
-    excludedEvents: CustomTMACEventTypes[];
-
-    /**
-     * Mat dialog ref
-     */
-    dialogRef: MatDialogRef<any, any>;
-
     /**
      * Fuse config ref
      */
     fuseConfigRef: Partial<FuseConfig>;
+    /**
+        * Url loaded flag
+        */
+    loaded = false;
 
     constructor(
         private sanitizer: DomSanitizer,
-        private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService,
-        private _uiActionEventService: UIActionEventService,
+        private _aotWidgetService: AOTWidgetService,
         private translocoService: TranslocoService,
-        private _interactionManagerService: InteractionManagerService,
+        private _fuseFacadeService: FuseFacadeService,
+        private _uiActionEventService: UIActionEventService,
+
     ) {
-        super('TwCustomComponent');
-
-        this.excludedEvents = EXCLUDED_TMAC_EVENT as CustomTMACEventTypes[];
+        super('TwToolbarCustomComponent');
     }
-
-    // tslint:disable-next-line: completed-docs
+    /**
+        * Mat dialog ref
+        */
+    dialogRef: MatDialogRef<any, any>;
+    /**
+     * Lifecycle hook
+     * @method
+     */
     ngOnInit(): void {
-        this.subscriptions = {};
         // call the wrapper init method
         this.initWrapper(this.data);
-
+        this.url = this.data.Data.Url;
+        // listen to agent status change
+        //SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
         // assign id
         this.idName = `tw_frame_${this.data.ID}`;
-
-        // check if this is opened in an interaction
-        if (this.data.InteractionDetails) {
-            this.interactionId = this.data.InteractionDetails.InteractionID;
-        }
 
         // register to post message subject
         this._tmacEventService.postMessage.pipe(takeUntil(this.unsubscribeAll)).subscribe(async (message: IPostMessage) => {
@@ -138,7 +113,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 }
                 switch (fn) {
                     case 'gettmacevents':
-                        const events = this._tmacEventService.getAllEventsArrayExcluded(this.excludedEvents, this.interactionId);
+                        const events = this._tmacEventService.getAllEventsArray();
                         // check event are there
                         if (events.length) {
                             // send events to the child
@@ -187,29 +162,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     case 'showcustompopup':
                         this.showCustomPopup(message.data);
                         break;
-                    case 'getOtherTMACEvents':
-                        // allow custom widget to listen to all tmac events
-                        this._tmacEventService.addTMACEventListener([
-                            {
-                                label: 'OnTMACEvent',
-                                callback: evts => this.sendDataToWindow('onTMACEvent', evts)
-                            }
-                        ]);
-                        break;
-                    case 'emitTMACEvent':
-                        // allow custom widget to emit tmac events in agent desktop
-                        window.__TMACSDK.SDKClient.events.emit('ontmacevent', message.data?.event);
-                        break;
-                    case 'selectInteraction':
-                        // sample data json
-                        // {
-                        //     isActive: true,
-                        //     otherData: {
-                        //         unreadCount: 0
-                        //     }
-                        // }
-                        // allow custom widget to switch interaction tab in agent desktop
-                        this._interactionManagerService.updateInteraction(message.data?.interactionId, message.data?.data);
+                    case 'emittmacevent':
+                        this._tmacEventService.emitSDKEvent({
+                            event: message.data,
+                            log: true
+                        })
                 }
                 this.logger.info('Message received from custom frame -' + message.name + ':' + JSON.stringify(message), true);
             } catch (error) {
@@ -230,8 +187,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     url,
                     this.data.Name,
                     `menubar=no,resizable=yes,location=no,scrollbars=no,
-                    width=${this.data.Config.Position.W || screen.width},
-                    height=${this.data.Config.Position.H || screen.height}`
+                     width=${this.data.Config.Position.W || screen.width},
+                     height=${this.data.Config.Position.H || screen.height}`
                 );
 
                 try {
@@ -251,9 +208,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
             // load the iframe URL
             this.url = this.transform(url);
-
-            // set show to true
-            this.show = true;
 
             // check if auto refresh is enabled
             if (this.data.Data.AutoRefresh && Number(this.data.Data.AutoRefresh) > 0) {
@@ -278,26 +232,23 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     }
 
     /**
-     * On Destroy
-     */
-    ngOnDestroy(): void {
-        // call the wrapper destroy method
-        if (this.data.Data.NotifyTypeOnClose) {
-            this.sendActionOnClose()
-        }
-        this.destroyWrapper();
-        this.dialogRef?.close();
-    }
-
-    /**
-     * To sanitize the URL to load URL safely
-     *
-     * @param url Url to transform
-     */
+         * To sanitize the URL to load URL safely
+         *
+         * @param url Url to transform
+         */
     transform(url: string): any {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
+    /**
+     * Lifecycle hook
+     * @method
+     */
+    ngOnDestroy(): void {
+        // call the wrapper destroy method
+        this.destroyWrapper();
+
+    }
     /**
      * To send data to the iframe/popup window
      *
@@ -334,26 +285,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      */
     frameLoaded = (evt: any) => {
 
-        if (this.data.Data.GetAllTMACEvents) {
-            this._tmacEventService.addTMACEventListener([{
-                label: 'OnTMACEvent',
-                callback: (evts) => this.sendDataToWindow('onTMACEvent', evts)
-            }]);
-        } else if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
-            // subscribe to interaction events
-            if (this.interactionId) {
-                this.subscriptions.eventsById = this._tmacEventService
-                    .getInteractionEventsById(this.interactionId)
-                    .pipe(takeUntil(this.unsubscribeAll))
-                    .subscribe((evts) => this.sendDataToWindow('onTMACEvent', evts));
-            }
-
-            // subscribe to all non interaction events
-            this.subscriptions.allEvents = this._tmacEventService
-                .getNonInteractionEventsExcluded(this.excludedEvents)
-                .pipe(takeUntil(this.unsubscribeAll))
-                .subscribe((evts) => this.sendDataToWindow('onTMACEvent', evts));
-        }
+        this._tmacEventService.addTMACEventListener([{
+            label: 'OnTMACEvent',
+            callback: (evts) => this.sendDataToWindow('onTMACEvent', evts)
+        }]);
 
         // check if id is there to make sure loaded completely
         if (evt.currentTarget.id) {
@@ -370,8 +305,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
     };
 
     /**
-     * On refresh event
-     */
+   * On refresh event
+   */
     onRefreshEvent(): void {
         const urlRef = this.url;
         this.url = null;
@@ -384,28 +319,9 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
             urlRef
         );
     }
-
     processUIControlEvents(message: IPostMessage) {
         this._tmacEventService._uiControlsEvents.next(message.data);
-    }
-
-    /**
-     * Method to send action message to customer on close of custom widget, based on configured type to notify
-     */
-    sendActionOnClose() {
-        SDKClient.sendActionMessage({
-            interactionId: this.interactionId.toString(),
-            message: JSON.stringify({
-                source: 'agent',
-                options: {},
-                data: {},
-                status: 'request',
-                type: this.data.Data.NotifyTypeOnClose,
-                eventName: 'ActionMessage',
-                id: TUtils.Generic.uuid()
-            })
-        });
-    }
+    }   
 
     showCustomPopup(data: any) {
         // check if the url to be taken from param

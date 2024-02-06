@@ -38,12 +38,17 @@
             >
                 <div class="twd-flex twd-flex-wrap twd-gap-3 twd-pb-2 twd-justify-end">
                     <ng-container *ngIf="currentInteraction.EventName === 'OutgoingEmailEvent'">
+                        <div *ngIf="isEmailSent(currentInteraction.InteractionID) === false" class="loading-spinner-email">
+                            <div class="loading-text-email">{{ locale('sharedComponents.email.emailIsBeingSent') }}</div>
+                            <div class="spinner-email"></div>
+                        </div>
                         <button
                             *ngIf="data.Data?.InteractionCommentAllowed && emailComponentMode !== 'preview'"
                             mat-raised-button
                             class="border-radius-20"
                             [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="saveInteractionComments()"
+                            [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                         >
                             <mat-icon>comment</mat-icon>
                         </button>
@@ -51,7 +56,11 @@
                             *ngIf="emailComponentMode !== 'preview'"
                             mat-raised-button
                             class="border-radius-20"
-                            [disabled]="(draftPollDuration && !currentInteraction.CurrOutSessionId) || sendingEmailAsMaker"
+                            [disabled]="
+                                (draftPollDuration && !currentInteraction.CurrOutSessionId) ||
+                                sendingEmailAsMaker ||
+                                isEmailSent(currentInteraction.InteractionID) === false
+                            "
                             (click)="saveEmailAsDraft(true, saveAsDraft)"
                             #saveAsDraft
                         >
@@ -64,13 +73,19 @@
                             (click)="closeEditor(closeBtn, true)"
                             #closeBtn
                             [matTooltip]="locale('interactionComponent.close')"
+                            [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                         >
                             {{ locale('interactionComponent.close') }}
                         </button>
                     </ng-container>
 
                     <ng-container *ngIf="currentInteraction.EventName === 'IncomingEmailEvent'">
+                        <div *ngIf="isEmailSent(currentInteraction.InteractionID) === false" class="loading-spinner-email">
+                            <div class="loading-text-email">{{ locale('sharedComponents.email.emailIsBeingSent') }}</div>
+                            <div class="spinner-email"></div>
+                        </div>
                         <button
+                            [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                             *ngIf="data.Data?.InteractionCommentAllowed && emailComponentMode !== 'preview'"
                             mat-raised-button
                             class="border-radius-20"
@@ -81,10 +96,18 @@
                         </button>
 
                         <div class="twd-p-2 twd-flex twd-justify-end twd-gap-2" *ngIf="OutboxReasons.includes(currentInteraction.RouteReason)">
-                            <button mat-raised-button class="border-radius-20" color="warn" (click)="rejectEmail(rejectBtn)" #rejectBtn>
+                            <button
+                                [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="warn"
+                                (click)="rejectEmail(rejectBtn)"
+                                #rejectBtn
+                            >
                                 {{ locale('interactionComponent.reject') }}
                             </button>
                             <button
+                                [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                                 mat-raised-button
                                 [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
                                 class="border-radius-20"
@@ -109,7 +132,11 @@
                                 *ngIf="emailComponentMode !== 'preview'"
                                 mat-raised-button
                                 class="border-radius-20"
-                                [disabled]="(draftPollDuration && !currentInteraction.CurrOutSessionId) || sendingEmailAsMaker"
+                                [disabled]="
+                                    (draftPollDuration && !currentInteraction.CurrOutSessionId) ||
+                                    sendingEmailAsMake ||
+                                    isEmailSent(currentInteraction.InteractionID) === false
+                                "
                                 (click)="saveEmailAsDraft(true, saveAsDraft)"
                                 #saveAsDraft
                             >
@@ -124,7 +151,7 @@
                                 (click)="closeEditor(closeEditorBtn)"
                                 #closeEditorBtn
                                 [matTooltip]="locale('widgets.emailControls.closeEditor')"
-                                [disabled]="sendingEmailAsMaker"
+                                [disabled]="sendingEmailAsMaker || isEmailSent(currentInteraction.InteractionID) === false"
                             >
                                 {{ locale('interactionComponent.cancel') }}
                             </button>
@@ -132,246 +159,256 @@
                     </ng-container>
                 </div>
 
-                <email
-                    #emailRef
-                    class="twd-flex-1"
-                    [mode]="emailComponentMode"
-                    [email]="replyInfo$ | async"
-                    [state]="getInboxMessageReq.error ? 'error' : getInboxMessageReq.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"
-                    (sendEmail)="sendEmailAsMaker($event)"
-                    (retry)="setEmailDetails(true)"
-                >
-                    <div id="emailInfo" class="twd-flex twd-flex-col twd-gap-y-1">
-                        <div *ngIf="currentInteraction.RejectReason" class="twd-text-lg twd-text-accent-default">
-                            <span class="twd-pr-1 twd-mb-1"> [{{ locale('widgets.emailControls.rejected') }}] : </span>
-                            {{ currentInteraction.RejectReason?.comment }}
-                        </div>
-                        <div class="twd-flex twd-justify-between">
-                            <div class="twd-flex">
-                                <div class="twd-flex twd-items-center">
-                                    <mat-icon class="s-20" [matTooltip]="locale('widgets.emailControls.intent')">grading</mat-icon>
-                                    <span class="text-bold twd-leading-none" [matTooltip]="locale('widgets.emailControls.intent')">{{
-                                        intent || 'NA'
-                                    }}</span>
-                                    <span class="twd-px-2"> | </span>
-                                    <span class="text-bold twd-leading-none" [matTooltip]="locale('widgets.emailControls.skill')">{{
-                                        currentInteraction.SkillName || currentInteraction.Skill || 'NA'
-                                    }}</span>
+                <!-- <div class="loading-container-email" *ngIf="isEmailSent(currentInteraction.InteractionID) === false">
+                    <div class="loading-overlay-email"></div>
+                    <div class="loading-spinner-email">
+                        <div class="spinner-email"></div>
+                        <div class="loading-text-email">Email sending in process</div>
+                    </div>
+                </div> -->
+
+                <div class="content-container-email" [class.disabled]="isEmailSent(currentInteraction.InteractionID) === false">
+                    <email
+                        #emailRef
+                        class="twd-flex-1"
+                        [mode]="emailComponentMode"
+                        [email]="replyInfo$ | async"
+                        [state]="getInboxMessageReq.error ? 'error' : getInboxMessageReq.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"
+                        (sendEmail)="sendEmailAsMaker($event)"
+                        (retry)="setEmailDetails(true)"
+                    >
+                        <div id="emailInfo" class="twd-flex twd-flex-col twd-gap-y-1">
+                            <div *ngIf="currentInteraction.RejectReason" class="twd-text-lg twd-text-accent-default">
+                                <span class="twd-pr-1 twd-mb-1"> [{{ locale('widgets.emailControls.rejected') }}] : </span>
+                                {{ currentInteraction.RejectReason?.comment }}
+                            </div>
+                            <div class="twd-flex twd-justify-between">
+                                <div class="twd-flex">
+                                    <div class="twd-flex twd-items-center">
+                                        <mat-icon class="s-20" [matTooltip]="locale('widgets.emailControls.intent')">grading</mat-icon>
+                                        <span class="text-bold twd-leading-none" [matTooltip]="locale('widgets.emailControls.intent')">{{
+                                            intent || 'NA'
+                                        }}</span>
+                                        <span class="twd-px-2"> | </span>
+                                        <span class="text-bold twd-leading-none" [matTooltip]="locale('widgets.emailControls.skill')">{{
+                                            currentInteraction.SkillName || currentInteraction.Skill || 'NA'
+                                        }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="twd-flex twd-items-center twd-truncate" [matTooltip]="locale('widgets.emailControls.routeType')">
+                                    <mat-icon class="s-20">directions</mat-icon>
+                                    <span class="twd-truncate twd-leading-none">
+                                        {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div class="twd-flex twd-items-center twd-truncate" [matTooltip]="locale('widgets.emailControls.routeType')">
-                                <mat-icon class="s-20">directions</mat-icon>
-                                <span class="twd-truncate twd-leading-none">
-                                    {{ currentInteraction.ParsedJsonData?.RouteType || 'NA' }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="twd-flex twd-justify-between">
-                            <div class="twd-flex twd-items-center text-bold twd-truncate" [matTooltip]="locale('widgets.emailControls.mailBox')">
-                                <mat-icon class="s-20">list_alt</mat-icon>
-                                <span class="twd-truncate">
-                                    {{ currentInteraction.Email_Mailbox || 'NA' }}
-                                </span>
-                            </div>
-
-                            <div class="twd-flex twd-items-center" [matTooltip]="locale('interactionComponent.priority')">
-                                <mat-icon
-                                    *ngIf="currentInteraction.PriorityIcon"
-                                    [ngClass]="{
-                                        'mat-warn': currentInteraction.PriorityIcon === 'high',
-                                        'text-alt-success': currentInteraction.PriorityIcon === 'low'
-                                    }"
-                                    class="s-20"
-                                    >{{ currentInteraction.PriorityIcon }}</mat-icon
-                                >
-                                <span class="twd-truncate twd-leading-none">
-                                    {{ currentInteraction.Priority || 'NA' }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="twd-flex twd-justify-between">
-                            <div class="twd-flex twd-max-w-6/12 twd-items-center">
-                                <div class="my-4 twd-truncate twd-flex twd-flex-col">
-                                    <span>
-                                        {{ currentInteraction.AgentName }}
+                            <div class="twd-flex twd-justify-between">
+                                <div class="twd-flex twd-items-center text-bold twd-truncate" [matTooltip]="locale('widgets.emailControls.mailBox')">
+                                    <mat-icon class="s-20">list_alt</mat-icon>
+                                    <span class="twd-truncate">
+                                        {{ currentInteraction.Email_Mailbox || 'NA' }}
                                     </span>
-                                    <p
-                                        class="twd-truncate"
-                                        *ngIf="
-                                            SentReasons.concat(DraftReasons).concat(OutboxReasons).includes(currentInteraction.RouteReason)
-                                                ? currentInteraction.To
-                                                : currentInteraction.From as emailIDs
-                                        "
-                                        [matTooltip]="emailIDs"
-                                        matTooltipClass="twd-break-all"
+                                </div>
+
+                                <div class="twd-flex twd-items-center" [matTooltip]="locale('interactionComponent.priority')">
+                                    <mat-icon
+                                        *ngIf="currentInteraction.PriorityIcon"
+                                        [ngClass]="{
+                                            'mat-warn': currentInteraction.PriorityIcon === 'high',
+                                            'text-alt-success': currentInteraction.PriorityIcon === 'low'
+                                        }"
+                                        class="s-20"
+                                        >{{ currentInteraction.PriorityIcon }}</mat-icon
                                     >
-                                        ({{ emailIDs }})
-                                    </p>
+                                    <span class="twd-truncate twd-leading-none">
+                                        {{ currentInteraction.Priority || 'NA' }}
+                                    </span>
                                 </div>
-                                <span
-                                    *ngIf="sentiment && sentiment !== 'NA'"
-                                    class="twd-flex twd-items-center twd-ml-4"
-                                    [matTooltip]="locale('interactionComponent.sentiment')"
+                            </div>
+
+                            <div class="twd-flex twd-justify-between">
+                                <div class="twd-flex twd-max-w-6/12 twd-items-center">
+                                    <div class="my-4 twd-truncate twd-flex twd-flex-col">
+                                        <span>
+                                            {{ currentInteraction.AgentName }}
+                                        </span>
+                                        <p
+                                            class="twd-truncate"
+                                            *ngIf="
+                                                SentReasons.concat(DraftReasons).concat(OutboxReasons).includes(currentInteraction.RouteReason)
+                                                    ? currentInteraction.To
+                                                    : currentInteraction.From as emailIDs
+                                            "
+                                            [matTooltip]="emailIDs"
+                                            matTooltipClass="twd-break-all"
+                                        >
+                                            ({{ emailIDs }})
+                                        </p>
+                                    </div>
+                                    <span
+                                        *ngIf="sentiment && sentiment !== 'NA'"
+                                        class="twd-flex twd-items-center twd-ml-4"
+                                        [matTooltip]="locale('interactionComponent.sentiment')"
+                                    >
+                                        <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
+                                        <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="twd-flex twd-items-end twd-flex-col"
+                                    [matTooltip]="locale('widgets.emailControls.sentOn')"
+                                    *ngIf="currentInteraction.EmailSentTime"
                                 >
-                                    <img *ngIf="sentiment === 'Positive'" class="w-24" src="assets/images/vectors/positive-score.svg" alt="" />
-                                    <img *ngIf="sentiment === 'Neutral'" class="w-24" src="assets/images/vectors/neutral-score.svg" alt="" />
-                                    <img *ngIf="sentiment === 'Negative'" class="w-24" src="assets/images/vectors/negative-score.svg" alt="" />
-                                </span>
-                            </div>
-
-                            <div
-                                class="twd-flex twd-items-end twd-flex-col"
-                                [matTooltip]="locale('widgets.emailControls.sentOn')"
-                                *ngIf="currentInteraction.EmailSentTime"
-                            >
-                                <div class="twd-flex twd-items-center">
-                                    <mat-icon class="s-20"> forward_to_inbox </mat-icon>
-                                    <span class="twd-leading-none">
-                                        {{ currentInteraction.EmailSentTime | date: 'mediumDate' }}
+                                    <div class="twd-flex twd-items-center">
+                                        <mat-icon class="s-20"> forward_to_inbox </mat-icon>
+                                        <span class="twd-leading-none">
+                                            {{ currentInteraction.EmailSentTime | date: 'mediumDate' }}
+                                        </span>
+                                    </div>
+                                    <span>
+                                        {{ currentInteraction.EmailSentTime | date: 'shortTime' }}
                                     </span>
                                 </div>
-                                <span>
-                                    {{ currentInteraction.EmailSentTime | date: 'shortTime' }}
-                                </span>
-                            </div>
 
-                            <div
-                                class="twd-flex twd-items-end twd-flex-col"
-                                [matTooltip]="locale('widgets.emailControls.receivedOn')"
-                                *ngIf="currentInteraction.EmailReceivedTime"
-                            >
-                                <div class="twd-flex twd-items-center">
-                                    <mat-icon class="s-20"> move_to_inbox </mat-icon>
-                                    <span class="twd-leading-none">
-                                        {{ currentInteraction.EmailReceivedTime | date: 'mediumDate' }}
+                                <div
+                                    class="twd-flex twd-items-end twd-flex-col"
+                                    [matTooltip]="locale('widgets.emailControls.receivedOn')"
+                                    *ngIf="currentInteraction.EmailReceivedTime"
+                                >
+                                    <div class="twd-flex twd-items-center">
+                                        <mat-icon class="s-20"> move_to_inbox </mat-icon>
+                                        <span class="twd-leading-none">
+                                            {{ currentInteraction.EmailReceivedTime | date: 'mediumDate' }}
+                                        </span>
+                                    </div>
+                                    <span>
+                                        {{ currentInteraction.EmailReceivedTime | date: 'shortTime' }}
                                     </span>
                                 </div>
-                                <span>
-                                    {{ currentInteraction.EmailReceivedTime | date: 'shortTime' }}
-                                </span>
                             </div>
+
+                            <a *ngIf="currentInteraction.showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
+                                {{
+                                    emailInView === 'original'
+                                        ? locale('widgets.emailControls.viewCheckerEmail')
+                                        : locale('widgets.emailControls.viewOriginal')
+                                }}
+                            </a>
                         </div>
 
-                        <a *ngIf="currentInteraction.showReplyEmailEnabled" class="twd-cursor-pointer" (click)="switchEmailView()">
-                            {{
-                                emailInView === 'original'
-                                    ? locale('widgets.emailControls.viewCheckerEmail')
-                                    : locale('widgets.emailControls.viewOriginal')
-                            }}
-                        </a>
-                    </div>
+                        <div
+                            id="emailNotification"
+                            *ngIf="currentInteraction.IsEmailProbableSpam"
+                            class="twd-flex twd-items-center twd-px-2 twd-py-0.5 twd-opacity-80 twd-rounded-3xl twd-mb-2"
+                            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                        >
+                            <mat-icon>report</mat-icon> <small class="twd-pl-2"> {{ locale('widgets.emailControls.spamEmailMsg') }} </small>
+                        </div>
 
-                    <div
-                        id="emailNotification"
-                        *ngIf="currentInteraction.IsEmailProbableSpam"
-                        class="twd-flex twd-items-center twd-px-2 twd-py-0.5 twd-opacity-80 twd-rounded-3xl twd-mb-2"
-                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                    >
-                        <mat-icon>report</mat-icon> <small class="twd-pl-2"> {{ locale('widgets.emailControls.spamEmailMsg') }} </small>
-                    </div>
-
-                    <div
-                        id="emailControlButtons"
-                        class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
-                        *ngIf="
-                            InboxReasons.includes(currentInteraction.RouteReason) ||
-                            DraftReasons.includes(currentInteraction.RouteReason) ||
-                            SentReasons.includes(currentInteraction.RouteReason)
-                        "
-                    >
-                        <button
-                            *ngIf="data.Data?.InternetHeadersAllowed && currentInteraction.InternetHeaders"
-                            mat-raised-button
-                            class="border-radius-20"
-                            [matTooltip]="locale('widgets.emailControls.internetHeaders')"
-                            (click)="showHeaders()"
+                        <div
+                            id="emailControlButtons"
+                            class="twd-flex twd-flex-wrap twd-justify-end twd-items-center mt-4 twd-gap-1.5"
+                            *ngIf="
+                                InboxReasons.includes(currentInteraction.RouteReason) ||
+                                DraftReasons.includes(currentInteraction.RouteReason) ||
+                                SentReasons.includes(currentInteraction.RouteReason)
+                            "
                         >
-                            <mat-icon>view_headline</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="data.Data?.InteractionCommentAllowed"
-                            mat-raised-button
-                            class="border-radius-20"
-                            [matTooltip]="locale('interactionComponent.interactionComment')"
-                            (click)="saveInteractionComments()"
-                        >
-                            <mat-icon>comment</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="emailComponentMode === 'preview'"
-                            mat-raised-button
-                            class="border-radius-20"
-                            [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            (click)="markAsSpam()"
-                            [matTooltip]="locale('widgets.emailControls.markAsSpam')"
-                        >
-                            <mat-icon>report</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="data.Data.Transfer.Allowed"
-                            mat-raised-button
-                            class="border-radius-20"
-                            [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            (click)="transferEmail(currentInteraction)"
-                            [matTooltip]="locale('widgets.emailControls.transfer')"
-                        >
-                            <mat-icon>forward_to_inbox</mat-icon>
-                        </button>
-                        <button
-                            mat-raised-button
-                            class="border-radius-20"
-                            (click)="showReplyEditor()"
-                            [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            [matTooltip]="locale('interactionComponent.reply')"
-                        >
-                            <mat-icon>reply</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="data.Data.ReplyAllAllowed"
-                            mat-raised-button
-                            class="border-radius-20"
-                            (click)="showReplyAllEmailEditor()"
-                            [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            [matTooltip]="locale('widgets.emailControls.replyAll')"
-                        >
-                            <mat-icon>reply_all</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="data.Data.ForwardAllowed"
-                            mat-raised-button
-                            class="border-radius-20"
-                            (click)="showForwardEmailEditor()"
-                            [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            [matTooltip]="locale('widgets.emailControls.forward')"
-                        >
-                            <mat-icon>forward</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="data.Data.DownloadAllowed"
-                            mat-raised-button
-                            class="border-radius-20"
-                            (click)="downloadEmail()"
-                            [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
-                            [matTooltip]="locale('interactionComponent.download')"
-                        >
-                            <mat-icon>file_download</mat-icon>
-                        </button>
-                        <button
-                            *ngIf="emailComponentMode === 'preview'"
-                            mat-raised-button
-                            class="border-radius-20"
-                            color="warn"
-                            #closeBtn
-                            (click)="closeEmail(closeBtn)"
-                            [matTooltip]="locale('interactionComponent.closeInteraction')"
-                        >
-                            {{ locale('interactionComponent.close') }}
-                        </button>
-                    </div>
-                </email>
+                            <button
+                                *ngIf="data.Data?.InternetHeadersAllowed && currentInteraction.InternetHeaders"
+                                mat-raised-button
+                                class="border-radius-20"
+                                [matTooltip]="locale('widgets.emailControls.internetHeaders')"
+                                (click)="showHeaders()"
+                            >
+                                <mat-icon>view_headline</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data?.InteractionCommentAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                [matTooltip]="locale('interactionComponent.interactionComment')"
+                                (click)="saveInteractionComments()"
+                            >
+                                <mat-icon>comment</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="emailComponentMode === 'preview'"
+                                mat-raised-button
+                                class="border-radius-20"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                (click)="markAsSpam()"
+                                [matTooltip]="locale('widgets.emailControls.markAsSpam')"
+                            >
+                                <mat-icon>report</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.Transfer.Allowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                (click)="transferEmail(currentInteraction)"
+                                [matTooltip]="locale('widgets.emailControls.transfer')"
+                            >
+                                <mat-icon>forward_to_inbox</mat-icon>
+                            </button>
+                            <button
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="showReplyEditor()"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                [matTooltip]="locale('interactionComponent.reply')"
+                            >
+                                <mat-icon>reply</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.ReplyAllAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="showReplyAllEmailEditor()"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                [matTooltip]="locale('widgets.emailControls.replyAll')"
+                            >
+                                <mat-icon>reply_all</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.ForwardAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="showForwardEmailEditor()"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                [matTooltip]="locale('widgets.emailControls.forward')"
+                            >
+                                <mat-icon>forward</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="data.Data.DownloadAllowed"
+                                mat-raised-button
+                                class="border-radius-20"
+                                (click)="downloadEmail()"
+                                [disabled]="getInboxMessageReq.loading || getInboxMessageReq.error"
+                                [matTooltip]="locale('interactionComponent.download')"
+                            >
+                                <mat-icon>file_download</mat-icon>
+                            </button>
+                            <button
+                                *ngIf="emailComponentMode === 'preview'"
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="warn"
+                                #closeBtn
+                                (click)="closeEmail(closeBtn)"
+                                [matTooltip]="locale('interactionComponent.closeInteraction')"
+                            >
+                                {{ locale('interactionComponent.close') }}
+                            </button>
+                        </div>
+                    </email>
+                </div>
             </div>
         </div>
     </tw-wrapper>

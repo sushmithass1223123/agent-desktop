@@ -1407,15 +1407,19 @@
                                                         }
                                                     },
                                                     "AudioEscalateAllowed": true,
+                                                    "RequestAudioCallAllowed": false,
                                                     "VideoEscalateAllowed": true,
+                                                    "RequestVideoCallAllowed": false,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
+                                                    "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
+                                                    "MuteAudioHidden": false,
                                                     "ReplyOnSMM": { "channels": "Whatsapp" },
                                                     "Whiteboard": {
                                                         "Allowed": true,
@@ -1942,7 +1946,8 @@
                                                     "DraftPollingInterval": 10000,
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false
+                                                    "TemplatesByHierarchy": false,
+                                                    "AsyncEmailSendTimeout": 60000
                                                 }
                                             },
                                             {
@@ -2669,7 +2674,7 @@
             "DashboardServerUrls": ["https://dicedev.tetherfi.cloud/SignalRDashboard1", "https://dicedev.tetherfi.cloud/SignalRDashboard2"],
             "FileServerUrl": {
                 "MediaUploader": "https://dicedev.tetherfi.cloud:13019/upload",
-                "MediaStreamer": "https://dicedev.tetherfi.cloud:13022",
+                "MediaStreamer": "https://dicedev.tetherfi.cloud:130222",
                 "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
@@ -2724,7 +2729,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://testlabsd.productqa.tetherfi.cloud/SDKProxy/TmacProxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -2755,5 +2760,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.7.3004"
+    "Version": "5.3.0"
 }

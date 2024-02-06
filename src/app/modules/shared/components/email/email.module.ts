@@ -21,7 +21,7 @@ const shared = [EmailComponent, EmailTemplateSelectorComponent, SkeletonComponen
 @NgModule({
     declarations: shared,
     exports: shared,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, EmailEditorModule, ScrollingModule,TranslocoRootModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, EmailEditorModule, ScrollingModule, TranslocoRootModule],
     providers: [
         {
             provide: APP_BASE_HREF,

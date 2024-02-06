@@ -25,10 +25,26 @@ export const EMAIL_REASONCODE_VALUES = {
     27: 'EMM not started',
     28: 'No email account found',
     29: 'Generic main exception',
-    30: 'Provided email account not found'
+    30: 'Provided email account not found',
+    100: 'success'
+};
+
+export const EMAIL_SEND_STATUS = {
+    '1': 'Success',
+    '0': 'Success',
+    '-1': 'Fail',
+    '-2': 'Fail',
+    '-3': 'FailedWithServerBusyException',
+    '-4': 'ExchangeAuthenticationError',
+    '-5': 'ExchangeServiceObjectNotCreated',
+    '-6': 'ExchangeMessageNotCreated',
+    '-8': 'MailboxInstanceCreationError',
+    '-9': 'EwsApiAdaptorDown',
+    '-11': 'EmailManagerLoading'
 };
 
 export const EMAIL_CURRENTSTATUS_CODES = {
-    SentToCustomer: 'to customer',
-    SentToCheckerSession: 'to checker'
+    SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
+    SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    EmailSending: 'sharedComponents.email.emailIsBeingSent'
 };

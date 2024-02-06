@@ -161,7 +161,14 @@ export class TMACEventService extends SharedWrapper {
             this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
         }
         // notify the observers
-        this._interactionEvent$.next([evt]);
+        if(evt.EventName === 'EmailSendingStatusEvent'){
+            evt.IsInteractionConstructEvent = true;
+            this._interactionEvent$.next([evt]);
+
+        }else{
+            this._interactionEvent$.next([evt]);
+        }
+        
         // emit events to launcher
         this.emitEventsToLauncher(evt);
     }
@@ -1400,6 +1407,40 @@ export class TMACEventService extends SharedWrapper {
         return concat(tempSub, this._interactionEvent$).pipe(
             map((evts) =>
                 evts?.filter((evt) => evt && (evt.IsInteractionConstructEvent || evt.IsInteractionDisposeEvent) && eventNames.includes(evt.EventName))
+            ),
+            filter((evts) => evts.length > 0)
+        );
+    }
+
+    /**
+     * To get all subscribed events
+     *
+     * @param {String[]} eventNames Names of the event
+     */
+    getAllSubscribedEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
+        // get the event based on interaction Id
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._interactionEventArray.filter(
+                (i: IUIEvent) => eventNames.includes(i.EventName)
+            );
+            tempSub.next(events);
+            tempSub.complete();
+        });
+
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for that is a IsInteractionConstructEvent or IsInteractionDisposeEvent
+        return concat(tempSub, this._interactionEvent$).pipe(
+            map((evts) =>
+                evts?.filter((evt) => evt && eventNames.includes(evt.EventName))
             ),
             filter((evts) => evts.length > 0)
         );

@@ -477,6 +477,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * To toggle user view mode
          */
         toggleUserView: boolean;
+        /**
+         * Audio call request
+         */
+        reqAudioCall: boolean;
+        /**
+         * Video call request
+         */
+        reqVideoCall: boolean;
     };
     /**
      * Connected event ref
@@ -573,7 +581,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         //trigger holdmethod
         this.sharedService.getHoldMethod().subscribe(() => {
-            this.holdInteraction();
+            if(this.status === 'connected'){
+                this.holdInteraction();
+            }
+            
         });
 
         this.widgetData = this.data.Data;
@@ -654,7 +665,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             screenshare: this.widgetData.ScreenShareAllowed ?? false,
             webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
             mediaDownload: false,
-            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false
+            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false,
+            reqAudioCall: this.widgetData.RequestAudioCallAllowed ?? false,
+            reqVideoCall: this.widgetData.RequestVideoCallAllowed ?? false
         };
 
         // set the user info
@@ -715,6 +728,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 label: 'Start Co-browsing',
                 icon: 'people',
                 type: 'cobrowse'
+            })
+        }
+
+        if (this.agentFeatures.reqAudioCall) {
+            this.moreActions.push({
+                label: 'Request Audio Call',
+                icon: 'phone_callback',
+                type: 'reqAudioCall'
+            })
+        }
+
+        if (this.agentFeatures.reqVideoCall) {
+            this.moreActions.push({
+                label: 'Request Video Call',
+                icon: 'ondemand_video',
+                type: 'reqVideoCall'
             })
         }
     }
@@ -1933,6 +1962,31 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
                 }
 
+                if (attachment) {
+                    //check if attachment is uploaded to media streamer
+                    if (attachment?.uploader === 'MediaStreamer') {
+                        //build proper media streamer url
+                        const mediaStreamerUrl: string = this.fileUploadUrl?.MediaStreamer;
+                        if (mediaStreamerUrl && !this.isValidURL(attachment?.src)) {
+                            //set url
+                            attachment.src = `${mediaStreamerUrl}/stream/media/${attachment?.src}`;
+                        }
+                    } else {
+                        // get the file upload url
+                        const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
+
+                        // check if we need to get full path of attachment
+                        if (
+                            !attachment.src && // check if src is not found
+                            attachment.name && // check if name is provided
+                            fileServerUrl // check if file server URL is configured
+                        ) {
+                            // get the attachment src
+                            attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
+                        }
+                    }
+                }
+
                 // add message to the transcripts
                 if (user) {
                     this.pushToTranscript({
@@ -2065,6 +2119,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             let status: SnackbarStateTypes = 'success';
 
             switch (msg.type.toLowerCase()) {
+                case 'request_audio_call':
+                    {
+                        if(msg.status === 'accepted'){
+                            message = this.translocoService.translate('widgets.chatControls.audioCallRequestAccepted');
+                        }else if(msg.status === 'rejected'){
+                            message = this.translocoService.translate('widgets.chatControls.audioCallRequestRejected');
+                            status = 'failure';
+                        }
+                        
+                    }
+                    break;   
+                case 'request_video_call':
+                    {
+                        if(msg.status === 'accepted'){
+                            message = this.translocoService.translate('widgets.chatControls.videoCallRequestAccepted');
+                       }else if(msg.status === 'rejected'){
+                            message = this.translocoService.translate('widgets.chatControls.videoCallRequestRejected');
+                            status = 'failure';
+                       }
+
+                    }                    
+                    break;               
                 case 'webrtctroubleshoot':
                     if (msg.status === 'accepted') {
                         message = this.translocoService.translate('widgets.chatControls.webrtcRequestAccepted');
@@ -3332,6 +3408,56 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    async sendRequestForCall(callType: string): Promise<boolean> {
+        try {
+            if(callType === 'AUDIO'){
+                await SDKClient.sendActionMessage({
+                    interactionId: this.interaction.InteractionID.toString(),
+                    message: JSON.stringify({
+                        source: 'agent',
+                        options: {},
+                        data: {
+                            interactionId: this.interaction.InteractionID.toString()
+                        },
+                        status: 'request',
+                        type: 'request_audio_call',
+                        eventName: 'ActionMessage',
+                        id: TUtils.Generic.uuid()
+                    })
+                })
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.requestForAudioCallSent'));
+                return true;
+    
+            }else if(callType === 'VIDEO'){
+                await SDKClient.sendActionMessage({
+                    interactionId: this.interaction.InteractionID.toString(),
+                    message: JSON.stringify({
+                        source: 'agent',
+                        options: {},
+                        data: {
+                            interactionId: this.interaction.InteractionID.toString()
+                        },
+                        status: 'request',
+                        type: 'request_video_call',
+                        eventName: 'ActionMessage',
+                        id: TUtils.Generic.uuid()
+                    })
+                })
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.requestForVideoCallSent'));
+                return true;
+    
+            }else{
+                return false;    
+            }
+            
+        } catch (error) {
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.errorInCallRequest'), 'failure');
+            return false; 
+        }
+        
+
+    }
+
     /**
      * To execute action
      */
@@ -3345,7 +3471,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 break;
             case 'cobrowse':
                 this.openCobrowse();
+                break;
+            case 'reqAudioCall':
+                this.sendRequestForCall('AUDIO');
+                break;
+            case 'reqVideoCall':
+                this.sendRequestForCall('VIDEO');
+                break;
             default:
+                break;
         }
         // close the more actions overlay
         this.openMoreActions = false;

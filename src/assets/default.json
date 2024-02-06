@@ -1208,15 +1208,19 @@
                                                         }
                                                     },
                                                     "AudioEscalateAllowed": true,
+                                                    "RequestAudioCallAllowed": false,
                                                     "VideoEscalateAllowed": true,
+                                                    "RequestVideoCallAllowed": false,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
+                                                    "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
+                                                    "MuteAudioHidden": false,
                                                     "Whiteboard": { "Allowed": true, "Url": "https://mx.tetherfi.cloud/Whiteboard/ui/index.html" },
                                                     "Snapshot": {
                                                         "Allowed": true,
@@ -1624,7 +1628,8 @@
                                                     "DraftPollingInterval": 10000,
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false
+                                                    "TemplatesByHierarchy": false,
+                                                    "AsyncEmailSendTimeout": 60000
                                                 }
                                             },
                                             {
@@ -2311,8 +2316,8 @@
         "Urls": {
             "DashboardServerUrls": ["https://mx.tetherfi.cloud/SignalRDashboard1", "https://mx.tetherfi.cloud/SignalRDashboard2"],
             "FileServerUrl": {
-                "MediaStreamer": "https://mx.tetherfi.cloud:13019/upload",
-                "MediaUploader": "https://mx.tetherfi.cloud:13022",
+                "MediaUploader": "https://mx.tetherfi.cloud:13019/upload",
+                "MediaStreamer": "https://mx.tetherfi.cloud:13022",
                 "MediaProxy": "https://mx.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://mx.tetherfi.cloud/TCM_Client/CampaignManager.asmx"

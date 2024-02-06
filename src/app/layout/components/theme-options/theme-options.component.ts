@@ -63,7 +63,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     languageSelectionEnabled = false;
-    languages = ["en", "de", "zh"];
+    languages = this.translocoService.getAvailableLangs();
     selectedLanguage = this.translocoService.getActiveLang();
 
     /**

@@ -89,6 +89,22 @@ export type TableConfig<T = any> =
           /**
            * Type of the cell
            */
+          type: 'date_single';
+          /**
+           * Displayed Value of the record
+           */
+          value?: GenericLabel<T, string | number>;
+          /**
+           * tooltip flag
+           */
+          tooltip?: boolean;
+          truncate?: boolean;
+          searchable?: boolean;
+      })
+    | (BaseTableConfig & {
+          /**
+           * Type of the cell
+           */
           type: 'controls';
           /**
            * Config for the control cell
@@ -301,7 +317,7 @@ export class TableComponent implements OnInit {
      */
     regExpEscape = (s) => {
         return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    }
+    };
 
     /**
      * Custom filter method fot Angular Material Datatable
@@ -380,6 +396,13 @@ export class TableComponent implements OnInit {
     doAdvancedSearch(): void {
         const filters = this.advancedSearchForm;
         this.source.filter = Object.keys(filters).length ? JSON.stringify(filters) : '';
+        this.advanceSearchModalRef?.close();
+    }
+
+    /**
+     * Closes advanced search modal
+     */
+    closeAdvancedSearch(): void {
         this.advanceSearchModalRef?.close();
     }
 

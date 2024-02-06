@@ -229,6 +229,7 @@
                 <div class="call-controls twd-flex twd-flex-row twd-flex-wrap">
                     <div class="actions-1 twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-max twd-max-w-5/12">
                         <button
+                            *ngIf="!muteAudioHidden"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
@@ -281,6 +282,18 @@
                             (click)="shareScreen()"
                         >
                             <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="agentFeatures.reqScreenshare"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            [matTooltip]="locale('widgets.audioVideoControls.requestScreenShare')"
+                            [ngClass]="{ 'bg-alt-danger': screenSharing }"
+                            (click)="requestToShareScreen()"
+                        >
+                            <mat-icon> {{ screenSharing ? 'tv' : 'tv' }} </mat-icon>
                         </button>
 
                         <button
