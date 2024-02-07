@@ -815,15 +815,32 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // evt.data.remote: IRemoteStreamInfo[]
 
                     const remote: IRemoteStreamInfo[] = evt.data.remote;
-                    remote?.forEach((r) => {
+                    remote?.forEach((r, i) => {
                         if (r.state !== 'changed') return;
 
                         this.userList.forEach((f) => {
                             if (f.stream.id !== r.stream.id) return;
                             f.stream = r.stream;
                             f.streamInfo.type = r.type;
+                            remote.splice(i, 1);
                         });
                     });
+
+                    if(remote?.length) {
+                        remote.forEach((r) => {
+                            if (this.userList.some((ul) => ul.stream.id == r.stream.id)) return;
+
+                            let newStreamObj = {
+                                stream: r.stream,
+                                streamInfo: {
+                                    id: '',
+                                    type: r.type,
+                                    user: r.user === '0' ? 'Customer' : r.user
+                                }
+                            };
+                            this.userList.push(newStreamObj);
+                        })
+                    }
 
                     break;
                 default:
