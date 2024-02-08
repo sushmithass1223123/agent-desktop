@@ -786,7 +786,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * To handle conference mixer
      */
-    private handleConferenceMixer(): void {
+    private handleConferenceMixer(msConferenceEnabled: boolean | undefined): void {
         // get the main line and conference line
         const mainLine = this.getAVConnection(this.callLines[0]);
         // this.avConns[this.callLines[0]];
@@ -799,6 +799,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             return;
         }
 
+        // If conference mixing to be done from Media Server, prevent mixing from CallSDK
+        if(msConferenceEnabled && this.widgetData.Conference?.MediaServerConferenceEnabled) return;
+        
         // add the conference peer connection to the conference
         mainLine.addConference(conferenceLine.getPeerConnection());
     }
@@ -1173,7 +1176,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 connection.unHold();
             }
             // // do conference mixing
-            this.handleConferenceMixer();
+            this.handleConferenceMixer(evt?.MediaServer_ConferenceEnabled);
         }
         // else {
         // set the status

@@ -870,6 +870,7 @@
                                                     },
                                                     "Conference": {
                                                         "Allowed": true,
+                                                        "MediaServerConferenceEnabled": true,
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
