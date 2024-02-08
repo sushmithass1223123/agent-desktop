@@ -503,7 +503,7 @@
             "chatAnswerError": "Error in answring the chat, please try again",
             "changeModeTitle": "Confirm Mode Change",
             "changeModeMsg": "Are you sure to change chat to ",
-            "changeModeLoading": "Chaiging the chat mode to #type, please wait...",
+            "changeModeLoading": "Changing the chat mode to #type, please wait...",
             "changeModeSuccess": "Chat mode changed to #type successfully",
             "changeModeFailed": "Change chat mode to #type failed!",
             "signatureRequestSuccess": "Signature request sent successfully",
