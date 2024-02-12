@@ -667,11 +667,15 @@ this.muteAudioHidden = false;
                             evt.data.response(true);
                             // show the UI
                             this.showUI = true;
+                            // notify agent accepted the call
+                            this.notifyCallConfirmation(true);
                         } else {
                             // reject request
                             evt.data.response(false);
                             // close the call widget
                             this.destroyWidget();
+                            // notify agent rejected the call
+                            this.notifyCallConfirmation(false);
                         }
                     };
                     const dynamicLabels = [
@@ -1963,6 +1967,30 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         } finally {
             this._fuseProgressBarService.hide();
         }
+    }
+
+    /**
+     * To send action message to notify agent accepted/rejected the AV call
+     */
+    public notifyCallConfirmation(response: boolean) {
+        try{
+            const messageType = response ? 'accepted_call' : 'rejected_call';
+            SDKClient.sendActionMessage({
+            interactionId: this.interactionId as any,
+            message: JSON.stringify({
+                source: 'agent',
+                options: {},
+                data: {
+                    interactionId: this.interactionId
+                },
+                status: 'action',
+                type: messageType,
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+                })
+            })
+        }
+        catch(error){}
     }
 
     ifMuted(data, type) {
