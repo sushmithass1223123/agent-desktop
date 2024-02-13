@@ -798,7 +798,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceError'));
             return;
         }
-
+        
         // add the conference peer connection to the conference
         mainLine.addConference(conferenceLine.getPeerConnection());
     }
@@ -1173,7 +1173,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 connection.unHold();
             }
             // // do conference mixing
-            this.handleConferenceMixer();
+            if(this.widgetData.Conference?.MediaServerConferenceEnabled && evt?.MediaServer_ConferenceEnabled) {
+                this.handleConferenceMixer();
+                this.logger.debug(`Conference mixing from Agent Desktop`, true);
+            } else this.logger.debug(`Conference mixed by Media Server`, true);
         }
         // else {
         // set the status
@@ -1214,8 +1217,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
-                    connection = this.createAVConnection(evt.SessionID, 'out');
-                    connection?.directCall(TEnums.WrcCallTypes.Audio);
+                    if(!this.widgetData.Conference?.MediaServerConferenceEnabled) {
+                        connection = this.createAVConnection(evt.SessionID, 'out');
+                        connection?.directCall(TEnums.WrcCallTypes.Audio);
+                    };
                     // play incoming call sound
                     this._appUIService.playAudio('ringing', 0.5, true);
                     break;
