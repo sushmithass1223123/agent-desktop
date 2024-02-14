@@ -10,7 +10,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { SharedService } from '@services/shared.service';
 import {
     ActionMessageReceivedEvent,
     AgentAVMessageEvent,
@@ -922,7 +921,7 @@ if (error === 'Screenshare Was Cancelled') {
 
                     if(remote?.length) {
                         remote.forEach((r) => {
-                            if (this.userList.some((ul) => ul.stream.id == r.stream.id)) return;
+                            if (this.userList.some((ul) => ul.stream.id == r.stream.id) || r?.state === 'deleted') return;
 
                             let newStreamObj = {
                                 stream: r.stream,
