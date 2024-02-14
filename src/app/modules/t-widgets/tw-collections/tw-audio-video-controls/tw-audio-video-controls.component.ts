@@ -677,6 +677,9 @@ this.muteAudioHidden = false;
                         this.destroyWidget();
                         return;
                     }
+                    // If the incoming call is done by agent, return. Because this is handled in requestav
+                    // Validate this only if the call is triggered through TwChatControlsComponent
+                    if (evt.data?.owner && this.data?.Data?.Source === 'TwChatControlsComponent') return;
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
@@ -704,9 +707,12 @@ this.muteAudioHidden = false;
                         },
                         {
                             key: '#customerName',
-                            value: this.translocoService.translate(
-                                'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
-                            )
+                            value:
+                                evt.data?.owner && evt.data.owner
+                                    ? evt.data.owner.split('_').pop()
+                                    : this.translocoService.translate(
+                                          'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
+                                      )
                         }
                     ];
 
@@ -1035,9 +1041,7 @@ if (error === 'Screenshare Was Cancelled') {
             const requestType = JSON.parse(evt.Message).param;
             switch (evt.Type) {
                 case 'requestav':
-                    this.interactionDetails.Direction = 'in';
-                    this.callType = requestType;
-                    this.startAVCall();
+                    this.handleAvRequestFromAgent(evt);
                     break;
                 case 'addscreenshare':
                     this.displayToasters = false;
@@ -1045,16 +1049,30 @@ if (error === 'Screenshare Was Cancelled') {
                 case 'endscreenshare':
                     this.displayToasters = false;
                     break;
+                case 'eventav':
+                    if (this.isAgentAvRequest && JSON.parse(evt.Message).event == 'connected' && JSON.parse(evt.Message).owner == 'customer') {
+                        this.isAgentAvRequest = false;
+                        this.isCustomerAcknowledged = true;
+                        if (this.agentAvRequestConsented) {
+                            this.showUI = true;
+                            this.startAVCall();
+                        }
+                    }
+                    break;
+                case 'avtstatus':
+                    if (evt.User == 'customer' && this.isAgentAvRequest && JSON.parse(evt.Message)?.errorCode == 'CALL_REJECTED') {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'),
+                            'failure'
+                        );
+                        this.destroyWidget();
+                        this.confirmDialogRef?.close();
+                    }
+                    break;
                 case 'mute':
                 case 'unmute':
                     this.updateMuteUnmuteUserList(requestType, evt);
                     break;
-            }
-            // check if its a av request
-            if (evt.Type === 'requestav') {
-                this.interactionDetails.Direction = 'in';
-                this.callType = JSON.parse(evt.Message).param;
-                this.startAVCall();
             }
 
             // forward the av messages to av channel
@@ -1067,6 +1085,58 @@ if (error === 'Screenshare Was Cancelled') {
             this.logger.error('error occured in AVControlMessageReceivedEvent', e, false);
         }
     };
+
+    /**
+     * Method to handle agent av call requests when customer is in conference
+     * @param {AVControlMessageReceivedEvent} evt - AV control message object
+     */
+    handleAvRequestFromAgent(evt: AVControlMessageReceivedEvent): void {
+        try {
+            let requestType = JSON.parse(evt.Message).param;
+            requestType = requestType.charAt(0).toUpperCase() + requestType.slice(1);
+
+            if (evt.User == 'customer') {
+                this.isAgentAvRequest = false;
+                this.interactionDetails.Direction = 'in';
+                this.callType = requestType;
+                this.startAVCall();
+            } else {
+                this.isAgentAvRequest = true;
+                const dynamicLabels = [
+                    {
+                        key: '#callType',
+                        value: this.translocoService.translate('dynamic_labels.audioVideoControls.callType.' + requestType)
+                    },
+                    {
+                        key: '#customerName',
+                        value: JSON.parse(evt.Message)?.owner?.split('_')?.pop() ?? 'Agent'
+                    }
+                ];
+
+                this.confirmDialogRef = this._appUIService.showCustomDialog(
+                    'confirm',
+                    this._appDataService.getUpdatedLabel(
+                        this.translocoService.translate('widgets.audioVideoControls.callRequestConfirmMsg'),
+                        dynamicLabels
+                    ),
+                    '',
+                    null,
+                    {
+                        disableClose: true
+                    }
+                );
+                this.confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        this.showUI = true;
+                        this.agentAvRequestConsented = true;
+                        if (this.isCustomerAcknowledged) this.startAVCall();
+                    } else this.destroyWidget();
+                });
+            }
+        } catch (e) {
+            this.logger.error('error occured in handleAvRequestFromAgent', e, false);
+        }
+    }
 
     /**
      *
