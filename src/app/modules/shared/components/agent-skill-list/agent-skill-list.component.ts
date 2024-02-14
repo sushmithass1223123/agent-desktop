@@ -25,6 +25,7 @@ import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.compone
 import { TableComponent } from '../table/table.component';
 import { TranslocoService } from '@ngneat/transloco';
 import { AppDataService } from '@services/app-data.service';
+import { SharedService } from '@services/shared.service';
 
 type ISwitch = {
     placeholder: string;
@@ -195,7 +196,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         private fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService,
         private translocoService: TranslocoService,
-        private appDataService: AppDataService
+        private appDataService: AppDataService,
+        private sharedService: SharedService
     ) {
         this.selectedItem = '';
         this.comments = '';
@@ -1026,6 +1028,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
+                        // End the call if its already ongoing during AV call - Observed in
+                        this.sharedService.triggerTransferMethod(this.interactionId);
+
                         this.loading -= 1;
                         if (dt.response.ResultCode >= 0) {
                             this._appUIService.showSnackbar(
@@ -1051,6 +1056,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
             // blind transfer/confks
             else {
+                // End the call if its already ongoing during AV call - Observed in
+                this.sharedService.triggerTransferMethod(this.interactionId);
+
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
                     comment: this.comments,
@@ -1113,6 +1121,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 number: skillToConf
             })
             .then((dt) => {
+                    // End the call if its already ongoing during AV call - Observed in
+                    this.sharedService.triggerTransferMethod(this.interactionId);
+                    
                     this.loading -= 1;
                     if (dt.response.ResultCode >= 0) {
                         this._appUIService.showSnackbar(

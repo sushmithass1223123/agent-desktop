@@ -40,6 +40,7 @@ import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Audio Video Controls
@@ -297,6 +298,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
     confirmDialogRef;
 
+    isAgentAvRequest: boolean = false;
+    isCustomerAcknowledged: boolean = false;
+    agentAvRequestConsented: boolean = false;
+
+    private _unsubscribeAll: Subject<any>;
+
     manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
 
     /**
@@ -328,6 +335,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.snapshotRequested = false;
 this.muteAudioHidden = false;
         this.displayToasters = true;
+
+        // Set the private defaults
+        this._unsubscribeAll = new Subject();
+
+        // If transfer is being triggered, then end the call 
+        this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe((interactionId: number) => {
+            if(interactionId === this.interactionId) this.endCall(true);
+        })
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -483,6 +498,10 @@ this.muteAudioHidden = false;
                 customerStream: undefined
             }
         });
+
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
 
         // call the wrapper destroy method
         this.destroyWrapper();
