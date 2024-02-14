@@ -39,6 +39,7 @@ import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Audio Video Controls
@@ -285,6 +286,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
+     * Whether audio mute button is allowed or not
+     */
+    muteAudioHidden: boolean;
+
+    /**
      * The current interaction
      */
     myInteraction: InteractionRef;
@@ -294,6 +300,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     isAgentAvRequest: boolean = false;
     isCustomerAcknowledged: boolean = false;
     agentAvRequestConsented: boolean = false;
+
+    private _unsubscribeAll: Subject<any>;
+
+    manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
 
     /**
      * Constructor
@@ -308,7 +318,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _agentFeaturesService: AgentFeaturesService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _interactionManagerService: InteractionManagerService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private sharedService: SharedService
     ) {
         super('TwAudioVideoControlsComponent');
 
@@ -321,7 +332,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
+this.muteAudioHidden = false;
         this.displayToasters = true;
+
+        // Set the private defaults
+        this._unsubscribeAll = new Subject();
+
+        // If transfer is being triggered, then end the call 
+        this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe((interactionId: number) => {
+            if(interactionId === this.interactionId) this.endCall(true);
+        })
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -444,6 +464,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
 
+        // Close the active dialogs
+        this.confirmDialogRef?.close();
+
         // listen to tmac interaction events
         // SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         // SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
@@ -474,6 +497,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 customerStream: undefined
             }
         });
+
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
 
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -527,6 +554,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     private startAVCall(): void {
         const widgetData = this.data.Data;
+
+        this.muteAudioHidden = widgetData.MuteAudioHidden;
 
         // create the AV channel connection
         this.createAVConnection();
@@ -639,7 +668,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // swtich the av events
             switch (evt.event) {
                 case 'onIncoming':
-                    //Check whether the type and status of myInteraction matches to 'textchat' and 'hold'
+                   //Check whether the type and status of myInteraction matches to 'textchat' and 'hold'
                     if (this.myInteraction?.type === 'textchat' && this.myInteraction?.status === 'hold') {
                         // reject request
                         evt.data.response(false);
@@ -659,11 +688,15 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             evt.data.response(true);
                             // show the UI
                             this.showUI = true;
+                            // notify agent accepted the call
+                            this.notifyCallConfirmation(true);
                         } else {
                             // reject request
                             evt.data.response(false);
                             // close the call widget
                             this.destroyWidget();
+                            // notify agent rejected the call
+                            this.notifyCallConfirmation(false);
                         }
                     };
                     const dynamicLabels = [
@@ -696,7 +729,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     );
                     this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
+                    //this is used in order to close appconfirmdialog in twchatcontrolcomponent
+                    this.sharedService.triggerAppConfirmDialogClose();
                     break;
                 case 'onTrace':
                     this.logger.info('onAVEvent.onTrace: ' + evt.data);
@@ -708,6 +742,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         this.status = `${error}`;
                     } else {
                         this.status = `Error : ${error}`;
+if (error === 'Screenshare Was Cancelled') {
+                            this.status = `${error}`;
+                        }
                     }
 
                     if (error) {
@@ -847,7 +884,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'onEnd':
                     this.connected = false;
                     this.status = 'ended';
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callEndedByRemote'), 'info');
+                    this._appUIService.showSnackbar(this.translocoService.translate(`widgets.audioVideoControls.${this.genericMessageMapper(evt?.data)}`), 'info');
                     // close the widget
                     this.destroyWidget();
                     this.confirmDialogRef?.close();
@@ -871,16 +908,32 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // evt.data.remote: IRemoteStreamInfo[]
 
                     const remote: IRemoteStreamInfo[] = evt.data.remote;
-                    remote?.forEach((r) => {
+                    remote?.forEach((r, i) => {
                         if (r.state !== 'changed') return;
 
                         this.userList.forEach((f) => {
                             if (f.stream.id !== r.stream.id) return;
                             f.stream = r.stream;
                             f.streamInfo.type = r.type;
+                            remote.splice(i, 1);
                         });
                     });
 
+                    if(remote?.length) {
+                        remote.forEach((r) => {
+                            if (this.userList.some((ul) => ul.stream.id == r.stream.id)) return;
+
+                            let newStreamObj = {
+                                stream: r.stream,
+                                streamInfo: {
+                                    id: '',
+                                    type: r.type,
+                                    user: r.user === '0' ? 'Customer' : r.user
+                                }
+                            };
+                            this.userList.push(newStreamObj);
+                        })
+                    }
                     break;
 
                 default:
@@ -890,6 +943,29 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.logger.error('Error in onAVEvent', error);
         }
     };
+
+    /**
+     * Method to normalize messages which are not defined by application labels
+     * @param message Message from MS/CallSDK/User
+     * @returns A generic application lable key
+     */
+    genericMessageMapper (message: string): string {
+        let messageKey = '';
+        const lcMessage = message.toLowerCase();
+        switch(lcMessage) {
+            case 'expected behaviour : call hangup by user while media was being established':
+            case 'call failed due to internal error': {
+                messageKey = 'callEndedByRemoteDueToInternalError'
+                break;
+            }
+            default: {
+                messageKey = 'callEndedByRemote'
+                break;
+            }
+        }
+
+        return messageKey;
+    }
 
     /**
      * To send av status to the server for logging & reporting purpose
@@ -999,7 +1075,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             }
 
             // forward the av messages to av channel
-            this.avConn?.onMessage(evt.Message);
+            this.avConn?.onMessage(
+                evt.Type === 'addscreenshare'
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    : evt.Message
+            );
         } catch (e) {
             this.logger.error('error occured in AVControlMessageReceivedEvent', e, false);
         }
@@ -1183,6 +1263,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             switch (type) {
                 case 'snapshot':
                     {
+if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         let message = '';
                         const msgStatus = msg.status.toLowerCase();
                         let status: SnackbarStateTypes = 'success';
@@ -1398,14 +1479,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.onCallHoldEvent = false;
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted) {
+            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
                 this.avConn.unMute(true, true);
                 this.audioMuted = false;
                 this.videoMuted = false;
-            } else if (this.muteAVOnHold.agentAudio && this.audioMuted) {
+            } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
                 this.avConn.unMute(true, false);
                 this.audioMuted = false;
-            } else if (this.muteAVOnHold.agentVideo && this.videoMuted) {
+            } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
                 this.avConn.unMute(false, true);
                 this.videoMuted = false;
             }
@@ -1520,6 +1601,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.audioMuted = !this.audioMuted;
+        this.manualMuteFlags.audio = (this.audioMuted === true);
     }
 
     /**
@@ -1537,6 +1619,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
+        this.manualMuteFlags.video = (this.videoMuted === true);
     }
 
     /**
@@ -2017,6 +2100,30 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
     }
 
+    /**
+     * To send action message to notify agent accepted/rejected the AV call
+     */
+    public notifyCallConfirmation(response: boolean) {
+        try{
+            const messageType = response ? 'accepted_call' : 'rejected_call';
+            SDKClient.sendActionMessage({
+            interactionId: this.interactionId as any,
+            message: JSON.stringify({
+                source: 'agent',
+                options: {},
+                data: {
+                    interactionId: this.interactionId
+                },
+                status: 'action',
+                type: messageType,
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+                })
+            })
+        }
+        catch(error){}
+    }
+
     ifMuted(data, type) {
         return this.mutedRemoteUsers[type].includes(data.id) || this.mutedRemoteUsers[type].includes(data.user.toLowerCase());
     }
@@ -2077,3 +2184,4 @@ interface IInteractionDetails {
 }
 
 // for more info visit - https://angular.io/api/core
+

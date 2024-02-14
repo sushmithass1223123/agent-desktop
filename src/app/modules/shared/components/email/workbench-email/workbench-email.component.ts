@@ -1084,22 +1084,31 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             );
             if (attachmentMap.ids.length > 0) {
                 let ids = attachmentMap.ids.join(',');
-                const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
-                    urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
-                    method: 'GET',
-                    responseType: 'json'
-                });
+                try {
+                    const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
+                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                        method: 'GET',
+                        responseType: 'json'
+                    });
 
-                if (response?.result?.length > 0) {
-                    attachmentMap.att.forEach((cur) => {
-                        if (cur.IsCloud) {
-                            let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
-                            if (fileMeta) {
-                                cur.ArchiveStatus = fileMeta.archiveStatus;
-                                cur.RestoreStatus = fileMeta.restoreStatus;
-                                cur.FileError = fileMeta.fileError;
+                    if (response?.result?.length > 0) {
+                        attachmentMap.att.forEach((cur) => {
+                            if (cur.IsCloud) {
+                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                                if (fileMeta) {
+                                    cur.ArchiveStatus = fileMeta.archiveStatus;
+                                    cur.RestoreStatus = fileMeta.restoreStatus;
+                                    cur.FileError = fileMeta.fileError;
+                                }
                             }
-                        }
+                        }, []);
+                    }
+                } catch (ex) {
+                    this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaError'), 'failure');
+                    attachmentMap.att.forEach((cur) => {
+                        cur.ArchiveStatus = null;
+                        cur.RestoreStatus = null;
+                        cur.FileError = true;
                     }, []);
                 }
             }

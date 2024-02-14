@@ -2,7 +2,7 @@
     <div class="annotate-container" (touchend)="setPenInactive()" (mouseup)="isPenActive && setPenInactive()">
         <div class="image-container" #imageContainer>
             <img id="imageToAnnotate-{{ sessionID }}" (load)="setCanvasSize()" src="{{ sourceImage }}" alt="" />
-            <div class="canvas-layout">
+            <div class="canvas-layout" style="background-color:#fff;">
                 <div class="annotate-controls">
                     <div class="control-flex">
                         <div (click)="this.activeTool = 'pen'" class="control"

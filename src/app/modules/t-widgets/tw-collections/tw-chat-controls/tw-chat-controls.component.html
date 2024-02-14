@@ -57,10 +57,11 @@
                         </div>
                         <div>
                             <mat-icon
-                                *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
+                            *ngIf="replyAble && conferenceType !== 'silent' && message.status !== 'init' && message.status !== 'failed'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
                                 [matTooltip]="locale('interactionComponent.reply')"
+                                [ngClass]="{ 'disabled': status !== 'connected' }"
                                 >reply</mat-icon
                             >
                         </div>
@@ -302,7 +303,7 @@
                                     (status === 'connected' ? 'mat-elevation-z2' : '')
                                 "
                                 [matTooltip]="interactionOnHold.buttonTooltip"
-                                (click)="holdUnhold()"
+                                (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                             >
                                 <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
                             </button>
@@ -650,9 +651,10 @@
                                         [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
                                         ngModel
                                         name="message"
-                                        matTextareaAutosize
-                                        matAutosizeMinRows="1"
-                                        matAutosizeMaxRows="5"
+                                        cdkTextareaAutosize
+                                        #autosize="cdkTextareaAutosize"
+                                        cdkAutosizeMinRows="1"
+                                        cdkAutosizeMaxRows="5"
                                         (keyup)="onKeyUp($event)"
                                     ></textarea>
                                 </mat-form-field>

@@ -86,8 +86,8 @@ export type TwChatControlsWhiteboard = {
      */
     Url: string;
     /*
-    *  Whiteboard url for customer
-    */
+     *  Whiteboard url for customer
+     */
     CustomerUrl: string;
 };
 
@@ -198,7 +198,7 @@ export type TwChatControlsWhiteboard = {
  * }
  * ```
  */
-export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> { }
+export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> {}
 
 /**
  * Chat control config's Data
@@ -241,7 +241,7 @@ export type TwChatControlsData = {
      */
     ReplyOnChatAllowed: boolean;
     /**
-     * To allow reply to a chat at SMM channel level 
+     * To allow reply to a chat at SMM channel level
      */
     ReplyOnSMM: TReplyOnSMM;
     /**
@@ -264,6 +264,12 @@ export type TwChatControlsData = {
      * Flag to hold interaction
      */
     HoldInteractionAllowed: boolean;
+
+    /**
+     * Hides audio mute button
+     */
+    MuteAudioHidden: boolean;
+
     /**
      * Whiteboard reference
      */
@@ -277,14 +283,14 @@ export type TwChatControlsData = {
          */
         Url: string;
         /*
-        *  Whiteboard url for customer
-        */
+         *  Whiteboard url for customer
+         */
         CustomerUrl: string;
     };
-     /**
+    /**
      * Cobrowse reference
      */
-      Cobrowse: {
+    Cobrowse: {
         /**
          * Flag to enable cobrowse
          */
@@ -294,8 +300,8 @@ export type TwChatControlsData = {
          */
         AgentUrl: string;
         /*
-        *  cobrowse url for customer
-        */
+         *  cobrowse url for customer
+         */
         CustomerUrls: { [name: string]: string }[];
     };
     /**
@@ -420,5 +426,5 @@ export type TwChatControlsData = {
 };
 
 export type TReplyOnSMM = {
-    channels: string
-}
+    channels: string;
+};

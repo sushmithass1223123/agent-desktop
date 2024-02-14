@@ -39,7 +39,8 @@ export const EMAIL_SEND_STATUS = {
     '-5': 'ExchangeServiceObjectNotCreated',
     '-6': 'ExchangeMessageNotCreated',
     '-8': 'MailboxInstanceCreationError',
-    '-9': 'EwsApiAdaptorDown'
+    '-9': 'EwsApiAdaptorDown',
+    '-11': 'EmailManagerLoading'
 };
 
 export const EMAIL_CURRENTSTATUS_CODES = {

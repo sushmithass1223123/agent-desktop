@@ -170,7 +170,8 @@
                     <textarea
                         matInput
                         #replyInput
-                        ngModel
+                        [(ngModel)]="allNewChats[selectedContact.id]"
+                       
                         name="message"
                         placeholder="Type your message"
                         [rows]="1"

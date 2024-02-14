@@ -28,7 +28,8 @@
         }"
         [ngStyle]="{
             'width.px': data.Config.Position.W,
-            'height.px': data.Config.Position.H
+            'height.px': data.Config.Position.H,
+            'minHeight': collapsed ? 'unset' : 'inherit'
         }"
     >
         <!-- We are writing a wrapper over material card -->
