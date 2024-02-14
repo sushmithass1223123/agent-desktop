@@ -643,6 +643,7 @@
             "callFailed": "Call failed: ",
             "callDisconnectedError": "Call disconnected, unexpected end!",
             "callEndedByRemote": "User has ended the call",
+            "callEndedByRemoteDueToInternalError": "Call ended due to internal error in user application",
             "remoteMuteTypeMsg": "#userName  #muteTyped the #streamType",
             "snapshotRequestSuccess": "Snapshot request sent successfully",
             "snapshotLoading": "Retreiving snapshot...",
