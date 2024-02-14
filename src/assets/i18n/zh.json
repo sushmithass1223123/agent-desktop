@@ -175,6 +175,7 @@
             "callFailed": "呼叫失败：",
             "callDisconnectedError": "通话断线，意外结束！",
             "callEndedByRemote": "用户已结束通话",
+            "callEndedByRemoteDueToInternalError": "由于用户应用程序中的内部错误，呼叫结束",
             "remoteMuteTypeMsg": "#userName  #muteTyped the #streamType",
             "snapshotRequestSuccess": "快照请求发送成功",
             "snapshotLoading": "Retreiving snapshot...",

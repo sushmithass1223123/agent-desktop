@@ -860,7 +860,7 @@ if (error === 'Screenshare Was Cancelled') {
                 case 'onEnd':
                     this.connected = false;
                     this.status = 'ended';
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callEndedByRemote'), 'info');
+                    this._appUIService.showSnackbar(this.translocoService.translate(`widgets.audioVideoControls.${this.genericMessageMapper(evt?.data)}`), 'info');
                     // close the widget
                     this.destroyWidget();
                     this.confirmDialogRef?.close();
@@ -903,6 +903,29 @@ if (error === 'Screenshare Was Cancelled') {
             this.logger.error('Error in onAVEvent', error);
         }
     };
+
+    /**
+     * Method to normalize messages which are not defined by application labels
+     * @param message Message from MS/CallSDK/User
+     * @returns A generic application lable key
+     */
+    genericMessageMapper (message: string): string {
+        let messageKey = '';
+        const lcMessage = message.toLowerCase();
+        switch(lcMessage) {
+            case 'expected behaviour : call hangup by user while media was being established':
+            case 'call failed due to internal error': {
+                messageKey = 'callEndedByRemoteDueToInternalError'
+                break;
+            }
+            default: {
+                messageKey = 'callEndedByRemote'
+                break;
+            }
+        }
+
+        return messageKey;
+    }
 
     /**
      * To send av status to the server for logging & reporting purpose
