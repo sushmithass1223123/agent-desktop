@@ -1092,16 +1092,35 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
         // skill transfer/conf
         else if (this.selectedRow?.type === 'Skill List' || freeTextConf.active) {
+            const skillToConf = freeTextConf.active ? freeTextConf.value : this.selectedItem;
+            const dynamicLabels = [
+                {
+                    key: '#conferenceTo',
+                    value: skillToConf
+                },
+                {
+                    key: '#conferenceType',
+                    value: this.isConsult
+                        ? this.translocoService.translate('sharedComponents.agentSkillList.consultConference')
+                        : this.translocoService.translate('sharedComponents.agentSkillList.blindConference')
+                }
+            ];
+
             this.loading -= 1;
-            SDKClient.transferTextChatToQueue({
-                chatMode: this._dialogData.OtherData.mode,
+            SDKClient.conferenceBlind({
+                comment: this.comments,
                 interactionId: this.interactionId.toString(),
-                isBlind: true,
-                skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem
+                number: skillToConf
             })
-                .then((dt) => {
+            .then((dt) => {
                     this.loading -= 1;
                     if (dt.response.ResultCode >= 0) {
+                        this._appUIService.showSnackbar(
+                            this.appDataService.getUpdatedLabel(
+                                this.translocoService.translate('sharedComponents.agentSkillList.conferenceCallSuccess'),
+                                dynamicLabels
+                            )
+                        );
                         this.close(true);
                     } else {
                         this._appUIService.showSnackbar(
