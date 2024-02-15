@@ -71,6 +71,7 @@ import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -91,6 +92,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     // @Input() data: IWidget<TextChatIncomingEvent, IWidgetData>;
     @Input() data: TwChatControls<TextChatIncomingEvent>;
+
+    // Child observer for text area auto increase size
+    @ViewChild('autosize') autosize: CdkTextareaAutosize;
     /**
      * Widget data ref
      */
@@ -171,6 +175,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Conference type of interaction
      */
     conferenceType = '';
+    /**
+     * Initial value 
+     */
+    whiteboardOpened: boolean = false;
     /**
      * Conference agent list
      */
@@ -712,7 +720,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // check for moreActions
-        if (this.agentFeatures.whiteboard) {
+        //check if whiteboard is already opened
+        if (this.agentFeatures.whiteboard && !this.whiteboardOpened) {
             this.moreActions.push({
                 label: 'Open Whiteboard',
                 icon: 'create',
@@ -2389,7 +2398,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'disconnected'
-        });
+            
+        });   
+        // Destroy whiteboard widget
+        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
         // stop the duration timer
         this.stopTimer.next(null);
         // hide auto response if enabled
@@ -2691,9 +2703,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.sharedService.getAppConfirmDialogClose().subscribe(() => {
             this.confirmDialogRef.close(false);
         })
-        this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+        this.confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
             if (dialogResult) {
-                this.endChat('AgentChatDisconnected');
+                // End chat logic
+                await this.endChat('AgentChatDisconnected');
+                // Destroy whiteboard widget
+                this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
             }
         });
     }
@@ -3336,6 +3351,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Opens a whiteboard session
      */
     async openWhiteboard(): Promise<void> {
+        //whiteboard is successfully opened in the openWhiteboard methodso setting it to true
+        this.whiteboardOpened = true;
         if (!this.widgetData.Whiteboard?.Url) {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardURLNotFound'), 'failure');
             return;
@@ -3487,6 +3504,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To execute action
      */
     executeAction(action: any, actionBtn: MatButton): void {
+        // Check if the whiteboard is already opened
+        if (action.type === 'whiteboard' && this.whiteboardOpened) {
+             // Exit the method if the whiteboard is already opened
+             return;
+        }
         switch (action.type) {
             case 'whiteboard':
                 this.openWhiteboard();

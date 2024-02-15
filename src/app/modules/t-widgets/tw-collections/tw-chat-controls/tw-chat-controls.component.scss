@@ -380,10 +380,11 @@ tw-chat-controls {
                                         border-radius: 20px;
 
                                         textarea {
-                                            overflow: hidden;
+                                            overflow-x: hidden;
                                             margin: 16px 48px 16px 16px;
                                             width: calc(100% - 64px);
                                             padding: 0;
+                                            min-height: 20px;
                                         }
                                     }
                                 }

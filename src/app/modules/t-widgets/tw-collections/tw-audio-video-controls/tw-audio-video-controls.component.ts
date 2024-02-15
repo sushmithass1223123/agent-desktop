@@ -10,7 +10,6 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { TMACEventService } from '@services/tmac-event.service';
-import { SharedService } from '@services/shared.service';
 import {
     ActionMessageReceivedEvent,
     AgentAVMessageEvent,
@@ -40,6 +39,7 @@ import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Audio Video Controls
@@ -297,6 +297,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
     confirmDialogRef;
 
+    isAgentAvRequest: boolean = false;
+    isCustomerAcknowledged: boolean = false;
+    agentAvRequestConsented: boolean = false;
+
+    private _unsubscribeAll: Subject<any>;
+
     manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
 
     /**
@@ -328,6 +334,14 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.snapshotRequested = false;
 this.muteAudioHidden = false;
         this.displayToasters = true;
+
+        // Set the private defaults
+        this._unsubscribeAll = new Subject();
+
+        // If transfer is being triggered, then end the call 
+        this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe((interactionId: number) => {
+            if(interactionId === this.interactionId) this.endCall(true);
+        })
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -483,6 +497,10 @@ this.muteAudioHidden = false;
                 customerStream: undefined
             }
         });
+
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
 
         // call the wrapper destroy method
         this.destroyWrapper();
@@ -658,6 +676,9 @@ this.muteAudioHidden = false;
                         this.destroyWidget();
                         return;
                     }
+                    // If the incoming call is done by agent, return. Because this is handled in requestav
+                    // Validate this only if the call is triggered through TwChatControlsComponent
+                    if (evt.data?.owner && this.data?.Data?.Source === 'TwChatControlsComponent') return;
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
@@ -685,9 +706,12 @@ this.muteAudioHidden = false;
                         },
                         {
                             key: '#customerName',
-                            value: this.translocoService.translate(
-                                'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
-                            )
+                            value:
+                                evt.data?.owner && evt.data.owner
+                                    ? evt.data.owner.split('_').pop()
+                                    : this.translocoService.translate(
+                                          'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
+                                      )
                         }
                     ];
 
@@ -860,7 +884,7 @@ if (error === 'Screenshare Was Cancelled') {
                 case 'onEnd':
                     this.connected = false;
                     this.status = 'ended';
-                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callEndedByRemote'), 'info');
+                    this._appUIService.showSnackbar(this.translocoService.translate(`widgets.audioVideoControls.${this.genericMessageMapper(evt?.data)}`), 'info');
                     // close the widget
                     this.destroyWidget();
                     this.confirmDialogRef?.close();
@@ -884,16 +908,32 @@ if (error === 'Screenshare Was Cancelled') {
                     // evt.data.remote: IRemoteStreamInfo[]
 
                     const remote: IRemoteStreamInfo[] = evt.data.remote;
-                    remote?.forEach((r) => {
+                    remote?.forEach((r, i) => {
                         if (r.state !== 'changed') return;
 
                         this.userList.forEach((f) => {
                             if (f.stream.id !== r.stream.id) return;
                             f.stream = r.stream;
                             f.streamInfo.type = r.type;
+                            remote.splice(i, 1);
                         });
                     });
 
+                    if(remote?.length) {
+                        remote.forEach((r) => {
+                            if (this.userList.some((ul) => ul.stream.id == r.stream.id) || r?.state === 'deleted') return;
+
+                            let newStreamObj = {
+                                stream: r.stream,
+                                streamInfo: {
+                                    id: '',
+                                    type: r.type,
+                                    user: r.user === '0' ? 'Customer' : r.user
+                                }
+                            };
+                            this.userList.push(newStreamObj);
+                        })
+                    }
                     break;
 
                 default:
@@ -903,6 +943,29 @@ if (error === 'Screenshare Was Cancelled') {
             this.logger.error('Error in onAVEvent', error);
         }
     };
+
+    /**
+     * Method to normalize messages which are not defined by application labels
+     * @param message Message from MS/CallSDK/User
+     * @returns A generic application lable key
+     */
+    genericMessageMapper (message: string): string {
+        let messageKey = '';
+        const lcMessage = message.toLowerCase();
+        switch(lcMessage) {
+            case 'expected behaviour : call hangup by user while media was being established':
+            case 'call failed due to internal error': {
+                messageKey = 'callEndedByRemoteDueToInternalError'
+                break;
+            }
+            default: {
+                messageKey = 'callEndedByRemote'
+                break;
+            }
+        }
+
+        return messageKey;
+    }
 
     /**
      * To send av status to the server for logging & reporting purpose
@@ -977,9 +1040,7 @@ if (error === 'Screenshare Was Cancelled') {
             const requestType = JSON.parse(evt.Message).param;
             switch (evt.Type) {
                 case 'requestav':
-                    this.interactionDetails.Direction = 'in';
-                    this.callType = requestType;
-                    this.startAVCall();
+                    this.handleAvRequestFromAgent(evt);
                     break;
                 case 'addscreenshare':
                     this.displayToasters = false;
@@ -987,24 +1048,94 @@ if (error === 'Screenshare Was Cancelled') {
                 case 'endscreenshare':
                     this.displayToasters = false;
                     break;
+                case 'eventav':
+                    if (this.isAgentAvRequest && JSON.parse(evt.Message).event == 'connected' && JSON.parse(evt.Message).owner == 'customer') {
+                        this.isAgentAvRequest = false;
+                        this.isCustomerAcknowledged = true;
+                        if (this.agentAvRequestConsented) {
+                            this.showUI = true;
+                            this.startAVCall();
+                        }
+                    }
+                    break;
+                case 'avtstatus':
+                    if (evt.User == 'customer' && this.isAgentAvRequest && JSON.parse(evt.Message)?.errorCode == 'CALL_REJECTED') {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'),
+                            'failure'
+                        );
+                        this.destroyWidget();
+                        this.confirmDialogRef?.close();
+                    }
+                    break;
                 case 'mute':
                 case 'unmute':
                     this.updateMuteUnmuteUserList(requestType, evt);
                     break;
             }
-            // check if its a av request
-            if (evt.Type === 'requestav') {
-                this.interactionDetails.Direction = 'in';
-                this.callType = JSON.parse(evt.Message).param;
-                this.startAVCall();
-            }
 
             // forward the av messages to av channel
-            this.avConn?.onMessage(evt.Message);
+            this.avConn?.onMessage(
+                evt.Type === 'addscreenshare'
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    : evt.Message
+            );
         } catch (e) {
             this.logger.error('error occured in AVControlMessageReceivedEvent', e, false);
         }
     };
+
+    /**
+     * Method to handle agent av call requests when customer is in conference
+     * @param {AVControlMessageReceivedEvent} evt - AV control message object
+     */
+    handleAvRequestFromAgent(evt: AVControlMessageReceivedEvent): void {
+        try {
+            let requestType = JSON.parse(evt.Message).param;
+            requestType = requestType.charAt(0).toUpperCase() + requestType.slice(1);
+
+            if (evt.User == 'customer') {
+                this.isAgentAvRequest = false;
+                this.interactionDetails.Direction = 'in';
+                this.callType = requestType;
+                this.startAVCall();
+            } else {
+                this.isAgentAvRequest = true;
+                const dynamicLabels = [
+                    {
+                        key: '#callType',
+                        value: this.translocoService.translate('dynamic_labels.audioVideoControls.callType.' + requestType)
+                    },
+                    {
+                        key: '#customerName',
+                        value: JSON.parse(evt.Message)?.owner?.split('_')?.pop() ?? 'Agent'
+                    }
+                ];
+
+                this.confirmDialogRef = this._appUIService.showCustomDialog(
+                    'confirm',
+                    this._appDataService.getUpdatedLabel(
+                        this.translocoService.translate('widgets.audioVideoControls.callRequestConfirmMsg'),
+                        dynamicLabels
+                    ),
+                    '',
+                    null,
+                    {
+                        disableClose: true
+                    }
+                );
+                this.confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        this.showUI = true;
+                        this.agentAvRequestConsented = true;
+                        if (this.isCustomerAcknowledged) this.startAVCall();
+                    } else this.destroyWidget();
+                });
+            }
+        } catch (e) {
+            this.logger.error('error occured in handleAvRequestFromAgent', e, false);
+        }
+    }
 
     /**
      *

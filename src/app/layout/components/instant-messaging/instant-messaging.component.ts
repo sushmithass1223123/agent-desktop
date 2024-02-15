@@ -87,6 +87,11 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
     allChats: Record<string, Chat> = {};
 
     /**
+     * allNewChats
+     */
+    allNewChats: Record<string, string> = {};
+
+    /**
      * Current Chat
      */
     chat: Chat;
@@ -223,7 +228,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
                     }, 10000);
                 } else {
                     this._dashboardService.triggerTeamAgentList(this.user.agentId, this.user.teamId, false, this.config.TeamFilter ?? false);
-                    this.resetChat();
+                    //this.resetChat();
                 }
             });
 
@@ -377,7 +382,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
                     lastUpdateDateTime: Date.now()
                 };
             }
-        } catch (error) { }
+        } catch (error) {}
         return contact;
     }
 
@@ -410,6 +415,10 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
             }
 
             this.selectedContact = contact;
+            const textarea = this._replyInput.nativeElement;
+            const length = textarea.value.length;
+            textarea.setSelectionRange(length, length);
+            textarea.focus();
             this.chat = this.allChats[contact.id] || { id: contact.id, dialog: [] };
         }
 
@@ -425,6 +434,8 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
 
         // Set the chat as null
         this.chat = null;
+        // Set the allNewChats as null
+        this.allNewChats = null;
     }
 
     /**
@@ -432,7 +443,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      */
     async reply(event): Promise<void> {
         event.preventDefault();
-        if (this._replyForm.form.value.message.trim() == "") {
+        if (this._replyForm.form.value.message.trim() == '') {
             return;
         }
 
