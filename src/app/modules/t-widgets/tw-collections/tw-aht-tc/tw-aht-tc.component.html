@@ -14,7 +14,7 @@
                 categoryField="category"
             >
                 <kendo-chart-area background="transparent"></kendo-chart-area>
-                <kendo-chart-legend [visible]="maximized"></kendo-chart-legend>
+                <kendo-chart-legend [visible]="maximized" [background]="'rgba(255, 255, 255, 0.7)'"></kendo-chart-legend>
                 <kendo-chart-series>
                     <kendo-chart-series-item
                         *ngFor="let series of stats; let outermost = last"
@@ -39,13 +39,12 @@
                             </ng-template>
                         </kendo-chart-series-item-tooltip>
                         <kendo-chart-series-item-labels
-                            *ngIf="(data.Data.Label || maximized) && outermost"
-                            background="none"
-                            position="outsideEnd"
-                            align="column"
-                            [content]="labelContent"
-                        >
-                        </kendo-chart-series-item-labels>
+  *ngIf="(data.Data.Label || maximized) && outermost"
+  position="outsideEnd"
+  align="column"
+  [content]="labelContent"
+>
+</kendo-chart-series-item-labels>
                     </kendo-chart-series-item>
                 </kendo-chart-series>
             </kendo-chart>
