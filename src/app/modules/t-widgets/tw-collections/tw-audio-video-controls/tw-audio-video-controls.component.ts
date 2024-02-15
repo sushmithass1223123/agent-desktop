@@ -828,7 +828,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
                     if(remote?.length) {
                         remote.forEach((r) => {
-                            if (this.userList.some((ul) => ul.stream.id == r.stream.id)) return;
+                            if (this.userList.some((ul) => ul.stream.id == r.stream.id) || r?.state === 'deleted') return;
 
                             let newStreamObj = {
                                 stream: r.stream,
