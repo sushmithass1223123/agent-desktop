@@ -3379,12 +3379,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
             });
     
-            if (res.response?.ResultMessage === 'Success') {
-                // Wait for the customer to accept the request
-                // No need to open the whiteboard here
-            } else {
-                throw new Error('Error occurred while requesting to open whiteboard');
-            }
+            
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
