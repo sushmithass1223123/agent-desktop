@@ -1029,7 +1029,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 })
                     .then((dt) => {
                         // End the call if its already ongoing during AV call - Observed in
-                        if(type === 'transfer') this.sharedService.triggerTransferMethod(this.interactionId);
+                        if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
+                            this.sharedService.triggerTransferMethod(this.interactionId);
+                        }
 
                         this.loading -= 1;
                         if (dt.response.ResultCode >= 0) {
@@ -1057,7 +1059,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             // blind transfer/confks
             else {
                 // End the call if its already ongoing during AV call - Observed in
-                if(type === 'transfer') this.sharedService.triggerTransferMethod(this.interactionId);
+                if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
+                    this.sharedService.triggerTransferMethod(this.interactionId);
+                }
 
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
@@ -1122,7 +1126,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             })
             .then((dt) => {
                     // End the call if its already ongoing during AV call - Observed in
-                    if(type === 'transfer') this.sharedService.triggerTransferMethod(this.interactionId);
+                    if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
+                        this.sharedService.triggerTransferMethod(this.interactionId);
+                    }
                     
                     this.loading -= 1;
                     if (dt.response.ResultCode >= 0) {
