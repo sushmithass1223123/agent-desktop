@@ -340,7 +340,7 @@ this.muteAudioHidden = false;
 
         // If transfer is being triggered, then end the call 
         this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe((interactionId: number) => {
-            if(interactionId === this.interactionId) this.endCall(true);
+            if(interactionId === this.interactionId) this.endCall(true, '' , 'CALL_TRANSFFERED');
         })
     }
 
@@ -1891,14 +1891,14 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * End Call
      * @method endCall
      */
-    public async endCall(endOnly = false, reason = ''): Promise<boolean> {
+    public async endCall(endOnly = false, reason = '', errorCode?: string): Promise<boolean> {
         // if there is only customer then endCall else dropCall
         if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
             this.logger.info('endCall - droping call');
             this.avConn.dropCall(reason);
         } else {
             this.logger.info('endCall - ending call');
-            this.avConn.endCall(this.wrcCallType, reason);
+            this.avConn.endCall(this.wrcCallType, reason, errorCode);
         }
 
         // of endOnly then return
