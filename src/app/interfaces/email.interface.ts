@@ -9,6 +9,7 @@ export interface EmailFile {
     Ext: string;
     Source?: EmailFileSources;
     Icon: string;
+    IsUploaded?: boolean;
 }
 
 export interface CreateEmailInput {

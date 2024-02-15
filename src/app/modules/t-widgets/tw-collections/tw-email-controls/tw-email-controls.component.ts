@@ -243,6 +243,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     isInteractionActive = false;
 
     /**
+     * Flag to check if interaction is active
+     */
+    prevFiles = [];
+
+    /**
      * Send Timer ref
      */
     sendTimerId: any;
@@ -1134,6 +1139,46 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         }
     }
 
+    compareArrays(arr1: Array<any>, arr2: Array<any>): { isModified: boolean; changes: Array<any> } {
+        const result = [];
+        let isModified = false;
+
+        // Check if arr1 is empty, consider only IsUploaded objects as "Added"
+        if (arr1.length === 0) {
+            for (const obj of arr2) {
+                if (obj.IsUploaded) {
+                    isModified = true;
+                    result.push(`${obj.URL}|1`);
+                }
+            }
+            return { isModified: isModified, changes: result };
+        }
+
+        // Check for objects added, unchanged or removed
+        for (const obj of arr2) {
+            const match = arr1.find((item) => item.URL === obj.URL);
+            if (match) {
+                result.push(`${obj.URL}|0`);
+            } else {
+                if (obj.IsUploaded) {
+                    isModified = true;
+                }
+                result.push(`${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
+            }
+        }
+
+        // Check for objects removed
+        for (const obj of arr1) {
+            const match = arr2.find((item) => item.URL === obj.URL);
+            if (!match) {
+                isModified = true;
+                result.push(`${obj.URL}|2`);
+            }
+        }
+
+        return { isModified: isModified, changes: result };
+    }
+
     /**
      * Save email as Draft
      */
@@ -1151,6 +1196,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 Subject = email.Subject;
                 Files = email.Files;
             }
+            let { isModified, changes } = this.compareArrays(this.prevFiles, Files);
+            this.prevFiles = [...Files];
             SDKClient.saveEmailDraft({
                 bccList: BCC || '',
                 body: (Body || '').toString(),
@@ -1160,7 +1207,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 routeId: RouteId || '',
                 subject: Subject || '',
                 toList: To || '',
-                typeOfResponse: ''
+                typeOfResponse: '',
+                attachmentList: changes,
+                isAttachmentModified: isModified
             })
                 .then((x) => {
                     if (x.response) {
