@@ -2169,16 +2169,33 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this._appUIService.showSnackbar(message, status);
                     }
                     break;
-                case 'openwhiteboard':
-                    if (msg.status === 'ack') {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestReceived'), 'info');
-                    } else if (msg.status === 'accepted') {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
-                    } else {
-                        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
-                    }
-                    break;
+                    case 'openwhiteboard':
+                        if (msg.status === 'accepted') {
+                            const agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
+                            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+                    
+                            const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
+                            widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
+                            widget.Config.ViewState = 'maximize';
+                            widget.Config.Anchor = true;
+                            widget.Config.Position.W = 800;
+                            widget.Config.Position.H = 550;
+                            widget.InteractionDetails = {
+                                InteractionID: this.interaction.InteractionID
+                            };
+                            widget.Data = {
+                                AutoOpen: false,
+                                Url: agentWhiteboardUrl.toString(),
+                                NotifyTypeOnClose: 'closeWhiteboard'
+                            };
+                            this.whiteBoardWidgetId = widget.ID;
+                            this._aotWidgetService.addWidget(widget);
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
+                        } else if (msg.status === 'rejected') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
+                        }
+                        break;
+                    
             }
         } catch (e) {
             console.error(e);
@@ -3344,31 +3361,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
-
-            // [Chirag July,31 22'] send whiteboard url to customer
-            let agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
-            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
-
+    
             if (res.response?.ResultMessage === 'Success') {
-                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
-                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
-                widget.Config.ViewState = 'maximize';
-                widget.Config.Anchor = true;
-                widget.Config.Position.W = 800;
-                widget.Config.Position.H = 550;
-                widget.InteractionDetails = {
-                    InteractionID: this.interaction.InteractionID
-                };
-                widget.Data = {
-                    AutoOpen: false,
-                    Url: agentWhiteboardUrl.toString(),
-                    NotifyTypeOnClose: 'closeWhiteboard'
-                };
-                this.whiteBoardWidgetId = widget.ID;
-                this._aotWidgetService.addWidget(widget);
-                snackRef.dismiss();
+                // Wait for the customer to accept the request
+                // No need to open the whiteboard here
             } else {
-                throw new Error('Error occured while opening whiteboard');
+                throw new Error('Error occurred while requesting to open whiteboard');
             }
         } catch (e) {
             console.error(e);
