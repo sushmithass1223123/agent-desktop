@@ -1,4 +1,5 @@
 import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CallHoldEvent, CallHoldReconnectEvent } from '@tmac/sdk';
@@ -123,7 +124,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService, private _fuseFacadeService: FuseFacadeService) {
+    constructor(private _tmacEventService: TMACEventService, private _fuseFacadeService: FuseFacadeService, private _appUiService: AppUiService) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -250,6 +251,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * @param {CallHoldReconnectEvent} evt
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent) {
-        this.interactionHold = false;
+        setTimeout(() => {
+           if(!this._appUiService.isAvInteractionOnHold[evt.InteractionID]?.onHold) {
+               this.interactionHold = false;
+           }
+        }, 50);
     }
 }

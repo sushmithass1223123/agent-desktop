@@ -198,7 +198,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * Manual hold click flag
      */
-    manualHold: boolean;
+    manualHold: boolean = false;
 
     /**
      * Flag on call hold
@@ -863,6 +863,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
 
         this.onCallHoldEvent = true;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
             if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
@@ -916,11 +917,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
             return;
         }
 
         this.onCallHoldEvent = false;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
             if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted) {
@@ -966,10 +968,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // un hold the call
         this.avConn.unHold();
         this.hold = false;
-
-        if (this.manualHold) {
-            this.manualHold = false;
-        }
     };
 
     /**
@@ -1235,7 +1233,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @method holdCall
      */
     public holdUnholdCall(): void {
-        this.manualHold = true;
+        this.manualHold = !this.manualHold;
 
         // check the hold flag
         if (this.hold) {

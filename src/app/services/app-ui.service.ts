@@ -41,6 +41,10 @@ export class AppUiService extends SharedWrapper {
      */
     private _audioInterval: any;
     /**
+     * Flag object for manual hold AV call use
+     */
+    public isAvInteractionOnHold: any = {};
+    /**
      * To hold Audio reference
      */
     private _audio: any;
@@ -660,6 +664,19 @@ export class AppUiService extends SharedWrapper {
                     disableNotification: true
                 });
             }
+        }
+    }
+
+    /**
+     * To set the av hold interaction flag
+     */
+    public setAvInteractionHoldFlag(interactionId: number, onHold: boolean) {
+        try {
+            this.isAvInteractionOnHold[interactionId] = {
+                onHold
+            }
+        } catch (error) {
+            console.error(error)
         }
     }
 }
