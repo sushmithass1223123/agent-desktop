@@ -167,7 +167,11 @@
 
                         <div class="button-group">
                             <button
-                                *ngIf="user.streamInfo.type === 'video' && agentFeatures.snapshot"
+                                *ngIf="
+                                    user.streamInfo.type === 'video' &&
+                                    agentFeatures.snapshot &&
+                                    user.streamInfo.user === interactionDetails.CustomerName
+                                "
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold || snapshotRequested"
@@ -257,7 +261,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.oneWayVideo || callType === 'audio'"
+                            *ngIf="(agentFeatures.oneWayVideo || callType === 'audio') && selfVideo?.type !== 'video'"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button

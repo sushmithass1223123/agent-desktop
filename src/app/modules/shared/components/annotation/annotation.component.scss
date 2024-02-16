@@ -52,7 +52,7 @@
                         width: 20px;
                         font-size: 20px;
                         height: 20px;
-                        color: #000;
+                        color: #070101;
                         transition: all 300ms ease-in-out;
                     }
 
@@ -67,7 +67,7 @@
                         gap: 10px;
                         padding: 10px;
                         min-height: 40px;
-                        background: #fff;
+                        background:#fff;
                         border-radius: 5px;
                         box-shadow: 5px 5px 5px rgba($color: #000000, $alpha: 0.05);
                         z-index: 999999999;
@@ -86,16 +86,16 @@
                                 width: 18px;
                                 height: 18px;
                                 font-size: 18px;
-                                color: #000;
+                                color: #070101;;
                                 transition: all 300ms ease-in-out;
                             }
 
                             &:hover {
-                                background: #000;
+                                background:black;
                                 height: 35px;
 
                                 mat-icon {
-                                    color: #fff;
+                                    color: #070101;
                                 }
                             }
                         }
@@ -105,22 +105,22 @@
                             cursor: pointer;
 
                             &:hover {
-                                background: #000;
+                                background: #070101;
                             }
                         }
 
                         .active-dot,
                         .active-shape {
-                            background: #000;
+                            background: #070101;
 
                             mat-icon {
-                                color: #fff;
+                                color: #070101;
                             }
                         }
                     }
 
                     &:hover {
-                        background: #000;
+                        background: #070101;
 
                         mat-icon {
                             color: white;
@@ -130,7 +130,7 @@
 
                 p {
                     font-size: 10px;
-                    color: #000;
+                    color: #070101;
                     font-weight: 500;
                     text-transform: capitalize;
                 }
@@ -144,7 +144,7 @@
                 }
 
                 .active-control {
-                    background: #000;
+                    background: #070101;
                     height: 35px;
 
                     mat-icon {
@@ -167,14 +167,14 @@
             gap: 10px;
 
             canvas {
-                border: 1px dashed #000;
+                border: 1px dashed #070101;
             }
         }
     }
 }
 
 .snapshot-button {
-    background: #000;
+    background: #070101;
     min-width: 35px;
     border-radius: 7px;
     transition: 0.3s ease;
@@ -182,7 +182,7 @@
     align-items: center;
     justify-content: center;
     padding: 7px 12px;
-    color: #fff;
+    color: #070101;
     font-size: 16px;
     border: 0px;
     // position: absolute;

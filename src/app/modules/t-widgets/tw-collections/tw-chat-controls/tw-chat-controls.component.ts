@@ -71,6 +71,7 @@ import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -91,6 +92,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     // @Input() data: IWidget<TextChatIncomingEvent, IWidgetData>;
     @Input() data: TwChatControls<TextChatIncomingEvent>;
+
+    // Child observer for text area auto increase size
+    @ViewChild('autosize') autosize: CdkTextareaAutosize;
     /**
      * Widget data ref
      */
@@ -535,6 +539,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     previewMediaDialogData: any;
 
+    /**
+     * Manual hold flag
+     */
+    isForceHold: boolean = false;
+
     @ViewChild('endBtn') endButton: MatButton;
 
     @ViewChild('closeBtn') closeButton: MatButton;
@@ -707,6 +716,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // check for moreActions
+        //check if whiteboard is already opened
         if (this.agentFeatures.whiteboard) {
             this.moreActions.push({
                 label: 'Open Whiteboard',
@@ -935,11 +945,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case 'clientreloaded':
                     this.callWidget?.destroy();
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.remoteBrowserRefreshMsg'), 'warning');
+                    break;
                 case 'conferencedisconnected':
                     const dynamicLabels = [
                         {
                             key: '#agentName',
-                            value: msg.data.agentName
+                            value: msg.data?.agentName
                         }
                     ];
                     //displays toaster when a conference is disconnected
@@ -2124,6 +2135,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         if(msg.status === 'accepted'){
                             message = this.translocoService.translate('widgets.chatControls.audioCallRequestAccepted');
                         }else if(msg.status === 'rejected'){
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('widgets.chatControls.audioCallRequestRejected'),
+                                'failure'
+                            );
                             message = this.translocoService.translate('widgets.chatControls.audioCallRequestRejected');
                             status = 'failure';
                         }
@@ -2135,6 +2150,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         if(msg.status === 'accepted'){
                             message = this.translocoService.translate('widgets.chatControls.videoCallRequestAccepted');
                        }else if(msg.status === 'rejected'){
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('widgets.chatControls.videoCallRequestRejected'),
+                                'failure'
+                            );
                             message = this.translocoService.translate('widgets.chatControls.videoCallRequestRejected');
                             status = 'failure';
                        }
@@ -2236,6 +2255,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {CallHoldReconnectEvent} evt
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+        // If the chat is put on hold manually, then return and don't auto unhold
+        if(this.isForceHold) return;
+
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
         this.status = 'connected';
@@ -2333,7 +2355,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // }
 
         // check if its a av request
-        if (evt.Type === 'requestav') {
+        if (evt.Type === 'requestav' && this.conferenceType !== 'silent') {
             // check the type
             const type = JSON.parse(evt.Message).param;
             // open the call widget
@@ -2355,7 +2377,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the interaction status
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'disconnected'
-        });
+            
+        });   
+        // Destroy whiteboard widget
+        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
         // stop the duration timer
         this.stopTimer.next(null);
         // hide auto response if enabled
@@ -2367,6 +2392,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             switch (evt.Reason.toLowerCase()) {
                 case 'remoteendclosed':
                 case 'logout':
+                    alertMessage = this.translocoService.translate('widgets.chatControls.disconnectByCustomer');
+                    break;
+                case 'customer ended':
                     alertMessage = this.translocoService.translate('widgets.chatControls.disconnectByCustomer');
                     break;
                 case 'agentchatdisconnected':
@@ -2493,10 +2521,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 value: evt.Comment
             }
         ]
-        this._appUIService.showSnackbar(
+
+        const updatedLabel = this._appDataService.getUpdatedLabel(
             this.translocoService.translate('widgets.chatControls.agentRequestRejected'),
-            'failure'
+            dynamicLabels
         );
+
+        this._appUIService.showSnackbar(updatedLabel, 'failure');
     }
 
     /**
@@ -2647,14 +2678,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     public confirmEndChat(): void {
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
-        this.confirmDialogRef.afterClosed().subscribe((dialogResult: boolean) => {
+        //subscribe to the observable for dialog close
+        this.sharedService.getAppConfirmDialogClose().subscribe(() => {
+            this.confirmDialogRef.close(false);
+        })
+        this.confirmDialogRef.afterClosed().subscribe(async (dialogResult: boolean) => {
             if (dialogResult) {
-                this.endChat('AgentChatDisconnected');
+                // End chat logic
+                await this.endChat('AgentChatDisconnected');
+                // Destroy whiteboard widget
+                this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
             }
         });
     }
 
-    /**
+     /**
      * To confirm close interaction
      */
     public confirmCloseInteraction(): void {

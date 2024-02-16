@@ -870,6 +870,7 @@
                                                     },
                                                     "Conference": {
                                                         "Allowed": true,
+                                                        "MediaServerConferenceEnabled": true,
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
@@ -1407,9 +1408,9 @@
                                                         }
                                                     },
                                                     "AudioEscalateAllowed": true,
-                                                    "RequestAudioCallAllowed": false,
+                                                    "RequestAudioCallAllowed": true,
                                                     "VideoEscalateAllowed": true,
-                                                    "RequestVideoCallAllowed": false,
+                                                    "RequestVideoCallAllowed": true,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": true,
@@ -2729,7 +2730,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://testlabsd.productqa.tetherfi.cloud/SDKProxy/TmacProxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },

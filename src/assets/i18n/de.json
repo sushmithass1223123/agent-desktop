@@ -83,6 +83,7 @@
             "callFailed": "Anruf fehlgeschlagen:",
             "callDisconnectedError": "Anruf getrennt, unerwartetes Ende!",
             "callEndedByRemote": "Der Benutzer hat den Anruf beendet",
+            "callEndedByRemoteDueToInternalError": "Der Anruf wurde aufgrund eines internen Fehlers in der Benutzeranwendung beendet",
             "remoteMuteTypeMsg": "#userName  #muteTyped the #streamType",
             "snapshotRequestSuccess": "Snapshot-Anfrage erfolgreich gesendet",
             "snapshotLoading": "Retreiving snapshot...",
