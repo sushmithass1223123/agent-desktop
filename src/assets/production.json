@@ -1,1 +1,1 @@
-{ "ProxyUrl": "../../TMACSDKProxy/TmacProxy.asmx", "ConfigMode": "remote", "Version": "5.1.6.30" }
+{ "ProxyUrl": "../../TMACSDKProxy/TmacProxy.asmx", "ConfigMode": "remote", "Version": "5.1.6.30-patch.1" }
