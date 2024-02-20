@@ -110,6 +110,15 @@ export type WidgetConfig = {
      */
     AutoOpen: boolean;
     /**
+     * Property to set the drag boundary of the widget
+     * NOTE: The value can be one of the following:
+     * 1 - class name (.exampleclass)
+     * 2 - element id (#exampleId)
+     * 3 - "body" (move over whole site)
+     * 4 - undefined (default ".container")
+     */
+    DragBoundary?: string;
+    /**
      * Flag to open AOT within the interaction page.
      * NOTE: This is applicable only for Interaction AOT's
      */

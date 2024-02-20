@@ -13,6 +13,7 @@
 >
     <tw-card
         cdkDrag
+        [cdkDragBoundary]="data.Config?.DragBoundary ?? '.container'"
         [cdkDragDisabled]="maximized || (!floating && !aot)"
         [cdkDragFreeDragPosition]="dragPosition"
         class="tw-card animate__animated animate__faster {{
