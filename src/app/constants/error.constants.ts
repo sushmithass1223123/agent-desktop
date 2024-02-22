@@ -10,3 +10,7 @@ export const AV_ERRORS: Partial<Record<WrcCodes, string>> = {
 export const PERMISSION_ERRORS = {
     SCREENSHARE: -5
 };
+
+export const AV_FAIL_CODES = {
+    REQUEST_TIMED_OUT: -4
+};

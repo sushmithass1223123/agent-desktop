@@ -640,6 +640,7 @@
             "avConnectionError": "Error occured in AV connection",
             "callRejectedByRemote": "User has rejected your request",
             "callNotAnsweredByremote": "Call was not answered by the Customer",
+            "remoteCallRequestTimedOut": "Call request timed out",
             "callFailed": "Call failed: ",
             "callDisconnectedError": "Call disconnected, unexpected end!",
             "callEndedByRemote": "User has ended the call",
