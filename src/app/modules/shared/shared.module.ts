@@ -4,7 +4,6 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { ChartsModule } from '@progress/kendo-angular-charts';
-import { EditorModule } from '@progress/kendo-angular-editor';
 import * as Chart from 'chart.js';
 import 'hammerjs';
 import { ChartsModule as ng2Charts } from 'ng2-charts';
@@ -45,7 +44,7 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ng2Charts, PickerModule, EditorModule, EmailModule, ChartsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ng2Charts, PickerModule, EmailModule, ChartsModule];
 
 /**
  * Shared components

@@ -127,7 +127,7 @@ export class TWContentWrapper {
         }
 
         // add display none to the host element
-        if(!data?.PreservePageContent) {
+        if(!data.Config?.PreserveOnTabChange) {
             this.hostElement.nativeElement.style.display = 'none';
         } else {
             this.hostElement.nativeElement.style.zIndex = '0';
@@ -162,7 +162,7 @@ export class TWContentWrapper {
             // get the path
             const active = d === this.widgetData.Data.Path;
             // set the style
-            if(!data?.PreservePageContent) {
+            if(!data.Config?.PreserveOnTabChange) {
                 this.hostElement.nativeElement.style.display = active ? 'block' : 'none';
             } else {
                 this.hostElement.nativeElement.style.zIndex = active ? 'inherit' : '0';
@@ -175,7 +175,7 @@ export class TWContentWrapper {
                 this.onActive();
                 this.pageActive = true;
             } else {
-                this.onInactive(data?.PreservePageContent);
+                this.onInactive(data.Config?.PreserveOnTabChange);
                 this.pageActive = false;
             }
         });

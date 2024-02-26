@@ -212,9 +212,8 @@
                 {
                     "Name": "Home",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-home",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/home",
                         "Duration": 100,
@@ -443,9 +442,8 @@
                 {
                     "Name": "Supervisor",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-supervisor",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
@@ -664,9 +662,8 @@
                 {
                     "Name": "Voice",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-voice",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/voice",
                         "RouteOnInteraction": true,
@@ -1106,9 +1103,8 @@
                 {
                     "Name": "TextChat",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-textchat",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
@@ -1546,9 +1542,8 @@
                 {
                     "Name": "Email",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-email",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/email",
                         "RouteOnInteraction": true,
@@ -1777,9 +1772,8 @@
                 {
                     "Name": "Generic",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-generic",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/generic",
                         "RouteOnInteraction": true,
@@ -2026,9 +2020,8 @@
                 {
                     "Name": "Workbench",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-workbench",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
+                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
                     "Data": {
                         "Path": "/workbench",
                         "Widgets": {
@@ -2119,9 +2112,15 @@
                 {
                     "Name": "Custom",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "PreserveOnTabChange": false,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/custom",
                         "Url": "https://mx.tetherfi.cloud/tmac_client/test.html?agentId=${AgentData.agentId}",
@@ -2131,9 +2130,15 @@
                 {
                     "Name": "Docker",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Type": "twc-docker",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "PreserveOnTabChange": false,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
@@ -2234,11 +2239,11 @@
                 {
                     "Name": "Bookmarks",
                     "Description": "",
-                    "PreservePageContent": false,
                     "Key": "Bookmarks",
                     "Type": "tw-bookmarks",
                     "Config": {
                         "Enabled": false,
+                        "PreserveOnTabChange": false,
                         "Hidden": false,
                         "Static": false,
                         "Anchor": false,
