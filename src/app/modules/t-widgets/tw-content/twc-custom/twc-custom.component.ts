@@ -214,11 +214,11 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     /**
      * On page inactive callback
      */
-    onInactive = () => {
+    onInactive = (preservePageContent?: boolean | undefined) => {
         // check if loaded and page is active
         if (this.loaded && this.pageActive) {
             if (this.unload) {
-                this.loaded = false;
+                if(!preservePageContent) this.loaded = false;
                 this.url = null;
                 // check if interval has started then clear
                 if (this.autoRefreshInterval) {

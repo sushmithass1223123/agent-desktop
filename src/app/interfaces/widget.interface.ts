@@ -16,6 +16,10 @@ export interface IWidget<T = any, K = any> {
      */
     ID: string;
     /**
+     * To preserve page content while switching between tabs
+     */
+    PreservePageContent?: boolean;
+    /**
      * Widget Description
      */
     Description: string;

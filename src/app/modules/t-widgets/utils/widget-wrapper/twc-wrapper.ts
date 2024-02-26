@@ -127,7 +127,14 @@ export class TWContentWrapper {
         }
 
         // add display none to the host element
-        this.hostElement.nativeElement.style.display = 'none';
+        if(!data?.PreservePageContent) {
+            this.hostElement.nativeElement.style.display = 'none';
+        } else {
+            this.hostElement.nativeElement.style.zIndex = '0';
+            this.hostElement.nativeElement.style.visibility = 'hidden';
+            this.hostElement.nativeElement.style.pointerEvents = 'none';
+            this.hostElement.nativeElement.style.position = 'fixed';
+        }
 
         // set the data
         this.widgetData = data || new Object();
@@ -155,13 +162,20 @@ export class TWContentWrapper {
             // get the path
             const active = d === this.widgetData.Data.Path;
             // set the style
-            this.hostElement.nativeElement.style.display = active ? 'block' : 'none';
+            if(!data?.PreservePageContent) {
+                this.hostElement.nativeElement.style.display = active ? 'block' : 'none';
+            } else {
+                this.hostElement.nativeElement.style.zIndex = active ? 'inherit' : '0';
+                this.hostElement.nativeElement.style.visibility = active ? 'visible' : 'hidden';
+                this.hostElement.nativeElement.style.pointerEvents = active ? 'all' : 'none';
+                this.hostElement.nativeElement.style.position = active ? 'inherit' : 'fixed';
+            }
             // check if active, then trigger event
             if (active) {
                 this.onActive();
                 this.pageActive = true;
             } else {
-                this.onInactive();
+                this.onInactive(data?.PreservePageContent);
                 this.pageActive = false;
             }
         });
@@ -184,5 +198,5 @@ export class TWContentWrapper {
     /**
      * On page inactive callback
      */
-    onInactive = () => {};
+    onInactive = (preservePageContent?: boolean | undefined) => {};
 }
