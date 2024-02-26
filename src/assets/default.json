@@ -212,6 +212,7 @@
                 {
                     "Name": "Home",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-home",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
@@ -442,6 +443,7 @@
                 {
                     "Name": "Supervisor",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-supervisor",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
@@ -662,6 +664,7 @@
                 {
                     "Name": "Voice",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-voice",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
@@ -1103,6 +1106,7 @@
                 {
                     "Name": "TextChat",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-textchat",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
@@ -1542,6 +1546,7 @@
                 {
                     "Name": "Email",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-email",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
@@ -1772,6 +1777,7 @@
                 {
                     "Name": "Generic",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-generic",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
@@ -2020,6 +2026,7 @@
                 {
                     "Name": "Workbench",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-workbench",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
                     "Data": {
@@ -2112,6 +2119,7 @@
                 {
                     "Name": "Custom",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-custom",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
                     "Data": {
@@ -2123,6 +2131,7 @@
                 {
                     "Name": "Docker",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Type": "twc-docker",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
                     "Data": {
@@ -2225,6 +2234,7 @@
                 {
                     "Name": "Bookmarks",
                     "Description": "",
+                    "PreservePageContent": false,
                     "Key": "Bookmarks",
                     "Type": "tw-bookmarks",
                     "Config": {

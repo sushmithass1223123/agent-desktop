@@ -266,8 +266,8 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
      * On page inactive callback
      */
     onInactive = (preservePageContent?: boolean | undefined) => {
-        if (this.loaded && this.pageActive) {
-            if(!preservePageContent) this.loaded = false;
+        if (this.loaded && this.pageActive && !preservePageContent) {
+            this.loaded = false;
             this.registerToService(false);
         }
     };
