@@ -336,7 +336,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || customerDevice || socialMedia
                             "
                             mat-mini-fab
                             color="default"
@@ -350,7 +350,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || customerDevice || socialMedia
                             "
                             mat-mini-fab
                             color="default"
