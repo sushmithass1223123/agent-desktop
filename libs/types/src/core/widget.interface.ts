@@ -64,6 +64,10 @@ export type InteractionWidgetBaseData = {
      * Flag to enable route on interaction
      */
     RouteOnInteraction?: boolean;
+     /**
+     * socialmediachannels
+     */
+    socialChannels:string [];
 };
 
 export type AOTWidget<T = any, K = any> = Widget<T> & {
