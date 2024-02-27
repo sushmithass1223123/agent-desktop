@@ -415,7 +415,7 @@
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected' || (action.type === 'whiteboard' && whiteboardOpened)"
+                                        [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled "
                                         >
                                             <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
