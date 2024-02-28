@@ -127,10 +127,6 @@ export type WidgetConfig = {
      */
     Position: WidgetPosition;
     /**
-     * To preserve page content while switching between tabs
-     */
-    PreserveOnTabChange?: boolean;
-    /**
      * Available widget actions
      */
     Actions: WidgetAction[];

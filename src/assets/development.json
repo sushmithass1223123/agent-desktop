@@ -213,10 +213,11 @@
                     "Name": "Home",
                     "Description": "",
                     "Type": "twc-home",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/home",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -490,10 +491,11 @@
                     "Name": "Supervisor",
                     "Description": "",
                     "Type": "twc-supervisor",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "AgentHierarchy": false,
                         "Widgets": {
                             "Static": [
@@ -755,10 +757,11 @@
                     "Name": "Voice",
                     "Description": "",
                     "Type": "twc-voice",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/voice",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1274,10 +1277,11 @@
                     "Name": "TextChat",
                     "Description": "",
                     "Type": "twc-textchat",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1830,10 +1834,11 @@
                     "Name": "Email",
                     "Description": "",
                     "Type": "twc-email",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/email",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2139,10 +2144,11 @@
                     "Name": "Generic",
                     "Description": "",
                     "Type": "twc-generic",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
                     "Data": {
                         "Path": "/generic",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2350,9 +2356,10 @@
                     "Name": "Workbench",
                     "Description": "",
                     "Type": "twc-workbench",
-                    "Config": { "Enabled": true, "PreserveOnTabChange": false, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
                     "Data": {
                         "Path": "/workbench",
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2444,13 +2451,12 @@
                     "Type": "twc-custom",
                     "Config": {
                         "Enabled": true,
-                        "PreserveOnTabChange": false,
                         "Class": "",
                         "Position": { "X": 1, "Y": 1 },
                         "Actions": [],
                         "Header": false
                     },
-                    "Data": { "Path": "/tmeet", "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
+                    "Data": { "Path": "/tmeet", "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false, "PreserveOnTabChange": false }
                 },
                 {
                     "Name": "Docker",
@@ -2460,13 +2466,13 @@
                         "Enabled": true,
                         "Class": "",
                         "Position": { "X": 1, "Y": 1 },
-                        "PreserveOnTabChange": false,
                         "Actions": [],
                         "Header": false
                     },
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2568,7 +2574,6 @@
                     "Type": "tw-bookmarks",
                     "Config": {
                         "Enabled": false,
-                        "PreserveOnTabChange": false,
                         "Hidden": false,
                         "Static": false,
                         "Anchor": false,
@@ -2582,7 +2587,7 @@
                         "Header": true,
                         "Pinned": false
                     },
-                    "Data": { "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit" }
+                    "Data": { "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit", "PreserveOnTabChange": false }
                 }
             ]
         },
