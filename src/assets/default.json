@@ -1213,19 +1213,15 @@
                                                         }
                                                     },
                                                     "AudioEscalateAllowed": true,
-                                                    "RequestAudioCallAllowed": false,
                                                     "VideoEscalateAllowed": true,
-                                                    "RequestVideoCallAllowed": false,
                                                     "SignatureAllowed": true,
                                                     "EmojiAllowed": true,
                                                     "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
                                                     "ScreenShareAllowed": true,
-                                                    "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
-                                                    "MuteAudioHidden": false,
                                                     "Whiteboard": { "Allowed": true, "Url": "https://mx.tetherfi.cloud/Whiteboard/ui/index.html" },
                                                     "Snapshot": {
                                                         "Allowed": true,
@@ -1634,8 +1630,7 @@
                                                     "DraftPollingInterval": 10000,
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false,
-                                                    "AsyncEmailSendTimeout": 60000
+                                                    "TemplatesByHierarchy": false
                                                 }
                                             },
                                             {
