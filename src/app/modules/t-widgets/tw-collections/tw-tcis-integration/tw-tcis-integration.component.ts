@@ -79,7 +79,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
 
         // check if Urls provided
         if (this.WidgetData.Urls.length) {
-            this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub);
+            this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub, false, undefined, this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper);
             this.registerHubEvents();
             this._signalrWrapper?.connect();
         }

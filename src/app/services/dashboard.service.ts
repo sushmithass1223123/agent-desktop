@@ -77,7 +77,9 @@ export class DashboardService extends SharedWrapper {
             'TmacDataServer',
             { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
             'TmacDataServerHub',
-            false
+            false,
+            undefined,
+            this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper
         );
 
         // check if the connection is created successfully

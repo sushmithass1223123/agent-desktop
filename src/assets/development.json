@@ -1422,7 +1422,7 @@
                                                     "HoldInteractionAllowed": true,
                                                     "MuteAudioHidden": false,
                                                     "ReplyOnSMM": { "channels": "Whatsapp" },
-                                                    "socialChannels": ["whatsapp","instagram","facebook", "twitter"],
+                                                    "socialChannels": ["whatsapp", "instagram", "facebook", "twitter"],
                                                     "Whiteboard": {
                                                         "Allowed": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
@@ -2744,7 +2744,8 @@
                 "maxConnectivityRetryTimeOut": 60,
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
-                "customApiURL": ""
+                "customApiURL": "",
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,

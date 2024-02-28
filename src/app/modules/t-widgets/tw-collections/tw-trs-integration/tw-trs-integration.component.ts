@@ -2,6 +2,7 @@ import { TwTrsIntegration, TwTrsIntegrationData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { AgentStatusChangeEvent, CommandResultEvent, IResponse, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
@@ -30,7 +31,7 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
      */
     private _signalrWrapper: SignalRWrapper;
 
-    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
+    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService, private _tmacEventService: TMACEventService) {
         super('TwTrsIntegrationComponent');
     }
 
@@ -45,7 +46,7 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
         this.WidgetData = this.data.Data;
 
         // create a signalR wrapper
-        this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TRS', {}, 'CustomApplicationHub');
+        this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TRS', {}, 'CustomApplicationHub', false, undefined, this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper);
 
         // register to hub events
         this.registerHubEvents();
