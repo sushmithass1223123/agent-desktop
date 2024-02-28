@@ -177,6 +177,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     conferenceType = '';
     /**
+     * Initial value 
+     */
+    whiteboardOpened: boolean = false;
+    /**
      * Conference agent list
      */
     conferenceAgentList: {
@@ -726,7 +730,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check for moreActions
         //check if whiteboard is already opened
-        if (this.agentFeatures.whiteboard) {
+        if (this.agentFeatures.whiteboard && !this.whiteboardOpened) {
             this.moreActions.push({
                 label: 'Open Whiteboard',
                 icon: 'create',
@@ -3360,6 +3364,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Opens a whiteboard session
      */
     async openWhiteboard(): Promise<void> {
+         //whiteboard is successfully opened in the openWhiteboard methodso setting it to true
+         this.whiteboardOpened = true;
         if (!this.widgetData.Whiteboard?.Url) {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardURLNotFound'), 'failure');
             return;
@@ -3530,6 +3536,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To execute action
      */
     executeAction(action: any, actionBtn: MatButton): void {
+          // Check if the whiteboard is already opened
+          if (action.type === 'whiteboard' && this.whiteboardOpened) {
+            // Exit the method if the whiteboard is already opened
+            return;
+       }
         switch (action.type) {
             case 'whiteboard':
                 this.openWhiteboard();
