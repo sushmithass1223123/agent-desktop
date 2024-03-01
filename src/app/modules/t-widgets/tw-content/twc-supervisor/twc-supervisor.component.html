@@ -8,6 +8,7 @@
             [ngClass]="{ 'xl:twd-max-w-4/12': dynamicWidgets.length > 0 }"
             class="static-widget-grid twd-flex-full twd-gap-1.5"
             [widgets]="staticWidgets"
+            [ngStyle]="{ 'maxHeight': widgetHeight }"
         ></tw-template>
 
         <tw-template
@@ -15,6 +16,7 @@
             [ngClass]="{ 'xl:twd-max-w-8/12': staticWidgets.length > 0, 'static-less': staticWidgets.length === 0 }"
             class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
             [widgets]="dynamicWidgets"
+            [ngStyle]="{ 'maxHeight': widgetHeight }"
         ></tw-template>
 
         <div

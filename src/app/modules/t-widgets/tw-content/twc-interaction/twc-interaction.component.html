@@ -26,6 +26,7 @@
                 [ngClass]="{ 'xl:twd-max-w-4/12': item.widgets.dynamic.length > 0 }"
                 class="static-widget-grid twd-flex-full twd-gap-1.5"
                 [widgets]="item.widgets.static"
+                [ngStyle]="{ 'maxHeight.px': widgetHeight }"
             ></tw-template>
 
             <tw-template
@@ -33,11 +34,12 @@
                 [ngClass]="{ 'xl:twd-max-w-8/12': item.widgets.static.length > 0, 'static-less': item.widgets.static.length === 0 }"
                 class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
                 [widgets]="item.widgets.dynamic"
+                [ngStyle]="{ 'maxHeight.px': widgetHeight }"
             ></tw-template>
 
             <ng-container *ngIf="item.widgets.localAOT$ | async as localAOTs">
                 <div class="aot-widgets">
-                    <tw-template *ngFor="let item of localAOTs" [widget]="item"></tw-template>
+                    <tw-template *ngFor="let item of localAOTs" [widget]="item" [ngStyle]="{ 'maxHeight.px': widgetHeight }"></tw-template>
                 </div>
             </ng-container>
 
