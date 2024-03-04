@@ -31,7 +31,7 @@
                 </ng-container>
             </div>
             <div
-                class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl twd-overflow-y-auto"
+                class="twd-h-full twd-flex-1 twd-flex twd-flex-col twd-shadow-md twd-rounded-3xl"
                 [ngClass]="
                     (customFuse.anchor?.content || customFuse.widget?.content) + (emailComponentMode !== 'preview' ? ' twd-pt-2 twd-px-2' : '')
                 "
@@ -167,7 +167,7 @@
                     </div>
                 </div> -->
 
-                <div class="content-container-email" [class.disabled]="isEmailSent(currentInteraction.InteractionID) === false">
+                <div class="content-container-email twd-h-full" [class.disabled]="isEmailSent(currentInteraction.InteractionID) === false">
                     <email
                         #emailRef
                         class="twd-flex-1"
