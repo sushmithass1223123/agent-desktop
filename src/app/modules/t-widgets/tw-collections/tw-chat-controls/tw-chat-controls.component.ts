@@ -48,6 +48,7 @@ import {
     TextChatIncomingEvent,
     TextChatMessageReceivedEvent,
     TextChatMessageSentEvent,
+    UserDeviceInfoEvent,
     TextChatMessageTemplateSentEvent,
     TextChatRemoteUserConnectedEvent,
     TextChatSelfServiceDestinationEvent,
@@ -61,7 +62,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
+import { AGENT_FEATURES, INVALID_CHARS, SOCIAL_CHANNELS } from 'app/constants';
 import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -547,6 +548,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     @ViewChild('endBtn') endButton: MatButton;
 
     @ViewChild('closeBtn') closeButton: MatButton;
+     /**
+         * Deviceinfocheck
+         */
+    customerDevice: boolean;
+    /**
+         * socialMediaAVdisable
+         */
+    socialMedia: boolean;
     /**
      * Constructor
      */
@@ -819,6 +828,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'TextChatUserMessageWaitTimerEvent',
                     'TextChatTypingStateChangedEvent',
                     'TextChatMessageReceivedEvent',
+                    'UserDeviceInfoEvent',
                     'TextChatAgentMessageReceivedEvent',
                     'AVControlMessageReceivedEvent',
                     'TextChatDisconnectedEvent',
@@ -1803,7 +1813,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.isSMM = evt.IsSMM || false;
 
         this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
-
+        // to check socialschannels
+        if (this.widgetData.socialChannels?.includes(this.channel) || (SOCIAL_CHANNELS?.includes(this.channel))) {
+            this.socialMedia = true;
+        }
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
@@ -1851,7 +1864,24 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             );
         }
     }
-
+    /**
+     * To process UserDeviceInfoEvent 
+     *
+     * @param _evt  UserDeviceInfoEvent
+     */
+ private getUserDeviceInfoEvent(_evt: UserDeviceInfoEvent): void {
+    const jsonDataObj =JSON.parse(_evt.JsonData);
+    const deviceInfo = JSON.parse(jsonDataObj.JsonData);
+    this.customerDevice = deviceInfo.info.osver === 'Android' || deviceInfo.info.osver === 'IOS';  
+}
+    /**
+     * To process  UserDeviceInfoEvent
+     * @param evt  UserDeviceInfoEvent evt
+     */
+ UserDeviceInfoEvent(evt:  UserDeviceInfoEvent): void {
+    this.getUserDeviceInfoEvent(evt);
+}
+    
     /**
      * To process TextChatSelfServiceDestinationEvent
      * @param evt TextChatSelfServiceDestinationEvent evt
@@ -3650,4 +3680,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
         return updatedLabel;
     }
+}
+
+function elseif(arg0: string) {
+    throw new Error('Function not implemented.');
 }

@@ -89,6 +89,10 @@ export type TwChatControlsWhiteboard = {
      *  Whiteboard url for customer
      */
     CustomerUrl: string;
+    /*
+     *  socialmediachannels
+     */
+    socialChannels:string [];
 };
 
 /**

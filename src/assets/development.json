@@ -218,6 +218,7 @@
                     "Data": {
                         "Path": "/home",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -520,6 +521,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "AgentHierarchy": false,
                         "Widgets": {
                             "Static": [
@@ -785,6 +787,7 @@
                     "Data": {
                         "Path": "/voice",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1308,6 +1311,7 @@
                     "Data": {
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1422,6 +1426,7 @@
                                                     "HoldInteractionAllowed": true,
                                                     "MuteAudioHidden": false,
                                                     "ReplyOnSMM": { "channels": "Whatsapp" },
+                                                    "socialChannels": ["whatsapp","instagram","facebook", "twitter"],
                                                     "Whiteboard": {
                                                         "Allowed": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
@@ -1870,6 +1875,7 @@
                     "Data": {
                         "Path": "/email",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2180,6 +2186,7 @@
                     "Data": {
                         "Path": "/generic",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2390,6 +2397,7 @@
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
                     "Data": {
                         "Path": "/workbench",
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2481,7 +2489,12 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
-                    "Data": { "Path": "/tmeet", "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
+                    "Data": {
+                        "Path": "/tmeet",
+                        "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}",
+                        "Unload": false,
+                        "PreserveOnTabChange": false
+                    }
                 },
                 {
                     "Name": "Docker",
@@ -2491,6 +2504,7 @@
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {

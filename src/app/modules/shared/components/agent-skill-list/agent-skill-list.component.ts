@@ -278,8 +278,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
-            this.switcherList['Skill List'] = conf;
-            setActiveSwitcher('Skill List');
+            if(this._dialogData.OtherData.type !== 'conf') {
+                this.switcherList['Skill List'] = conf;
+                setActiveSwitcher('Skill List');
+            }
         }
 
         if (this._dialogData?.SpeedDial && this._dialogData?.SpeedDial.Allowed) {
@@ -1104,61 +1106,60 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
         // skill transfer/conf
         else if (this.selectedRow?.type === 'Skill List' || freeTextConf.active) {
-            const skillToConf = freeTextConf.active ? freeTextConf.value : this.selectedItem;
-            const dynamicLabels = [
-                {
-                    key: '#conferenceTo',
-                    value: skillToConf
-                },
-                {
-                    key: '#conferenceType',
-                    value: this.isConsult
-                        ? this.translocoService.translate('sharedComponents.agentSkillList.consultConference')
-                        : this.translocoService.translate('sharedComponents.agentSkillList.blindConference')
-                }
-            ];
-
             this.loading -= 1;
-            SDKClient.conferenceBlind({
-                comment: this.comments,
-                interactionId: this.interactionId.toString(),
-                number: skillToConf
-            })
-            .then((dt) => {
-                    // End the call if its already ongoing during AV call - Observed in
-                    if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
-                        this.sharedService.triggerTransferMethod(this.interactionId);
+
+            if(type === 'transfer') {
+                const dynamicLabels = [
+                    {
+                        key: '#transferType',
+                        value: type
+                    },
+                    {
+                        key: '#transferTo',
+                        value: freeTextConf.active ? freeTextConf.value : this.selectedItem
+                    },
+                    {
+                        key: '#type',
+                        value: type
                     }
-                    
-                    this.loading -= 1;
-                    if (dt.response.ResultCode >= 0) {
+                ];
+                SDKClient.transferTextChatToQueue({
+                    chatMode: this._dialogData.OtherData.mode,
+                    interactionId: this.interactionId.toString(),
+                    isBlind: !this.isConsult,
+                    skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem
+                })
+                .then((dt) => {
+                        this.loading -= 1;
+                        if (dt.response.ResultCode >= 0) {
+                            this._appUIService.showSnackbar(
+                                this.appDataService.getUpdatedLabel(
+                                    this.translocoService.translate('sharedComponents.agentSkillList.transferChatSuccess'),
+                                    dynamicLabels
+                                )
+                            );
+                            this.close(true);
+                        } else {
+                            this._appUIService.showSnackbar(
+                                this.appDataService.getUpdatedLabel(
+                                    this.translocoService.translate('sharedComponents.agentSkillList.transferTextChatToQueueFailed'),
+                                    dynamicLabels
+                                ) + dt.response.ResultMessage,
+                                'failure'
+                            );
+                        }
+                    })
+                    .catch(() => {
+                        this.loading -= 1;
                         this._appUIService.showSnackbar(
                             this.appDataService.getUpdatedLabel(
-                                this.translocoService.translate('sharedComponents.agentSkillList.conferenceCallSuccess'),
+                                this.translocoService.translate('sharedComponents.agentSkillList.transferTextChatToQueueError'),
                                 dynamicLabels
-                            )
-                        );
-                        this.close(true);
-                    } else {
-                        this._appUIService.showSnackbar(
-                            this.appDataService.getUpdatedLabel(
-                                this.translocoService.translate('sharedComponents.agentSkillList.transferTextChatToQueueFailed'),
-                                dynamicLabels
-                            ) + dt.response.ResultMessage,
+                            ),
                             'failure'
                         );
-                    }
-                })
-                .catch(() => {
-                    this.loading -= 1;
-                    this._appUIService.showSnackbar(
-                        this.appDataService.getUpdatedLabel(
-                            this.translocoService.translate('sharedComponents.agentSkillList.transferTextChatToQueueError'),
-                            dynamicLabels
-                        ),
-                        'failure'
-                    );
-                });
+                    });
+            }
         } else {
             // no row selected
             this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.agentSkillList.transferChatDefaultError'), 'failure');
