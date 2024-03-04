@@ -172,6 +172,7 @@
             "avConnectionError": "AV 连接发生错误",
             "callRejectedByRemote": "用户拒绝了您的请求",
             "callNotAnsweredByremote": "客户未接听电话",
+            "remoteCallRequestTimedOut": "呼叫请求超时",
             "callFailed": "呼叫失败：",
             "callDisconnectedError": "通话断线，意外结束！",
             "callEndedByRemote": "用户已结束通话",

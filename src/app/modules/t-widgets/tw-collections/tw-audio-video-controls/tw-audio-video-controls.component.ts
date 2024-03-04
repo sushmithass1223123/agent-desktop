@@ -31,7 +31,7 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
+import { AGENT_FEATURES, AV_ERRORS, AV_FAIL_CODES, PERMISSION_ERRORS } from 'app/constants';
 import { SnackbarStateTypes, InteractionRef } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -836,6 +836,11 @@ if (error === 'Screenshare Was Cancelled') {
                     if (evt.data.code === 'CALL_REJECTED') {
                         this._appUIService.showSnackbar(
                             this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'),
+                            'failure'
+                        );
+                    } else if (evt.data.code === AV_FAIL_CODES.REQUEST_TIMED_OUT) {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.remoteCallRequestTimedOut'),
                             'failure'
                         );
                     } else if (evt.data.code === 'CALL_NOT_ANSWERED') {
