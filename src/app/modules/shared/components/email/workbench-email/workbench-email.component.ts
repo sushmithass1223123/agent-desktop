@@ -817,7 +817,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         this.setComponentState('email/polling/inactive', { silent });
                     }
                 });
-            this.disableBtn = true;
+            this.disableBtn = false;
         } catch (e) {
             console.error(e);
             this.setComponentState('emails/failure', { silent });
