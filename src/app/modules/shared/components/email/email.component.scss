@@ -49,8 +49,11 @@ email-editor {
     min-height: 250px;
 }
 
-.email-body {
+.email-header.twd-pb-2 {
     min-height: 200px;
+}
+
+.email-body {
     text-align: initial;
 }
 
