@@ -79,7 +79,8 @@ export class TWContentWrapper {
         // this.widgetWidth = window.innerWidth >= 599 ? window.innerWidth - 100 : window.innerWidth;
 
         // default height
-        this.widgetHeight = window.innerHeight - 85;
+        this.widgetHeight = (window.innerHeight - 85) * ((window.outerWidth - 10)
+        / window.innerWidth);
 
         // TODO: screen resolution widget height
         // this.widgetHeight = screen.height - 220;

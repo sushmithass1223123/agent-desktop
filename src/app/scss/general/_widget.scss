@@ -103,6 +103,7 @@ body.fit-to-screen {
 .tw-card {
     width: 100%;
     height: 100%;
+    max-height: inherit;
 
     @include media-breakpoint('lt-md') {
         grid-column: auto !important;
@@ -112,11 +113,11 @@ body.fit-to-screen {
 .tw-static-panel {
     gap: 6px;
     padding-bottom: 1px;
-    max-height: calc(100vh - 86px);
+    max-height: calc(calc(100vh * var(--zoom)) - 86px);
 
     @include media-breakpoint('gt-md') {
         // max-height: calc(100vh - 95px);
-        max-height: calc(100vh - 86px);
+        max-height: calc(calc(100vh * var(--zoom)) - 86px);
     }
 }
 

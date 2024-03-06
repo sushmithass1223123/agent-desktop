@@ -1,6 +1,6 @@
 import { Platform } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseConfig } from '@fuse/types';
@@ -10,6 +10,8 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import * as TMACSDK from '@tmac/sdk';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+declare var document: any;
 
 // declare global
 declare global {
@@ -112,6 +114,11 @@ export class AppComponent implements OnInit, OnDestroy {
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
+    
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+        this.setZoomPercentage();
+    }
 
     /**
      * Constructor
@@ -126,6 +133,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private _domSanitizer: DomSanitizer,
         private _appDataService: AppDataService
     ) {
+        this.setZoomPercentage();
         // Add is-mobile class to the body if the platform is mobile
         if (this._platform.ANDROID || this._platform.IOS) {
             this.document.body.classList.add('is-mobile');
@@ -242,6 +250,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // subscribe to app ui service
         this._appUIService.unsubscribe();
+    }
+
+    /**
+     * Method to set the window zoom percentage
+     */
+    setZoomPercentage(): void {
+        try {
+            const zoomPercentage = (window.outerWidth - 10) / window.innerWidth;
+            document.documentElement.style.setProperty(
+                '--zoom', zoomPercentage > 1 ? zoomPercentage : 1
+            ); 
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
