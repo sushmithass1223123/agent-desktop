@@ -716,7 +716,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             } else {
                 this.setComponentState('emails/loading', { silent });
             }
-
+            this.disableBtn = true;
             const currentSearchFilters = this.advancedSearch.data[this.currentTab];
             const searchFields = this.parseDateFromSearchParams(currentSearchFilters.data);
             let searchParams: any;
@@ -775,6 +775,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 .pipe(
                     timeout(50000),
                     map((res: any) => {
+                        this.disableBtn = false;
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
 
@@ -817,7 +818,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         this.setComponentState('email/polling/inactive', { silent });
                     }
                 });
-            this.disableBtn = true;
+            
         } catch (e) {
             console.error(e);
             this.setComponentState('emails/failure', { silent });
