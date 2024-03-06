@@ -1166,6 +1166,9 @@ if (error === 'Screenshare Was Cancelled') {
                 }
                 break;
         }
+
+        const muteDisplayTextTypes = this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.muteDisplayText'))?.split(',');
+
         const dynamicLabels = [
             {
                 key: '#userName',
@@ -1174,6 +1177,10 @@ if (error === 'Screenshare Was Cancelled') {
             {
                 key: '#muteType',
                 value: data.Type
+            },
+            {
+                key: '#muteDisplayText',
+                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
             },
             {
                 key: '#streamType',
