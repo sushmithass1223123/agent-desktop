@@ -424,6 +424,3 @@ export const EXCLUDED_TMAC_EVENT = [
     'TeamrWorkCodeDetailsEvent',
     'VoiceCannedResponseEvent'
 ];
-export const SOCIAL_CHANNELS = [
-    "whatsapp","instagram","facebook", "twitter"
-]

@@ -89,10 +89,6 @@ export type TwChatControlsWhiteboard = {
      *  Whiteboard url for customer
      */
     CustomerUrl: string;
-    /*
-     *  socialmediachannels
-     */
-    socialChannels:string [];
 };
 
 /**
@@ -291,6 +287,37 @@ export type TwChatControlsData = {
          */
         CustomerUrl: string;
     };
+    /**
+     * Method to disable AV escalations when customer connects through mobile device
+     */
+    DisableAvConstraints:
+        | {
+              /**
+               * Device OS list
+               */
+              Devices: string[];
+              /**
+               * Social channels list
+               */
+              SocialChannels: string[];
+              /**
+               * Disable Escalate Audio Calls
+               */
+              EscalateAudioCall: boolean;
+              /**
+               * Disable Escalate Video Calls
+               */
+              EscalateVideoCall: boolean;
+              /**
+               * Disable Request Audio Calls
+               */
+              RequestAudioCall: boolean;
+              /**
+               * Disable Request Video Calls
+               */
+              RequestVideoCall: boolean;
+          }
+        | undefined;
     /**
      * Cobrowse reference
      */
