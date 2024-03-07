@@ -336,7 +336,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || customerDevice || socialMedia
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateAudioCall)
                             "
                             mat-mini-fab
                             color="default"
@@ -350,7 +350,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || customerDevice || socialMedia
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateVideoCall)
                             "
                             mat-mini-fab
                             color="default"
@@ -415,7 +415,9 @@
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected'"
+                                        [disabled]="status !== 'connected' || 
+                                        (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
+                                        (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall))"
                                         >
                                             <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
