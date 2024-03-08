@@ -468,3 +468,8 @@ mat-dialog-container {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+// Email attachment tooltip to break words
+.mat-tooltip {
+    word-break: break-all; 
+}
