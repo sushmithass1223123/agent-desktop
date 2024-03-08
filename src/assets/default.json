@@ -217,6 +217,7 @@
                     "Data": {
                         "Path": "/home",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -447,6 +448,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "AgentHierarchy": false,
                         "Widgets": {
                             "Static": [
@@ -667,6 +669,7 @@
                     "Data": {
                         "Path": "/voice",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1108,6 +1111,7 @@
                     "Data": {
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1547,6 +1551,7 @@
                     "Data": {
                         "Path": "/email",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1777,6 +1782,7 @@
                     "Data": {
                         "Path": "/generic",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2024,6 +2030,7 @@
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
                     "Data": {
                         "Path": "/workbench",
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2116,6 +2123,7 @@
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
                     "Data": {
                         "Path": "/custom",
+                        "PreserveOnTabChange": false,
                         "Url": "https://mx.tetherfi.cloud/tmac_client/test.html?agentId=${AgentData.agentId}",
                         "Unload": false
                     }
@@ -2128,6 +2136,7 @@
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2242,7 +2251,7 @@
                         "Header": true,
                         "Pinned": false
                     },
-                    "Data": { "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit" }
+                    "Data": { "PreserveOnTabChange": false, "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit" }
                 }
             ]
         },
