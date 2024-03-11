@@ -2319,9 +2319,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param {CallHoldReconnectEvent} evt
      */
-    CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
+    async CallHoldReconnectEvent(evt: CallHoldReconnectEvent) {
+        // Wait for 50ms. Reason, the manual callhold check / change done at AV component is triggered after this.
+        // Which means, the below return check to be done only after the isAvInteractionOnHold value is modified by AV component.
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         // If the chat is put on hold manually, then return and don't auto unhold
-        if(this.isForceHold) return;
+        if(this.isForceHold || this._appUIService?.isAvInteractionOnHold[evt.InteractionID]?.onHold) return;
 
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
