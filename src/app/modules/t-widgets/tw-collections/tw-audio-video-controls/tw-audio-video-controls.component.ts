@@ -1434,17 +1434,19 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
-                this.avConn.mute(true, true);
-                this.audioMuted = true;
-                this.videoMuted = true;
-            } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
-                this.avConn.mute(true, false);
-                this.audioMuted = true;
-            } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
-                this.avConn.mute(false, true);
-                this.videoMuted = true;
-            }
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
+                    this.avConn.mute(true, true);
+                    this.audioMuted = true;
+                    this.videoMuted = true;
+                } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
+                    this.avConn.mute(true, false);
+                    this.audioMuted = true;
+                } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
+                    this.avConn.mute(false, true);
+                    this.videoMuted = true;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1493,17 +1495,19 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
-                this.avConn.unMute(true, true);
-                this.audioMuted = false;
-                this.videoMuted = false;
-            } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
-                this.avConn.unMute(true, false);
-                this.audioMuted = false;
-            } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
-                this.avConn.unMute(false, true);
-                this.videoMuted = false;
-            }
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
