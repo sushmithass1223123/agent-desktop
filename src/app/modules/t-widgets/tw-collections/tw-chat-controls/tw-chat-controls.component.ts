@@ -588,6 +588,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
           }
         | undefined;
     /**
+    * Flag to observe call hold events from AV controls
+    */
+    isAvCallManuallyHeld: boolean = false;
+    /**
      * Constructor
      */
     constructor(
@@ -630,6 +634,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         //trigger holdmethod
         this.sharedService.getHoldMethod().subscribe(() => {
+            debugger;
             if(this.status === 'connected'){
                 this.holdInteraction();
             }
@@ -2319,13 +2324,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param {CallHoldReconnectEvent} evt
      */
-    async CallHoldReconnectEvent(evt: CallHoldReconnectEvent) {
-        // Wait for 50ms. Reason, the manual callhold check / change done at AV component is triggered after this.
-        // Which means, the below return check to be done only after the isAvInteractionOnHold value is modified by AV component.
-        await new Promise(resolve => setTimeout(resolve, 50));
-
+    CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         // If the chat is put on hold manually, then return and don't auto unhold
-        if(this.isForceHold || this._appUIService?.isAvInteractionOnHold[evt.InteractionID]?.onHold) return;
+        if(this.isForceHold || this.isAvCallManuallyHeld) return;
 
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
@@ -2636,6 +2637,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom HoldInteractionEvent
      */
     HoldInteractionEvent(): void {
+        this.isAvCallManuallyHeld = true;
         this.holdInteraction();
     }
 
@@ -2643,6 +2645,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom UnholdInteractionEvent
      */
     UnholdInteractionEvent(): void {
+        this.isAvCallManuallyHeld = false;
         this.unHoldInteraction();
     }
 
