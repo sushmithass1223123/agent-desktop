@@ -634,7 +634,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         //trigger holdmethod
         this.sharedService.getHoldMethod().subscribe(() => {
-            debugger;
             if(this.status === 'connected'){
                 this.holdInteraction();
             }
