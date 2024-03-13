@@ -67,9 +67,9 @@ export class TwcDockerComponent extends TWContentWrapper implements OnInit, OnDe
     /**
      * On page inactive callback
      */
-    onInactive = () => {
+    onInactive = (preservePageContent?: boolean | undefined) => {
         if (this.loaded && this.pageActive) {
-            if (this.unload) {
+            if (this.unload && !preservePageContent) {
                 this.loaded = false;
             }
         }

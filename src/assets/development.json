@@ -218,6 +218,7 @@
                     "Data": {
                         "Path": "/home",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -520,6 +521,7 @@
                     "Data": {
                         "Path": "/supervisor",
                         "Duration": 100,
+                        "PreserveOnTabChange": false,
                         "AgentHierarchy": false,
                         "Widgets": {
                             "Static": [
@@ -785,6 +787,7 @@
                     "Data": {
                         "Path": "/voice",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1308,6 +1311,7 @@
                     "Data": {
                         "Path": "/textchat",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -1407,6 +1411,14 @@
                                                             }
                                                         }
                                                     },
+                                                    "DisableAvConstraints": {
+                                                        "Devices": ["android", "ios"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "facebook",  "twitter"],
+                                                        "EscalateAudioCall": false,
+                                                        "EscalateVideoCall": false,
+                                                        "RequestAudioCall": false,
+                                                        "RequestVideoCall": false
+                                                    },
                                                     "AudioEscalateAllowed": true,
                                                     "RequestAudioCallAllowed": true,
                                                     "VideoEscalateAllowed": true,
@@ -1422,7 +1434,6 @@
                                                     "HoldInteractionAllowed": true,
                                                     "MuteAudioHidden": false,
                                                     "ReplyOnSMM": { "channels": "Whatsapp" },
-                                                    "socialChannels": ["whatsapp", "instagram", "facebook", "twitter"],
                                                     "Whiteboard": {
                                                         "Allowed": true,
                                                         "Url": "https://dicedev.tetherfi.cloud/Whiteboard/ui/index.html",
@@ -1871,6 +1882,7 @@
                     "Data": {
                         "Path": "/email",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2181,6 +2193,7 @@
                     "Data": {
                         "Path": "/generic",
                         "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2391,6 +2404,7 @@
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Header": true },
                     "Data": {
                         "Path": "/workbench",
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2482,7 +2496,12 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
-                    "Data": { "Path": "/tmeet", "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
+                    "Data": {
+                        "Path": "/tmeet",
+                        "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}",
+                        "Unload": false,
+                        "PreserveOnTabChange": false
+                    }
                 },
                 {
                     "Name": "Docker",
@@ -2492,6 +2511,7 @@
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
+                        "PreserveOnTabChange": false,
                         "Widgets": {
                             "Static": [
                                 {
@@ -2731,7 +2751,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy2/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -2763,5 +2783,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.3.0"
+    "Version": "5.4.0"
 }

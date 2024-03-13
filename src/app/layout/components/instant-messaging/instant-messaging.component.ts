@@ -415,10 +415,13 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
             }
 
             this.selectedContact = contact;
+            // Use setTimeout to focus on the input after Angular has rendered it
+        setTimeout(() => {
             const textarea = this._replyInput.nativeElement;
             const length = textarea.value.length;
             textarea.setSelectionRange(length, length);
             textarea.focus();
+        });
             this.chat = this.allChats[contact.id] || { id: contact.id, dialog: [] };
         }
 

@@ -461,3 +461,10 @@ mat-dialog-container {
 .mat-card-header-text {
     width: 100%;
 }
+
+// Email template mat menu text overflow changes
+.mat-menu-content div button div {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
