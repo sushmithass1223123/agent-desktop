@@ -2,7 +2,7 @@ import { TwTcisIntegration, TwTcisIntegrationData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { extractJsonVal, getStringVars } from '@tmac/operators';
-import { IUIEvent, SDKClient, SignalRWrapper, TMACEventTypes, TUtils } from '@tmac/sdk';
+import { IUIEvent, SDKClient, SignalRWrapper, SignalRWrapperNew, TMACEventTypes, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { get, uniq } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
@@ -30,7 +30,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
     /**
      * SignalR wrapper for TCIS connection
      */
-    private _signalrWrapper: SignalRWrapper;
+    private _signalrWrapper: SignalRWrapper | SignalRWrapperNew;
 
     constructor(private _tmacEventService: TMACEventService) {
         super('TwTcisIntegrationComponent');
@@ -79,7 +79,11 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
 
         // check if Urls provided
         if (this.WidgetData.Urls.length) {
-            this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub, false, undefined, this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper);
+            if(!this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper) {
+                this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub, false);
+            } else {
+                this._signalrWrapper = new TUtils.SignalRWrapperNew(this.WidgetData.Urls, '', 'TCIS', {}, this.WidgetData.Hub, false);
+            }
             this.registerHubEvents();
             this._signalrWrapper?.connect();
         }

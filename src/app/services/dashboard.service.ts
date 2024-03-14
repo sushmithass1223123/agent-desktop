@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
-import { AgentStateDurationList, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
+import { AgentStateDurationList, SDKClient, SignalRWrapper, SignalRWrapperNew, TUtils } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
@@ -29,7 +29,7 @@ export class DashboardService extends SharedWrapper {
     /**
      * SignalR instance
      */
-    private _signalRInstance: SignalRWrapper;
+    private _signalRInstance: SignalRWrapper | SignalRWrapperNew;
     /**
      * Dashboard Seervice subject
      */
@@ -71,16 +71,26 @@ export class DashboardService extends SharedWrapper {
         }
 
         // create a signalR connection to the server
-        const signalR = new TUtils.SignalRWrapper(
-            this._serviceUrls,
-            'webSockets',
-            'TmacDataServer',
-            { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
-            'TmacDataServerHub',
-            false,
-            undefined,
-            this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper
-        );
+        var signalR;
+        if(!this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper){
+            signalR = new TUtils.SignalRWrapper(
+                this._serviceUrls,
+                'webSockets',
+                'TmacDataServer',
+                { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
+                'TmacDataServerHub',
+                false
+            );
+        } else {
+            signalR = new TUtils.SignalRWrapperNew(
+                this._serviceUrls,
+                'webSockets',
+                'TmacDataServer',
+                { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
+                'TmacDataServerHub',
+                false
+            );
+        }
 
         // check if the connection is created successfully
         if (signalR) {
