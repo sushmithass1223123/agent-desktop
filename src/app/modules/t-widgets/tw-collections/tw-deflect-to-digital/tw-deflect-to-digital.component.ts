@@ -8,7 +8,8 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
-
+import { AgentFeaturesService } from '@services/agent-features.service';
+import { AGENT_FEATURES } from 'app/constants';
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
@@ -21,7 +22,6 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      */
     // @Input() data: IWidget<any, WidgetData>;
     @Input() data: TwDeflectToDigital;
-
     /**
      * Interaction Id
      */
@@ -42,12 +42,12 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      */
     @ViewChild(TextTemplatesComponent)
     textTemplatesRef: TextTemplatesComponent;
-
+    IsDeflectToDigitalEditTextMessageEnabled: boolean = false;
     /**
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService,
-        private translocoService: TranslocoService) {
+        private translocoService: TranslocoService, private _agentFeaturesService: AgentFeaturesService) {
         super('TwDeflectToDigitalComponent');
     }
 
@@ -57,7 +57,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         this.initWrapper(this.data);
 
-        this.interactionId = this.data.InteractionDetails.InteractionID;
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         // check if number to be taken from TMAC event
         if (!this.data.Data.Number?.toLowerCase().includes('event')) {
@@ -65,7 +65,13 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
         }
 
         const eventName = this.data.Data.Number?.split('.')?.shift() as any;
-
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
+        this.checkAgentFeatures();
         // register to tmac events
         if (eventName) {
             this._tmacEventService
@@ -157,8 +163,32 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
         }
     }
-}
 
+    /**
+     * To check agent features for IsDeflectToDigitalEditTextMessageEnabled
+     */
+    private checkAgentFeatures(): void {
+        try {
+
+            const featureDetails = SDKClient.getAgentData().featuresList.filter(
+                (f) => 
+                f.Feature.toLowerCase() === AGENT_FEATURES.IsDeflectToDigitalEditTextMessageEnabled.toLowerCase()
+            );
+            console.log("IsDeflectToDigitalEditTextMessageEnabled", featureDetails)
+            if(featureDetails.length == 1)
+            {
+                console.log("IsDeflectToDigitalEditTextMessageEnabled featureDetails.length", featureDetails[0].IsEnabled)
+                this.IsDeflectToDigitalEditTextMessageEnabled = featureDetails[0].IsEnabled;
+            }
+            else
+            {
+                console.log("IsDeflectToDigitalEditTextMessageEnabled EditAllowed", this.data.Data.EditAllowed)
+                this.IsDeflectToDigitalEditTextMessageEnabled = this.data.Data.EditAllowed;
+            }
+        } catch (error) {}
+    }
+    
+}
 interface WidgetData {
     DeflectExpiry: number;
     DeflectIntent: string;
@@ -171,5 +201,4 @@ interface WidgetData {
     ReservedStatusCode: string;
     Number: string;
 }
-
 // for more info visit - https://angular.io/api/core
