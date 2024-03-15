@@ -9,12 +9,21 @@ export class SharedService {
     constructor() {}
 
     private holdMethodSubject = new Subject<void>();
+    private changeStatusSubject = new Subject<any>();
     private transferMethodSubject = new Subject<number>();
     private emailErrorNotifySubject = new Subject<number>();
     private appConfirmDialog = new Subject<void>();
 
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
+    }
+    
+    triggerChangeStatus(auxData: any): void {
+    this.changeStatusSubject.next(auxData);
+    }
+
+    getChangeStatus(): Observable<any> {
+    return this.changeStatusSubject.asObservable();
     }
 
     getEmailFailure() {
