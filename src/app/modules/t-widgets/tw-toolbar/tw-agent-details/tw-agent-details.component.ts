@@ -8,6 +8,7 @@ import { IWidget } from 'app/interfaces';
 import { throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 /**
  * Agent Details component
  */
@@ -58,7 +59,8 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _sharedService:SharedService
     ) {
         super('TwAgentDetailsComponent');
     }
@@ -108,6 +110,11 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
             .catch(() => {
                 this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.loadAuxCodesError'), 'failure');
             });
+            // Subscribe to the change status observable provided by the shared service
+            this._sharedService.getChangeStatus().subscribe((auxData: IAUXCodes) => {
+                 // Upon receiving new data, invoke the changeStatus method of changing status in agents side
+                this.changeStatus(auxData)
+            })
     }
 
     /**
