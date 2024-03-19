@@ -48,6 +48,7 @@ import {
     TextChatIncomingEvent,
     TextChatMessageReceivedEvent,
     TextChatMessageSentEvent,
+    UserDeviceInfoEvent,
     TextChatMessageTemplateSentEvent,
     TextChatRemoteUserConnectedEvent,
     TextChatSelfServiceDestinationEvent,
@@ -547,6 +548,49 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     @ViewChild('endBtn') endButton: MatButton;
 
     @ViewChild('closeBtn') closeButton: MatButton;
+     /**
+         * Deviceinfocheck
+         */
+    customerDevice: boolean;
+    /**
+         * socialMediaAVdisable
+         */
+    socialMedia: boolean;
+    /**
+     * Method to disable AV escalations when customer connects through mobile device
+     */
+    DisableAvConstraints:
+        | {
+              /**
+               * Device OS list
+               */
+              Devices: string[];
+              /**
+               * Social channels list
+               */
+              SocialChannels: string[];
+              /**
+               * Disable Escalate Audio Calls
+               */
+              EscalateAudioCall: boolean;
+              /**
+               * Disable Escalate Video Calls
+               */
+              EscalateVideoCall: boolean;
+              /**
+               * Disable Request Audio Calls
+               */
+              RequestAudioCall: boolean;
+              /**
+               * Disable Request Video Calls
+               */
+              RequestVideoCall: boolean;
+          }
+        | undefined;
+    /**
+    * Flag to observe call hold events from AV controls
+    */
+    isAvCallManuallyHeld: boolean = false;
     /**
          *Createicondisable
          */
@@ -619,6 +663,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             limit: 0,
             requestSent: false
         };
+
+        this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
 
         this.registerToEvents();
 
@@ -830,6 +876,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'TextChatUserMessageWaitTimerEvent',
                     'TextChatTypingStateChangedEvent',
                     'TextChatMessageReceivedEvent',
+                    'UserDeviceInfoEvent',
                     'TextChatAgentMessageReceivedEvent',
                     'AVControlMessageReceivedEvent',
                     'TextChatDisconnectedEvent',
@@ -1814,7 +1861,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.isSMM = evt.IsSMM || false;
 
         this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
-
+        // to check socialschannels
+        if (this.DisableAvConstraints?.SocialChannels?.includes(this.channel)) {
+            this.socialMedia = true;
+        }
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             status: 'connected',
@@ -1862,7 +1912,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             );
         }
     }
-
+    /**
+     * To process UserDeviceInfoEvent 
+     *
+     * @param _evt  UserDeviceInfoEvent
+     */
+    private getUserDeviceInfoEvent(_evt: UserDeviceInfoEvent): void {
+        const jsonDataObj =JSON.parse(_evt.JsonData);
+        const deviceInfo = JSON.parse(jsonDataObj.JsonData);
+        if(this.DisableAvConstraints?.Devices?.length) {
+            this.customerDevice = this.DisableAvConstraints.Devices.includes(deviceInfo.info.osver?.toLowerCase()); 
+        }
+    }
+    /**
+     * To process  UserDeviceInfoEvent
+     * @param evt  UserDeviceInfoEvent evt
+     */
+ UserDeviceInfoEvent(evt:  UserDeviceInfoEvent): void {
+    this.getUserDeviceInfoEvent(evt);
+}
+    
     /**
      * To process TextChatSelfServiceDestinationEvent
      * @param evt TextChatSelfServiceDestinationEvent evt
@@ -2267,7 +2336,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         // If the chat is put on hold manually, then return and don't auto unhold
-        if(this.isForceHold) return;
+        if(this.isForceHold || this.isAvCallManuallyHeld) return;
 
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
@@ -2578,6 +2647,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom HoldInteractionEvent
      */
     HoldInteractionEvent(): void {
+        this.isAvCallManuallyHeld = true;
         this.holdInteraction();
     }
 
@@ -2585,6 +2655,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom UnholdInteractionEvent
      */
     UnholdInteractionEvent(): void {
+        this.isAvCallManuallyHeld = false;
         this.unHoldInteraction();
     }
 
@@ -3663,4 +3734,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
         return updatedLabel;
     }
+}
+
+function elseif(arg0: string) {
+    throw new Error('Function not implemented.');
 }

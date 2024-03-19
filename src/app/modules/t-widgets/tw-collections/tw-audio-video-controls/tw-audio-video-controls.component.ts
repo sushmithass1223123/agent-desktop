@@ -31,7 +31,7 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
+import { AGENT_FEATURES, AV_ERRORS, AV_FAIL_CODES, PERMISSION_ERRORS } from 'app/constants';
 import { SnackbarStateTypes, InteractionRef } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -240,7 +240,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * Manual hold click flag
      */
-    manualHold: boolean;
+    manualHold: boolean = false;
 
     /**
      * Flag on call hold
@@ -838,6 +838,11 @@ if (error === 'Screenshare Was Cancelled') {
                             this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'),
                             'failure'
                         );
+                    } else if (evt.data.code === AV_FAIL_CODES.REQUEST_TIMED_OUT) {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.remoteCallRequestTimedOut'),
+                            'failure'
+                        );
                     } else if (evt.data.code === 'CALL_NOT_ANSWERED') {
                         this._appUIService.showSnackbar(
                             this.translocoService.translate('widgets.audioVideoControls.callNotAnsweredByremote'),
@@ -1161,6 +1166,9 @@ if (error === 'Screenshare Was Cancelled') {
                 }
                 break;
         }
+
+        const muteDisplayTextTypes = this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.muteDisplayText'))?.split(',');
+
         const dynamicLabels = [
             {
                 key: '#userName',
@@ -1169,6 +1177,10 @@ if (error === 'Screenshare Was Cancelled') {
             {
                 key: '#muteType',
                 value: data.Type
+            },
+            {
+                key: '#muteDisplayText',
+                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
             },
             {
                 key: '#streamType',
@@ -1419,19 +1431,22 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         }
 
         this.onCallHoldEvent = true;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
-                this.avConn.mute(true, true);
-                this.audioMuted = true;
-                this.videoMuted = true;
-            } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
-                this.avConn.mute(true, false);
-                this.audioMuted = true;
-            } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
-                this.avConn.mute(false, true);
-                this.videoMuted = true;
-            }
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
+                    this.avConn.mute(true, true);
+                    this.audioMuted = true;
+                    this.videoMuted = true;
+                } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
+                    this.avConn.mute(true, false);
+                    this.audioMuted = true;
+                } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
+                    this.avConn.mute(false, true);
+                    this.videoMuted = true;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1472,24 +1487,27 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      */
     CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
             return;
         }
 
         this.onCallHoldEvent = false;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
         if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
-                this.avConn.unMute(true, true);
-                this.audioMuted = false;
-                this.videoMuted = false;
-            } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
-                this.avConn.unMute(true, false);
-                this.audioMuted = false;
-            } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
-                this.avConn.unMute(false, true);
-                this.videoMuted = false;
-            }
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1522,10 +1540,6 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         // un hold the call
         this.avConn.unHold();
         this.hold = false;
-
-        if (this.manualHold) {
-            this.manualHold = false;
-        }
     };
 
     /**
@@ -1847,7 +1861,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method holdCall
      */
     public holdUnholdCall(): void {
-        this.manualHold = true;
+        this.manualHold = !this.manualHold;
 
         // check the hold flag
         if (this.hold) {

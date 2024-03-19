@@ -472,7 +472,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     Ext: f.type,
                     Name: resVal.Name,
                     Source: resVal.Source,
-                    URL: resVal.URL
+                    URL: resVal.URL,
+                    IsUploaded: true
                 });
                 ref.dismiss();
             }

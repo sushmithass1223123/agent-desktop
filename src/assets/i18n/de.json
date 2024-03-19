@@ -80,6 +80,7 @@
             "avConnectionError": "Bei der AV-Verbindung ist ein Fehler aufgetreten",
             "callRejectedByRemote": "Der Benutzer hat Ihre Anfrage abgelehnt",
             "callNotAnsweredByremote": "Der Anruf wurde vom Kunden nicht beantwortet",
+            "remoteCallRequestTimedOut": "Zeitüberschreitung bei der Anrufanforderung",
             "callFailed": "Anruf fehlgeschlagen:",
             "callDisconnectedError": "Anruf getrennt, unerwartetes Ende!",
             "callEndedByRemote": "Der Benutzer hat den Anruf beendet",
