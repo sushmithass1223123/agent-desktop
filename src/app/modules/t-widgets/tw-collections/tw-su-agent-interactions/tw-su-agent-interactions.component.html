@@ -61,6 +61,12 @@
                                     [matTooltip]="locale('channels.whatsApp')"
                                 ></mat-icon>
                                 <mat-icon
+                                color="primary"
+                                *ngSwitchCase="'instagram'"
+                                svgIcon="custom-instagram"
+                                [matTooltip]="locale('channels.instagram')"
+                            ></mat-icon>
+                                <mat-icon
                                     color="primary"
                                     *ngSwitchCase="'we'"
                                     svgIcon="custom-we"
