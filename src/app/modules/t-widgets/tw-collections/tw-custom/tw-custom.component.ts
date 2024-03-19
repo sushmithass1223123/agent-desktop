@@ -8,6 +8,7 @@ import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { SharedService } from '@services/shared.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { UIActionEventService } from '@services/ui-action-event.service';
 import { setStringVars } from '@tmac/operators';
@@ -107,6 +108,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _uiActionEventService: UIActionEventService,
         private translocoService: TranslocoService,
         private _interactionManagerService: InteractionManagerService,
+        private sharedService: SharedService
     ) {
         super('TwCustomComponent');
 
@@ -281,6 +283,8 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * On Destroy
      */
     ngOnDestroy(): void {
+        // Notify service that whiteboard is closed
+        this.sharedService.setWhiteboardState(false);
         // call the wrapper destroy method
         if (this.data.Data.NotifyTypeOnClose) {
             this.sendActionOnClose()

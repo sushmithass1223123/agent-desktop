@@ -592,6 +592,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     */
     isAvCallManuallyHeld: boolean = false;
     /**
+         *Createicondisable
+         */
+    createIconButtonDisabled: boolean = false;
+    /**
      * Constructor
      */
     constructor(
@@ -629,6 +633,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Init
      */
     ngOnInit(): void {
+        {
+            // Subscribe to whiteboardOpen$ observable
+            this.sharedService.whiteboardOpen$.subscribe((whiteboardOpen) => {
+                // Disable or enable create icon button based on whiteboard state
+                this.createIconButtonDisabled = whiteboardOpen;
+            });
+        }
         // call the wrapper init method
         this.initWrapper(this.data);
 
@@ -3456,6 +3467,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         }
+          // Notify service that whiteboard is open
+  this.sharedService.setWhiteboardState(true);
     }
 
     /**

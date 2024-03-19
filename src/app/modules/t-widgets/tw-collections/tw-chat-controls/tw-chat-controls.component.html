@@ -415,10 +415,9 @@
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected' || 
+                                        [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled" || 
                                         (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
-                                        (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall))"
-                                        >
+                                        (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall))">
                                             <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
                                 </div>
