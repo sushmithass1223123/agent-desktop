@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Subject } from 'rxjs/internal/Subject';
 
 @Injectable({
@@ -13,6 +13,8 @@ export class SharedService {
     private transferMethodSubject = new Subject<number>();
     private emailErrorNotifySubject = new Subject<number>();
     private appConfirmDialog = new Subject<void>();
+    private whiteboardOpenSubject = new BehaviorSubject<boolean>(false);
+    whiteboardOpen$ = this.whiteboardOpenSubject.asObservable();
 
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
@@ -51,5 +53,8 @@ export class SharedService {
     getAppConfirmDialogClose() {
         return this.appConfirmDialog.asObservable();
     }
+    setWhiteboardState(open: boolean) {
+        this.whiteboardOpenSubject.next(open);
+      }
 }
 
