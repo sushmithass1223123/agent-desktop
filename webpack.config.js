@@ -11,7 +11,8 @@ module.exports = (config) => {
         "url": false,
         "http": false,
         "util": false,
-        "https": false
+        "https": false,
+        "net": false
     }
     // addTailwindPlugin({
     //     webpackConfig: config,

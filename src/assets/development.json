@@ -2765,7 +2765,7 @@
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
                 "customApiURL": "",
-                "useDotNet6Wrapper": false
+                "useDotNet6Wrapper": true
             },
             "logging": {
                 "enabled": true,
