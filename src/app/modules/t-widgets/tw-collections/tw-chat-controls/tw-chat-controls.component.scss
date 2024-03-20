@@ -11,6 +11,9 @@ tw-chat-controls {
         .chat-controls {
             .interaction-details {
                 line-height: 1.5;
+                .disabled-button {
+                    opacity: 0.5;
+                }
             }
 
             .chat-container {

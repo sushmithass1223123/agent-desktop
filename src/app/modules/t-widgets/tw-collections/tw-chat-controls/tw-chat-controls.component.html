@@ -295,14 +295,13 @@
                             <button
                                 mat-mini-fab
                                 color="default"
-                                *ngIf="conferenceType !== 'silent' && conferenceType !== 'whisper' "
-                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading ||conferenceType === 'silent' ||  conferenceType === 'whisper' "
-                                [ngClass]="
+                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading || (conferenceType === 'silent' || conferenceType === 'whisper')"
+                                [ngClass]="{'disabled-button': 
                                     ((status === 'connected' || status === 'hold' || status === 'unhold') &&
                                         (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
                                     ' ' +
                                     (status === 'connected' ? 'mat-elevation-z2' : '')
-                                "
+                                }"
                                 [matTooltip]="interactionOnHold.buttonTooltip"
                                 (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                             >
