@@ -2179,7 +2179,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }
                     break;
                     case 'openwhiteboard':
-                        if (msg.status === 'accepted') {
+                       if (msg.status === 'ack') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestReceived'), 'info');
+                        } 
+                        else if (msg.status === 'accepted') {
                             const agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
                             agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
                     
