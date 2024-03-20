@@ -305,6 +305,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
     manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
 
+    // Flag to end the call after screenshare disconnect
+    endCallAfterScreenShareEnd: boolean = false;
+
     /**
      * Constructor
      */
@@ -821,6 +824,7 @@ if (error === 'Screenshare Was Cancelled') {
                 case 'onScreenshareEnded':
                     this.status = 'screenshare-ended';
                     this.screenSharing = false;
+                    if(this.endCallAfterScreenShareEnd) this.endCall();
                     break;
                 case 'onScreenshareDisconnected':
                     this.status = evt.data ? evt.data : 'ss-disconnected';
@@ -1674,7 +1678,8 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * Share Screen
      * @method shareScreen
      */
-    public shareScreen(): void {
+    public shareScreen(endCallAfterScreenShareEnd?: boolean): void {
+        this.endCallAfterScreenShareEnd = endCallAfterScreenShareEnd;
         // check if to start or stop
         if (this.screenSharing) {
             // stop screen sharing
