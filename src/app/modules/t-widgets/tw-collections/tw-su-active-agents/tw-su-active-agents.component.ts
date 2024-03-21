@@ -601,7 +601,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     // snackbar message
                     let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess');
                     // check if the agent is on call
-                    if (agent.CurrentAgentStatus.includes('StatusName (which Supervisor chose)')) {
+                    if (agent.CurrentAgentStatus.includes('On Call')) {
                         message = this.translocoService.translate('widgets.activeAgents.statusChangeRequestSuccess');
                         message = message?.replace('#agentName', agent.AgentName);
                         notification += ', will be reflecting after the interaction';
