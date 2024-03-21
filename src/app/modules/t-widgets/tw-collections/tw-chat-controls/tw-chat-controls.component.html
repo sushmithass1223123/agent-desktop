@@ -415,9 +415,9 @@
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected' || (conferenceType === 'silent' && (action.type === 'whiteboard' || action.type === 'signatureRequest')) || (conferenceType === 'whisper' && (action.type === 'whiteboard' || action.type === 'signatureRequest'))"
+                                        [disabled]="status !== 'connected'||conferenceType === 'whisper'|| conferenceType === 'silent'"
                                         >
-                                            <mat-icon >{{ action.icon }}</mat-icon>
+                                        <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
                                 </div>
                             </ng-template>
