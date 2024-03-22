@@ -261,7 +261,7 @@
                         </button>
 
                         <button
-                            *ngIf="(agentFeatures.oneWayVideo || callType === 'audio') && selfVideo?.type !== 'video'"
+                            *ngIf="agentFeatures.audioToVideo && (agentFeatures.oneWayVideo || callType?.toLowerCase() === 'audio') && selfVideo?.type !== 'video'"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
@@ -352,7 +352,7 @@
                             mat-icon-button
                             color="warn"
                             [matTooltip]="locale('widgets.audioVideoControls.endCall')"
-                            (click)="endCall()"
+                            (click)="screenSharing ? shareScreen(true) : endCall()"
                         >
                             <mat-icon>call_end</mat-icon>
                         </button>

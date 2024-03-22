@@ -114,6 +114,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             audio: 'wifi_calling_3',
             video: 'duo',
             whatsapp: 'custom-whatsapp',
+            instagram: 'custom-instagram',
             we: 'custom-we',
             line: 'custom-line',
             viber: 'custom-viber',

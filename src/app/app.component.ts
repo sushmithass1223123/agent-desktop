@@ -39,6 +39,10 @@ export class AppComponent implements OnInit, OnDestroy {
             name: 'whatsapp'
         },
         {
+            label: 'custom-instagram',
+            name: 'instagram'
+        },
+        {
             label: 'custom-line',
             name: 'line'
         },

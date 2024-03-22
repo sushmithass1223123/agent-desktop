@@ -34,6 +34,10 @@ export interface TwSuActiveAgents extends Widget<TwSuActiveAgentsData> {}
  */
 export type TwSuActiveAgentsData = {
     /**
+     * [agentStatusChange]
+     */
+    agentStatusChange:boolean;
+    /**
      * [need more info]
      */
     TASUrl: string;

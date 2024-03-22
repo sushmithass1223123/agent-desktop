@@ -62,7 +62,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, INVALID_CHARS, SOCIAL_CHANNELS } from 'app/constants';
+import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
 import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -557,6 +557,45 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
     socialMedia: boolean;
     /**
+     * Method to disable AV escalations when customer connects through mobile device
+     */
+    DisableAvConstraints:
+        | {
+              /**
+               * Device OS list
+               */
+              Devices: string[];
+              /**
+               * Social channels list
+               */
+              SocialChannels: string[];
+              /**
+               * Disable Escalate Audio Calls
+               */
+              EscalateAudioCall: boolean;
+              /**
+               * Disable Escalate Video Calls
+               */
+              EscalateVideoCall: boolean;
+              /**
+               * Disable Request Audio Calls
+               */
+              RequestAudioCall: boolean;
+              /**
+               * Disable Request Video Calls
+               */
+              RequestVideoCall: boolean;
+          }
+        | undefined;
+    /**
+    * Flag to observe call hold events from AV controls
+    */
+    isAvCallManuallyHeld: boolean = false;
+    /**
+         *Createicondisable
+         */
+    createIconButtonDisabled: boolean = false;
+    /**
      * Constructor
      */
     constructor(
@@ -594,6 +633,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Init
      */
     ngOnInit(): void {
+        {
+            // Subscribe to whiteboardOpen$ observable
+            this.sharedService.whiteboardOpen$.subscribe((whiteboardOpen) => {
+                // Disable or enable create icon button based on whiteboard state
+                this.createIconButtonDisabled = whiteboardOpen;
+            });
+        }
         // call the wrapper init method
         this.initWrapper(this.data);
 
@@ -617,6 +663,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             limit: 0,
             requestSent: false
         };
+
+        this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
 
         this.registerToEvents();
 
@@ -1814,7 +1862,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
         // to check socialschannels
-        if (this.widgetData.socialChannels?.includes(this.channel) || (SOCIAL_CHANNELS?.includes(this.channel))) {
+        if (this.DisableAvConstraints?.SocialChannels?.includes(this.channel)) {
             this.socialMedia = true;
         }
         // update the interaction status and user
@@ -1869,11 +1917,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param _evt  UserDeviceInfoEvent
      */
- private getUserDeviceInfoEvent(_evt: UserDeviceInfoEvent): void {
-    const jsonDataObj =JSON.parse(_evt.JsonData);
-    const deviceInfo = JSON.parse(jsonDataObj.JsonData);
-    this.customerDevice = deviceInfo.info.osver === 'Android' || deviceInfo.info.osver === 'IOS';  
-}
+    private getUserDeviceInfoEvent(_evt: UserDeviceInfoEvent): void {
+        const jsonDataObj =JSON.parse(_evt.JsonData);
+        const deviceInfo = JSON.parse(jsonDataObj.JsonData);
+        if(this.DisableAvConstraints?.Devices?.length) {
+            this.customerDevice = this.DisableAvConstraints.Devices.includes(deviceInfo.info.osver?.toLowerCase()); 
+        }
+    }
     /**
      * To process  UserDeviceInfoEvent
      * @param evt  UserDeviceInfoEvent evt
@@ -2204,16 +2254,37 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this._appUIService.showSnackbar(message, status);
                     }
                     break;
-                case 'openwhiteboard':
-                    if (msg.status === 'ack') {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestReceived'), 'info');
-                    } else if (msg.status === 'accepted') {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
-                    } else {
-                        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
-                    }
-                    break;
+                    case 'openwhiteboard':
+                        if (msg.status === 'ack') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestReceived'), 'info');
+                        } 
+                         else if (msg.status === 'accepted') {
+                            // send whiteboard url to customer
+                            const agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
+                            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+                    
+                            const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
+                            widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
+                            widget.Config.ViewState = 'maximize';
+                            widget.Config.Anchor = true;
+                            widget.Config.Position.W = 800;
+                            widget.Config.Position.H = 550;
+                            widget.InteractionDetails = {
+                                InteractionID: this.interaction.InteractionID
+                            };
+                            widget.Data = {
+                                AutoOpen: false,
+                                Url: agentWhiteboardUrl.toString(),
+                                NotifyTypeOnClose: 'closeWhiteboard'
+                            };
+                            this.whiteBoardWidgetId = widget.ID;
+                            this._aotWidgetService.addWidget(widget);
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
+                        } else if (msg.status === 'rejected') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
+                        }
+                        break;
+                    
             }
         } catch (e) {
             console.error(e);
@@ -2286,7 +2357,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         // If the chat is put on hold manually, then return and don't auto unhold
-        if(this.isForceHold) return;
+        if(this.isForceHold || this.isAvCallManuallyHeld) return;
 
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
@@ -2597,6 +2668,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom HoldInteractionEvent
      */
     HoldInteractionEvent(): void {
+        this.isAvCallManuallyHeld = true;
         this.holdInteraction();
     }
 
@@ -2604,6 +2676,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom UnholdInteractionEvent
      */
     UnholdInteractionEvent(): void {
+        this.isAvCallManuallyHeld = false;
         this.unHoldInteraction();
     }
 
@@ -3386,35 +3459,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
             });
 
-            // [Chirag July,31 22'] send whiteboard url to customer
-            let agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
-            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+            
 
             if (res.response?.ResultMessage === 'Success') {
-                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
-                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
-                widget.Config.ViewState = 'maximize';
-                widget.Config.Anchor = true;
-                widget.Config.Position.W = 800;
-                widget.Config.Position.H = 550;
-                widget.InteractionDetails = {
-                    InteractionID: this.interaction.InteractionID
-                };
-                widget.Data = {
-                    AutoOpen: false,
-                    Url: agentWhiteboardUrl.toString(),
-                    NotifyTypeOnClose: 'closeWhiteboard'
-                };
-                this.whiteBoardWidgetId = widget.ID;
-                this._aotWidgetService.addWidget(widget);
-                snackRef.dismiss();
+                 // Wait for the customer to accept the request
+                // No need to open the whiteboard here
+               
             } else {
-                throw new Error('Error occured while opening whiteboard');
+                throw new Error('Error occurred while requesting to open whiteboard');
             }
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         }
+          // Notify service that whiteboard is open
+  this.sharedService.setWhiteboardState(true);
     }
 
     /**
