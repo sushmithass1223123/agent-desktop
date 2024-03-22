@@ -176,6 +176,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Conference type of interaction
      */
     conferenceType = '';
+    
     /**
      * Conference agent list
      */
@@ -624,7 +625,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             Limit: 0
         };
     }
-
+    // Define a boolean flag to track if the whiteboard is open
+    private isWhiteboardOpen: boolean = false;
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -773,6 +775,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // check for moreActions
+        //check if whiteboard is already opened
         //check if whiteboard is already opened
         if (this.agentFeatures.whiteboard) {
             this.moreActions.push({
@@ -2480,8 +2483,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             status: 'disconnected'
             
         });   
-        // Destroy whiteboard widget
+        
+        // Check if the whiteboard is open before destroying it
+        if (this.isWhiteboardOpen) {
         this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
+        // Reset the flag since whiteboard is closed
+        this.isWhiteboardOpen = false;
+        }
         // stop the duration timer
         this.stopTimer.next(null);
         // hide auto response if enabled
@@ -3433,6 +3441,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Opens a whiteboard session
      */
     async openWhiteboard(): Promise<void> {
+        // Set the flag to true when opening the whiteboard
+            this.isWhiteboardOpen = true;
+        
         if (!this.widgetData.Whiteboard?.Url) {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardURLNotFound'), 'failure');
             return;
@@ -3589,6 +3600,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To execute action
      */
     executeAction(action: any, actionBtn: MatButton): void {
+        
         switch (action.type) {
             case 'whiteboard':
                 this.openWhiteboard();
