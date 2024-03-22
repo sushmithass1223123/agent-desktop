@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
-import { AgentStateDurationList, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
+import { AgentStateDurationList, SDKClient, SignalRWrapper, SignalRWrapperNew, TUtils } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
@@ -29,7 +29,7 @@ export class DashboardService extends SharedWrapper {
     /**
      * SignalR instance
      */
-    private _signalRInstance: SignalRWrapper;
+    private _signalRInstance: SignalRWrapper | SignalRWrapperNew;
     /**
      * Dashboard Seervice subject
      */
@@ -71,14 +71,26 @@ export class DashboardService extends SharedWrapper {
         }
 
         // create a signalR connection to the server
-        const signalR = new TUtils.SignalRWrapper(
-            this._serviceUrls,
-            'webSockets',
-            'TmacDataServer',
-            { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
-            'TmacDataServerHub',
-            false
-        );
+        var signalR;
+        if(!this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper){
+            signalR = new TUtils.SignalRWrapper(
+                this._serviceUrls,
+                'webSockets',
+                'TmacDataServer',
+                { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
+                'TmacDataServerHub',
+                false
+            );
+        } else {
+            signalR = new TUtils.SignalRWrapperNew(
+                this._serviceUrls,
+                'webSockets',
+                'TmacDataServer',
+                { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
+                'TmacDataServerHub',
+                false
+            );
+        }
 
         // check if the connection is created successfully
         if (signalR) {
@@ -348,7 +360,7 @@ export class DashboardService extends SharedWrapper {
 
         // if connected, then trigger
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetAgentData', this._signalRInstance.hub.connection.id, agentId, start, duration);
+            this._signalRInstance.hub.invoke('GetAgentData', this.getSignalRConnectionId(this._signalRInstance), agentId, start, duration);
         }
     }
 
@@ -376,7 +388,7 @@ export class DashboardService extends SharedWrapper {
         if (this._signalRInstance?.isConnected()) {
             this._signalRInstance.hub.invoke(
                 'GetActiveAgentList',
-                this._signalRInstance.hub.connection.id,
+                this.getSignalRConnectionId(this._signalRInstance),
                 agentId,
                 hierarchy ? teamId : '',
                 start,
@@ -399,7 +411,7 @@ export class DashboardService extends SharedWrapper {
             // stop first
             this._signalRInstance.hub.invoke(
                 'GetActiveAgentList',
-                this._signalRInstance.hub.connection.id,
+                this.getSignalRConnectionId(this._signalRInstance),
                 agentId,
                 this._agentHierarchy ? teamId : '',
                 false,
@@ -410,7 +422,7 @@ export class DashboardService extends SharedWrapper {
             setTimeout(() => {
                 this._signalRInstance.hub.invoke(
                     'GetActiveAgentList',
-                    this._signalRInstance.hub.connection.id,
+                    this.getSignalRConnectionId(this._signalRInstance),
                     agentId,
                     this._agentHierarchy ? teamId : '',
                     true,
@@ -430,7 +442,7 @@ export class DashboardService extends SharedWrapper {
         this.logger.info(`triggerAgentInteractions: agentId=${agentId}, start=${start}`, false);
 
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetActiveInteractionList', this._signalRInstance.hub.connection.id, agentId, start);
+            this._signalRInstance.hub.invoke('GetActiveInteractionList', this.getSignalRConnectionId(this._signalRInstance), agentId, start);
         }
     }
 
@@ -446,7 +458,16 @@ export class DashboardService extends SharedWrapper {
         this.logger.info(`triggerTeamAgentList: start=${start}, teamFilter=${teamFilter}`, false);
 
         if (this._signalRInstance?.isConnected()) {
-            this._signalRInstance.hub.invoke('GetTeamAgentList', this._signalRInstance.hub.connection.id, agentId, start, teamFilter ? teamId : '');
+            this._signalRInstance.hub.invoke('GetTeamAgentList', this.getSignalRConnectionId(this._signalRInstance), agentId, start, teamFilter ? teamId : '');
         }
+    }
+
+    /**
+     * Method to return signalr connection id
+     * @param singalRInstance Signalr object
+     * @returns connection id
+     */
+    getSignalRConnectionId(singalRInstance: SignalRWrapper | SignalRWrapperNew): string | number | any {
+        return singalRInstance?.hub?.connection?.id ?? singalRInstance?.connectionId ?? '';
     }
 }

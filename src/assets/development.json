@@ -2767,7 +2767,8 @@
                 "maxConnectivityRetryTimeOut": 60,
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
-                "customApiURL": ""
+                "customApiURL": "",
+                "useDotNet6Wrapper": true
             },
             "logging": {
                 "enabled": true,

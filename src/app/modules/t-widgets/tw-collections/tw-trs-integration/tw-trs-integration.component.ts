@@ -2,7 +2,8 @@ import { TwTrsIntegration, TwTrsIntegrationData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppUiService } from '@services/app-ui.service';
-import { AgentStatusChangeEvent, CommandResultEvent, IResponse, SDKClient, SignalRWrapper, TUtils } from '@tmac/sdk';
+import { TMACEventService } from '@services/tmac-event.service';
+import { AgentStatusChangeEvent, CommandResultEvent, IResponse, SDKClient, SignalRWrapper, SignalRWrapperNew, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 
 /**
@@ -28,9 +29,9 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
     /**
      * SignalR wrapper for TRS connection
      */
-    private _signalrWrapper: SignalRWrapper;
+    private _signalrWrapper: SignalRWrapper | SignalRWrapperNew;
 
-    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {
+    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService, private _tmacEventService: TMACEventService) {
         super('TwTrsIntegrationComponent');
     }
 
@@ -45,7 +46,11 @@ export class TwTrsIntegrationComponent extends TWidgetWrapper implements OnInit,
         this.WidgetData = this.data.Data;
 
         // create a signalR wrapper
-        this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TRS', {}, 'CustomApplicationHub');
+        if(!this._tmacEventService.appConfig.AppConfigs.SDK.signalRProxy?.useDotNet6Wrapper){
+            this._signalrWrapper = new TUtils.SignalRWrapper(this.WidgetData.Urls, '', 'TRS', {}, 'CustomApplicationHub', false);
+        } else {
+            this._signalrWrapper = new TUtils.SignalRWrapperNew(this.WidgetData.Urls, '', 'TRS', {}, 'CustomApplicationHub', false);
+        }
 
         // register to hub events
         this.registerHubEvents();

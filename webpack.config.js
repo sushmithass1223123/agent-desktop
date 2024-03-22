@@ -7,6 +7,13 @@ module.exports = (config) => {
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
     }));
+    config.resolve.fallback = {
+        "url": false,
+        "http": false,
+        "util": false,
+        "https": false,
+        "net": false
+    }
     // addTailwindPlugin({
     //     webpackConfig: config,
     //     tailwindConfig,
