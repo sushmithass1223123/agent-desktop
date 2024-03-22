@@ -544,10 +544,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { 
-                                        "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index",
-                                        "agentStatusChange":true
-                                    }
+                                    "Data": { "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index", "agentStatusChange": true }
                                 }
                             ],
                             "Dynamic": [
@@ -1416,7 +1413,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "fb",  "twitter"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
@@ -2786,5 +2783,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.4.1"
+    "Version": "5.5.0-beta.1"
 }
