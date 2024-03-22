@@ -295,13 +295,14 @@
                             <button
                                 mat-mini-fab
                                 color="default"
-                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading"
+                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper'"
                                 [ngClass]="
                                     ((status === 'connected' || status === 'hold' || status === 'unhold') &&
                                         (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
                                     ' ' +
                                     (status === 'connected' ? 'mat-elevation-z2' : '')
                                 "
+                                [ngStyle]="{ 'opacity' : ((status !== 'connected' && status !== 'hold') || interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper') ? '0.5' : 1 }"
                                 [matTooltip]="interactionOnHold.buttonTooltip"
                                 (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                             >
@@ -387,7 +388,7 @@
                         <div class="fab-container" *ngIf="moreActions.length">
                             <button
                                 mat-icon-button
-                                [disabled]="status !== 'connected'"
+                                [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
                                 [class]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
                                 [ngClass]="{ 'twd-hidden': asyncChatRef.isAsync }"
                                 cdkOverlayOrigin
