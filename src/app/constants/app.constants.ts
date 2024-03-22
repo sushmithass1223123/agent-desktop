@@ -254,6 +254,7 @@ export const AGENT_FEATURES = {
     IsAudioEscalateEnabled: 'isaudioescalateenabled',
     IsVideoEscalateEnabled: 'isvideoescalateenabled',
     IsChatSignatureEnabled: 'ischatsignatureenabled',
+    IsDeflectToDigitalEditTextMessageEnabled: 'isdeflecttodigitaledittextmessageenabled',
     IsChatWhiteboardEnabled: 'ischatwhiteboardenabled',
     IsChatAttachmentsEnabled: 'ischatattachmentsenabled',
     IsChatEmojiEnabled: 'ischatemojienabled',
