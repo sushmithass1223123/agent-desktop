@@ -1437,7 +1437,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this.onCallHoldEvent = true;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
-        if (!this.manualHold && this.muteAVOnHold.enabled) {
+        if (this.muteAVOnHold.enabled) {
             setTimeout(() => {
                 if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
                     this.avConn.mute(true, true);
@@ -1498,7 +1498,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this.onCallHoldEvent = false;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
-        if (!this.manualHold && this.muteAVOnHold.enabled) {
+        if (this.muteAVOnHold.enabled) {
             setTimeout(() => {
                 if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
                     this.avConn.unMute(true, true);
