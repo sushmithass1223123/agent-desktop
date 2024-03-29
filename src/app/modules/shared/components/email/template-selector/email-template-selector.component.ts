@@ -162,22 +162,11 @@ export class EmailTemplateSelectorComponent implements OnInit, OnDestroy {
             useTemplate: (info: EmailTemplate) => this.useTemplate(info),
             closeTemplate: () => this.closeTemplatePreview()
         };
-        if (preview.Type === 'Form') {
-            const widget = new TwWidgetModel('Template', 'tw-email-template-preview');
-            widget.Name = 'Template';
-            widget.Config.Anchor = true;
-            widget.Config.Position.W = 500;
-            widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
-            widget.Data = data;
-            this.aotService.addWidget(widget as AOTWidget);
-            this.templatePreview.aots.push(widget.ID);
-        } else {
-            this.previewDialogRef = this.matDialog.open(TwEmailTemplatePreviewComponent, {
-                data,
-                minWidth: '40%',
-                panelClass: `email-template-dialog__${(data.info?.Type || '').replaceAll(' ', '')}`
-            });
-        }
+        this.previewDialogRef = this.matDialog.open(TwEmailTemplatePreviewComponent, {
+            data,
+            minWidth: '40%',
+            panelClass: `email-template-dialog__${(data.info?.Type || '').replaceAll(' ', '')}`
+        });
     }
 
     /**
