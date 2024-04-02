@@ -61,7 +61,7 @@
                         }
                     },
                     "SearchPollingInterval": 10000,
-                    "QueueTransferForAgent": false
+                    "QueueTransferForAgent": true
                 }
             },
             {

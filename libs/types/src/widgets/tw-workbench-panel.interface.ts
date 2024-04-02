@@ -29,7 +29,7 @@ export type TwEmailWorkbenchConfig = {
      * This is only available when the user is agent.
      * For supervisors this is always enabled.
      * @type {boolean} true | false
-     * @default false
+     * @default true
      */
     QueueTransferForAgent?: boolean;
     /**
@@ -64,6 +64,10 @@ export type TwEmailWorkbenchConfig = {
      * Max limit of search range in days
      */
      MaxSearchRange: number;
+     /**
+     * Max limit of bulk mail count 
+     */
+     MaxBulkMailCount: number;
 
 };
 

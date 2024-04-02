@@ -2104,7 +2104,7 @@
                                                     },
                                                     "SearchPollingInterval": 0,
                                                     "DeleteAllowed": false,
-                                                    "QueueTransferForAgent": false,
+                                                    "QueueTransferForAgent": true,
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
@@ -2390,7 +2390,7 @@
                 "protocol": "webSockets",
                 "timeout": 10,
                 "fallback": true,
-                "useDotNet6Wrapper": true
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,

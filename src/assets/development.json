@@ -2464,13 +2464,14 @@
                                                     },
                                                     "SearchPollingInterval": 0,
                                                     "DeleteAllowed": false,
-                                                    "QueueTransferForAgent": false,
+                                                    "QueueTransferForAgent": true,
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxSearchRange": 30
+                                                    "MaxSearchRange": 30,
+                                                    "MaxBulkMailCount":10
                                                 }
                                             },
                                             {
@@ -2765,7 +2766,7 @@
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
                 "customApiURL": "",
-                "useDotNet6Wrapper": true
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,
