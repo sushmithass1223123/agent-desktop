@@ -1790,36 +1790,25 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         return checks;
     };
 
-  /**
- * Selects emails for folders respecting the maximum bulk mail count limit
- * @param {boolean} checked State of the checkbox
- * @param {Mail[]} emails If this isn't passed, all the emails across all folders are used for this check
- */
-selectEmails = (checked: boolean, emails?: Mail[]) => {
-    const mails = emails ?? this.getAllEmailNodes();
-    const maxBulkMailCount = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxBulkMailCount ?? 10;
-    const selectedEmails = mails.filter(n => n.checked);
-    let selectableEmailsCount = checked ? maxBulkMailCount - selectedEmails.length : selectedEmails.length;
-
-    // Ensure we don't select more than the maximum limit
-    if (selectableEmailsCount > maxBulkMailCount) {
-        selectableEmailsCount = maxBulkMailCount;
-    }
-
-    for (const n of mails) {
-        if (checked) {
-            if (selectableEmailsCount > 0) {
-                n.checked = true;
-                selectableEmailsCount--;
-            } else {
-                break;
-            }
-        } else {
-            n.checked = false;
+    /**
+     * Selects emails for folders
+     * @param {boolean} checked state of the checkbox
+     * @param {Mail[]} emails if this isnt passed, all the emails across all folders are used for this check
+     */
+    selectEmails = (checked: boolean, emails?: Mail[]) => {
+        const mails = emails ?? this.getAllEmailNodes();
+        for (const n of mails) {
+            n.checked = checked;
         }
+    };
+    
+    isCheckboxDisabled() {
+        const maxBulkMailCount = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxBulkMailCount ?? 10;
+        const selectedCount = this.getAllEmailNodes().reduce((count, n) => count + (n.checked ? 1 : 0), 0);
+        return selectedCount >= maxBulkMailCount;
     }
-};
-
+    
+    
     /**
      * To show internet headers
      * @param {String} headers
