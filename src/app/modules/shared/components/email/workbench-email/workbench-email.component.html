@@ -380,7 +380,7 @@
                                 <button
                                     mat-raised-button
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                    *ngIf="currentTab === 'queue' || currentTab === 'inbox' || currentTab === 'sentitem'|| currentTab === 'draft'"
+                                    *ngIf="currentTab === 'queue'"
                                     (click)="replyToSelectedEmails(getSelectedEmails())"
                                 >
                                     {{ locale('widgets.emailControls.replyAll') }}
@@ -389,7 +389,7 @@
                                 <button
                                     mat-raised-button
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
-                                    *ngIf="state.allowQueueTransfer && currentTab === 'queue' || currentTab === 'inbox' || currentTab === 'sentitem'|| currentTab === 'draft'"
+                                    *ngIf="state.allowQueueTransfer "
                                     (click)="transferEmail(getSelectedEmails())"
                                 >
                                     {{ locale('sharedComponents.email.transferAll') }}
@@ -398,7 +398,7 @@
                                 <button
                                     mat-raised-button
                                     color="primary"
-                                    *ngIf="currentTab === 'queue' || currentTab === 'inbox' || currentTab === 'sentitem'|| currentTab === 'draft'"
+                                    *ngIf="currentTab === 'queue'"
                                     class="twd-flex-1 twd-text-xs sm:twd-text-sm lg:twd-text-base border-radius-20 mx-8"
                                     (click)="closeEmails(getSelectedEmails())"
                                 >
@@ -640,7 +640,7 @@
                     "
                 >
                 <div class="twd-flex twd-items-center">
-                    <div *ngIf="currentTab === 'sentitem' || currentTab === 'draft'||currentTab === 'inbox'||currentTab === 'queue'&& state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected;">
+                    <div *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected;">
                         <mat-checkbox
                             [disabled]="isCheckboxDisabled()"
                             [indeterminate]="selected.some"
@@ -706,7 +706,7 @@
                                         : ' theme-bg'
                                 "
                             >
-                                <div class="twd-p-3"   *ngIf="currentTab === 'sentitem' || currentTab === 'draft'||currentTab === 'inbox'||currentTab === 'queue'&& state.bulkSelection ">
+                            <div class="twd-p-3" *ngIf="state.bulkSelection">
                                     <mat-checkbox [disabled]="isCheckboxDisabled()" [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
                                 </div>
 

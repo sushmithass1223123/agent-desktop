@@ -2463,7 +2463,7 @@
                                                         }
                                                     },
                                                     "SearchPollingInterval": 0,
-                                                    "DeleteAllowed": false,
+                                                    "DeleteAllowed": true,
                                                     "QueueTransferForAgent": true,
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
