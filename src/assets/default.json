@@ -2109,7 +2109,8 @@
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false
+                                                    "TemplatesByHierarchy": false,
+                                                    "MaxBulkMailCount":10
                                                 }
                                             },
                                             {
