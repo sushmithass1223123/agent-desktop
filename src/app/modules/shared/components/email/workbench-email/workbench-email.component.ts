@@ -1807,13 +1807,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         const selectedCount = selectedEmails.length;
       
         // If the selected count is greater than or equal to the max limit, only disable unchecked emails.
-        if (selectedCount >= maxBulkMailCount) {
-        // disable unchecked emails.
-          return !email.checked; 
+        if (selectedCount >= maxBulkMailCount && !email.checked) {
+            // Disable unchecked emails.
+            return true;
         } else {
-          return false; // Here enabling all emails if the selected count is below the limit
+            return false; // Enable all emails if the selected count is below the limit or the email is already checked.
         }
-    }  
+    };
     /**
      * To show internet headers
      * @param {String} headers
