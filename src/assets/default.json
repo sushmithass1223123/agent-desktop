@@ -2110,7 +2110,7 @@
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxBulkMailCount":11
+                                                    "MaxBulkMailCount":10
                                                 }
                                             },
                                             {
