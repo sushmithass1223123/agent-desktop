@@ -2471,7 +2471,7 @@
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
                                                     "MaxSearchRange": 30,
-                                                    "MaxBulkMailCount":10
+                                                    "MaxBulkMailCount":11
                                                 }
                                             },
                                             {
