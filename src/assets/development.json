@@ -2726,7 +2726,7 @@
             "DesktopAlerts": true,
             "DesktopAlertTimeout": 5000,
             "AppAlertTimeout": 5000,
-            "AppAlertOnConnectivityStatus": true
+            "AppAlertOnConnectivityStatus": false
         },
         "CheckForResolution": true,
         "AV": {

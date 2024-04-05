@@ -697,7 +697,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         else 
         { 
             // case where the user cancels the status change
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents. changeStatuscancelled'));
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'));
         }
     }
 }
