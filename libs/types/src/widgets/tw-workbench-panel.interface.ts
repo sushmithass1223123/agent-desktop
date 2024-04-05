@@ -63,8 +63,7 @@ export type TwEmailWorkbenchConfig = {
     /**
      * Max limit of search range in days
      */
-     MaxSearchRange: number;
-
+    MaxSearchRange: number;
 };
 
 /**
@@ -92,6 +91,20 @@ export type TwChatWorkbenchConfig = {
      * Flag to check if the user is allowed to push an item from workbench queue
      */
     PushAllowed?: boolean;
+};
+
+/**
+ * Available tabs of the email workbench
+ */
+export type TwSmpWorkbenchTabs = 'queue' | 'inbox' | 'sent' | 'drafts' | 'posts';
+
+export type TwSmpWorkbenchConfig = {
+    /**
+     * Tabs to be configured to show on workbench
+     * @type {TwSmpWorkbenchTabs[]} Array of tab items
+     * @default []
+     */
+    Tabs: TwSmpWorkbenchTabs[];
 };
 
 /**

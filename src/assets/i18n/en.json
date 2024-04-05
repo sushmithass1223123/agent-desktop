@@ -944,6 +944,16 @@
             "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
             "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute"
         },
+        "socialMediaPosts": {
+            "queueLabel": "Queue",
+            "inboxLabel": "Inbox",
+            "sentLabel": "Sent",
+            "draftsLabel": "Drafts",
+            "postsLabel": "Posts",
+            "searchPlaceholder": "Search posts here...",
+            "pull": "Pull",
+            "transfer": "Transfer"
+        },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
             "departmentsNotFound": "No Departments Found",

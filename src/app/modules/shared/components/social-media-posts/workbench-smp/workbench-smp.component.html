@@ -1,0 +1,183 @@
+<ng-container *ngIf="{
+    anchor: (customFuse.anchor$ | async),
+    widget: (customFuse.widget$ | async)
+} as customFuse">
+
+    <ng-container *ngIf="{
+        search: {
+            global: {
+                empty: !globalSearch.form.value,
+                edited: globalSearch.form.value
+            }
+        }
+    } as state">
+        <div *transloco="let locale" #smpWorkbench
+            class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
+            [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+
+            <!-- Tab side bar container -->
+            <div *ngIf="!noTabsAvailable" class="twd-ml-2 lg:twd-mx-2 border-radius-20 h-100-p">
+                <div class="h-100-p py-20 twd-flex twd-flex-col twd-justify-between">
+                    <div class="tab-menu twd-flex twd-flex-col twd-gap-4">
+                        <ng-container *ngFor="let tab of availableTabs">
+                            <button class="twd-mb-3 pb-20" mat-button *ngIf="tab.enabled" [matTooltip]="tab.label"
+                                (click)="switchTab(tab.key)" matTooltipPosition="right"
+                                [ngClass]="{ 'mat-raised-button': currentTab === tab.key }"
+                                [color]="currentTab === tab.key && 'accent'">
+                                <mat-icon>{{ tab.icon }}</mat-icon>
+                                <div>{{ tab.label }}</div>
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+
+            <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
+                <!-- Side body -->
+                <div class="theme-bg border-radius-20 twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
+                    [ngClass]="{
+                    'twd-justify-center': noTabsAvailable
+                }">
+                    <ng-container *ngIf="!noTabsAvailable">
+                        <!-- Posts modifiers container -->
+                        <div class="theme-bg twd-top-0 twd-left-0 twd-z-10 twd-py-2 twd-px-1.5 twd-shadow-md">
+                            <div
+                                class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
+                                <!-- Global search form -->
+                                <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1">
+                                    <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
+                                        <!-- Search bar -->
+                                        <input class="login-input" matInput
+                                            [placeholder]="locale('sharedComponents.socialMediaPosts.searchPlaceholder')"
+                                            [formControl]="globalSearch.form" />
+                                        <button *ngIf="state.search.global.empty" mat-icon-button matSuffix disabled
+                                            type="button">
+                                            <mat-icon matSuffix>search</mat-icon>
+                                        </button>
+                                        <button *ngIf="state.search.global.edited" mat-button color="primary" matSuffix
+                                            mat-icon-button aria-label="Go"
+                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }">
+                                            <mat-icon>east</mat-icon>
+                                        </button>
+                                        <button *ngIf="!state.search.global.empty && !state.search.global.edited"
+                                            type="button" mat-button color="accent" matSuffix mat-icon-button
+                                            aria-label="Clear"
+                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }">
+                                            <mat-icon>close</mat-icon>
+                                        </button>
+                                    </mat-form-field>
+                                </form>
+
+                                <!-- Refresh workbench -->
+                                <button mat-icon-button (click)="doSmpDataRefresh()"
+                                    [ngClass]="{ 'twd-animate-spin': polling.active }" [disabled]="polling.active"
+                                    [matTooltip]="locale('widgets.workbench.refresh')">
+                                    <mat-icon>refresh</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Side body mini tabs container -->
+                        <div class="twd-flex-1 twd-relative">
+                            <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
+                                <div class="posts-list twd-w-full">
+                                    <div class="twd-w-full twd-rounded-3xl ng-tns-c543-38 red-200 dropdowns expanded"
+                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                        <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
+                                            <div class="sc-flex">
+                                                <mat-icon
+                                                    style="transform: rotate(0deg);">arrow_drop_down_circle</mat-icon>
+                                                <img class="sc-icon" src="assets/images/vectors/facebook.svg"
+                                                    alt="Facebook Icon">
+                                                <p>Facebook</p>
+                                            </div>
+                                            <p>(28)</p>
+                                        </div>
+                                        <!-- Level 1 dropdown -->
+                                        <div class="dropdown-l1 twd-w-full twd-pl-5 expanded">
+                                            <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
+                                                <div class="sc-flex">
+                                                    <mat-icon
+                                                        style="transform: rotate(0deg);">arrow_drop_down_circle</mat-icon>
+                                                    <p>42001</p>
+                                                </div>
+                                                <p>(20)</p>
+                                            </div>
+                                            <!-- Level 2 dropdown -->
+                                            <div class="post-list-flex twd-w-full twd-pl-5">
+                                                <div mat-ripple
+                                                    class="post-list mat-elevation-z1 theme-bg twd-w-full twd-relative twd-rounded-3xl twd-p-3">
+                                                    <h5 class="font-weight-700">Yashwanthkumar Arivazhagan</h5>
+                                                    <p class="font-weight-500">Lorem ipsum, dolor sit amet consectetur
+                                                        adipisicing elit.
+                                                        Impedit, aut. Iusto provident distinctio, facilis id aperiam
+                                                        nobis debitis fugiat possimus velit incidunt nemo explicabo eius
+                                                        illum vitae laudantium laborum. Sed.</p>
+                                                    <div class="date-time-flex twd-absolute twd-pr-3 twd-pt-3">
+                                                        <h5 class="font-weight-700">12th March 2024</h5>
+                                                        <p class="font-weight-500">12:00 PM</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-l1 twd-w-full twd-pl-5">
+                                            <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
+                                                <div class="sc-flex">
+                                                    <mat-icon>arrow_drop_down_circle</mat-icon>
+                                                    <p>42002</p>
+                                                </div>
+                                                <p>(8)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="twd-w-full twd-rounded-3xl red-200 dropdowns"
+                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                        <div class="twd-w-full dropdown-header twd-pl-2 twd-pr-2">
+                                            <div class="sc-flex">
+                                                <mat-icon>arrow_drop_down_circle</mat-icon>
+                                                <img class="sc-icon" src="assets/images/vectors/instagram.svg"
+                                                    alt="Instagram Icon">
+                                                <p>Instagram</p>
+                                            </div>
+                                            <p>(7)</p>
+                                        </div>
+                                    </div>
+                                    <div class="twd-w-full twd-rounded-3xl red-200 dropdowns"
+                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                        <div class="twd-w-full dropdown-header twd-pl-2 twd-pr-2">
+                                            <div class="sc-flex">
+                                                <mat-icon>arrow_drop_down_circle</mat-icon>
+                                                <img class="sc-icon" src="assets/images/vectors/x.svg"
+                                                    alt="Facebook Icon">
+                                                <p>Twitter (X)</p>
+                                            </div>
+                                            <p>(9)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Actual body -->
+                <div class="wsmp-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto twd-p-3"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                    <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
+                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
+                            {{ locale('sharedComponents.socialMediaPosts.transfer') }}
+                        </button>
+                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
+                            {{ locale('sharedComponents.socialMediaPosts.pull') }}
+                        </button>
+                    </div>
+                    <div
+                        class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
+                        <smp-template></smp-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+</ng-container>

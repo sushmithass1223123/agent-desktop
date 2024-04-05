@@ -2483,6 +2483,20 @@
                                                     "PushAllowed": true,
                                                     "SearchPollingInterval": 5000
                                                 }
+                                            },
+                                            {
+                                                "Type": "Social Media",
+                                                "Enabled": true,
+                                                "Icon": "video_label",
+                                                "Config": {
+                                                    "Tabs": [
+                                                        "queue",
+                                                        "inbox",
+                                                        "sent",
+                                                        "drafts",
+                                                        "posts"
+                                                    ]
+                                                }
                                             }
                                         ]
                                     }

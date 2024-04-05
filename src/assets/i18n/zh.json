@@ -515,6 +515,16 @@
             "sentLabel": "发送",
             "draftsLabel": "草稿"
         },
+        "socialMediaPosts": {
+            "queueLabel": "Queue",
+            "inboxLabel": "Inbox",
+            "sentLabel": "Sent",
+            "draftsLabel": "Drafts",
+            "postsLabel": "Posts",
+            "searchPlaceholder": "Search posts here...",
+            "pull": "Pull",
+            "transfer": "Transfer"
+        },
         "textTemplates": {
             "departments": "部门",
             "groups": "团体",

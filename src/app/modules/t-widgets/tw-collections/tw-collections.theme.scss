@@ -318,7 +318,7 @@
             }
         }
 
-        workbench-email {
+        workbench-email, workbench-smp {
             .theme-bg {
                 @if ($is-dark==true) {
                     color: #fafafa;
