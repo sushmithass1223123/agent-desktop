@@ -1790,28 +1790,25 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         return checks;
     };
 
-    /**
-     * Selects emails for folders
-     * @param {boolean} checked state of the checkbox
-     * @param {Mail[]} emails if this isnt passed, all the emails across all folders are used for this check
-     */
+    
+   /**
+    * Selects emails for folders
+    * @param {boolean} checked State of the checkbox
+    * @param {Mail[]} emails If this isn't passed, all the emails across all folders are used for this check
+    */
     selectEmails = (checked: boolean, emails?: Mail[]) => {
+        const maxBulkSelection = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxBulkMailCount ?? 10;
         const mails = emails ?? this.getAllEmailNodes();
+    
+    // Checking here  if the number of selected emails exceeds the maximum bulk selection limit
+        if (checked && mails.length > maxBulkSelection) {
+        // warning message to the user
+        this.appUiService.showSnackbar('Maximum 10 bulk selections allowed.');
+        return; // Return without changing the checked status
+        }
+
         for (const n of mails) {
             n.checked = checked;
-        }
-    };
-    isCheckboxDisabled(email: any) {
-        const maxBulkMailCount = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxBulkMailCount ?? 10;
-        const selectedEmails = this.getAllEmailNodes().filter((email: any) => email.checked);
-        const selectedCount = selectedEmails.length;
-      
-        // If the selected count is greater than to  the max limit, only disable unchecked emails.
-        if (selectedCount > maxBulkMailCount && !email.checked) {
-            // Disable unchecked emails.
-            return true;
-        } else {
-            return false; // Enable all emails if the selected count is below the limit or the email is already checked.
         }
     };
     /**
