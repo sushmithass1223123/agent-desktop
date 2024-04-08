@@ -40,68 +40,86 @@ tw-smp-controls .mat-card-content {
             border: 2px solid var(--twd-primary-default);
         }
     }
+}
+
+.interaction-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba($color: #000000, $alpha: 0.35);
+    align-items: center;
+    justify-content: center;
+    z-index: 9;
+    padding: 5vh 0;
 
     .interaction-main {
-        height: 100%;
-        align-items: flex-start;
+        min-width: 550px;
+        width: 50vw;
+    }
+}
+
+.interaction-main {
+    height: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .social-info-action {
+        align-items: center;
         justify-content: space-between;
 
-        .social-info-action {
-            align-items: center;
-            justify-content: space-between;
-
-            .s-info {
-                align-items: center;
-                justify-content: flex-start;
-                gap: 10px;
-
-                img {
-                    height: 40px;
-                }
-
-                h5 {
-                    font-size: 17px;
-                }
-            }
-
-            .s-actions {
-                align-items: center;
-                justify-content: flex-start;
-                gap: 10px;
-
-                mat-icon {
-                    width: 20px;
-                    height: 20px;
-                    opacity: 0.35;
-                    cursor: pointer;
-                }
-            }
-        }
-
-        smp-template {
-            width: 100%;
-            height: 100%;
-            padding-bottom: 10px;
-            max-height: 100%;
-            overflow: hidden;
-
-            .smp-template {
-                padding-left: 0px !important;
-                padding-right: 0px !important;
-            }
-        }
-
-        .load-more {
+        .s-info {
             align-items: center;
             justify-content: flex-start;
             gap: 10px;
-            cursor: pointer;
 
-            p {
-                font-size: 13px;
-                opacity: 0.75;
+            img {
+                height: 40px;
+            }
+
+            h5 {
+                font-size: 17px;
+            }
+        }
+
+        .s-actions {
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+
+            mat-icon {
+                width: 20px;
+                height: 20px;
+                opacity: 0.35;
+                cursor: pointer;
             }
         }
     }
 
+    smp-template {
+        width: 100%;
+        height: 100%;
+        padding-bottom: 10px;
+        max-height: 100%;
+        overflow: hidden;
+
+        .smp-template {
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+            height: 50vh;
+        }
+    }
+
+    .load-more {
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        cursor: pointer;
+
+        p {
+            font-size: 13px;
+            opacity: 0.75;
+        }
+    }
 }

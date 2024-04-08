@@ -25,8 +25,11 @@ export class SmpTemplateComponent {
      * Fuse custom config
      */
     customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => true)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(
+            filter(() => true)
+        ),
+        widget$: this._fuseFacadeService.widgetBgClasses$,
+        config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
     };
     /**
      * Commments array

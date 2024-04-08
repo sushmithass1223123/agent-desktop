@@ -1,6 +1,7 @@
 <ng-container *ngIf="{
     anchor: (customFuse.anchor$ | async),
-    widget: (customFuse.widget$ | async)
+    widget: (customFuse.widget$ | async),
+    config: (customFuse.config$ | async)
 } as customFuse">
 
     <div class="smp-template twd-w-full wd-h-full theme-bg twd-p-4 twd-relative">
@@ -59,9 +60,9 @@
                     <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
                         [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
                         <div class="image-container twd-relative">
-                            <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
+                            <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
                             <div style="--vertBranchLength: {{ getVertbranchLength(prevComment, comment.cid) }}"
-                                class="vert-branch twd-absolute"></div>
+                                class="vert-branch twd-absolute"></div> -->
                             <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
                         </div>
                         <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative"
@@ -85,7 +86,7 @@
 
             <!-- Active list -->
             <ng-container *ngFor="let comment of commentsToBeRendered;">
-                <ng-container>
+                <ng-container *ngIf="!hideStructureActions || (hideStructureActions && comment.active)">
                     <ng-container
                         *ngIf="comment.active && checkCommentStructure('prevrep', comment?.parents) && !commentStructureModifyer.previousRepliesLoaded && !hideStructureActions">
                         <div class="comment-utility cu-lp" role="button"
@@ -96,17 +97,22 @@
                     </ng-container>
 
                     <div [id]="comment.cid" class="comment-flex twd-w-full"
-                        [ngStyle]="{'paddingLeft': comment?.parents?.length ? ((commentMode !== 'initial' ? comment?.parents?.length : 1) * 40 + 'px') : '0'}">
+                        [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length : 1) * 40 + 'px') : '0'}">
                         <div class="image-container twd-relative">
-                            <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
-                            <div *ngIf="(commentMode === 'initial' && !comment.active) || currentMode !== 'initial'"
+                            <!-- <div *ngIf="comment?.parents?.length && !hideStructureActions"
+                                class="side-branch twd-absolute"></div>
+                            <div *ngIf="!hideStructureActions && ((commentMode === 'initial' && !comment.active) || currentMode !== 'initial')"
                                 style="--vertBranchLength: {{ getVertbranchLength(commentsToBeRendered, comment.cid) }}"
-                                class="vert-branch twd-absolute"></div>
+                                class="vert-branch twd-absolute"></div> -->
                             <img src="assets/images/vectors/x.svg" alt="Commenter image">
                         </div>
                         <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative {{comment.active ? 'active-comment' : ''}}"
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                             <p class="duration font-weight-500 twd-absolute">14h</p>
+                            <div class="active-comment-actions twd-flex twd-absolute" *ngIf="comment?.active">
+                                <p class="font-weight-500">Like</p>
+                                <p class="font-weight-500">Reply</p>
+                            </div>
                             <div class="comment-info-flex">
                                 <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
                                 <p class="font-weight-500">{{comment.comment}}</p>
@@ -116,7 +122,7 @@
 
                     <ng-container *ngIf="comment?.active">
                         <div class="reply-area twd-relative"
-                            [ngStyle]="{'paddingLeft': comment?.parents?.length ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
+                            [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
                             <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2">
                                 <textarea name="reply" id="reply" placeholder="Enter your reply here..."></textarea>
                                 <div class="reply-actions twd-w-full twd-flex">
@@ -149,9 +155,9 @@
                     <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
                         [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
                         <div class="image-container twd-relative">
-                            <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
+                            <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
                             <div style="--vertBranchLength: {{ getVertbranchLength(nextComment, comment.cid) }}"
-                                class="vert-branch twd-absolute"></div>
+                                class="vert-branch twd-absolute"></div> -->
                             <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
                         </div>
                         <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative"

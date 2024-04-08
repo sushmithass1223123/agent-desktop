@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <smp-template [hideStructureActions]="true"></smp-template>
-                <div class="load-more twd-flex">
+                <div class="load-more twd-flex" role="button" (click)="toggleInteractionPopup()">
                     <p>Load more</p>
                     <mat-icon>arrow_drop_down</mat-icon>
                 </div>
@@ -47,4 +47,23 @@
 
         </div>
     </tw-wrapper>
+
+    <div class="interaction-popup twd-flex" *ngIf="popupInteraction">
+        <div class="interaction-main twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
+            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+            <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
+                <div class="s-info twd-flex">
+                    <img src="assets/images/vectors/facebook.svg" alt="">
+                    <h5 class="font-weight-700">Janet Archer</h5>
+                </div>
+                <div class="s-actions twd-flex">
+                    <mat-icon role="button">reply</mat-icon>
+                    <mat-icon role="button">save</mat-icon>
+                    <mat-icon role="button">send</mat-icon>
+                    <mat-icon (click)="toggleInteractionPopup()" role="button">close</mat-icon>
+                </div>
+            </div>
+            <smp-template></smp-template>
+        </div>
+    </div>
 </ng-container>
