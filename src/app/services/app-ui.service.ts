@@ -37,6 +37,10 @@ type UiChanActions = 'hold/select-chat';
 })
 export class AppUiService extends SharedWrapper {
     /**
+     * onlineStatus
+     */
+    private onlineStatus: BehaviorSubject<boolean>;
+    /**
      * Audio interval reference to repeat
      */
     private _audioInterval: any;
@@ -107,6 +111,18 @@ export class AppUiService extends SharedWrapper {
     ) {
         super('AppUiService');
         this.init();
+
+        // Initialize onlineStatus subject based on the current navigator status
+        this.onlineStatus = new BehaviorSubject<boolean>(navigator.onLine);
+    
+        // Add event listeners for online and offline events
+        window.addEventListener('online', () => {
+          this.onlineStatus.next(true);
+        });
+    
+        window.addEventListener('offline', () => {
+          this.onlineStatus.next(false);
+        });
     }
 
     /**
@@ -116,6 +132,10 @@ export class AppUiService extends SharedWrapper {
         this.uiChannel$ = new Subject();
     }
 
+    // Expose Observable for online/offline status
+    getOnlineStatus(): Observable<boolean> {
+    return this.onlineStatus.asObservable();
+    }
     // -----------------------------------------------------------------------------------------------------
     // Snackbar methods
     // -----------------------------------------------------------------------------------------------------

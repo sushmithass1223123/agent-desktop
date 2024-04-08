@@ -2390,7 +2390,7 @@
                 "protocol": "webSockets",
                 "timeout": 10,
                 "fallback": true,
-                "useDotNet6Wrapper": true
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,
