@@ -13,7 +13,7 @@ import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { addSeconds, isAfter } from 'date-fns';
 import { groupBy, sortBy, uniqBy } from 'lodash';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { InstantMessagingService } from './instant-messaging.service';
 
@@ -76,6 +76,8 @@ interface Chat {
     animations: appAnimations
 })
 export class InstantMessagingComponent extends SharedWrapper implements OnInit, OnDestroy {
+    isAgentOnline: boolean = true;
+    onlineStatusSubscription: Subscription;
     /**
      * contact List
      */
@@ -188,7 +190,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         private _dashboardService: DashboardService,
         private _instantMessagingService: InstantMessagingService,
         private _aotWidgetService: AOTWidgetService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
     ) {
         super('InstantMessagingComponent');
         // Set the defaults
@@ -210,6 +212,10 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * On init
      */
     ngOnInit(): void {
+        // Subscribe to online/offline status
+        this.onlineStatusSubscription = this._appUIService.getOnlineStatus().subscribe((isOnline: boolean) => {
+        this.isAgentOnline = isOnline;
+      });
         this.user = SDKClient.getAgentData();
 
         // Subscribe to the foldedChanged observable
@@ -288,6 +294,8 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * On destroy
      */
     ngOnDestroy(): void {
+        // Unsubscribe from the online/offline status subscription
+        this.onlineStatusSubscription.unsubscribe();
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
@@ -446,6 +454,11 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      */
     async reply(event): Promise<void> {
         event.preventDefault();
+        // Check if the agent is online before allowing message sending
+        if (!this.isAgentOnline) {
+            return;
+        }
+
         if (this._replyForm.form.value.message.trim() == '') {
             return;
         }
