@@ -1,0 +1,22 @@
+<tw-wrapper [data]="data">
+    <div fxFlex fxFill fxLayout="column" class="tw-static-panel">
+        <ng-container *ngFor="let widget of widgets">
+            <tw-smp-controls [data]="widget" *ngIf="widget.Type === 'tw-smp-controls'" [class]="widget.Type" [ngClass]="{
+                    maximized: maximized[widget.Type],
+                    collapsed: collapsed[widget.Type],
+                    floating: floating[widget.Type]
+                }" (maximizeEvent)="maximized[widget.Type] = $event" (collapseEvent)="collapsed[widget.Type] = $event"
+                (floatEvent)="floating[widget.Type] = $event">
+            </tw-smp-controls>
+
+            <tw-customer-details [data]="widget" *ngIf="widget.Type === 'tw-customer-details'" [class]="widget.Type"
+                [ngClass]="{
+                maximized: maximized[widget.Type],
+                collapsed: collapsed[widget.Type],
+                floating: floating[widget.Type]
+            }" (maximizeEvent)="maximized[widget.Type] = $event" (collapseEvent)="collapsed[widget.Type] = $event"
+                (floatEvent)="floating[widget.Type] = $event">
+            </tw-customer-details>
+        </ng-container>
+    </div>
+</tw-wrapper>

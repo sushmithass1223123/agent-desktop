@@ -169,5 +169,56 @@
                 background: var(--twd-primary-50) !important;
             }
         }
+
+        .reply-area {
+            width: 100%;
+            max-width: 40vw;
+            height: 100px;
+            min-height: 100px;
+
+            .reply-box {
+                border: 2px solid var(--twd-primary-default);
+                width: 100%;
+                height: 100%;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 5px;
+
+                textarea {
+                    width: 100%;
+                    height: calc(100% - 30px);
+                    border: none;
+                    outline: none;
+                    font-family: inherit;
+                    font-size: 14px;
+                    font-weight: 500;
+                    background: transparent;
+                    resize: none;
+
+                    &::placeholder {
+                        font-family: inherit;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                }
+
+                .reply-actions{
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .r-actions{
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: 5px;
+                    }
+                    mat-icon{
+                        width: 20px;
+                        height: 20px;
+                        cursor: pointer;
+                        opacity: 0.35;
+                    }
+                }
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@
     <div class="smp-template twd-w-full wd-h-full theme-bg twd-p-4 twd-relative">
         <div class="smp-post-info-container twd-flex twd-w-full">
             <div class="poster-info-flex twd-flex">
-                <img src="assets/images/vectors/facebook.svg" alt="Poster profile picture">
+                <img src="assets/images/vectors/x.svg" alt="Poster profile picture">
                 <div class="poster-identity-flex twd-flex twd-flex-col">
                     <h5 class="font-weight-700">Yashwanthkumar Arivazhagan . <span>1hr . Edited</span></h5>
                     <h5 class="font-weight-600" [ngStyle]="{'color': 'var(--twd-primary-300)'}">Tetherfi Technologies
@@ -46,7 +46,7 @@
 
         <div class="smp-post-comment-container twd-w-full">
             <!-- Prev comment loader -->
-            <ng-container *ngIf="checkCommentStructure('prevcmt', undefined)">
+            <ng-container *ngIf="checkCommentStructure('prevcmt', undefined) && !hideStructureActions">
                 <div style="padding-left: 0;" class="comment-utility" role="button" (click)="this.loadHistory('prev')">
                     <mat-icon style="transform: rotate(-127deg);">redo</mat-icon>
                     <p class="font-weight-600">Load previous comments</p>
@@ -75,7 +75,7 @@
                     </div>
                 </ng-container>
                 <!-- Prev comment prev reply loader -->
-                <ng-container *ngIf="checkCommentStructure('prevcmtprevrep', [i])">
+                <ng-container *ngIf="checkCommentStructure('prevcmtprevrep', [i]) && !hideStructureActions">
                     <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('prev', i)">
                         <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
                         <p class="font-weight-600">Load all {{getReplyCount(prevComment)}} replies</p>
@@ -87,7 +87,7 @@
             <ng-container *ngFor="let comment of commentsToBeRendered;">
                 <ng-container>
                     <ng-container
-                        *ngIf="comment.active && checkCommentStructure('prevrep', comment?.parents) && !commentStructureModifyer.previousRepliesLoaded">
+                        *ngIf="comment.active && checkCommentStructure('prevrep', comment?.parents) && !commentStructureModifyer.previousRepliesLoaded && !hideStructureActions">
                         <div class="comment-utility cu-lp" role="button"
                             (click)="this.commentStructureModifyer.previousRepliesLoaded = true; this.setRenderedComments();">
                             <mat-icon style="transform: rotate(-127deg);">redo</mat-icon>
@@ -114,8 +114,26 @@
                         </div>
                     </div>
 
+                    <ng-container *ngIf="comment?.active">
+                        <div class="reply-area twd-relative"
+                            [ngStyle]="{'paddingLeft': comment?.parents?.length ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
+                            <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2">
+                                <textarea name="reply" id="reply" placeholder="Enter your reply here..."></textarea>
+                                <div class="reply-actions twd-w-full twd-flex">
+                                    <div class="r-actions twd-flex">
+                                        <mat-icon role="button">tag_faces</mat-icon>
+                                        <mat-icon role="button">gif</mat-icon>
+                                        <mat-icon role="button">camera_alt</mat-icon>
+                                        <mat-icon role="button">file_copy</mat-icon>
+                                    </div>
+                                    <mat-icon role="button">send</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
                     <ng-container
-                        *ngIf="comment.active && checkCommentStructure('nextrep', comment?.parents) && !commentStructureModifyer.nextRepliesLoaded">
+                        *ngIf="comment.active && checkCommentStructure('nextrep', comment?.parents) && !commentStructureModifyer.nextRepliesLoaded && !hideStructureActions">
                         <div class="comment-utility" role="button"
                             (click)="this.commentStructureModifyer.nextRepliesLoaded = true; this.setRenderedComments();">
                             <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
@@ -147,7 +165,7 @@
                     </div>
                 </ng-container>
                 <!-- Prev comment prev reply loader -->
-                <ng-container *ngIf="checkCommentStructure('nextcmtprevrep', [i])">
+                <ng-container *ngIf="checkCommentStructure('nextcmtprevrep', [i]) && !hideStructureActions">
                     <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('next', i)">
                         <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
                         <p class="font-weight-600">Load all {{getReplyCount(nextComment)}} replies</p>
@@ -156,7 +174,7 @@
             </ng-container>
 
             <!-- Next comment loader -->
-            <ng-container *ngIf="checkCommentStructure('nextcmt', undefined)">
+            <ng-container *ngIf="checkCommentStructure('nextcmt', undefined) && !hideStructureActions">
                 <div style="padding-left: 0;" class="comment-utility" role="button" (click)="this.loadHistory('next')">
                     <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
                     <p class="font-weight-600">Load next comments</p>

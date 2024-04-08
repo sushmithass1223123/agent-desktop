@@ -123,6 +123,9 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             case 'email':
                 eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent'];
                 break;
+            case 'smp':
+                this.createWidgetList({}, 'incoming', '3', false, {});
+                break;
             case 'fax':
                 eventNames = ['FaxReceivedEvent'];
                 break;

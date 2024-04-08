@@ -1,0 +1,24 @@
+{
+    "Name": "Social Media Posts",
+    "Description": "",
+    "Type": "tw-smp-controls",
+    "Config": {
+        "Enabled": true,
+        "Hidden": false,
+        "Static": false,
+        "Anchor": true,
+        "AOT": false,
+        "AutoOpen": false,
+        "Icon": "video_label",
+        "Class": "",
+        "Position": {
+            "X": 2,
+            "Y": 1
+        },
+        "Actions": ["maximize", "collapse", "float"],
+        "ViewState": "restore",
+        "Header": true,
+        "Pinned": false
+    },
+    "Data": {}
+}

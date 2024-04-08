@@ -1,5 +1,5 @@
 import { filter, first } from 'rxjs/operators';
-import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 
 interface Comment {
@@ -19,6 +19,7 @@ interface Comment {
     encapsulation: ViewEncapsulation.None
 })
 export class SmpTemplateComponent {
+    @Input() hideStructureActions: boolean = false;
     commentMode: string = 'initial';
     /**
      * Fuse custom config
@@ -169,7 +170,7 @@ export class SmpTemplateComponent {
 
         repliesForCid.forEach((comment: Comment, i: number) => {
             if (document.getElementById(comment.cid.toString())) {
-                height += document.getElementById(comment.cid.toString()).clientHeight + 20;
+                height += document.getElementById(comment.cid.toString()).clientHeight + (this.hideStructureActions ? -5 : 20);
                 if (
                     i == repliesForCid.length - 1 &&
                     this.commentMode !== 'initial' &&
@@ -177,6 +178,10 @@ export class SmpTemplateComponent {
                 ) {
                     height -= document.getElementById(comment.cid.toString()).clientHeight / 2 - 9;
                 }
+            }
+
+            if(comment.active) {
+                height+=190;
             }
         });
 
