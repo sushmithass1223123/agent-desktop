@@ -305,6 +305,7 @@
             "logoutNotAllowed": "Logout is not allowed, ",
             "isOnCall": "  is on call",
             "logoutLoadingMessage": "Please wait, Logging out the user..",
+            "logoutFail": "logout failed due to network issues. Please try again later",
             "logoutSuccess": "Logged out successfully",
             "logoutFailed": "Logout failed, please try again",
             "loadingChangeStatus": "Please wait, changing status...",
