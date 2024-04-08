@@ -445,8 +445,8 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
 
         // Set the chat as null
         this.chat = null;
-        // Set the allNewChats as null
-        this.allNewChats = null;
+         // Reset the allNewChats to an empty object
+        this.allNewChats = {};
     }
 
     /**
