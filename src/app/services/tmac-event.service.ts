@@ -693,11 +693,32 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             this._sharedService.triggerChangeStatus(jsonData.auxData);
             // Show notification after status change
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'));
-        } 
-        else 
-        { 
+            
+            // Send success message back to the agent screen
+            SDKClient.sendNotification({
+                agentIds: [jsonData.requestedBy.agentId], 
+                informAllTmac: false,
+                message: this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'),
+                supervisorId: '', 
+                teamId: '', 
+                type: 'notify',
+                tmacServer: jsonData.requestedBy.tmacserver
+            });
+            } 
+            else 
+            {
             // case where the user cancels the status change
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'));
+            // Send cancellation message back to the agent screen
+            SDKClient.sendNotification({
+                agentIds: [jsonData.requestedBy.agentId], 
+                informAllTmac: false,
+                message: this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'),
+                supervisorId: '', 
+                teamId: '', 
+                type: 'notify',
+                tmacServer: jsonData.requestedBy.tmacserver
+        });
         }
     }
 }
