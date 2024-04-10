@@ -163,6 +163,45 @@
         }
     }
 
+    tw-smp-controls {
+        .avatar-box {
+            background-color: map-get($background, app-bar) !important;
+        }
+        
+        .sm-im-content {
+            @if ($is-dark==true) {
+                background-color: map-get($background, hover) !important;
+            }
+        }
+
+        .interaction-popup .interaction-main {
+            background-color: #494949 !important;
+        }
+    }
+
+    smp-template {
+        .comment-box {
+            @if ($is-dark==true) {
+                background-color: map-get($background, card) !important;
+            }
+
+            @else {
+                color: rgba(0, 0, 0, 0.87) !important;
+                background-color: #efefef !important;
+            }
+        }
+        .reply-box {
+            @if ($is-dark==true) {
+                background-color: map-get($background, card) !important;
+            }
+
+            @else {
+                color: rgba(0, 0, 0, 0.87) !important;
+                background-color: #efefef !important;
+            }
+        }
+    }
+
     tw-su-active-agents {
         mat-form-field {
             .mat-form-field-wrapper {

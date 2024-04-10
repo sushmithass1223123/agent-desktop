@@ -71,7 +71,7 @@
                                     class="vert-branch twd-absolute"></div> -->
                                 <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
                             </div>
-                            <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative"
+                            <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                                 <p class="duration font-weight-500 twd-absolute">14h</p>
                                 <div class="comment-info-flex">
@@ -113,7 +113,7 @@
                                 class="vert-branch twd-absolute"></div> -->
                             <img src="assets/images/vectors/x.svg" alt="Commenter image">
                         </div>
-                        <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative {{comment.active ? 'active-comment' : ''}}"
+                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{comment.active ? 'active-comment' : ''}}"
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                             <p class="duration font-weight-500 twd-absolute">14h</p>
                             <div class="active-comment-actions twd-flex twd-absolute" *ngIf="comment?.active">
@@ -130,7 +130,7 @@
                     <ng-container *ngIf="comment?.active">
                         <div class="reply-area twd-relative"
                             [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
-                            <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2">
+                            <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
                                 <textarea name="reply" id="reply" placeholder="Enter your reply here..."></textarea>
                                 <div class="reply-actions twd-w-full twd-flex">
                                     <div class="r-actions twd-flex">
@@ -168,7 +168,7 @@
                                 class="vert-branch twd-absolute"></div> -->
                             <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
                         </div>
-                        <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative"
+                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative"
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                             <p class="duration font-weight-500 twd-absolute">14h</p>
                             <div class="comment-info-flex">
