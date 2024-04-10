@@ -138,6 +138,7 @@
             ]
         },
         "Navbar": {
+            "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
                     {
@@ -1413,7 +1414,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "facebook",  "twitter"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "facebook", "twitter"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,

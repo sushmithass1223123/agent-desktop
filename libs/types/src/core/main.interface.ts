@@ -51,6 +51,10 @@ export type Toolbar = {
  */
 export type Navbar = {
     /**
+     * Flag to hold active interactions on switching between tabs
+     */
+    HoldInteractionOnTabChange: boolean;
+    /**
      * Top and Bottom navbar widgets list
      */
     Widgets: TopBottomWidgets;

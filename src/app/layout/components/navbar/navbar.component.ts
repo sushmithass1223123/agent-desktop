@@ -72,7 +72,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * Opened widget IDs 
      */
     widgetIDs: any[];
-
+    /**
+     * Flag to hold active interactions on switching between tabs
+     */
+    holdInteractionOnTabChange: boolean;
 
     /**
      * Unsubscribe All subject
@@ -122,6 +125,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 this.topWidgets = sidebarWidgets.Top || [];
                 // get the bottom widgets
                 this.bottomWidgets = sidebarWidgets.Bottom || [];
+                // flag to hold interaction on tab switch
+                this.holdInteractionOnTabChange = config.Main.Navbar.HoldInteractionOnTabChange;
 
                 // set a flag to check if selected
                 let selected = false;
@@ -192,8 +197,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * @param {any} item
      */
     selectTab(item: any): void {
+        console.log(this.holdInteractionOnTabChange);
         //triggerHoldMethod added in order to invoke holdinteraction method in tw-chat-controls.component.
-        if (item.Name.toLowerCase() != 'textchat') {
+        if (item.Name.toLowerCase() != 'textchat' && this.holdInteractionOnTabChange) {
             this.sharedService.triggerHoldMethod();
         }
         if (item.Name.toLowerCase() != 'supervisor') {
