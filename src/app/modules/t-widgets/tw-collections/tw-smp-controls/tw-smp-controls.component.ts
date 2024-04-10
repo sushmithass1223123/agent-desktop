@@ -1,5 +1,5 @@
 import { TwSmpControls } from '@ad/types';
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -21,6 +21,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper {
      */
     @Input() data: TwSmpControls<SocialMediaPostIncomingEvent>;
     /**
+     * To emit maximize event on widget maximize
+     */
+    @Output() maximizeEvent = new EventEmitter();
+    /**
+     * To emit float event on widget maximize
+     */
+    @Output() floatEvent = new EventEmitter();
+    /**
      * Fuse custom config
      */
     customFuse = {
@@ -35,13 +43,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper {
      */
     popupInteraction: boolean = false;
 
-    widgetMode: {
-        isMaximized: boolean;
-        isFloating: boolean;
-    } = {
-        isMaximized: false,
-        isFloating: false
-    };
+    isMaximizedMode: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -62,6 +64,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper {
     }
 
     onMaximized(isMax: boolean): void {
-        this.widgetMode.isMaximized = isMax;
+        this.isMaximizedMode = isMax;
+        this.maximizeEvent.emit(isMax);
+    }
+
+    onFloated(isFloat: boolean): void {
+        this.isMaximizedMode = isFloat;
+        this.floatEvent.emit(isFloat)
     }
 }

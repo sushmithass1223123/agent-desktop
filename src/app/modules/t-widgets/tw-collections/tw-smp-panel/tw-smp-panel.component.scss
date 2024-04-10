@@ -1,0 +1,43 @@
+tw-smp-panel {
+    display: grid;
+
+    .tw-static-panel {
+        .tw-smp-controls,
+        .tw-customer-details {
+            transition: all 300ms ease-in-out;
+
+            &.maximized {
+                flex: 0;
+
+                &.collapsed {
+                    flex: 0;
+                }
+            }
+
+            &.collapsed {
+                flex: 0;
+            }
+
+            &.floating {
+                flex: 1;
+
+                &.collapsed {
+                    flex: inherit;
+                }
+            }
+        }
+
+        .tw-smp-controls {
+            flex: 1;
+            height: 75%;
+        }
+
+        .tw-customer-details {
+            height: 100%;
+        }
+
+        .tw-smp-controls {
+            flex: 2;
+        }
+    }
+}

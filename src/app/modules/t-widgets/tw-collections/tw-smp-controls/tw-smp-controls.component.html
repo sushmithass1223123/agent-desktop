@@ -4,7 +4,7 @@
         config: (customFuse.config$ | async)
     } as customFuse">
     <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)"
-        (floatEvent)="floatEvent.emit($event)" *transloco="let locale">
+        (floatEvent)="onFloated($event)" *transloco="let locale">
         <div class="smp-interaction-container twd-w-full twd-flex">
             <div class="interaction-avatar twd-flex twd-flex-col twd-pl-2">
                 <div class="avatar-box twd-rounded-3xl twd-relative twd-flex active"
@@ -38,9 +38,9 @@
                         <mat-icon role="button">close</mat-icon>
                     </div>
                 </div>
-                <smp-template [ngClass]="{ 'max-mode': widgetMode.isMaximized }"
-                    [hideStructureActions]="!widgetMode.isMaximized"></smp-template>
-                <div class="load-more twd-flex" *ngIf="!widgetMode.isMaximized" role="button"
+                <smp-template [ngClass]="{ 'max-mode': isMaximizedMode }"
+                    [hideStructureActions]="!isMaximizedMode"></smp-template>
+                <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
                     (click)="toggleInteractionPopup()">
                     <p>Load more</p>
                     <mat-icon>arrow_drop_down</mat-icon>
