@@ -59,7 +59,7 @@
             align-items: center;
             justify-content: space-between;
 
-            .reaction-palette {
+            .reaction-palette, .comment-util {
                 align-items: center;
                 justify-content: flex-start;
 
@@ -76,9 +76,18 @@
                 }
             }
 
-            .comments-count {
-                font-size: 12px;
+            .comment-util{
+                gap: 10px;
+
+                .active-scroller{
+                    cursor: pointer;
+                }
+                
+                .comments-count {
+                    font-size: 12px;
+                }
             }
+
         }
     }
 

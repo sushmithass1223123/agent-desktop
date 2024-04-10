@@ -39,9 +39,14 @@
                         23
                     </p>
                 </div>
-                <p class="comments-count twd-pl-2 font-weight-600" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                    Comments
-                    5</p>
+                <div class="comment-util twd-flex" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
+                    <p (click)="scrollToActiveComment()" role="button" *ngIf="!hideStructureActions"
+                        class="active-scroller twd-pl-2 font-weight-600">
+                        Active</p>
+                    <p class="comments-count twd-pl-2 font-weight-600">
+                        Comments
+                        5</p>
+                </div>
             </div>
         </div>
 
@@ -55,32 +60,34 @@
             </ng-container>
 
             <!-- Old comment history -->
-            <ng-container *ngFor="let prevComment of prevComments; let i = index">
-                <ng-container *ngFor="let comment of prevComment">
-                    <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
-                        [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
-                        <div class="image-container twd-relative">
-                            <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
-                            <div style="--vertBranchLength: {{ getVertbranchLength(prevComment, comment.cid) }}"
-                                class="vert-branch twd-absolute"></div> -->
-                            <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
-                        </div>
-                        <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                            <p class="duration font-weight-500 twd-absolute">14h</p>
-                            <div class="comment-info-flex">
-                                <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
-                                <p class="font-weight-500">{{comment.comment}}</p>
+            <ng-container *ngIf="!hideStructureActions">
+                <ng-container *ngFor="let prevComment of prevComments; let i = index">
+                    <ng-container *ngFor="let comment of prevComment">
+                        <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
+                            [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
+                            <div class="image-container twd-relative">
+                                <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
+                                <div style="--vertBranchLength: {{ getVertbranchLength(prevComment, comment.cid) }}"
+                                    class="vert-branch twd-absolute"></div> -->
+                                <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
+                            </div>
+                            <div class="comment-box twd-p-3 twd-rounded-3xl twd-relative"
+                                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                                <p class="duration font-weight-500 twd-absolute">14h</p>
+                                <div class="comment-info-flex">
+                                    <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
+                                    <p class="font-weight-500">{{comment.comment}}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </ng-container>
-                <!-- Prev comment prev reply loader -->
-                <ng-container *ngIf="checkCommentStructure('prevcmtprevrep', [i]) && !hideStructureActions">
-                    <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('prev', i)">
-                        <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
-                        <p class="font-weight-600">Load all {{getReplyCount(prevComment)}} replies</p>
-                    </div>
+                    </ng-container>
+                    <!-- Prev comment prev reply loader -->
+                    <ng-container *ngIf="checkCommentStructure('prevcmtprevrep', [i]) && !hideStructureActions">
+                        <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('prev', i)">
+                            <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
+                            <p class="font-weight-600">Load all {{getReplyCount(prevComment)}} replies</p>
+                        </div>
+                    </ng-container>
                 </ng-container>
             </ng-container>
 
@@ -150,6 +157,7 @@
             </ng-container>
 
             <!-- Next comment history -->
+            <ng-container *ngIf="!hideStructureActions"></ng-container>
             <ng-container *ngFor="let nextComment of nextComments; let i = index">
                 <ng-container *ngFor="let comment of nextComment">
                     <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"

@@ -25,9 +25,7 @@ export class SmpTemplateComponent {
      * Fuse custom config
      */
     customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(
-            filter(() => true)
-        ),
+        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => true)),
         widget$: this._fuseFacadeService.widgetBgClasses$,
         config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
     };
@@ -173,7 +171,9 @@ export class SmpTemplateComponent {
 
         repliesForCid.forEach((comment: Comment, i: number) => {
             if (document.getElementById(comment.cid.toString())) {
-                height += document.getElementById(comment.cid.toString()).clientHeight + (this.hideStructureActions ? -5 : 20);
+                height +=
+                    document.getElementById(comment.cid.toString()).clientHeight +
+                    (this.hideStructureActions ? -5 : 20);
                 if (
                     i == repliesForCid.length - 1 &&
                     this.commentMode !== 'initial' &&
@@ -183,8 +183,8 @@ export class SmpTemplateComponent {
                 }
             }
 
-            if(comment.active) {
-                height+=190;
+            if (comment.active) {
+                height += 190;
             }
         });
 
@@ -361,6 +361,19 @@ export class SmpTemplateComponent {
                 if (comment?.parents?.length) replyCount++;
             });
             return replyCount;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    scrollToActiveComment(): void {
+        try {
+            const activeCommentEl = document.querySelectorAll('.active-comment');
+            if(activeCommentEl?.length) {
+                activeCommentEl.forEach((el) => {
+                    el.scrollIntoView({ behavior: 'smooth'});
+                })
+            }
         } catch (error) {
             console.error(error);
         }

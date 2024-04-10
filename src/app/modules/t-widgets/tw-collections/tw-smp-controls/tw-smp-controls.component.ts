@@ -35,6 +35,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper {
      */
     popupInteraction: boolean = false;
 
+    widgetMode: {
+        isMaximized: boolean;
+        isFloating: boolean;
+    } = {
+        isMaximized: false,
+        isFloating: false
+    };
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private translocoService: TranslocoService
@@ -44,10 +52,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper {
 
     toggleInteractionPopup(): void {
         try {
-            document.querySelector('.navbar-fuse-sidebar').style.zIndex = this.popupInteraction ? 1000 : 8;
+            document.querySelector('.navbar-fuse-sidebar').style.zIndex = this.popupInteraction
+                ? 1000
+                : 8;
             this.popupInteraction = !this.popupInteraction;
         } catch (error) {
             console.error(error);
         }
+    }
+
+    onMaximized(isMax: boolean): void {
+        this.widgetMode.isMaximized = isMax;
     }
 }

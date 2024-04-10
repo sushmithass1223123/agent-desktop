@@ -38,8 +38,10 @@
                         <mat-icon role="button">close</mat-icon>
                     </div>
                 </div>
-                <smp-template [hideStructureActions]="true"></smp-template>
-                <div class="load-more twd-flex" role="button" (click)="toggleInteractionPopup()">
+                <smp-template [ngClass]="{ 'max-mode': widgetMode.isMaximized }"
+                    [hideStructureActions]="!widgetMode.isMaximized"></smp-template>
+                <div class="load-more twd-flex" *ngIf="!widgetMode.isMaximized" role="button"
+                    (click)="toggleInteractionPopup()">
                     <p>Load more</p>
                     <mat-icon>arrow_drop_down</mat-icon>
                 </div>
