@@ -138,6 +138,7 @@
             ]
         },
         "Navbar": {
+            "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
                     {
