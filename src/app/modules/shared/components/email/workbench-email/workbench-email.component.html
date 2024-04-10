@@ -642,6 +642,7 @@
                 <div class="twd-flex twd-items-center">
                     <div *ngIf="state.bulkSelection && !node.grandChildren && getEmailChecks(node.children) as selected;">
                         <mat-checkbox
+                            [disabled]="isCheckboxDisabled()"
                             [indeterminate]="selected.some"
                             [checked]="selected.all"
                             (change)="selectEmails($event.checked, node.children)"
@@ -706,7 +707,7 @@
                                 "
                             >
                             <div class="twd-p-3" *ngIf="state.bulkSelection">
-                                    <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                                    <mat-checkbox [disabled]="isCheckboxDisabled()" [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
                                 </div>
 
                                 <div
