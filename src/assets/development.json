@@ -2714,7 +2714,12 @@
                                                         "sent",
                                                         "drafts",
                                                         "posts"
-                                                    ]
+                                                    ],
+                                                    "PullAllowed": true,
+                                                    "AskPullConfirmation": true,
+                                                    "SearchPollingInterval": 5000,
+                                                    "MaxSearchRange": 30,
+                                                    "SearchDuration": 24
                                                 }
                                             }
                                         ]

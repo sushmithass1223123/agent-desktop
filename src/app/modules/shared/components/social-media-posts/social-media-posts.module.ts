@@ -7,13 +7,14 @@ import { TranslocoRootModule } from 'app/transloco-root.module';
 import { MaterialModule } from '@modules/shared/material.module';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const shared = [WorkbenchSmpComponent, SmpTemplateComponent];
 
 @NgModule({
     declarations: shared,
     exports: shared,
-    imports: [CommonModule, BrowserModule, TranslocoRootModule, MaterialModule, ScrollingModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, BrowserModule, TranslocoRootModule, MaterialModule, ScrollingModule],
     providers: [
         {
             provide: APP_BASE_HREF,

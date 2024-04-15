@@ -3,7 +3,7 @@ workbench-smp {
         background: lightgrey !important;
     }
 
-    smp-template{
+    smp-template {
         height: 100%;
     }
 
@@ -182,4 +182,20 @@ workbench-smp {
     top: 45vh;
     left: 22vw;
     z-index: 100%;
+}
+
+.advanced-search-form {
+    width: calc(100% - 20px);
+    margin-left: 10px;
+
+    .twd-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    input[type=time] {
+        height: 5px;
+    }
 }

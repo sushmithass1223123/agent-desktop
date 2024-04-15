@@ -7,9 +7,11 @@
         search: {
             global: {
                 empty: !globalSearch.form.value,
-                edited: globalSearch.form.value
-            }
-        }
+                edited: globalSearch.data[currentTab] !== globalSearch.form.value
+            },
+            form: advancedSearch.data[currentTab]?.changed
+        },
+        openSmpResData: openSmpRes.data | async
     } as state">
         <div *transloco="let locale" #smpWorkbench
             class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
@@ -74,11 +76,17 @@
                                     [matTooltip]="locale('widgets.workbench.refresh')">
                                     <mat-icon>refresh</mat-icon>
                                 </button>
+
+                                <!-- Advanced search trigger -->
+                                <button mat-icon-button (click)="advancedSearch.show = !advancedSearch.show"
+                                    class="twd-relative" [matTooltip]="locale('widgets.workbench.advanceSearch')">
+                                    <mat-icon> more_vert </mat-icon>
+                                </button>
                             </div>
                         </div>
 
                         <!-- Side body mini tabs container -->
-                        <div class="twd-flex-1 twd-relative">
+                        <div *ngIf="!advancedSearch.show && !smpSearchRes.error" class="twd-relative twd-h-full">
                             <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
                                 <div class="posts-list twd-w-full">
                                     <div class="twd-w-full twd-rounded-3xl ng-tns-c543-38 red-200 dropdowns expanded"
@@ -155,6 +163,73 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced search form -->
+                        <div *ngIf="advancedSearch.show" class="advanced-search-form mat-elevation-z2 border-radius-20">
+                            <p class="text-center text-bold twd-py-4 twd-h-[52px] border-bottom">
+                                {{ locale('widgets.workbench.advanceSearch') }}
+                            </p>
+
+                            <form [formGroup]="advancedSearch.form"
+                                [style.pointer-events]="this.disableAdvSearchActions ? 'none' : 'auto'"
+                                class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto twd-relative"
+                                (ngSubmit)="submitAdvanceSearchForm()" novalidate>
+
+                                <!-- Search in progress -->
+                                <div *ngIf="disableAdvSearchActions"
+                                    class="twd-col-span-2 twd-flex twd-justify-center twd-items-center twd-spinner">
+                                    <mat-spinner></mat-spinner>
+                                </div>
+
+                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                    <mat-label>{{ locale('widgets.workbench.fromDate') }} </mat-label>
+                                    <input matInput formControlName="fromDate" [matDatepicker]="fromDatePicker" />
+                                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #fromDatePicker></mat-datepicker>
+                                </mat-form-field>
+                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                    <mat-label> {{ locale('widgets.workbench.fromTime') }} </mat-label>
+                                    <input matInput formControlName="fromTime" type="time" />
+                                </mat-form-field>
+
+                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                    <mat-label>{{ locale('widgets.workbench.toDate') }} </mat-label>
+                                    <input matInput formControlName="toDate" [matDatepicker]="toDatePicker" />
+                                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #toDatePicker></mat-datepicker>
+                                </mat-form-field>
+                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                    <mat-label> {{ locale('widgets.workbench.toTime') }} </mat-label>
+                                    <input matInput formControlName="toTime" type="time" />
+                                </mat-form-field>
+
+
+                                <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
+                                    <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20"
+                                        [disabled]="this.disableAdvSearchActions">
+                                        {{ locale('global.search') }}
+                                    </button>
+                                    <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20"
+                                        type="button" (click)="resetForm(); doAdvancedSearch()"
+                                        [disabled]="this.disableAdvSearchActions">
+                                        {{ locale('sharedComponents.email.reset') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Loading UI -->
+                        <div class="twd-p-3" *ngIf="smpSearchRes.loading">
+                            <div
+                                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                                class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
+                            >
+                                <span class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
+                                    <mat-icon> arrow_drop_down </mat-icon>
+                                </span>
+                                <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
                             </div>
                         </div>
                     </ng-container>

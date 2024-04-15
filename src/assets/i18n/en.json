@@ -952,7 +952,9 @@
             "postsLabel": "Posts",
             "searchPlaceholder": "Search posts here...",
             "pull": "Pull",
-            "transfer": "Transfer"
+            "transfer": "Transfer",
+            "getPostsFailed": "Error occured while fetching posts",
+            "getPostsLoading": "Loading posts"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
