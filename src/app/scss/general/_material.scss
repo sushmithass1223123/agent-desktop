@@ -413,6 +413,8 @@ mat-dialog-container {
 
 // Email attachment tooltip to break words
 .mat-tooltip {
+    font-size: 1.4rem !important;
+    white-space: pre-line;
     word-break: break-all; 
 }
 

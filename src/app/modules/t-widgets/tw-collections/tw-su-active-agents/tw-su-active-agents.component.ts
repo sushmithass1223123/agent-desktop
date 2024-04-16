@@ -26,10 +26,11 @@ import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil,take} from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { from } from 'rxjs';
 import { groupBy, mergeMap, toArray } from 'rxjs/operators';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Active agents component widget
@@ -141,7 +142,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _fuseSidebarService: FuseSidebarService,
         private _instantMessagingService: InstantMessagingService,
         private _agentFeaturesService: AgentFeaturesService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService
     ) {
         super('TwSuActiveAgentsComponent');
 
@@ -170,6 +172,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
+            
         // get agent aux codes
         SDKClient.loadAUXCodes(false).then((result: IResponse) => {
             // check if the data is null
@@ -200,7 +203,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper destroy method
         this.destroyWrapper();
     }
+    /**
+     * Private method for handling AgentChangeStatusConfirmationEvent
+     */
 
+   
+    
     /**
      * To check agent features for IsSetBroadcastEnabled
      */
@@ -528,6 +536,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                                 // logout error
                                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFailed'), 'failure');
                             }
+                        }).catch(() => {
+                            // Handle logout failure due to internet connection issues
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFail'), 'failure');
                         });
                     }
                 });
@@ -576,15 +587,41 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 
-    /**
-     * Change agent status
-     * @method changeAgentStatus
-     * @param {SuAgentDataModel} agent
-     * @param {IAUXCodes} item
-     */
-    public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
-        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'), 'loading');
-        // change the status
+   /**
+ * Change agent status
+ * @method changeAgentStatus
+ * @param {SuAgentModel} agent 
+ * @param {IAUXCodes} item 
+ */
+public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
+    // Show a snackbar indicating that the status change is in progress
+    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'));
+    if (this.data.Data.agentStatusChange){
+    // Constructing a request packet to change the agent's status
+    const reqPacket = {
+        agentId: agent.AgentLoginID,
+        eventString: JSON.stringify({
+            EventName: 'GenericEvent',
+            SubEventName: 'AgentChangeStatusConfirmationEvent',
+            JsonData: JSON.stringify({
+                type: 'request',
+                status: `${item.Name}!`, 
+                auxData: item,
+                requestedBy: {
+                    agentId: this.user.agentId,
+                    tmacserver: this.user.tmacServer
+                }
+            })
+        }),
+        isPriority: true,
+        toTmacServer: agent.TmacServer
+    };
+
+    // Adding the status change event to the agent's session
+    SDKClient.addEventToAgentSession(reqPacket);
+}
+
+else if (!this.data.Data.agentStatusChange){
         SDKClient.changeStatus(
             {
                 deviceId: agent.StationID,
@@ -637,8 +674,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 // logout error
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.statusChangeError'), 'failure');
             });
+        }
     }
-
     /**
      *  Send Quiz intent to agent
      * @param {String} intentName

@@ -1419,7 +1419,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "facebook", "twitter"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
@@ -2770,7 +2770,8 @@
                 "maxConnectivityRetryTimeOut": 60,
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
-                "customApiURL": ""
+                "customApiURL": "",
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,
@@ -2788,5 +2789,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.4.4"
+    "Version": "5.5.0-beta.2"
 }

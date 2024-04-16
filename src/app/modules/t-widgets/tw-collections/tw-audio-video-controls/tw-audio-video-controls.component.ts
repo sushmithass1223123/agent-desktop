@@ -305,6 +305,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
     manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
 
+    // Flag to end the call after screenshare disconnect
+    endCallAfterScreenShareEnd: boolean = false;
+
     /**
      * Constructor
      */
@@ -821,6 +824,7 @@ if (error === 'Screenshare Was Cancelled') {
                 case 'onScreenshareEnded':
                     this.status = 'screenshare-ended';
                     this.screenSharing = false;
+                    if(this.endCallAfterScreenShareEnd) this.endCall();
                     break;
                 case 'onScreenshareDisconnected':
                     this.status = evt.data ? evt.data : 'ss-disconnected';
@@ -1433,18 +1437,20 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this.onCallHoldEvent = true;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
-        if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
-                this.avConn.mute(true, true);
-                this.audioMuted = true;
-                this.videoMuted = true;
-            } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
-                this.avConn.mute(true, false);
-                this.audioMuted = true;
-            } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
-                this.avConn.mute(false, true);
-                this.videoMuted = true;
-            }
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
+                    this.avConn.mute(true, true);
+                    this.audioMuted = true;
+                    this.videoMuted = true;
+                } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
+                    this.avConn.mute(true, false);
+                    this.audioMuted = true;
+                } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
+                    this.avConn.mute(false, true);
+                    this.videoMuted = true;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1492,18 +1498,20 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this.onCallHoldEvent = false;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
-        if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
-                this.avConn.unMute(true, true);
-                this.audioMuted = false;
-                this.videoMuted = false;
-            } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
-                this.avConn.unMute(true, false);
-                this.audioMuted = false;
-            } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
-                this.avConn.unMute(false, true);
-                this.videoMuted = false;
-            }
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1670,7 +1678,8 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * Share Screen
      * @method shareScreen
      */
-    public shareScreen(): void {
+    public shareScreen(endCallAfterScreenShareEnd?: boolean): void {
+        this.endCallAfterScreenShareEnd = endCallAfterScreenShareEnd;
         // check if to start or stop
         if (this.screenSharing) {
             // stop screen sharing

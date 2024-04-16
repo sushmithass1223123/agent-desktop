@@ -25,12 +25,14 @@ import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
-import { upperFirst } from 'lodash';
+import {  upperFirst } from 'lodash';
 import { concat, merge, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil,take } from 'rxjs/operators';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
+import { SharedService } from './shared.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  *  Componentless Event service
@@ -120,7 +122,7 @@ export class TMACEventService extends SharedWrapper {
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
+    constructor(private _appDataService: AppDataService, private translocoService: TranslocoService,private _sharedService: SharedService,private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
         // intialize all the subject
         super('TMACEventService');
         this._unsubscribeAll = new Subject();
@@ -652,6 +654,95 @@ export class TMACEventService extends SharedWrapper {
 
         this._aotWidgetService.addWidget(widget as AOTWidget);
     };
+   /**
+ * Handles the agent change status confirmation event.
+ * @param evt The event data containing JSON data.
+ */
+private AgentChangeStatusConfirmationEvent = async (evt: any) => {
+    // Parse the JSON data from the event
+    const jsonData = JSON.parse(evt.JsonData);
+    const dynamicLabels = [
+        {
+            key: '#status',
+            value:jsonData.status
+        }
+    ]; 
+    // Check if the JSON data type is a request
+    if (jsonData.type === 'request') {
+        // Show a confirmation dialog to the user
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+            'generic',
+            this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.alertChangeStatus'),
+                dynamicLabels
+            ),
+            this.translocoService.translate('widgets.activeAgents.agentStatusConfirm'),
+        );
+        
+         
+
+        // Wait for the confirmation dialog to be closed
+        const dialogResult = await confirmDialogRef.afterClosed().pipe(
+            takeUntil(this._unsubscribeAll),
+            take(1)
+        ).toPromise();
+        
+        // If the user confirmed the action
+        if (dialogResult) {
+            // Trigger change status method in the shared service with auxiliary data
+            this._sharedService.triggerChangeStatus(jsonData.auxData);
+            const statusChangeLabels = [
+                {
+                    key: '#approvedStatus',
+                    value: jsonData.status // Approvedstatus obtained from JSON data
+                },
+                {   
+                    key: '#newStatus',
+                    value: jsonData.status // New status obtained from JSON data
+                }
+            ];
+            // status change message based on JSON data
+            const statusChangeMessage = this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'),
+                statusChangeLabels
+            );
+            // Send success message back to the agent screen
+            const agentMessage = this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.agentStatusApproved'),
+                statusChangeLabels
+            );
+            // Show notification after status change
+            this._appUIService.showSnackbar(statusChangeMessage);
+            
+            // Send success message back to the agent screen
+           
+            SDKClient.sendNotification({
+                agentIds: [jsonData.requestedBy.agentId], 
+                informAllTmac: false,
+                message: agentMessage,
+                supervisorId: '', 
+                teamId: '', 
+                type: 'notify',
+                tmacServer: jsonData.requestedBy.tmacserver
+            });
+            } 
+            else 
+            {
+            // case where the user cancels the status change
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'));
+            // Send cancellation message back to the agent screen
+            SDKClient.sendNotification({
+                agentIds: [jsonData.requestedBy.agentId], 
+                informAllTmac: false,
+                message: this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'),
+                supervisorId: '', 
+                teamId: '', 
+                type: 'notify',
+                tmacServer: jsonData.requestedBy.tmacserver
+        });
+        }
+    }
+}
 
     /**
      * To process TCM_DirectAgentNotifyTimeoutEvent
@@ -970,6 +1061,10 @@ export class TMACEventService extends SharedWrapper {
             {
                 label: 'AgentNotificaitonEvent',
                 callback: this.AgentNotificaitonEvent
+            },
+            {
+                label: 'AgentChangeStatusConfirmationEvent',
+                callback: this.AgentChangeStatusConfirmationEvent  
             },
             {
                 label: 'TCMDirectAgentNotifyTimeoutEvent',

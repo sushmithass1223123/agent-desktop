@@ -176,6 +176,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Conference type of interaction
      */
     conferenceType = '';
+    
     /**
      * Conference agent list
      */
@@ -588,6 +589,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
           }
         | undefined;
     /**
+    * Flag to observe call hold events from AV controls
+    */
+    isAvCallManuallyHeld: boolean = false;
+    /**
+         *Createicondisable
+         */
+    createIconButtonDisabled: boolean = false;
+    /**
      * Constructor
      */
     constructor(
@@ -616,7 +625,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             Limit: 0
         };
     }
-
+    // Define a boolean flag to track if the whiteboard is open
+    private isWhiteboardOpen: boolean = false;
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -625,6 +635,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Init
      */
     ngOnInit(): void {
+        {
+            // Subscribe to whiteboardOpen$ observable
+            this.sharedService.whiteboardOpen$.subscribe((whiteboardOpen) => {
+                // Disable or enable create icon button based on whiteboard state
+                this.createIconButtonDisabled = whiteboardOpen;
+            });
+        }
         // call the wrapper init method
         this.initWrapper(this.data);
 
@@ -758,6 +775,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // check for moreActions
+        //check if whiteboard is already opened
         //check if whiteboard is already opened
         if (this.agentFeatures.whiteboard) {
             this.moreActions.push({
@@ -2239,16 +2257,37 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this._appUIService.showSnackbar(message, status);
                     }
                     break;
-                case 'openwhiteboard':
-                    if (msg.status === 'ack') {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestReceived'), 'info');
-                    } else if (msg.status === 'accepted') {
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
-                    } else {
-                        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
-                    }
-                    break;
+                    case 'openwhiteboard':
+                        if (msg.status === 'ack') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestReceived'), 'info');
+                        } 
+                         else if (msg.status === 'accepted') {
+                            // send whiteboard url to customer
+                            const agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
+                            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+                    
+                            const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
+                            widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
+                            widget.Config.ViewState = 'maximize';
+                            widget.Config.Anchor = true;
+                            widget.Config.Position.W = 800;
+                            widget.Config.Position.H = 550;
+                            widget.InteractionDetails = {
+                                InteractionID: this.interaction.InteractionID
+                            };
+                            widget.Data = {
+                                AutoOpen: false,
+                                Url: agentWhiteboardUrl.toString(),
+                                NotifyTypeOnClose: 'closeWhiteboard'
+                            };
+                            this.whiteBoardWidgetId = widget.ID;
+                            this._aotWidgetService.addWidget(widget);
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
+                        } else if (msg.status === 'rejected') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
+                        }
+                        break;
+                    
             }
         } catch (e) {
             console.error(e);
@@ -2321,7 +2360,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent): void {
         // If the chat is put on hold manually, then return and don't auto unhold
-        if(this.isForceHold || this.status !== 'hold') return;
+        if(this.isForceHold || this.isAvCallManuallyHeld || this.status !== 'hold') return;
 
         this.interactionOnHold = unHoldState;
         this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
@@ -2444,8 +2483,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             status: 'disconnected'
             
         });   
-        // Destroy whiteboard widget
+        
+        // Check if the whiteboard is open before destroying it
+        if (this.isWhiteboardOpen) {
         this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
+        // Reset the flag since whiteboard is closed
+        this.isWhiteboardOpen = false;
+        }
         // stop the duration timer
         this.stopTimer.next(null);
         // hide auto response if enabled
@@ -2632,6 +2676,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom HoldInteractionEvent
      */
     HoldInteractionEvent(): void {
+        this.isAvCallManuallyHeld = true;
         this.holdInteraction();
     }
 
@@ -2639,6 +2684,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To process custom UnholdInteractionEvent
      */
     UnholdInteractionEvent(): void {
+        this.isAvCallManuallyHeld = false;
         this.unHoldInteraction();
     }
 
@@ -3395,6 +3441,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Opens a whiteboard session
      */
     async openWhiteboard(): Promise<void> {
+        // Set the flag to true when opening the whiteboard
+            this.isWhiteboardOpen = true;
+        
         if (!this.widgetData.Whiteboard?.Url) {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardURLNotFound'), 'failure');
             return;
@@ -3421,35 +3470,21 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
             });
 
-            // [Chirag July,31 22'] send whiteboard url to customer
-            let agentWhiteboardUrl = new URL(this.widgetData.Whiteboard.Url);
-            agentWhiteboardUrl.searchParams.set('sessionid', this.sessionID);
+            
 
             if (res.response?.ResultMessage === 'Success') {
-                const widget = new TwWidgetModel('Whiteboard', 'tw-custom', 'create') as AOTWidget;
-                widget.Config.Actions = ['collapse', 'maximize', 'destroy'];
-                widget.Config.ViewState = 'maximize';
-                widget.Config.Anchor = true;
-                widget.Config.Position.W = 800;
-                widget.Config.Position.H = 550;
-                widget.InteractionDetails = {
-                    InteractionID: this.interaction.InteractionID
-                };
-                widget.Data = {
-                    AutoOpen: false,
-                    Url: agentWhiteboardUrl.toString(),
-                    NotifyTypeOnClose: 'closeWhiteboard'
-                };
-                this.whiteBoardWidgetId = widget.ID;
-                this._aotWidgetService.addWidget(widget);
-                snackRef.dismiss();
+                 // Wait for the customer to accept the request
+                // No need to open the whiteboard here
+               
             } else {
-                throw new Error('Error occured while opening whiteboard');
+                throw new Error('Error occurred while requesting to open whiteboard');
             }
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         }
+          // Notify service that whiteboard is open
+  this.sharedService.setWhiteboardState(true);
     }
 
     /**
@@ -3565,6 +3600,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To execute action
      */
     executeAction(action: any, actionBtn: MatButton): void {
+        
         switch (action.type) {
             case 'whiteboard':
                 this.openWhiteboard();

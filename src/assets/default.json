@@ -1219,7 +1219,7 @@
                                                     },
                                                     "DisableAvConstraints": {
                                                         "Devices": ["android", "ios"],
-                                                        "SocialChannels": ["whatsapp", "instagram", "facebook",  "twitter"],
+                                                        "SocialChannels": ["whatsapp", "instagram", "fb", "twitter"],
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
@@ -2389,7 +2389,14 @@
         },
         "SDK": {
             "proxy": { "urls": ["../../TMACSDKProxy/TmacProxy.asmx"], "type": "soap", "timeout": 60 },
-            "signalRProxy": { "enabled": true, "logging": true, "protocol": "webSockets", "timeout": 10, "fallback": true },
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true,
+                "useDotNet6Wrapper": false
+            },
             "logging": {
                 "enabled": true,
                 "level": { "debug": true, "info": true, "warn": true, "error": true },
@@ -2404,5 +2411,5 @@
             ]
         }
     },
-    "Version": "5.4.4"
+    "Version": "5.5.0-beta.2"
 }
