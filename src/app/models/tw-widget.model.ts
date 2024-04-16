@@ -29,6 +29,10 @@ export class TwWidgetModel {
      */
     Data: any;
     /**
+     * Any extra config for the widget
+     */
+    ExtraConfig: any;
+    /**
      * [OPTIONAL] For interaction widget to pass interaction details
      */
     InteractionDetails?: any;
@@ -66,5 +70,7 @@ export class TwWidgetModel {
             Header: true
         };
         this.Data = new Object();
+        this.ExtraConfig = null;
     }
+    
 }

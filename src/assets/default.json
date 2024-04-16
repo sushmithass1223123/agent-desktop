@@ -472,7 +472,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TASUrl": "https://mx.tetherfi.cloud/TAS/Quiz/Index" }
+                                    "Data": { "TASUrl": "https://mx.tetherfi.cloud/TAS/Quiz/Index",
+                                                "AllowSupervisorToBargeIn": true,
+                                                "AllowSupervisorToChatSilentMonitor": true,
+                                                "AllowSupervisorToChatWhisper": true
+                                 }
                                 }
                             ],
                             "Dynamic": [

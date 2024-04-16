@@ -28,6 +28,10 @@ export interface IWidget<T = any, K = any> {
      */
     Config: WidgetConfig;
     /**
+     * Widget Extra Configs
+     */
+    ExtraConfig?: T;
+    /**
      * Widget Custom Data
      */
     Data: K;

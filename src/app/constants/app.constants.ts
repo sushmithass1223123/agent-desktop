@@ -289,7 +289,7 @@ export const AGENT_FEATURES = {
 export const AGENT_FEATURES_MAP = {
     AllowSupervisorToBargeIn: {
         Type: 'interaction',
-        SubType: ['voice'],
+        SubType: ['textchat', 'audiochat', 'videochat'],
         Icon: 'call_merge',
         Label: 'Barge-In'
     },

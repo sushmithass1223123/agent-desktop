@@ -100,7 +100,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
         // assign the widget data
         this.configData = this.data.Data;
-
         // register to event
         this._tmacEventService
             .getNonInteractionEvents(['TeamAgentInteractionDetailsEvent'])
@@ -205,7 +204,9 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     public featureCheck(feature: AgentFeatures, type: 'agent' | 'interaction', element: InteractionDataModel): boolean {
         try {
             // if not allow supervisor or in map the item is not found return false
-            if (element.LastStatus.includes('Disconnected') || !feature.Feature.startsWith('AllowSupervisor') || !this.featureMap[feature.Feature]) {
+            if (element.LastStatus.includes('Disconnected') 
+                || !feature.Feature.startsWith('AllowSupervisor') 
+            || !this.featureMap[feature.Feature]) {
                 return false;
             }
 
@@ -226,7 +227,14 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 this.featureMap[feature.Feature].Type === type &&
                 this.featureMap[feature.Feature].SubType.includes(subType)
             ) {
-                return feature.IsEnabled;
+                if(feature.IsEnabled && this.data.ExtraConfig[feature.Feature])
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
             } else {
                 return false;
             }
@@ -241,7 +249,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     public performInteractionAction(item: InteractionDataModel, feature: AgentFeatures): void {
         switch (feature.Feature.toLowerCase()) {
             case AGENT_FEATURES.AllowSupervisorToBargeIn:
-                break;
             case AGENT_FEATURES.AllowSupervisorToChatConference:
                 this.performChatBargeIn('conf', item);
                 break;

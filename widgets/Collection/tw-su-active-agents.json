@@ -21,6 +21,9 @@
         "Pinned": false
     },
     "Data": {
-        "TASUrl": ""
+        "TASUrl": "",
+        "AllowSupervisorToBargeIn": true,
+        "AllowSupervisorToChatSilentMonitor": true,
+        "AllowSupervisorToChatWhisper": true
     }
 }

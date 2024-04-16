@@ -545,7 +545,12 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index" }
+                                    "Data": { 
+                                    "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index",
+                                    "AllowSupervisorToBargeIn": true,
+                                    "AllowSupervisorToChatSilentMonitor": true,
+                                    "AllowSupervisorToChatWhisper": true
+                                 }
                                 }
                             ],
                             "Dynamic": [

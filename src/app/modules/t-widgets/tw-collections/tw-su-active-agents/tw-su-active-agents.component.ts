@@ -565,12 +565,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * @param {SuAgentModel} item
      */
     public viewInteractions(item: SuAgentModel): void {
-        const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 'tw-su-agent-interactions', null, item.AgentLoginID);
+        const widget = new TwWidgetModel('Interaction Details - ' + item.AgentName, 
+        'tw-su-agent-interactions', null, item.AgentLoginID);
         widget.Config.Anchor = true;
         widget.Config.Position.W = 800;
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
         widget.Data = item;
+        widget.ExtraConfig = this.data.Data;
         this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 
