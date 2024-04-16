@@ -538,7 +538,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                             }
                         }).catch(() => {
                             // Handle logout failure due to internet connection issues
-                            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFail'), 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFail'), 'failure');
                         });
                     }
                 });
