@@ -1832,21 +1832,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         }
     }
     };
-
-    isCheckboxDisabled (email: any) {
-    const maxBulkMailCount = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxBulkMailCount ?? 10;
-    const selectedEmails = this.getAllEmailNodes().filter((email: any) => email.checked);
-    const selectedCount = selectedEmails.length;
-  
-    // If the selected count is greater than to  the max limit, only disable unchecked emails.
-    if (selectedCount > maxBulkMailCount && !email.checked) {
-        // Disable unchecked emails.
-        return true;
-    } 
-    else {
-        return false; // Enable all emails if the selected count is below the limit or the email is already checked.
-        }
-    }; 
     /**
      * To show internet headers
      * @param {String} headers
