@@ -693,6 +693,10 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             this._sharedService.triggerChangeStatus(jsonData.auxData);
             const statusChangeLabels = [
                 {
+                    key: '#approvedStatus',
+                    value: jsonData.status // Approvedstatus obtained from JSON data
+                },
+                {   
                     key: '#newStatus',
                     value: jsonData.status // New status obtained from JSON data
                 }
@@ -702,16 +706,20 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                 this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'),
                 statusChangeLabels
             );
-        
+            // Send success message back to the agent screen
+            const agentMessage = this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.agentStatusApproved'),
+                statusChangeLabels
+            );
             // Show notification after status change
             this._appUIService.showSnackbar(statusChangeMessage);
             
             // Send success message back to the agent screen
-            const agentMessage = this.translocoService.translate('widgets.activeAgents.agentStatusApproved');
+           
             SDKClient.sendNotification({
                 agentIds: [jsonData.requestedBy.agentId], 
                 informAllTmac: false,
-                message: agentMessage.replace('#newStatus', jsonData.status),
+                message: agentMessage,
                 supervisorId: '', 
                 teamId: '', 
                 type: 'notify',
