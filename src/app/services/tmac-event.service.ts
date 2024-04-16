@@ -691,14 +691,27 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         if (dialogResult) {
             // Trigger change status method in the shared service with auxiliary data
             this._sharedService.triggerChangeStatus(jsonData.auxData);
+            const statusChangeLabels = [
+                {
+                    key: '#newStatus',
+                    value: jsonData.status // New status obtained from JSON data
+                }
+            ];
+            // status change message based on JSON data
+            const statusChangeMessage = this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'),
+                statusChangeLabels
+            );
+        
             // Show notification after status change
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'));
+            this._appUIService.showSnackbar(statusChangeMessage);
             
             // Send success message back to the agent screen
+            const agentMessage = this.translocoService.translate('widgets.activeAgents.agentStatusApproved');
             SDKClient.sendNotification({
                 agentIds: [jsonData.requestedBy.agentId], 
                 informAllTmac: false,
-                message: this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'),
+                message: agentMessage.replace('#newStatus', jsonData.status),
                 supervisorId: '', 
                 teamId: '', 
                 type: 'notify',
