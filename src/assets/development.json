@@ -2464,14 +2464,15 @@
                                                         }
                                                     },
                                                     "SearchPollingInterval": 0,
-                                                    "DeleteAllowed": false,
-                                                    "QueueTransferForAgent": false,
+                                                    "DeleteAllowed": true,
+                                                    "QueueTransferForAgent": true,
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxSearchRange": 30
+                                                    "MaxSearchRange": 30,
+                                                    "MaxSelection":10
                                                 }
                                             },
                                             {
