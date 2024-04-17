@@ -706,7 +706,7 @@
                                 "
                             >
                                 <div class="twd-p-3" *ngIf="state.bulkSelection">
-                                    <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                                    <mat-checkbox (change)="selectEmails($event.checked, [node], $event)"[value]="node.checked" [checked]="node.checked"></mat-checkbox>
                                 </div>
 
                                 <div

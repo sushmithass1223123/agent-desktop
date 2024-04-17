@@ -1795,10 +1795,31 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {boolean} checked state of the checkbox
      * @param {Mail[]} emails if this isnt passed, all the emails across all folders are used for this check
      */
-    selectEmails = (checked: boolean, emails?: Mail[]) => {
+    selectEmails = (checked: boolean, emails?: Mail[], event?:any) => {
         const mails = emails ?? this.getAllEmailNodes();
+        const maxSelection =(this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSelection?? 10;
+        let totalCurrentSelections = this.getAllEmailNodes().filter((email:any) => email.checked)?.length ?? 0;
+        const dynamicLabels = [
+            {
+                key: '#maxBulkMailCount',
+                value: maxSelection.toString()
+            }
+        ];
         for (const n of mails) {
+            if((totalCurrentSelections == maxSelection) && checked) {
+                if(event) {
+                    event.checked = false;
+                    event.source.checked = false;
+                }
+                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(
+                    this.translocoService.translate('widgets.activeAgents.maxBulkMailCount'),
+                    dynamicLabels
+                ));
+                return;
+            }
+
             n.checked = checked;
+            totalCurrentSelections++;
         }
     };
 

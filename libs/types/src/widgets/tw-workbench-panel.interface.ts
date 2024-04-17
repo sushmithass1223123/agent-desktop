@@ -64,6 +64,10 @@ export type TwEmailWorkbenchConfig = {
      * Max limit of search range in days
      */
      MaxSearchRange: number;
+      /**
+     * Max limit of Selection in mail
+     */
+      MaxSelection: number;
 
 };
 
