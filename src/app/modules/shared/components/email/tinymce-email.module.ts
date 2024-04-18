@@ -100,6 +100,20 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      * event emitter call to take effect in ngOnchanges
      */
     _editorContentChanged = false;
+   
+    filterContent(element: HTMLElement): string {
+    // Removing any elements with scrollbar styles
+    const scrollBarElements = element.querySelectorAll('style');
+    scrollBarElements.forEach((el) => {
+    if (el.innerText.includes('scrollbar')) {
+        el.remove();
+    }
+    });
+                    
+    // Extract and return the clean text content
+    return element.innerText.trim();
+    }
+                    
 
     constructor(@Inject(APP_BASE_HREF) private baseHref: string) {}
 
@@ -180,7 +194,14 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
                         editor.on('init', () => {
-                            editor.setContent(this.body || '');
+                            //temporary element to extract clean text content
+                            const tempElement = document.createElement('div');
+                            tempElement.innerHTML = this.body || '';
+                    
+                            // Filtering unwanted content (like scrollbar CSS)
+                            const cleanBody = this.filterContent(tempElement);
+                    
+                            editor.setContent(cleanBody);
                             this._editor = editor;
                             // notify the email-component that body of the email has changed
                             editor.focus();
