@@ -23,6 +23,10 @@ export type Widget<T = any> = {
      */
     Config: WidgetConfig;
     /**
+     * Extra Config of widget
+     */
+    ExtraConfig?: T;
+    /**
      * Widget data
      */
     Data: T;

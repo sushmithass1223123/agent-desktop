@@ -21,6 +21,14 @@
         "Pinned": false
     },
     "Data": {
-        "TASUrl": ""
+        "TASUrl": "",
+        "agentStatusChange": true,
+        "InteractionConstraints": {
+            "ValidateFor": ["textchat"],
+            "AllowSupervisorToBargeIn": false,
+            "AllowSupervisorToChatSilentMonitor": false,
+            "AllowSupervisorToChatWhisper": false,
+            "AllowSupervisorToChatConference": false
+            } 
     }
 }

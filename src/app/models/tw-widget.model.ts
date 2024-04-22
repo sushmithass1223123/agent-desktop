@@ -25,6 +25,10 @@ export class TwWidgetModel {
      */
     Config: WidgetConfig;
     /**
+     * Extra Configuration object of widget of type WidgetConfig
+     */
+    ExtraConfig?: any;
+    /**
      * Any extra data for the widget
      */
     Data: any;
@@ -66,5 +70,6 @@ export class TwWidgetModel {
             Header: true
         };
         this.Data = new Object();
+        this.ExtraConfig = null;
     }
 }
