@@ -18,6 +18,7 @@ import {
     SDKClient,
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
+    TMACCommandType,
     TMACEventTypes,
     TmacServerConnectionSuccess
 } from '@tmac/sdk';
@@ -106,6 +107,10 @@ export class TMACEventService extends SharedWrapper {
             ref: MatDialogRef<ReminderTaskDialogComponent, any>;
         }[];
     };
+
+    private _tmacCommandsArray: TMACCommandType[];
+
+
 
     /** Events to manipulate AD elements from custom widget */
     _uiControlsEvents: Subject<any> = new Subject();
@@ -936,6 +941,7 @@ export class TMACEventService extends SharedWrapper {
             dacRequest: null,
             reminder: []
         };
+        this._tmacCommandsArray = new Array();
 
         // subscribe to post message
         window.addEventListener('message', this.postMessageReceived);
@@ -1000,6 +1006,9 @@ export class TMACEventService extends SharedWrapper {
                 callback: this.AutoCloseTabEvent
             }
         ]);
+
+        this.addTMACCommandListener()
+
     }
 
     /**
@@ -1089,6 +1098,8 @@ export class TMACEventService extends SharedWrapper {
             dacRequest: null,
             reminder: []
         };
+
+        this.removeTMACCommandListener();
     }
 
     /**
@@ -1479,7 +1490,7 @@ export class TMACEventService extends SharedWrapper {
             if (logEnabled && data.log) {
                 this.logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -1510,6 +1521,38 @@ export class TMACEventService extends SharedWrapper {
     get getUIControlEvents(): any | Observable<any> {
         return this._uiControlsEvents.asObservable();
     }
+
+    /**
+     * To observe tmac sdk proxy method calls & its data
+     */
+
+    addTMACCommandListener() {
+        SDKClient.events.on('TMACCOMMAND', this.onTmacCommand);
+    }
+
+    removeTMACCommandListener() {
+        SDKClient.events.off('TMACCOMMAND', this.onTmacCommand);
+    }
+
+    onTmacCommand = (data) => {
+        try {
+            const commandIndex = this._tmacCommandsArray.findIndex(c => (c.methodName === data.methodName) && (c.type === data.type));
+            if (commandIndex > -1) {
+                this._tmacCommandsArray.splice(commandIndex, 1);
+            }
+            this._tmacCommandsArray.push(data);
+        } catch (e) {
+            console.log('Error occured on tmac command', e);
+        }
+    }
+
+    getTmacCommandsArray(type?) {
+        if (type)
+            return this._tmacCommandsArray.filter(c => c.type === type);
+        else
+            return this._tmacCommandsArray;
+    }
+
 }
 
 /**
