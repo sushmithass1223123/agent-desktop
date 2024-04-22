@@ -33,6 +33,10 @@ export interface TwSuActiveAgents extends Widget<TwSuActiveAgentsData> {}
  * Data config for active agents widget
  */
 export type TwSuActiveAgentsData = {
+       /**
+     * interactionConstraints for bargin, silent monito, whisper
+     */
+    InteractionConstraints: TwInteractionConstraints;
     /**
      * [agentStatusChange]
      */
@@ -49,4 +53,15 @@ export type TwSuActiveAgentsData = {
      * Direction of the sort
      */
     SortType: 'desc' | 'asc';
+};
+
+/**
+ * Constraints for bargin, whisper, silent monitor
+ */
+ interface TwInteractionConstraints  {
+  ValidateFor: string[] ;
+  AllowSupervisorToBargeIn: boolean;
+  AllowSupervisorToChatSilentMonitor: boolean;
+  AllowSupervisorToChatWhisper: boolean;
+  AllowSupervisorToChatConference: boolean;
 };

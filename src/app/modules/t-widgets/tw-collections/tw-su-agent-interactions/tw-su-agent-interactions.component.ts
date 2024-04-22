@@ -226,7 +226,8 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 this.featureMap[feature.Feature].Type === type &&
                 this.featureMap[feature.Feature].SubType.includes(subType)
             ) {
-                return feature.IsEnabled;
+                return feature.IsEnabled && this.data.ExtraConfig[feature.Feature] 
+                && this.data.ExtraConfig.validateFor.includes(subType);
             } else {
                 return false;
             }
