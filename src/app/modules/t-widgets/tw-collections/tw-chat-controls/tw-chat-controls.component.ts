@@ -899,7 +899,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'AVDisconnectedEvent',
                     'HoldInteractionEvent',
                     'UnholdInteractionEvent',
-                    'ConfirmEndInteractionEvent'
+                    'ConfirmEndInteractionEvent',
+                    "EndInteractionEvent"
                 ],
                 this.interaction.InteractionID
             )
@@ -2704,10 +2705,25 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process custom ConfirmEndInteractionEvent and confirm end chat
+     * this method is not going to be used hereafter 
      */
     ConfirmEndInteractionEvent(): void {
         this.confirmEndChat();
     }
+
+
+    /**
+     * To process custom EndInteractionWithoutConfrimationEvent to skip confirmation alert
+     * this method is used hereafter instead of ConfirmEndInteractionEvent
+     */
+    async EndInteractionEvent(): Promise<void> {
+        // End chat logic
+        await this.endChat('AgentChatDisconnected');
+        // Destroy whiteboard widget
+        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
+    }
+
+    
 
     /**
      * On widget maximzed event

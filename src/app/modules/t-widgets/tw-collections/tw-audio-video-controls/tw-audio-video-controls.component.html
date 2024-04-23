@@ -352,7 +352,7 @@
                             mat-icon-button
                             color="warn"
                             [matTooltip]="locale('widgets.audioVideoControls.endCall')"
-                            (click)="screenSharing ? shareScreen(true) : endCall()"
+                            (click)="screenSharing ? shareScreen(true) : endAVCallClicked()"
                         >
                             <mat-icon>call_end</mat-icon>
                         </button>

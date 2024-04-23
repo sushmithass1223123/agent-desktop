@@ -116,7 +116,7 @@
             "Limit": 50
         },
         "ReplyAllowed": true,
-        "EndInteractionOnAVEnd": false,
+        "EndInteractionOnAVEnd": true,
         "CloseInteractionOnEnd": false
     }
 }

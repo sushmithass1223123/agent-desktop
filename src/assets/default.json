@@ -1261,7 +1261,7 @@
                                                     },
                                                     "ConversationService": { "Url": "", "Limit": 50, "Label": false },
                                                     "ReplyAllowed": true,
-                                                    "EndInteractionOnAVEnd": false,
+                                                    "EndInteractionOnAVEnd": true,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
                                                         "AgentAudio": false,

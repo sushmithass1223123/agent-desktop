@@ -37,7 +37,7 @@ import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
-import { delay, filter, takeUntil } from 'rxjs/operators';
+import { delay, filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
 
@@ -335,7 +335,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
-this.muteAudioHidden = false;
+        this.muteAudioHidden = false;
         this.displayToasters = true;
 
         // Set the private defaults
@@ -1906,6 +1906,48 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this.hold = !this.hold;
     }
 
+    async confirmDialogForEndInteraction()
+    {
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
+        if (dialogResult) {
+            this.endCall(true);
+            this.destroyWidget();
+            this.endInteraction();
+        }  
+        else {
+            this.endCall(true);
+            this.destroyWidget();
+        }
+    }
+
+    endInteraction()
+    {    
+        this._tmacEventService.emitSDKEvent({
+        event: {
+            EventName: 'EndInteractionEvent',
+            InteractionID: this.interactionId
+        },
+        isInteractionEvent: true
+        });
+    }
+
+    /**
+     * pre End Call when confirmation box is needed
+     * @method endCallClicked
+     */
+    public async endAVCallClicked()
+    {
+        if(this.data.Data.EndInteractionOnAVEnd && this.data.Data.Source === 'TwChatControlsComponent'){
+            this.confirmDialogForEndInteraction();
+        }
+        else {
+            this.endCall(true);
+            this.destroyWidget();
+        }
+    }
+
+
     /**
      * End Call
      * @method endCall
@@ -1925,8 +1967,9 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             return true;
         }
 
-        // to confirm end call
-        if (this.data.Data.EndInteractionOnAVEnd && this.data.Data.Source === 'TwChatControlsComponent') {
+         // to confirm end call
+         if (this.data.Data.EndInteractionOnAVEnd 
+            && this.data.Data.Source === 'TwChatControlsComponent') {
             // this.data.Data.Opener.confirmEndChat(null);
 
             this._tmacEventService.emitSDKEvent({
