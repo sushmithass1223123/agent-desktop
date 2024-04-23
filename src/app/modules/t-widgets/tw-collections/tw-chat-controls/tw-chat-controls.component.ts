@@ -586,6 +586,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                * Disable Request Video Calls
                */
               RequestVideoCall: boolean;
+              /**
+               * Disable Request Screenshare
+               */
+              RequestScreenShare: boolean;
+
+              
           }
         | undefined;
     /**
@@ -1487,8 +1493,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // };
 
         widget.InteractionDetails = this.data.InteractionDetails;
-
-        widget.Data = { ...this.data.Data };
+        // this.isMobileDevice = this.customerDevice;
+        widget.Data = { ...this.data.Data, 
+            IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
+            && this.DisableAvConstraints?.RequestScreenShare };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -1928,6 +1936,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.customerDevice = this.DisableAvConstraints.Devices.includes(deviceInfo.info.osver?.toLowerCase()); 
         }
     }
+    
     /**
      * To process  UserDeviceInfoEvent
      * @param evt  UserDeviceInfoEvent evt

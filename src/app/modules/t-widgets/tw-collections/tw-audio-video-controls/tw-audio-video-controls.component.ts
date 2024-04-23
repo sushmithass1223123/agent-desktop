@@ -308,6 +308,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     // Flag to end the call after screenshare disconnect
     endCallAfterScreenShareEnd: boolean = false;
 
+    IsScreenShareDisabled: boolean;
+
     /**
      * Constructor
      */
@@ -404,6 +406,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionID;
         this.callType = this.data.Data.CallType;
+        this.IsScreenShareDisabled = this.data.Data.IsScreenShareDisabled;
 
         // listen to tmac interaction events
         this._tmacEventService
@@ -1986,6 +1989,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
         return true;
     }
+
 
     /**
      * Opens webrtc stats inside an iframe

@@ -148,6 +148,12 @@ export type TwAudioVideoControlsData = {
      */
     HoldInteractionAllowed: boolean;
     /**
+     * To identify the customer device
+     * 
+     * [INTERNAL] Used when opened as AOT from tw-chat-controls-widget
+     */
+    IsScreenShareDisabled: boolean;
+    /**
      * [STANDALONE] Flag to allow screenshare
      */
     ScreenShareAllowed: boolean;

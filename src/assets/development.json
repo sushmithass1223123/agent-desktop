@@ -1428,7 +1428,8 @@
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
-                                                        "RequestVideoCall": false
+                                                        "RequestVideoCall": false,
+                                                        "RequestScreenShare": true
                                                     },
                                                     "AudioEscalateAllowed": true,
                                                     "RequestAudioCallAllowed": true,
