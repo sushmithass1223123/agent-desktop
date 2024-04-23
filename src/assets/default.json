@@ -1229,7 +1229,8 @@
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
-                                                        "RequestVideoCall": false
+                                                        "RequestVideoCall": false,
+                                                        "RequestScreenShare": false
                                                     },
                                                     "AudioEscalateAllowed": true,
                                                     "RequestAudioCallAllowed": false,

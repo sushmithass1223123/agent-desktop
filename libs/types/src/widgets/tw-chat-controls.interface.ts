@@ -316,6 +316,11 @@ export type TwChatControlsData = {
                * Disable Request Video Calls
                */
               RequestVideoCall: boolean;
+              /**
+               * Disable Request ScreenShare
+               */
+              RequestScreenShare: boolean;
+              
           }
         | undefined;
     /**
