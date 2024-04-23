@@ -1548,7 +1548,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     <div> <strong> Subject: </strong> <span> ${emailcomponentInput.Subject} </span> </div>
                 </div>
             </div>
-        </div>
         <br />
         `;
         emailcomponentInput.prelude = prelude;
