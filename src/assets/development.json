@@ -2451,7 +2451,12 @@
                     "Description": "",
                     "Type": "twc-custom",
                     "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
-                    "Data": { "Path": "/tmeet", "PreserveOnTabChange": false, "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}", "Unload": false }
+                    "Data": {
+                        "Path": "/tmeet",
+                        "PreserveOnTabChange": false,
+                        "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}",
+                        "Unload": false
+                    }
                 },
                 {
                     "Name": "Docker",
@@ -2576,7 +2581,11 @@
                         "Header": true,
                         "Pinned": false
                     },
-                    "Data": { "PreserveOnTabChange": false, "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit" }
+                    "Data": {
+                        "PreserveOnTabChange": false,
+                        "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"],
+                        "DataLevel": "agent_orgunit"
+                    }
                 }
             ]
         },
@@ -2734,5 +2743,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.1.30-patch.3"
+    "Version": "5.2.1.30-patch.4"
 }

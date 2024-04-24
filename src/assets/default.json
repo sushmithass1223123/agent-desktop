@@ -2251,7 +2251,11 @@
                         "Header": true,
                         "Pinned": false
                     },
-                    "Data": { "PreserveOnTabChange": false, "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"], "DataLevel": "agent_orgunit" }
+                    "Data": {
+                        "PreserveOnTabChange": false,
+                        "BookmarksApiUrls": ["https://dice.tetherfi.cloud:8097/api/v1/bookmarks"],
+                        "DataLevel": "agent_orgunit"
+                    }
                 }
             ]
         },
@@ -2380,5 +2384,5 @@
             ]
         }
     },
-    "Version": "5.1.6.30"
+    "Version": "5.2.1.30-patch.4"
 }
