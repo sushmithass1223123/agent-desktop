@@ -18,7 +18,6 @@ import { Subscription } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { AOTWidget } from '@ad/types';
 import { TwWidgetModel } from 'app/models';
-import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * TwCustomComponent
@@ -102,9 +101,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
         private _fuseFacadeService: FuseFacadeService,
-        private _appUIService: AppUiService,
-        private translocoService: TranslocoService
-
+        private _appUIService: AppUiService
     ) {
         super('TwCustomComponent');
 
@@ -353,7 +350,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
         // check if url is provided
         if (!url) {
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.customDialog.urlNotFound'), 'failure');
+            this._appUIService.showSnackbar('URL not found', 'failure');
             return;
         }
 
@@ -379,7 +376,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         if (data.confirmOnClose) {
             widget.OnDestroy = () => {
                 // get confiration before close
-                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.agentAssist.confirmCloseTitle'), this.translocoService.translate('widgets.agentAssist.confirmCloseMsg'));
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Close', 'Do you want to close this window?');
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         widget.destroy();
