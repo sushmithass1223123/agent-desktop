@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.5.0-beta.2",
+    "version": "5.6.0-beta.1",
     "license": "",
     "scripts": {
         "ng": "nx",
@@ -68,7 +68,7 @@
         "@progress/kendo-licensing": "^1.2.2",
         "@progress/kendo-theme-default": "5.4.1",
         "@tmac/operators": "git+https://gitlab+deploy-token-40:adUz1ascDCfab1qtKLaz@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/operators",
-        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.5.0-beta.2",
+        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.5.0",
         "@tmac/styles": "git+https://gitlab+deploy-token-37:43tSyhD5CpPuLUzed32Y@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/styles",
         "abort-controller": "3.0.0",
         "angular-calendar": "0.29.0",
