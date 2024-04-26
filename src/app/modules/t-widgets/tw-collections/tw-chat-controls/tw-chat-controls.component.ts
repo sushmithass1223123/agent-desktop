@@ -2100,7 +2100,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         messageId,
                         message,
                         type,
-                        time: moment(item.DateTime, 'dd/MM/yyyy HH:mm:ss'),
+                        time: moment(item.DateTime.replaceAll('-', '/'), 'dd/MM/yyyy HH:mm:ss'),
                         attachment: {
                             ...attachment,
                             angle: 0
