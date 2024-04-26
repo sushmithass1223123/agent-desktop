@@ -33,6 +33,7 @@
             class="twd-w-7/12 twd-pt-1"
             [editAllowed]="IsDeflectToDigitalEditTextMessageEnabled"
             (sendTemplate)="sendTemplate($event)"
+            [departmentFilters]="data.Data.DepartmentFilters"
         ></text-templates>
     </div>
 </tw-wrapper>
