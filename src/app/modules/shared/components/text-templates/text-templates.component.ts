@@ -19,6 +19,10 @@ import { TranslocoService } from '@ngneat/transloco';
 })
 export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
+     * filter that is to be applied to department
+     */
+    @Input() departmentFilters: any;
+    /**
      * Departments
      */
     departments = [];
@@ -87,6 +91,11 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
                 this.departments = result.response;
+                this.departments = this.departmentFilters ? result.response.filter((data) => {
+                    return Object.keys(this.departmentFilters).every((key) => {
+                        return this.departmentFilters[key].includes(data[key])
+                    });
+                }) : result.response;
                 // .filter((d) => d.Channel.toLowerCase() === 'sms');
             })
             .catch((err) => {
@@ -218,7 +227,6 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         return true;
     }
 }
-
 interface IWidgetData {
     /**
      * Type of messaging
