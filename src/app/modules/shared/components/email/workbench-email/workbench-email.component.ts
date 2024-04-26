@@ -1812,7 +1812,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     event.source.checked = false;
                 }
                 this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(
-                    this.translocoService.translate('widgets.activeAgents.maxBulkMailCount'),
+                    this.translocoService.translate('widgets.workbench.maxBulkMailCount'),
                     dynamicLabels
                 ));
                 return;
