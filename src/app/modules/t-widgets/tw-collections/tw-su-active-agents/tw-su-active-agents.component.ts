@@ -536,6 +536,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                                 // logout error
                                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFailed'), 'failure');
                             }
+                        }).catch(() => {
+                            // Handle logout failure due to internet connection issues
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFail'), 'failure');
                         });
                     }
                 });
@@ -579,6 +582,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
         widget.Data = item;
+        widget.ExtraConfig = this.data.Data.InteractionConstraints;
         this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 

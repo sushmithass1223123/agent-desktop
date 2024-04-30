@@ -148,7 +148,7 @@
                                 mat-raised-button
                                 class="border-radius-20"
                                 color="accent"
-                                (click)="closeEditor(closeEditorBtn)"
+                                (click)="closeEditor(closeEditorBtn, true)"
                                 #closeEditorBtn
                                 [matTooltip]="locale('widgets.emailControls.closeEditor')"
                                 [disabled]="sendingEmailAsMaker || isEmailSent(currentInteraction.InteractionID) === false"

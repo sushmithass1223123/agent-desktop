@@ -137,6 +137,7 @@
             ]
         },
         "Navbar": {
+            "HoldInteractionOnTabChange": false,
             "Widgets": {
                 "Top": [
                     {
@@ -471,7 +472,17 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "TASUrl": "https://mx.tetherfi.cloud/TAS/Quiz/Index" }
+                                    "Data": { 
+                                        "TASUrl": "https://mx.tetherfi.cloud/TAS/Quiz/Index",
+                                        "agentStatusChange": true,
+                                        "InteractionConstraints": {
+                                            "ValidateFor": ["textchat"],
+                                            "AllowSupervisorToBargeIn": false,
+                                            "AllowSupervisorToChatSilentMonitor": false,
+                                            "AllowSupervisorToChatWhisper": false,
+                                            "AllowSupervisorToChatConference": false
+                                        }  
+                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -1218,7 +1229,8 @@
                                                         "EscalateAudioCall": false,
                                                         "EscalateVideoCall": false,
                                                         "RequestAudioCall": false,
-                                                        "RequestVideoCall": false
+                                                        "RequestVideoCall": false,
+                                                        "RequestScreenShare": false
                                                     },
                                                     "AudioEscalateAllowed": true,
                                                     "RequestAudioCallAllowed": false,
@@ -1250,7 +1262,7 @@
                                                     },
                                                     "ConversationService": { "Url": "", "Limit": 50, "Label": false },
                                                     "ReplyAllowed": true,
-                                                    "EndInteractionOnAVEnd": false,
+                                                    "EndInteractionOnAVEnd": true,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
                                                         "AgentAudio": false,
@@ -2103,13 +2115,14 @@
                                                         }
                                                     },
                                                     "SearchPollingInterval": 0,
-                                                    "DeleteAllowed": false,
-                                                    "QueueTransferForAgent": false,
+                                                    "DeleteAllowed": true,
+                                                    "QueueTransferForAgent": true,
                                                     "TemplatesByTeam": false,
                                                     "Tabs": ["queue", "inbox", "sent", "drafts"],
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
-                                                    "TemplatesByHierarchy": false
+                                                    "TemplatesByHierarchy": false,
+                                                    "MaxSelection":10
                                                 }
                                             },
                                             {
@@ -2406,5 +2419,5 @@
             ]
         }
     },
-    "Version": "5.5.0-beta.1"
+    "Version": "5.6.0-beta.1"
 }

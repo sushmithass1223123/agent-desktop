@@ -262,7 +262,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'forward':
                     this._email = {
                         BCC: [],
-                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`,
                         To: [],
                         From: mailbox,
                         Subject: `FW: ${subject}`,
@@ -273,7 +273,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'reply':
                     this._email = {
                         BCC: [],
-                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`,
                         To: Array.isArray(From) ? From : [From],
                         From: this.email.mailbox,
                         Subject: (subject || '').startsWith('RE:') ? subject : `RE: ${subject}`,
@@ -285,7 +285,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     const ToList = (Array.isArray(From) ? From : From.split(',')).concat(To);
                     this._email = {
                         BCC,
-                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`,
                         To: Array.from(new Set(ToList.filter((e) => e && e !== mailbox))),
                         From: mailbox,
                         Subject: (subject || '').startsWith('RE:') ? subject : `RE: ${subject}`,
@@ -294,7 +294,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     };
                     break;
                 case 'draft':
-                    this.email.Body = `${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
+                    this.email.Body = `${bodyBreak} ${Body}`;
                     this._email = email;
                     break;
             }

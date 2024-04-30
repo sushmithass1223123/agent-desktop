@@ -292,7 +292,7 @@
                             *ngIf="agentFeatures.reqScreenshare"
                             mat-flat-button
                             mat-icon-button
-                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent"
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent || IsScreenShareDisabled"
                             [matTooltip]="locale('widgets.audioVideoControls.requestScreenShare')"
                             [ngClass]="{ 'bg-alt-danger': screenSharing }"
                             (click)="requestToShareScreen()"
@@ -352,7 +352,7 @@
                             mat-icon-button
                             color="warn"
                             [matTooltip]="locale('widgets.audioVideoControls.endCall')"
-                            (click)="screenSharing ? shareScreen(true) : endCall()"
+                            (click)="screenSharing ? shareScreen(true) : endAVCallClicked()"
                         >
                             <mat-icon>call_end</mat-icon>
                         </button>

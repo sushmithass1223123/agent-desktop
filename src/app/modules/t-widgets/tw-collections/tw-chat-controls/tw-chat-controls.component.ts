@@ -586,6 +586,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                * Disable Request Video Calls
                */
               RequestVideoCall: boolean;
+              /**
+               * Disable Request Screenshare
+               */
+              RequestScreenShare: boolean;
+
+              
           }
         | undefined;
     /**
@@ -899,7 +905,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'AVDisconnectedEvent',
                     'HoldInteractionEvent',
                     'UnholdInteractionEvent',
-                    'ConfirmEndInteractionEvent'
+                    'ConfirmEndInteractionEvent',
+                    "EndInteractionEvent"
                 ],
                 this.interaction.InteractionID
             )
@@ -1486,8 +1493,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // };
 
         widget.InteractionDetails = this.data.InteractionDetails;
-
-        widget.Data = { ...this.data.Data };
+        // this.isMobileDevice = this.customerDevice;
+        widget.Data = { ...this.data.Data, 
+            IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
+            && this.DisableAvConstraints?.RequestScreenShare };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -1927,6 +1936,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this.customerDevice = this.DisableAvConstraints.Devices.includes(deviceInfo.info.osver?.toLowerCase()); 
         }
     }
+    
     /**
      * To process  UserDeviceInfoEvent
      * @param evt  UserDeviceInfoEvent evt
@@ -2090,7 +2100,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         messageId,
                         message,
                         type,
-                        time: moment(item.DateTime, 'dd/MM/yyyy HH:mm:ss'),
+                        time: moment(item.DateTime.replaceAll('-', '/'), 'dd/MM/yyyy HH:mm:ss'),
                         attachment: {
                             ...attachment,
                             angle: 0
@@ -2704,10 +2714,25 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     /**
      * To process custom ConfirmEndInteractionEvent and confirm end chat
+     * this method is not going to be used hereafter 
      */
     ConfirmEndInteractionEvent(): void {
         this.confirmEndChat();
     }
+
+
+    /**
+     * To process custom EndInteractionWithoutConfrimationEvent to skip confirmation alert
+     * this method is used hereafter instead of ConfirmEndInteractionEvent
+     */
+    async EndInteractionEvent(): Promise<void> {
+        // End chat logic
+        await this.endChat('AgentChatDisconnected');
+        // Destroy whiteboard widget
+        this._aotWidgetService.destroyWidget(this.whiteBoardWidgetId);
+    }
+
+    
 
     /**
      * On widget maximzed event
