@@ -77,8 +77,8 @@ export class DashboardService extends SharedWrapper {
             'TmacDataServer',
             { agentId: agentData.agentId, stationId: '', tmacServer: '', isTmac: false },
             'TmacDataServerHub',
-            false,
-            10
+            false
+           
         );
 
         // check if the connection is created successfully
