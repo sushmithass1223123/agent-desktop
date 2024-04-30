@@ -2731,5 +2731,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.2.5.30-patch.6"
+    "Version": "5.2.5.30-patch.7"
 }
