@@ -109,10 +109,7 @@
                                                     "TeamFilter": true
                                                 },
                                                 "Skill": {
-                                                    "Allowed": {
-                                                        "callinbound": false,
-                                                        "calloutbound": true
-                                                    },
+                                                    "Allowed": true,
                                                     "Consult": true,
                                                     "Blind": true,
                                                     "Comments": true,
