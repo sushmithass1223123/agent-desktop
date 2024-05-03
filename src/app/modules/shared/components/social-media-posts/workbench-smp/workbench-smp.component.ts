@@ -4,15 +4,16 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { IWidget, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { filter } from 'rxjs/operators';
+import { filter, map, timeout } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { fuseAnimations } from '@fuse/animations';
-import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AppUiService } from '@services/app-ui.service';
 import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { isEqual } from 'lodash';
+import { throwADError } from 'app/utils';
 
 export class SMPost {
     Skill: string;
@@ -214,10 +215,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
          */
         draftsTabAllowed: boolean;
     };
-    /**
-     * Disable advance Search submit button
-     */
-    disableBtn: Boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -336,6 +333,17 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 );
                 break;
 
+            case 'smposts/success':
+                this.smpSearchRes.loading = false;
+                this.smpSearchRes.error = false;
+                this.advancedSearch.snackbarRef?.dismiss();
+                break;
+
+            case 'smposts/polling/inactive':
+                this.polling.failed = false;
+                this.polling.active = false;
+                break;
+
             default:
                 break;
         }
@@ -396,6 +404,46 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 };
                 requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
             }
+
+            const maps: Record<AvailableTabs, any> = {
+                inbox: this.mapInboxPosts,
+                queue: [],
+                drafts: [],
+                posts: [],
+                sent: []
+            };
+
+            this.advancedSearch.sub$ = forkJoin(requests)
+                .pipe(
+                    timeout(50000),
+                    map((res: any) => {
+                        this.disableAdvSearchActions = false;
+
+                        if (res.find((x: any) => x.status !== 'SUCCESS')) {
+                            const resultStr = JSON.parse(
+                                JSON.stringify(res.find((x: any) => x.status !== 'SUCCESS'))?.toLowerCase()
+                            );
+
+                            // Todo: handle result str
+                            alert(resultStr);
+                        }
+                        const posts = res.map((x: any) => x.result || []).flat();
+                        return maps[this.currentTab](posts);
+                    })
+                )
+                .subscribe({
+                    next: (res: SMPost[]) => {
+                        this.setComponentState('smposts/success', { silent });
+                    },
+                    error: (e) => {
+                        console.error(e);
+                        this.setComponentState('smposts/failure', { silent });
+                        this.setComponentState('smposts/polling/inactive', { silent });
+                    },
+                    complete: () => {
+                        this.setComponentState('smposts/polling/inactive', { silent });
+                    }
+                });
         } catch (error) {
             console.error(error);
         }
