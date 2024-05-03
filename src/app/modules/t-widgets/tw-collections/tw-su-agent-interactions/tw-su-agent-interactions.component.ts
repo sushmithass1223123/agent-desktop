@@ -226,8 +226,12 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 this.featureMap[feature.Feature].Type === type &&
                 this.featureMap[feature.Feature].SubType.includes(subType)
             ) {
-                return feature.IsEnabled && this.data.ExtraConfig[feature.Feature] 
-                && this.data.ExtraConfig.validateFor.includes(subType);
+                return (
+                    feature.IsEnabled &&
+                    (this.data?.ExtraConfig && this.data?.ExtraConfig?.ValidateFor?.length
+                        ? this.data.ExtraConfig[feature.Feature] && this.data.ExtraConfig.ValidateFor.includes(subType)
+                        : true)
+                );
             } else {
                 return false;
             }

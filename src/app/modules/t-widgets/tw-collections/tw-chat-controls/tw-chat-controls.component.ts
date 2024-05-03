@@ -286,21 +286,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Icon
          */
         icon: string;
+        /**
+         * Is action enabled
+         */
+        enable: boolean;
     }[] = [
             {
                 action: 'documents',
                 icon: 'insert_drive_file',
-                label: 'Documents'
+                label: 'Documents',
+                enable: true
             },
             {
                 action: 'camera',
                 icon: 'camera_alt',
-                label: 'Camera'
+                label: 'Camera',
+                enable: true
             },
             {
                 action: 'media',
                 icon: 'photo',
-                label: 'Photos & Videos'
+                label: 'Photos & Videos',
+                enable: true
             }
         ];
     /**
@@ -1869,6 +1876,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.intent = evt.TransferIntent || evt.Intent || 'Default';
         // check the channel
         this.channel = evt.Channel.toLowerCase() || 'textchat';
+        // Disable document attachment feature if the channel is instagram
+        if(this.channel === 'instagram') this.attachActions[0].enable = false;
         // check social media
         this.isSMM = evt.IsSMM || false;
 
@@ -2295,6 +2304,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
                         } else if (msg.status === 'rejected') {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
+                            this.createIconButtonDisabled = false; 
                         }
                         break;
                     
@@ -3294,24 +3304,49 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      *
      * @param { 'documents' | 'camera' | 'media' } type
      */
-    addAttachment(type: 'documents' | 'camera' | 'media'): void {
-        // clear the mode
-        this.attachPreviewMode = '';
-        // close the attach menu
-        setTimeout(() => {
-            if (type === 'documents') {
-                // open camera to take a picture
-                this.attachPreviewMode = 'uploadDocuments';
-            } else if (type === 'media') {
-                // open camera to take a picture
-                this.attachPreviewMode = 'uploadMedia';
-            } else {
-                // open camera to take a picture
-                this.attachPreviewMode = 'camera';
+    addAttachment(type: 'documents' | 'camera' | 'media', isEnabled: boolean): void {
+        try {
+            if (!isEnabled) {
+                let attachmentWarnTypeLabelTypeMapper = this.getUpdatedLabel(
+                    this.translocoService.translate('widgets.chatControls.attachmentWarnType'),
+                    []
+                )?.split(',');
+                if (attachmentWarnTypeLabelTypeMapper[0] === 'widgets.chatControls.attachmentWarnType') 
+                    attachmentWarnTypeLabelTypeMapper = ['documents:documents', 'camera:photos', 'media:media'];
+
+                const dynamicLabels = [
+                    {
+                        key: '#attachmentWarnType',
+                        value: attachmentWarnTypeLabelTypeMapper.filter((warnLabel: string) => warnLabel.split(':')[0] === type)[0]?.split(':')[1]
+                    }
+                ];
+
+                this._appUIService.showSnackbar(
+                    this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.attachmentWarnMessage'), dynamicLabels),
+                    'warning'
+                );
+                return;
             }
-            // close attachment list
-            this.showAttachOverlay = false;
-        });
+            // clear the mode
+            this.attachPreviewMode = '';
+            // close the attach menu
+            setTimeout(() => {
+                if (type === 'documents') {
+                    // open camera to take a picture
+                    this.attachPreviewMode = 'uploadDocuments';
+                } else if (type === 'media') {
+                    // open camera to take a picture
+                    this.attachPreviewMode = 'uploadMedia';
+                } else {
+                    // open camera to take a picture
+                    this.attachPreviewMode = 'camera';
+                }
+                // close attachment list
+                this.showAttachOverlay = false;
+            });
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     /**

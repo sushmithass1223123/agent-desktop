@@ -472,7 +472,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { 
+                                    "Data": {
                                         "TASUrl": "https://mx.tetherfi.cloud/TAS/Quiz/Index",
                                         "agentStatusChange": true,
                                         "InteractionConstraints": {
@@ -481,7 +481,7 @@
                                             "AllowSupervisorToChatSilentMonitor": false,
                                             "AllowSupervisorToChatWhisper": false,
                                             "AllowSupervisorToChatConference": false
-                                        }  
+                                        }
                                     }
                                 }
                             ],
@@ -2122,7 +2122,7 @@
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxSelection":10
+                                                    "MaxSelection": 10
                                                 }
                                             },
                                             {
@@ -2419,5 +2419,5 @@
             ]
         }
     },
-    "Version": "5.6.0-beta.1"
+    "Version": "5.6.0-beta.2"
 }

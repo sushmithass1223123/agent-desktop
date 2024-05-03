@@ -637,7 +637,7 @@
                                                 mat-mini-fab
                                                 color="default"
                                                 [matTooltip]="item.label"
-                                                (click)="addAttachment(item.action)"
+                                                (click)="addAttachment(item.action, item.enable)"
                                             >
                                                 <mat-icon>{{ item.icon }}</mat-icon>
                                             </button>
