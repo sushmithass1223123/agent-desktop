@@ -169,6 +169,22 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
+                if(this.attachPreviewMode === 'uploadMedia') {
+                    const fileMime = input.files[0].type.split('/');
+                    if(!['video', 'image'].includes(fileMime[0])) {
+                        const dynamicLabels = [
+                            {
+                                key: '#fileType',
+                                value: fileMime[1]
+                            }
+                        ]
+                        this._appUIService.showSnackbar(
+                            this.getUpdatedLabel(this.translocoService.translate('widgets.chatAttachments.invalidType'), dynamicLabels),
+                            'warning'
+                        );
+                        return;
+                    }
+                }
                 const base64 = await this.convertToBase64(input.files[0]);
                 const fileName = input.files[0].name;
                 this.uploadingFiles.push({
@@ -186,6 +202,14 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
         }
+    }
+
+    getUpdatedLabel(msg, labels = []) {
+        let updatedLabel = msg;
+        labels?.forEach(ele => {
+            updatedLabel = updatedLabel.replace(ele.key, ele.value);
+        });
+        return updatedLabel;
     }
 
     /**
