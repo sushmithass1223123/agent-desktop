@@ -138,7 +138,9 @@
             "coBrowseLoading": "Opening Co-browse",
             "requestForAudioCallSent": "Audio call request sent",
             "requestForVideoCallSent": "Video call request sent",
-            "errorInCallRequest": "Call request failed"
+            "errorInCallRequest": "Call request failed",
+            "attachmentWarnMessage": "Attaching #attachmentWarnType restricted",
+            "attachmentWarnType": "documents:documents,camera:photos,media:media"
         },
         "cannedResponses": {
             "mode": "模式",
