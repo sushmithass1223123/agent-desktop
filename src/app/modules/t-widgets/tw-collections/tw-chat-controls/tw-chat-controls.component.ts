@@ -2304,6 +2304,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestAccepted'), 'success');
                         } else if (msg.status === 'rejected') {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardRequestRejected'), 'failure');
+                            this.createIconButtonDisabled = false; 
                         }
                         break;
                     
