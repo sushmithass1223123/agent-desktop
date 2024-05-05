@@ -956,7 +956,8 @@
             "pull": "Pull",
             "transfer": "Transfer",
             "getPostsFailed": "Error occured while fetching posts",
-            "getPostsLoading": "Loading posts"
+            "getPostsLoading": "Loading posts",
+            "postsNotFound": "There are no posts"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

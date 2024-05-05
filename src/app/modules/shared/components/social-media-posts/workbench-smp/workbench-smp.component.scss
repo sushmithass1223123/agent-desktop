@@ -44,11 +44,15 @@ workbench-smp {
                     .sc-icon {
                         width: 24px;
                         height: 24px;
-                        transition: transform 200ms ease;
                     }
 
                     mat-icon {
                         transform: rotate(-90deg);
+                    }
+
+                    .expanded {
+                        width: 30px;
+                        transform: rotate(0deg);
                     }
                 }
             }
@@ -71,14 +75,16 @@ workbench-smp {
                     flex-direction: column;
                     align-items: flex-start;
                     justify-content: flex-start;
-                    gap: 10px;
+                    gap: 5px;
 
                     .post-list {
-                        height: 90px;
+                        height: fit-content;
+                        max-height: 90px;
                         display: flex;
                         flex-direction: column;
                         align-items: flex-start;
                         justify-content: space-between;
+                        gap: 5px;
 
                         p {
                             overflow: hidden;
@@ -115,6 +121,14 @@ workbench-smp {
                 overflow-y: scroll;
                 overflow-x: hidden;
             }
+        }
+
+        .poster {
+            text-overflow: ellipsis;
+            max-width: 50%;
+            -webkit-line-clamp: 1;
+            white-space: pre;
+            overflow: hidden;
         }
 
         .expanded {

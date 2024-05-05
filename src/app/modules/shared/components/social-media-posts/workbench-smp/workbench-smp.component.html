@@ -88,79 +88,63 @@
                         <!-- Side body mini tabs container -->
                         <div *ngIf="!advancedSearch.show && !smpSearchRes.error" class="twd-relative twd-h-full">
                             <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
-                                <div class="posts-list twd-w-full">
-                                    <div class="twd-w-full twd-rounded-3xl ng-tns-c543-38 red-200 dropdowns expanded"
-                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
+                                <!-- Post list -->
+                                <div class="posts-list twd-w-full" *ngIf="segregatedPosts.length">
+                                    <div class="twd-w-full twd-rounded-3xl ng-tns-c543-38 red-200 dropdowns twd-pb-2 {{getObjectKeyString(channel)}}"
+                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                                        *ngFor="let channel of segregatedPosts">
                                         <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
                                             <div class="sc-flex">
-                                                <mat-icon
-                                                    style="transform: rotate(0deg);">arrow_drop_down_circle</mat-icon>
-                                                <img class="sc-icon" src="assets/images/vectors/facebook.svg"
+                                                <mat-icon [id]="getObjectKeyString(channel)"
+                                                    (click)="toggleDropdown(getObjectKeyString(channel))"
+                                                    role="button">arrow_drop_down_circle</mat-icon>
+                                                <img class="sc-icon"
+                                                    src="assets/images/vectors/{{getObjectKeyString(channel)}}.svg"
                                                     alt="Facebook Icon">
-                                                <p>Facebook</p>
+                                                <p>{{getObjectKeyString(channel)}}</p>
                                             </div>
-                                            <p>(28)</p>
+                                            <p>({{getTotalArrayCount(channel)}})</p>
                                         </div>
                                         <!-- Level 1 dropdown -->
-                                        <div class="dropdown-l1 twd-w-full twd-pl-5 expanded">
+                                        <div class="dropdown-l1 twd-w-full twd-pl-5 {{getObjectKeyString(skill)}}"
+                                            *ngFor="let skill of getObjectValueData(channel)">
                                             <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
                                                 <div class="sc-flex">
-                                                    <mat-icon
-                                                        style="transform: rotate(0deg);">arrow_drop_down_circle</mat-icon>
-                                                    <p>42001</p>
+                                                    <mat-icon role="button" [id]="getObjectKeyString(skill)"
+                                                        (click)="toggleDropdown(getObjectKeyString(skill))">arrow_drop_down_circle</mat-icon>
+                                                    <p>{{getObjectKeyString(skill)}}</p>
                                                 </div>
-                                                <p>(20)</p>
+                                                <p>({{getTotalArrayCount(channel, getObjectKeyString(skill))}})</p>
                                             </div>
                                             <!-- Level 2 dropdown -->
                                             <div class="post-list-flex twd-w-full twd-pl-5">
                                                 <div mat-ripple
-                                                    class="post-list mat-elevation-z1 theme-bg twd-w-full twd-relative twd-rounded-3xl twd-p-3">
-                                                    <h5 class="font-weight-700">Yashwanthkumar Arivazhagan</h5>
-                                                    <p class="font-weight-500">Lorem ipsum, dolor sit amet consectetur
-                                                        adipisicing elit.
-                                                        Impedit, aut. Iusto provident distinctio, facilis id aperiam
-                                                        nobis debitis fugiat possimus velit incidunt nemo explicabo eius
-                                                        illum vitae laudantium laborum. Sed.</p>
+                                                    class="post-list mat-elevation-z1 theme-bg twd-w-full twd-relative twd-rounded-3xl twd-p-3"
+                                                    *ngFor="let post of getObjectValueData(skill)">
+                                                    <h5 class="font-weight-700 poster">{{post.PostData.From}}</h5>
+                                                    <p class="font-weight-500">{{post.PostData.Subject}}</p>
                                                     <div class="date-time-flex twd-absolute twd-pr-3 twd-pt-3">
-                                                        <h5 class="font-weight-700">12th March 2024</h5>
-                                                        <p class="font-weight-500">12:00 PM</p>
+                                                        <h5 class="font-weight-700">
+                                                            {{formatDate(post.AddedTime).date}}</h5>
+                                                        <p class="font-weight-500">{{formatDate(post.AddedTime).time}}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="dropdown-l1 twd-w-full twd-pl-5">
-                                            <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
-                                                <div class="sc-flex">
-                                                    <mat-icon>arrow_drop_down_circle</mat-icon>
-                                                    <p>42002</p>
-                                                </div>
-                                                <p>(8)</p>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div class="twd-w-full twd-rounded-3xl red-200 dropdowns"
-                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-                                        <div class="twd-w-full dropdown-header twd-pl-2 twd-pr-2">
-                                            <div class="sc-flex">
-                                                <mat-icon>arrow_drop_down_circle</mat-icon>
-                                                <img class="sc-icon" src="assets/images/vectors/instagram.svg"
-                                                    alt="Instagram Icon">
-                                                <p>Instagram</p>
-                                            </div>
-                                            <p>(7)</p>
-                                        </div>
-                                    </div>
-                                    <div class="twd-w-full twd-rounded-3xl red-200 dropdowns"
-                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body">
-                                        <div class="twd-w-full dropdown-header twd-pl-2 twd-pr-2">
-                                            <div class="sc-flex">
-                                                <mat-icon>arrow_drop_down_circle</mat-icon>
-                                                <img class="sc-icon" src="assets/images/vectors/x.svg"
-                                                    alt="Facebook Icon">
-                                                <p>Twitter (X)</p>
-                                            </div>
-                                            <p>(9)</p>
-                                        </div>
+                                </div>
+
+                                <!-- Loading UI -->
+                                <div class="twd-p-3" *ngIf="smpSearchRes.loading">
+                                    <div [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
+                                        class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
+                                        style="height: 50px;">
+                                        <span
+                                            class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
+                                            <mat-icon> arrow_drop_down_circle </mat-icon>
+                                        </span>
+                                        <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
                                     </div>
                                 </div>
                             </div>
@@ -219,20 +203,13 @@
                                 </div>
                             </form>
                         </div>
-
-                        <!-- Loading UI -->
-                        <div class="twd-p-3" *ngIf="smpSearchRes.loading">
-                            <div
-                                [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
-                                class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
-                            >
-                                <span class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
-                                    <mat-icon> arrow_drop_down </mat-icon>
-                                </span>
-                                <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
-                            </div>
-                        </div>
                     </ng-container>
+
+                    <div *ngIf="!segregatedPosts.length && !smpSearchRes.loading && !smpSearchRes.error"
+                        class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center">
+                        <span class="twd-text-2xl">{{ locale('sharedComponents.socialMediaPosts.postsNotFound') }}
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Actual body -->

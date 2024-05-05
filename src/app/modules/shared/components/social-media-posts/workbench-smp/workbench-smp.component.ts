@@ -4,7 +4,7 @@ import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { IWidget, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { filter, map, timeout } from 'rxjs/operators';
+import { filter, map, takeUntil, timeout } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { fuseAnimations } from '@fuse/animations';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
@@ -16,8 +16,41 @@ import { isEqual } from 'lodash';
 import { throwADError } from 'app/utils';
 
 export class SMPost {
-    Skill: string;
+    ItemId: string;
     AddedTime: Date;
+    AgentId: string;
+    Channel: string;
+    CreatedBy: string;
+    CustomerIdentifier: string;
+    Key: string;
+    OrderIndex: number;
+    SubChannel: string;
+    Status: number;
+    SkillName: string;
+    SkillId: string;
+    RouteDate: string;
+    RouteTime: string;
+    RonaEnabled: boolean;
+    Reason: string;
+    PostData: PostData;
+}
+
+interface PostData {
+    SessionId: string;
+    OutSessionId: string;
+    RouteId: string;
+    From: string;
+    To: string;
+    Subject: string;
+    EmailType: string;
+    Skill: string;
+    Intent: string;
+    JsonData: any;
+    SentimentInfo: any;
+    RouteReason: string;
+    HasAttachment: boolean;
+    IsEmailProbableSpam: boolean;
+    RejectReason: string;
 }
 
 /**
@@ -96,7 +129,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * Advanced search form controls and cached search fields for each category
      */
     advancedSearch: AdvanceSearchFormData = {
-        form: this._smpService.globalEmailWorkbenchState$.searchParams,
+        form: this._smpService.globalSmpWorkbenchState$.searchParams,
         data: {},
         show: false,
         sub$: null,
@@ -215,6 +248,13 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
          */
         draftsTabAllowed: boolean;
     };
+    /**
+     * List of availabloe mailboxes
+     */
+    availableMailboxes: string[] = [];
+
+    // UI modifyers
+    segregatedPosts: any = [];
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -226,7 +266,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         super('WorkbenchSmpComponent');
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
+        // get and set the list of available mailboxes
+        await this.setAvailableMailboxes();
+
         this.validateAvailabletabsFromConfiguration();
 
         // set the current tab
@@ -254,7 +297,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             this.startPolling();
                         } else {
                             // if polling is disabled, do an advanced search only once
-                            // this.doAdvancedSearch();
+                            this.doAdvancedSearch();
                         }
                     } else {
                         // stop polling when not in view
@@ -307,6 +350,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return;
 
             case 'smposts/failure':
+                this.advancedSearch.snackbarRef?.dismiss();
                 this.smpSearchRes.loading = false;
                 this.smpSearchRes.msg = this.translocoService.translate(
                     'sharedComponents.socialMediaPosts.getPostsFailed'
@@ -396,18 +440,50 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             // In case if we are back to old tab, get the preserved global key
             if (globalKey) {
                 searchParams = {
+                    subject: globalKey,
                     content: this.currentTab !== 'queue' ? globalKey : undefined,
                     global: 'GLOBAL',
+                    listOfMailboxes:
+                        this._smpService.globalSmpWorkbenchState$.searchParams.value.listOfMailboxes.join(','),
+                    hasAttachments: 2,
+                    replied: 2,
+                    closed: 2,
+                    assigned: 2,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     skills: []
                 };
                 requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
             }
+            if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
+                searchParams = {
+                    global: '',
+                    skills: [],
+                    email: searchFields.email,
+                    agent: searchFields.agent || '',
+                    startDate: searchFields.startDate,
+                    endDate: searchFields.endDate,
+                    subject: searchFields.subject,
+                    content: searchFields.content,
+                    listOfMailboxes: searchFields.listOfMailboxes.join(',')
+                };
+                if (this.currentTab === 'inbox') {
+                    searchParams.assignedTo = searchFields.assignedTo;
+                    searchParams.hasAttachments = searchFields.hasAttachments;
+                    searchParams.replied = searchFields.replied;
+                    searchParams.closed = searchFields.closed;
+                    searchParams.assigned = searchFields.assigned;
+                }
+                if (this.currentTab !== 'queue') {
+                    searchParams.insessionid = searchFields.inSessionId;
+                    searchParams.listOfMailboxes = searchFields.listOfMailboxes.join(',');
+                }
+                requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
+            }
 
             const maps: Record<AvailableTabs, any> = {
-                inbox: this.mapInboxPosts,
-                queue: [],
+                inbox: this.mapPosts,
+                queue: this.mapPosts,
                 drafts: [],
                 posts: [],
                 sent: []
@@ -421,11 +497,25 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             const resultStr = JSON.parse(
-                                JSON.stringify(res.find((x: any) => x.status !== 'SUCCESS'))?.toLowerCase()
+                                JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase()
                             );
 
-                            // Todo: handle result str
-                            alert(resultStr);
+                            if (resultStr?.errorcode && resultStr.errorcode == '-101') {
+                                this._appUiService.showSnackbar(
+                                    'Number of posts present in the search has reached maximum limit, Please select a shorter date range',
+                                    'warning'
+                                );
+                                return;
+                            }
+
+                            throwADError(
+                                'Error in WorkbenchSmpComponent.doAdvancedSearch',
+                                `Request to fetch ${this.currentTab} mails failed with response : \n ${JSON.stringify(
+                                    res,
+                                    null,
+                                    2
+                                )}`
+                            );
                         }
                         const posts = res.map((x: any) => x.result || []).flat();
                         return maps[this.currentTab](posts);
@@ -433,6 +523,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 )
                 .subscribe({
                     next: (res: SMPost[]) => {
+                        this.updateSegregatedPosts(res);
                         this.setComponentState('smposts/success', { silent });
                     },
                     error: (e) => {
@@ -603,9 +694,28 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * Method to handle tab switching from user
      * @param tabName Name of the tab that user tends to switch
      */
-    switchTab(tabName: string): void {
+    switchTab(tab: AvailableTabs): void {
         try {
-            this.currentTab = tabName;
+            this.advancedSearch.show = false;
+            this.advancedSearch.sub$?.unsubscribe();
+            this.segregatedPosts = [];
+            this.openSmpRes.data.next(null);
+            this.currentTab = tab ?? '';
+            if (tab) {
+                if (this.advancedSearch.data[tab]) {
+                    this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
+                    this.globalSearch.form.setValue(this.globalSearch.data[tab]);
+                } else {
+                    this.resetForm();
+                    this.advancedSearch.data[tab] = {
+                        data: this.advancedSearch.form.value,
+                        changed: false
+                    };
+                    this.globalSearch.form.setValue('');
+                    this.globalSearch.data[tab] = this.globalSearch.form.value;
+                }
+                this.doAdvancedSearch();
+            }
         } catch (error) {
             console.error(error);
         }
@@ -622,31 +732,169 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     /**
-     * This method is used to formate the post list reponse from the inbox search
-     * @param {any} result This is the response form the inbox search
+     * This method is used to formate the post list reponse from the search api
+     * @param {any} result This is the response form the search
      * @returns {SMPost[]} returns mapped posts parsed into SMPost type
      */
-    mapInboxPosts(result: any): SMPost[] {
+    mapPosts(result: any): SMPost[] {
         try {
             if (!result || !result.length) {
                 return [];
             }
 
             return result.map((x: any): SMPost => {
-                const AddedTime = new Date(x.currentStatusDate);
-                if (!x.currentStatusTime) {
-                    console.log('Unable to split x.currentStatusTime', x);
-                }
-                const time = x.currentStatusTime.split(':');
-                AddedTime.setHours(time[0]);
-                AddedTime.setMinutes(time[1]);
                 return {
-                    Skill: x.makerSkillName || x.cmSkill,
-                    AddedTime
+                    AddedTime: x?.addedTime,
+                    AgentId: x?.agentID,
+                    Channel: x?.channel,
+                    CreatedBy: x?.createdBy,
+                    CustomerIdentifier: x?.customerIdentifier,
+                    ItemId: x?.itemID,
+                    Key: x?.key,
+                    OrderIndex: x?.orderIndex,
+                    Reason: x?.reason,
+                    RonaEnabled: x?.ronaEnabled,
+                    RouteDate: x?.routeDate,
+                    RouteTime: x?.routeTime,
+                    SkillId: x?.skillId,
+                    SkillName: x?.skillName,
+                    Status: x?.status,
+                    SubChannel: x?.subChannel,
+                    PostData: {
+                        ...JSON.parse(x?.data)
+                    }
                 };
             });
         } catch (error) {
             console.error(error);
         }
+    }
+
+    /**
+     * Sets available mailboxes
+     */
+    private async setAvailableMailboxes(): Promise<void> {
+        if (!this._smpService.globalSmpWorkbenchState$.availableMailboxes.value?.length) {
+            await this._smpService.init();
+        }
+
+        this.availableMailboxes = this._smpService.globalSmpWorkbenchState$.availableMailboxes.value;
+        this._smpService.globalSmpWorkbenchState$.availableMailboxes.valueChanges
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((res) => {
+                this.availableMailboxes = res;
+            });
+    }
+
+    updateSegregatedPosts(response: SMPost[]): void {
+        try {
+            this.segregatedPosts = [];
+            let channelIdentifier = 'SubChannel';
+            let skillIdentifier = 'SkillName';
+            let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
+
+            const getSegregatedPostsBySkill = (channel: string) => {
+                const filteredPostsByChannel: SMPost[] = response.filter(
+                    (res: SMPost) => res[channelIdentifier] === channel
+                );
+                let availableSkills = Array.from(
+                    new Set(filteredPostsByChannel.map((r: SMPost) => r[skillIdentifier]))
+                );
+
+                let constructedPost: any = [];
+
+                availableSkills.forEach((skill: string) => {
+                    constructedPost.push({
+                        [skill]: filteredPostsByChannel.filter((post: SMPost) => post[skillIdentifier] === skill)
+                    });
+                });
+
+                return constructedPost;
+            };
+
+            availableChannels.forEach((channel: string) => {
+                this.segregatedPosts.push({
+                    [channel]: getSegregatedPostsBySkill(channel)
+                });
+            });
+
+            console.log(this.segregatedPosts);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    getTotalArrayCount(channel: any, skillname?: string) {
+        const dataArray: any = Object.values(channel)[0];
+        let count = 0;
+        dataArray.forEach((skillArray: any) => {
+            if (skillname && Object.keys(skillArray)[0] !== skillname) return;
+            let arrc: any = Object.values(skillArray)[0];
+            count += arrc.length;
+        });
+        return count;
+    }
+
+    getObjectKeyString(data: any): string {
+        return Object.keys(data)[0];
+    }
+
+    getObjectValueData(data: any): any {
+        return Object.values(data)[0];
+    }
+
+    formatDate(inputDateStr: string): { date: string; time: string } {
+        const inputDate = new Date(inputDateStr);
+        const months = [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
+        ];
+        const day = inputDate.getDate();
+        const month = inputDate.getMonth();
+        const year = inputDate.getFullYear();
+        const hours = inputDate.getHours();
+        const minutes = inputDate.getMinutes();
+
+        const addOrdinalSuffix = (day) => {
+            if (day >= 11 && day <= 13) {
+                return day + 'th';
+            }
+            switch (day % 10) {
+                case 1:
+                    return day + 'st';
+                case 2:
+                    return day + 'nd';
+                case 3:
+                    return day + 'rd';
+                default:
+                    return day + 'th';
+            }
+        };
+
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const hours12 = hours % 12 || 12;
+
+        return {
+            date: `${addOrdinalSuffix(day)} ${months[month]} ${year}`,
+            time: `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`
+        };
+    }
+
+    toggleDropdown(className: string) {
+        const rippleEl = document.querySelector(`.${className}`);
+        const triggerEl = document.getElementById(className);
+
+        rippleEl.classList.toggle('expanded');
+        triggerEl.classList.toggle('expanded');
     }
 }

@@ -2733,7 +2733,7 @@
                                                     ],
                                                     "PullAllowed": true,
                                                     "AskPullConfirmation": true,
-                                                    "SearchPollingInterval": 5000,
+                                                    "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24
                                                 }
@@ -3005,7 +3005,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy2/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
