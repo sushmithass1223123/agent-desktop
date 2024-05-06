@@ -11,7 +11,7 @@
             },
             form: advancedSearch.data[currentTab]?.changed
         },
-        openSmpResData: openSmpRes.data | async
+        openPostResData: openPostRes.data | async
     } as state">
         <div *transloco="let locale" #smpWorkbench
             class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
@@ -25,7 +25,7 @@
                             <button class="twd-mb-3 pb-20" mat-button *ngIf="tab.enabled" [matTooltip]="tab.label"
                                 (click)="switchTab(tab.key)" matTooltipPosition="right"
                                 [ngClass]="{ 'mat-raised-button': currentTab === tab.key }"
-                                [color]="currentTab === tab.key && 'accent'">
+                                [color]="currentTab === tab.key && 'accent'" [disabled]="postSearchRes.loading">
                                 <mat-icon>{{ tab.icon }}</mat-icon>
                                 <div>{{ tab.label }}</div>
                             </button>
@@ -86,7 +86,8 @@
                         </div>
 
                         <!-- Side body mini tabs container -->
-                        <div *ngIf="!advancedSearch.show && !smpSearchRes.error" class="twd-relative twd-h-full">
+                        <div *ngIf="!advancedSearch.show && !postSearchRes.error && (segregatedPosts.length || postSearchRes.loading)"
+                            class="twd-relative twd-h-full">
                             <div class="twd-absolute twd-h-full twd-w-full twd-p-3 twd-overflow-y-auto">
                                 <!-- Post list -->
                                 <div class="posts-list twd-w-full" *ngIf="segregatedPosts.length">
@@ -118,7 +119,7 @@
                                             </div>
                                             <!-- Level 2 dropdown -->
                                             <div class="post-list-flex twd-w-full twd-pl-5">
-                                                <div mat-ripple
+                                                <div mat-ripple (click)="openPost(post)"
                                                     class="post-list mat-elevation-z1 theme-bg twd-w-full twd-relative twd-rounded-3xl twd-p-3"
                                                     *ngFor="let post of getObjectValueData(skill)">
                                                     <h5 class="font-weight-700 poster">{{post.PostData.From}}</h5>
@@ -136,15 +137,19 @@
                                 </div>
 
                                 <!-- Loading UI -->
-                                <div class="twd-p-3" *ngIf="smpSearchRes.loading">
+                                <div class="twd-p-3" *ngIf="postSearchRes.loading">
                                     <div [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                                         class="twd-flex twd-items-center twd-truncate twd-rounded-3xl twd-w-full twd-pl-2"
-                                        style="height: 50px;">
+                                        style="height: 45px;">
                                         <span
                                             class="twd-transform twd-transition-transform twd--rotate-90 twd-grid twd-place-items-center">
                                             <mat-icon> arrow_drop_down_circle </mat-icon>
                                         </span>
-                                        <skeleton class="twd-opacity-30 twd-w-5/12 twd-m-2"></skeleton>
+                                        <div class="twd-opacity-30 twd-w-5/12 twd-m-2">
+                                            <div
+                                                class="twd-inline-flex twd-bg-gray-400 twd-animate-pulse twd-h-7 twd-w-full twd-rounded-md">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -205,15 +210,32 @@
                         </div>
                     </ng-container>
 
-                    <div *ngIf="!segregatedPosts.length && !smpSearchRes.loading && !smpSearchRes.error"
+                    <!-- No posts found UI -->
+                    <div *ngIf="!segregatedPosts.length && !postSearchRes.loading && !postSearchRes.error"
                         class="w-100-p h-50-p twd-flex twd-items-center twd-justify-center">
                         <span class="twd-text-2xl">{{ locale('sharedComponents.socialMediaPosts.postsNotFound') }}
                         </span>
+                    </div>
+
+                    <!-- Getting post error UI -->
+                    <div *ngIf="!postSearchRes.loading && postSearchRes.error"
+                        class="h-80-p twd-flex twd-justify-center twd-items-center">
+                        <div class="twd-w-5/12">
+                            <div class="w-100-p h-100-p text-center" fxLayout="column" fxLayoutAlign="center center">
+                                <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
+                                <h4 class="text-center m-0">{{ postSearchRes.msg }}</h4>
+                            </div>
+                            <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary"
+                                (click)="doAdvancedSearch()">
+                                {{ locale('global.retry') }}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Actual body -->
                 <div class="wsmp-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto twd-p-3"
+                    *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                     <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
@@ -225,7 +247,31 @@
                     </div>
                     <div
                         class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
-                        <smp-template></smp-template>
+                        <smp-template *ngIf="!(openPostRes.loading || openPostRes.error)"
+                            [postData]="state.openPostResData"></smp-template>
+
+                        <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
+                            fxLayoutAlign="center center" *ngIf="openPostRes.loading && !openPostRes.error">
+                            <div class="twd-w-5/12">
+                                <div class="w-100-p h-100-p text-center" fxLayout="column"
+                                    fxLayoutAlign="center center">
+                                    <img src="assets/images/vectors/no-data-1.svg"
+                                        class="w-100-p h-85-p box-shadow-3d" />
+                                    <h4 class="text-center m-0">{{
+                                        locale('sharedComponents.socialMediaPosts.loadingPostLabel') }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Select post placeholder -->
+                <div *ngIf="!state.openPostResData && !openPostRes.loading"
+                    class="wsmp-open theme-bg twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center">
+                    <div class="twd-flex twd-flex-col twd-justify-center">
+                        <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> video_label </mat-icon>
+                        <span class="twd-text-2xl">{{ locale('sharedComponents.socialMediaPosts.selectPostLabel') }}
+                        </span>
                     </div>
                 </div>
             </div>

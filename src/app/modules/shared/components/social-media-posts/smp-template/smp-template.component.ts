@@ -1,6 +1,7 @@
-import { filter, first } from 'rxjs/operators';
-import { ChangeDetectorRef, Component, Input, ViewEncapsulation } from '@angular/core';
+import { filter } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { SocialMediaData } from '@tmac/sdk';
 
 interface Comment {
     cid: number;
@@ -18,7 +19,9 @@ interface Comment {
     styleUrls: ['./smp-template.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class SmpTemplateComponent {
+export class SmpTemplateComponent implements OnInit {
+    @Input() postData: any;
+    socialMediaData: SocialMediaData;
     @Input() hideStructureActions: boolean = false;
     commentMode: string = 'initial';
     /**
@@ -78,8 +81,7 @@ export class SmpTemplateComponent {
                         {
                             cid: 111,
                             commenter: 'Akash S',
-                            comment:
-                                "True. Mike's gonna whoop him outta the octagon. Mark my words.",
+                            comment: "True. Mike's gonna whoop him outta the octagon. Mark my words.",
                             replies: []
                         },
                         {
@@ -125,6 +127,10 @@ export class SmpTemplateComponent {
         this.setRenderedComments();
     }
 
+    ngOnInit(): void {
+        this.socialMediaData = this.postData?.SocialMediaData;
+    }
+
     /**
      * Recursive method to flatten each comment
      * @param comments Actual comment array to be nested
@@ -146,9 +152,7 @@ export class SmpTemplateComponent {
 
                 if (replies.length > 0) {
                     const newParents = [...parents, cid];
-                    flattenedComments = flattenedComments.concat(
-                        this.flattenNestedComments(replies, newParents)
-                    );
+                    flattenedComments = flattenedComments.concat(this.flattenNestedComments(replies, newParents));
                 }
             });
 
@@ -164,9 +168,7 @@ export class SmpTemplateComponent {
      * @returns Length of the branch
      */
     getVertbranchLength(commentArray: Comment[], commentId: number): number {
-        const repliesForCid = commentArray.filter((comment: Comment) =>
-            comment?.parents?.includes(commentId)
-        );
+        const repliesForCid = commentArray.filter((comment: Comment) => comment?.parents?.includes(commentId));
         let height = 0;
 
         repliesForCid.forEach((comment: Comment, i: number) => {
@@ -202,11 +204,8 @@ export class SmpTemplateComponent {
         try {
             this.commentsToBeRendered = [];
 
-            const activeCommentIndex: number = this.comments.findIndex(
-                (comment: Comment) => comment.active === true
-            );
-            const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents
-                ?.length
+            const activeCommentIndex: number = this.comments.findIndex((comment: Comment) => comment.active === true);
+            const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents?.length
                 ? this.comments[activeCommentIndex]?.parents[0]
                 : this.comments[activeCommentIndex].cid;
 
@@ -219,8 +218,7 @@ export class SmpTemplateComponent {
                 ) {
                     this.commentsToBeRendered.push(comment);
                 }
-                if (comment?.active && comment.cid !== activeCommentRootParent)
-                    this.commentsToBeRendered.push(comment);
+                if (comment?.active && comment.cid !== activeCommentRootParent) this.commentsToBeRendered.push(comment);
                 if (
                     comment?.parents?.includes(activeCommentRootParent) &&
                     i > activeCommentIndex &&
@@ -244,17 +242,13 @@ export class SmpTemplateComponent {
 
     checkCommentStructure(structure: string, commentParents: number[]): boolean {
         try {
-            const activeCommentIndex: number = this.comments.findIndex(
-                (comment: Comment) => comment.active === true
-            );
+            const activeCommentIndex: number = this.comments.findIndex((comment: Comment) => comment.active === true);
             const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents[0];
             if (structure === 'prevrep') {
                 const previousRepliesExists =
                     activeCommentRootParent &&
                     JSON.parse(JSON.stringify(this.comments)).splice(
-                        this.comments.findIndex(
-                            (comment: Comment) => comment.cid === activeCommentRootParent
-                        ),
+                        this.comments.findIndex((comment: Comment) => comment.cid === activeCommentRootParent),
                         activeCommentIndex
                     ).length > 1;
                 return previousRepliesExists;
@@ -266,9 +260,7 @@ export class SmpTemplateComponent {
             } else if (structure === 'prevcmt') {
                 return (
                     this.orgCommentArray[
-                        this.orgCommentArray.findIndex(
-                            (comment: Comment) => comment.cid === activeCommentRootParent
-                        ) -
+                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) -
                             this.commentStructureModifyer.prevCommentLoadLevel -
                             1
                     ] !== undefined
@@ -276,9 +268,7 @@ export class SmpTemplateComponent {
             } else if (structure === 'nextcmt') {
                 return (
                     this.orgCommentArray[
-                        this.orgCommentArray.findIndex(
-                            (comment: Comment) => comment.cid === activeCommentRootParent
-                        ) +
+                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) +
                             this.commentStructureModifyer.nextCommentLoadLevel +
                             1
                     ] !== undefined
@@ -299,17 +289,14 @@ export class SmpTemplateComponent {
 
     loadHistory(direction: string): void {
         try {
-            const activeCommentIndex: number = this.comments.findIndex(
-                (comment: Comment) => comment.active === true
-            );
+            const activeCommentIndex: number = this.comments.findIndex((comment: Comment) => comment.active === true);
             const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents[0];
             if (direction === 'prev') {
                 this.commentStructureModifyer.prevCommentLoadLevel++;
                 const commentToFlatten = [
                     this.orgCommentArray[
-                        this.orgCommentArray.findIndex(
-                            (comment: Comment) => comment.cid === activeCommentRootParent
-                        ) - this.commentStructureModifyer.prevCommentLoadLevel
+                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) -
+                            this.commentStructureModifyer.prevCommentLoadLevel
                     ]
                 ];
                 let flattenedComments = this.flattenNestedComments(commentToFlatten);
@@ -321,9 +308,8 @@ export class SmpTemplateComponent {
                 this.commentStructureModifyer.nextCommentLoadLevel++;
                 const commentToFlatten = [
                     this.orgCommentArray[
-                        this.orgCommentArray.findIndex(
-                            (comment: Comment) => comment.cid === activeCommentRootParent
-                        ) + this.commentStructureModifyer.nextCommentLoadLevel
+                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) +
+                            this.commentStructureModifyer.nextCommentLoadLevel
                     ]
                 ];
                 let flattenedComments = this.flattenNestedComments(commentToFlatten);
@@ -369,10 +355,10 @@ export class SmpTemplateComponent {
     scrollToActiveComment(): void {
         try {
             const activeCommentEl = document.querySelectorAll('.active-comment');
-            if(activeCommentEl?.length) {
+            if (activeCommentEl?.length) {
                 activeCommentEl.forEach((el) => {
-                    el.scrollIntoView({ behavior: 'smooth'});
-                })
+                    el.scrollIntoView({ behavior: 'smooth' });
+                });
             }
         } catch (error) {
             console.error(error);

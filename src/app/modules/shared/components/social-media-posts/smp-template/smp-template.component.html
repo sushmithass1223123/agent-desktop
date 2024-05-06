@@ -5,69 +5,172 @@
 } as customFuse">
 
     <div class="smp-template twd-w-full wd-h-full theme-bg twd-p-4 twd-relative">
-        <div class="smp-post-info-container twd-flex twd-w-full">
-            <div class="poster-info-flex twd-flex">
-                <img src="assets/images/vectors/x.svg" alt="Poster profile picture">
-                <div class="poster-identity-flex twd-flex twd-flex-col">
-                    <h5 class="font-weight-700">Yashwanthkumar Arivazhagan . <span>1hr . Edited</span></h5>
-                    <h5 class="font-weight-600" [ngStyle]="{'color': 'var(--twd-primary-300)'}">Tetherfi Technologies
-                        Pvt.Ltd</h5>
+        <ng-container *ngIf="socialMediaData">
+            <div class="smp-post-info-container twd-flex twd-w-full">
+                <div class="poster-info-flex twd-flex">
+                    <img src="assets/images/vectors/x.svg" alt="Poster profile picture">
+                    <div class="poster-identity-flex twd-flex twd-flex-col">
+                        <h5 class="font-weight-700">{{socialMediaData?.Posts?.AccountName}} . <span>1hr . Edited</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="poster-content-flex twd-w-full twd-pt-3">
+                    <h3 class="font-weight-700" [ngStyle]="{'color': 'var(--twd-primary-300)'}">Tetherfi - Sprint 5
+                        Planning
+                        Meeting</h3>
+                    <div class="twd-pt-2">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, eligendi!</p>
+                        <br>
+                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae aperiam minima, laborum
+                            quas
+                            hic
+                            incidunt similique sequi natus minus necessitatibus ex, pariatur tempore aliquid in
+                            molestiae
+                            nam,
+                            fugiat repudiandae ea.</p>
+                        <br>
+                        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam dicta, sint ipsam
+                            dignissimos
+                            voluptatibus aliquid.</p>
+                    </div>
+                </div>
+                <div class="poster-stats-flex twd-flex twd-w-full bt">
+                    <div class="reaction-palette twd-flex">
+                        <img src="assets/images/vectors/love.svg" alt="Like icon">
+                        <img src="assets/images/vectors/haha.svg" alt="Laugh icon">
+                        <img src="assets/images/vectors/like.svg" alt="Like icon">
+                        <p class="reaction-count twd-pl-2 font-weight-600"
+                            [ngStyle]="{'color': 'var(--twd-primary-300)'}">
+                            23
+                        </p>
+                    </div>
+                    <div class="comment-util twd-flex" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
+                        <p (click)="scrollToActiveComment()" role="button" *ngIf="!hideStructureActions"
+                            class="active-scroller twd-pl-2 font-weight-600">
+                            Active</p>
+                        <p class="comments-count twd-pl-2 font-weight-600">
+                            Comments
+                            5</p>
+                    </div>
                 </div>
             </div>
-            <div class="poster-content-flex twd-w-full twd-pt-3">
-                <h3 class="font-weight-700" [ngStyle]="{'color': 'var(--twd-primary-300)'}">Tetherfi - Sprint 5 Planning
-                    Meeting</h3>
-                <div class="twd-pt-2">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, eligendi!</p>
-                    <br>
-                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae aperiam minima, laborum quas
-                        hic
-                        incidunt similique sequi natus minus necessitatibus ex, pariatur tempore aliquid in molestiae
-                        nam,
-                        fugiat repudiandae ea.</p>
-                    <br>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam dicta, sint ipsam dignissimos
-                        voluptatibus aliquid.</p>
-                </div>
-            </div>
-            <div class="poster-stats-flex twd-flex twd-w-full bt">
-                <div class="reaction-palette twd-flex">
-                    <img src="assets/images/vectors/love.svg" alt="Like icon">
-                    <img src="assets/images/vectors/haha.svg" alt="Laugh icon">
-                    <img src="assets/images/vectors/like.svg" alt="Like icon">
-                    <p class="reaction-count twd-pl-2 font-weight-600" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                        23
-                    </p>
-                </div>
-                <div class="comment-util twd-flex" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                    <p (click)="scrollToActiveComment()" role="button" *ngIf="!hideStructureActions"
-                        class="active-scroller twd-pl-2 font-weight-600">
-                        Active</p>
-                    <p class="comments-count twd-pl-2 font-weight-600">
-                        Comments
-                        5</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="smp-post-comment-container twd-w-full">
-            <!-- Prev comment loader -->
-            <ng-container *ngIf="checkCommentStructure('prevcmt', undefined) && !hideStructureActions">
-                <div style="padding-left: 0;" class="comment-utility" role="button" (click)="this.loadHistory('prev')">
-                    <mat-icon style="transform: rotate(-127deg);">redo</mat-icon>
-                    <p class="font-weight-600">Load previous comments</p>
-                </div>
-            </ng-container>
+            <div class="smp-post-comment-container twd-w-full">
+                <!-- Prev comment loader -->
+                <ng-container *ngIf="checkCommentStructure('prevcmt', undefined) && !hideStructureActions">
+                    <div style="padding-left: 0;" class="comment-utility" role="button"
+                        (click)="this.loadHistory('prev')">
+                        <mat-icon style="transform: rotate(-127deg);">redo</mat-icon>
+                        <p class="font-weight-600">Load previous comments</p>
+                    </div>
+                </ng-container>
 
-            <!-- Old comment history -->
-            <ng-container *ngIf="!hideStructureActions">
-                <ng-container *ngFor="let prevComment of prevComments; let i = index">
-                    <ng-container *ngFor="let comment of prevComment">
+                <!-- Old comment history -->
+                <ng-container *ngIf="!hideStructureActions">
+                    <ng-container *ngFor="let prevComment of prevComments; let i = index">
+                        <ng-container *ngFor="let comment of prevComment">
+                            <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
+                                [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
+                                <div class="image-container twd-relative">
+                                    <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
+                                    <div style="--vertBranchLength: {{ getVertbranchLength(prevComment, comment.cid) }}"
+                                        class="vert-branch twd-absolute"></div> -->
+                                    <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
+                                </div>
+                                <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative"
+                                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                                    <p class="duration font-weight-500 twd-absolute">14h</p>
+                                    <div class="comment-info-flex">
+                                        <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
+                                        <p class="font-weight-500">{{comment.comment}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Prev comment prev reply loader -->
+                        <ng-container *ngIf="checkCommentStructure('prevcmtprevrep', [i]) && !hideStructureActions">
+                            <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('prev', i)">
+                                <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
+                                <p class="font-weight-600">Load all {{getReplyCount(prevComment)}} replies</p>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+
+                <!-- Active list -->
+                <ng-container *ngFor="let comment of commentsToBeRendered;">
+                    <ng-container *ngIf="!hideStructureActions || (hideStructureActions && comment.active)">
+                        <ng-container
+                            *ngIf="comment.active && checkCommentStructure('prevrep', comment?.parents) && !commentStructureModifyer.previousRepliesLoaded && !hideStructureActions">
+                            <div class="comment-utility cu-lp" role="button"
+                                (click)="this.commentStructureModifyer.previousRepliesLoaded = true; this.setRenderedComments();">
+                                <mat-icon style="transform: rotate(-127deg);">redo</mat-icon>
+                                <p class="font-weight-600">Load previous replies</p>
+                            </div>
+                        </ng-container>
+
+                        <div [id]="comment.cid" class="comment-flex twd-w-full"
+                            [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length : 1) * 40 + 'px') : '0'}">
+                            <div class="image-container twd-relative">
+                                <!-- <div *ngIf="comment?.parents?.length && !hideStructureActions"
+                                    class="side-branch twd-absolute"></div>
+                                <div *ngIf="!hideStructureActions && ((commentMode === 'initial' && !comment.active) || currentMode !== 'initial')"
+                                    style="--vertBranchLength: {{ getVertbranchLength(commentsToBeRendered, comment.cid) }}"
+                                    class="vert-branch twd-absolute"></div> -->
+                                <img src="assets/images/vectors/x.svg" alt="Commenter image">
+                            </div>
+                            <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{comment.active ? 'active-comment' : ''}}"
+                                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                                <p class="duration font-weight-500 twd-absolute">14h</p>
+                                <div class="active-comment-actions twd-flex twd-absolute" *ngIf="comment?.active">
+                                    <p class="font-weight-500">Like</p>
+                                    <p class="font-weight-500">Reply</p>
+                                </div>
+                                <div class="comment-info-flex">
+                                    <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
+                                    <p class="font-weight-500">{{comment.comment}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ng-container *ngIf="comment?.active">
+                            <div class="reply-area twd-relative"
+                                [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
+                                <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
+                                    <textarea name="reply" id="reply" placeholder="Enter your reply here..."></textarea>
+                                    <div class="reply-actions twd-w-full twd-flex">
+                                        <div class="r-actions twd-flex">
+                                            <mat-icon role="button">tag_faces</mat-icon>
+                                            <mat-icon role="button">gif</mat-icon>
+                                            <mat-icon role="button">camera_alt</mat-icon>
+                                            <mat-icon role="button">file_copy</mat-icon>
+                                        </div>
+                                        <mat-icon role="button">send</mat-icon>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container
+                            *ngIf="comment.active && checkCommentStructure('nextrep', comment?.parents) && !commentStructureModifyer.nextRepliesLoaded && !hideStructureActions">
+                            <div class="comment-utility" role="button"
+                                (click)="this.commentStructureModifyer.nextRepliesLoaded = true; this.setRenderedComments();">
+                                <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
+                                <p class="font-weight-600">Load next replies</p>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+
+                <!-- Next comment history -->
+                <ng-container *ngIf="!hideStructureActions"></ng-container>
+                <ng-container *ngFor="let nextComment of nextComments; let i = index">
+                    <ng-container *ngFor="let comment of nextComment">
                         <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
                             [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
                             <div class="image-container twd-relative">
                                 <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
-                                <div style="--vertBranchLength: {{ getVertbranchLength(prevComment, comment.cid) }}"
+                                <div style="--vertBranchLength: {{ getVertbranchLength(nextComment, comment.cid) }}"
                                     class="vert-branch twd-absolute"></div> -->
                                 <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
                             </div>
@@ -82,118 +185,23 @@
                         </div>
                     </ng-container>
                     <!-- Prev comment prev reply loader -->
-                    <ng-container *ngIf="checkCommentStructure('prevcmtprevrep', [i]) && !hideStructureActions">
-                        <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('prev', i)">
+                    <ng-container *ngIf="checkCommentStructure('nextcmtprevrep', [i]) && !hideStructureActions">
+                        <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('next', i)">
                             <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
-                            <p class="font-weight-600">Load all {{getReplyCount(prevComment)}} replies</p>
+                            <p class="font-weight-600">Load all {{getReplyCount(nextComment)}} replies</p>
                         </div>
                     </ng-container>
                 </ng-container>
-            </ng-container>
 
-            <!-- Active list -->
-            <ng-container *ngFor="let comment of commentsToBeRendered;">
-                <ng-container *ngIf="!hideStructureActions || (hideStructureActions && comment.active)">
-                    <ng-container
-                        *ngIf="comment.active && checkCommentStructure('prevrep', comment?.parents) && !commentStructureModifyer.previousRepliesLoaded && !hideStructureActions">
-                        <div class="comment-utility cu-lp" role="button"
-                            (click)="this.commentStructureModifyer.previousRepliesLoaded = true; this.setRenderedComments();">
-                            <mat-icon style="transform: rotate(-127deg);">redo</mat-icon>
-                            <p class="font-weight-600">Load previous replies</p>
-                        </div>
-                    </ng-container>
-
-                    <div [id]="comment.cid" class="comment-flex twd-w-full"
-                        [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length : 1) * 40 + 'px') : '0'}">
-                        <div class="image-container twd-relative">
-                            <!-- <div *ngIf="comment?.parents?.length && !hideStructureActions"
-                                class="side-branch twd-absolute"></div>
-                            <div *ngIf="!hideStructureActions && ((commentMode === 'initial' && !comment.active) || currentMode !== 'initial')"
-                                style="--vertBranchLength: {{ getVertbranchLength(commentsToBeRendered, comment.cid) }}"
-                                class="vert-branch twd-absolute"></div> -->
-                            <img src="assets/images/vectors/x.svg" alt="Commenter image">
-                        </div>
-                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{comment.active ? 'active-comment' : ''}}"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                            <p class="duration font-weight-500 twd-absolute">14h</p>
-                            <div class="active-comment-actions twd-flex twd-absolute" *ngIf="comment?.active">
-                                <p class="font-weight-500">Like</p>
-                                <p class="font-weight-500">Reply</p>
-                            </div>
-                            <div class="comment-info-flex">
-                                <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
-                                <p class="font-weight-500">{{comment.comment}}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <ng-container *ngIf="comment?.active">
-                        <div class="reply-area twd-relative"
-                            [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
-                            <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
-                                <textarea name="reply" id="reply" placeholder="Enter your reply here..."></textarea>
-                                <div class="reply-actions twd-w-full twd-flex">
-                                    <div class="r-actions twd-flex">
-                                        <mat-icon role="button">tag_faces</mat-icon>
-                                        <mat-icon role="button">gif</mat-icon>
-                                        <mat-icon role="button">camera_alt</mat-icon>
-                                        <mat-icon role="button">file_copy</mat-icon>
-                                    </div>
-                                    <mat-icon role="button">send</mat-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-container>
-
-                    <ng-container
-                        *ngIf="comment.active && checkCommentStructure('nextrep', comment?.parents) && !commentStructureModifyer.nextRepliesLoaded && !hideStructureActions">
-                        <div class="comment-utility" role="button"
-                            (click)="this.commentStructureModifyer.nextRepliesLoaded = true; this.setRenderedComments();">
-                            <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
-                            <p class="font-weight-600">Load next replies</p>
-                        </div>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-
-            <!-- Next comment history -->
-            <ng-container *ngIf="!hideStructureActions"></ng-container>
-            <ng-container *ngFor="let nextComment of nextComments; let i = index">
-                <ng-container *ngFor="let comment of nextComment">
-                    <div *ngIf="!comment?.hidden" [id]="comment.cid" class="comment-flex twd-w-full"
-                        [ngStyle]="{'paddingLeft': comment?.parents?.length ? (comment?.parents?.length * 40 + 'px') : '0'}">
-                        <div class="image-container twd-relative">
-                            <!-- <div *ngIf="comment?.parents?.length" class="side-branch twd-absolute"></div>
-                            <div style="--vertBranchLength: {{ getVertbranchLength(nextComment, comment.cid) }}"
-                                class="vert-branch twd-absolute"></div> -->
-                            <img src="assets/images/vectors/instagram.svg" alt="Commenter image">
-                        </div>
-                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                            <p class="duration font-weight-500 twd-absolute">14h</p>
-                            <div class="comment-info-flex">
-                                <h5 class="font-weight-700 text-truncate">{{comment.commenter}}</h5>
-                                <p class="font-weight-500">{{comment.comment}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-                <!-- Prev comment prev reply loader -->
-                <ng-container *ngIf="checkCommentStructure('nextcmtprevrep', [i]) && !hideStructureActions">
-                    <div class="comment-utility" role="button" (click)="loadHistoryCommentReplies('next', i)">
+                <!-- Next comment loader -->
+                <ng-container *ngIf="checkCommentStructure('nextcmt', undefined) && !hideStructureActions">
+                    <div style="padding-left: 0;" class="comment-utility" role="button"
+                        (click)="this.loadHistory('next')">
                         <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
-                        <p class="font-weight-600">Load all {{getReplyCount(nextComment)}} replies</p>
+                        <p class="font-weight-600">Load next comments</p>
                     </div>
                 </ng-container>
-            </ng-container>
-
-            <!-- Next comment loader -->
-            <ng-container *ngIf="checkCommentStructure('nextcmt', undefined) && !hideStructureActions">
-                <div style="padding-left: 0;" class="comment-utility" role="button" (click)="this.loadHistory('next')">
-                    <mat-icon style="transform: rotate(45deg) scaleY(-1);">redo</mat-icon>
-                    <p class="font-weight-600">Load next comments</p>
-                </div>
-            </ng-container>
-        </div>
+            </div>
+        </ng-container>
     </div>
 </ng-container>

@@ -1,10 +1,10 @@
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
-import { IWidget, ResData } from 'app/interfaces';
+import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { filter, map, takeUntil, timeout } from 'rxjs/operators';
+import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { fuseAnimations } from '@fuse/animations';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
@@ -13,7 +13,10 @@ import { AppUiService } from '@services/app-ui.service';
 import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { isEqual } from 'lodash';
-import { throwADError } from 'app/utils';
+import { maticonByExtension, throwADError } from 'app/utils';
+import { GetInboxItemResult, MediaMatrixDataModelAttachmentModel, SDKClient, TUtils } from '@tmac/sdk';
+import { AppDataService } from '@services/app-data.service';
+import { OUTBOX_REASONS } from 'app/constants';
 
 export class SMPost {
     ItemId: string;
@@ -33,6 +36,7 @@ export class SMPost {
     RonaEnabled: boolean;
     Reason: string;
     PostData: PostData;
+    Files?: any[]; // Will get assigned internally in code
 }
 
 interface PostData {
@@ -142,7 +146,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Email Search Stateful request
      */
-    smpSearchRes: ResData = {
+    postSearchRes: ResData = {
         error: false,
         loading: false,
         msg: ''
@@ -150,7 +154,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Email Search Stateful request
      */
-    openSmpRes: ResData<
+    openPostRes: ResData<
         BehaviorSubject<
             SMPost & {
                 Body: string;
@@ -252,6 +256,22 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * List of availabloe mailboxes
      */
     availableMailboxes: string[] = [];
+    /**
+     * Replied post shown
+     */
+    latestPostPreview: boolean = false;
+    /**
+     * Object to hold post data
+     */
+    postBodies: Record<string, any> = {};
+
+    selectedPostSessionId: string;
+    selectedPostOutSessionId: string;
+    selectedPostRouteReason: string;
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
 
     // UI modifyers
     segregatedPosts: any = [];
@@ -261,7 +281,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         private translocoService: TranslocoService,
         private _smpService: SocialMediaPostsService,
         private _appUiService: AppUiService,
-        private http: HttpClient
+        private http: HttpClient,
+        private _appDataService: AppDataService
     ) {
         super('WorkbenchSmpComponent');
     }
@@ -278,6 +299,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.advancedSearch.data[this.currentTab] = { data: this.advancedSearch.form.value, changed: false };
             this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
         }
+
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
     }
 
     /**
@@ -321,7 +346,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 filter(
                     () =>
                         this.polling.enabled &&
-                        !this.smpSearchRes.loading &&
+                        !this.postSearchRes.loading &&
                         !this.polling.active &&
                         !this.advancedSearch.show
                 )
@@ -351,11 +376,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             case 'smposts/failure':
                 this.advancedSearch.snackbarRef?.dismiss();
-                this.smpSearchRes.loading = false;
-                this.smpSearchRes.msg = this.translocoService.translate(
+                this.postSearchRes.loading = false;
+                this.postSearchRes.msg = this.translocoService.translate(
                     'sharedComponents.socialMediaPosts.getPostsFailed'
                 );
-                this.smpSearchRes.error = true;
+                this.postSearchRes.error = true;
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.getPostsFailed'),
                     'failure'
@@ -368,9 +393,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 break;
 
             case 'smposts/loading':
-                this.smpSearchRes.loading = true;
-                this.smpSearchRes.error = false;
-                this.openSmpRes.data.next(null);
+                this.postSearchRes.loading = true;
+                this.postSearchRes.error = false;
+                this.openPostRes.data.next(null);
                 this.advancedSearch.snackbarRef = this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.getPostsLoading'),
                     'loading'
@@ -378,14 +403,33 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 break;
 
             case 'smposts/success':
-                this.smpSearchRes.loading = false;
-                this.smpSearchRes.error = false;
+                this.postSearchRes.loading = false;
+                this.postSearchRes.error = false;
                 this.advancedSearch.snackbarRef?.dismiss();
                 break;
 
             case 'smposts/polling/inactive':
                 this.polling.failed = false;
                 this.polling.active = false;
+                break;
+
+            case 'smposts/open/loading':
+                this.openPostRes.loading = true;
+                this.openPostRes.error = false;
+                break;
+
+            case 'smposts/open/success':
+                this.openPostRes.loading = false;
+                this.openPostRes.error = false;
+                break;
+
+            case 'smposts/open/failure':
+                this.openPostRes.loading = false;
+                this.openPostRes.error = true;
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.openPostFailed'),
+                    'failure'
+                );
                 break;
 
             default:
@@ -419,7 +463,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             if (!this.data.Data.WorkbenchUrl) {
                 this.setComponentState('smposts/failure', {
-                    msg: this.translocoService.translate('sharedComponents.email.workbenchURLNotFound'),
+                    msg: this.translocoService.translate('sharedComponents.socialMediaPosts.workbenchURLNotFound'),
                     silent
                 });
                 return;
@@ -451,7 +495,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     assigned: 2,
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
-                    skills: []
+                    skills: [],
+                    channel: 'socialmediachannel'
                 };
                 requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
             }
@@ -465,7 +510,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     endDate: searchFields.endDate,
                     subject: searchFields.subject,
                     content: searchFields.content,
-                    listOfMailboxes: searchFields.listOfMailboxes.join(',')
+                    listOfMailboxes: searchFields.listOfMailboxes.join(','),
+                    channel: 'socialmediachannel'
                 };
                 if (this.currentTab === 'inbox') {
                     searchParams.assignedTo = searchFields.assignedTo;
@@ -699,9 +745,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.advancedSearch.show = false;
             this.advancedSearch.sub$?.unsubscribe();
             this.segregatedPosts = [];
-            this.openSmpRes.data.next(null);
+            this.openPostRes.data.next(null);
             this.currentTab = tab ?? '';
             if (tab) {
+                this.latestPostPreview = tab === 'drafts' || tab === 'sent';
                 if (this.advancedSearch.data[tab]) {
                     this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
                     this.globalSearch.form.setValue(this.globalSearch.data[tab]);
@@ -896,5 +943,311 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
         rippleEl.classList.toggle('expanded');
         triggerEl.classList.toggle('expanded');
+    }
+
+    /**
+     * opens email for preview
+     */
+    async openPost(post: SMPost): Promise<void> {
+        try {
+            this.openPostRes.data.next(Object.assign(post, { Body: '' }, { currentTab: this.currentTab }));
+            this.setComponentState('smposts/open/loading');
+
+            let fetchFromOutbox =
+                (this.currentTab === 'drafts' ||
+                    this.currentTab === 'sent' ||
+                    post.PostData.RouteReason === 'CheckerQueue') &&
+                this.latestPostPreview;
+            let inboxRes: GetInboxItemResult;
+
+            const getRequestedSession = () => (fetchFromOutbox ? post.PostData.OutSessionId : post.PostData.SessionId);
+
+            const getAttachments = (attachments: any[]): any[] => {
+                if (attachments && attachments.length) {
+                    return attachments.map((item: any) => {
+                        let uploadedName = item.URL.split('/').pop();
+                        if (!item.Name) {
+                            uploadedName = uploadedName.replace(getRequestedSession(), '');
+                            item.Name = uploadedName;
+                        }
+                        item.Ext = item.Name.split('.').pop();
+                        item.Icon = maticonByExtension(item.Ext);
+                        return item;
+                    });
+                }
+                return [];
+            };
+
+            if (!this.postBodies[post.PostData.SessionId]) {
+                inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
+                if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
+                    if (this.currentTab === 'queue') {
+                        fetchFromOutbox = true;
+                    } else if (!fetchFromOutbox) {
+                        throwADError('Error in WorkbenchSmpComponent.getInboxEmail', 'Unexpected Response from server');
+                    }
+                } else {
+                    let tempAttachments = await this.requestAttachmentData(
+                        inboxRes.Attachments?.MediaMatrixDataModelAttachmentModel
+                    );
+                    this.postBodies = Object.assign(this.postBodies, {
+                        [post.PostData.SessionId]: {
+                            Files: getAttachments(tempAttachments),
+                            AgentName: inboxRes.AgentName,
+                            Intent: inboxRes.Intent,
+                            RepliedStatus:
+                                inboxRes.RepliedStatus === '1'
+                                    ? this.translocoService.translate('sharedComponents.socialMediaPosts.replied')
+                                    : this.translocoService.translate('sharedComponents.socialMediaPosts.notReplied'),
+                            ConversationID: inboxRes.ConversationID,
+                            CurrentStatus: inboxRes.CurrentStatus,
+                            ClosedBy: inboxRes.ClosedBy,
+                            CCList: inboxRes.CcList,
+                            From: inboxRes.From,
+                            Priority: inboxRes.Priority,
+                            ToList: inboxRes.ToList,
+                            SessionId: post.PostData.SessionId,
+                            OutSessionId: post.PostData.OutSessionId,
+                            EmailType: inboxRes?.EmailType,
+                            IsEmailProbableSpam: inboxRes.IsEmailProbableSpam,
+                            InternetHeaders: inboxRes.InternetHeaders,
+                            SocialMediaData: inboxRes.SocialMediaData
+                        }
+                    });
+                    this.selectedPostSessionId = post.PostData.SessionId;
+                    this.selectedPostOutSessionId = post.PostData.OutSessionId;
+                    this.selectedPostRouteReason = post.PostData.RouteReason;
+                }
+            }
+
+            this.openPostRes.data.next(
+                Object.assign(post, this.postBodies[getRequestedSession()], { currentTab: this.currentTab })
+            );
+            this.postBodies = {};
+            this.setComponentState('smposts/open/success');
+        } catch (e) {
+            console.error(e);
+            this.setComponentState('smposts/open/failure');
+        }
+    }
+
+    /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: MediaMatrixDataModelAttachmentModel[]): Promise<any> {
+        try {
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.Url.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId });
+                        } else {
+                            acc.att.push({ ...cur });
+                        }
+                    } else {
+                        acc.att.push({ ...cur });
+                    }
+                    return acc;
+                },
+                { ids: [], att: [] }
+            );
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                try {
+                    const { response } = await TUtils.HttpClient.sendRequest<
+                        MediaStreamerMultiResponse<MediaStreamerMetaResponse>
+                    >({
+                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                        method: 'GET',
+                        responseType: 'json'
+                    });
+
+                    if (response?.result?.length > 0) {
+                        attachmentMap.att.forEach((cur) => {
+                            if (cur.IsCloud) {
+                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                                if (fileMeta) {
+                                    cur.ArchiveStatus = fileMeta.archiveStatus;
+                                    cur.RestoreStatus = fileMeta.restoreStatus;
+                                    cur.FileError = fileMeta.fileError;
+                                }
+                            }
+                        }, []);
+                    }
+                } catch (ex) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.fileMetaError'),
+                        'failure'
+                    );
+                    attachmentMap.att.forEach((cur) => {
+                        cur.ArchiveStatus = null;
+                        cur.RestoreStatus = null;
+                        cur.FileError = true;
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
+        }
+    }
+
+    async pullPosts(posts: SMPost[]): Promise<void> {
+        let archivedAttachments = posts.find((e) => {
+            let filesInArchive = e.Files.find((f) => {
+                return f.ArchiveStatus || f.FileError;
+            });
+            if (filesInArchive) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        let pullEmailOp = () => {
+            const loader = this._appUiService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostLoading'),
+                'loading'
+            );
+            try {
+                const { agentId, tmacServer } = SDKClient.getAgentData();
+                if (posts.find((post) => !post.PostData.SessionId)) {
+                    this.getValidDataForSelectedPost();
+                    return;
+                }
+                const { items } = posts.reduce(
+                    (acc, curr) => {
+                        const item = {
+                            routeId: curr.PostData.RouteId || '',
+                            sessionId: curr.PostData.SessionId,
+                            inSessionId: curr.PostData.SessionId,
+                            conversationId: '',
+                            mailbox: ''
+                        };
+                        if (this.currentTab === 'draft') {
+                            item.sessionId = curr.PostData.OutSessionId;
+                        } else if (
+                            this.currentTab === 'queue' &&
+                            curr.PostData.EmailType !== 'Dummy' &&
+                            OUTBOX_REASONS.includes(curr.PostData.RouteReason)
+                        ) {
+                            item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
+                        } else if (this.currentTab === 'sentitem') {
+                            item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
+                        }
+                        delete this.postBodies[curr.PostData.SessionId];
+                        delete this.postBodies[curr.PostData.OutSessionId];
+                        acc.items.push(item);
+                        return acc;
+                    },
+                    { items: [] }
+                );
+                this.http
+                    .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
+                        tmacServer,
+                        agentId,
+                        items
+                    })
+                    .subscribe({
+                        next: (res: any) => {
+                            if (res.status === 'FAILED') {
+                                loader.dismiss();
+                                const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
+                                if (isAlreadyPulled.length) {
+                                    if (isAlreadyPulled.length > 1) {
+                                        if (isAlreadyPulled.length === posts.length) {
+                                            this._appUiService.showSnackbar(
+                                                this.translocoService.translate(
+                                                    'sharedComponents.socialMediaPosts.postsAssigned'
+                                                ),
+                                                'failure'
+                                            );
+                                        } else {
+                                            this._appUiService.showSnackbar(
+                                                this.translocoService.translate(
+                                                    'sharedComponents.socialMediaPosts.somePostsAssigned'
+                                                ),
+                                                'failure'
+                                            );
+                                        }
+                                    } else {
+                                        this._appUiService.showSnackbar(
+                                            this.translocoService.translate(
+                                                'sharedComponents.socialMediaPosts.emailsAssigned'
+                                            ),
+                                            'failure'
+                                        );
+                                    }
+                                } else {
+                                    this._appUiService.showSnackbar(
+                                        this.translocoService.translate(
+                                            'sharedComponents.socialMediaPosts.pullPostsFailed'
+                                        ),
+                                        'failure'
+                                    );
+                                }
+                                return;
+                            }
+                            loader.dismiss();
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsSuccess'),
+                                'success'
+                            );
+                        },
+                        error: (err) => {
+                            console.error(err);
+                            loader.dismiss();
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
+                                'failure'
+                            );
+                        }
+                    });
+            } catch (e) {
+                console.error(e);
+                loader.dismiss();
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
+                    'failure'
+                );
+            }
+        };
+
+        if (archivedAttachments) {
+            const confirmDialogRef = this._appUiService.showAppConfirmDialog(
+                'generic',
+                this.translocoService.translate('sharedComponents.socialMediaPosts.postPullConfirmHeader'),
+                this.translocoService.translate('sharedComponents.socialMediaPosts.postConfirmBody')
+            );
+
+            const dialogResult = await confirmDialogRef
+                .afterClosed()
+                .pipe(takeUntil(this.unsubscribeAll))
+                .pipe(take(1))
+                .toPromise();
+            if (dialogResult) {
+                pullEmailOp();
+            }
+        } else {
+            pullEmailOp();
+        }
+    }
+
+    async getValidDataForSelectedPost() {
+        try {
+            const inboxRes: GetInboxItemResult = (await SDKClient.getInboxItem(this.selectedPostSessionId)).response;
+            const postData: SMPost = new SMPost();
+
+            postData.PostData.RouteId = inboxRes.RouteId;
+            postData.PostData.SessionId = inboxRes.SessionID;
+            postData.PostData.RouteReason = this.selectedPostRouteReason;
+            postData.PostData.EmailType = inboxRes.EmailType;
+            this.pullPosts([postData]);
+        } catch (e) {
+            this.logger.error('Error occured while getting valid data for selected email:', JSON.stringify(e), true);
+        }
     }
 }
