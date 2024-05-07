@@ -955,6 +955,7 @@
             "searchPlaceholder": "Search posts here...",
             "pull": "Pull",
             "transfer": "Transfer",
+            "reset": "Reset",
             "getPostsFailed": "Error occured while fetching posts",
             "getPostsLoading": "Loading posts",
             "postsNotFound": "There are no posts",
@@ -969,7 +970,8 @@
             "postPullConfirmHeader": "Post Pull Confirmation",
             "postSendConfirmHeader": "Email Send Confirmation",
             "postConfirmBody": "There are attachments that are unavailable in this post. Do you still want to continue ?",
-            "loadingPostLabel": "Please wait while the post is loading..."
+            "loadingPostLabel": "Please wait while the post is loading",
+            "invalidPostResponse": "Could not read post data"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

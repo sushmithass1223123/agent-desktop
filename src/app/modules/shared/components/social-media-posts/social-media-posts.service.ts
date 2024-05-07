@@ -97,7 +97,7 @@ export class SocialMediaPostsService {
     /**
      * Resets email state
      */
-    resetEmailState(update?: any): void {
+    resetPostState(update?: any): void {
         this.globalSmpWorkbenchState$.globalSearchKey.reset();
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,

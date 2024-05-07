@@ -120,8 +120,12 @@
                                             <!-- Level 2 dropdown -->
                                             <div class="post-list-flex twd-w-full twd-pl-5">
                                                 <div mat-ripple (click)="openPost(post)"
-                                                    class="post-list mat-elevation-z1 theme-bg twd-w-full twd-relative twd-rounded-3xl twd-p-3"
-                                                    *ngFor="let post of getObjectValueData(skill)">
+                                                    class="post-list mat-elevation-z1 twd-w-full twd-relative twd-rounded-3xl twd-p-3"
+                                                    [ngClass]="
+                                                    selectedPostSessionId === post.PostData.SessionId
+                                                        ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
+                                                        : ' theme-bg'
+                                                " *ngFor="let post of getObjectValueData(skill)">
                                                     <h5 class="font-weight-700 poster">{{post.PostData.From}}</h5>
                                                     <p class="font-weight-500">{{post.PostData.Subject}}</p>
                                                     <div class="date-time-flex twd-absolute twd-pr-3 twd-pt-3">
@@ -203,7 +207,7 @@
                                     <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20"
                                         type="button" (click)="resetForm(); doAdvancedSearch()"
                                         [disabled]="this.disableAdvSearchActions">
-                                        {{ locale('sharedComponents.email.reset') }}
+                                        {{ locale('sharedComponents.socialMediaPosts.reset') }}
                                     </button>
                                 </div>
                             </form>
@@ -221,9 +225,11 @@
                     <div *ngIf="!postSearchRes.loading && postSearchRes.error"
                         class="h-80-p twd-flex twd-justify-center twd-items-center">
                         <div class="twd-w-5/12">
-                            <div class="w-100-p h-100-p text-center" fxLayout="column" fxLayoutAlign="center center">
+                            <div class="w-100-p h-100-p text-center twd-flex twd-flex-col" fxLayout="column"
+                                fxLayoutAlign="center center" style="gap: 10px">
                                 <img src="assets/images/vectors/no-data-1.svg" class="w-100-p h-85-p box-shadow-3d" />
-                                <h4 class="text-center m-0">{{ postSearchRes.msg }}</h4>
+                                <h4 style="font-size: 16px;" class="text-center m-0 font-weight-600">{{
+                                    postSearchRes.msg }}</h4>
                             </div>
                             <button class="mx-auto w-80-p mt-20 d-block" mat-raised-button color="primary"
                                 (click)="doAdvancedSearch()">
@@ -241,24 +247,28 @@
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
                             {{ locale('sharedComponents.socialMediaPosts.transfer') }}
                         </button>
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
+                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            (click)="pullPosts([selectedPost])">
                             {{ locale('sharedComponents.socialMediaPosts.pull') }}
                         </button>
                     </div>
                     <div
                         class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
-                        <smp-template *ngIf="!(openPostRes.loading || openPostRes.error)"
+                        <smp-template [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering"
+                            *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
                             [postData]="state.openPostResData"></smp-template>
 
                         <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
                             fxLayoutAlign="center center" *ngIf="openPostRes.loading && !openPostRes.error">
                             <div class="twd-w-5/12">
-                                <div class="w-100-p h-100-p text-center" fxLayout="column"
-                                    fxLayoutAlign="center center">
+                                <div class="w-100-p h-100-p text-center twd-flex twd-flex-col" fxLayout="column"
+                                    fxLayoutAlign="center center" style="gap: 10px">
                                     <img src="assets/images/vectors/no-data-1.svg"
                                         class="w-100-p h-85-p box-shadow-3d" />
-                                    <h4 class="text-center m-0">{{
-                                        locale('sharedComponents.socialMediaPosts.loadingPostLabel') }}</h4>
+                                    <h4 style="font-size: 16px;" class="text-center m-0 font-weight-600">{{
+                                        state.openPostResData !== null ?
+                                        locale('sharedComponents.socialMediaPosts.loadingPostLabel') :
+                                        locale('sharedComponents.socialMediaPosts.invalidPostResponse') }}</h4>
                                 </div>
                             </div>
                         </div>

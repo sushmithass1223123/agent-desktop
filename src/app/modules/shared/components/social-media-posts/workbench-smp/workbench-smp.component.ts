@@ -14,7 +14,7 @@ import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { isEqual } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { GetInboxItemResult, MediaMatrixDataModelAttachmentModel, SDKClient, TUtils } from '@tmac/sdk';
+import { GetInboxItemResult, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
 import { OUTBOX_REASONS } from 'app/constants';
 
@@ -144,7 +144,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     disableAdvSearchActions: boolean = false;
     /**
-     * Email Search Stateful request
+     * Post Search Stateful request
      */
     postSearchRes: ResData = {
         error: false,
@@ -152,7 +152,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         msg: ''
     };
     /**
-     * Email Search Stateful request
+     * Post Search Stateful request
      */
     openPostRes: ResData<
         BehaviorSubject<
@@ -276,6 +276,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     // UI modifyers
     segregatedPosts: any = [];
 
+    MaximumAllowedPostImageRendering: number = 5;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private translocoService: TranslocoService,
@@ -303,6 +305,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
+
+        this.MaximumAllowedPostImageRendering = (
+            this.channelConf.Config as TwSmpWorkbenchConfig
+        ).MaximumAllowedPostImageRendering;
     }
 
     /**
@@ -573,6 +579,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         this.setComponentState('smposts/success', { silent });
                     },
                     error: (e) => {
+                        this.disableAdvSearchActions = false;
                         console.error(e);
                         this.setComponentState('smposts/failure', { silent });
                         this.setComponentState('smposts/polling/inactive', { silent });
@@ -728,7 +735,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
         } catch (error) {}
 
-        this._smpService.resetEmailState(updateValue);
+        this._smpService.resetPostState(updateValue);
 
         this.advancedSearch.data[this.currentTab] = {
             data: this.advancedSearch.form.value,
@@ -742,6 +749,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     switchTab(tab: AvailableTabs): void {
         try {
+            if (tab === this.currentTab) return;
             this.advancedSearch.show = false;
             this.advancedSearch.sub$?.unsubscribe();
             this.segregatedPosts = [];
@@ -946,7 +954,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     /**
-     * opens email for preview
+     * opens post for preview
      */
     async openPost(post: SMPost): Promise<void> {
         try {
@@ -984,12 +992,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     if (this.currentTab === 'queue') {
                         fetchFromOutbox = true;
                     } else if (!fetchFromOutbox) {
-                        throwADError('Error in WorkbenchSmpComponent.getInboxEmail', 'Unexpected Response from server');
+                        throwADError('Error in WorkbenchSmpComponent.getInboxItem', 'Unexpected Response from server');
                     }
                 } else {
-                    let tempAttachments = await this.requestAttachmentData(
-                        inboxRes.Attachments?.MediaMatrixDataModelAttachmentModel
-                    );
+                    let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
                     this.postBodies = Object.assign(this.postBodies, {
                         [post.PostData.SessionId]: {
                             Files: getAttachments(tempAttachments),
@@ -1011,7 +1017,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             EmailType: inboxRes?.EmailType,
                             IsEmailProbableSpam: inboxRes.IsEmailProbableSpam,
                             InternetHeaders: inboxRes.InternetHeaders,
-                            SocialMediaData: inboxRes.SocialMediaData
+                            SocialMediaData: inboxRes.SocialMediaData,
+                            SubChannel: post.SubChannel,
+                            Subject: post.PostData.Subject
                         }
                     });
                     this.selectedPostSessionId = post.PostData.SessionId;
@@ -1034,7 +1042,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Get attachment meta data from media streamer for archive status
      */
-    async requestAttachmentData(attachments: MediaMatrixDataModelAttachmentModel[]): Promise<any> {
+    async requestAttachmentData(attachments: any[]): Promise<any> {
         try {
             let attachmentMap = attachments.reduce(
                 (acc, cur) => {
@@ -1107,7 +1115,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
         });
 
-        let pullEmailOp = () => {
+        let pullPostOp = () => {
             const loader = this._appUiService.showSnackbar(
                 this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostLoading'),
                 'loading'
@@ -1127,7 +1135,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             conversationId: '',
                             mailbox: ''
                         };
-                        if (this.currentTab === 'draft') {
+                        if (this.currentTab === 'drafts') {
                             item.sessionId = curr.PostData.OutSessionId;
                         } else if (
                             this.currentTab === 'queue' &&
@@ -1135,7 +1143,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             OUTBOX_REASONS.includes(curr.PostData.RouteReason)
                         ) {
                             item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
-                        } else if (this.currentTab === 'sentitem') {
+                        } else if (this.currentTab === 'sent') {
                             item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
                         }
                         delete this.postBodies[curr.PostData.SessionId];
@@ -1176,7 +1184,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                                     } else {
                                         this._appUiService.showSnackbar(
                                             this.translocoService.translate(
-                                                'sharedComponents.socialMediaPosts.emailsAssigned'
+                                                'sharedComponents.socialMediaPosts.postsAssigned'
                                             ),
                                             'failure'
                                         );
@@ -1229,10 +1237,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 .pipe(take(1))
                 .toPromise();
             if (dialogResult) {
-                pullEmailOp();
+                pullPostOp();
             }
         } else {
-            pullEmailOp();
+            pullPostOp();
         }
     }
 
@@ -1247,7 +1255,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             postData.PostData.EmailType = inboxRes.EmailType;
             this.pullPosts([postData]);
         } catch (e) {
-            this.logger.error('Error occured while getting valid data for selected email:', JSON.stringify(e), true);
+            this.logger.error('Error occured while getting valid data for selected post:', JSON.stringify(e), true);
         }
     }
 }

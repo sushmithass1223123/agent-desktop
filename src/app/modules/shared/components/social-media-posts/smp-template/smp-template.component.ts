@@ -1,7 +1,8 @@
 import { filter } from 'rxjs/operators';
-import { ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { SocialMediaData } from '@tmac/sdk';
+import { PostAttachment, SocialMediaData } from '@tmac/sdk';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 interface Comment {
     cid: number;
@@ -21,9 +22,10 @@ interface Comment {
 })
 export class SmpTemplateComponent implements OnInit {
     @Input() postData: any;
+
     socialMediaData: SocialMediaData;
+
     @Input() hideStructureActions: boolean = false;
-    commentMode: string = 'initial';
     /**
      * Fuse custom config
      */
@@ -32,324 +34,28 @@ export class SmpTemplateComponent implements OnInit {
         widget$: this._fuseFacadeService.widgetBgClasses$,
         config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
     };
+
+    @Input() MaximumAllowedPostImageRendering: number = 5;
+
+    lineClampCharacterCount: number = 100;
+
     /**
-     * Commments array
+     * Preview media dialog
      */
-    comments: Comment[] = [
-        {
-            cid: 3,
-            commenter: 'Linda',
-            comment: 'Jake vs Mike!',
-            replies: []
-        },
-        {
-            cid: 4,
-            commenter: 'Arthur Shelby',
-            comment: 'Who is going to win!',
-            replies: [
-                {
-                    cid: 41,
-                    commenter: 'Tommy Shelby',
-                    comment: 'Brother you here!!',
-                    replies: []
-                },
-                {
-                    cid: 42,
-                    commenter: 'John Shelby',
-                    comment: 'OKOKOKOKOKOKOKOKOKOKOKOKOKOKOK',
-                    replies: [
-                        {
-                            cid: 421,
-                            commenter: 'Aunt Polly',
-                            comment: 'Shut up!',
-                            replies: []
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            cid: 1,
-            commenter: 'Janet Archer',
-            comment: 'Jake paul gon win!',
-            replies: [
-                {
-                    cid: 11,
-                    commenter: 'Yashwanthkumar Arivazhagan',
-                    comment: 'No way bruh..',
-                    replies: [
-                        {
-                            cid: 111,
-                            commenter: 'Akash S',
-                            comment: "True. Mike's gonna whoop him outta the octagon. Mark my words.",
-                            replies: []
-                        },
-                        {
-                            cid: 112,
-                            commenter: 'Michael Carl',
-                            comment: 'Yes. He is mad.',
-                            active: true,
-                            replies: []
-                        }
-                    ]
-                },
-                {
-                    cid: 12,
-                    commenter: 'Jake Paul',
-                    comment: 'I am gonna win!',
-                    replies: []
-                }
-            ]
-        },
-        {
-            cid: 2,
-            commenter: 'Alan Wake',
-            comment: 'Why they telecasting in NF tho?',
-            replies: []
-        }
-    ];
+    @ViewChild('previewMediaDialog')
+    previewMediaDialog: TemplateRef<any>;
+    /**
+     * Preview media dialog ref
+     */
+    previewMediaDialogRef: MatDialogRef<any>;
+    previewMediaDialogData: any;
 
-    orgCommentArray: Comment[] = [];
-    commentsToBeRendered: Comment[] = [];
-    prevComments: Comment[][] = [];
-    nextComments: Comment[][] = [];
-
-    commentStructureModifyer = {
-        previousRepliesLoaded: false,
-        nextRepliesLoaded: false,
-        prevCommentLoadLevel: 0,
-        nextCommentLoadLevel: 0
-    };
-
-    constructor(private _fuseFacadeService: FuseFacadeService, private cdr: ChangeDetectorRef) {
-        this.orgCommentArray = JSON.parse(JSON.stringify(this.comments));
-        this.comments = this.flattenNestedComments(this.comments);
-        this.setRenderedComments();
-    }
+    constructor(private _fuseFacadeService: FuseFacadeService, private _matDialog: MatDialog) {}
 
     ngOnInit(): void {
         this.socialMediaData = this.postData?.SocialMediaData;
-    }
-
-    /**
-     * Recursive method to flatten each comment
-     * @param comments Actual comment array to be nested
-     * @param parents Recursive argument
-     */
-    flattenNestedComments(comments: Comment[], parents: any[] = []): Comment[] {
-        try {
-            let flattenedComments = [];
-
-            comments.forEach((comment) => {
-                const { cid, commenter, active, comment: text, replies } = comment;
-                const newComment: any = { cid, commenter, active, comment: text };
-
-                if (parents.length > 0) {
-                    newComment.parents = [...parents];
-                }
-
-                flattenedComments.push(newComment);
-
-                if (replies.length > 0) {
-                    const newParents = [...parents, cid];
-                    flattenedComments = flattenedComments.concat(this.flattenNestedComments(replies, newParents));
-                }
-            });
-
-            return flattenedComments;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    /**
-     * Method to dynamically calculate the length of the comment branch
-     * @param commentId Comment id of the comment
-     * @returns Length of the branch
-     */
-    getVertbranchLength(commentArray: Comment[], commentId: number): number {
-        const repliesForCid = commentArray.filter((comment: Comment) => comment?.parents?.includes(commentId));
-        let height = 0;
-
-        repliesForCid.forEach((comment: Comment, i: number) => {
-            if (document.getElementById(comment.cid.toString())) {
-                height +=
-                    document.getElementById(comment.cid.toString()).clientHeight +
-                    (this.hideStructureActions ? -5 : 20);
-                if (
-                    i == repliesForCid.length - 1 &&
-                    this.commentMode !== 'initial' &&
-                    this.commentStructureModifyer.previousRepliesLoaded
-                ) {
-                    height -= document.getElementById(comment.cid.toString()).clientHeight / 2 - 9;
-                }
-            }
-
-            if (comment.active) {
-                height += 190;
-            }
-        });
-
-        if (height && document.querySelector('.cu-lp')) {
-            height += document.querySelector('.cu-lp').clientHeight - 5;
-        }
-
-        return height;
-    }
-
-    /**
-     * Method to modify actual comments array to be rendered in the UI
-     */
-    setRenderedComments(): void {
-        try {
-            this.commentsToBeRendered = [];
-
-            const activeCommentIndex: number = this.comments.findIndex((comment: Comment) => comment.active === true);
-            const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents?.length
-                ? this.comments[activeCommentIndex]?.parents[0]
-                : this.comments[activeCommentIndex].cid;
-
-            this.comments.forEach((comment: Comment, i: number) => {
-                if (
-                    comment.cid === activeCommentRootParent ||
-                    (comment?.parents?.includes(activeCommentRootParent) &&
-                        i < activeCommentIndex &&
-                        this.commentStructureModifyer.previousRepliesLoaded)
-                ) {
-                    this.commentsToBeRendered.push(comment);
-                }
-                if (comment?.active && comment.cid !== activeCommentRootParent) this.commentsToBeRendered.push(comment);
-                if (
-                    comment?.parents?.includes(activeCommentRootParent) &&
-                    i > activeCommentIndex &&
-                    this.commentStructureModifyer.nextRepliesLoaded
-                ) {
-                    this.commentsToBeRendered.push(comment);
-                }
-            });
-
-            if (
-                this.commentStructureModifyer.previousRepliesLoaded ||
-                this.commentStructureModifyer.nextRepliesLoaded
-            ) {
-                this.commentMode = 'modified';
-            }
-            this.cdr.detectChanges();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    checkCommentStructure(structure: string, commentParents: number[]): boolean {
-        try {
-            const activeCommentIndex: number = this.comments.findIndex((comment: Comment) => comment.active === true);
-            const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents[0];
-            if (structure === 'prevrep') {
-                const previousRepliesExists =
-                    activeCommentRootParent &&
-                    JSON.parse(JSON.stringify(this.comments)).splice(
-                        this.comments.findIndex((comment: Comment) => comment.cid === activeCommentRootParent),
-                        activeCommentIndex
-                    ).length > 1;
-                return previousRepliesExists;
-            } else if (structure === 'nextrep') {
-                const nextRepliesExists = JSON.parse(JSON.stringify(this.comments))
-                    .splice(activeCommentIndex + 1)
-                    .some((comment: Comment) => comment?.parents.includes(activeCommentRootParent));
-                return nextRepliesExists;
-            } else if (structure === 'prevcmt') {
-                return (
-                    this.orgCommentArray[
-                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) -
-                            this.commentStructureModifyer.prevCommentLoadLevel -
-                            1
-                    ] !== undefined
-                );
-            } else if (structure === 'nextcmt') {
-                return (
-                    this.orgCommentArray[
-                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) +
-                            this.commentStructureModifyer.nextCommentLoadLevel +
-                            1
-                    ] !== undefined
-                );
-            } else if (structure === 'prevcmtprevrep') {
-                return this.prevComments[commentParents[0]].some(
-                    (comment: Comment) => comment?.parents?.length && comment?.hidden
-                );
-            } else if (structure === 'nextcmtprevrep') {
-                return this.nextComments[commentParents[0]].some(
-                    (comment: Comment) => comment?.parents?.length && comment?.hidden
-                );
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    loadHistory(direction: string): void {
-        try {
-            const activeCommentIndex: number = this.comments.findIndex((comment: Comment) => comment.active === true);
-            const activeCommentRootParent: number = this.comments[activeCommentIndex]?.parents[0];
-            if (direction === 'prev') {
-                this.commentStructureModifyer.prevCommentLoadLevel++;
-                const commentToFlatten = [
-                    this.orgCommentArray[
-                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) -
-                            this.commentStructureModifyer.prevCommentLoadLevel
-                    ]
-                ];
-                let flattenedComments = this.flattenNestedComments(commentToFlatten);
-                flattenedComments.forEach((c: Comment) => {
-                    if (c?.parents?.length) c.hidden = true;
-                });
-                this.prevComments.unshift(flattenedComments);
-            } else {
-                this.commentStructureModifyer.nextCommentLoadLevel++;
-                const commentToFlatten = [
-                    this.orgCommentArray[
-                        this.orgCommentArray.findIndex((comment: Comment) => comment.cid === activeCommentRootParent) +
-                            this.commentStructureModifyer.nextCommentLoadLevel
-                    ]
-                ];
-                let flattenedComments = this.flattenNestedComments(commentToFlatten);
-                flattenedComments.forEach((c: Comment) => {
-                    if (c?.parents?.length) c.hidden = true;
-                });
-                this.nextComments.unshift(flattenedComments);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    loadHistoryCommentReplies(direction: string, index: number): void {
-        try {
-            if (direction === 'prev') {
-                this.prevComments[index].forEach((comment: Comment) => {
-                    comment.hidden = false;
-                });
-            } else {
-                this.nextComments[index].forEach((comment: Comment) => {
-                    comment.hidden = false;
-                });
-            }
-            this.cdr.detectChanges();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    getReplyCount(commentArray: Comment[]): number {
-        try {
-            let replyCount = 0;
-            commentArray.forEach((comment: Comment) => {
-                if (comment?.parents?.length) replyCount++;
-            });
-            return replyCount;
-        } catch (error) {
-            console.error(error);
-        }
+        this.socialMediaData.Posts.PostText.Text = "She had been told time and time again that the most important steps were the first and the last. It was something that she carried within her in everything she did, but then he showed up and disrupted everything. He told her that she had it wrong. The first step wasn't the most important. The last step wasn't the most important. It was the next step that was the most important. She nervously peered over the edge. She understood in her mind that the view was supposed to be beautiful, but all she felt was fear. There had always been something about heights that disturbed her, and now she could feel the full force of this unease. She reluctantly crept a little closer with the encouragement of her friends as the fear continued to build. She couldn't help but feel that something horrible was about to happen."
+        this.validateReadMore();
     }
 
     scrollToActiveComment(): void {
@@ -363,5 +69,126 @@ export class SmpTemplateComponent implements OnInit {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    parseDotnetDate(dotnetDate: string): Date {
+        try {
+            const regex = /\/Date\((\d+)\)\//;
+            const match = dotnetDate.match(regex);
+            if (match && match.length > 1) {
+                const timestamp = parseInt(match[1], 10);
+                return new Date(timestamp);
+            }
+            return new Date();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    getGenericTimeFormat(dotnetDate: string): string {
+        try {
+            if (!dotnetDate) return 'NA';
+            const currentDate: any = new Date();
+            const date: any = this.parseDotnetDate(dotnetDate);
+            const diffMilliseconds = currentDate - date;
+
+            const diffSeconds = Math.floor(diffMilliseconds / 1000);
+            const diffMinutes = Math.floor(diffSeconds / 60);
+            const diffHours = Math.floor(diffMinutes / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            const diffWeeks = Math.floor(diffDays / 7);
+
+            const currentMonth = currentDate.getMonth() + 1;
+            const currentDateWithoutTime = new Date(currentDate.getFullYear(), currentMonth, 0);
+            const dateWithoutTime = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            const diffMonths =
+                (currentDateWithoutTime.getFullYear() - dateWithoutTime.getFullYear()) * 12 +
+                (currentDateWithoutTime.getMonth() - dateWithoutTime.getMonth());
+
+            if (diffSeconds < 60) {
+                return `${diffSeconds}s`;
+            } else if (diffMinutes < 60) {
+                return `${diffMinutes}m`;
+            } else if (diffHours < 24) {
+                return `${diffHours}h`;
+            } else if (diffDays < 7) {
+                return `${diffDays}d`;
+            } else if (diffMonths < 12) {
+                return `${diffWeeks}w`;
+            } else {
+                return 'older';
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * To preview the media in the post
+     * @param {PostAttachment} previewData Post attachment data
+     */
+    public previewMedia(previewData: PostAttachment): void {
+        let otherData = null;
+        if (previewData.MediaType == 'Photo') {
+            otherData = {
+                scale: 1
+            };
+        }
+
+        this.previewMediaDialogData = {
+            timestamp: this.parseDotnetDate(previewData.InsertionDateTime),
+            attachment: {
+                type: previewData.MediaType,
+                src: previewData.MediaUrl
+            },
+            otherData
+        };
+
+        this.previewMediaDialogRef = this._matDialog.open(this.previewMediaDialog, {
+            panelClass: 'preview-media-dialog'
+        });
+        this.previewMediaDialogRef.afterOpened().subscribe(() => {
+            if (previewData.MediaType == 'Video') {
+                const scrollContainer = document.querySelector('.drag-scroll-content') as HTMLDivElement;
+                if (scrollContainer) {
+                    scrollContainer.style.overflow = 'auto';
+                    scrollContainer.style.height = '';
+                    scrollContainer.style.height = '100%';
+                    scrollContainer.style.minHeight = '100px';
+                    scrollContainer.style.maxHeight = '600px';
+                    scrollContainer.style.width = '';
+                    scrollContainer.style.maxWidth = '800px';
+                    scrollContainer.style.display = 'flex';
+                }
+            }
+        });
+    }
+
+    validateReadMore() {
+        try {
+            setTimeout(() => {
+                const contentParaEl = document.getElementById('contentPara');
+                const readMoreEl = document.getElementById('readMore');
+                const maxHeight = 3 * parseFloat(window.getComputedStyle(contentParaEl).lineHeight);
+    
+                if (contentParaEl.clientHeight > maxHeight) {
+                    contentParaEl.classList.add('clamp');
+                    readMoreEl.style.display = 'block';
+                } else {
+                    readMoreEl.style.display = 'none';
+                }
+            }, 500);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    onReadMore(event: any) {
+        event.preventDefault();
+        const contentParaEl = document.getElementById('contentPara');
+        const readMoreEl = document.getElementById('readMore'); 
+
+        contentParaEl.classList.toggle("clamp");
+        readMoreEl.style.display = 'none';
     }
 }

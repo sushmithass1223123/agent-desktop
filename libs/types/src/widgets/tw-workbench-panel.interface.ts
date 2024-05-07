@@ -138,6 +138,10 @@ export type TwSmpWorkbenchConfig = {
      * @default 0
      */
     SearchDuration: number;
+    /**
+     * Number which holds maximum post image that could be rendered in UI
+     */
+    MaximumAllowedPostImageRendering: number;
 };
 
 /**

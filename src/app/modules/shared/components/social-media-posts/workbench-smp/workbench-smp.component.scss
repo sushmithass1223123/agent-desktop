@@ -85,6 +85,7 @@ workbench-smp {
                         align-items: flex-start;
                         justify-content: space-between;
                         gap: 5px;
+                        border: 2px solid transparent;
 
                         p {
                             overflow: hidden;
@@ -112,6 +113,10 @@ workbench-smp {
                                 font-size: 10px;
                             }
                         }
+                    }
+
+                    .twd-border-primary-default{
+                        border: 2px solid var(--twd-primary-default) !important;
                     }
                 }
             }
