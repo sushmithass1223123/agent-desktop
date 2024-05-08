@@ -545,8 +545,8 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { 
-                                        "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index", 
+                                    "Data": {
+                                        "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index",
                                         "agentStatusChange": true,
                                         "InteractionConstraints": {
                                             "ValidateFor": ["textchat"],
@@ -554,7 +554,7 @@
                                             "AllowSupervisorToChatSilentMonitor": true,
                                             "AllowSupervisorToChatWhisper": true,
                                             "AllowSupervisorToChatConference": true
-                                          } 
+                                        }
                                     }
                                 }
                             ],
@@ -1034,9 +1034,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "DepartmentFilters": {
-                                            "Name": ["Deflect"]
-                                        },
+                                        "DepartmentFilters": { "Name": ["Deflect"] },
                                         "ResponseMode": "manual",
                                         "EditAllowed": false,
                                         "Number": "IncomingCallEvent.PhoneNumber",
@@ -2486,7 +2484,7 @@
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
                                                     "MaxSearchRange": 30,
-                                                    "MaxSelection":10
+                                                    "MaxSelection": 10
                                                 }
                                             },
                                             {
@@ -2799,5 +2797,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.6.0-beta.1"
+    "Version": "5.6.0-beta.2"
 }
