@@ -65,6 +65,10 @@ export class SocialMediaPostsService {
      * ReadOnly Observable for email workbench state
      */
     readonly globalSmpWorkbenchState$ = this._internal$.email;
+    /**
+     * Object to hold post data
+     */
+    postBodies: any = {};
 
     /**
      * Service init method
@@ -101,7 +105,8 @@ export class SocialMediaPostsService {
         this.globalSmpWorkbenchState$.globalSearchKey.reset();
         this.globalSmpWorkbenchState$.searchParams.setValue({
             ...initSmpostsSearchState,
-            ...update
+            ...update,
+            listOfMailboxes: this.globalSmpWorkbenchState$.availableMailboxes.value
         });
     }
 }

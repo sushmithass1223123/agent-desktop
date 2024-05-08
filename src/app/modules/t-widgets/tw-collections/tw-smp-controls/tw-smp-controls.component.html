@@ -7,20 +7,11 @@
         (floatEvent)="onFloated($event)" *transloco="let locale">
         <div class="smp-interaction-container twd-w-full twd-flex">
             <div class="interaction-avatar twd-flex twd-flex-col twd-pl-2">
-                <div class="avatar-box twd-rounded-3xl twd-relative twd-flex active"
+                <div *ngFor="let interaction of interactionList" (click)="selectInteraction(interaction)"
+                    class="avatar-box twd-rounded-3xl twd-relative twd-flex {{interaction.isActive ? 'active' : 'inactive'}}"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                    <img class="twd-absolute social-tag" src="assets/images/vectors/facebook.svg" alt="">
-                    <h5 class="font-weight-600">JA</h5>
-                </div>
-                <div class="avatar-box twd-rounded-3xl twd-relative twd-flex"
-                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                    <img class="twd-absolute social-tag" src="assets/images/vectors/instagram.svg" alt="">
-                    <h5 class="font-weight-600">YK</h5>
-                </div>
-                <div class="avatar-box twd-rounded-3xl twd-relative twd-flex"
-                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                    <img class="twd-absolute social-tag" src="assets/images/vectors/x.svg" alt="">
-                    <h5 class="font-weight-600">CR</h5>
+                    <img class="twd-absolute social-tag" src="assets/images/vectors/{{interaction.channel}}.svg" alt="">
+                    <h5 class="font-weight-600">{{getInitials(interaction.user)}}</h5>
                 </div>
             </div>
 
@@ -28,8 +19,9 @@
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                 <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                     <div class="s-info twd-flex">
-                        <img src="assets/images/vectors/facebook.svg" alt="">
-                        <h5 class="font-weight-700">Janet Archer</h5>
+                        <img src="assets/images/vectors/{{this.smpService.postBodies[sessionId]?.SubChannel}}.svg"
+                            alt="">
+                        <h5 class="font-weight-700">{{this.smpService.postBodies[sessionId]?.PostAccountName}}</h5>
                     </div>
                     <div class="s-actions twd-flex">
                         <mat-icon role="button">reply</mat-icon>
@@ -38,8 +30,9 @@
                         <mat-icon role="button">close</mat-icon>
                     </div>
                 </div>
-                <smp-template [ngClass]="{ 'max-mode': isMaximizedMode }"
-                    [hideStructureActions]="!isMaximizedMode"></smp-template>
+                <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
+                    [mode]="'interaction-min'" [postData]="this.smpService.postBodies[sessionId]"
+                    [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
                 <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
                     (click)="toggleInteractionPopup()">
                     <p>Load more</p>
@@ -55,8 +48,8 @@
             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
             <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                 <div class="s-info twd-flex">
-                    <img src="assets/images/vectors/facebook.svg" alt="">
-                    <h5 class="font-weight-700">Janet Archer</h5>
+                    <img src="assets/images/vectors/{{smpService.postBodies[sessionId]?.SubChannel}}.svg" alt="">
+                    <h5 class="font-weight-700">{{smpService.postBodies[sessionId]?.PostAccountName}}</h5>
                 </div>
                 <div class="s-actions twd-flex">
                     <mat-icon role="button">reply</mat-icon>
@@ -65,7 +58,8 @@
                     <mat-icon (click)="toggleInteractionPopup()" role="button">close</mat-icon>
                 </div>
             </div>
-            <smp-template></smp-template>
+            <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
+                [mode]="'interaction-min'" [postData]="this.smpService.postBodies[sessionId]"></smp-template>
         </div>
     </div>
 </ng-container>

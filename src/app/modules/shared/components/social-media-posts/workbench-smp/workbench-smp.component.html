@@ -254,10 +254,12 @@
                     </div>
                     <div
                         class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
-                        <smp-template [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering"
+                        <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
+                            [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering" [mode]="'workbench'"
                             [postData]="state.openPostResData"></smp-template>
 
+                        <!-- Open post loading page -->
                         <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
                             fxLayoutAlign="center center" *ngIf="openPostRes.loading && !openPostRes.error">
                             <div class="twd-w-5/12">
@@ -266,8 +268,20 @@
                                     <img src="assets/images/vectors/no-data-1.svg"
                                         class="w-100-p h-85-p box-shadow-3d" />
                                     <h4 style="font-size: 16px;" class="text-center m-0 font-weight-600">{{
-                                        state.openPostResData !== null ?
-                                        locale('sharedComponents.socialMediaPosts.loadingPostLabel') :
+                                        locale('sharedComponents.socialMediaPosts.loadingPostLabel') }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Open post error page -->
+                        <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
+                            fxLayoutAlign="center center" *ngIf="openPostRes.error">
+                            <div class="twd-w-5/12">
+                                <div class="w-100-p h-100-p text-center twd-flex twd-flex-col" fxLayout="column"
+                                    fxLayoutAlign="center center" style="gap: 10px">
+                                    <img src="assets/images/vectors/no-data-1.svg"
+                                        class="w-100-p h-85-p box-shadow-3d" />
+                                    <h4 style="font-size: 16px;" class="text-center m-0 font-weight-600">{{
                                         locale('sharedComponents.socialMediaPosts.invalidPostResponse') }}</h4>
                                 </div>
                             </div>

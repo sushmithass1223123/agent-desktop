@@ -76,10 +76,13 @@ workbench-smp {
                     align-items: flex-start;
                     justify-content: flex-start;
                     gap: 5px;
+                    max-height: 50vh;
+                    overflow-y: scroll;                
 
                     .post-list {
                         height: fit-content;
                         max-height: 90px;
+                        min-height: 75px;
                         display: flex;
                         flex-direction: column;
                         align-items: flex-start;

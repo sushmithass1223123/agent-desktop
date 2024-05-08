@@ -3,6 +3,7 @@ import { Component, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } f
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { PostAttachment, SocialMediaData } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SmpComponentInputs } from 'app/interfaces';
 
 interface Comment {
     cid: number;
@@ -21,9 +22,8 @@ interface Comment {
     encapsulation: ViewEncapsulation.None
 })
 export class SmpTemplateComponent implements OnInit {
-    @Input() postData: any;
-
-    socialMediaData: SocialMediaData;
+    @Input() postData: SmpComponentInputs;
+    @Input() mode: 'workbench' | 'interaction-min';
 
     @Input() hideStructureActions: boolean = false;
     /**
@@ -53,9 +53,7 @@ export class SmpTemplateComponent implements OnInit {
     constructor(private _fuseFacadeService: FuseFacadeService, private _matDialog: MatDialog) {}
 
     ngOnInit(): void {
-        this.socialMediaData = this.postData?.SocialMediaData;
-        this.socialMediaData.Posts.PostText.Text = "She had been told time and time again that the most important steps were the first and the last. It was something that she carried within her in everything she did, but then he showed up and disrupted everything. He told her that she had it wrong. The first step wasn't the most important. The last step wasn't the most important. It was the next step that was the most important. She nervously peered over the edge. She understood in her mind that the view was supposed to be beautiful, but all she felt was fear. There had always been something about heights that disturbed her, and now she could feel the full force of this unease. She reluctantly crept a little closer with the encouragement of her friends as the fear continued to build. She couldn't help but feel that something horrible was about to happen."
-        this.validateReadMore();
+        console.log(this.postData)
     }
 
     scrollToActiveComment(): void {
@@ -162,33 +160,5 @@ export class SmpTemplateComponent implements OnInit {
                 }
             }
         });
-    }
-
-    validateReadMore() {
-        try {
-            setTimeout(() => {
-                const contentParaEl = document.getElementById('contentPara');
-                const readMoreEl = document.getElementById('readMore');
-                const maxHeight = 3 * parseFloat(window.getComputedStyle(contentParaEl).lineHeight);
-    
-                if (contentParaEl.clientHeight > maxHeight) {
-                    contentParaEl.classList.add('clamp');
-                    readMoreEl.style.display = 'block';
-                } else {
-                    readMoreEl.style.display = 'none';
-                }
-            }, 500);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    onReadMore(event: any) {
-        event.preventDefault();
-        const contentParaEl = document.getElementById('contentPara');
-        const readMoreEl = document.getElementById('readMore'); 
-
-        contentParaEl.classList.toggle("clamp");
-        readMoreEl.style.display = 'none';
     }
 }

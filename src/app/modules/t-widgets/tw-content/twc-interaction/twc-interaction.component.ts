@@ -124,7 +124,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent'];
                 break;
             case 'smp':
-                this.createWidgetList({}, 'incoming', '3', false, {});
+                eventNames = ['IncomingEmailEvent'];
                 break;
             case 'fax':
                 eventNames = ['FaxReceivedEvent'];
@@ -201,7 +201,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
         const aotWidgets = [...this.tempAOTs, ...(widgets.AOT?.filter((w: IWidget) => w.Config.Enabled ?? []) ?? [])];
 
-        const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);
+        const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat', 'smp', 'email'].includes(this.type) ? true : false);
 
         // loop the widgets and add append interaction details
         staticWidgets
@@ -297,7 +297,11 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     IncomingEmailEvent(evt: IncomingEmailEvent): void {
         // create email widgets
-        this.createWidgetList(evt, 'connected', evt.From, false, evt);
+        if(this.type === 'smp' && evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
+            this.createWidgetList(evt, 'connected', evt.From, false, evt);
+        } else if (this.type === 'email' && evt.EmailType !== 'NewSocialMediaItemFromMakerQueue') {
+            this.createWidgetList(evt, 'connected', evt.From, false, evt);
+        }
     }
 
     /**

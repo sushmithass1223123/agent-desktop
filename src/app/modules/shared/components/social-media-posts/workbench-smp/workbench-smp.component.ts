@@ -1,7 +1,7 @@
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
-import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData } from 'app/interfaces';
+import { IWidget, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
@@ -14,11 +14,13 @@ import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { isEqual } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { GetInboxItemResult, SDKClient, TUtils } from '@tmac/sdk';
+import { GetInboxItemResult, SDKClient, TUtils, PostAttachment } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
 import { OUTBOX_REASONS } from 'app/constants';
 
 export class SMPost {
+    Mailbox?: string;
+    ConversationID?: string;
     ItemId: string;
     AddedTime: Date;
     AgentId: string;
@@ -260,10 +262,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * Replied post shown
      */
     latestPostPreview: boolean = false;
-    /**
-     * Object to hold post data
-     */
-    postBodies: Record<string, any> = {};
 
     selectedPostSessionId: string;
     selectedPostOutSessionId: string;
@@ -534,8 +532,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             const maps: Record<AvailableTabs, any> = {
-                inbox: this.mapPosts,
-                queue: this.mapPosts,
+                inbox: this.mapInboxPosts,
+                queue: this.mapQueuePosts,
                 drafts: [],
                 posts: [],
                 sent: []
@@ -755,6 +753,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.segregatedPosts = [];
             this.openPostRes.data.next(null);
             this.currentTab = tab ?? '';
+            this.selectedPostSessionId = '';
+            this.selectedPostOutSessionId = '';
+            this.selectedPostRouteReason = '';
             if (tab) {
                 this.latestPostPreview = tab === 'drafts' || tab === 'sent';
                 if (this.advancedSearch.data[tab]) {
@@ -791,7 +792,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {any} result This is the response form the search
      * @returns {SMPost[]} returns mapped posts parsed into SMPost type
      */
-    mapPosts(result: any): SMPost[] {
+    mapQueuePosts(result: any): SMPost[] {
         try {
             if (!result || !result.length) {
                 return [];
@@ -817,6 +818,69 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SubChannel: x?.subChannel,
                     PostData: {
                         ...JSON.parse(x?.data)
+                    }
+                };
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * This method is used to formate the post list reponse from the search api
+     * @param {any} result This is the response form the search
+     * @returns {SMPost[]} returns mapped posts parsed into SMPost type
+     */
+    mapInboxPosts(result: any): SMPost[] {
+        try {
+            if (!result || !result.length) {
+                return [];
+            }
+
+            return result.map((x: any): SMPost => {
+                const AddedTime = new Date(x.receivedDate);
+                if (!x.receivedTime) {
+                    console.log('Unable to split x.receivedTime', x);
+                }
+                const time = x.receivedTime.split(':');
+                AddedTime.setHours(time[0]);
+                AddedTime.setMinutes(time[1]);
+
+                return {
+                    Mailbox: x?.mailbox,
+                    ConversationID: x?.conversationID,
+                    AddedTime,
+                    AgentId: '',
+                    Channel: '',
+                    CreatedBy: '',
+                    CustomerIdentifier: '',
+                    ItemId: '',
+                    Key: '',
+                    OrderIndex: x?.orderIndex,
+                    Reason: x?.reason,
+                    RonaEnabled: x?.ronaEnabled,
+                    RouteDate: x?.routeDate,
+                    RouteTime: x?.routeTime,
+                    SkillId: x?.makerSkill,
+                    SkillName: x?.makerSkillName,
+                    Status: x?.status,
+                    SubChannel: x?.channel?.toLowerCase(),
+                    PostData: {
+                        SessionId: x?.sessionID,
+                        OutSessionId: '',
+                        RouteId: '',
+                        From: x?.from,
+                        To: '',
+                        Subject: x?.subject,
+                        EmailType: '',
+                        Skill: '',
+                        Intent: x?.intent,
+                        JsonData: '',
+                        SentimentInfo: '',
+                        RouteReason: '',
+                        HasAttachment: x?.hasAttachments,
+                        IsEmailProbableSpam: false,
+                        RejectReason: ''
                     }
                 };
             });
@@ -970,23 +1034,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             const getRequestedSession = () => (fetchFromOutbox ? post.PostData.OutSessionId : post.PostData.SessionId);
 
-            const getAttachments = (attachments: any[]): any[] => {
-                if (attachments && attachments.length) {
-                    return attachments.map((item: any) => {
-                        let uploadedName = item.URL.split('/').pop();
-                        if (!item.Name) {
-                            uploadedName = uploadedName.replace(getRequestedSession(), '');
-                            item.Name = uploadedName;
-                        }
-                        item.Ext = item.Name.split('.').pop();
-                        item.Icon = maticonByExtension(item.Ext);
-                        return item;
-                    });
-                }
-                return [];
-            };
+            this.selectedPostSessionId = post.PostData.SessionId;
+            this.selectedPostOutSessionId = post.PostData.OutSessionId;
+            this.selectedPostRouteReason = post.PostData.RouteReason;
 
-            if (!this.postBodies[post.PostData.SessionId]) {
+            if (!this._smpService.postBodies[post.PostData.SessionId]) {
                 inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
                 if (!inboxRes || inboxRes?.EmailType === 'Dummy') {
                     if (this.currentTab === 'queue') {
@@ -995,43 +1047,26 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         throwADError('Error in WorkbenchSmpComponent.getInboxItem', 'Unexpected Response from server');
                     }
                 } else {
-                    let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
-                    this.postBodies = Object.assign(this.postBodies, {
+                    this._smpService.postBodies = Object.assign(this._smpService.postBodies, {
                         [post.PostData.SessionId]: {
-                            Files: getAttachments(tempAttachments),
-                            AgentName: inboxRes.AgentName,
-                            Intent: inboxRes.Intent,
-                            RepliedStatus:
-                                inboxRes.RepliedStatus === '1'
-                                    ? this.translocoService.translate('sharedComponents.socialMediaPosts.replied')
-                                    : this.translocoService.translate('sharedComponents.socialMediaPosts.notReplied'),
                             ConversationID: inboxRes.ConversationID,
-                            CurrentStatus: inboxRes.CurrentStatus,
-                            ClosedBy: inboxRes.ClosedBy,
-                            CCList: inboxRes.CcList,
-                            From: inboxRes.From,
-                            Priority: inboxRes.Priority,
-                            ToList: inboxRes.ToList,
                             SessionId: post.PostData.SessionId,
                             OutSessionId: post.PostData.OutSessionId,
-                            EmailType: inboxRes?.EmailType,
-                            IsEmailProbableSpam: inboxRes.IsEmailProbableSpam,
-                            InternetHeaders: inboxRes.InternetHeaders,
-                            SocialMediaData: inboxRes.SocialMediaData,
                             SubChannel: post.SubChannel,
-                            Subject: post.PostData.Subject
+                            Subject: post.PostData.Subject,
+                            PostAccountName: inboxRes.SocialMediaData.Posts.AccountName,
+                            PostId: inboxRes.SocialMediaData.Posts.PostId,
+                            SmActiveComment: inboxRes.SocialMediaData.Comments,
+                            PostText: inboxRes.SocialMediaData.Posts.PostText,
+                            PostAttachments: inboxRes.SocialMediaData.Posts.PostAttachments
                         }
                     });
-                    this.selectedPostSessionId = post.PostData.SessionId;
-                    this.selectedPostOutSessionId = post.PostData.OutSessionId;
-                    this.selectedPostRouteReason = post.PostData.RouteReason;
                 }
             }
 
             this.openPostRes.data.next(
-                Object.assign(post, this.postBodies[getRequestedSession()], { currentTab: this.currentTab })
+                Object.assign(post, this._smpService.postBodies[getRequestedSession()], { currentTab: this.currentTab })
             );
-            this.postBodies = {};
             this.setComponentState('smposts/open/success');
         } catch (e) {
             console.error(e);
@@ -1039,152 +1074,69 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         }
     }
 
-    /**
-     * Get attachment meta data from media streamer for archive status
-     */
-    async requestAttachmentData(attachments: any[]): Promise<any> {
+    async pullPosts(posts: SMPost[]): Promise<void> {
+        const loader = this._appUiService.showSnackbar(
+            this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostLoading'),
+            'loading'
+        );
         try {
-            let attachmentMap = attachments.reduce(
-                (acc, cur) => {
-                    if (cur.IsCloud) {
-                        let split = cur.Url.split('/');
-                        if (split.length > 0) {
-                            let fileId = split[split.length - 1];
-                            acc.ids.push(fileId);
-                            acc.att.push({ ...cur, FileId: fileId });
-                        } else {
-                            acc.att.push({ ...cur });
-                        }
-                    } else {
-                        acc.att.push({ ...cur });
+            const { agentId, tmacServer } = SDKClient.getAgentData();
+            if (posts.find((post) => !post.PostData.SessionId)) {
+                this.getValidDataForSelectedPost();
+                return;
+            }
+            const { items } = posts.reduce(
+                (acc, curr) => {
+                    const item = {
+                        routeId: curr.PostData.RouteId || '',
+                        sessionId: curr.PostData.SessionId,
+                        inSessionId: curr.PostData.SessionId,
+                        conversationId: curr?.ConversationID || '',
+                        mailbox: curr?.Mailbox || ''
+                    };
+                    if (this.currentTab === 'drafts') {
+                        item.sessionId = curr.PostData.OutSessionId;
+                    } else if (
+                        this.currentTab === 'queue' &&
+                        curr.PostData.EmailType !== 'Dummy' &&
+                        OUTBOX_REASONS.includes(curr.PostData.RouteReason)
+                    ) {
+                        item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
+                    } else if (this.currentTab === 'sent') {
+                        item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
                     }
+                    acc.items.push(item);
                     return acc;
                 },
-                { ids: [], att: [] }
+                { items: [] }
             );
-            if (attachmentMap.ids.length > 0) {
-                let ids = attachmentMap.ids.join(',');
-                try {
-                    const { response } = await TUtils.HttpClient.sendRequest<
-                        MediaStreamerMultiResponse<MediaStreamerMetaResponse>
-                    >({
-                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
-                        method: 'GET',
-                        responseType: 'json'
-                    });
-
-                    if (response?.result?.length > 0) {
-                        attachmentMap.att.forEach((cur) => {
-                            if (cur.IsCloud) {
-                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
-                                if (fileMeta) {
-                                    cur.ArchiveStatus = fileMeta.archiveStatus;
-                                    cur.RestoreStatus = fileMeta.restoreStatus;
-                                    cur.FileError = fileMeta.fileError;
-                                }
-                            }
-                        }, []);
-                    }
-                } catch (ex) {
-                    this._appUiService.showSnackbar(
-                        this.translocoService.translate('sharedComponents.socialMediaPosts.fileMetaError'),
-                        'failure'
-                    );
-                    attachmentMap.att.forEach((cur) => {
-                        cur.ArchiveStatus = null;
-                        cur.RestoreStatus = null;
-                        cur.FileError = true;
-                    }, []);
-                }
-            }
-            return attachmentMap.att;
-        } catch (error) {
-            return attachments;
-        }
-    }
-
-    async pullPosts(posts: SMPost[]): Promise<void> {
-        let archivedAttachments = posts.find((e) => {
-            let filesInArchive = e.Files.find((f) => {
-                return f.ArchiveStatus || f.FileError;
-            });
-            if (filesInArchive) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        let pullPostOp = () => {
-            const loader = this._appUiService.showSnackbar(
-                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostLoading'),
-                'loading'
-            );
-            try {
-                const { agentId, tmacServer } = SDKClient.getAgentData();
-                if (posts.find((post) => !post.PostData.SessionId)) {
-                    this.getValidDataForSelectedPost();
-                    return;
-                }
-                const { items } = posts.reduce(
-                    (acc, curr) => {
-                        const item = {
-                            routeId: curr.PostData.RouteId || '',
-                            sessionId: curr.PostData.SessionId,
-                            inSessionId: curr.PostData.SessionId,
-                            conversationId: '',
-                            mailbox: ''
-                        };
-                        if (this.currentTab === 'drafts') {
-                            item.sessionId = curr.PostData.OutSessionId;
-                        } else if (
-                            this.currentTab === 'queue' &&
-                            curr.PostData.EmailType !== 'Dummy' &&
-                            OUTBOX_REASONS.includes(curr.PostData.RouteReason)
-                        ) {
-                            item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
-                        } else if (this.currentTab === 'sent') {
-                            item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
+            this.http
+                .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
+                    tmacServer,
+                    agentId,
+                    items
+                })
+                .subscribe({
+                    next: (res: any) => {
+                        if (res.status === 'SUCCESS') {
+                            this.openPostRes.data.next(null);
                         }
-                        delete this.postBodies[curr.PostData.SessionId];
-                        delete this.postBodies[curr.PostData.OutSessionId];
-                        acc.items.push(item);
-                        return acc;
-                    },
-                    { items: [] }
-                );
-                this.http
-                    .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
-                        tmacServer,
-                        agentId,
-                        items
-                    })
-                    .subscribe({
-                        next: (res: any) => {
-                            if (res.status === 'FAILED') {
-                                loader.dismiss();
-                                const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
-                                if (isAlreadyPulled.length) {
-                                    if (isAlreadyPulled.length > 1) {
-                                        if (isAlreadyPulled.length === posts.length) {
-                                            this._appUiService.showSnackbar(
-                                                this.translocoService.translate(
-                                                    'sharedComponents.socialMediaPosts.postsAssigned'
-                                                ),
-                                                'failure'
-                                            );
-                                        } else {
-                                            this._appUiService.showSnackbar(
-                                                this.translocoService.translate(
-                                                    'sharedComponents.socialMediaPosts.somePostsAssigned'
-                                                ),
-                                                'failure'
-                                            );
-                                        }
-                                    } else {
+                        if (res.status === 'FAILED') {
+                            loader.dismiss();
+                            const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
+                            if (isAlreadyPulled.length) {
+                                if (isAlreadyPulled.length > 1) {
+                                    if (isAlreadyPulled.length === posts.length) {
                                         this._appUiService.showSnackbar(
                                             this.translocoService.translate(
                                                 'sharedComponents.socialMediaPosts.postsAssigned'
+                                            ),
+                                            'failure'
+                                        );
+                                    } else {
+                                        this._appUiService.showSnackbar(
+                                            this.translocoService.translate(
+                                                'sharedComponents.socialMediaPosts.somePostsAssigned'
                                             ),
                                             'failure'
                                         );
@@ -1192,55 +1144,43 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                                 } else {
                                     this._appUiService.showSnackbar(
                                         this.translocoService.translate(
-                                            'sharedComponents.socialMediaPosts.pullPostsFailed'
+                                            'sharedComponents.socialMediaPosts.postsAssigned'
                                         ),
                                         'failure'
                                     );
                                 }
-                                return;
+                            } else {
+                                this._appUiService.showSnackbar(
+                                    this.translocoService.translate(
+                                        'sharedComponents.socialMediaPosts.pullPostsFailed'
+                                    ),
+                                    'failure'
+                                );
                             }
-                            loader.dismiss();
-                            this._appUiService.showSnackbar(
-                                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsSuccess'),
-                                'success'
-                            );
-                        },
-                        error: (err) => {
-                            console.error(err);
-                            loader.dismiss();
-                            this._appUiService.showSnackbar(
-                                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
-                                'failure'
-                            );
+                            return;
                         }
-                    });
-            } catch (e) {
-                console.error(e);
-                loader.dismiss();
-                this._appUiService.showSnackbar(
-                    this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
-                    'failure'
-                );
-            }
-        };
-
-        if (archivedAttachments) {
-            const confirmDialogRef = this._appUiService.showAppConfirmDialog(
-                'generic',
-                this.translocoService.translate('sharedComponents.socialMediaPosts.postPullConfirmHeader'),
-                this.translocoService.translate('sharedComponents.socialMediaPosts.postConfirmBody')
+                        loader.dismiss();
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsSuccess'),
+                            'success'
+                        );
+                    },
+                    error: (err) => {
+                        console.error(err);
+                        loader.dismiss();
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
+                            'failure'
+                        );
+                    }
+                });
+        } catch (e) {
+            console.error(e);
+            loader.dismiss();
+            this._appUiService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
+                'failure'
             );
-
-            const dialogResult = await confirmDialogRef
-                .afterClosed()
-                .pipe(takeUntil(this.unsubscribeAll))
-                .pipe(take(1))
-                .toPromise();
-            if (dialogResult) {
-                pullPostOp();
-            }
-        } else {
-            pullPostOp();
         }
     }
 
