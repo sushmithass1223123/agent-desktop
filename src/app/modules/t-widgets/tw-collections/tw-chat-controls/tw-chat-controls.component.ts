@@ -1018,6 +1018,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
                 case 'clientreloaded':
+                    if(this.callWidget)
+                    {
+                        this.callWidget?.destroy();
+                    }
                     this.callWidget?.destroy();
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.remoteBrowserRefreshMsg'), 'warning');
                     break;

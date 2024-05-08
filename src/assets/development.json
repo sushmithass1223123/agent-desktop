@@ -475,7 +475,8 @@
                                         "Actions": ["minimize", "destroy", "resize"],
                                         "ViewState": "restore",
                                         "Header": true,
-                                        "Pinned": false
+                                        "Pinned": false,
+                                        "DragBoundary": ".tw-email-controls"
                                     },
                                     "Data": {
                                         "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
@@ -503,7 +504,8 @@
                                         "Actions": ["maximize", "destroy"],
                                         "ViewState": "restore",
                                         "Header": true,
-                                        "Pinned": false
+                                        "Pinned": false,
+                                        "DragBoundary": "body"
                                     },
                                     "Data": {
                                         "GamificationProxyUrl": "https://dicedev.tetherfi.cloud/GamificationProxy/Proxy.asmx",
