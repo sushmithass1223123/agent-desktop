@@ -27,7 +27,8 @@
                         <mat-icon role="button">reply</mat-icon>
                         <mat-icon role="button">save</mat-icon>
                         <mat-icon role="button">send</mat-icon>
-                        <mat-icon role="button">close</mat-icon>
+                        <mat-icon role="button" [disabled]="actionStatus.isClosingInteraction"
+                            (click)="closeInteraction()">close</mat-icon>
                     </div>
                 </div>
                 <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
@@ -59,7 +60,8 @@
                 </div>
             </div>
             <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
-                [mode]="'interaction-min'" [postData]="this.smpService.postBodies[sessionId]"></smp-template>
+                [maxFileUploadSize]="MaxFileUploadSize" [mode]="'interaction-min'" [sessionId]="sessionId"
+                [postData]="this.smpService.postBodies[sessionId]"></smp-template>
         </div>
     </div>
 </ng-container>

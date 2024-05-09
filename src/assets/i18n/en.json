@@ -215,6 +215,11 @@
             "serviceLevel": "SL %",
             "agentSkillUpdateSuccessMsg": "Agent skills has been updated!"
         },
+        "smpControls": {
+            "sendPostReplyError": "Error occured while sending reply!",
+            "sendPostReplyLoading": "Sending reply...",
+            "replySendTimeoutMessage": "Timed out while sending reply!"
+        },
         "voiceControls": {
             "reset": "Reset",
             "resetCallTitle": "Reset Call",
@@ -953,6 +958,11 @@
             "draftsLabel": "Drafts",
             "postsLabel": "Posts",
             "searchPlaceholder": "Search posts here...",
+            "sortBy": "Sort by",
+            "postSubject": "Post subject",
+            "postDate": "Post date",
+            "deleteAttachmentConfirmationHeader": "Delete attachment",
+            "deleteAttachmentConfirmationBody": "Are you sure you want to delete the attachment?",
             "pull": "Pull",
             "transfer": "Transfer",
             "reset": "Reset",
@@ -971,7 +981,10 @@
             "postSendConfirmHeader": "Email Send Confirmation",
             "postConfirmBody": "There are attachments that are unavailable in this post. Do you still want to continue ?",
             "loadingPostLabel": "Please wait while the post is loading",
-            "invalidPostResponse": "Could not read post data"
+            "invalidPostResponse": "Could not read post data",
+            "uploadFileLoading": "Please wait while the file uploads",
+            "uploadFileSizeWarning": "File size exceeded!",
+            "fileTypeNotSupported": "Selected file type is not allowed to upload!"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

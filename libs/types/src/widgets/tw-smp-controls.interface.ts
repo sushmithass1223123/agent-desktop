@@ -36,5 +36,12 @@ export interface TwSmpControls<T> extends InteractionWidget<TwSmpControlsData, T
  * Data config for tw-email-controls widget
  */
 export interface TwSmpControlsData {
-
+    /**
+     * Number in bytes to specify maximum file upload size
+     */
+    MaxFileUploadSize: number;
+    /**
+     * Send reply timeout
+     */
+    AsyncReplySendTimeout: number;
 }

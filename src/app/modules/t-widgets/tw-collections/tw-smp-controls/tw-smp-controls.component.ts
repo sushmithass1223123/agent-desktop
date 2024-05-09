@@ -1,14 +1,18 @@
 import { InteractionWidgetBaseData, TwSmpControls, TwSmpControlsData } from '@ad/types';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { IAgentData, IncomingEmailEvent, SDKClient } from '@tmac/sdk';
+import { IAgentData, IncomingEmailEvent, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
+import { EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES } from 'app/constants';
 import { InteractionRef, IWidget } from 'app/interfaces';
+import { ADError, throwADError } from 'app/utils';
 import { filter, takeUntil } from 'rxjs/operators';
 
 declare var document: any;
@@ -61,7 +65,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     interactionId: number;
 
-    sessionId: number | string;
+    sessionId: any;
+    outSessionId: any;
     /**
      * User info
      */
@@ -71,13 +76,24 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     currentInteraction: any = {};
 
+    actionStatus: {
+        isClosingInteraction: boolean;
+    } = {
+        isClosingInteraction: false
+    };
+
+    maxFileUploadSize: number = 20971520;
+    asyncReplySendTimeout: number = 60000;
+    sendTimerId: any;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private translocoService: TranslocoService,
         private _interactionManagerService: InteractionManagerService,
         public smpService: SocialMediaPostsService,
         private _contentPageService: ContentPageService,
-        private _appUiService: AppUiService
+        private _appUiService: AppUiService,
+        private _fuseProgressBarService: FuseProgressBarService
     ) {
         super('TwSmpControlsComponent');
     }
@@ -116,7 +132,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.currentInteraction = this.data.InteractionDetails;
 
-        console.log(this.smpService.postBodies[this.sessionId])
+        this.smpService.sendReply.subscribe((event: any) => this.onSendReply(event))
+
+        this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
+        this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
+
+        console.log(this.smpService.postBodies[this.sessionId]);
 
         this._interactionManagerService.interactions
             .pipe(takeUntil(this.unsubscribeAll))
@@ -132,7 +153,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             isActive: i.isActive,
                             interactionId: i.interactionId,
                             sessionId: i.otherData?.SessionId,
-                            channel: this.smpService.postBodies[this.sessionId].SubChannel
+                            channel: this.smpService.postBodies[this.sessionId].SubChannel,
+                            isPostReplySent: i.isPostReplySent
                         };
                     });
             });
@@ -178,12 +200,164 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             return;
         }
 
-        // update is active
         this._interactionManagerService.updateInteraction(item.interactionId, {
             isActive: true,
             otherData: {
                 unreadCount: 0
             }
         });
+    }
+
+    /**
+     * Closes current interaction
+     */
+    closeInteraction(force = false): void {
+        const closeApiCall = () => {
+            this.actionStatus.isClosingInteraction = true;
+            this._fuseProgressBarService.show();
+
+            SDKClient.closeInteraction(this.interactionId.toString(), null)
+                .then((dt: IResponse) => {
+                    this._fuseProgressBarService.hide();
+                    if (dt.response && dt.response.ResultCode === 0) {
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('interactionComponent.closeInteractionSuccess')
+                        );
+                        this._interactionManagerService.removeInteraction(dt.response.InteractionID);
+                    } else {
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('interactionComponent.closeInteractionFailed'),
+                            'failure'
+                        );
+                    }
+                })
+                .catch(() => {
+                    this._fuseProgressBarService.hide();
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('interactionComponent.closeInteractionFailed'),
+                        'failure'
+                    );
+                })
+                .finally(() => {
+                    this.actionStatus.isClosingInteraction = false;
+                });
+        };
+        if (force) {
+            closeApiCall();
+        } else {
+            const confirmDialogRef = this._appUiService.showAppConfirmDialog('closeInteraction');
+            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
+                if (dialogResult) {
+                    closeApiCall();
+                }
+            });
+        }
+    }
+
+    async onSendReply(event: any) {
+        try {
+            let attachments = event.attachments;
+            let body = event.body;
+
+            const errCallback = (err) => {
+                console.error(err);
+                let msg = this.translocoService.translate('widgets.smpControls.sendPostReplyError');
+                if (err instanceof ADError) {
+                    msg = err.message;
+                }
+                this._fuseProgressBarService.hide();
+                this._appUiService.showSnackbar(msg, 'failure');
+            };
+            try {
+                this._fuseProgressBarService.show();
+                const ref = this._appUiService.showSnackbar(
+                    this.translocoService.translate('widgets.smpControls.sendPostReplyLoading'),
+                    'loading'
+                );
+                const res = await SDKClient.sendEmail({
+                    attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
+                    body: body,
+                    inboxSessionId: this.sessionId,
+                    outboxSessionId: this.outSessionId || '',
+                    routeId: '',
+                    toList: '',
+                    bccList: '',
+                    typeOfResponse: '',
+                    ccList: '',
+                    subject: ''
+                }).catch((e) => errCallback(e));
+                // this._fuseProgressBarService.hide();
+                ref.dismiss();
+                if (!res || !res.response) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('widgets.smpControls.emailSendConnectionError'),
+                        'failure'
+                    );
+                    throwADError('Error in TwSmpControlsComponent.onSendReply', 'Unexpected response from Server');
+                    return;
+                }
+
+                let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+
+                if (res.response.CurrentStatus === 'EmailSending') {
+                    this._interactionManagerService.updateInteraction(this.interactionId, {
+                        isReplySent: false
+                    });
+                    let timerTime = this.asyncReplySendTimeout ? this.asyncReplySendTimeout : 60000;
+                    this.sendTimerId = setTimeout(() => {
+                        let isSent = this.isPostReplySent(this.interactionId);
+                        if (!isSent && this.interactionId) {
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('widgets.smpControls.replySendTimeoutMessage'),
+                                'failure'
+                            );
+
+                            this._interactionManagerService.updateInteraction(this.interactionId, {
+                                isReplySent: true
+                            });
+                        }
+                    }, timerTime);
+                    reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
+                }
+
+                const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
+                if (!reasonCodeMsg) {
+                    throwADError(
+                        'Error in TwSmpControlsComponent.onSendReply',
+                        'Unable to send post reply. Invalid Reason Code'
+                    );
+                }
+                if (!currentStatusMsg) {
+                    throwADError(
+                        'Error in TwSmpControlsComponent.onSendReply',
+                        'Unable to send post reply. Invalid Current Status'
+                    );
+                }
+                if (reasonCodeMsg !== 'success') {
+                    throwADError(
+                        'Error in TwSmpControlsComponent.onSendReply',
+                        `${reasonCodeMsg} [${res.response.SendStatus}]`
+                    );
+                }
+
+                this._appUiService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
+            } catch (err) {
+                errCallback(err);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * Checks if post reply is sent or not
+     */
+    isPostReplySent(interactionId: any): boolean {
+        let interaction = this.interactionList.find((i) => i.interactionId === interactionId);
+
+        if (interaction && interaction.isPostReplySent === false) {
+            return false;
+        }
+        return true;
     }
 }

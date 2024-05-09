@@ -1,3 +1,17 @@
+type PostFileSources = 'mediastreamer' | 'tmacproxy';
+type PostFileDirection = 'IN' | 'OUT';
+export interface PostFile {
+    Id: string;
+    SessionID?: string;
+    Direction: PostFileDirection;
+    Name: string;
+    URL: string;
+    Ext: string;
+    Source?: PostFileSources;
+    Icon: string;
+    IsUploaded?: boolean;
+}
+
 export interface SmpComponentInputs {
     PostAccountName: string;
     ConversationID: string;

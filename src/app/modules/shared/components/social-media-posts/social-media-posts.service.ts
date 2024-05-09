@@ -1,6 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
+import { Subject } from 'rxjs';
 
 const today = new Date();
 const yesterday = new Date();
@@ -69,6 +70,7 @@ export class SocialMediaPostsService {
      * Object to hold post data
      */
     postBodies: any = {};
+    sendReply = new Subject<any>();
 
     /**
      * Service init method

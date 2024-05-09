@@ -1,9 +1,27 @@
-import { filter } from 'rxjs/operators';
-import { Component, Input, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { filter, take, takeUntil } from 'rxjs/operators';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    TemplateRef,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { PostAttachment, SocialMediaData } from '@tmac/sdk';
+import { PostAttachment, SDKClient, TUtils } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SmpComponentInputs } from 'app/interfaces';
+import { MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
+import { AppUiService } from '@services/app-ui.service';
+import { TranslocoService } from '@ngneat/transloco';
+import { Subject } from 'rxjs';
+import { AppDataService } from '@services/app-data.service';
+import { maticonByExtension, throwADError } from 'app/utils';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
+import { SocialMediaPostsService } from '../social-media-posts.service';
 
 interface Comment {
     cid: number;
@@ -24,8 +42,10 @@ interface Comment {
 export class SmpTemplateComponent implements OnInit {
     @Input() postData: SmpComponentInputs;
     @Input() mode: 'workbench' | 'interaction-min';
+    @ViewChild('fileInput') fileInput!: ElementRef;
 
     @Input() hideStructureActions: boolean = false;
+    @Input() sessionId: string = '';
     /**
      * Fuse custom config
      */
@@ -39,6 +59,15 @@ export class SmpTemplateComponent implements OnInit {
 
     lineClampCharacterCount: number = 100;
 
+    body: string = '';
+    attachments: any[] = [];
+    mimeConstraints: string;
+    /**
+     * Maximum file size default 20mbs
+     */
+    @Input() maxFileUploadSize = 20971520;
+    renderActiveCommentAttachment: boolean = false;
+
     /**
      * Preview media dialog
      */
@@ -49,11 +78,30 @@ export class SmpTemplateComponent implements OnInit {
      */
     previewMediaDialogRef: MatDialogRef<any>;
     previewMediaDialogData: any;
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
+    /**
+     * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
+     */
+    unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
+    sendTimerId: any;
+    rawAttachmentData: any;
 
-    constructor(private _fuseFacadeService: FuseFacadeService, private _matDialog: MatDialog) {}
+    constructor(
+        private _fuseFacadeService: FuseFacadeService,
+        private _matDialog: MatDialog,
+        private _appUiService: AppUiService,
+        private translocoService: TranslocoService,
+        private _appDataService: AppDataService,
+        private _smpService: SocialMediaPostsService
+    ) {}
 
     ngOnInit(): void {
-        console.log(this.postData)
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
     }
 
     scrollToActiveComment(): void {
@@ -160,5 +208,133 @@ export class SmpTemplateComponent implements OnInit {
                 }
             }
         });
+    }
+
+    onAttach(fileType) {
+        this.mimeConstraints = fileType;
+        setTimeout(() => {
+            this.fileInput?.nativeElement?.click();
+        });
+    }
+
+    async onFileSelected(evt: any) {
+        const input = evt.target as HTMLInputElement;
+        let resVal: Partial<PostFile>;
+        if (input.files && input.files.length) {
+            const f = input.files[0];
+            const fext = this.mimeConstraints.includes('*') ? f.type.split('/')[0] : f.name.split('.').pop();
+            if (!this.mimeConstraints.includes(fext)) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.fileTypeNotSupported'),
+                    'failure'
+                );
+                return;
+            }
+            const ref = this._appUiService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileLoading'),
+                'loading'
+            );
+            if (f.size > this.maxFileUploadSize) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileSizeWarning'),
+                    'failure'
+                );
+                return;
+            }
+            const Base64 = await this.convertToBase64(f);
+            this.rawAttachmentData = Base64;
+            if (this.fileUploadUrl?.MediaUploader) {
+                const formData = new FormData();
+                formData.append('file', f);
+                formData.append('interaction_id', TUtils.Generic.uuid());
+                formData.append('organization_id', 'prod');
+                formData.append('conv_id', this.sessionId);
+                formData.append('uploaded_by', SDKClient.getAgentData().agentId);
+                formData.append('other', '');
+
+                const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
+                    urls: [this.fileUploadUrl.MediaUploader],
+                    method: 'POST',
+                    responseType: 'json',
+                    formData
+                });
+
+                if (response?.isSuccess) {
+                    resVal = {
+                        Name: response.result.original_name,
+                        URL: response.result.downloadURL,
+                        Source: 'mediastreamer'
+                    };
+                } else {
+                    throwADError('File not created at server', response);
+                }
+            } else {
+                const {
+                    response: [res]
+                } = await SDKClient.uploadFiles({
+                    files: [
+                        {
+                            Base64,
+                            FileName: f.name,
+                            RelativePath: '',
+                            Status: 0,
+                            Type: '',
+                            Url: ''
+                        }
+                    ]
+                });
+                resVal = { Name: res.FileName, URL: res.Url, Source: 'tmacproxy' };
+            }
+
+            const ext = resVal.Name.split('.').pop();
+
+            this.attachments.push({
+                Id: TUtils.Generic.uuid(),
+                SessionID: this.sessionId,
+                Direction: 'OUT',
+                Icon: maticonByExtension(ext),
+                Ext: f.type,
+                Name: resVal.Name,
+                Source: resVal.Source,
+                URL: resVal.URL,
+                IsUploaded: true
+            });
+            ref.dismiss();
+        }
+    }
+
+    /**
+     * Convert file to base64
+     * @param {File} file
+     */
+    convertToBase64(file: File): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
+    onSendReply() {
+        this._smpService.sendReply.next({ attachments: this.attachments, body: this.body });
+    }
+
+    async onClearAttachment() {
+        const confirmDialogRef = this._appUiService.showAppConfirmDialog(
+            'generic',
+            this.translocoService.translate('sharedComponents.socialMediaPosts.deleteAttachmentConfirmationHeader'),
+            this.translocoService.translate('sharedComponents.socialMediaPosts.deleteAttachmentConfirmationBody')
+        );
+
+        const dialogResult = await confirmDialogRef
+            .afterClosed()
+            .pipe(takeUntil(this.unsubscribeAll$))
+            .pipe(take(1))
+            .toPromise();
+        if (dialogResult) {
+            this.mimeConstraints = '';
+            this.attachments = [];
+        }
     }
 }

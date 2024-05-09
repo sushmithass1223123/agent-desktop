@@ -12,7 +12,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AppUiService } from '@services/app-ui.service';
 import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
-import { isEqual } from 'lodash';
+import { isEqual, sortBy } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { GetInboxItemResult, SDKClient, TUtils, PostAttachment } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
@@ -275,6 +275,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     segregatedPosts: any = [];
 
     MaximumAllowedPostImageRendering: number = 5;
+
+    /**
+     * Sort controls
+     */
+    sortControls = {
+        sortBy: 'Date',
+        ascending: false
+    };
+
+    rawResponse: any[] = [];
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -573,7 +583,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 )
                 .subscribe({
                     next: (res: SMPost[]) => {
-                        this.updateSegregatedPosts(res);
+                        this.rawResponse = res;
+                        this.sortPosts();
                         this.setComponentState('smposts/success', { silent });
                     },
                     error: (e) => {
@@ -778,16 +789,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     /**
-     * Method to handle data refreshing
-     */
-    doSmpDataRefresh(): void {
-        try {
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    /**
      * This method is used to formate the post list reponse from the search api
      * @param {any} result This is the response form the search
      * @returns {SMPost[]} returns mapped posts parsed into SMPost type
@@ -890,6 +891,69 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     /**
+     * This method is used to formate the post list reponse from the search api
+     * @param {any} result This is the response form the search
+     * @returns {SMPost[]} returns mapped posts parsed into SMPost type
+     */
+    mapSentPosts(result: any): SMPost[] {
+        try {
+            if (!result || !result.length) {
+                return [];
+            }
+
+            return result.map((x: any): SMPost => {
+                const AddedTime = new Date(x.sendDate);
+                if (!x.sendTime) {
+                    console.log('Unable to split x.sendTime', x);
+                }
+                const time = x.sendTime.split(':');
+                AddedTime.setHours(time[0]);
+                AddedTime.setMinutes(time[1]);
+
+                return {
+                    Mailbox: x?.mailbox,
+                    ConversationID: x?.conversationID,
+                    AddedTime,
+                    AgentId: '',
+                    Channel: '',
+                    CreatedBy: '',
+                    CustomerIdentifier: '',
+                    ItemId: '',
+                    Key: '',
+                    OrderIndex: x?.orderIndex,
+                    Reason: x?.reason,
+                    RonaEnabled: x?.ronaEnabled,
+                    RouteDate: x?.routeDate,
+                    RouteTime: x?.routeTime,
+                    SkillId: x?.makerSkill,
+                    SkillName: x?.makerSkillName,
+                    Status: x?.status,
+                    SubChannel: x?.channel?.toLowerCase(),
+                    PostData: {
+                        SessionId: x?.sessionID,
+                        OutSessionId: '',
+                        RouteId: '',
+                        From: x?.from,
+                        To: '',
+                        Subject: x?.subject,
+                        EmailType: '',
+                        Skill: '',
+                        Intent: x?.intent,
+                        JsonData: '',
+                        SentimentInfo: '',
+                        RouteReason: '',
+                        HasAttachment: x?.hasAttachments,
+                        IsEmailProbableSpam: false,
+                        RejectReason: ''
+                    }
+                };
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
      * Sets available mailboxes
      */
     private async setAvailableMailboxes(): Promise<void> {
@@ -910,6 +974,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.segregatedPosts = [];
             let channelIdentifier = 'SubChannel';
             let skillIdentifier = 'SkillName';
+            let backupSkillIdentifier = 'SkillId';
             let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
 
             const getSegregatedPostsBySkill = (channel: string) => {
@@ -917,14 +982,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     (res: SMPost) => res[channelIdentifier] === channel
                 );
                 let availableSkills = Array.from(
-                    new Set(filteredPostsByChannel.map((r: SMPost) => r[skillIdentifier]))
+                    new Set(filteredPostsByChannel.map((r: SMPost) => r[skillIdentifier] ?? r[backupSkillIdentifier]))
                 );
 
                 let constructedPost: any = [];
 
                 availableSkills.forEach((skill: string) => {
                     constructedPost.push({
-                        [skill]: filteredPostsByChannel.filter((post: SMPost) => post[skillIdentifier] === skill)
+                        [skill]: filteredPostsByChannel.filter(
+                            (post: SMPost) => post[skillIdentifier] === skill || post[backupSkillIdentifier] === skill
+                        )
                     });
                 });
 
@@ -1197,5 +1264,45 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         } catch (e) {
             this.logger.error('Error occured while getting valid data for selected post:', JSON.stringify(e), true);
         }
+    }
+
+    sortPosts(): void {
+        try {
+            if (this.sortControls.sortBy === 'Date') {
+                this.rawResponse.sort((a, b) => {
+                    const dateA = new Date(a.AddedTime);
+                    const dateB = new Date(b.AddedTime);
+
+                    if (this.sortControls.ascending) {
+                        if (dateA < dateB) {
+                            return -1;
+                        }
+                        if (dateA > dateB) {
+                            return 1;
+                        }
+                    } else {
+                        if (dateA > dateB) {
+                            return -1;
+                        }
+                        if (dateA < dateB) {
+                            return 1;
+                        }
+                    }
+                    return 0;
+                });
+                this.updateSegregatedPosts(this.rawResponse);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * Commits the value from global search control value to globalSearch.data
+     * When the tab is swithced, this value will be retained in globalSearch.data
+     */
+    submitGlobalSearchForm(): void {
+        this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
+        this.doAdvancedSearch();
     }
 }

@@ -14,7 +14,13 @@
     "Main": {
         "Toolbar": {
             "Widgets": [
-                { "Name": "Interaction indicators", "Description": "", "Type": "tw-active-interaction", "Config": { "Enabled": true }, "Data": {} },
+                {
+                    "Name": "Interaction indicators",
+                    "Description": "",
+                    "Type": "tw-active-interaction",
+                    "Config": { "Enabled": true },
+                    "Data": {}
+                },
                 {
                     "Name": "Toolbar Menu",
                     "Description": "",
@@ -22,8 +28,20 @@
                     "Config": { "Enabled": true },
                     "Data": {
                         "Widgets": [
-                            { "Name": "Broadcast Message", "Description": "", "Type": "tw-broadcast", "Config": { "Enabled": true }, "Data": {} },
-                            { "Name": "Aux Timer", "Description": "", "Type": "tw-aux-timer", "Config": { "Enabled": true }, "Data": {} },
+                            {
+                                "Name": "Broadcast Message",
+                                "Description": "",
+                                "Type": "tw-broadcast",
+                                "Config": { "Enabled": true },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Aux Timer",
+                                "Description": "",
+                                "Type": "tw-aux-timer",
+                                "Config": { "Enabled": true },
+                                "Data": {}
+                            },
                             {
                                 "Name": "Agent Details",
                                 "Description": "",
@@ -32,7 +50,12 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": true, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
+                                    }
                                 }
                             },
                             {
@@ -47,7 +70,11 @@
                                 "Description": "",
                                 "Type": "tw-logout",
                                 "Config": { "Enabled": true },
-                                "Data": { "LogoutAux": ["logout"], "AllowLogoutOnOpenInteractions": true, "AllowLogoutOnAvailable": false }
+                                "Data": {
+                                    "LogoutAux": ["logout"],
+                                    "AllowLogoutOnOpenInteractions": true,
+                                    "AllowLogoutOnAvailable": false
+                                }
                             },
                             {
                                 "Name": "Agent IM",
@@ -61,7 +88,13 @@
                                     "ScreenShareAllowed": false
                                 }
                             },
-                            { "Name": "Notification", "Description": "", "Type": "tw-notifications", "Config": { "Enabled": true }, "Data": {} },
+                            {
+                                "Name": "Notification",
+                                "Description": "",
+                                "Type": "tw-notifications",
+                                "Config": { "Enabled": true },
+                                "Data": {}
+                            },
                             {
                                 "Name": "Available Media Devices",
                                 "Description": "",
@@ -94,7 +127,11 @@
                                             "Icon": "call",
                                             "Data": {
                                                 "Agent": {
-                                                    "Source": { "Use": "station", "Display": "${LastName}, ${FirstName}", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "station",
+                                                        "Display": "${LastName}, ${FirstName}",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "AllowedStates": [],
                                                     "TeamFilter": false,
                                                     "Columns": []
@@ -104,7 +141,11 @@
                                                     "Consult": true,
                                                     "Blind": true,
                                                     "Comments": false,
-                                                    "Source": { "Use": "Number", "Display": "${Name} - ${Number}", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "Number",
+                                                        "Display": "${Name} - ${Number}",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "Columns": [],
                                                     "TeamFilter": true
                                                 }
@@ -240,7 +281,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "agent", "SLEnabled": true, "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] } }
+                                    "Data": {
+                                        "Role": "agent",
+                                        "SLEnabled": true,
+                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
+                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -264,7 +309,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "totalinteractions", "ChartType": "pie", "Role": "agent", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "totalinteractions",
+                                        "ChartType": "pie",
+                                        "Role": "agent",
+                                        "Limit": 0,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "AHT/Transfer/Conference",
@@ -308,7 +359,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "auxstatus", "ChartType": "pie", "Role": "agent", "Limit": 5, "Label": false }
+                                    "Data": {
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "agent",
+                                        "Limit": 5,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Interaction Details",
@@ -472,7 +529,7 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { 
+                                    "Data": {
                                         "TASUrl": "https://mx.tetherfi.cloud/TAS/Quiz/Index",
                                         "agentStatusChange": true,
                                         "InteractionConstraints": {
@@ -481,7 +538,7 @@
                                             "AllowSupervisorToChatSilentMonitor": false,
                                             "AllowSupervisorToChatWhisper": false,
                                             "AllowSupervisorToChatConference": false
-                                        }  
+                                        }
                                     }
                                 }
                             ],
@@ -554,7 +611,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "ciq", "ChartType": "doughnut", "Role": "supervisor", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "ciq",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Intent List",
@@ -576,7 +639,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "intentlist", "ChartType": "pie", "Role": "supervisor", "Limit": 5, "Label": false }
+                                    "Data": {
+                                        "Source": "intentlist",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 5,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Skill Dashboard",
@@ -622,7 +691,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "activechannels", "ChartType": "doughnut", "Role": "supervisor", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "activechannels",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Status",
@@ -644,7 +719,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "auxstatus", "ChartType": "pie", "Role": "supervisor", "Limit": 10, "Label": false }
+                                    "Data": {
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 10,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Work Codes",
@@ -744,7 +825,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["VO"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -759,7 +844,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "Number",
+                                                                "Display": "Number",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "Columns": []
                                                         }
                                                     },
@@ -771,7 +860,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "station", "Display": "agentName", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "station",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -781,7 +874,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["VO"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -797,7 +894,14 @@
                                                         "DefaultMenu": ["Main Menu", "Products", "Mobile", "Agent"],
                                                         "Transfer": {
                                                             "Allowed": true,
-                                                            "Menu": [{ "Text": "Accesscode+TPIN", "Type": "v_nv", "Value": "tpin", "Icon": "lock" }]
+                                                            "Menu": [
+                                                                {
+                                                                    "Text": "Accesscode+TPIN",
+                                                                    "Type": "v_nv",
+                                                                    "Value": "tpin",
+                                                                    "Icon": "lock"
+                                                                }
+                                                            ]
                                                         }
                                                     },
                                                     "DialpadAllowed": false,
@@ -835,8 +939,18 @@
                                                             "DefaultValue": "",
                                                             "MaskData": true
                                                         },
-                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "NRIC", "ValueSource": "CCLDataEvent.NRIC", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
@@ -1063,7 +1177,10 @@
                                         "TCMProxyUrl": "https://mx.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
                                             "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "" },
-                                            "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "" }
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": ""
+                                            }
                                         }
                                     }
                                 },
@@ -1174,7 +1291,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1184,7 +1305,11 @@
                                                             "Consult": false,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [],
                                                             "Columns": [],
                                                             "Rules": {
@@ -1202,7 +1327,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1212,7 +1341,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": ["CH"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -1246,7 +1379,10 @@
                                                     "InteractionCommentAllowed": true,
                                                     "HoldInteractionAllowed": true,
                                                     "MuteAudioHidden": false,
-                                                    "Whiteboard": { "Allowed": true, "Url": "https://mx.tetherfi.cloud/Whiteboard/ui/index.html" },
+                                                    "Whiteboard": {
+                                                        "Allowed": true,
+                                                        "Url": "https://mx.tetherfi.cloud/Whiteboard/ui/index.html"
+                                                    },
                                                     "Snapshot": {
                                                         "Allowed": true,
                                                         "Source": "remote",
@@ -1254,7 +1390,11 @@
                                                         "RemoteRequestTimeout": 10
                                                     },
                                                     "ShowUserLabel": false,
-                                                    "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
+                                                    "ChatTemplate": {
+                                                        "Allowed": true,
+                                                        "Filter": "startswith",
+                                                        "FilterByTime": false
+                                                    },
                                                     "WebRTCTest": {
                                                         "Allowed": true,
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
@@ -1312,7 +1452,12 @@
                                                             "Unit": "",
                                                             "DefaultValue": ""
                                                         },
-                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "Auth Type",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
@@ -1325,14 +1470,27 @@
                                                             "Unit": "",
                                                             "DefaultValue": ""
                                                         },
-                                                        { "Title": "Email", "ValueSource": "CCLDataEvent.Email", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Address", "ValueSource": "CCLDataEvent.Address", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "NRIC",
                                                             "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
                                                             "DefaultValue": "",
-                                                            "MaskData": { "UnMaskedStartChars": 2, "UnMaskedEndChars": 2 }
+                                                            "MaskData": {
+                                                                "UnMaskedStartChars": 2,
+                                                                "UnMaskedEndChars": 2
+                                                            }
                                                         },
                                                         {
                                                             "Title": "Account Number",
@@ -1559,8 +1717,14 @@
                                     "Data": {
                                         "TCMProxyUrl": "https://mx.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
-                                            "Name": { "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name", "DefaultValue": "" },
-                                            "Phone": { "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile", "DefaultValue": "" }
+                                            "Name": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.Name",
+                                                "DefaultValue": ""
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.mobile",
+                                                "DefaultValue": ""
+                                            }
                                         }
                                     }
                                 }
@@ -1626,7 +1790,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": false,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1636,7 +1804,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": false,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -2093,7 +2265,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -2103,7 +2279,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -2122,7 +2302,7 @@
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxSelection":10
+                                                    "MaxSelection": 10
                                                 }
                                             },
                                             {
@@ -2147,7 +2327,13 @@
                     "Name": "Custom",
                     "Description": "",
                     "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/custom",
                         "PreserveOnTabChange": false,
@@ -2159,7 +2345,13 @@
                     "Name": "Docker",
                     "Description": "",
                     "Type": "twc-docker",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
@@ -2186,7 +2378,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://mx.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://mx.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2208,7 +2404,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://mx.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://mx.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2230,7 +2430,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://mx.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://mx.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2252,7 +2456,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://mx.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://mx.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ]
                         }
@@ -2349,7 +2557,10 @@
             ]
         },
         "Urls": {
-            "DashboardServerUrls": ["https://mx.tetherfi.cloud/SignalRDashboard1", "https://mx.tetherfi.cloud/SignalRDashboard2"],
+            "DashboardServerUrls": [
+                "https://mx.tetherfi.cloud/SignalRDashboard1",
+                "https://mx.tetherfi.cloud/SignalRDashboard2"
+            ],
             "FileServerUrl": {
                 "MediaUploader": "https://mx.tetherfi.cloud:13019/upload",
                 "MediaStreamer": "https://mx.tetherfi.cloud:13022",
@@ -2369,22 +2580,40 @@
                 "Small": { "Src": "", "Width": null, "Height": null },
                 "Alt": "Tetherfi"
             },
-            "Customer": { "Large": { "Src": "", "Width": 160, "Height": 88 }, "Small": { "Src": "", "Width": 50, "Height": 50 }, "Alt": "Tetherfi" }
+            "Customer": {
+                "Large": { "Src": "", "Width": 160, "Height": 88 },
+                "Small": { "Src": "", "Width": 50, "Height": 50 },
+                "Alt": "Tetherfi"
+            }
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
-        "Notifications": { "Sounds": true, "SoundLevel": 1, "DesktopAlerts": true, "DesktopAlertTimeout": 5000, "AppAlertTimeout": 5000 },
+        "Notifications": {
+            "Sounds": true,
+            "SoundLevel": 1,
+            "DesktopAlerts": true,
+            "DesktopAlertTimeout": 5000,
+            "AppAlertTimeout": 5000
+        },
         "CheckForResolution": false,
         "AV": {
             "webRTCConfig": {
-                "iceServers": [{ "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
+                "iceServers": [
+                    { "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }
+                ],
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },
             "mediaConstraints": { "type": "", "video": { "width": 640, "height": 480 } },
             "offerOptions": { "offerToReceiveAudio": true, "offerToReceiveVideo": true, "iceRestart": true },
             "answerOptions": { "iceRestart": false },
-            "recordingOptions": { "enabled": false, "codec": "vp9", "recordLocal": false, "audioKbps": 32, "videoKbps": 512 },
+            "recordingOptions": {
+                "enabled": false,
+                "codec": "vp9",
+                "recordLocal": false,
+                "audioKbps": 32,
+                "videoKbps": 512
+            },
             "audioLevelCheck": { "enabled": true, "threshold": 0.3 },
             "connectionBandwidthUpperLimit": 1024,
             "audioTrackBandwidthUpperLimit": 16,
@@ -2419,5 +2648,5 @@
             ]
         }
     },
-    "Version": "5.6.0-beta.1"
+    "Version": "5.7.0-beta.1"
 }

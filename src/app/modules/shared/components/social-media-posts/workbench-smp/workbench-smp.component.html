@@ -46,8 +46,9 @@
                             <div
                                 class="mt-8 border-radius-20 twd-relative twd-flex twd-items-center twd-justify-between lg:twd-justify-center">
                                 <!-- Global search form -->
-                                <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1">
-                                    <mat-form-field class="custom with-border form-field w-100-p" appearance="outline">
+                                <form class="twd-max-w-6/12 lg:twd-max-w-full twd-flex-1"
+                                    (ngSubmit)="submitGlobalSearchForm()">
+                                    <mat-form-field class=" custom with-border form-field w-100-p" appearance="outline">
                                         <!-- Search bar -->
                                         <input class="login-input" matInput
                                             [placeholder]="locale('sharedComponents.socialMediaPosts.searchPlaceholder')"
@@ -71,7 +72,7 @@
                                 </form>
 
                                 <!-- Refresh workbench -->
-                                <button mat-icon-button (click)="doSmpDataRefresh()"
+                                <button mat-icon-button (click)="doAdvancedSearch()"
                                     [ngClass]="{ 'twd-animate-spin': polling.active }" [disabled]="polling.active"
                                     [matTooltip]="locale('widgets.workbench.refresh')">
                                     <mat-icon>refresh</mat-icon>
@@ -82,6 +83,37 @@
                                     class="twd-relative" [matTooltip]="locale('widgets.workbench.advanceSearch')">
                                     <mat-icon> more_vert </mat-icon>
                                 </button>
+                            </div>
+                            <div id="sortControls" class="twd-flex twd-items-center twd-justify-end twd-px-2 twd-pt-2">
+                                <div class="twd-flex twd-items-center">
+                                    <div class="twd-font-bold twd-text-sm">
+                                        <button id="sortKeyBtn" mat-button class="twd-px-1.5"
+                                            [matMenuTriggerFor]="sortMenu" [disabled]="!segregatedPosts?.length">
+                                            <span>{{ locale('sharedComponents.socialMediaPosts.sortBy') }} {{
+                                                sortControls.sortBy
+                                                }} </span>
+                                            <mat-menu class="custom" #sortMenu="matMenu">
+                                                <button mat-menu-item
+                                                    (click)="sortControls.sortBy = 'Subject'; sortPosts()">
+                                                    <span>{{ locale('sharedComponents.socialMediaPosts.postSubject')
+                                                        }}</span>
+                                                </button>
+                                                <button mat-menu-item
+                                                    (click)="sortControls.sortBy = 'Date'; sortPosts()">
+                                                    <span>{{ locale('sharedComponents.socialMediaPosts.postDate')
+                                                        }}</span>
+                                                </button>
+                                            </mat-menu>
+                                        </button>
+                                        <button id="sortOrderBtn" mat-button
+                                            (click)="sortControls.ascending = !sortControls.ascending; sortPosts()"
+                                            class="twd-max-w-min twd-px-0" [disabled]="!segregatedPosts?.length">
+                                            <mat-icon>
+                                                {{ sortControls.ascending ? 'arrow_upward' : 'arrow_downward' }}
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -107,12 +139,12 @@
                                             <p>({{getTotalArrayCount(channel)}})</p>
                                         </div>
                                         <!-- Level 1 dropdown -->
-                                        <div class="dropdown-l1 twd-w-full twd-pl-5 {{getObjectKeyString(skill)}}"
+                                        <div class="dropdown-l1 twd-w-full twd-pl-5 s{{getObjectKeyString(skill)}}"
                                             *ngFor="let skill of getObjectValueData(channel)">
                                             <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
                                                 <div class="sc-flex">
                                                     <mat-icon role="button" [id]="getObjectKeyString(skill)"
-                                                        (click)="toggleDropdown(getObjectKeyString(skill))">arrow_drop_down_circle</mat-icon>
+                                                        (click)="toggleDropdown('s'+getObjectKeyString(skill))">arrow_drop_down_circle</mat-icon>
                                                     <p>{{getObjectKeyString(skill)}}</p>
                                                 </div>
                                                 <p>({{getTotalArrayCount(channel, getObjectKeyString(skill))}})</p>
@@ -198,6 +230,29 @@
                                     <input matInput formControlName="toTime" type="time" />
                                 </mat-form-field>
 
+                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                    <mat-label>{{ locale('widgets.workbench.subject') }} </mat-label>
+                                    <input matInput formControlName="subject" type="text" />
+                                </mat-form-field>
+
+                                <mat-form-field class="twd-text-sm" appearance="outline">
+                                    <mat-label>{{ locale('widgets.workbench.content') }} </mat-label>
+                                    <input matInput formControlName="content" type="text" />
+                                </mat-form-field>
+
+                                <mat-form-field class="twd-text-sm" [ngClass]="{ 'twd-hidden': currentTab !== 'inbox' }"
+                                    appearance="outline">
+                                    <mat-label>
+                                        {{ locale('widgets.workbench.assignedTo') }}
+                                    </mat-label>
+                                    <input matInput formControlName="assignedTo" type="text" />
+                                </mat-form-field>
+
+                                <mat-form-field class="twd-text-sm" appearance="outline"
+                                    [ngClass]="{ 'twd-hidden': currentTab === 'queue' }">
+                                    <mat-label>{{ locale('widgets.workbench.sessionId') }} </mat-label>
+                                    <input matInput formControlName="inSessionId" type="text" />
+                                </mat-form-field>
 
                                 <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
                                     <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20"
@@ -243,7 +298,7 @@
                 <div class="wsmp-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto twd-p-3"
                     *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                    <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p">
+                    <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p" *ngIf="openPostResData">
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
                             {{ locale('sharedComponents.socialMediaPosts.transfer') }}
                         </button>

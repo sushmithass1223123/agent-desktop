@@ -193,7 +193,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         let dynamicWidgets = widgets.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         try {
             if (evt.WidgetConfigData) {
-                dynamicWidgets = JSON.parse(evt.WidgetConfigData)?.filter((w: IWidget) => w.Config.Enabled);
+                // dynamicWidgets = JSON.parse(evt.WidgetConfigData)?.filter((w: IWidget) => w.Config.Enabled);
             }
         } catch (error) {
             throwADError('Error in TwcInteractionComponent.createWidgetList', error);
@@ -258,7 +258,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             user: user || 'Customer',
             path: this.data.Data.Path,
             otherData: otherData,
-            isEmailSent: null
+            isEmailSent: null,
+            isPostReplySent: null
         });
     }
 

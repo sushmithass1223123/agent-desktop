@@ -4,7 +4,8 @@
     config: (customFuse.config$ | async)
 } as customFuse">
 
-    <div class="smp-template twd-w-full wd-h-full theme-bg twd-p-4 twd-relative">
+    <div class="smp-template twd-w-full wd-h-full theme-bg twd-relative"
+        [ngClass]="{'twd-p-1': mode !== 'workbench', 'twd-p-4': mode === 'workbench'}">
         <ng-container>
             <div class="smp-post-info-container twd-flex twd-w-full">
                 <div class="poster-info-flex twd-flex" *ngIf="mode !== 'interaction-min'">
@@ -85,29 +86,44 @@
                         <div class="comment-info-flex">
                             <h5 class="font-weight-700 text-truncate">{{postData?.SmActiveComment?.FromName}}</h5>
                             <p class="font-weight-500">{{postData?.SmActiveComment?.CommentText?.Text}}</p>
-                            <img *ngIf="postData?.SmActiveComment?.CommentAttachments?.length === 1"
+                            <div class="media-data-placeholder twd-flex" role="button"
+                                (click)="this.renderActiveCommentAttachment = true;"
+                                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                                *ngIf="!renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length === 1">
+                                <mat-icon> insert_photo</mat-icon>
+                                <p>Image</p>
+                            </div>
+                            <img *ngIf="renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length === 1"
                                 [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl">
                         </div>
                     </div>
                 </div>
 
-                <!-- <ng-container *ngIf="comment?.active">
+                <!-- Reply container -->
+                <ng-container *ngIf="mode === 'interaction-min'">
                     <div class="reply-area twd-relative"
-                        [ngStyle]="{'paddingLeft': (comment?.parents?.length && !hideStructureActions) ? ((commentMode !== 'initial' ? comment?.parents?.length + 1 : 1) * 40 + 'px') : '0'}">
+                        [ngStyle]="{'paddingLeft': postData?.SmActiveComment?.ParentId !== postData?.PostId ? '40px' : '45px'}">
                         <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
-                            <textarea name="reply" id="reply" placeholder="Enter your reply here..."></textarea>
+                            <textarea [(ngModel)]="body" name="reply" id="reply" [rows]="2"
+                                placeholder="Enter your reply here..."></textarea>
+                            <div class="attachment-container" *ngIf="attachments.length">
+                                <mat-icon role="button" (click)="onClearAttachment()">close</mat-icon>
+                                <img *ngIf="mimeConstraints.includes('image')" [src]="rawAttachmentData">
+                            </div>
                             <div class="reply-actions twd-w-full twd-flex">
                                 <div class="r-actions twd-flex">
                                     <mat-icon role="button">tag_faces</mat-icon>
-                                    <mat-icon role="button">gif</mat-icon>
-                                    <mat-icon role="button">camera_alt</mat-icon>
-                                    <mat-icon role="button">file_copy</mat-icon>
+                                    <mat-icon [disabled]="attachments.length" (click)="onAttach('image/gif')"
+                                        role="button">gif</mat-icon>
+                                    <mat-icon [disabled]="attachments.length" (click)="onAttach('image/*')"
+                                        role="button">camera_alt</mat-icon>
+                                    <!-- <mat-icon role="button">file_copy</mat-icon> -->
                                 </div>
-                                <mat-icon role="button">send</mat-icon>
+                                <mat-icon role="button" (click)="onSendReply()">send</mat-icon>
                             </div>
                         </div>
                     </div>
-                </ng-container> -->
+                </ng-container>
             </div>
         </ng-container>
     </div>
@@ -140,3 +156,6 @@
         </drag-scroll>
     </div>
 </ng-template>
+
+<input type="file" #fileInput style="display: none;" [accept]="mimeConstraints" [multiple]="false"
+    (change)="onFileSelected($event)">
