@@ -309,7 +309,7 @@
             "logoutSuccess": "Logged out successfully",
             "logoutFailed": "Logout failed, please try again",
             "loadingChangeStatus": "Please wait, changing status...",
-            "agentStatusSuccess": "Your status changed to #newStatus",
+            "agentStatusSuccess": "Status of Agent changed successfully to #newStatus",
             "agentStatusApproved": "Agent accepted the request and changed to #approvedStatus",
             "maxBulkMailCount": "Maximum #maxBulkMailCount bulk selections only is allowed.",
             "changeStatuscancelled":"Status change canceled",
