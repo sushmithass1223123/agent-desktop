@@ -108,9 +108,24 @@
                                                     "Source": { "Use": "Number", "Display": "${Name} - ${Number}", "FreeTextAllowed": true },
                                                     "Columns": [],
                                                     "TeamFilter": true
-                                                }
+                                                },
+                                                "Skill": {
+                                                    "Allowed": true,
+                                                    "Consult": true,
+                                                    "Blind": true,
+                                                    "Comments": true,
+                                                    "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                    "ChannelPrefix": ["VO"],
+                                                    "Columns": [],
+                                                    "Rules": {
+                                                        "Enabled": true,
+                                                        "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                        "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                        "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                    }
                                             }
-                                        },
+                                        }
+                                    },
                                         {
                                             "Name": "Send WhatsApp",
                                             "Enabled": true,
