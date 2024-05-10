@@ -123,9 +123,9 @@
                                                         "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
                                                         "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
                                                     }
+                                                }
                                             }
-                                        }
-                                    },
+                                        },
                                         {
                                             "Name": "Send WhatsApp",
                                             "Enabled": true,
