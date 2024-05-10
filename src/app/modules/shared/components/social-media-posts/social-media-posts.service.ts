@@ -72,6 +72,7 @@ export class SocialMediaPostsService {
     postBodies: any = {};
     sendReply = new Subject<any>();
 
+    draftData: any = {};
     /**
      * Service init method
      */

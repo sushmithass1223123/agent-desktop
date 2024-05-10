@@ -218,7 +218,9 @@
         "smpControls": {
             "sendPostReplyError": "Error occured while sending reply!",
             "sendPostReplyLoading": "Sending reply...",
-            "replySendTimeoutMessage": "Timed out while sending reply!"
+            "replySendTimeoutMessage": "Timed out while sending reply!",
+            "replySendConnectionError": "Error connecting to media matrix server",
+            "parallelReplyWarning": "A reply is already being sent. Please wait..."
         },
         "voiceControls": {
             "reset": "Reset",
@@ -971,6 +973,7 @@
             "reset": "Reset",
             "getPostsFailed": "Error occured while fetching posts",
             "getPostsLoading": "Loading posts",
+            "postIsBeingSent": "Post is being sent. Please wait!",
             "postsNotFound": "There are no posts",
             "openPostFailed": "Unable to open post",
             "fileMetaError": "Couldn't fetch attachment file data",

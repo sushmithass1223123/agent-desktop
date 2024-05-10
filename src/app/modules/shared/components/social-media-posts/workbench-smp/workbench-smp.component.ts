@@ -538,7 +538,14 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     searchParams.insessionid = searchFields.inSessionId;
                     searchParams.listOfMailboxes = searchFields.listOfMailboxes.join(',');
                 }
-                requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
+                requests.push(
+                    this.http.post(
+                        `${this.data.Data.WorkbenchUrl}/${
+                            this.currentTab === 'sent' ? 'sentitem' : this.currentTab
+                        }/search`,
+                        searchParams
+                    )
+                );
             }
 
             const maps: Record<AvailableTabs, any> = {

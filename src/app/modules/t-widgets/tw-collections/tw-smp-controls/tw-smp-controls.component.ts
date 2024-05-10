@@ -1,6 +1,6 @@
-import { InteractionWidgetBaseData, TwSmpControls, TwSmpControlsData } from '@ad/types';
+import { SMP_REASONCODE_VALUES, SMP_CURRENTSTATUS_CODES } from './../../../../constants/smp.constants';
+import { InteractionWidgetBaseData, TwSmpControlsData } from '@ad/types';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { TranslocoService } from '@ngneat/transloco';
@@ -10,14 +10,13 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { IAgentData, IncomingEmailEvent, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES } from 'app/constants';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { ADError, throwADError } from 'app/utils';
 import { filter, takeUntil } from 'rxjs/operators';
 
 declare var document: any;
 
-type EmailEventGeneric = IncomingEmailEvent;
+type SmpEventGeneric = IncomingEmailEvent;
 
 @Component({
     selector: 'tw-smp-controls',
@@ -29,7 +28,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * data from widget
      */
-    @Input() data: IWidget<EmailEventGeneric, TwSmpControlsData & InteractionWidgetBaseData>;
+    @Input() data: IWidget<SmpEventGeneric, TwSmpControlsData & InteractionWidgetBaseData>;
     /**
      * To emit maximize event on widget maximize
      */
@@ -78,8 +77,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
     actionStatus: {
         isClosingInteraction: boolean;
+        isReplyOnProgress: boolean;
     } = {
-        isClosingInteraction: false
+        isClosingInteraction: false,
+        isReplyOnProgress: false
     };
 
     maxFileUploadSize: number = 20971520;
@@ -132,7 +133,15 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.currentInteraction = this.data.InteractionDetails;
 
-        this.smpService.sendReply.subscribe((event: any) => this.onSendReply(event))
+        this.smpService.sendReply.subscribe((event: any) => {
+            if(this.actionStatus.isReplyOnProgress) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('widgets.smpControls.parallelReplyWarning')
+                );
+                return;
+            }
+            this.onSendReply(event);
+        });
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
@@ -146,7 +155,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     .filter((i: InteractionRef) => i.type === 'smp')
                     .map((i) => {
                         this.isInteractionActive = i.interactionId === this.interactionId && i.isActive;
-                        this.sessionId = this.data.InteractionDetails.SessionId;
+                        if (i.isActive) {
+                            this.sessionId = i.otherData?.SessionId;
+                            this.interactionId = i.interactionId;
+                        }
                         return {
                             user: i.user,
                             status: i.status,
@@ -269,35 +281,37 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 this._appUiService.showSnackbar(msg, 'failure');
             };
             try {
+                this.actionStatus.isReplyOnProgress = true;
                 this._fuseProgressBarService.show();
                 const ref = this._appUiService.showSnackbar(
                     this.translocoService.translate('widgets.smpControls.sendPostReplyLoading'),
                     'loading'
                 );
-                const res = await SDKClient.sendEmail({
-                    attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
+                const res = await SDKClient.sendItem({
+                    attachmentFileList: attachments && attachments.length ? attachments : '',
                     body: body,
                     inboxSessionId: this.sessionId,
                     outboxSessionId: this.outSessionId || '',
                     routeId: '',
                     toList: '',
                     bccList: '',
-                    typeOfResponse: '',
+                    typeOfResponse: 'reply',
                     ccList: '',
                     subject: ''
                 }).catch((e) => errCallback(e));
                 // this._fuseProgressBarService.hide();
                 ref.dismiss();
                 if (!res || !res.response) {
+                    this.actionStatus.isReplyOnProgress = false;
                     this._appUiService.showSnackbar(
-                        this.translocoService.translate('widgets.smpControls.emailSendConnectionError'),
+                        this.translocoService.translate('widgets.smpControls.replySendConnectionError'),
                         'failure'
                     );
                     throwADError('Error in TwSmpControlsComponent.onSendReply', 'Unexpected response from Server');
                     return;
                 }
 
-                let reasonCodeMsg = EMAIL_REASONCODE_VALUES[res.response.SendStatus];
+                let reasonCodeMsg = SMP_REASONCODE_VALUES[res.response.SendStatus];
 
                 if (res.response.CurrentStatus === 'EmailSending') {
                     this._interactionManagerService.updateInteraction(this.interactionId, {
@@ -313,27 +327,30 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             );
 
                             this._interactionManagerService.updateInteraction(this.interactionId, {
-                                isReplySent: true
+                                isPostReplySent: true
                             });
                         }
                     }, timerTime);
-                    reasonCodeMsg = EMAIL_REASONCODE_VALUES[100];
+                    reasonCodeMsg = SMP_REASONCODE_VALUES[100];
                 }
 
-                const currentStatusMsg = EMAIL_CURRENTSTATUS_CODES[res.response.CurrentStatus];
+                const currentStatusMsg = SMP_CURRENTSTATUS_CODES[res.response.CurrentStatus];
                 if (!reasonCodeMsg) {
+                    this.actionStatus.isReplyOnProgress = false;
                     throwADError(
                         'Error in TwSmpControlsComponent.onSendReply',
                         'Unable to send post reply. Invalid Reason Code'
                     );
                 }
                 if (!currentStatusMsg) {
+                    this.actionStatus.isReplyOnProgress = false;
                     throwADError(
                         'Error in TwSmpControlsComponent.onSendReply',
                         'Unable to send post reply. Invalid Current Status'
                     );
                 }
                 if (reasonCodeMsg !== 'success') {
+                    this.actionStatus.isReplyOnProgress = false;
                     throwADError(
                         'Error in TwSmpControlsComponent.onSendReply',
                         `${reasonCodeMsg} [${res.response.SendStatus}]`
@@ -342,9 +359,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 this._appUiService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
             } catch (err) {
+                this.actionStatus.isReplyOnProgress = false;
                 errCallback(err);
             }
         } catch (error) {
+            this.actionStatus.isReplyOnProgress = false;
             console.error(error);
         }
     }

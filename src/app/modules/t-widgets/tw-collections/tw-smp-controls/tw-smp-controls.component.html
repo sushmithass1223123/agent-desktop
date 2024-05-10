@@ -60,8 +60,8 @@
                 </div>
             </div>
             <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
-                [maxFileUploadSize]="MaxFileUploadSize" [mode]="'interaction-min'" [sessionId]="sessionId"
-                [postData]="this.smpService.postBodies[sessionId]"></smp-template>
+                [maxFileUploadSize]="MaxFileUploadSize" [mode]="'interaction-min'" [interactionId]="interactionId"
+                [sessionId]="sessionId" [postData]="this.smpService.postBodies[sessionId]"></smp-template>
         </div>
     </div>
 </ng-container>

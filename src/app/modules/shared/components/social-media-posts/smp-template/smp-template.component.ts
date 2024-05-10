@@ -13,13 +13,12 @@ import {
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { PostAttachment, SDKClient, TUtils } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
+import { InteractionRef, MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { Subject } from 'rxjs';
 import { AppDataService } from '@services/app-data.service';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { SocialMediaPostsService } from '../social-media-posts.service';
 
@@ -43,9 +42,14 @@ export class SmpTemplateComponent implements OnInit {
     @Input() postData: SmpComponentInputs;
     @Input() mode: 'workbench' | 'interaction-min';
     @ViewChild('fileInput') fileInput!: ElementRef;
+    /**
+     * Reply input children ref
+     */
+    @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
     @Input() hideStructureActions: boolean = false;
     @Input() sessionId: string = '';
+    @Input() interactionId: number;
     /**
      * Fuse custom config
      */
@@ -67,6 +71,7 @@ export class SmpTemplateComponent implements OnInit {
      */
     @Input() maxFileUploadSize = 20971520;
     renderActiveCommentAttachment: boolean = false;
+    showEmojiPicker: boolean = false;
 
     /**
      * Preview media dialog
@@ -88,6 +93,7 @@ export class SmpTemplateComponent implements OnInit {
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
     sendTimerId: any;
     rawAttachmentData: any;
+    isReplySent: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -95,7 +101,7 @@ export class SmpTemplateComponent implements OnInit {
         private _appUiService: AppUiService,
         private translocoService: TranslocoService,
         private _appDataService: AppDataService,
-        private _smpService: SocialMediaPostsService
+        public smpService: SocialMediaPostsService
     ) {}
 
     ngOnInit(): void {
@@ -182,7 +188,9 @@ export class SmpTemplateComponent implements OnInit {
         }
 
         this.previewMediaDialogData = {
-            timestamp: this.parseDotnetDate(previewData.InsertionDateTime),
+            timestamp: previewData?.InsertionDateTime
+                ? this.parseDotnetDate(previewData?.InsertionDateTime)
+                : Date.now(),
             attachment: {
                 type: previewData.MediaType,
                 src: previewData.MediaUrl
@@ -317,7 +325,7 @@ export class SmpTemplateComponent implements OnInit {
     }
 
     onSendReply() {
-        this._smpService.sendReply.next({ attachments: this.attachments, body: this.body });
+        this.smpService.sendReply.next({ attachments: this.attachments, body: this.body });
     }
 
     async onClearAttachment() {
@@ -336,5 +344,15 @@ export class SmpTemplateComponent implements OnInit {
             this.mimeConstraints = '';
             this.attachments = [];
         }
+    }
+
+    addEmoji(evt: any) {
+        const inputVal: string = this.body || '';
+        const selectionStart = this.replyInputField.nativeElement.selectionStart;
+        const selectionEnd = this.replyInputField.nativeElement.selectionEnd;
+        const startSlice = inputVal.slice(0, selectionStart);
+        const endSlice = inputVal.slice(selectionEnd);
+        this.body = `${startSlice}${evt.emoji.native}${endSlice}`;
+        this.replyInputField.nativeElement.focus();
     }
 }

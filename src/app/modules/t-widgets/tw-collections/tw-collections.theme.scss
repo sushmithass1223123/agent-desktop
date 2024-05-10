@@ -192,6 +192,10 @@
                 background-color: #efefef !important;
             }
         }
+        .replied .comment-box {
+            background-color: map-get($primary, 700) !important;
+            color: mat-contrast($primary, 700) !important;
+        }
         .reply-box {
             @if ($is-dark==true) {
                 background-color: map-get($background, card) !important;
