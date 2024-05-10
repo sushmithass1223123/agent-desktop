@@ -20,6 +20,7 @@ export interface SmpComponentInputs {
     PostId: string;
     SubChannel: string;
     SmActiveComment: SmComment;
+    SmParentComments: SmComment;
     Subject: string;
     PostText: SmPostText;
     PostAttachments: SmPostAttachments[];

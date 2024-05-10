@@ -32,7 +32,8 @@
                     </div>
                 </div>
                 <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
-                    [mode]="'interaction-min'" [postData]="this.smpService.postBodies[sessionId]"
+                    [interactionId]="interactionId" [sessionId]="sessionId" [mode]="'interaction-min'"
+                    [postData]="this.smpService.postBodies[sessionId]"
                     [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
                 <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
                     (click)="toggleInteractionPopup()">

@@ -1,5 +1,6 @@
 import { filter, take, takeUntil } from 'rxjs/operators';
 import {
+    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
@@ -48,7 +49,7 @@ export class SmpTemplateComponent implements OnInit {
     @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
     @Input() hideStructureActions: boolean = false;
-    @Input() sessionId: string = '';
+    @Input() sessionId: string;
     @Input() interactionId: number;
     /**
      * Fuse custom config
@@ -63,9 +64,6 @@ export class SmpTemplateComponent implements OnInit {
 
     lineClampCharacterCount: number = 100;
 
-    body: string = '';
-    attachments: any[] = [];
-    mimeConstraints: string;
     /**
      * Maximum file size default 20mbs
      */
@@ -92,7 +90,6 @@ export class SmpTemplateComponent implements OnInit {
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
     sendTimerId: any;
-    rawAttachmentData: any;
     isReplySent: boolean = false;
 
     constructor(
@@ -101,13 +98,15 @@ export class SmpTemplateComponent implements OnInit {
         private _appUiService: AppUiService,
         private translocoService: TranslocoService,
         private _appDataService: AppDataService,
-        public smpService: SocialMediaPostsService
+        public smpService: SocialMediaPostsService,
+        private cdr: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
+        this.cdr.detectChanges();
     }
 
     scrollToActiveComment(): void {
@@ -219,7 +218,7 @@ export class SmpTemplateComponent implements OnInit {
     }
 
     onAttach(fileType) {
-        this.mimeConstraints = fileType;
+        this.smpService.draftData[this.sessionId].mimeConstraints = fileType;
         setTimeout(() => {
             this.fileInput?.nativeElement?.click();
         });
@@ -230,8 +229,10 @@ export class SmpTemplateComponent implements OnInit {
         let resVal: Partial<PostFile>;
         if (input.files && input.files.length) {
             const f = input.files[0];
-            const fext = this.mimeConstraints.includes('*') ? f.type.split('/')[0] : f.name.split('.').pop();
-            if (!this.mimeConstraints.includes(fext)) {
+            const fext = this.smpService.draftData[this.sessionId].mimeConstraints.includes('*')
+                ? f.type.split('/')[0]
+                : f.name.split('.').pop();
+            if (!this.smpService.draftData[this.sessionId].mimeConstraints.includes(fext)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.fileTypeNotSupported'),
                     'failure'
@@ -250,7 +251,7 @@ export class SmpTemplateComponent implements OnInit {
                 return;
             }
             const Base64 = await this.convertToBase64(f);
-            this.rawAttachmentData = Base64;
+            this.smpService.draftData[this.sessionId].rawAttachmentData = Base64;
             if (this.fileUploadUrl?.MediaUploader) {
                 const formData = new FormData();
                 formData.append('file', f);
@@ -296,7 +297,7 @@ export class SmpTemplateComponent implements OnInit {
 
             const ext = resVal.Name.split('.').pop();
 
-            this.attachments.push({
+            this.smpService.draftData[this.sessionId].attachments.push({
                 Id: TUtils.Generic.uuid(),
                 SessionID: this.sessionId,
                 Direction: 'OUT',
@@ -325,7 +326,7 @@ export class SmpTemplateComponent implements OnInit {
     }
 
     onSendReply() {
-        this.smpService.sendReply.next({ attachments: this.attachments, body: this.body });
+        this.smpService.sendReply.next(this.sessionId);
     }
 
     async onClearAttachment() {
@@ -341,18 +342,19 @@ export class SmpTemplateComponent implements OnInit {
             .pipe(take(1))
             .toPromise();
         if (dialogResult) {
-            this.mimeConstraints = '';
-            this.attachments = [];
+            this.smpService.draftData[this.sessionId].mimeConstraints = '';
+            this.smpService.draftData[this.sessionId].rawAttachmentData = '';
+            this.smpService.draftData[this.sessionId].attachments = [];
         }
     }
 
     addEmoji(evt: any) {
-        const inputVal: string = this.body || '';
+        const inputVal: string = this.smpService.draftData[this.sessionId].body || '';
         const selectionStart = this.replyInputField.nativeElement.selectionStart;
         const selectionEnd = this.replyInputField.nativeElement.selectionEnd;
         const startSlice = inputVal.slice(0, selectionStart);
         const endSlice = inputVal.slice(selectionEnd);
-        this.body = `${startSlice}${evt.emoji.native}${endSlice}`;
+        this.smpService.draftData[this.sessionId].body = `${startSlice}${evt.emoji.native}${endSlice}`;
         this.replyInputField.nativeElement.focus();
     }
 }

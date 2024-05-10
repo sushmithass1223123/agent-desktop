@@ -2466,7 +2466,8 @@
                                                 },
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "DraftPollingInterval": 60
                                                 }
                                             },
                                             {

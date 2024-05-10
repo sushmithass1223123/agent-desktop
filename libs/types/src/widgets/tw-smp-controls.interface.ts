@@ -44,4 +44,8 @@ export interface TwSmpControlsData {
      * Send reply timeout
      */
     AsyncReplySendTimeout: number;
+    /**
+     * Inverval to send drafts
+     */
+    DraftPollingInterval: number;
 }

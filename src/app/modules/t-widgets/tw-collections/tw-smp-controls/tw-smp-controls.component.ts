@@ -12,6 +12,7 @@ import { IAgentData, IncomingEmailEvent, IResponse, SDKClient } from '@tmac/sdk'
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { ADError, throwADError } from 'app/utils';
+import { interval, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 declare var document: any;
@@ -70,10 +71,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      * User info
      */
     user: IAgentData;
-    /**
-     * Current interaction
-     */
-    currentInteraction: any = {};
 
     actionStatus: {
         isClosingInteraction: boolean;
@@ -86,6 +83,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     maxFileUploadSize: number = 20971520;
     asyncReplySendTimeout: number = 60000;
     sendTimerId: any;
+    /**
+     * Draft pollling subscription
+     */
+    draftPolling$: Subscription;
+    /**
+     * Duration interval for saving post as draft in milliseconds
+     */
+    draftPollDuration = 0;
+
+    prevAttachments: any[] = [];
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -131,16 +138,19 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.initWrapper(this.data);
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionId;
-        this.currentInteraction = this.data.InteractionDetails;
+        this.draftPollDuration = this.data.Data.DraftPollingInterval;
 
-        this.smpService.sendReply.subscribe((event: any) => {
-            if(this.actionStatus.isReplyOnProgress) {
+        this.smpService.sendReply.subscribe((sessionId: any) => {
+            if (this.actionStatus.isReplyOnProgress) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('widgets.smpControls.parallelReplyWarning')
                 );
                 return;
             }
-            this.onSendReply(event);
+            this.onSendReply({
+                attachments: this.smpService.draftData[sessionId].attachments,
+                body: this.smpService.draftData[sessionId].body
+            });
         });
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
@@ -378,5 +388,90 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             return false;
         }
         return true;
+    }
+
+    /**
+     * Save post as Draft
+     */
+    savePostAsDraft(closePost = false): void {
+        const callback = () => {
+            let { isModified, changes } = this.compareArrays(
+                this.prevAttachments,
+                this.smpService.draftData[this.sessionId].attachments
+            );
+            this.prevAttachments = [...this.smpService.draftData[this.sessionId].attachments];
+            SDKClient.saveEmailDraft({
+                bccList: '',
+                body: (this.smpService.draftData[this.sessionId].body || '').toString(),
+                ccList: '',
+                inboxSessionId: this.sessionId,
+                outboxSessionId: this.outSessionId || '',
+                routeId: '',
+                subject: '',
+                toList: '',
+                typeOfResponse: '',
+                attachmentList: changes,
+                isAttachmentModified: isModified
+            })
+                .then((x) => {
+                    if (x.response) {
+                        // this.currentInteraction.CurrOutSessionId = x.response;
+                    } else {
+                        throwADError('Unable to save as draft', new Error('Invalid server response'));
+                    }
+                    if (closePost) {
+                        this.closeInteraction(true);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        };
+        const poll = () => {
+            if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
+                const polling = interval(this.draftPollDuration);
+                this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+                    callback();
+                });
+            }
+        };
+        poll();
+        callback();
+    }
+
+    compareArrays(arr1: Array<any>, arr2: Array<any>): { isModified: boolean; changes: Array<any> } {
+        const result = [];
+        let isModified = false;
+
+        if (arr1.length === 0) {
+            for (const obj of arr2) {
+                if (obj.IsUploaded) {
+                    isModified = true;
+                    result.push(`${obj.URL}|1`);
+                }
+            }
+            return { isModified: isModified, changes: result };
+        }
+
+        for (const obj of arr2) {
+            const match = arr1.find((item) => item.URL === obj.URL);
+            if (match) {
+                result.push(`${obj.URL}|0`);
+            } else {
+                if (obj.IsUploaded) {
+                    isModified = true;
+                }
+                result.push(`${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
+            }
+        }
+        for (const obj of arr1) {
+            const match = arr2.find((item) => item.URL === obj.URL);
+            if (!match) {
+                isModified = true;
+                result.push(`${obj.URL}|2`);
+            }
+        }
+
+        return { isModified: isModified, changes: result };
     }
 }

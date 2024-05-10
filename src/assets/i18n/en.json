@@ -962,6 +962,7 @@
             "sentLabel": "Sent",
             "draftsLabel": "Drafts",
             "postsLabel": "Posts",
+            "postDetails": "Post details",
             "searchPlaceholder": "Search posts here...",
             "sortBy": "Sort by",
             "postSubject": "Post subject",

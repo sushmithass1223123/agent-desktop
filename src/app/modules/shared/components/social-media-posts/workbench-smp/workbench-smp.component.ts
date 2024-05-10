@@ -14,9 +14,9 @@ import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { isEqual, sortBy } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { GetInboxItemResult, SDKClient, TUtils, PostAttachment } from '@tmac/sdk';
+import { GetInboxItemResult, SDKClient, TUtils, PostAttachment, GetOutboxItemResult } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
-import { OUTBOX_REASONS } from 'app/constants';
+import { OUTBOX_REASONS, SMP_CURRENTSTATUS_CODES } from 'app/constants';
 
 export class SMPost {
     Mailbox?: string;
@@ -980,13 +980,14 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         try {
             this.segregatedPosts = [];
             let channelIdentifier = 'SubChannel';
+            let backupChannelIdentifier = 'EmailType';
             let skillIdentifier = 'SkillName';
             let backupSkillIdentifier = 'SkillId';
             let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
 
             const getSegregatedPostsBySkill = (channel: string) => {
                 const filteredPostsByChannel: SMPost[] = response.filter(
-                    (res: SMPost) => res[channelIdentifier] === channel
+                    (res: SMPost) => (res[channelIdentifier] ?? res[backupChannelIdentifier]) === channel
                 );
                 let availableSkills = Array.from(
                     new Set(filteredPostsByChannel.map((r: SMPost) => r[skillIdentifier] ?? r[backupSkillIdentifier]))
@@ -1105,12 +1106,22 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     post.PostData.RouteReason === 'CheckerQueue') &&
                 this.latestPostPreview;
             let inboxRes: GetInboxItemResult;
+            let outboxRes: GetOutboxItemResult;
 
             const getRequestedSession = () => (fetchFromOutbox ? post.PostData.OutSessionId : post.PostData.SessionId);
 
             this.selectedPostSessionId = post.PostData.SessionId;
             this.selectedPostOutSessionId = post.PostData.OutSessionId;
             this.selectedPostRouteReason = post.PostData.RouteReason;
+
+            if (!this._smpService.draftData[this.selectedPostSessionId]) {
+                this._smpService.draftData[this.selectedPostSessionId] = {
+                    body: '',
+                    mimeConstraints: '',
+                    rawAttachmentData: '',
+                    attachments: []
+                };
+            }
 
             if (!this._smpService.postBodies[post.PostData.SessionId]) {
                 inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
@@ -1126,16 +1137,46 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             ConversationID: inboxRes.ConversationID,
                             SessionId: post.PostData.SessionId,
                             OutSessionId: post.PostData.OutSessionId,
-                            SubChannel: post.SubChannel,
+                            SubChannel: (post.SubChannel ?? inboxRes.EmailType).toLowerCase(),
                             Subject: post.PostData.Subject,
                             PostAccountName: inboxRes.SocialMediaData.Posts.AccountName,
                             PostId: inboxRes.SocialMediaData.Posts.PostId,
                             SmActiveComment: inboxRes.SocialMediaData.Comments,
+                            SmParentComments: inboxRes.SocialMediaData.ParentComments,
                             PostText: inboxRes.SocialMediaData.Posts.PostText,
-                            PostAttachments: inboxRes.SocialMediaData.Posts.PostAttachments
+                            PostAttachments: inboxRes.SocialMediaData.Posts.PostAttachments,
+                            PostDetails: {
+                                To: post.PostData.To,
+                                From: post.PostData.From,
+                                Intent: post.PostData.Intent,
+                                Status: post.Status
+                            }
                         }
                     });
                 }
+            }
+
+            if (fetchFromOutbox && !this._smpService.postBodies[post.PostData.OutSessionId]) {
+                outboxRes = (await SDKClient.getOutboxItem(post.PostData.OutSessionId)).response;
+                if (!outboxRes) {
+                    throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
+                }
+
+                // this._smpService.postBodies = Object.assign(this._smpService.postBodies, {
+                //     [post.PostData.OutSessionId]: {
+                //         ConversationID: outboxRes.ConversationID,
+                //         SessionId: post.PostData.SessionId,
+                //         OutSessionId: post.PostData.OutSessionId,
+                //         SubChannel: post.SubChannel,
+                //         Subject: post.PostData.Subject,
+                //         PostAccountName: outboxRes.SocialMediaData.Posts.AccountName,
+                //         PostId: outboxRes.SocialMediaData.Posts.PostId,
+                //         SmActiveComment: outboxRes.SocialMediaData.Comments,
+                //         SmParentComments: outboxRes.SocialMediaData.ParentComments,
+                //         PostText: outboxRes.SocialMediaData.Posts.PostText,
+                //         PostAttachments: outboxRes.SocialMediaData.Posts.PostAttachments
+                //     }
+                // });
             }
 
             this.openPostRes.data.next(
@@ -1311,5 +1352,25 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     submitGlobalSearchForm(): void {
         this.globalSearch.data[this.currentTab] = this.globalSearch.form.value;
         this.doAdvancedSearch();
+    }
+
+    showPostDetails(): void {
+        let pdHtml = '';
+        pdHtml += `<span style="font-weight: 800">To: </span><span style="font-weight: 500">${
+            this._smpService.postBodies[this.selectedPostSessionId].PostDetails.To
+        }</span><br>`;
+        pdHtml += `<span style="font-weight: 800">From: </span><span style="font-weight: 500">${
+            this._smpService.postBodies[this.selectedPostSessionId].PostDetails.From
+        }</span><br>`;
+        pdHtml += `<span style="font-weight: 800">Intent: </span><span style="font-weight: 500">${
+            this._smpService.postBodies[this.selectedPostSessionId].PostDetails.Intent
+        }</span><br>`;
+        pdHtml += `<span style="font-weight: 800">Status: </span><span style="font-weight: 500">${
+            SMP_CURRENTSTATUS_CODES[this._smpService.postBodies[this.selectedPostSessionId].PostDetails.Status]
+        }</span><br>`;
+
+        this._appUiService.showCustomDialog('alert', pdHtml, 'Post details', {
+            messageClasses: 'twd-whitespace-pre-line twd-break-words'
+        });
     }
 }

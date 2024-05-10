@@ -63,9 +63,45 @@
             </div>
 
             <div class="smp-post-comment-container twd-w-full">
+                <!-- Parent comment -->
+                <div [id]="postData?.SmParentComments?.CommentId" *ngIf="postData?.SmParentComments"
+                    class="comment-flex twd-w-full">
+                    <div class="image-container twd-relative">
+                        <img src="assets/images/vectors/x.svg" alt="Commenter image">
+                    </div>
+                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+
+                        <!-- Comment time -->
+                        <p class="duration font-weight-500 twd-absolute">
+                            {{getGenericTimeFormat(postData?.SmParentComments?.CommentText?.InsertionDateTime)}}</p>
+
+                        <!-- Comment actions -->
+                        <div class="active-comment-actions twd-flex twd-absolute" *ngIf="mode !== 'workbench'">
+                            <p class="font-weight-500">Like</p>
+                            <p class="font-weight-500">Reply</p>
+                        </div>
+
+                        <!-- Actual comment detail -->
+                        <div class="comment-info-flex">
+                            <h5 class="font-weight-700 text-truncate">{{postData?.SmParentComments?.FromName}}</h5>
+                            <p class="font-weight-500">{{postData?.SmParentComments?.CommentText?.Text}}</p>
+                            <div class="media-data-placeholder twd-flex" role="button"
+                                (click)="this.renderActiveCommentAttachment = true;"
+                                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                                *ngIf="!renderActiveCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length === 1">
+                                <mat-icon> insert_photo</mat-icon>
+                                <p>Image</p>
+                            </div>
+                            <img *ngIf="renderActiveCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length === 1"
+                                [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Active comment -->
                 <div [id]="postData?.SmActiveComment?.CommentId" class="comment-flex twd-w-full"
-                    [ngStyle]="{ 'paddingLeft': postData?.SmActiveComment?.ParentId !== postData?.PostId ? '20px' : 0 }">
+                    [ngStyle]="{ 'paddingLeft': postData?.SmActiveComment?.ParentId !== postData?.PostId ? '40px' : 0 }">
                     <div class="image-container twd-relative">
                         <img src="assets/images/vectors/x.svg" alt="Commenter image">
                     </div>
@@ -119,11 +155,12 @@
                             <div class="media-data-placeholder twd-flex" role="button"
                                 (click)="this.renderActiveCommentAttachment = true;"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                                *ngIf="!renderActiveCommentAttachment && rawAttachmentData">
+                                *ngIf="!renderActiveCommentAttachment && smpService?.draftData[sessionId]?.attachments">
                                 <mat-icon> insert_photo</mat-icon>
                                 <p>Image</p>
                             </div>
-                            <img *ngIf="rawAttachmentData && renderActiveCommentAttachment" [src]="rawAttachmentData">
+                            <img *ngIf="smpService?.draftData[sessionId]?.attachments && renderActiveCommentAttachment"
+                                [src]="smpService?.draftData[sessionId]?.attachments">
                         </div>
                     </div>
                 </div>
@@ -133,21 +170,24 @@
                     <div class="reply-area twd-relative"
                         [ngStyle]="{'paddingLeft': postData?.SmActiveComment?.ParentId !== postData?.PostId ? '40px' : '45px'}">
                         <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
-                            <textarea #replyInput [(ngModel)]="body" name="reply" id="reply" [rows]="2"
-                                placeholder="Enter your reply here..."></textarea>
-                            <div class="attachment-container" *ngIf="attachments.length">
+                            <textarea #replyInput [(ngModel)]="smpService?.draftData[sessionId].body" name="reply"
+                                id="reply" [rows]="2" placeholder="Enter your reply here..."></textarea>
+                            <div class="attachment-container"
+                                *ngIf="smpService?.draftData[sessionId]?.rawAttachmentData">
                                 <mat-icon role="button" (click)="onClearAttachment()">close</mat-icon>
-                                <img *ngIf="mimeConstraints.includes('image')"
-                                    (click)="previewMedia({MediaType: 'Photo',MediaUrl: rawAttachmentData})"
-                                    [src]="rawAttachmentData">
+                                <img *ngIf="smpService?.draftData[sessionId]?.mimeConstraints.includes('image')"
+                                    (click)="previewMedia({MediaType: 'Photo',MediaUrl: smpService?.draftData[sessionId]?.rawAttachmentData})"
+                                    [src]="smpService?.draftData[sessionId]?.rawAttachmentData">
                             </div>
                             <div class="reply-actions twd-w-full twd-flex">
                                 <div class="r-actions twd-flex">
                                     <mat-icon (click)="this.showEmojiPicker = !this.showEmojiPicker"
                                         role="button">tag_faces</mat-icon>
-                                    <mat-icon [ngStyle]="{'pointerEvents': attachments.length ? 'none' : 'all'}"
+                                    <mat-icon
+                                        [ngStyle]="{'pointerEvents': smpService?.draftData[sessionId]?.attachments?.length ? 'none' : 'all'}"
                                         (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                    <mat-icon [ngStyle]="{'pointerEvents': attachments.length ? 'none' : 'all'}"
+                                    <mat-icon
+                                        [ngStyle]="{'pointerEvents': smpService?.draftData[sessionId]?.attachments?.length ? 'none' : 'all'}"
                                         (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
                                 </div>
                                 <mat-icon role="button" (click)="onSendReply()">send</mat-icon>
@@ -191,5 +231,5 @@
     </div>
 </ng-template>
 
-<input type="file" #fileInput style="display: none;" [accept]="mimeConstraints" [multiple]="false"
-    (change)="onFileSelected($event)">
+<input type="file" #fileInput style="display: none;" [accept]="smpService.draftData[sessionId]?.mimeConstraints"
+    [multiple]="false" (change)="onFileSelected($event)">
