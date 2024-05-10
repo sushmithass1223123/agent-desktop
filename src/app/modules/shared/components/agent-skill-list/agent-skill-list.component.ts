@@ -278,7 +278,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
-            if(this._dialogData.OtherData.type !== 'conf') {
+            if(this._dialogData.OtherData?.type !== 'conf') {
                 this.switcherList['Skill List'] = conf;
                 setActiveSwitcher('Skill List');
             }
