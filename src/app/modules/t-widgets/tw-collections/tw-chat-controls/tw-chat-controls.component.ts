@@ -1038,7 +1038,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                             });
                         } catch (error) { }
                     }
-                    this.callWidget?.destroy();
+                    if(this.callWidget)
+                        {
+                            this.callWidget?.destroy();
+                        }
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.remoteBrowserRefreshMsg'), 'warning');
                     break;
                 case 'conferencedisconnected':
