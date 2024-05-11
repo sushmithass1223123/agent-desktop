@@ -30,6 +30,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
 import { EMAIL_SEND_STATUS } from 'app/constants';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 
 /**
  * TwcInteractionComponent
@@ -69,7 +70,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
         private translocoService: TranslocoService,
-        private _sharedService: SharedService
+        private _sharedService: SharedService,
+        private _fuseProgressBarService: FuseProgressBarService
     ) {
         super('TwcInteractionComponent', hostElement, contentPageService);
     }
@@ -332,6 +334,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      * To Process Interaction Sending Status Event
      */
     EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
+        this._fuseProgressBarService.hide();
         let emailMeta = JSON.parse(evt.JsonData);
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             isEmailSent: true

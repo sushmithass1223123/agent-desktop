@@ -23,6 +23,7 @@ export interface SmpComponentInputs {
     SmParentComments: SmComment;
     Subject: string;
     PostText: SmPostText;
+    IsOutbound: boolean;
     PostAttachments: SmPostAttachments[];
 }
 

@@ -50,6 +50,8 @@ export class SmpTemplateComponent implements OnInit {
 
     @Input() hideStructureActions: boolean = false;
     @Input() sessionId: string;
+    @Input() outSessionId: string;
+    activeSessionId: string;
     @Input() interactionId: number;
     /**
      * Fuse custom config
@@ -106,6 +108,7 @@ export class SmpTemplateComponent implements OnInit {
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
+        this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
         this.cdr.detectChanges();
     }
 

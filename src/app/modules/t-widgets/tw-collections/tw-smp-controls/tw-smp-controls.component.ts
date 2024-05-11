@@ -67,6 +67,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
     sessionId: any;
     outSessionId: any;
+    activeSessionId: any;
     /**
      * User info
      */
@@ -138,6 +139,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.initWrapper(this.data);
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionId;
+        this.outSessionId = this.data.InteractionDetails?.OutSessionID;
+        if(this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
+        else this.activeSessionId = this.sessionId;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
 
         this.smpService.sendReply.subscribe((sessionId: any) => {
@@ -167,6 +171,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this.isInteractionActive = i.interactionId === this.interactionId && i.isActive;
                         if (i.isActive) {
                             this.sessionId = i.otherData?.SessionId;
+                            this.outSessionId = i.otherData?.OutSessionID;
                             this.interactionId = i.interactionId;
                         }
                         return {
@@ -175,7 +180,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             isActive: i.isActive,
                             interactionId: i.interactionId,
                             sessionId: i.otherData?.SessionId,
-                            channel: this.smpService.postBodies[this.sessionId].SubChannel,
+                            channel:
+                                this.smpService.postBodies[this.sessionId]?.SubChannel ??
+                                this.smpService.postBodies[this.outSessionId]?.SubChannel,
                             isPostReplySent: i.isPostReplySent
                         };
                     });
@@ -240,6 +247,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
             SDKClient.closeInteraction(this.interactionId.toString(), null)
                 .then((dt: IResponse) => {
+                    delete this.smpService.postBodies[this.sessionId];
+                    delete this.smpService.postBodies[this.outSessionId];
                     this._fuseProgressBarService.hide();
                     if (dt.response && dt.response.ResultCode === 0) {
                         this._appUiService.showSnackbar(

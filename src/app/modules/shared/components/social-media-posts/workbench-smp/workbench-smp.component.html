@@ -139,12 +139,13 @@
                                             <p>({{getTotalArrayCount(channel)}})</p>
                                         </div>
                                         <!-- Level 1 dropdown -->
-                                        <div class="dropdown-l1 twd-w-full twd-pl-5 {{getObjectKeyString(channel)}}-{{getObjectKeyString(skill)}}"
+                                        <div class="dropdown-l1 twd-w-full twd-pl-5 {{getObjectKeyString(channel)}}-{{getObjectKeyString(skill).split('@')[0]}}"
                                             *ngFor="let skill of getObjectValueData(channel)">
                                             <div class="dropdown-header twd-w-full twd-pl-2 twd-pr-2">
                                                 <div class="sc-flex">
-                                                    <mat-icon role="button" [id]="getObjectKeyString(skill)"
-                                                        (click)="toggleDropdown(getObjectKeyString(channel)+'-'+getObjectKeyString(skill))">arrow_drop_down_circle</mat-icon>
+                                                    <mat-icon role="button"
+                                                        [id]="getObjectKeyString(skill).split('@')[0]"
+                                                        (click)="toggleDropdown(getObjectKeyString(channel)+'-'+getObjectKeyString(skill).split('@')[0])">arrow_drop_down_circle</mat-icon>
                                                     <p>{{getObjectKeyString(skill)}}</p>
                                                 </div>
                                                 <p>({{getTotalArrayCount(channel, getObjectKeyString(skill))}})</p>
@@ -154,7 +155,7 @@
                                                 <div mat-ripple (click)="openPost(post)"
                                                     class="post-list mat-elevation-z1 twd-w-full twd-relative twd-rounded-3xl twd-p-3"
                                                     [ngClass]="
-                                                    selectedPostSessionId === post.PostData.SessionId
+                                                    ((currentTab !== 'sent' && currentTab !== 'drafts' && (selectedPostSessionId === post.PostData.SessionId)) || ((currentTab === 'sent' || currentTab === 'drafts') && selectedPostOutSessionId === post.PostData.OutSessionId))
                                                         ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
                                                         : ' theme-bg'
                                                 " *ngFor="let post of getObjectValueData(skill)">

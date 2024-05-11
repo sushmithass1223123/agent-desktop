@@ -19,9 +19,10 @@
                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                 <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                     <div class="s-info twd-flex">
-                        <img src="assets/images/vectors/{{this.smpService.postBodies[sessionId]?.SubChannel}}.svg"
+                        <img src="assets/images/vectors/{{this.smpService.postBodies[activeSessionId]?.SubChannel}}.svg"
                             alt="">
-                        <h5 class="font-weight-700">{{this.smpService.postBodies[sessionId]?.PostAccountName}}</h5>
+                        <h5 class="font-weight-700">{{this.smpService.postBodies[activeSessionId]?.PostAccountName}}
+                        </h5>
                     </div>
                     <div class="s-actions twd-flex">
                         <mat-icon role="button">reply</mat-icon>
@@ -31,9 +32,10 @@
                             (click)="closeInteraction()">close</mat-icon>
                     </div>
                 </div>
-                <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
-                    [interactionId]="interactionId" [sessionId]="sessionId" [mode]="'interaction-min'"
-                    [postData]="this.smpService.postBodies[sessionId]"
+                <smp-template *ngIf="this.smpService?.postBodies[activeSessionId]"
+                    [MaximumAllowedPostImageRendering]="5" [interactionId]="interactionId" [sessionId]="sessionId"
+                    [outSessionId]="outSessionId" [mode]="'interaction-min'"
+                    [postData]="this.smpService.postBodies[activeSessionId]"
                     [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
                 <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
                     (click)="toggleInteractionPopup()">
@@ -50,8 +52,8 @@
             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
             <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                 <div class="s-info twd-flex">
-                    <img src="assets/images/vectors/{{smpService.postBodies[sessionId]?.SubChannel}}.svg" alt="">
-                    <h5 class="font-weight-700">{{smpService.postBodies[sessionId]?.PostAccountName}}</h5>
+                    <img src="assets/images/vectors/{{smpService.postBodies[activeSessionId]?.SubChannel}}.svg" alt="">
+                    <h5 class="font-weight-700">{{smpService.postBodies[activeSessionId]?.PostAccountName}}</h5>
                 </div>
                 <div class="s-actions twd-flex">
                     <mat-icon role="button">reply</mat-icon>
@@ -60,9 +62,10 @@
                     <mat-icon (click)="toggleInteractionPopup()" role="button">close</mat-icon>
                 </div>
             </div>
-            <smp-template *ngIf="this.smpService?.postBodies[sessionId]" [MaximumAllowedPostImageRendering]="5"
+            <smp-template *ngIf="this.smpService?.postBodies[activeSessionId]" [MaximumAllowedPostImageRendering]="5"
                 [maxFileUploadSize]="MaxFileUploadSize" [mode]="'interaction-min'" [interactionId]="interactionId"
-                [sessionId]="sessionId" [postData]="this.smpService.postBodies[sessionId]"></smp-template>
+                [outSessionId]="outSessionId" [sessionId]="sessionId"
+                [postData]="this.smpService.postBodies[activeSessionId]"></smp-template>
         </div>
     </div>
 </ng-container>
