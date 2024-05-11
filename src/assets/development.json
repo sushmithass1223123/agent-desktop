@@ -2467,7 +2467,7 @@
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
                                                     "AsyncReplySendTimeout": 60000,
-                                                    "DraftPollingInterval": 60
+                                                    "DraftPollingInterval": 10000
                                                 }
                                             },
                                             {
@@ -2942,7 +2942,7 @@
                                                 "Enabled": true,
                                                 "Icon": "video_label",
                                                 "Config": {
-                                                    "Tabs": ["queue", "inbox", "sent", "drafts", "posts"],
+                                                    "Tabs": ["queue", "inbox", "sent", "draft", "posts"],
                                                     "PullAllowed": true,
                                                     "AskPullConfirmation": true,
                                                     "SearchPollingInterval": 0,

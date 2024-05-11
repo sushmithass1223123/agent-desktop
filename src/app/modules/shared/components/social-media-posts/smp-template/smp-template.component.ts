@@ -5,6 +5,7 @@ import {
     ElementRef,
     EventEmitter,
     Input,
+    OnDestroy,
     OnInit,
     Output,
     TemplateRef,
@@ -17,7 +18,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InteractionRef, MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { Subject } from 'rxjs';
+import { interval, Subject, Subscription } from 'rxjs';
 import { AppDataService } from '@services/app-data.service';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { InteractionManagerService } from '@services/interaction-manager.service';
@@ -39,7 +40,7 @@ interface Comment {
     styleUrls: ['./smp-template.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class SmpTemplateComponent implements OnInit {
+export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() postData: SmpComponentInputs;
     @Input() mode: 'workbench' | 'interaction-min';
     @ViewChild('fileInput') fileInput!: ElementRef;
@@ -70,6 +71,7 @@ export class SmpTemplateComponent implements OnInit {
      * Maximum file size default 20mbs
      */
     @Input() maxFileUploadSize = 20971520;
+    @Input() draftPollDuration = 60;
     renderActiveCommentAttachment: boolean = false;
     showEmojiPicker: boolean = false;
 
@@ -103,6 +105,9 @@ export class SmpTemplateComponent implements OnInit {
         public smpService: SocialMediaPostsService,
         private cdr: ChangeDetectorRef
     ) {}
+
+    ngOnDestroy(): void {
+    }
 
     ngOnInit(): void {
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
@@ -221,7 +226,7 @@ export class SmpTemplateComponent implements OnInit {
     }
 
     onAttach(fileType) {
-        this.smpService.draftData[this.sessionId].mimeConstraints = fileType;
+        this.smpService.draftData[this.activeSessionId].mimeConstraints = fileType;
         setTimeout(() => {
             this.fileInput?.nativeElement?.click();
         });
@@ -232,10 +237,10 @@ export class SmpTemplateComponent implements OnInit {
         let resVal: Partial<PostFile>;
         if (input.files && input.files.length) {
             const f = input.files[0];
-            const fext = this.smpService.draftData[this.sessionId].mimeConstraints.includes('*')
+            const fext = this.smpService.draftData[this.activeSessionId].mimeConstraints.includes('*')
                 ? f.type.split('/')[0]
                 : f.name.split('.').pop();
-            if (!this.smpService.draftData[this.sessionId].mimeConstraints.includes(fext)) {
+            if (!this.smpService.draftData[this.activeSessionId].mimeConstraints.includes(fext)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.fileTypeNotSupported'),
                     'failure'
@@ -254,13 +259,13 @@ export class SmpTemplateComponent implements OnInit {
                 return;
             }
             const Base64 = await this.convertToBase64(f);
-            this.smpService.draftData[this.sessionId].rawAttachmentData = Base64;
+            this.smpService.draftData[this.activeSessionId].rawAttachmentData = Base64;
             if (this.fileUploadUrl?.MediaUploader) {
                 const formData = new FormData();
                 formData.append('file', f);
                 formData.append('interaction_id', TUtils.Generic.uuid());
                 formData.append('organization_id', 'prod');
-                formData.append('conv_id', this.sessionId);
+                formData.append('conv_id', this.activeSessionId);
                 formData.append('uploaded_by', SDKClient.getAgentData().agentId);
                 formData.append('other', '');
 
@@ -300,7 +305,7 @@ export class SmpTemplateComponent implements OnInit {
 
             const ext = resVal.Name.split('.').pop();
 
-            this.smpService.draftData[this.sessionId].attachments.push({
+            this.smpService.draftData[this.activeSessionId].attachments.push({
                 Id: TUtils.Generic.uuid(),
                 SessionID: this.sessionId,
                 Direction: 'OUT',
@@ -329,7 +334,7 @@ export class SmpTemplateComponent implements OnInit {
     }
 
     onSendReply() {
-        this.smpService.sendReply.next(this.sessionId);
+        this.smpService.sendReply.next(this.activeSessionId);
     }
 
     async onClearAttachment() {
@@ -345,19 +350,19 @@ export class SmpTemplateComponent implements OnInit {
             .pipe(take(1))
             .toPromise();
         if (dialogResult) {
-            this.smpService.draftData[this.sessionId].mimeConstraints = '';
-            this.smpService.draftData[this.sessionId].rawAttachmentData = '';
-            this.smpService.draftData[this.sessionId].attachments = [];
+            this.smpService.draftData[this.activeSessionId].mimeConstraints = '';
+            this.smpService.draftData[this.activeSessionId].rawAttachmentData = '';
+            this.smpService.draftData[this.activeSessionId].attachments = [];
         }
     }
 
     addEmoji(evt: any) {
-        const inputVal: string = this.smpService.draftData[this.sessionId].body || '';
+        const inputVal: string = this.smpService.draftData[this.activeSessionId].body || '';
         const selectionStart = this.replyInputField.nativeElement.selectionStart;
         const selectionEnd = this.replyInputField.nativeElement.selectionEnd;
         const startSlice = inputVal.slice(0, selectionStart);
         const endSlice = inputVal.slice(selectionEnd);
-        this.smpService.draftData[this.sessionId].body = `${startSlice}${evt.emoji.native}${endSlice}`;
+        this.smpService.draftData[this.activeSessionId].body = `${startSlice}${evt.emoji.native}${endSlice}`;
         this.replyInputField.nativeElement.focus();
     }
 }

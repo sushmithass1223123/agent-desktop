@@ -960,7 +960,7 @@
             "queueLabel": "Queue",
             "inboxLabel": "Inbox",
             "sentLabel": "Sent",
-            "draftsLabel": "Drafts",
+            "draftsLabel": "Draft",
             "postsLabel": "Posts",
             "postDetails": "Post details",
             "searchPlaceholder": "Search posts here...",

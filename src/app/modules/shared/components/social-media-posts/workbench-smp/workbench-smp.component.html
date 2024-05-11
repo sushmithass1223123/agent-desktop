@@ -155,7 +155,7 @@
                                                 <div mat-ripple (click)="openPost(post)"
                                                     class="post-list mat-elevation-z1 twd-w-full twd-relative twd-rounded-3xl twd-p-3"
                                                     [ngClass]="
-                                                    ((currentTab !== 'sent' && currentTab !== 'drafts' && (selectedPostSessionId === post.PostData.SessionId)) || ((currentTab === 'sent' || currentTab === 'drafts') && selectedPostOutSessionId === post.PostData.OutSessionId))
+                                                    ((currentTab !== 'sent' && currentTab !== 'draft' && (selectedPostSessionId === post.PostData.SessionId)) || ((currentTab === 'sent' || currentTab === 'draft') && selectedPostOutSessionId === post.PostData.OutSessionId))
                                                         ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
                                                         : ' theme-bg'
                                                 " *ngFor="let post of getObjectValueData(skill)">

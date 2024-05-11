@@ -78,7 +78,7 @@ type ComponentActions =
 /**
  * Available tabs of the smp workbench
  */
-type AvailableTabs = 'inbox' | 'sent' | 'queue' | 'drafts' | 'posts';
+type AvailableTabs = 'inbox' | 'sent' | 'queue' | 'draft' | 'posts';
 
 /**
  * Global search form controls
@@ -198,7 +198,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             label: this.translocoService.translate('sharedComponents.socialMediaPosts.draftsLabel'),
             enabled: true,
             icon: 'file_copy',
-            key: 'drafts'
+            key: 'draft'
         },
         {
             label: this.translocoService.translate('sharedComponents.socialMediaPosts.postsLabel'),
@@ -551,7 +551,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const maps: Record<AvailableTabs, any> = {
                 inbox: this.mapInboxPosts,
                 queue: this.mapQueuePosts,
-                drafts: [],
+                draft: this.mapDraftPosts,
                 posts: [],
                 sent: this.mapSentPosts
             };
@@ -775,7 +775,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.selectedPostOutSessionId = '';
             this.selectedPostRouteReason = '';
             if (tab) {
-                this.latestPostPreview = tab === 'drafts' || tab === 'sent';
+                this.latestPostPreview = tab === 'draft' || tab === 'sent';
                 if (this.advancedSearch.data[tab]) {
                     this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
                     this.globalSearch.form.setValue(this.globalSearch.data[tab]);
@@ -902,6 +902,63 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {any} result This is the response form the search
      * @returns {SMPost[]} returns mapped posts parsed into SMPost type
      */
+    mapDraftPosts(result: any): SMPost[] {
+        try {
+            if (!result || !result.length) {
+                return [];
+            }
+
+            return result.map((x: any): SMPost => {
+                let AddedTime = new Date(x?.currentStatusDateTime);
+
+                return {
+                    Mailbox: x?.mailbox,
+                    ConversationID: x?.conversationID,
+                    AddedTime,
+                    AgentId: '',
+                    Channel: '',
+                    CreatedBy: '',
+                    CustomerIdentifier: '',
+                    ItemId: '',
+                    Key: '',
+                    OrderIndex: 0,
+                    Reason: '',
+                    RonaEnabled: false,
+                    RouteDate: '',
+                    RouteTime: '',
+                    SkillId: '',
+                    SkillName: '',
+                    Status: 0,
+                    SubChannel: (x?.label?.split('Draft_'))?.pop()?.toLowerCase(),
+                    PostData: {
+                        SessionId: x?.inSessionID,
+                        OutSessionId: x?.sessionID,
+                        RouteId: x?.routeId ?? '',
+                        From: x?.from,
+                        To: '',
+                        Subject: x?.subject,
+                        EmailType: '',
+                        Skill: '',
+                        Intent: '',
+                        JsonData: '',
+                        SentimentInfo: '',
+                        RouteReason: '',
+                        HasAttachment: x?.hasAttachments,
+                        IsEmailProbableSpam: false,
+                        RejectReason: ''
+                    }
+                };
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * This method is used to formate the post list reponse from the search api
+     * @param {any} result This is the response form the search
+     * @returns {SMPost[]} returns mapped posts parsed into SMPost type
+     */
     mapSentPosts(result: any): SMPost[] {
         try {
             if (!result || !result.length) {
@@ -983,7 +1040,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             let backupChannelIdentifier = 'EmailType';
             let skillIdentifier = 'SkillName';
             let backupSkillIdentifier = 'SkillId';
-            if(this.currentTab === 'sent') skillIdentifier = 'Mailbox'
+            if(this.currentTab === 'sent' || this.currentTab === 'draft') skillIdentifier = 'Mailbox'
             let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
 
             const getSegregatedPostsBySkill = (channel: string) => {
@@ -1103,7 +1160,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.setComponentState('smposts/open/loading');
 
             let fetchFromOutbox =
-                (this.currentTab === 'drafts' ||
+                (this.currentTab === 'draft' ||
                     this.currentTab === 'sent' ||
                     post.PostData.RouteReason === 'CheckerQueue') &&
                 this.latestPostPreview;
@@ -1227,7 +1284,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         conversationId: curr?.ConversationID || '',
                         mailbox: curr?.Mailbox || ''
                     };
-                    if (this.currentTab === 'drafts') {
+                    if (this.currentTab === 'draft') {
                         item.sessionId = curr.PostData.OutSessionId;
                     } else if (
                         this.currentTab === 'queue' &&

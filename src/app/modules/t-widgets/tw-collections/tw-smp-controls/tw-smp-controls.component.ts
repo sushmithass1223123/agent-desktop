@@ -85,15 +85,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     asyncReplySendTimeout: number = 60000;
     sendTimerId: any;
     /**
+     * Duration interval for saving post as draft in milliseconds
+     */
+    draftPollDuration = 60000;
+
+    /**
      * Draft pollling subscription
      */
     draftPolling$: Subscription;
-    /**
-     * Duration interval for saving post as draft in milliseconds
-     */
-    draftPollDuration = 0;
-
     prevAttachments: any[] = [];
+    draftOutsessionId = {};
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -140,7 +141,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.outSessionId = this.data.InteractionDetails?.OutSessionID;
-        if(this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
+        if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
         else this.activeSessionId = this.sessionId;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
 
@@ -172,6 +173,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         if (i.isActive) {
                             this.sessionId = i.otherData?.SessionId;
                             this.outSessionId = i.otherData?.OutSessionID;
+                            if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
+                            else this.activeSessionId = this.sessionId;
                             this.interactionId = i.interactionId;
                         }
                         return {
@@ -249,6 +252,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 .then((dt: IResponse) => {
                     delete this.smpService.postBodies[this.sessionId];
                     delete this.smpService.postBodies[this.outSessionId];
+                    delete this.smpService.draftData[this.activeSessionId];
                     this._fuseProgressBarService.hide();
                     if (dt.response && dt.response.ResultCode === 0) {
                         this._appUiService.showSnackbar(
@@ -316,9 +320,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     bccList: '',
                     typeOfResponse: 'reply',
                     ccList: '',
-                    subject: ''
+                    subject: this.smpService.postBodies[this.activeSessionId]?.Subject ?? ''
                 }).catch((e) => errCallback(e));
-                // this._fuseProgressBarService.hide();
                 ref.dismiss();
                 if (!res || !res.response) {
                     this.actionStatus.isReplyOnProgress = false;
@@ -406,17 +409,19 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         const callback = () => {
             let { isModified, changes } = this.compareArrays(
                 this.prevAttachments,
-                this.smpService.draftData[this.sessionId].attachments
+                this.smpService.draftData[this.activeSessionId].attachments
             );
-            this.prevAttachments = [...this.smpService.draftData[this.sessionId].attachments];
+            this.prevAttachments = [...this.smpService.draftData[this.activeSessionId].attachments];
             SDKClient.saveEmailDraft({
                 bccList: '',
-                body: (this.smpService.draftData[this.sessionId].body || '').toString(),
+                body: (this.smpService.draftData[this.activeSessionId].body || '').toString(),
                 ccList: '',
                 inboxSessionId: this.sessionId,
-                outboxSessionId: this.outSessionId || '',
+                outboxSessionId: this.draftOutsessionId[this.activeSessionId]
+                    ? this.draftOutsessionId[this.activeSessionId]
+                    : this.outSessionId || '',
                 routeId: '',
-                subject: '',
+                subject: this.smpService.postBodies[this.activeSessionId]?.Subject ?? '',
                 toList: '',
                 typeOfResponse: '',
                 attachmentList: changes,
@@ -424,7 +429,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             })
                 .then((x) => {
                     if (x.response) {
-                        // this.currentInteraction.CurrOutSessionId = x.response;
+                        this.draftOutsessionId[this.activeSessionId] = x.response.replace(/^"(.*)"$/, '$1');
                     } else {
                         throwADError('Unable to save as draft', new Error('Invalid server response'));
                     }
@@ -436,15 +441,15 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     console.error(err);
                 });
         };
-        const poll = () => {
-            if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
-                const polling = interval(this.draftPollDuration);
-                this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-                    callback();
-                });
-            }
-        };
-        poll();
+        // const poll = () => {
+        //     if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
+        //         const polling = interval(this.draftPollDuration);
+        //         this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+        //             callback();
+        //         });
+        //     }
+        // };
+        // poll();
         callback();
     }
 
