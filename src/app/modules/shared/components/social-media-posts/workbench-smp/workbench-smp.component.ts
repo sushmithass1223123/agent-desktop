@@ -1,7 +1,7 @@
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
-import { IWidget, ResData } from 'app/interfaces';
+import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
@@ -78,7 +78,7 @@ type ComponentActions =
 /**
  * Available tabs of the smp workbench
  */
-type AvailableTabs = 'inbox' | 'sent' | 'queue' | 'draft' | 'posts';
+type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft' | 'posts';
 
 /**
  * Global search form controls
@@ -189,10 +189,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             key: 'inbox'
         },
         {
-            label: this.translocoService.translate('sharedComponents.socialMediaPosts.sentLabel'),
+            label: this.translocoService.translate('sharedComponents.socialMediaPosts.sentItemLabel'),
             enabled: true,
             icon: 'send',
-            key: 'sent'
+            key: 'sentitem'
         },
         {
             label: this.translocoService.translate('sharedComponents.socialMediaPosts.draftsLabel'),
@@ -512,7 +512,14 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     skills: [],
                     channel: 'socialmediachannel'
                 };
-                requests.push(this.http.post(`${this.data.Data.WorkbenchUrl}/${this.currentTab}/search`, searchParams));
+                requests.push(
+                    this.http.post(
+                        `${this.data.Data.WorkbenchUrl}/${
+                            this.currentTab === 'posts' ? 'inbox' : this.currentTab
+                        }/search`,
+                        searchParams
+                    )
+                );
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
                 searchParams = {
@@ -541,7 +548,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 requests.push(
                     this.http.post(
                         `${this.data.Data.WorkbenchUrl}/${
-                            this.currentTab === 'sent' ? 'sentitem' : this.currentTab
+                            this.currentTab === 'posts' ? 'inbox' : this.currentTab
                         }/search`,
                         searchParams
                     )
@@ -552,8 +559,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 inbox: this.mapInboxPosts,
                 queue: this.mapQueuePosts,
                 draft: this.mapDraftPosts,
-                posts: [],
-                sent: this.mapSentPosts
+                posts: this.mapInboxPosts,
+                sentitem: this.mapSentItemPosts
             };
 
             this.advancedSearch.sub$ = forkJoin(requests)
@@ -690,7 +697,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 (this.channelConf.Config as TwSmpWorkbenchConfig)?.Tabs?.map((m: string) => m.toLowerCase()) ?? [];
             if (allowedTabs.length) {
                 this.availableTabs.forEach((f) => {
-                    f.enabled = allowedTabs.includes(f.label.toLowerCase());
+                    f.enabled = allowedTabs.includes(f.key.toLowerCase());
                     if (f.enabled) {
                         this.noTabsAvailable = false;
                     }
@@ -775,7 +782,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.selectedPostOutSessionId = '';
             this.selectedPostRouteReason = '';
             if (tab) {
-                this.latestPostPreview = tab === 'draft' || tab === 'sent';
+                this.latestPostPreview = tab === 'draft' || tab === 'sentitem';
                 if (this.advancedSearch.data[tab]) {
                     this.advancedSearch.form.setValue(this.advancedSearch.data[tab].data);
                     this.globalSearch.form.setValue(this.globalSearch.data[tab]);
@@ -929,7 +936,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillId: '',
                     SkillName: '',
                     Status: 0,
-                    SubChannel: (x?.label?.split('Draft_'))?.pop()?.toLowerCase(),
+                    SubChannel: x?.label?.split('Draft_')?.pop()?.toLowerCase(),
                     PostData: {
                         SessionId: x?.inSessionID,
                         OutSessionId: x?.sessionID,
@@ -959,7 +966,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {any} result This is the response form the search
      * @returns {SMPost[]} returns mapped posts parsed into SMPost type
      */
-    mapSentPosts(result: any): SMPost[] {
+    mapSentItemPosts(result: any): SMPost[] {
         try {
             if (!result || !result.length) {
                 return [];
@@ -992,7 +999,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillId: '',
                     SkillName: '',
                     Status: 0,
-                    SubChannel: (x?.label?.split('Sent_'))?.pop()?.toLowerCase(),
+                    SubChannel: x?.label?.split('Sent_')?.pop()?.toLowerCase(),
                     PostData: {
                         SessionId: x?.inSessionID,
                         OutSessionId: x?.sessionID,
@@ -1040,7 +1047,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             let backupChannelIdentifier = 'EmailType';
             let skillIdentifier = 'SkillName';
             let backupSkillIdentifier = 'SkillId';
-            if(this.currentTab === 'sent' || this.currentTab === 'draft') skillIdentifier = 'Mailbox'
+            if (this.currentTab === 'sentitem' || this.currentTab === 'draft') skillIdentifier = 'Mailbox';
             let availableChannels = Array.from(new Set(response.map((r: SMPost) => r[channelIdentifier])));
 
             const getSegregatedPostsBySkill = (channel: string) => {
@@ -1155,19 +1162,36 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     async openPost(post: SMPost): Promise<void> {
         try {
-            if(this.openPostRes.loading) return;
+            if (this.openPostRes.loading) return;
             this.openPostRes.data.next(Object.assign(post, { Body: '' }, { currentTab: this.currentTab }));
             this.setComponentState('smposts/open/loading');
 
             let fetchFromOutbox =
                 (this.currentTab === 'draft' ||
-                    this.currentTab === 'sent' ||
+                    this.currentTab === 'sentitem' ||
                     post.PostData.RouteReason === 'CheckerQueue') &&
                 this.latestPostPreview;
             let inboxRes: GetInboxItemResult;
             let outboxRes: GetInboxItemResult | any;
 
             const getRequestedSession = () => (fetchFromOutbox ? post.PostData.OutSessionId : post.PostData.SessionId);
+
+            const getAttachments = (attachments: any[]): any[] => {
+                if (attachments && attachments.length) {
+
+                    return attachments.map((item: any) => {
+                        let uploadedName = item.Url.split('/').pop();
+                        if (!item.Name) {
+                            uploadedName = uploadedName.replace(getRequestedSession(), '');
+                            item.Name = uploadedName;
+                        }
+                        item.Ext = item.Name.split('.').pop();
+                        item.Icon = maticonByExtension(item.Ext);
+                        return item;
+                    });
+                }
+                return [];
+            };
 
             this.selectedPostSessionId = post.PostData.SessionId;
             this.selectedPostOutSessionId = post.PostData.OutSessionId;
@@ -1200,8 +1224,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         throwADError('Error in WorkbenchSmpComponent.getInboxItem', 'Unexpected Response from server');
                     }
                 } else {
+                    let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
                     this._smpService.postBodies = Object.assign(this._smpService.postBodies, {
                         [post.PostData.SessionId]: {
+                            Files: getAttachments(tempAttachments),
                             ConversationID: inboxRes.ConversationID,
                             SessionId: post.PostData.SessionId,
                             SubChannel: (post.SubChannel ?? inboxRes.EmailType).toLowerCase(),
@@ -1224,14 +1250,19 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 }
             }
 
-            if (fetchFromOutbox && !this._smpService.postBodies[post.PostData.OutSessionId]) {
+            if (
+                fetchFromOutbox &&
+                (!this._smpService.postBodies[post.PostData.OutSessionId] || this.currentTab === 'draft')
+            ) {
                 outboxRes = (await SDKClient.getOutboxItem(post.PostData.OutSessionId)).response;
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
 
+                let tempAttachments = await this.requestAttachmentData(outboxRes.Attachments);
                 this._smpService.postBodies = Object.assign(this._smpService.postBodies, {
                     [post.PostData.OutSessionId]: {
+                        Files: getAttachments(tempAttachments),
                         ConversationID: outboxRes.ConversationID,
                         SessionId: post.PostData.SessionId,
                         OutSessionId: post.PostData.OutSessionId,
@@ -1264,6 +1295,71 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         }
     }
 
+    /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: any[]): Promise<any> {
+        try {
+            //extract file id's
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.URL.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId });
+                        } else {
+                            acc.att.push({ ...cur });
+                        }
+                    } else {
+                        acc.att.push({ ...cur });
+                    }
+                    return acc;
+                },
+                { ids: [], att: [] }
+            );
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                try {
+                    const { response } = await TUtils.HttpClient.sendRequest<
+                        MediaStreamerMultiResponse<MediaStreamerMetaResponse>
+                    >({
+                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                        method: 'GET',
+                        responseType: 'json'
+                    });
+
+                    if (response?.result?.length > 0) {
+                        attachmentMap.att.forEach((cur) => {
+                            if (cur.IsCloud) {
+                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                                if (fileMeta) {
+                                    cur.ArchiveStatus = fileMeta.archiveStatus;
+                                    cur.RestoreStatus = fileMeta.restoreStatus;
+                                    cur.FileError = fileMeta.fileError;
+                                }
+                            }
+                        }, []);
+                    }
+                } catch (ex) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.fileMetaError'),
+                        'failure'
+                    );
+                    attachmentMap.att.forEach((cur) => {
+                        cur.ArchiveStatus = null;
+                        cur.RestoreStatus = null;
+                        cur.FileError = true;
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
+        }
+    }
+
     async pullPosts(posts: SMPost[]): Promise<void> {
         const loader = this._appUiService.showSnackbar(
             this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostLoading'),
@@ -1292,7 +1388,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         OUTBOX_REASONS.includes(curr.PostData.RouteReason)
                     ) {
                         item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
-                    } else if (this.currentTab === 'sent') {
+                    } else if (this.currentTab === 'sentitem') {
                         item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
                     }
                     acc.items.push(item);
@@ -1301,7 +1397,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 { items: [] }
             );
             this.http
-                .post(this.data.Data.WorkbenchUrl + `/${this.currentTab === 'sent' ? 'sentitem' : this.currentTab}/pull`, {
+                .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
                     tmacServer,
                     agentId,
                     items
@@ -1310,6 +1406,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     next: (res: any) => {
                         if (res.status === 'SUCCESS') {
                             this.openPostRes.data.next(null);
+                            this.selectedPostSessionId = '';
+                            this.selectedPostOutSessionId = '';
+                            this.selectedPostRouteReason = '';
                         }
                         if (res.status === 'FAILED') {
                             loader.dismiss();

@@ -220,7 +220,17 @@
             "sendPostReplyLoading": "Sending reply...",
             "replySendTimeoutMessage": "Timed out while sending reply!",
             "replySendConnectionError": "Error connecting to media matrix server",
-            "parallelReplyWarning": "A reply is already being sent. Please wait..."
+            "parallelReplyWarning": "A reply is already being sent. Please wait...",
+            "savingDraftLabel": "Saving post reply as draft...",
+            "savingDraftSuccessLabel": "Post reply successfully saved as draft.",
+            "savingDraftFailedLabel": "Error occured while saving the reply as draft!",
+            "saveAsDraftConfirmationHeader": "Draft confirmation",
+            "saveAsDraftConfirmationBody": "Do you want to save the reply as draft?",
+            "tooltips": {
+                "closeInteraction": "Close interaction",
+                "draftInteraction": "Save as draft",
+                "transferInteraction": "Transfer interaction"
+            }
         },
         "voiceControls": {
             "reset": "Reset",
@@ -959,7 +969,7 @@
         "socialMediaPosts": {
             "queueLabel": "Queue",
             "inboxLabel": "Inbox",
-            "sentLabel": "Sent",
+            "sentItemLabel": "Sent",
             "draftsLabel": "Draft",
             "postsLabel": "Posts",
             "postDetails": "Post details",
@@ -977,7 +987,9 @@
             "postIsBeingSent": "Post is being sent. Please wait!",
             "postsNotFound": "There are no posts",
             "openPostFailed": "Unable to open post",
-            "fileMetaError": "Couldn't fetch attachment file data",
+            "fileMetaError": "Error occurred while connecting to file server - if it fails again please raise as an incident",
+            "uploadFileSuccess": "File has been uploaded",
+            "uploadFileFailure": "Couldn't upload the file",
             "selectPostLabel": "Select a post to read",
             "pullPostLoading": "Fetching post",
             "postsAssigned": "Posts are already assigned",

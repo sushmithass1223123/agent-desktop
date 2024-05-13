@@ -13,7 +13,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { ADError, throwADError } from 'app/utils';
 import { interval, Subscription } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 
 declare var document: any;
 
@@ -95,6 +95,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     draftPolling$: Subscription;
     prevAttachments: any[] = [];
     draftOutsessionId = {};
+    isDraftMode: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -141,6 +142,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.outSessionId = this.data.InteractionDetails?.OutSessionID;
+        this.isDraftMode = this.data.InteractionDetails.RouteReason === 'AgentDraftPull';
         if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
         else this.activeSessionId = this.sessionId;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
@@ -161,8 +163,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
 
-        console.log(this.smpService.postBodies[this.sessionId]);
-
         this._interactionManagerService.interactions
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((interactions: InteractionRef[]) => {
@@ -173,6 +173,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         if (i.isActive) {
                             this.sessionId = i.otherData?.SessionId;
                             this.outSessionId = i.otherData?.OutSessionID;
+                            this.isDraftMode = i.otherData?.RouteReason === 'AgentDraftPull';
                             if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
                             else this.activeSessionId = this.sessionId;
                             this.interactionId = i.interactionId;
@@ -243,7 +244,25 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Closes current interaction
      */
-    closeInteraction(force = false): void {
+    async closeInteraction(force = false) {
+        const confirmDialogRef = this._appUiService.showAppConfirmDialog(
+            'generic',
+            this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationHeader'),
+            this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationBody')
+        );
+
+        const dialogResult = await confirmDialogRef
+            .afterClosed()
+            .pipe(takeUntil(this.unsubscribeAll))
+            .pipe(take(1))
+            .toPromise();
+        if (dialogResult) {
+            this.savePostAsDraft(true, true, true);
+            return;
+        } else {
+            force = true;
+        }
+
         const closeApiCall = () => {
             this.actionStatus.isClosingInteraction = true;
             this._fuseProgressBarService.show();
@@ -286,6 +305,22 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     closeApiCall();
                 }
             });
+        }
+    }
+
+    /**
+     * Deletes the draft copy of the post
+     */
+    async deleteDraftEmail(): Promise<void> {
+        try {
+            if (this.draftOutsessionId[this.activeSessionId] || this.draftPollDuration) {
+                await SDKClient.deleteBulkEmailsInDraft(
+                    `${this.sessionId}|${this.draftOutsessionId[this.activeSessionId]}`
+                ).catch((err) => throwADError('Unable to delete post drafts', ''));
+            }
+        } catch (e) {
+            console.error('Unable to delete the draft copy of the post');
+            console.error(e);
         }
     }
 
@@ -405,8 +440,13 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Save post as Draft
      */
-    savePostAsDraft(closePost = false): void {
+    savePostAsDraft(closePost = false, isLoud: boolean, actionFromUi: boolean): void {
         const callback = () => {
+            if (isLoud)
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
+                    'loading'
+                );
             let { isModified, changes } = this.compareArrays(
                 this.prevAttachments,
                 this.smpService.draftData[this.activeSessionId].attachments
@@ -429,9 +469,18 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             })
                 .then((x) => {
                     if (x.response) {
+                        if (isLoud)
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('widgets.smpControls.savingDraftSuccessLabel')
+                            );
                         this.draftOutsessionId[this.activeSessionId] = x.response.replace(/^"(.*)"$/, '$1');
                     } else {
                         throwADError('Unable to save as draft', new Error('Invalid server response'));
+                        if (isLoud)
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
+                                'failure'
+                            );
                     }
                     if (closePost) {
                         this.closeInteraction(true);
@@ -439,17 +488,22 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 })
                 .catch((err) => {
                     console.error(err);
+                    if (isLoud)
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
+                            'failure'
+                        );
                 });
         };
-        // const poll = () => {
-        //     if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
-        //         const polling = interval(this.draftPollDuration);
-        //         this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-        //             callback();
-        //         });
-        //     }
-        // };
-        // poll();
+        const poll = () => {
+            if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
+                const polling = interval(this.draftPollDuration);
+                this.draftPolling$ = polling.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+                    callback();
+                });
+            }
+        };
+        if (!actionFromUi) poll();
         callback();
     }
 

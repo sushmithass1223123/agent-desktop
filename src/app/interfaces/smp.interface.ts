@@ -13,6 +13,7 @@ export interface PostFile {
 }
 
 export interface SmpComponentInputs {
+    Files: any[];
     PostAccountName: string;
     ConversationID: string;
     SessionId: string;

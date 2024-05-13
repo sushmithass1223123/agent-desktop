@@ -50,6 +50,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
     @Input() hideStructureActions: boolean = false;
+    @Input() skipCommentContainer: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
@@ -72,6 +73,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
      */
     @Input() maxFileUploadSize = 20971520;
     @Input() draftPollDuration = 60;
+    @Input() isDraftMode: boolean = false;
     renderActiveCommentAttachment: boolean = false;
     showEmojiPicker: boolean = false;
 
@@ -106,14 +108,25 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         private cdr: ChangeDetectorRef
     ) {}
 
-    ngOnDestroy(): void {
-    }
+    ngOnDestroy(): void {}
 
     ngOnInit(): void {
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
+        if (this.skipCommentContainer) this.lineClampCharacterCount = 1000;
         this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
+        this.postData = JSON.parse(JSON.stringify(this.postData));
+        if (this.isDraftMode && this.smpService.draftData[this.activeSessionId]) {
+            this.smpService.draftData[this.activeSessionId].body = this.postData.SmActiveComment.CommentText.Text;
+            this.smpService.draftData[this.activeSessionId].attachments = this.postData.Files;
+            if(this.postData.Files.length) {
+                this.smpService.draftData[this.activeSessionId].rawAttachmentData = this.postData.Files[0].Url;
+                this.smpService.draftData[this.activeSessionId].mimeConstraints = 'image';
+            }
+            this.postData.SmActiveComment = this.postData.SmParentComments;
+            this.postData.SmParentComments = null;
+        }
         this.cdr.detectChanges();
     }
 
@@ -188,7 +201,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
      */
     public previewMedia(previewData: PostAttachment): void {
         let otherData = null;
-        if (previewData.MediaType == 'Photo') {
+        if (previewData.MediaType == 'image') {
             otherData = {
                 scale: 1
             };
@@ -277,12 +290,19 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 });
 
                 if (response?.isSuccess) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileSuccess')
+                    );
                     resVal = {
                         Name: response.result.original_name,
                         URL: response.result.downloadURL,
                         Source: 'mediastreamer'
                     };
                 } else {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileFailure'),
+                        'failure'
+                    );
                     throwADError('File not created at server', response);
                 }
             } else {
@@ -300,12 +320,24 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                         }
                     ]
                 });
-                resVal = { Name: res.FileName, URL: res.Url, Source: 'tmacproxy' };
+                if (res.Url) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileSuccess')
+                    );
+                    resVal = { Name: res.FileName, URL: res.Url, Source: 'tmacproxy' };
+                } else {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileFailure'),
+                        'failure'
+                    );
+                    throwADError('File not created at server', res);
+                    return;
+                }
             }
 
             const ext = resVal.Name.split('.').pop();
 
-            this.smpService.draftData[this.activeSessionId].attachments.push({
+            this.smpService.draftData[this.activeSessionId].attachments = [{
                 Id: TUtils.Generic.uuid(),
                 SessionID: this.sessionId,
                 Direction: 'OUT',
@@ -315,8 +347,10 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 Source: resVal.Source,
                 URL: resVal.URL,
                 IsUploaded: true
-            });
-            ref.dismiss();
+            }];
+            setTimeout(() => {
+                ref.dismiss();
+            }, 3000);
         }
     }
 

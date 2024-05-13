@@ -155,7 +155,7 @@
                                                 <div mat-ripple (click)="openPost(post)"
                                                     class="post-list mat-elevation-z1 twd-w-full twd-relative twd-rounded-3xl twd-p-3"
                                                     [ngClass]="
-                                                    ((currentTab !== 'sent' && currentTab !== 'draft' && (selectedPostSessionId === post.PostData.SessionId)) || ((currentTab === 'sent' || currentTab === 'draft') && selectedPostOutSessionId === post.PostData.OutSessionId))
+                                                    ((currentTab !== 'sentitem' && currentTab !== 'draft' && (selectedPostSessionId === post.PostData.SessionId)) || ((currentTab === 'sentitem' || currentTab === 'draft') && selectedPostOutSessionId === post.PostData.OutSessionId))
                                                         ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
                                                         : ' theme-bg'
                                                 " *ngFor="let post of getObjectValueData(skill)">
@@ -300,7 +300,7 @@
                     *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                     <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p"
-                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId">
+                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId && currentTab !== 'posts'">
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
                             (click)="showPostDetails()">
                             {{ locale('sharedComponents.socialMediaPosts.postDetails') }}
@@ -316,9 +316,9 @@
                     <div
                         class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
                         <smp-template
-                            *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
+                            *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null" [isDraftMode]="currentTab === 'draft'"
                             [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering" [mode]="'workbench'"
-                            [postData]="state.openPostResData"></smp-template>
+                            [postData]="state.openPostResData" [skipCommentContainer]="currentTab === 'posts'"></smp-template>
 
                         <!-- Open post loading page -->
                         <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"

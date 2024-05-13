@@ -25,17 +25,20 @@
                         </h5>
                     </div>
                     <div class="s-actions twd-flex">
-                        <mat-icon role="button">reply</mat-icon>
-                        <mat-icon (click)="savePostAsDraft()" role="button">save</mat-icon>
-                        <mat-icon role="button">send</mat-icon>
-                        <mat-icon role="button" [disabled]="actionStatus.isClosingInteraction"
+                        <!-- <mat-icon role="button">reply</mat-icon> -->
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
+                            (click)="savePostAsDraft(false, true, true)" role="button">save</mat-icon>
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                            role="button">forward</mat-icon>
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')"
+                            [disabled]="actionStatus.isClosingInteraction" role="button"
                             (click)="closeInteraction()">close</mat-icon>
                     </div>
                 </div>
-                <smp-template *ngIf="this.smpService?.postBodies[activeSessionId]"
-                    [MaximumAllowedPostImageRendering]="5" [draftPollDuration]="draftPollDuration"
-                    [interactionId]="interactionId" [sessionId]="sessionId" [outSessionId]="outSessionId"
-                    [mode]="'interaction-min'" [postData]="this.smpService.postBodies[activeSessionId]"
+                <smp-template [isDraftMode]="isDraftMode" [MaximumAllowedPostImageRendering]="5"
+                    [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
+                    [outSessionId]="outSessionId" [mode]="'interaction-min'"
+                    [postData]="this.smpService.postBodies[activeSessionId]"
                     [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
                 <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
                     (click)="toggleInteractionPopup()">
@@ -62,7 +65,7 @@
                     <mat-icon (click)="toggleInteractionPopup()" role="button">close</mat-icon>
                 </div>
             </div>
-            <smp-template *ngIf="this.smpService?.postBodies[activeSessionId]" [MaximumAllowedPostImageRendering]="5"
+            <smp-template [MaximumAllowedPostImageRendering]="5" [isDraftMode]="isDraftMode"
                 [draftPollDuration]="draftPollDuration" [maxFileUploadSize]="MaxFileUploadSize"
                 [mode]="'interaction-min'" [interactionId]="interactionId" [outSessionId]="outSessionId"
                 [sessionId]="sessionId" [postData]="this.smpService.postBodies[activeSessionId]"></smp-template>

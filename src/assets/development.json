@@ -2942,7 +2942,7 @@
                                                 "Enabled": true,
                                                 "Icon": "video_label",
                                                 "Config": {
-                                                    "Tabs": ["queue", "inbox", "sent", "draft", "posts"],
+                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
                                                     "PullAllowed": true,
                                                     "AskPullConfirmation": true,
                                                     "SearchPollingInterval": 0,
@@ -3196,8 +3196,8 @@
                 "https://dicedev.tetherfi.cloud/SignalRDashboard2"
             ],
             "FileServerUrl": {
-                "MediaUploader": "https://dicedev.tetherfi.cloud:13019/upload",
-                "MediaStreamer": "https://dicedev.tetherfi.cloud:130222",
+                "MediaUploader": "https://dicepoc.tetherfi.cloud:13019/upload",
+                "MediaStreamer": "https://dicepoc.tetherfi.cloud:13022",
                 "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"

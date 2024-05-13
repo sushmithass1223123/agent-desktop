@@ -76,7 +76,7 @@
                     justify-content: center;
                     cursor: pointer;
 
-                    img {
+                    img, video {
                         max-height: 100%;
                         width: auto;
                     }
@@ -278,7 +278,7 @@
                     }
                 }
 
-                .emoji-mart{
+                .emoji-mart {
                     width: 100% !important;
                 }
 
@@ -321,5 +321,14 @@
                 }
             }
         }
+    }
+}
+
+.no-comments {
+    grid-template-rows: 1fr;
+
+    .smp-post-info-container .scrollable .poster-gallery {
+        height: 30%;
+        min-height: unset;
     }
 }
