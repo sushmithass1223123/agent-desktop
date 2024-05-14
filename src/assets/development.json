@@ -3214,8 +3214,8 @@
                 "https://dicedev.tetherfi.cloud/SignalRDashboard2"
             ],
             "FileServerUrl": {
-                "MediaUploader": "https://dicedev.tetherfi.cloud:13019/upload",
-                "MediaStreamer": "https://dicedev.tetherfi.cloud:13022",
+                "MediaUploader": "https://dicepoc.tetherfi.cloud:13019/upload",
+                "MediaStreamer": "https://dicepoc.tetherfi.cloud:13022",
                 "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"

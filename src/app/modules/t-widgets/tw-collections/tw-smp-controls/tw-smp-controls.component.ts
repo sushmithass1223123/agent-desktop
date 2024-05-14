@@ -141,6 +141,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.maximumAllowedPostImageRendering = this.data.Data.MaximumAllowedPostImageRendering;
         if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
         else this.activeSessionId = this.sessionId;
+        if(!this.smpService.draftData[this.activeSessionId]) {
+            this.smpService.draftData[this.activeSessionId] = {
+                body: '',
+                mimeConstraints: '',
+                rawAttachmentData: '',
+                attachments: []
+            };
+        }
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
         this.smpService.draftUploadStatus[this.activeSessionId] = true;
 
@@ -173,6 +181,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.isDraftMode = i.otherData?.RouteReason === 'AgentDraftPull';
                             if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
                             else this.activeSessionId = this.sessionId;
+                            if(!this.smpService.draftData[this.activeSessionId]) {
+                                this.smpService.draftData[this.activeSessionId] = {
+                                    body: '',
+                                    mimeConstraints: '',
+                                    rawAttachmentData: '',
+                                    attachments: []
+                                };
+                            }
                             if (this.smpService.draftUploadStatus[this.activeSessionId] === undefined)
                                 this.smpService.draftUploadStatus[this.activeSessionId] = true;
                             this.interactionId = i.interactionId;
@@ -453,6 +469,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
                     'loading'
                 );
+            if(!this.smpService.postBodies[this.activeSessionId]) this.draftPolling$?.unsubscribe();
             if (this.prevAttachments.length === 0)
                 this.prevAttachments = this.smpService.postBodies[this.activeSessionId].Files;
             let { isModified, changes } = this.compareArrays(
@@ -478,7 +495,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 isAttachmentModified: isModified
             })
                 .then((x) => {
-                    if (x.response) {
+                    if (x.response.replace(/^"(.*)"$/, '$1')) {
                         this.smpService.draftUploadStatus[this.activeSessionId] = true;
                         if (isLoud)
                             this._appUiService.showSnackbar(
