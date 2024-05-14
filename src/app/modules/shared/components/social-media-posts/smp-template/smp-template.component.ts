@@ -3,11 +3,9 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
-    EventEmitter,
     Input,
     OnDestroy,
     OnInit,
-    Output,
     TemplateRef,
     ViewChild,
     ViewEncapsulation
@@ -15,24 +13,13 @@ import {
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { PostAttachment, SDKClient, TUtils } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { InteractionRef, MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
+import { MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { interval, Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AppDataService } from '@services/app-data.service';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { InteractionManagerService } from '@services/interaction-manager.service';
 import { SocialMediaPostsService } from '../social-media-posts.service';
-
-interface Comment {
-    cid: number;
-    active?: boolean;
-    comment: string;
-    commenter: string;
-    replies: Comment[];
-    parents?: number[];
-    hidden?: boolean;
-}
 
 @Component({
     selector: 'smp-template',
@@ -75,6 +62,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() draftPollDuration = 60;
     @Input() isDraftMode: boolean = false;
     renderActiveCommentAttachment: boolean = false;
+    renderParentCommentAttachment: boolean = false;
     showEmojiPicker: boolean = false;
 
     /**
@@ -95,8 +83,6 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
      * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
-    sendTimerId: any;
-    isReplySent: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -119,15 +105,39 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         this.postData = JSON.parse(JSON.stringify(this.postData));
         if (this.isDraftMode && this.smpService.draftData[this.activeSessionId]) {
             this.smpService.draftData[this.activeSessionId].body = this.postData.SmActiveComment.CommentText.Text;
-            this.smpService.draftData[this.activeSessionId].attachments = this.postData.Files;
-            if(this.postData.Files.length) {
-                this.smpService.draftData[this.activeSessionId].rawAttachmentData = this.postData.Files[0].Url;
-                this.smpService.draftData[this.activeSessionId].mimeConstraints = 'image';
+            if (this.postData.Files && this.postData.SmActiveComment?.CommentAttachments?.length) {
+                const fileIndex = this.postData.Files.findIndex(
+                    (fileData) => fileData.URL === this.postData.SmActiveComment.CommentAttachments[0].MediaUrl
+                );
+                this.smpService.draftData[this.activeSessionId].attachments = this.postData.Files[fileIndex];
+                if (this.postData.Files.length) {
+                    this.smpService.draftData[this.activeSessionId].rawAttachmentData =
+                        this.postData.Files[fileIndex].URL;
+                    this.smpService.draftData[this.activeSessionId].mimeConstraints = this.getFileType(
+                        this.smpService.draftData[this.activeSessionId].rawAttachmentData
+                    );
+                }
             }
             this.postData.SmActiveComment = this.postData.SmParentComments;
             this.postData.SmParentComments = null;
         }
         this.cdr.detectChanges();
+    }
+
+    getFileType(fileName) {
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'];
+        const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
+
+        if (videoExtensions.includes(fileExtension)) {
+            return 'video';
+        }
+
+        if (imageExtensions.includes(fileExtension)) {
+            return 'image';
+        }
+
+        return 'image';
     }
 
     scrollToActiveComment(): void {
@@ -337,17 +347,20 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
 
             const ext = resVal.Name.split('.').pop();
 
-            this.smpService.draftData[this.activeSessionId].attachments = [{
-                Id: TUtils.Generic.uuid(),
-                SessionID: this.sessionId,
-                Direction: 'OUT',
-                Icon: maticonByExtension(ext),
-                Ext: f.type,
-                Name: resVal.Name,
-                Source: resVal.Source,
-                URL: resVal.URL,
-                IsUploaded: true
-            }];
+            this.smpService.draftUploadStatus[this.activeSessionId] = false;
+            this.smpService.draftData[this.activeSessionId].attachments = [
+                {
+                    Id: TUtils.Generic.uuid(),
+                    SessionID: this.sessionId,
+                    Direction: 'OUT',
+                    Icon: maticonByExtension(ext),
+                    Ext: f.type,
+                    Name: resVal.Name,
+                    Source: resVal.Source,
+                    URL: resVal.URL,
+                    IsUploaded: true
+                }
+            ];
             setTimeout(() => {
                 ref.dismiss();
             }, 3000);
@@ -384,6 +397,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             .pipe(take(1))
             .toPromise();
         if (dialogResult) {
+            this.smpService.draftUploadStatus[this.activeSessionId] = false;
             this.smpService.draftData[this.activeSessionId].mimeConstraints = '';
             this.smpService.draftData[this.activeSessionId].rawAttachmentData = '';
             this.smpService.draftData[this.activeSessionId].attachments = [];
@@ -398,5 +412,6 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         const endSlice = inputVal.slice(selectionEnd);
         this.smpService.draftData[this.activeSessionId].body = `${startSlice}${evt.emoji.native}${endSlice}`;
         this.replyInputField.nativeElement.focus();
+        this.smpService.draftUploadStatus[this.activeSessionId] = false;
     }
 }

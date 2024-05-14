@@ -5,7 +5,8 @@
     } as customFuse">
     <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)"
         (floatEvent)="onFloated($event)" *transloco="let locale">
-        <div class="smp-interaction-container twd-w-full twd-flex">
+        <div class="smp-interaction-container twd-w-full twd-flex"
+            [ngStyle]="{'pointerEvents': actionStatus.disableUIButtons ? 'none' : 'all'}">
             <div class="interaction-avatar twd-flex twd-flex-col twd-pl-2">
                 <div *ngFor="let interaction of interactionList" (click)="selectInteraction(interaction)"
                     class="avatar-box twd-rounded-3xl twd-relative twd-flex {{interaction.isActive ? 'active' : 'inactive'}}"
@@ -30,8 +31,7 @@
                             (click)="savePostAsDraft(false, true, true)" role="button">save</mat-icon>
                         <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
                             role="button">forward</mat-icon>
-                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')"
-                            [disabled]="actionStatus.isClosingInteraction" role="button"
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')" role="button"
                             (click)="closeInteraction()">close</mat-icon>
                     </div>
                 </div>

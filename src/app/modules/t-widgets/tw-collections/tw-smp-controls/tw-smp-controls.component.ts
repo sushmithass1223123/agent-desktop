@@ -8,7 +8,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { IAgentData, IncomingEmailEvent, IResponse, SDKClient } from '@tmac/sdk';
+import { IncomingEmailEvent, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { InteractionRef, IWidget } from 'app/interfaces';
 import { ADError, throwADError } from 'app/utils';
@@ -68,17 +68,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     sessionId: any;
     outSessionId: any;
     activeSessionId: any;
-    /**
-     * User info
-     */
-    user: IAgentData;
 
     actionStatus: {
-        isClosingInteraction: boolean;
-        isReplyOnProgress: boolean;
+        disableUIButtons: boolean;
     } = {
-        isClosingInteraction: false,
-        isReplyOnProgress: false
+        disableUIButtons: false
     };
 
     maxFileUploadSize: number = 20971520;
@@ -146,9 +140,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
         else this.activeSessionId = this.sessionId;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
+        this.smpService.draftUploadStatus[this.activeSessionId] = true;
 
         this.smpService.sendReply.subscribe((sessionId: any) => {
-            if (this.actionStatus.isReplyOnProgress) {
+            if (this.actionStatus.disableUIButtons) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('widgets.smpControls.parallelReplyWarning')
                 );
@@ -176,6 +171,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.isDraftMode = i.otherData?.RouteReason === 'AgentDraftPull';
                             if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
                             else this.activeSessionId = this.sessionId;
+                            if (this.smpService.draftUploadStatus[this.activeSessionId] === undefined)
+                                this.smpService.draftUploadStatus[this.activeSessionId] = true;
                             this.interactionId = i.interactionId;
                         }
                         return {
@@ -192,7 +189,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     });
             });
 
-        this.user = SDKClient.getAgentData() || null;
+        this.savePostAsDraft(false, false, false);
     }
 
     toggleInteractionPopup(): void {
@@ -245,26 +242,31 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      * Closes current interaction
      */
     async closeInteraction(force = false) {
-        const confirmDialogRef = this._appUiService.showAppConfirmDialog(
-            'generic',
-            this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationHeader'),
-            this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationBody')
-        );
+        if (!force) {
+            if (!this.smpService.draftUploadStatus[this.activeSessionId]) {
+                const confirmDialogRef = this._appUiService.showAppConfirmDialog(
+                    'generic',
+                    this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationHeader'),
+                    this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationBody')
+                );
 
-        const dialogResult = await confirmDialogRef
-            .afterClosed()
-            .pipe(takeUntil(this.unsubscribeAll))
-            .pipe(take(1))
-            .toPromise();
-        if (dialogResult) {
-            this.savePostAsDraft(true, true, true);
-            return;
-        } else {
-            force = true;
+                const dialogResult = await confirmDialogRef
+                    .afterClosed()
+                    .pipe(takeUntil(this.unsubscribeAll))
+                    .pipe(take(1))
+                    .toPromise();
+                if (dialogResult) {
+                    this.savePostAsDraft(true, true, true);
+                    return;
+                } else {
+                    this.deleteDraftPost();
+                    force = true;
+                }
+            }
         }
 
         const closeApiCall = () => {
-            this.actionStatus.isClosingInteraction = true;
+            this.actionStatus.disableUIButtons = true;
             this._fuseProgressBarService.show();
 
             SDKClient.closeInteraction(this.interactionId.toString(), null)
@@ -272,6 +274,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     delete this.smpService.postBodies[this.sessionId];
                     delete this.smpService.postBodies[this.outSessionId];
                     delete this.smpService.draftData[this.activeSessionId];
+                    delete this.smpService.draftUploadStatus[this.activeSessionId];
+                    delete this.draftOutsessionId[this.activeSessionId];
                     this._fuseProgressBarService.hide();
                     if (dt.response && dt.response.ResultCode === 0) {
                         this._appUiService.showSnackbar(
@@ -293,7 +297,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     );
                 })
                 .finally(() => {
-                    this.actionStatus.isClosingInteraction = false;
+                    this.actionStatus.disableUIButtons = false;
                 });
         };
         if (force) {
@@ -311,11 +315,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Deletes the draft copy of the post
      */
-    async deleteDraftEmail(): Promise<void> {
+    async deleteDraftPost(): Promise<void> {
         try {
             if (this.draftOutsessionId[this.activeSessionId] || this.draftPollDuration) {
                 await SDKClient.deleteBulkEmailsInDraft(
-                    `${this.sessionId}|${this.draftOutsessionId[this.activeSessionId]}`
+                    `${this.sessionId}|${this.draftOutsessionId[this.activeSessionId] ?? this.outSessionId}`
                 ).catch((err) => throwADError('Unable to delete post drafts', ''));
             }
         } catch (e) {
@@ -339,7 +343,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 this._appUiService.showSnackbar(msg, 'failure');
             };
             try {
-                this.actionStatus.isReplyOnProgress = true;
+                this.actionStatus.disableUIButtons = true;
                 this._fuseProgressBarService.show();
                 const ref = this._appUiService.showSnackbar(
                     this.translocoService.translate('widgets.smpControls.sendPostReplyLoading'),
@@ -359,7 +363,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 }).catch((e) => errCallback(e));
                 ref.dismiss();
                 if (!res || !res.response) {
-                    this.actionStatus.isReplyOnProgress = false;
+                    this.actionStatus.disableUIButtons = false;
                     this._appUiService.showSnackbar(
                         this.translocoService.translate('widgets.smpControls.replySendConnectionError'),
                         'failure'
@@ -393,21 +397,21 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 const currentStatusMsg = SMP_CURRENTSTATUS_CODES[res.response.CurrentStatus];
                 if (!reasonCodeMsg) {
-                    this.actionStatus.isReplyOnProgress = false;
+                    this.actionStatus.disableUIButtons = false;
                     throwADError(
                         'Error in TwSmpControlsComponent.onSendReply',
                         'Unable to send post reply. Invalid Reason Code'
                     );
                 }
                 if (!currentStatusMsg) {
-                    this.actionStatus.isReplyOnProgress = false;
+                    this.actionStatus.disableUIButtons = false;
                     throwADError(
                         'Error in TwSmpControlsComponent.onSendReply',
                         'Unable to send post reply. Invalid Current Status'
                     );
                 }
                 if (reasonCodeMsg !== 'success') {
-                    this.actionStatus.isReplyOnProgress = false;
+                    this.actionStatus.disableUIButtons = false;
                     throwADError(
                         'Error in TwSmpControlsComponent.onSendReply',
                         `${reasonCodeMsg} [${res.response.SendStatus}]`
@@ -416,11 +420,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
                 this._appUiService.showSnackbar(this.translocoService.translate(currentStatusMsg), 'success');
             } catch (err) {
-                this.actionStatus.isReplyOnProgress = false;
+                this.actionStatus.disableUIButtons = false;
                 errCallback(err);
             }
         } catch (error) {
-            this.actionStatus.isReplyOnProgress = false;
+            this.actionStatus.disableUIButtons = false;
             console.error(error);
         }
     }
@@ -447,11 +451,15 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
                     'loading'
                 );
+            if (this.prevAttachments.length === 0)
+                this.prevAttachments = this.smpService.postBodies[this.activeSessionId].Files;
             let { isModified, changes } = this.compareArrays(
                 this.prevAttachments,
                 this.smpService.draftData[this.activeSessionId].attachments
             );
-            this.prevAttachments = [...this.smpService.draftData[this.activeSessionId].attachments];
+            this.prevAttachments = JSON.parse(
+                JSON.stringify(this.smpService.draftData[this.activeSessionId].attachments)
+            );
             SDKClient.saveEmailDraft({
                 bccList: '',
                 body: (this.smpService.draftData[this.activeSessionId].body || '').toString(),
@@ -469,6 +477,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             })
                 .then((x) => {
                     if (x.response) {
+                        this.smpService.draftUploadStatus[this.activeSessionId] = true;
                         if (isLoud)
                             this._appUiService.showSnackbar(
                                 this.translocoService.translate('widgets.smpControls.savingDraftSuccessLabel')
@@ -507,6 +516,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         callback();
     }
 
+    /**
+     * 
+     * @param arr1 Original array where changes are made
+     * @param arr2 Comparison array
+     * @returns Modify object
+     */
     compareArrays(arr1: Array<any>, arr2: Array<any>): { isModified: boolean; changes: Array<any> } {
         const result = [];
         let isModified = false;

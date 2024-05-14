@@ -534,7 +534,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     listOfMailboxes: searchFields.listOfMailboxes.join(','),
                     channel: 'socialmediachannel'
                 };
-                if (this.currentTab === 'inbox') {
+                if (this.currentTab === 'inbox' || this.currentTab === 'posts') {
                     searchParams.assignedTo = searchFields.assignedTo;
                     searchParams.hasAttachments = searchFields.hasAttachments;
                     searchParams.replied = searchFields.replied;
@@ -1178,7 +1178,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
             const getAttachments = (attachments: any[]): any[] => {
                 if (attachments && attachments.length) {
-
                     return attachments.map((item: any) => {
                         let uploadedName = item.Url.split('/').pop();
                         if (!item.Name) {
@@ -1196,24 +1195,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.selectedPostSessionId = post.PostData.SessionId;
             this.selectedPostOutSessionId = post.PostData.OutSessionId;
             this.selectedPostRouteReason = post.PostData.RouteReason;
-
-            if (!this._smpService.draftData[this.selectedPostSessionId] && !fetchFromOutbox) {
-                this._smpService.draftData[this.selectedPostSessionId] = {
-                    body: '',
-                    mimeConstraints: '',
-                    rawAttachmentData: '',
-                    attachments: []
-                };
-            }
-
-            if (!this._smpService.draftData[this.selectedPostOutSessionId] && fetchFromOutbox) {
-                this._smpService.draftData[this.selectedPostOutSessionId] = {
-                    body: '',
-                    mimeConstraints: '',
-                    rawAttachmentData: '',
-                    attachments: []
-                };
-            }
 
             if (!fetchFromOutbox && !this._smpService.postBodies[post.PostData.SessionId]) {
                 inboxRes = (await SDKClient.getInboxItem(post.PostData.SessionId)).response;
@@ -1250,10 +1231,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 }
             }
 
-            if (
-                fetchFromOutbox &&
-                (!this._smpService.postBodies[post.PostData.OutSessionId] || this.currentTab === 'draft')
-            ) {
+            if (fetchFromOutbox) {
                 outboxRes = (await SDKClient.getOutboxItem(post.PostData.OutSessionId)).response;
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
@@ -1304,16 +1282,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             let attachmentMap = attachments.reduce(
                 (acc, cur) => {
                     if (cur.IsCloud) {
-                        let split = cur.URL.split('/');
+                        let split = cur.Url.split('/');
                         if (split.length > 0) {
                             let fileId = split[split.length - 1];
                             acc.ids.push(fileId);
-                            acc.att.push({ ...cur, FileId: fileId });
+                            acc.att.push({ ...cur, FileId: fileId, URL: cur.Url });
                         } else {
-                            acc.att.push({ ...cur });
+                            acc.att.push({ ...cur, URL: cur.Url });
                         }
                     } else {
-                        acc.att.push({ ...cur });
+                        acc.att.push({ ...cur, URL: cur.Url });
                     }
                     return acc;
                 },
@@ -1405,6 +1383,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 .subscribe({
                     next: (res: any) => {
                         if (res.status === 'SUCCESS') {
+                            this.constructDraftData();
                             this.openPostRes.data.next(null);
                             this.selectedPostSessionId = '';
                             this.selectedPostOutSessionId = '';
@@ -1546,5 +1525,32 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         this._appUiService.showCustomDialog('alert', pdHtml, 'Post details', {
             messageClasses: 'twd-whitespace-pre-line twd-break-words'
         });
+    }
+
+    constructDraftData(): void {
+        try {
+            let fetchFromOutbox =
+                (this.currentTab === 'draft' || this.currentTab === 'sentitem') && this.latestPostPreview;
+
+            if (!fetchFromOutbox) {
+                this._smpService.draftData[this.selectedPostSessionId] = {
+                    body: '',
+                    mimeConstraints: '',
+                    rawAttachmentData: '',
+                    attachments: []
+                };
+            }
+
+            if (fetchFromOutbox) {
+                this._smpService.draftData[this.selectedPostOutSessionId] = {
+                    body: '',
+                    mimeConstraints: '',
+                    rawAttachmentData: '',
+                    attachments: []
+                };
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 }

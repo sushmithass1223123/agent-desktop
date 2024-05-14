@@ -33,12 +33,12 @@ export interface SmComment {
     ParentId: string;
     CommentText: SmCommentText;
     FromName: string;
+    CommentAttachments: SmCommentAttachment[];
 }
 
 export interface SmCommentText {
     InsertionDateTime: string;
     Text: string;
-    CommentAttachments: SmCommentAttachment[];
 }
 
 export interface SmPostText {

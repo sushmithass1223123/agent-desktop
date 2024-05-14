@@ -65,7 +65,8 @@
                                         <button *ngIf="!state.search.global.empty && !state.search.global.edited"
                                             type="button" mat-button color="accent" matSuffix mat-icon-button
                                             aria-label="Clear"
-                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }">
+                                            [@animate]="{ value: '*', params: { delay: '100ms', x: '100%' } }"
+                                            (click)="resetGlobalSearchForm(); doAdvancedSearch()">
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </mat-form-field>
@@ -88,7 +89,7 @@
                                 <div class="twd-flex twd-items-center">
                                     <div class="twd-font-bold twd-text-sm">
                                         <button id="sortKeyBtn" mat-button class="twd-px-1.5"
-                                            [matMenuTriggerFor]="sortMenu" [disabled]="!segregatedPosts?.length">
+                                            [disabled]="!segregatedPosts?.length">
                                             <span>{{ locale('sharedComponents.socialMediaPosts.sortBy') }} {{
                                                 sortControls.sortBy
                                                 }} </span>
@@ -316,9 +317,11 @@
                     <div
                         class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
                         <smp-template
-                            *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null" [isDraftMode]="currentTab === 'draft'"
+                            *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
+                            [isDraftMode]="currentTab === 'draft'"
                             [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering" [mode]="'workbench'"
-                            [postData]="state.openPostResData" [skipCommentContainer]="currentTab === 'posts'"></smp-template>
+                            [postData]="state.openPostResData"
+                            [skipCommentContainer]="currentTab === 'posts'"></smp-template>
 
                         <!-- Open post loading page -->
                         <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"
