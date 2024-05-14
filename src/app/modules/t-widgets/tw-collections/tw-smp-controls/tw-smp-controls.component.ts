@@ -90,6 +90,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     prevAttachments: any[] = [];
     draftOutsessionId = {};
     isDraftMode: boolean = false;
+    maximumAllowedPostImageRendering: number = 5;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -137,6 +138,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.outSessionId = this.data.InteractionDetails?.OutSessionID;
         this.isDraftMode = this.data.InteractionDetails.RouteReason === 'AgentDraftPull';
+        this.maximumAllowedPostImageRendering = this.data.Data.MaximumAllowedPostImageRendering;
         if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
         else this.activeSessionId = this.sessionId;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;

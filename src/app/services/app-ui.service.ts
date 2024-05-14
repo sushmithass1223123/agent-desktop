@@ -92,6 +92,11 @@ export class AppUiService extends SharedWrapper {
          */
         data?: any;
     }>;
+    /**
+     * onlineStatus
+     */
+    private onlineStatus: BehaviorSubject<boolean>;
+
 
     /**
      * Constructor
@@ -107,6 +112,17 @@ export class AppUiService extends SharedWrapper {
     ) {
         super('AppUiService');
         this.init();
+
+        this.onlineStatus = new BehaviorSubject<boolean>(navigator.onLine);
+    
+        // Add event listeners for online and offline events
+        window.addEventListener('online', () => {
+          this.onlineStatus.next(true);
+        });
+    
+        window.addEventListener('offline', () => {
+          this.onlineStatus.next(false);
+        });
     }
 
     /**
@@ -680,5 +696,10 @@ export class AppUiService extends SharedWrapper {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    // Expose Observable for online/offline status
+    getOnlineStatus(): Observable<boolean> {
+        return this.onlineStatus.asObservable();
     }
 }

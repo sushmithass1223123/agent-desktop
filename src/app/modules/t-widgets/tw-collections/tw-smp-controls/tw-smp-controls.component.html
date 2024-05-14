@@ -35,7 +35,8 @@
                             (click)="closeInteraction()">close</mat-icon>
                     </div>
                 </div>
-                <smp-template [isDraftMode]="isDraftMode" [MaximumAllowedPostImageRendering]="5"
+                <smp-template [isDraftMode]="isDraftMode"
+                    [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
                     [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
                     [outSessionId]="outSessionId" [mode]="'interaction-min'"
                     [postData]="this.smpService.postBodies[activeSessionId]"

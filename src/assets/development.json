@@ -2482,7 +2482,8 @@
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
                                                     "AsyncReplySendTimeout": 60000,
-                                                    "DraftPollingInterval": 10000
+                                                    "DraftPollingInterval": 10000,
+                                                    "MaximumAllowedPostImageRendering": 1
                                                 }
                                             },
                                             {
@@ -2958,8 +2959,6 @@
                                                 "Icon": "video_label",
                                                 "Config": {
                                                     "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
-                                                    "PullAllowed": true,
-                                                    "AskPullConfirmation": true,
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24,
@@ -3211,8 +3210,8 @@
                 "https://dicedev.tetherfi.cloud/SignalRDashboard2"
             ],
             "FileServerUrl": {
-                "MediaUploader": "https://dicepoc.tetherfi.cloud:13019/upload",
-                "MediaStreamer": "https://dicepoc.tetherfi.cloud:13022",
+                "MediaUploader": "https://dicedev.tetherfi.cloud:13019/upload",
+                "MediaStreamer": "https://dicedev.tetherfi.cloud:13022",
                 "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
             "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"

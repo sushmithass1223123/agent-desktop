@@ -41,6 +41,10 @@ export interface TwSmpControlsData {
      */
     MaxFileUploadSize: number;
     /**
+     * Maximum number post attachment that can be rendered automatically
+     */
+    MaximumAllowedPostImageRendering: number;
+    /**
      * Send reply timeout
      */
     AsyncReplySendTimeout: number;

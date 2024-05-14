@@ -20,5 +20,9 @@
         "Header": true,
         "Pinned": false
     },
-    "Data": {}
+    "Data": {
+        "MaxFileUploadSize": 20971520,
+        "AsyncReplySendTimeout": 60000,
+        "DraftPollingInterval": 10000
+    }
 }

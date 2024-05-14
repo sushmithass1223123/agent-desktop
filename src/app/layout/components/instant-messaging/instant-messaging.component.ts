@@ -13,7 +13,7 @@ import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { addSeconds, isAfter } from 'date-fns';
 import { groupBy, sortBy, uniqBy } from 'lodash';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { InstantMessagingService } from './instant-messaging.service';
 
@@ -80,6 +80,8 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * contact List
      */
     contacts: Contact[] = [];
+    isAgentOnline: boolean = true;
+    onlineStatusSubscription: Subscription;
 
     /**
      * all chats
@@ -210,6 +212,9 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * On init
      */
     ngOnInit(): void {
+        this.onlineStatusSubscription = this._appUIService.getOnlineStatus().subscribe((isOnline: boolean) => {
+            this.isAgentOnline = isOnline;
+        });  
         this.user = SDKClient.getAgentData();
 
         // Subscribe to the foldedChanged observable
@@ -288,6 +293,8 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * On destroy
      */
     ngOnDestroy(): void {
+        // Unsubscribe from the online/offline status subscription
+        this.onlineStatusSubscription.unsubscribe();
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
@@ -446,6 +453,11 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      */
     async reply(event): Promise<void> {
         event.preventDefault();
+        // Check if the agent is online before allowing message sending
+        if (!this.isAgentOnline) {
+            return;
+        }
+
         if (this._replyForm.form.value.message.trim() == '') {
             return;
         }

@@ -322,6 +322,7 @@
             "logoutNotAllowed": "Logout is not allowed, ",
             "isOnCall": "  is on call",
             "logoutLoadingMessage": "Please wait, Logging out the user..",
+            "logoutFail": "logout failed due to network issues. Please try again later",
             "logoutSuccess": "Logged out successfully",
             "logoutFailed": "Logout failed, please try again",
             "loadingChangeStatus": "Please wait, changing status...",
@@ -964,6 +965,7 @@
             "emailSendErrorMailboxInstanceCreationError": "Mailbox creation error",
             "emailSendErrorUnknown": "Unknown",
             "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
+            "emailSendErrorPayloadTooLarge": "Attachments exceed maximum file size",
             "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute"
         },
         "socialMediaPosts": {

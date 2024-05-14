@@ -26,6 +26,7 @@ export const SMP_SEND_STATUS = {
     '-6': 'ExchangeMessageNotCreated',
     '-8': 'MailboxInstanceCreationError',
     '-9': 'EwsApiAdaptorDown',
+    '-10': 'PayloadTooLarge',
     '-11': 'EmailManagerLoading'
 };
 
