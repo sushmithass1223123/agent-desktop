@@ -76,12 +76,12 @@ interface Chat {
     animations: appAnimations
 })
 export class InstantMessagingComponent extends SharedWrapper implements OnInit, OnDestroy {
-    isAgentOnline: boolean = true;
-    onlineStatusSubscription: Subscription;
     /**
      * contact List
      */
     contacts: Contact[] = [];
+    isAgentOnline: boolean = true;
+    onlineStatusSubscription: Subscription;
 
     /**
      * all chats
@@ -190,7 +190,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
         private _dashboardService: DashboardService,
         private _instantMessagingService: InstantMessagingService,
         private _aotWidgetService: AOTWidgetService,
-        private _appUIService: AppUiService,
+        private _appUIService: AppUiService
     ) {
         super('InstantMessagingComponent');
         // Set the defaults
@@ -212,10 +212,9 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
      * On init
      */
     ngOnInit(): void {
-        // Subscribe to online/offline status
         this.onlineStatusSubscription = this._appUIService.getOnlineStatus().subscribe((isOnline: boolean) => {
-        this.isAgentOnline = isOnline;
-      });
+            this.isAgentOnline = isOnline;
+        });  
         this.user = SDKClient.getAgentData();
 
         // Subscribe to the foldedChanged observable
@@ -445,7 +444,7 @@ export class InstantMessagingComponent extends SharedWrapper implements OnInit, 
 
         // Set the chat as null
         this.chat = null;
-         // Reset the allNewChats to an empty object
+        // Reset the allNewChats to an empty object
         this.allNewChats = {};
     }
 

@@ -192,7 +192,9 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                             log: true
                         });
                     })
-                    
+                    .catch(() => {
+                        this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
+                    })
                     .finally(() => {
                         // Reset logoutDisableAfterAcceptance flag on catch
                         this.logoutDisableAfterAcceptance = false;
@@ -200,7 +202,6 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             } else {
                 // Reset logoutDisableAfterAcceptance if user cancels logout
                 this.logoutDisableAfterAcceptance = false;
-
             }
         });
     }

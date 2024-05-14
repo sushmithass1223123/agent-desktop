@@ -19,6 +19,10 @@ export interface InteractionRef extends ActiveInteraction {
      */
     isEmailSent: boolean | null | undefined;
     /**
+     * Is post reply sent interaction flag
+     */
+    isPostReplySent: boolean | null | undefined;
+    /**
      * Interaction status
      */
     status: string;

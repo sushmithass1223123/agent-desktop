@@ -1,0 +1,75 @@
+<ng-container *ngIf="{
+        anchor: (customFuse.anchor$ | async),
+        widget: (customFuse.widget$ | async),
+        config: (customFuse.config$ | async)
+    } as customFuse">
+    <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)"
+        (floatEvent)="onFloated($event)" *transloco="let locale">
+        <div class="smp-interaction-container twd-w-full twd-flex"
+            [ngStyle]="{'pointerEvents': actionStatus.disableUIButtons ? 'none' : 'all'}">
+            <div class="interaction-avatar twd-flex twd-flex-col twd-pl-2">
+                <div *ngFor="let interaction of interactionList" (click)="selectInteraction(interaction)"
+                    class="avatar-box twd-rounded-3xl twd-relative twd-flex {{interaction.isActive ? 'active' : 'inactive'}}"
+                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                    <img class="twd-absolute social-tag" src="assets/images/vectors/{{interaction.channel}}.svg" alt="">
+                    <h5 class="font-weight-600">{{getInitials(interaction.user)}}</h5>
+                </div>
+            </div>
+
+            <div class="interaction-main sm-im-content twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
+                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
+                    <div class="s-info twd-flex">
+                        <img src="assets/images/vectors/{{this.smpService.postBodies[activeSessionId]?.SubChannel}}.svg"
+                            alt="">
+                        <h5 class="font-weight-700">{{this.smpService.postBodies[activeSessionId]?.PostAccountName}}
+                        </h5>
+                    </div>
+                    <div class="s-actions twd-flex">
+                        <!-- <mat-icon role="button">reply</mat-icon> -->
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
+                            (click)="savePostAsDraft(false, true, true)" role="button">save</mat-icon>
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                            role="button">forward</mat-icon>
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')" role="button"
+                            (click)="closeInteraction()">close</mat-icon>
+                    </div>
+                </div>
+                <smp-template [isDraftMode]="isDraftMode"
+                    [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
+                    [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
+                    [outSessionId]="outSessionId" [mode]="'interaction-min'"
+                    [postData]="this.smpService.postBodies[activeSessionId]"
+                    [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
+                <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
+                    (click)="toggleInteractionPopup()">
+                    <p>Load more</p>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                </div>
+            </div>
+
+        </div>
+    </tw-wrapper>
+
+    <div class="interaction-popup twd-flex" *ngIf="popupInteraction">
+        <div class="interaction-main twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
+            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+            <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
+                <div class="s-info twd-flex">
+                    <img src="assets/images/vectors/{{smpService.postBodies[activeSessionId]?.SubChannel}}.svg" alt="">
+                    <h5 class="font-weight-700">{{smpService.postBodies[activeSessionId]?.PostAccountName}}</h5>
+                </div>
+                <div class="s-actions twd-flex">
+                    <mat-icon role="button">reply</mat-icon>
+                    <mat-icon role="button">save</mat-icon>
+                    <mat-icon role="button">send</mat-icon>
+                    <mat-icon (click)="toggleInteractionPopup()" role="button">close</mat-icon>
+                </div>
+            </div>
+            <smp-template [MaximumAllowedPostImageRendering]="5" [isDraftMode]="isDraftMode"
+                [draftPollDuration]="draftPollDuration" [maxFileUploadSize]="MaxFileUploadSize"
+                [mode]="'interaction-min'" [interactionId]="interactionId" [outSessionId]="outSessionId"
+                [sessionId]="sessionId" [postData]="this.smpService.postBodies[activeSessionId]"></smp-template>
+        </div>
+    </div>
+</ng-container>
