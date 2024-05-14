@@ -1018,6 +1018,26 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
                 case 'clientreloaded':
+                    // Check if the status is 'hold'
+                    if (this.status === 'hold') {
+                        try {
+                            SDKClient.sendActionMessage({
+                                interactionId: this.interaction.InteractionID.toString(),
+                                message: JSON.stringify({
+                                    source: 'agent',
+                                    options: {},
+                                    data: {
+                                        interactionId: this.interaction.InteractionID.toString(),
+                                        onCall: this.disableAV === true
+                                    },
+                                    status: 'action',
+                                    type: 'hold',
+                                    eventName: 'ActionMessage',
+                                    id: TUtils.Generic.uuid()
+                                })
+                            });
+                        } catch (error) { }
+                    }
                     this.callWidget?.destroy();
                     this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.remoteBrowserRefreshMsg'), 'warning');
                     break;
