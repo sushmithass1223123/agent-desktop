@@ -23,23 +23,41 @@
                 "Small": { "Src": "", "Width": null, "Height": null },
                 "Alt": "Tetherfi"
             },
-            "Customer": { "Large": { "Src": "", "Width": 160, "Height": 88 }, "Small": { "Src": "", "Width": 50, "Height": 50 }, "Alt": "Tetherfi" }
+            "Customer": {
+                "Large": { "Src": "", "Width": 160, "Height": 88 },
+                "Small": { "Src": "", "Width": 50, "Height": 50 },
+                "Alt": "Tetherfi"
+            }
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
-        "Notifications": { "Sounds": true, "SoundLevel": 1, "DesktopAlerts": true, "DesktopAlertTimeout": 5000, "AppAlertTimeout": 5000 },
+        "Notifications": {
+            "Sounds": true,
+            "SoundLevel": 1,
+            "DesktopAlerts": true,
+            "DesktopAlertTimeout": 5000,
+            "AppAlertTimeout": 5000
+        },
         "CheckForResolution": false,
         "DisableCheckForDevicePermission": false,
         "AV": {
             "webRTCConfig": {
-                "iceServers": [{ "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
+                "iceServers": [
+                    { "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }
+                ],
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },
             "mediaConstraints": { "type": "", "video": { "width": 640, "height": 480 } },
             "offerOptions": { "offerToReceiveAudio": true, "offerToReceiveVideo": true, "iceRestart": true },
             "answerOptions": { "iceRestart": false },
-            "recordingOptions": { "enabled": false, "codec": "vp9", "recordLocal": false, "audioKbps": 32, "videoKbps": 512 },
+            "recordingOptions": {
+                "enabled": false,
+                "codec": "vp9",
+                "recordLocal": false,
+                "audioKbps": 32,
+                "videoKbps": 512
+            },
             "audioLevelCheck": { "enabled": true, "threshold": 0.3 },
             "connectionBandwidthUpperLimit": 1024,
             "audioTrackBandwidthUpperLimit": 16,
@@ -52,7 +70,13 @@
         },
         "SDK": {
             "proxy": { "urls": ["../../TMACSDKProxy/TmacProxy.asmx"], "type": "soap", "timeout": 60 },
-            "signalRProxy": { "enabled": true, "logging": true, "protocol": "webSockets", "timeout": 10, "fallback": true },
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true
+            },
             "logging": {
                 "enabled": true,
                 "level": { "debug": true, "info": true, "warn": true, "error": true },

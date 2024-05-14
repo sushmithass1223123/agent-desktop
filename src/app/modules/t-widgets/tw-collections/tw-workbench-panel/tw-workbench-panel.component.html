@@ -39,6 +39,12 @@
                             [channelConf]="channel"
                             *ngSwitchCase="'chat'"
                         ></workbench-chat>
+
+                        <workbench-smp
+                            [data]="{ Data: data.Data?.General || {}, Config: data.Config }"
+                            [channelConf]="channel"
+                            *ngSwitchCase="'social media'"
+                        ></workbench-smp>
                     </ng-container>
                 </mat-tab>
             </mat-tab-group>

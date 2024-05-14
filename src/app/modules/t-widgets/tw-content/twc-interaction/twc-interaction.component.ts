@@ -30,6 +30,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
 import { EMAIL_SEND_STATUS } from 'app/constants';
+import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 
 /**
  * TwcInteractionComponent
@@ -69,7 +70,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         private _aotWidgetService: AOTWidgetService,
         private _appUIService: AppUiService,
         private translocoService: TranslocoService,
-        private _sharedService: SharedService
+        private _sharedService: SharedService,
+        private _fuseProgressBarService: FuseProgressBarService
     ) {
         super('TwcInteractionComponent', hostElement, contentPageService);
     }
@@ -122,6 +124,9 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
                 break;
             case 'email':
                 eventNames = ['IncomingEmailEvent', 'OutgoingEmailEvent'];
+                break;
+            case 'smp':
+                eventNames = ['IncomingEmailEvent'];
                 break;
             case 'fax':
                 eventNames = ['FaxReceivedEvent'];
@@ -198,7 +203,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
 
         const aotWidgets = [...this.tempAOTs, ...(widgets.AOT?.filter((w: IWidget) => w.Config.Enabled ?? []) ?? [])];
 
-        const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat'].includes(this.type) ? true : false);
+        const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat', 'smp', 'email'].includes(this.type) ? true : false);
 
         // loop the widgets and add append interaction details
         staticWidgets
@@ -255,7 +260,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             user: user || 'Customer',
             path: this.data.Data.Path,
             otherData: otherData,
-            isEmailSent: null
+            isEmailSent: null,
+            isPostReplySent: null
         });
     }
 
@@ -294,7 +300,11 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     IncomingEmailEvent(evt: IncomingEmailEvent): void {
         // create email widgets
-        this.createWidgetList(evt, 'connected', evt.From, false, evt);
+        if(this.type === 'smp' && evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
+            this.createWidgetList(evt, 'connected', evt.From, false, evt);
+        } else if (this.type === 'email' && evt.EmailType !== 'NewSocialMediaItemFromMakerQueue') {
+            this.createWidgetList(evt, 'connected', evt.From, false, evt);
+        }
     }
 
     /**
@@ -324,6 +334,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      * To Process Interaction Sending Status Event
      */
     EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
+        this._fuseProgressBarService.hide();
         let emailMeta = JSON.parse(evt.JsonData);
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             isEmailSent: true
