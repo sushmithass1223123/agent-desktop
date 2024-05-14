@@ -158,7 +158,11 @@
                                                     "Consult": true,
                                                     "Blind": true,
                                                     "Comments": true,
-                                                    "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "vdn",
+                                                        "Display": "skill",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "ChannelPrefix": ["VO"],
                                                     "Columns": [],
                                                     "Rules": {

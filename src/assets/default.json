@@ -154,7 +154,11 @@
                                                     "Consult": true,
                                                     "Blind": true,
                                                     "Comments": true,
-                                                    "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "vdn",
+                                                        "Display": "skill",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "ChannelPrefix": ["VO"],
                                                     "Columns": [],
                                                     "Rules": {
@@ -230,6 +234,13 @@
                         "Type": "twn-email",
                         "Config": { "Enabled": true, "Icon": "email" },
                         "Data": { "Path": "/email", "Active": false }
+                    },
+                    {
+                        "Name": "Social Media Posts",
+                        "Description": "",
+                        "Type": "twn-smp",
+                        "Config": { "Enabled": true, "Icon": "video_label" },
+                        "Data": { "Path": "/smp", "Active": false }
                     },
                     {
                         "Name": "Generic",
@@ -1988,6 +1999,222 @@
                     }
                 },
                 {
+                    "Name": "Social Media Posts",
+                    "Description": "",
+                    "Type": "twc-smp",
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Data": {
+                        "Path": "/smp",
+                        "Duration": 100,
+                        "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Smp-Panel",
+                                    "Description": "",
+                                    "Type": "tw-smp-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 3 },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Social Media Posts",
+                                                "Description": "",
+                                                "Type": "tw-smp-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "video_label",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "MaxFileUploadSize": 20971520,
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "DraftPollingInterval": 10000,
+                                                    "MaximumAllowedPostImageRendering": 1
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-customer-details",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "CustomerInfo": [
+                                                        {
+                                                            "Title": "Campaign Name",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.CampaignName",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Customer Name",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.Name",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Phone Number",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.PhoneNumber",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Skill",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Skill",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "Intent",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Intent",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        },
+                                                        {
+                                                            "Title": "AutoDial",
+                                                            "ValueSource": "GenericInteractionEvent.Item.Data.AutoDial",
+                                                            "Unit": "",
+                                                            "DefaultValue": "NA"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Speech Transcripts",
+                                    "Description": "",
+                                    "Key": "SpeechTranscript",
+                                    "Type": "tw-voice-bot-transcripts",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Key": "CustomerAccountInfo",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": { "IsAuthenticated": true }
+                                },
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Key": "AmdocBCC",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Key": "CustomerSentiment",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
                     "Name": "Generic",
                     "Description": "",
                     "Type": "twc-generic",
@@ -2329,6 +2556,18 @@
                                                     "AskPullConfirmation": true,
                                                     "PushAllowed": true,
                                                     "SearchPollingInterval": 5000
+                                                }
+                                            },
+                                            {
+                                                "Type": "Social Media",
+                                                "Enabled": true,
+                                                "Icon": "video_label",
+                                                "Config": {
+                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
+                                                    "SearchPollingInterval": 0,
+                                                    "MaxSearchRange": 30,
+                                                    "SearchDuration": 24,
+                                                    "MaximumAllowedPostImageRendering": 1
                                                 }
                                             }
                                         ]
