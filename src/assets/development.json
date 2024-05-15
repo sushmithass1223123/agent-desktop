@@ -669,7 +669,8 @@
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
-                                        "Pinned": false
+                                        "Pinned": false,
+                                        "DragBoundary": "body"
                                     },
                                     "Data": {
                                         "Source": "totalinteractions",
