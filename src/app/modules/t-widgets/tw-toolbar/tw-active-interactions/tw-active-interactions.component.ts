@@ -9,6 +9,7 @@ import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { TMACEventService } from '@services/tmac-event.service';
 
 /**
  * Active interactions
@@ -46,7 +47,8 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         private _interactionManagerService: InteractionManagerService,
         private _contentPageService: ContentPageService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appUIService: AppUiService
+        private _appUIService: AppUiService,
+        private _tmacEventService: TMACEventService
     ) {
         super('TwActiveInteractionsComponent');
     }
@@ -73,6 +75,17 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         this._contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((mode: string) => {
             this.currentViewMode = mode;
         });
+    
+        // subscribe to UI control events
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+          try {
+            if (data && data.interactionId)  {
+              this.handleUIControls(data);
+            }
+          } catch (e) {
+            console.log('Error occurred on UIControl event received', e);
+          }
+        });
     }
 
     /**
@@ -82,6 +95,19 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
+
+    /**
+     * Method to manipulate interaction controls based on the custom events
+     * @param data 
+     */
+    handleUIControls(data:any): void {
+        if (data.eventName === 'changePhoneNumber') {
+            const index = this.interactionList.findIndex(item => item.interactionId === data.interactionId);
+            if (index !== -1) {
+                this.interactionList[index].user = data.phoneNumber;
+            }
+        }
     }
 
     /**
