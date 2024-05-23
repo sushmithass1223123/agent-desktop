@@ -1024,9 +1024,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "DepartmentFilters": {
-                                            "Name": ["Deflect"]
-                                        },
+                                        "DepartmentFilters": { "Name": ["Deflect"] },
                                         "ResponseMode": "manual",
                                         "EditAllowed": false,
                                         "Number": "IncomingCallEvent.PhoneNumber",
