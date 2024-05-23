@@ -18,7 +18,6 @@ import { Subscription } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { AOTWidget } from '@ad/types';
 import { TwWidgetModel } from 'app/models';
-import { TranslocoService } from '@ngneat/transloco';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 
 /**
@@ -105,7 +104,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService,
         private _uiActionEventService: TMACEventService,
-        private translocoService: TranslocoService,
         private _interactionManagerService: InteractionManagerService
     ) {
         super('TwCustomComponent');
@@ -379,7 +377,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
         // check if url is provided
         if (!url) {
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.customDialog.urlNotFound'), 'failure');
+            this._appUIService.showSnackbar('URL not found', 'failure');
             return;
         }
 
