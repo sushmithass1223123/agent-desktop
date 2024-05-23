@@ -6,6 +6,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { sortBy } from 'lodash';
 import { TranslocoService } from '@ngneat/transloco';
+import { TwDeflectToDigital } from '@ad/types';
 
 /**
  * Tw Compose Messaging Component
@@ -18,6 +19,10 @@ import { TranslocoService } from '@ngneat/transloco';
     encapsulation: ViewEncapsulation.None
 })
 export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * filter that is to be applied to department
+     */
+       @Input() departmentFilters: any;
     /**
      * Departments
      */
@@ -86,7 +91,11 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         // get the text templates
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
-                this.departments = result.response;
+                this.departments = this.departmentFilters ? result.response.filter((data) => {
+                    return Object.keys(this.departmentFilters).every((key) => {
+                        return this.departmentFilters[key].includes(data[key])
+                    });
+                }) : result.response;
                 // .filter((d) => d.Channel.toLowerCase() === 'sms');
             })
             .catch((err) => {

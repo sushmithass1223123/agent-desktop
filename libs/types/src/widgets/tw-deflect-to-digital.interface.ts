@@ -56,6 +56,10 @@ export interface TwDeflectToDigitalData {
      */
     DeflectExpiry: number;
     /**
+     *DepartmentFilters
+     */
+     DepartmentFilters: any;
+    /**
      * Intent of the deflect
      */
     DeflectIntent: string;
