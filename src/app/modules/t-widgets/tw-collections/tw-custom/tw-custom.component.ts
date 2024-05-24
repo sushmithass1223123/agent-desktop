@@ -185,7 +185,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                     case 'showcustompopup':
                         this.showCustomPopup(message.data);
                         break;
-                        case 'getOtherTMACEvents':
+                    case 'getOtherTMACEvents':
                         // allow custom widget to listen to all tmac events
                         this._tmacEventService.addTMACEventListener([
                             {
@@ -209,7 +209,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // allow custom widget to switch interaction tab in agent desktop
                         this._interactionManagerService.updateInteraction(message.data?.interactionId, message.data?.data);
                 }
-                
+
                 this.logger.info('Message received from custom frame -' + message.name + ':' + JSON.stringify(message), true);
             } catch (error) {
                 this.logger.error('Error in TwCustomComponent.postMessage', error, false);
@@ -326,7 +326,13 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Iframe loaded event
      */
     frameLoaded = (evt: any) => {
-        if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
+
+        if (this.data.Data.GetAllTMACEvents) {
+            this._tmacEventService.addTMACEventListener([{
+                label: 'OnTMACEvent',
+                callback: (evts) => this.sendDataToWindow('onTMACEvent', evts)
+            }]);
+        } else if (!this.subscriptions.eventsById && !this.subscriptions.allEvents) {
             // subscribe to interaction events
             if (this.interactionId) {
                 this.subscriptions.eventsById = this._tmacEventService
@@ -383,7 +389,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
 
         // get assist widget config
-        const title = `${data.Title}`;
+        const title = `${data.title}`;
         const icon = data.icon || '';
         const actions = data.actions || ['destroy'];
         const viewState = data.viewState || 'restore';
@@ -393,6 +399,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
 
         // create a widget model
         const widget = new TwWidgetModel(title, 'tw-custom', icon);
+        widget.InteractionDetails = this.data.InteractionDetails;
         widget.Config.Position.W = width;
         widget.Config.Position.H = height;
         widget.Config.Actions = actions;
