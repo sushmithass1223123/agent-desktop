@@ -1,0 +1,13 @@
+{
+    "Name": "Social Media Posts",
+    "Description": "",
+    "Type": "twn-smp",
+    "Config": {
+        "Enabled": true,
+        "Icon": "video_label"
+    },
+    "Data": {
+        "Path": "/smp",
+        "Active": false
+    }
+}

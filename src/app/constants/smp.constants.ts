@@ -1,20 +1,6 @@
-// route reasons
-export const OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull','MakerQueue'];
-export const SENT_REASONS = ['AgentSentPull'];
-export const DRAFT_REASONS = ['AgentDraftPull'];
-export const INBOX_REASONS = ['MakerQueue', 'AgentPull', 'TransferToAgent', 'TransferToSkill'];
-
-// entites
-export const AVAILABLE_ENTITIES = [
-    { key: 'PERSON', label: 'Names' },
-    { key: 'ORG', label: 'Organizations' },
-    { key: 'GPE', label: 'Locations' },
-    { key: 'DATE', label: 'Dates' }
-];
-
-export const EMAIL_REASONCODE_VALUES = {
+export const SMP_REASONCODE_VALUES = {
     0: 'success',
-    1: 'success', // was Email Scheduled. Changed due to server issue
+    1: 'success',
     20: 'Mailbox is not enabled',
     21: 'Mailbox sending out not enabled',
     22: 'Exception (refer to emm logs)',
@@ -23,13 +9,13 @@ export const EMAIL_REASONCODE_VALUES = {
     25: 'Exception in ews send',
     26: 'EWS send failed',
     27: 'EMM not started',
-    28: 'No email account found',
+    28: 'No smm account found',
     29: 'Generic main exception',
-    30: 'Provided email account not found',
+    30: 'Provided smm account not found',
     100: 'success'
 };
 
-export const EMAIL_SEND_STATUS = {
+export const SMP_SEND_STATUS = {
     '1': 'Success',
     '0': 'Success',
     '-1': 'Fail',
@@ -44,8 +30,8 @@ export const EMAIL_SEND_STATUS = {
     '-11': 'EmailManagerLoading'
 };
 
-export const EMAIL_CURRENTSTATUS_CODES = {
+export const SMP_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
     SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
-    EmailSending: 'sharedComponents.email.emailIsBeingSent'
+    EmailSending: 'sharedComponents.socialMediaPosts.postIsBeingSent'
 };
