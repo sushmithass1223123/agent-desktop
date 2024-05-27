@@ -15,6 +15,12 @@
                     </button>
                 </ng-template>
             </mat-form-field>
+            <mat-form-field class="custom custom-matfield with-border" appearance="outline">
+                <mat-select [formControl]="sendType" [placeholder]="locale('widgets.deflectToDigital.typePlaceholder')">
+                    <mat-option *ngFor="let item of SendTypeList" [value]="item.value">{{ item.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
             <div class="twd-flex-1 twd-relative">
                 <div class="twd-absolute twd-h-full twd-w-full">
                     <mat-form-field class="twd-h-full twd-w-full custom-textarea custom pb-0 border-radius-20 with-border" appearance="outline">

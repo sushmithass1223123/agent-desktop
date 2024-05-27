@@ -138,7 +138,7 @@
         "sms": "SMS",
         "email": "Email",
         "whatsApp": "WhatsApp",
-        "instagram":"instagram",
+        "instagram": "instagram",
         "weChat": "We Chat",
         "viber": "Viber",
         "line": "Line",
@@ -301,7 +301,7 @@
             "agentDataloadingMsg": "Please wait, retrieving information...",
             "requestTimeoutMsg": "Request timedout!",
             "agentActivityFailed": "Unable to get agent activity",
-            "agentStatusConfirm":"Are you sure you want to continue?",
+            "agentStatusConfirm": "Are you sure you want to continue?",
             "logoutNotAllowed": "Logout is not allowed, ",
             "isOnCall": "  is on call",
             "logoutLoadingMessage": "Please wait, Logging out the user..",
@@ -312,7 +312,7 @@
             "agentStatusSuccess": "Status of Agent changed successfully to #newStatus",
             "agentStatusApproved": "Agent accepted the request and changed to #approvedStatus",
             "maxBulkMailCount": "Maximum #maxBulkMailCount bulk selections only is allowed.",
-            "changeStatuscancelled":"Status change canceled",
+            "changeStatuscancelled": "Status change canceled",
             "alertChangeStatus": "Supervisor wants to change your status to #status",
             "statusChangeRequestSuccess": "#agentName is on call, status change request sent successfully",
             "statusChangeFailed": "Status change failed!",
@@ -401,7 +401,10 @@
             "toFieldRequiredMsg": "Please provide the number to deflect",
             "deflectLoading": "Deflecting",
             "deflectError": "Unable to Deflect: ",
-            "deflectFailed": "Deflecting failed"
+            "deflectFailed": "Deflecting failed",
+            "typePlaceholder": "Send Type",
+            "typeSMS": "SMS",
+            "typeEmail": "EMAIL"
         },
         "customerJourney": {
             "voiceWith": "Voice with",
