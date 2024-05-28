@@ -781,6 +781,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                         this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                         // remove the interaction reference
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
+                    } 
+                    else if (dt.response && dt.response.ResultCode === -2) {
+                        // Ignore the error if the interaction is already closed
+                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
                     } else {
                         this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
                     }
