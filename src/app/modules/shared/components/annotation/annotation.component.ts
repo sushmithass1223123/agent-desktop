@@ -126,32 +126,28 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
       this.isRectPenTouched = false;
       this.isCirclePenTouched = false;
     } else if (this.activeTool == 'rect') {
-      if (this.isRectPenTouched) this.undoCanvas();
-      this.annotateCtx.rect(
+      this.annotateCtx.clearRect(0, 0, this.annotateCanvas.width, this.annotateCanvas.height);
+      this.annotateCtx.putImageData(this.canvasCtxDataArray[this.canvasCtxDataArrayIndex], 0, 0);
+      this.annotateCtx.lineWidth = this.annotatePenStrokeWidth;
+      this.annotateCtx.strokeStyle = this.annotatePenColor;
+      this.annotateCtx.strokeRect(
         this.rectStartPosX,
         this.rectStartPosY,
         posX - this.rectStartPosX,
         posY - this.rectStartPosY
       );
-      this.annotateCtx.stroke();
-      this.canvasCtxDataArray.push(
-        this.annotateCtx.getImageData(0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
-      );
-      this.canvasCtxDataArrayIndex += 1;
-      this.annotateCtx.beginPath();
-      this.isRectPenTouched = true;
     } else if (this.activeTool == 'circle') {
-      if (this.isCirclePenTouched) this.undoCanvas();
+      this.annotateCtx.clearRect(0, 0, this.annotateCanvas.width, this.annotateCanvas.height);
+      this.annotateCtx.putImageData(this.canvasCtxDataArray[this.canvasCtxDataArrayIndex], 0, 0);
+      this.annotateCtx.lineWidth = this.annotatePenStrokeWidth;
+      this.annotateCtx.strokeStyle = this.annotatePenColor;
+      this.annotateCtx.beginPath();
       this.annotateCtx.arc(this.rectStartPosX, this.rectStartPosY, Math.abs(posX - this.rectStartPosX), 0, 2 * Math.PI);
       this.annotateCtx.stroke();
-      this.canvasCtxDataArray.push(
-        this.annotateCtx.getImageData(0, 0, this.annotateCanvas.width, this.annotateCanvas.height)
-      );
-      this.canvasCtxDataArrayIndex += 1;
-      this.annotateCtx.beginPath();
-      this.isCirclePenTouched = true;
+      this.annotateCtx.closePath();
     }
-  }
+}
+
 
   clearCanvas() {
     this.annotateCtx.clearRect(0, 0, this.annotateCanvas.width, this.annotateCanvas.height);
