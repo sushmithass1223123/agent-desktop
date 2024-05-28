@@ -329,7 +329,7 @@
             "loadingChangeStatus": "Please wait, changing status...",
             "agentStatusSuccess": "Status of Agent changed successfully to #newStatus",
             "agentStatusApproved": "Agent accepted the request and changed to #approvedStatus",
-            "changeStatuscancelled":"Status change canceled",
+            "changeStatuscancelled":"Status Change Cancelled",
             "alertChangeStatus": "Supervisor wants to change your status to #status",
             "statusChangeRequestSuccess": "#agentName is on call, status change request sent successfully",
             "statusChangeFailed": "Status change failed!",
