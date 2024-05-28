@@ -144,7 +144,9 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 customerContact: this.toNumber,
                 templateMessage: template,
                 comment: this.comment,
-                additionalParams: JSON.stringify({}),
+                additionalParams: JSON.stringify({
+                    sendType: this.sendType.value
+                }),
                 deflectExpiry: this.data.Data.DeflectExpiry,
                 deflectIntent: this.data.Data.DeflectIntent,
                 destChannel: this.data.Data.DestChannel,
@@ -153,8 +155,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 fallbackSkillId: this.data.Data.FallbackSkillId,
                 nextStatusName: this.data.Data.NextStatusName,
                 statusLockTimeout: this.data.Data.StatusLockTimeout,
-                reservedStatusCode: this.data.Data.ReservedStatusCode,
-                sendType: this.sendType.value
+                reservedStatusCode: this.data.Data.ReservedStatusCode
             });
 
             if (res.response.ResultCode < 0) {
