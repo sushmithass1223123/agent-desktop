@@ -637,7 +637,7 @@ else if (!this.data.Data.agentStatusChange){
                     // notification to the agent
                     let notification = `Supervisor ${this.user.agentName} has changed your status to ${response.Status}`;
                     // snackbar message
-                    let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess');
+                    let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess').replace('#newStatus', response.Status);
                     // check if the agent is on call
                     if (agent.CurrentAgentStatus.includes('On Call')) {
                         message = this.translocoService.translate('widgets.activeAgents.statusChangeRequestSuccess');
