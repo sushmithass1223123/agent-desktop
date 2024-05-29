@@ -95,7 +95,7 @@
                             <mat-icon>comment</mat-icon>
                         </button>
 
-                        <div class="twd-p-2 twd-flex twd-justify-end twd-gap-2" *ngIf="['CheckerQueue', 'CheckerPull'].includes(currentInteraction.RouteReason)">
+                        <div class="twd-p-2 twd-flex twd-justify-end twd-gap-2" *ngIf="MailReasons.includes(currentInteraction.RouteReason)">
                             <button
                                 [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                                 mat-raised-button
