@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -12,6 +12,7 @@ import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { TwSuAgentInteractions } from '@ad/types';
 import { TranslocoService } from '@ngneat/transloco';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 /**
  * Supervisor Agent Interactions Component
@@ -73,6 +74,17 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     };
 
     /**
+     * Make call dialog ref
+     */
+    makeCallDialogRef: MatDialogRef<any>;
+
+    /**
+     * Make call dialog
+     */
+    @ViewChild('makeCallDialog')
+    MakeCallDialog: TemplateRef<any>;
+
+    /**
      * Constructor
      */
     constructor(
@@ -80,7 +92,8 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _matDialog: MatDialog,
     ) {
         super('TwSuAgentInteractionsComponent');
         this.agentData = SDKClient.getAgentData();
@@ -156,6 +169,34 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             .catch(() => {
                 this._appUIService.showSnackbar('Error in chat barge-in', 'failure');
             });
+    }
+
+    private performVoiceBargeIn(type: 'barge-in' | 'silent', item: InteractionDataModel): void {
+        try {
+            const phoneNumber = item.InteractionData.UserData.PhoneNumber + '' + item.InteractionData.AgentId + '' + item.InteractionData.LoginInstanceID;
+                // make call to the provided number 
+                SDKClient.makeCall({
+                    interactionId: item.InteractionID.toString(),
+                    number: phoneNumber,
+                    source: '',
+                    sourceId: ''
+                })
+                .then((dt) => {
+                        
+                        if (dt.response.ResultCode === 0) {
+                            this._appUIService.showSnackbar('Make call success', 'success');
+                        } else {
+                            this._appUIService.showSnackbar('Make call failed', 'failure');
+                        }
+                    })
+                .catch((err) => {
+                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallError'), 'failure');
+                        this.logger.error('Error in makeCall', err);
+                    });
+            } catch(e) {
+                console.log('error while performing barge-in', e);
+            }
+    
     }
 
     /**
@@ -246,6 +287,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     public performInteractionAction(item: InteractionDataModel, feature: AgentFeatures): void {
         switch (feature.Feature.toLowerCase()) {
             case AGENT_FEATURES.AllowSupervisorToBargeIn:
+                this.performVoiceBargeIn('barge-in', item);
                 break;
             case AGENT_FEATURES.AllowSupervisorToChatConference:
                 this.performChatBargeIn('conf', item);
