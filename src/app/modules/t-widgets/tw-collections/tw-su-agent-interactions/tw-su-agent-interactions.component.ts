@@ -173,7 +173,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
     private performVoiceBargeIn(type: 'barge-in' | 'silent', item: InteractionDataModel): void {
         try {
-            const phoneNumber = item.InteractionData.UserData.PhoneNumber + '' + item.InteractionData.AgentId + '' + item.InteractionData.LoginInstanceID;
+            const phoneNumber = item.InteractionData.UserData.PhoneNumber + '' + item.InteractionData.AgentId + '' + this.configData.StationID;
                 // make call to the provided number 
                 SDKClient.makeCall({
                     interactionId: item.InteractionID.toString(),

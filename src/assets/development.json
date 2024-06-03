@@ -215,8 +215,8 @@
                         "Name": "Supervisor",
                         "Description": "",
                         "Type": "twn-supervisor",
-                        "Config": { "Enabled": true, "Icon": "supervised_user_circle" },
-                        "Data": { "Path": "/supervisor", "Active": false }
+                        "Config": { "Enabled": false, "Icon": "supervised_user_circle" },
+                        "Data": { "Path": "/supervisor", "Active": true }
                     },
                     {
                         "Name": "Voice",
@@ -3318,5 +3318,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.7.0-beta.1"
+    "Version": "5.7.0-beta.test"
 }
