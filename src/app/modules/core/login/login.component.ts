@@ -978,6 +978,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                                     retrying: false,
                                     section: 'main'
                                 };
+                                 // Using development JSON as the default config
+                               this.appConfig?.Login?.ItemTwo;
                                 this.logger.debug('Error occured in getting main content configuration!', false);
                                 return;
                             }

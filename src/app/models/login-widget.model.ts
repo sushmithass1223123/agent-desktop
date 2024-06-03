@@ -13,6 +13,7 @@ export class LoginWidgetModel {
     PromptAgentIdOnInvalidLanId: boolean;
     MultiWindowMode: MultiWindowMode;
     SSOLinkExpiry: number;
+    ItemTwo: any;
 
     constructor() {
         this.Modes = {
@@ -38,5 +39,6 @@ export class LoginWidgetModel {
             PixelDimension: false
         };
         this.SSOLinkExpiry = 0;
+        this.ItemTwo = []
     }
 }

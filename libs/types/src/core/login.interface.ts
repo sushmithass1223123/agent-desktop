@@ -51,6 +51,10 @@ export type LoginConfig = {
      * to enable selection of languages for lables in the application
      */
      enableLanguageSelection: boolean;
+     /**
+     * ItemTwo property
+     */
+     ItemTwo:any;
 };
 
 /**
