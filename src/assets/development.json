@@ -2487,7 +2487,6 @@
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
                                                     "AsyncReplySendTimeout": 60000,
-                                                    "DraftPollingInterval": 10000,
                                                     "MaximumAllowedPostImageRendering": 1
                                                 }
                                             },
@@ -3284,9 +3283,10 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx",
-                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"
+                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx",
+                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"
                 ],
+                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -3318,5 +3318,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.7.0-beta.1"
+    "Version": "5.7.0-beta.2.3"
 }

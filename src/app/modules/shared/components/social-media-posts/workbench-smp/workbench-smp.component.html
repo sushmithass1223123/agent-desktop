@@ -73,7 +73,7 @@
                                 </form>
 
                                 <!-- Refresh workbench -->
-                                <button mat-icon-button (click)="doAdvancedSearch()"
+                                <button mat-icon-button (click)="this.chosenPostData = undefined; doAdvancedSearch()"
                                     [ngClass]="{ 'twd-animate-spin': polling.active }" [disabled]="polling.active"
                                     [matTooltip]="locale('widgets.workbench.refresh')">
                                     <mat-icon>refresh</mat-icon>
@@ -155,13 +155,28 @@
                                             <div class="post-list-flex twd-w-full twd-pl-5">
                                                 <div mat-ripple (click)="openPost(post)"
                                                     class="post-list mat-elevation-z1 twd-w-full twd-relative twd-rounded-3xl twd-p-3"
-                                                    [ngClass]="
-                                                    ((currentTab !== 'sentitem' && currentTab !== 'draft' && (selectedPostSessionId === post.PostData.SessionId)) || ((currentTab === 'sentitem' || currentTab === 'draft') && selectedPostOutSessionId === post.PostData.OutSessionId))
-                                                        ? ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100'
+                                                    [ngClass]="activeCommentValidator(post)
+                                                        ? getActiveCommentStyle()
                                                         : ' theme-bg'
                                                 " *ngFor="let post of getObjectValueData(skill)">
                                                     <h5 class="font-weight-700 poster">{{post.PostData.From}}</h5>
                                                     <p class="font-weight-500">{{post.PostData.Subject}}</p>
+
+                                                    <!-- Comment reaction indicator -->
+                                                    <img *ngIf="chosenPostData && notificationAction === 'smrc_a' && activeCommentValidator(post)"
+                                                        class="not-rimg"
+                                                        src="assets/images/vectors/{{chosenPostData?.SocialMediaData?.Engagement?.reactionType?.replaceAll(' ', '')}}.svg">
+
+                                                    <!-- Delete / Edit icon indicator -->
+                                                    <mat-icon
+                                                        *ngIf="chosenPostData && notificationAction === 'smc_e' && activeCommentValidator(post)"
+                                                        [ngStyle]="{'color': '#ffcf74'}"
+                                                        class="del_edit-rimg">edit</mat-icon>
+                                                    <mat-icon
+                                                        *ngIf="hidePostActions && activeCommentValidator(post)"
+                                                        [ngStyle]="{'color': '#ec5757'}"
+                                                        class="del_edit-rimg">delete_forever</mat-icon>
+
                                                     <div class="date-time-flex twd-absolute twd-pr-3 twd-pt-3">
                                                         <h5 class="font-weight-700">
                                                             {{formatDate(post.AddedTime).date}}</h5>
@@ -301,7 +316,7 @@
                     *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                     <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p"
-                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId && currentTab !== 'posts'">
+                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId && currentTab !== 'posts' && !hidePostActions">
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
                             (click)="showPostDetails()">
                             {{ locale('sharedComponents.socialMediaPosts.postDetails') }}
@@ -314,14 +329,16 @@
                             {{ locale('sharedComponents.socialMediaPosts.pull') }}
                         </button>
                     </div>
-                    <div
-                        class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full">
+                    <div class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
+                        [ngClass]="{'edit-border': notificationAction === 'smc_e', 'delete-border': hidePostActions}">
                         <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
                             [isDraftMode]="currentTab === 'draft'"
+                            [engagementFromNotification]="notificationAction === 'smrc_a' ? chosenPostData?.SocialMediaData?.Engagement : ''"
+                            [previousCommentFromNotification]="notificationAction === 'smc_e' ? [chosenPostData?.SocialMediaData?.Comments] : []"
                             [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering" [mode]="'workbench'"
                             [postData]="state.openPostResData"
-                            [skipCommentContainer]="currentTab === 'posts'"></smp-template>
+                            [enhanceCommentContainer]="currentTab === 'posts'"></smp-template>
 
                         <!-- Open post loading page -->
                         <div class="twd-flex twd-justify-center twd-items-center twd-flex twd-h-full" fxLayout="column"

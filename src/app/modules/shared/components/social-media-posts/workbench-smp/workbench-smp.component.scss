@@ -82,7 +82,7 @@ workbench-smp {
                     .post-list {
                         height: fit-content;
                         max-height: 90px;
-                        min-height: 75px;
+                        min-height: 80px;
                         display: flex;
                         flex-direction: column;
                         align-items: flex-start;
@@ -98,6 +98,24 @@ workbench-smp {
                             line-clamp: 2;
                             -webkit-box-orient: vertical;
                             max-width: 75%;
+                        }
+
+                        .not-rimg{
+                            position: absolute;
+                            top: 50%;
+                            left: 65%;
+                            transform: translate(0%, -50%);
+                            height: 30px;
+                            width: auto;
+                        }
+
+                        .del_edit-rimg {
+                            position: absolute;
+                            bottom: 7px;
+                            right: 4px;
+                            font-size: 18px;
+                            width: 18px;
+                            height: 18px;
                         }
 
                         .date-time-flex {
@@ -220,4 +238,12 @@ workbench-smp {
     input[type=time] {
         height: 5px;
     }
+}
+
+.edit-border {
+    border: 2px solid #ffcf74 !important;
+}
+
+.delete-border {
+    border: 2px solid #ec5757 !important;
 }

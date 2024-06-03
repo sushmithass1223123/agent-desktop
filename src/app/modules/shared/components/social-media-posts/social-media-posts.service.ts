@@ -1,7 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 const today = new Date();
 const yesterday = new Date();
@@ -70,9 +70,9 @@ export class SocialMediaPostsService {
      * Object to hold post data
      */
     postBodies: any = {};
-    sendReply = new Subject<any>();
-    draftUploadStatus: any = {}
-    draftData: any = {};
+    private _postFromNotification: Subject<any> = new Subject<any>();
+    private _switchTabFromNotification: Subject<any> = new Subject<string>();
+    private _emittedNotificationData: Subject<any> = new Subject<any>();
     /**
      * Service init method
      */
@@ -80,9 +80,33 @@ export class SocialMediaPostsService {
         await this.setMailboxes();
     }
 
+    setPostFromNotification(data): void {
+        this._postFromNotification.next(data)
+    }
+
+    triggerEmittedNotificationData(data): void {
+        this._emittedNotificationData.next(data)
+    }
+
+    get getEmittedNotificationData(): Observable<any> {
+        return this._emittedNotificationData.asObservable();
+    }
+
+    get getPostFromNotification(): Observable<any> {
+        return this._postFromNotification.asObservable();
+    }
+
+    setSwitchTabFromNotification(data): void {
+        this._switchTabFromNotification.next(data)
+    }
+
+    get getSwitchTabFromNotification(): Observable<any> {
+        return this._switchTabFromNotification.asObservable();
+    }
+
     async setMailboxes(): Promise<void> {
         try {
-            const res = await SDKClient.getMailboxes('agent');
+            const res = await SDKClient.getMailboxes('agent', undefined, true);
             if (!res.response) {
                 throw new Error(`Invalid Server response ${JSON.stringify(res.response, null, 2)}`);
             }
