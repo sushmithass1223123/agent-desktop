@@ -562,7 +562,6 @@
             "selectPostLabel": "Select a post to read",
             "pullPostLoading": "Fetching post",
             "postsAssigned": "Posts are already assigned",
-            "somePostsAssigned": "Some posts are already assigned",
             "pullPostsFailed": "Unable to pull posts",
             "pullPostsSuccess": "Posts pulled successfully",
             "postPullConfirmHeader": "Post Pull Confirmation",

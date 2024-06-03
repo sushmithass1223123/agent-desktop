@@ -237,7 +237,7 @@ export interface AppNotification {
     /**
      * Message of app notification
      */
-    message: string;
+    message: string | any;
     /**
      * Time of the app notification
      */

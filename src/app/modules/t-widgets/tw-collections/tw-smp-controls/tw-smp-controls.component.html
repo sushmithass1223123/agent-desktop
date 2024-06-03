@@ -28,26 +28,58 @@
                     <div class="s-actions twd-flex">
                         <!-- <mat-icon role="button">reply</mat-icon> -->
                         <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
-                            (click)="savePostAsDraft(false, true, true)" role="button">save</mat-icon>
+                            (click)="savePostAsDraft(false, true)" role="button">save</mat-icon>
                         <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
                             role="button">forward</mat-icon>
                         <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')" role="button"
                             (click)="closeInteraction()">close</mat-icon>
                     </div>
                 </div>
-                <smp-template [isDraftMode]="isDraftMode"
-                    [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
-                    [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
-                    [outSessionId]="outSessionId" [mode]="'interaction-min'"
-                    [postData]="this.smpService.postBodies[activeSessionId]"
-                    [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
-                <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
-                    (click)="toggleInteractionPopup()">
-                    <p>Load more</p>
-                    <mat-icon>arrow_drop_down</mat-icon>
+                <ng-container *ngIf="postDraftData[interactionId] && smpService.postBodies[activeSessionId]">
+                    <smp-template [isDraftMode]="isDraftMode" [draftData]="postDraftData[interactionId]"
+                        [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
+                        [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
+                        (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
+                        [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []"
+                        (emitReply)="emitReply($event)" [outSessionId]="outSessionId" [mode]="'interaction-min'"
+                        [postData]="this.smpService.postBodies[activeSessionId]"
+                        [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
+                    <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
+                        (click)="toggleInteractionPopup()">
+                        <p>Load more</p>
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </div>
+                </ng-container>
+                <div class="banner-overlay twd-absolute twd-flex"
+                    *ngIf="previousCommentData[activeSessionId] && !previousCommentData[activeSessionId]?.isConsented">
+                    <div class="bg-ol twd-absolute"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"></div>
+                    <div class="custom-dialog deleted"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                        <img src="assets/images/vectors/pc_edited.svg">
+                        <h4>{{locale('widgets.smpControls.commentEditedDialogMessage')}}</h4>
+                        <button mat-raised-button color="primary"
+                            (click)="this.previousCommentData[activeSessionId].isConsented = true; closeInteraction(true)"
+                            type="button">OK</button>
+                    </div>
+                </div>
+                <div class="banner-overlay twd-absolute twd-flex"
+                    *ngIf="deletedPostData[activeSessionId] && !deletedPostData[activeSessionId]?.isConsented">
+                    <div class="bg-ol twd-absolute"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"></div>
+                    <div class="custom-dialog edited"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                        <img src="assets/images/vectors/pc_deleted.svg">
+                        <h4 *ngIf="deletedPostData[activeSessionId].type === 'smp_d'">
+                            {{locale('widgets.smpControls.postDeletedDialogMessage')}}</h4>
+                        <h4 *ngIf="deletedPostData[activeSessionId].type === 'smc_d'">
+                            {{locale('widgets.smpControls.commentDeletedDialogMessage')}}</h4>
+                        <button mat-raised-button color="primary"
+                            (click)="this.deletedPostData[activeSessionId].isConsented = true; closeInteraction(true)"
+                            type="button">OK</button>
+                    </div>
                 </div>
             </div>
-
         </div>
     </tw-wrapper>
 
@@ -67,9 +99,13 @@
                 </div>
             </div>
             <smp-template [MaximumAllowedPostImageRendering]="5" [isDraftMode]="isDraftMode"
+                [draftData]="postDraftData[interactionId]"
+                (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
                 [draftPollDuration]="draftPollDuration" [maxFileUploadSize]="MaxFileUploadSize"
+                [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []"
                 [mode]="'interaction-min'" [interactionId]="interactionId" [outSessionId]="outSessionId"
-                [sessionId]="sessionId" [postData]="this.smpService.postBodies[activeSessionId]"></smp-template>
+                [sessionId]="sessionId" [postData]="this.smpService.postBodies[activeSessionId]"
+                (emitReply)="emitReply($event)"></smp-template>
         </div>
     </div>
 </ng-container>
