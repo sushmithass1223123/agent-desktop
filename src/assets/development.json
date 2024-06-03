@@ -2996,10 +2996,11 @@
                                                     "X": 2,
                                                     "Y": 1
                                                 },
-                                                "Actions": ["maximize", "collapse", "float"],
-                                                "ViewState": "restore",
-                                                "Header": true,
-                                                "Pinned": false
+                                                "Data": {
+                                                    "MaxFileUploadSize": 20971520,
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "MaximumAllowedPostImageRendering": 1
+                                                }
                                             },
                                             "Data": {
                                                 "MaxFileUploadSize": 20971520,
@@ -3914,9 +3915,10 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx",
-                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"
+                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx",
+                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"
                 ],
+                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -3959,5 +3961,5 @@
             }
         }
     },
-    "Version": "5.7.0-beta.1"
+    "Version": "5.7.0-beta.2"
 }

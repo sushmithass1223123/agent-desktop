@@ -231,7 +231,11 @@
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
                 "transferInteraction": "Transfer interaction"
-            }
+            },
+            "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
+            "commentEditedDialogMessage": "Comment has been edited! Please pull the post again to continue.",
+            "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
+            "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed."
         },
         "voiceControls": {
             "reset": "Reset",
@@ -329,7 +333,7 @@
             "loadingChangeStatus": "Please wait, changing status...",
             "agentStatusSuccess": "Status of Agent changed successfully to #newStatus",
             "agentStatusApproved": "Agent accepted the request and changed to #approvedStatus",
-            "changeStatuscancelled": "Status change canceled",
+            "changeStatuscancelled": "Status Change Cancelled",
             "alertChangeStatus": "Supervisor wants to change your status to #status",
             "statusChangeRequestSuccess": "#agentName is on call, status change request sent successfully",
             "statusChangeFailed": "Status change failed!",
@@ -998,7 +1002,6 @@
             "selectPostLabel": "Select a post to read",
             "pullPostLoading": "Fetching post",
             "postsAssigned": "Posts are already assigned",
-            "somePostsAssigned": "Some posts are already assigned",
             "pullPostsFailed": "Unable to pull posts",
             "pullPostsSuccess": "Posts pulled successfully",
             "postPullConfirmHeader": "Post Pull Confirmation",
@@ -1008,7 +1011,8 @@
             "invalidPostResponse": "Could not read post data",
             "uploadFileLoading": "Please wait while the file uploads",
             "uploadFileSizeWarning": "File size exceeded!",
-            "fileTypeNotSupported": "Selected file type is not allowed to upload!"
+            "fileTypeNotSupported": "Selected file type is not allowed to upload!",
+            "noCommentsFoundMessage": "No comments found!"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

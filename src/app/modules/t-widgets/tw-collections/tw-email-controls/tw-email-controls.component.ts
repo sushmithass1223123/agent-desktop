@@ -1310,7 +1310,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.rejectEmailFailed'), 'failure');
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.rejectEmailSuccess'));
-                            this.closeEmail(null, true);
+                           // this.closeEmail(null, true);
                         }
                         this._fuseProgressBarService.hide();
                     })

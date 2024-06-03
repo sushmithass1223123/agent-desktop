@@ -11,6 +11,8 @@
         config: customFuse.config$ | async
     } as customFuse"
 >
+<!-- if AOT widget: DragBoundary is 'body' 
+    else it is taken from configurations -->
     <tw-card
         cdkDrag
         [cdkDragBoundary]="data.Config?.AOT ? 'body' : data.Config?.DragBoundary ?? '.container'"

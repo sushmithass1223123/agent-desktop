@@ -337,7 +337,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         this._fuseProgressBarService.hide();
         let emailMeta = JSON.parse(evt.JsonData);
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
-            isEmailSent: true
+            isEmailSent: true,
+            isReplySent: true
         });
         if (EMAIL_SEND_STATUS[emailMeta?.StatusCode] === 'Success') {
             this._sharedService.triggerEmailFailure(evt.InteractionID);
