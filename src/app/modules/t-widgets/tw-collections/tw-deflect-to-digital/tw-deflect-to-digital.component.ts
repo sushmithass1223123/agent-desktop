@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AGENT_FEATURES } from 'app/constants';
+import { FormControl } from '@angular/forms';
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
@@ -36,6 +37,12 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      * Agents comment
      */
     comment = '';
+
+    /**
+     * selected send type
+     */
+    sendType = new FormControl();
+
 
     /**
      * Text template componet ref
@@ -137,7 +144,9 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 customerContact: this.toNumber,
                 templateMessage: template,
                 comment: this.comment,
-                additionalParams: JSON.stringify({}),
+                additionalParams: JSON.stringify({
+                    sendType: this.sendType.value
+                }),
                 deflectExpiry: this.data.Data.DeflectExpiry,
                 deflectIntent: this.data.Data.DeflectIntent,
                 destChannel: this.data.Data.DestChannel,
@@ -187,6 +196,20 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
         } catch (error) {}
     }
+
+    /**
+     * Types of sending notification
+     */
+    SendTypeList = [
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeSMS'),
+            value: "sms"
+        },
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeEmail'),
+            value: "email"
+        }
+    ];
     
 }
 interface WidgetData {

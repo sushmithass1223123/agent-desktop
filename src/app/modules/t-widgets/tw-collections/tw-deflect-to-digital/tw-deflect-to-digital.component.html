@@ -1,23 +1,53 @@
 <tw-wrapper [data]="data" *transloco="let locale">
     <div class="twd-flex twd-gap-x-2 twd-h-full twd-p-2 twd-pb-4 twd-relative">
         <ng-container *ngIf="!!templatesRef?.loading as widgetLoading">
-            <mat-progress-bar class="!twd-absolute !twd-w-full twd-top-0 twd-left-0" *ngIf="widgetLoading" mode="query"></mat-progress-bar>
+            <mat-progress-bar
+                class="!twd-absolute !twd-w-full twd-top-0 twd-left-0"
+                *ngIf="widgetLoading"
+                mode="query"
+            ></mat-progress-bar>
         </ng-container>
         <div class="twd-w-5/12 twd-flex twd-flex-col">
             <mat-form-field class="custom custom-matfield with-border" appearance="outline">
-                <input matInput [placeholder]="locale('widgets.composeMessage.toPlaceholder')" type="tel" [(ngModel)]="toNumber" autocomplete="off" />
+                <input
+                    matInput
+                    [placeholder]="locale('widgets.composeMessage.toPlaceholder')"
+                    type="tel"
+                    [(ngModel)]="toNumber"
+                    autocomplete="off"
+                />
                 <button *ngIf="!toNumber; else clearBtn" mat-icon-button matSuffix disabled>
                     <mat-icon matSuffix>smartphone</mat-icon>
                 </button>
                 <ng-template #clearBtn>
-                    <button mat-button color="primary" matSuffix mat-icon-button aria-label="Clear" (click)="toNumber = ''">
+                    <button
+                        mat-button
+                        color="primary"
+                        matSuffix
+                        mat-icon-button
+                        aria-label="Clear"
+                        (click)="toNumber = ''"
+                    >
                         <mat-icon>close</mat-icon>
                     </button>
                 </ng-template>
             </mat-form-field>
+            <mat-form-field
+                class="custom custom-matfield with-border"
+                *ngIf="data.Data.enableSendType"
+                appearance="outline"
+            >
+                <mat-select [formControl]="sendType" [placeholder]="locale('widgets.deflectToDigital.typePlaceholder')">
+                    <mat-option *ngFor="let item of SendTypeList" [value]="item.value">{{ item.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
             <div class="twd-flex-1 twd-relative">
                 <div class="twd-absolute twd-h-full twd-w-full">
-                    <mat-form-field class="twd-h-full twd-w-full custom-textarea custom pb-0 border-radius-20 with-border" appearance="outline">
+                    <mat-form-field
+                        class="twd-h-full twd-w-full custom-textarea custom pb-0 border-radius-20 with-border"
+                        appearance="outline"
+                    >
                         <textarea
                             matInput
                             matAutosizeMinRows="1"

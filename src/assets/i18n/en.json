@@ -333,7 +333,7 @@
             "loadingChangeStatus": "Please wait, changing status...",
             "agentStatusSuccess": "Status of Agent changed successfully to #newStatus",
             "agentStatusApproved": "Agent accepted the request and changed to #approvedStatus",
-            "changeStatuscancelled":"Status Change Cancelled",
+            "changeStatuscancelled": "Status Change Cancelled",
             "alertChangeStatus": "Supervisor wants to change your status to #status",
             "statusChangeRequestSuccess": "#agentName is on call, status change request sent successfully",
             "statusChangeFailed": "Status change failed!",
@@ -422,7 +422,10 @@
             "toFieldRequiredMsg": "Please provide the number to deflect",
             "deflectLoading": "Deflecting",
             "deflectError": "Unable to Deflect: ",
-            "deflectFailed": "Deflecting failed"
+            "deflectFailed": "Deflecting failed",
+            "typePlaceholder": "Send Type",
+            "typeSMS": "SMS",
+            "typeEmail": "EMAIL"
         },
         "customerJourney": {
             "voiceWith": "Voice with",
