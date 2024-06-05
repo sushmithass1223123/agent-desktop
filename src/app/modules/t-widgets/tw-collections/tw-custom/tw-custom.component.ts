@@ -191,6 +191,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                             {
                                 label: 'OnTMACEvent',
                                 callback: evts => this.sendDataToWindow('onTMACEvent', evts)
+                            },
+                            {
+                                label: 'OnConsultDestinationAgentsListEvent',
+                                callback: evts => this.sendDataToWindow('onTMACEvent', evts)
                             }
                         ]);
                         break;
