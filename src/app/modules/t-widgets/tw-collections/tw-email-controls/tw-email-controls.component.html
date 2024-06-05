@@ -456,7 +456,7 @@
                     class="border-radius-20"
                     color="warn"
                     mat-raised-button
-                    (click)="rejectEmailDialogRef.close(); rejectReason = { comment: '', reasonTags: '' }"
+                    (click)="rejectEmailDialogRef.close(true);"
                 >
                     {{ locale('interactionComponent.cancel') }}
                 </button>

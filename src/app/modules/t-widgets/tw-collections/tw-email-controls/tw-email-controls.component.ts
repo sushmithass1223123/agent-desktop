@@ -1297,7 +1297,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             maxWidth: '450px',
             disableClose: true
         });
-        this.rejectEmailDialogRef.afterClosed().subscribe(() => {
+        this.rejectEmailDialogRef.afterClosed().subscribe((skipRejectMail = false) => {
+            if(skipRejectMail) return;
             const { comment, reasonTags } = this.rejectReason;
             if (comment) {
                 SDKClient.rejectEmail({
