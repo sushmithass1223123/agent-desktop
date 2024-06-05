@@ -31,7 +31,7 @@ import {
     UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, MAIL_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -127,7 +127,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Inbox reasons
      */
     InboxReasons = INBOX_REASONS;
-
+    /**
+     * Mail reason
+     */
+    MailReasons = MAIL_REASONS;
     /**
      * Fuse custom config
      */

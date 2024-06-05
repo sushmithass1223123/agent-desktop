@@ -23,7 +23,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { AppDataService } from '@services/app-data.service';
 import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
-import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS,MAIL_REASONS } from 'app/constants';
+import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS} from 'app/constants';
 import { EmailComponentInputs, IWidget, ResData, MediaStreamerMultiResponse, MediaStreamerMetaResponse } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
@@ -140,10 +140,6 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Sent reason
      */
     SentReasons = SENT_REASONS;
-    /**
-     * Mail reason
-     */
-    MailReasons = MAIL_REASONS;
     /**
      * Email bodies
      */
