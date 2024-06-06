@@ -31,7 +31,7 @@ import {
     UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, MAIL_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -127,7 +127,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Inbox reasons
      */
     InboxReasons = INBOX_REASONS;
-
+    /**
+     * Mail reason
+     */
+    MailReasons = MAIL_REASONS;
     /**
      * Fuse custom config
      */
@@ -1297,7 +1300,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             maxWidth: '450px',
             disableClose: true
         });
-        this.rejectEmailDialogRef.afterClosed().subscribe(() => {
+        this.rejectEmailDialogRef.afterClosed().subscribe((skipRejectMail = false) => {
+            if(skipRejectMail) return;
             const { comment, reasonTags } = this.rejectReason;
             if (comment) {
                 SDKClient.rejectEmail({
@@ -1310,7 +1314,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.rejectEmailFailed'), 'failure');
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.rejectEmailSuccess'));
-                            this.closeEmail(null, true);
+                            //this.closeEmail(null, true);
                         }
                         this._fuseProgressBarService.hide();
                     })
