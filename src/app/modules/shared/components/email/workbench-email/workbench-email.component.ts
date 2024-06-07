@@ -972,9 +972,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         if (this.currentTab === 'draft') {
                             item.sessionId = curr.OutSessionId;
                         } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
-                            item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                            item.sessionId = curr.OutSessionId ? `${curr.InSessionId}|${curr.OutSessionId}` : curr.InSessionId;
                         } else if (this.currentTab === 'sentitem') {
-                            item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                            item.sessionId = curr.OutSessionId ? `${curr.InSessionId}|${curr.OutSessionId}` : curr.InSessionId;
                             // item.inSessionId = curr.OutSessionId;
                         }
                         delete this.emailBodies[curr.InSessionId];

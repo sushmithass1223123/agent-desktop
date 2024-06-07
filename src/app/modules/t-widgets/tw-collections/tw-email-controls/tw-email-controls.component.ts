@@ -1301,7 +1301,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             disableClose: true
         });
         this.rejectEmailDialogRef.afterClosed().subscribe((skipRejectMail = false) => {
-            if(skipRejectMail) return;
+            if(skipRejectMail) {
+            evt.disabled = false;
+            this._fuseProgressBarService.hide();
+                return;
+            }
             const { comment, reasonTags } = this.rejectReason;
             if (comment) {
                 SDKClient.rejectEmail({
