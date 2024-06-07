@@ -31,7 +31,7 @@ import { SocialMediaPostsService } from '../social-media-posts.service';
 })
 export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() postData: SmpComponentInputs;
-    @Input() mode: 'workbench' | 'interaction-min';
+    @Input() mode: 'workbench' | 'interaction-min' | 'interaction-max';
     @ViewChild('fileInput') fileInput!: ElementRef;
     /**
      * Reply input children ref
@@ -131,7 +131,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             this.postData.SmActiveComment = this.postData.SmParentComments;
             this.postData.SmParentComments = null;
         }
-        if (this.enhanceCommentContainer) this.loadCommentHistory();
+        if (this.enhanceCommentContainer || this.mode === 'interaction-max') this.loadCommentHistory();
         this.cdr.detectChanges();
     }
 
@@ -362,7 +362,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
 
             const ext = resVal.Name.split('.').pop();
 
-            this.dataChanged.emit(this.interactionId)
+            this.dataChanged.emit(this.interactionId);
 
             this.draftData.attachments = [
                 {
@@ -416,7 +416,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             this.draftData.mimeConstraints = '';
             this.draftData.rawAttachmentData = '';
             this.draftData.attachments = [];
-            this.dataChanged.emit(this.interactionId)
+            this.dataChanged.emit(this.interactionId);
         }
     }
 
@@ -443,7 +443,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 startIndex: this.indexHolder[0][0],
                 endIndex: this.indexHolder[0][1]
             });
-            if (!response) {
+            if (!response || (Array.isArray(response) && !response?.length)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.noCommentsFoundMessage'),
                     'failure'
@@ -452,14 +452,15 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 return;
             }
             this.generateSegregatedComment(response, -1);
-            if (this.engagementFromNotification) {
+            if (this.engagementFromNotification || this.mode === 'interaction-max') {
+                const checkerId = this.engagementFromNotification
+                    ? this.engagementFromNotification.smmId
+                    : this.postData.SmActiveComment.CommentId;
                 const isActiveCommentFound = this.flattenedCommentHistory.findIndex(
-                    (commentData: any) =>
-                        commentData.CommentId === this.engagementFromNotification.smmId ||
-                        commentData.PostId === this.engagementFromNotification.smmId
+                    (commentData: any) => commentData.CommentId === checkerId || commentData.PostId === checkerId
                 );
                 if (isActiveCommentFound < 0) this.onLoadNextHistory('comments');
-                else this.validateVisibleComments(this.engagementFromNotification.smmId);
+                else this.validateVisibleComments(checkerId);
             }
             console.log(this.flattenedCommentHistory);
         } catch (error) {

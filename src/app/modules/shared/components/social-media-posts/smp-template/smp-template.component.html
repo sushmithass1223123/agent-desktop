@@ -8,7 +8,7 @@
         [ngClass]="{'twd-p-1': mode !== 'workbench', 'twd-p-4': mode === 'workbench'}">
         <ng-container>
             <div class="smp-post-info-container twd-flex twd-w-full">
-                <div class="poster-info-flex twd-flex" *ngIf="mode !== 'interaction-min'">
+                <div class="poster-info-flex twd-flex" *ngIf="mode !== 'interaction-min' && mode !== 'interaction-max'">
                     <img src="assets/images/vectors/{{postData?.SubChannel}}.svg" alt="Poster profile picture">
                     <div class="poster-identity-flex twd-flex twd-flex-col">
                         <h5 class="font-weight-700">{{postData?.PostAccountName}} . <span>1hr . Edited</span>
@@ -200,19 +200,22 @@
 
                     <!-- Previous -->
                     <ng-container *ngIf="findPreviousCommentIndex() as prevComment">
-                        <mat-icon role="button" (click)="this.showPreviousComment = !this.showPreviousComment" class="prev-com-trigger">info</mat-icon>
-                        <div *ngIf="showPreviousComment" style="margin-left: -5px;" class="previous-comment-holder mat-elevation-z1">
+                        <mat-icon role="button" (click)="this.showPreviousComment = !this.showPreviousComment"
+                            class="prev-com-trigger">info</mat-icon>
+                        <div *ngIf="showPreviousComment" style="margin-left: -5px;"
+                            class="previous-comment-holder mat-elevation-z1">
                             <h4>Previous comment</h4>
                             <div class="comment-flex twd-w-full">
                                 <div class="image-container twd-relative">
                                     <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
                                 </div>
-                                <div style="max-width: 100%;" class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative">
-        
+                                <div style="max-width: 100%;"
+                                    class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative">
+
                                     <!-- Comment time -->
                                     <p class="duration font-weight-500 twd-absolute">
                                         {{getGenericTimeFormat(prevComment?.CommentText?.InsertionDateTime)}}</p>
-        
+
                                     <!-- Comment actions -->
                                     <div class="active-comment-actions twd-flex twd-absolute">
                                         <div class="reaction-palette twd-flex"
@@ -227,10 +230,11 @@
                                             </p>
                                         </div>
                                     </div>
-        
+
                                     <!-- Actual comment detail -->
                                     <div class="comment-info-flex">
-                                        <h5 style="max-width: 10vw;" class="font-weight-700 text-truncate">{{prevComment?.FromName ?
+                                        <h5 style="max-width: 10vw;" class="font-weight-700 text-truncate">
+                                            {{prevComment?.FromName ?
                                             prevComment?.FromName : postData?.PostAccountName}}</h5>
                                         <p class="font-weight-500">{{prevComment?.CommentText?.PreviousComment}}</p>
                                         <div class="media-data-placeholder twd-flex" role="button"
@@ -249,11 +253,14 @@
                                                 </ng-container>
                                             </ng-container>
                                         </div>
-                                        <ng-container *ngIf="prevComment?.CommentAttachments?.length === 1 && renderPrevCommentAttachment"
+                                        <ng-container
+                                            *ngIf="prevComment?.CommentAttachments?.length === 1 && renderPrevCommentAttachment"
                                             [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl)">
-                                            <img *ngSwitchCase="'image'" [src]="prevComment?.CommentAttachments[0]?.MediaUrl">
-                                            <video *ngSwitchCase="'video'" [src]="prevComment?.CommentAttachments[0]?.MediaUrl"
-                                                [autoplay]="false" controls></video>
+                                            <img *ngSwitchCase="'image'"
+                                                [src]="prevComment?.CommentAttachments[0]?.MediaUrl">
+                                            <video *ngSwitchCase="'video'"
+                                                [src]="prevComment?.CommentAttachments[0]?.MediaUrl" [autoplay]="false"
+                                                controls></video>
                                         </ng-container>
                                     </div>
                                 </div>
@@ -270,7 +277,8 @@
                         [ngStyle]="{'paddingLeft': postData?.SmActiveComment?.ParentId !== postData?.PostId ? '40px' : '45px'}">
                         <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
                             <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
-                                placeholder="Enter your reply here..." (input)="dataChanged.emit(interactionId)"></textarea>
+                                placeholder="Enter your reply here..."
+                                (input)="dataChanged.emit(interactionId)"></textarea>
                             <div class="attachment-container" *ngIf="draftData?.rawAttachmentData">
                                 <mat-icon role="button" (click)="onClearAttachment()">close</mat-icon>
                                 <img *ngIf="draftData?.mimeConstraints.includes('image')"
@@ -308,7 +316,7 @@
                         <div class="image-container twd-relative">
                             <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
                         </div>
-                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{(engagementFromNotification && engagementFromNotification?.smmId === commentData?.CommentId || engagementFromNotification?.smmId === commentData?.PostId) ? 'active-comment' : ''}}"
+                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{((engagementFromNotification && engagementFromNotification?.smmId === commentData?.CommentId || engagementFromNotification?.smmId === commentData?.PostId) || (mode === 'interaction-max' && commentData?.CommentId === postData?.SmActiveComment?.CommentId)) ? 'active-comment' : ''}}"
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
 
                             <!-- Reaction from notification -->
@@ -366,6 +374,44 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Reply container -->
+                    <ng-container *ngIf="mode === 'interaction-max' && draftData && commentData?.CommentId === postData?.SmActiveComment?.CommentId">
+                        <div class="reply-area twd-relative"
+                            [ngStyle]="{ 'paddingLeft': (commentData.nestLevel * 45)+'px'}">
+                            <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
+                                <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
+                                    placeholder="Enter your reply here..."
+                                    (input)="dataChanged.emit(interactionId)"></textarea>
+                                <div class="attachment-container" *ngIf="draftData?.rawAttachmentData">
+                                    <mat-icon role="button" (click)="onClearAttachment()">close</mat-icon>
+                                    <img *ngIf="draftData?.mimeConstraints.includes('image')"
+                                        (click)="previewMedia({MediaType: 'image', MediaUrl: draftData?.rawAttachmentData})"
+                                        [src]="draftData?.rawAttachmentData">
+                                </div>
+                                <div class="reply-actions twd-w-full twd-flex">
+                                    <div class="r-actions twd-flex">
+                                        <mat-icon (click)="this.showEmojiPicker = !this.showEmojiPicker"
+                                            role="button">tag_faces</mat-icon>
+                                        <mat-icon
+                                            [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
+                                            (click)="onAttach('image/gif')" role="button">gif</mat-icon>
+                                        <mat-icon
+                                            [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
+                                            (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
+                                        <mat-icon
+                                            [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
+                                            (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
+                                    </div>
+                                    <mat-icon role="button" (click)="onSendReply()">send</mat-icon>
+                                </div>
+                                <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"
+                                    [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"
+                                    isNative="true" navPosition="none" searchPosition="none"></emoji-mart>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Load replies for this comment -->
                     <div class="load-template twd-flex" (click)="onForceLoadHistory('replies', commentData)"
                         *ngIf="commentData?.ReplyComments?.length && commentData?.isVisible && !validateLoadHistory('replies', commentData)"
                         [ngStyle]="{ 'paddingLeft': ((commentData.nestLevel + 1) * 45)+'px'}">

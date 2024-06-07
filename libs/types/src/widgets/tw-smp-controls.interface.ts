@@ -1,3 +1,4 @@
+import { AgentSkillConfig } from './../components/agent-skill-list.interface';
 import { InteractionWidget } from '..';
 
 /**
@@ -36,6 +37,10 @@ export interface TwSmpControls<T> extends InteractionWidget<TwSmpControlsData, T
  * Data config for tw-email-controls widget
  */
 export interface TwSmpControlsData {
+    /**
+     * Transfer config
+    */
+    Transfer: AgentSkillConfig;
     /**
      * Number in bytes to specify maximum file upload size
      */

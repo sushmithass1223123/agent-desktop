@@ -321,7 +321,7 @@
                             (click)="showPostDetails()">
                             {{ locale('sharedComponents.socialMediaPosts.postDetails') }}
                         </button>
-                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm">
+                        <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm" (click)="transferPost([selectedPost])">
                             {{ locale('sharedComponents.socialMediaPosts.transfer') }}
                         </button>
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"

@@ -104,6 +104,10 @@ export type TwSmpWorkbenchTabs = 'queue' | 'inbox' | 'sent' | 'drafts' | 'posts'
 
 export type TwSmpWorkbenchConfig = {
     /**
+     * Transfer related settings of the workbench tab
+    */
+    Transfer?: AgentSkillConfig;
+    /**
      * Tabs to be configured to show on workbench
      * @type {TwSmpWorkbenchTabs[]} Array of tab items
      * @default []

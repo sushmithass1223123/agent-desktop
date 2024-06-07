@@ -1,3 +1,4 @@
+import { AgentSkillListComponent } from '@modules/shared/components';
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
@@ -11,11 +12,13 @@ import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AppUiService } from '@services/app-ui.service';
 import { addHours, format, format as formatDate } from 'date-fns';
-import { isEqual } from 'lodash';
+import { isEqual, merge } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { GetInboxItemResult, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
 import { OUTBOX_REASONS } from 'app/constants';
+import { MatDialog } from '@angular/material/dialog';
+import { AgentSkillListDataModel } from 'app/models';
 
 export class SMPost {
     Mailbox?: string;
@@ -58,6 +61,11 @@ interface PostData {
     RejectReason: string;
     PostId?: string;
     IsDeleted?: boolean;
+}
+
+const channelMapper: any = {
+    'fb': 'facebook',
+    'instagram': 'instagram'
 }
 
 /**
@@ -292,7 +300,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         private translocoService: TranslocoService,
         private _smpService: SocialMediaPostsService,
         private _appUiService: AppUiService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _matDialog: MatDialog
     ) {
         super('WorkbenchSmpComponent');
     }
@@ -850,7 +859,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillId: x?.SkillId,
                     SkillName: x?.SkillName,
                     Status: x?.Status,
-                    SubChannel: x?.SubChannel,
+                    SubChannel: channelMapper[x?.SubChannel?.toLowerCase()],
                     PostData: {
                         ...JSON.parse(x?.Data)
                     }
@@ -899,7 +908,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillId: x?.MakerSkill,
                     SkillName: x?.MakerSkillName,
                     Status: x?.Status,
-                    SubChannel: x?.Channel?.toLowerCase(),
+                    SubChannel: channelMapper[x?.Channel?.toLowerCase()],
                     PostData: {
                         SessionId: x?.SessionID,
                         OutSessionId: '',
@@ -968,7 +977,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillId: '',
                     SkillName: '',
                     Status: 0,
-                    SubChannel: x?.Label?.split('Draft_')?.pop()?.toLowerCase(),
+                    SubChannel: channelMapper[x?.Label?.split('Draft_')?.pop()?.toLowerCase()],
                     PostData: {
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
@@ -1031,7 +1040,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     SkillId: '',
                     SkillName: '',
                     Status: 0,
-                    SubChannel: x?.Label?.split('Sent_')?.pop()?.toLowerCase(),
+                    SubChannel: channelMapper[x?.Label?.split('Sent_')?.pop()?.toLowerCase()],
                     PostData: {
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
@@ -1277,6 +1286,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             IsOutbound: fetchFromOutbox,
                             IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
                             IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
+                            RouteId: post.PostData.RouteId,
                             PostDetails: {
                                 To: post.PostData.To,
                                 From: post.PostData.From,
@@ -1293,13 +1303,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
-                let modifiedAttachmentData = [
-                    {
-                        IsCloud: true,
-                        Url: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
-                        IsUploaded: true
-                    }
-                ];
+                let modifiedAttachmentData: any[] = [];
+                if(outboxRes?.SocialMediaData?.Comments?.CommentAttachments?.length) {
+                    modifiedAttachmentData = [
+                        {
+                            IsCloud: true,
+                            Url: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                            IsUploaded: true
+                        }
+                    ];
+                }
 
                 let tempAttachments = await this.requestAttachmentData(
                     this.currentTab === 'draft' ? modifiedAttachmentData : outboxRes.Attachments
@@ -1325,6 +1338,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         IsOutbound: fetchFromOutbox,
                         IsCommentDeleted: outboxRes.SocialMediaData.Comments?.IsDeleted,
                         IsPostDeleted: outboxRes.SocialMediaData.Posts?.IsDeleted,
+                        RouteId: post.PostData.RouteId,
                         PostDetails: {
                             To: post.PostData.To,
                             From: post.PostData.From,
@@ -1627,5 +1641,57 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             default:
                 return ' twd-bg-primary-100 twd-border-primary-default twd-border-opacity-100';
         }
+    }
+
+    /**
+     * Transfers post
+     * @param {any} email
+     */
+    transferPost(posts: SMPost[]): void {
+        const config = (this.channelConf?.Config || {}) as TwSmpWorkbenchConfig;
+
+        const transferConfig = config?.Transfer ?? {};
+        let data = new AgentSkillListDataModel('transferEmail', 'Transfer Post');
+        data = merge({}, data, transferConfig);
+        const sessionKey = this.getCurrentSessionKey();
+        data = {
+            ...data,
+            OtherData: {
+                type: 'transfer',
+                emails: posts.map((p) => ({
+                    ...p,
+                    SessionId: p[sessionKey],
+                    RouteId: p.PostData.RouteId
+                })),
+                useMediaMatrixProxyUrl: true
+            },
+            Callback: ({ success }) => {
+                if (success) {
+                    this.doAdvancedSearch(true);
+                    this.openPostRes.data.next(null);
+                }
+            }
+        };
+
+        this._matDialog.open(AgentSkillListComponent, {
+            data,
+            panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
+            minWidth: '30%',
+            maxWidth: '100%',
+            disableClose: true
+        });
+    }
+
+    /**
+     * Method to get the session key based on current tab
+     * Gets the current session's key name
+     * @returns {string}
+     */
+    getCurrentSessionKey(): string {
+        let sessionKey = 'OutSessionId';
+        if (['inbox', 'queue'].includes(this.currentTab)) {
+            sessionKey = 'SessionId';
+        }
+        return sessionKey;
     }
 }
