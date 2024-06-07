@@ -1,5 +1,5 @@
 import { SMP_REASONCODE_VALUES, SMP_CURRENTSTATUS_CODES } from './../../../../constants/smp.constants';
-import { InteractionWidgetBaseData, TwSmpControlsData } from '@ad/types';
+import { AgentSkillListData, InteractionWidgetBaseData, TwSmpControlsData } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -10,21 +10,30 @@ import {
     Output,
     ViewEncapsulation
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { AgentSkillListComponent } from '@modules/shared/components';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { AgentNotificaitonEvent, IncomingEmailEvent, IResponse, SDKClient } from '@tmac/sdk';
+import { AgentNotificaitonEvent, IncomingEmailEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { InteractionRef, IWidget } from 'app/interfaces';
-import { ADError, throwADError } from 'app/utils';
-import { interval, Subscription } from 'rxjs';
+import { InteractionRef, IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
+import { AgentSkillListDataModel } from 'app/models';
+import { ADError, maticonByExtension, throwADError } from 'app/utils';
+import { merge } from 'lodash';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
 declare var document: any;
+
+const channelMapper: any = {
+    fb: 'facebook',
+    instagram: 'instagram'
+};
 
 type SmpEventGeneric = IncomingEmailEvent;
 
@@ -95,6 +104,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     previousCommentData: any = {};
     deletedPostData: any = {};
     postDraftData: any = {};
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -103,23 +116,32 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         public smpService: SocialMediaPostsService,
         private _contentPageService: ContentPageService,
         private _appUiService: AppUiService,
-        private _fuseProgressBarService: FuseProgressBarService
+        private _fuseProgressBarService: FuseProgressBarService,
+        private _matDialog: MatDialog,
+        private _appDataService: AppDataService
     ) {
         super('TwSmpControlsComponent');
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.initWrapper(this.data);
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.outSessionId = this.data.InteractionDetails?.OutSessionID;
         this.isDraftMode = this.data.InteractionDetails.RouteReason === 'AgentDraftPull';
+        if (this.data.InteractionDetails.RecoveryData.Email_RouteReason === 'TransferToAgent') {
+            await this.generatePostBody(this.data.InteractionDetails.RecoveryData.Email_MainSesisonId);
+        }
         this.maximumAllowedPostImageRendering = this.data.Data.MaximumAllowedPostImageRendering;
         if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
         else this.activeSessionId = this.sessionId;
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
+
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
 
         this.smpService.getEmittedNotificationData
             .pipe(takeUntil(this.unsubscribeAll))
@@ -159,6 +181,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.sessionId = i.otherData?.SessionId;
                             this.outSessionId = i.otherData?.OutSessionID;
                             this.isDraftMode = i.otherData?.RouteReason === 'AgentDraftPull';
+                            if (i.otherData.RecoveryData.Email_RouteReason === 'TransferToAgent') {
+                                this.generatePostBody(i.otherData.RecoveryData.Email_MainSesisonId);
+                            }
                             if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
                             else this.activeSessionId = this.sessionId;
                             this.interactionId = i.interactionId;
@@ -611,5 +636,176 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         }
 
         return { isModified: isModified, changes: result };
+    }
+
+    /**
+     * Transfers post
+     */
+    transferPost(): void {
+        const transferConfig = this.data.Data.Transfer ?? {};
+        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Post');
+        data = merge({}, data, transferConfig);
+        data = {
+            ...data,
+            InteractionId: this.interactionId,
+            OtherData: {
+                type: 'transfer',
+                emails: [this.smpService.postBodies[this.activeSessionId]].map((p) => ({
+                    ...p,
+                    SessionId: this.activeSessionId
+                })),
+                useMediaMatrixProxyUrl: true
+            }
+        };
+
+        this._matDialog.open(AgentSkillListComponent, {
+            data,
+            panelClass: [
+                'agent-skill-dialog',
+                'twd-w-11/12',
+                'twd-h-10/12',
+                'lg:twd-w-7/12',
+                'lg:twd-h-8/12',
+                'xl:twd-w-6/12',
+                '2xl:twd-w-5/12'
+            ],
+            minWidth: '30%',
+            maxWidth: '100%',
+            disableClose: true
+        });
+    }
+
+    clearDraftData(): void {
+        try {
+            this.postDraftData[this.interactionId] = {
+                body: '',
+                mimeConstraints: '',
+                rawAttachmentData: '',
+                attachments: [],
+                isReplyDrafted: false
+            };
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: any[]): Promise<any> {
+        try {
+            //extract file id's
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.Url.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId, URL: cur.Url });
+                        } else {
+                            acc.att.push({ ...cur, URL: cur.Url });
+                        }
+                    } else {
+                        acc.att.push({ ...cur, URL: cur.Url });
+                    }
+                    return acc;
+                },
+                { ids: [], att: [] }
+            );
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                try {
+                    const { response } = await TUtils.HttpClient.sendRequest<
+                        MediaStreamerMultiResponse<MediaStreamerMetaResponse>
+                    >({
+                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                        method: 'GET',
+                        responseType: 'json'
+                    });
+
+                    if (response?.result?.length > 0) {
+                        attachmentMap.att.forEach((cur) => {
+                            if (cur.IsCloud) {
+                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                                if (fileMeta) {
+                                    cur.ArchiveStatus = fileMeta.archiveStatus;
+                                    cur.RestoreStatus = fileMeta.restoreStatus;
+                                    cur.FileError = fileMeta.fileError;
+                                }
+                            }
+                        }, []);
+                    }
+                } catch (ex) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.fileMetaError'),
+                        'failure'
+                    );
+                    attachmentMap.att.forEach((cur) => {
+                        cur.ArchiveStatus = null;
+                        cur.RestoreStatus = null;
+                        cur.FileError = true;
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
+        }
+    }
+
+    async generatePostBody(sid: any): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                let inboxRes: any;
+                inboxRes = (await SDKClient.getInboxItem(sid)).response;
+                const getAttachments = (attachments: any[]): any[] => {
+                    if (attachments && attachments.length) {
+                        return attachments.map((item: any) => {
+                            let uploadedName = item.Url.split('/').pop();
+                            if (!item.Name) {
+                                uploadedName = uploadedName.replace(sid, '');
+                                item.Name = uploadedName;
+                            }
+                            item.Ext = item.Name.split('.').pop();
+                            item.Icon = maticonByExtension(item.Ext);
+                            return item;
+                        });
+                    }
+                    return [];
+                };
+                let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
+                let smData = inboxRes?.SocialMediaData;
+                this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
+                    [sid]: {
+                        Files: getAttachments(tempAttachments),
+                        ConversationID: inboxRes.ConversationID,
+                        SessionId: sid,
+                        SubChannel: (
+                            channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? inboxRes.EmailType
+                        ).toLowerCase(),
+                        Subject: inboxRes.Subject,
+                        PostAccountName: inboxRes.SocialMediaData.Posts.AccountName
+                            ? inboxRes.SocialMediaData.Posts.AccountName
+                            : inboxRes.SocialMediaData.Posts.AccountId,
+                        PostId: inboxRes.SocialMediaData.Posts.PostId,
+                        SmActiveComment: inboxRes.SocialMediaData.Comments,
+                        SmParentComments: inboxRes.SocialMediaData.ParentComments,
+                        PostText: inboxRes.SocialMediaData.Posts.PostText,
+                        PostAttachments: inboxRes.SocialMediaData.Posts.PostAttachments,
+                        PostEngagements: inboxRes.SocialMediaData.Posts.PostEngagements,
+                        Engagement: inboxRes.SocialMediaData.Engagement,
+                        IsOutbound: false,
+                        IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
+                        IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
+                        RouteId: inboxRes?.RouteId
+                    }
+                });
+                resolve(true);
+            } catch (error) {
+                resolve(true);
+                console.error();
+            }
+        });
     }
 }

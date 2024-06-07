@@ -230,7 +230,8 @@
             "tooltips": {
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
-                "transferInteraction": "Transfer interaction"
+                "transferInteraction": "Transfer interaction",
+                "clearData": "Clear data"
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited! Please pull the post again to continue.",

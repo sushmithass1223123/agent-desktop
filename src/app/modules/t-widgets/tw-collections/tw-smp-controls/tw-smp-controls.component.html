@@ -26,11 +26,12 @@
                         </h5>
                     </div>
                     <div class="s-actions twd-flex">
-                        <!-- <mat-icon role="button">reply</mat-icon> -->
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                            role="button" (click)="transferPost()">forward</mat-icon>
                         <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
                             (click)="savePostAsDraft(false, true)" role="button">save</mat-icon>
-                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
-                            role="button">forward</mat-icon>
+                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.clearData')"
+                        (click)="clearDraftData()" role="button">not_interested</mat-icon>
                         <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')" role="button"
                             (click)="closeInteraction()">close</mat-icon>
                     </div>
@@ -102,8 +103,8 @@
                 [draftData]="postDraftData[interactionId]"
                 (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
                 [draftPollDuration]="draftPollDuration" [maxFileUploadSize]="MaxFileUploadSize"
-                [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []"
-                [mode]="'interaction-min'" [interactionId]="interactionId" [outSessionId]="outSessionId"
+                [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []" [enhanceCommentContainer]="true"
+                [mode]="'interaction-max'" [interactionId]="interactionId" [outSessionId]="outSessionId"
                 [sessionId]="sessionId" [postData]="this.smpService.postBodies[activeSessionId]"
                 (emitReply)="emitReply($event)"></smp-template>
         </div>

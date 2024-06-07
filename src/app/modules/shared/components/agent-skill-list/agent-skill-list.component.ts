@@ -1173,6 +1173,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     private transferEmail(): void {
         this.loading += 1;
         const emails: any[] = this._dialogData.OtherData.emails;
+        const useMediaMatrixProxyUrl: any = this._dialogData.OtherData?.useMediaMatrixProxyUrl;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
@@ -1184,7 +1185,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     toAgentId: transferTo
-                })
+                }, undefined, useMediaMatrixProxyUrl)
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1239,7 +1240,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     skillId: transferTo
-                })
+                }, undefined, useMediaMatrixProxyUrl)
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
