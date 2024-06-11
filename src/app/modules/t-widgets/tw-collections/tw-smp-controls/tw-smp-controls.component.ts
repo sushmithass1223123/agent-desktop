@@ -1,4 +1,10 @@
-import { SMP_REASONCODE_VALUES, SMP_CURRENTSTATUS_CODES } from './../../../../constants/smp.constants';
+import {
+    SMP_REASONCODE_VALUES,
+    SMP_CURRENTSTATUS_CODES,
+    SMP_OUTBOX_REASONS,
+    SMP_DRAFT_REASONS,
+    SMP_SENT_REASONS
+} from 'app/constants';
 import { AgentSkillListData, InteractionWidgetBaseData, TwSmpControlsData } from '@ad/types';
 import {
     AfterViewInit,
@@ -108,6 +114,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      * File upload url config
      */
     fileUploadUrl: any;
+    routeReason: string = '';
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -128,13 +135,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionId;
         this.outSessionId = this.data.InteractionDetails?.OutSessionID;
-        this.isDraftMode = this.data.InteractionDetails.RouteReason === 'AgentDraftPull';
-        if (this.data.InteractionDetails.RecoveryData.Email_RouteReason === 'TransferToAgent') {
-            await this.generatePostBody(this.data.InteractionDetails.RecoveryData.Email_MainSesisonId);
-        }
+        this.routeReason = this.data.InteractionDetails.RouteReason;
+        this.isDraftMode = this.routeReason === 'AgentDraftPull';
+        await this.setPostDetails();
         this.maximumAllowedPostImageRendering = this.data.Data.MaximumAllowedPostImageRendering;
-        if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
-        else this.activeSessionId = this.sessionId;
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
@@ -180,12 +184,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         if (i.isActive) {
                             this.sessionId = i.otherData?.SessionId;
                             this.outSessionId = i.otherData?.OutSessionID;
-                            this.isDraftMode = i.otherData?.RouteReason === 'AgentDraftPull';
-                            if (i.otherData.RecoveryData.Email_RouteReason === 'TransferToAgent') {
-                                this.generatePostBody(i.otherData.RecoveryData.Email_MainSesisonId);
-                            }
-                            if (this.smpService.postBodies[this.outSessionId]) this.activeSessionId = this.outSessionId;
-                            else this.activeSessionId = this.sessionId;
+                            this.routeReason = i.otherData?.RouteReason;
+                            this.isDraftMode = this.routeReason === 'AgentDraftPull';
+                            this.setPostDetails();
                             this.interactionId = i.interactionId;
                         }
                         return {
@@ -754,12 +755,20 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         }
     }
 
-    async generatePostBody(sid: any): Promise<any> {
+    /**
+     * Sets post's body and some other details
+     */
+    async setPostDetails(): Promise<void> {
         return new Promise<any>(async (resolve, reject) => {
             try {
+                const fetchFromOutbox = SMP_OUTBOX_REASONS.concat(SMP_DRAFT_REASONS)
+                    .concat(SMP_SENT_REASONS)
+                    .includes(this.routeReason);
+
                 let inboxRes: any;
-                inboxRes = (await SDKClient.getInboxItem(sid)).response;
-                const getAttachments = (attachments: any[]): any[] => {
+                let outboxRes: any;
+
+                const getAttachments = (attachments: any[], sid: any): any[] => {
                     if (attachments && attachments.length) {
                         return attachments.map((item: any) => {
                             let uploadedName = item.Url.split('/').pop();
@@ -774,33 +783,47 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     }
                     return [];
                 };
-                let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
-                let smData = inboxRes?.SocialMediaData;
-                this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
-                    [sid]: {
-                        Files: getAttachments(tempAttachments),
-                        ConversationID: inboxRes.ConversationID,
-                        SessionId: sid,
-                        SubChannel: (
-                            channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? inboxRes.EmailType
-                        ).toLowerCase(),
-                        Subject: inboxRes.Subject,
-                        PostAccountName: inboxRes.SocialMediaData.Posts.AccountName
-                            ? inboxRes.SocialMediaData.Posts.AccountName
-                            : inboxRes.SocialMediaData.Posts.AccountId,
-                        PostId: inboxRes.SocialMediaData.Posts.PostId,
-                        SmActiveComment: inboxRes.SocialMediaData.Comments,
-                        SmParentComments: inboxRes.SocialMediaData.ParentComments,
-                        PostText: inboxRes.SocialMediaData.Posts.PostText,
-                        PostAttachments: inboxRes.SocialMediaData.Posts.PostAttachments,
-                        PostEngagements: inboxRes.SocialMediaData.Posts.PostEngagements,
-                        Engagement: inboxRes.SocialMediaData.Engagement,
-                        IsOutbound: false,
-                        IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
-                        IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
-                        RouteId: inboxRes?.RouteId
-                    }
-                });
+
+                const setPostBody = async (resData: any, sid: any) => {
+                    let tempAttachments = await this.requestAttachmentData(resData.Attachments);
+                    let smData = resData?.SocialMediaData;
+                    this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
+                        [sid]: {
+                            Files: getAttachments(tempAttachments, sid),
+                            ConversationID: resData.ConversationID,
+                            SessionId: sid,
+                            SubChannel: (
+                                channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? resData.EmailType
+                            ).toLowerCase(),
+                            Subject: resData.Subject,
+                            PostAccountName: smData.Posts.AccountName
+                                ? smData.Posts.AccountName
+                                : smData.Posts.AccountId,
+                            PostId: smData.Posts.PostId,
+                            SmActiveComment: smData.Comments,
+                            SmParentComments: smData.ParentComments,
+                            PostText: smData.Posts.PostText,
+                            PostAttachments: smData.Posts.PostAttachments,
+                            PostEngagements: smData.Posts.PostEngagements,
+                            Engagement: smData.Engagement,
+                            IsOutbound: fetchFromOutbox && this.outSessionId,
+                            IsCommentDeleted: smData.Comments?.IsDeleted,
+                            IsPostDeleted: smData.Posts?.IsDeleted,
+                            RouteId: resData?.RouteId
+                        }
+                    });
+                };
+
+                if (!this.smpService.postBodies[this.sessionId]) {
+                    inboxRes = (await SDKClient.getInboxItem(this.sessionId)).response;
+                    setPostBody(inboxRes, this.sessionId);
+                }
+
+                if (fetchFromOutbox && this.outSessionId && !this.smpService.postBodies[this.outSessionId]) {
+                    outboxRes = (await SDKClient.getOutboxItem(this.outSessionId)).response;
+                    setPostBody(outboxRes, this.outSessionId);
+                }
+                this.activeSessionId = fetchFromOutbox && this.outSessionId ? this.outSessionId : this.sessionId;
                 resolve(true);
             } catch (error) {
                 resolve(true);

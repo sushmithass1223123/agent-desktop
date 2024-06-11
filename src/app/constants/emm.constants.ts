@@ -42,7 +42,8 @@ export const EMAIL_SEND_STATUS = {
     '-8': 'MailboxInstanceCreationError',
     '-9': 'EwsApiAdaptorDown',
     '-10': 'PayloadTooLarge',
-    '-11': 'EmailManagerLoading'
+    '-11': 'EmailManagerLoading',
+    '404': 'ServerNotReachable'
 };
 
 export const EMAIL_CURRENTSTATUS_CODES = {

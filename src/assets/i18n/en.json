@@ -974,7 +974,8 @@
             "emailSendErrorUnknown": "Unknown",
             "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
             "emailSendErrorPayloadTooLarge": "Attachments exceed maximum file size",
-            "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute"
+            "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute",
+            "emailSendErrorServerNotReachable": "Server not reachable"
         },
         "socialMediaPosts": {
             "queueLabel": "Queue",

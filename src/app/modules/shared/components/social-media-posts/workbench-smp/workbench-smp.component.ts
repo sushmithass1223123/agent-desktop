@@ -16,7 +16,7 @@ import { isEqual, merge } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { GetInboxItemResult, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
-import { OUTBOX_REASONS } from 'app/constants';
+import { SMP_OUTBOX_REASONS } from 'app/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { AgentSkillListDataModel } from 'app/models';
 
@@ -1474,7 +1474,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     } else if (
                         this.currentTab === 'queue' &&
                         curr.PostData.EmailType !== 'Dummy' &&
-                        OUTBOX_REASONS.includes(curr.PostData.RouteReason)
+                        SMP_OUTBOX_REASONS.includes(curr.PostData.RouteReason)
                     ) {
                         item.sessionId = `${curr.PostData.SessionId}|${curr.PostData.OutSessionId}`;
                     } else if (this.currentTab === 'sentitem') {
