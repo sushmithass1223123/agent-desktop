@@ -691,13 +691,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
         }
 
-        if (fetchFromOutbox) {
+        if (fetchFromOutbox && interaction?.OutSessionId) {
             const res2 = await SDKClient.getOutboxEmail(interaction.OutSessionId).catch((err) => {
                 console.error(err);
                 errCallback();
                 return;
             });
-            if (res2) {
+            if (res2 && res2.response !== null) {
                 outboxRes = res2.response;
                 let attch = await this.requestAttachmentData(outboxRes.Attachments);
                 outboxRes.Attachments = attch;
@@ -708,7 +708,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.getInboxMessageReq = { error: false, loading: false };
         const emailInteractionDetails = {
             ...this.currentInteraction,
-            ...this.emailBodies[fetchFromOutbox ? this.currentInteraction.OutSessionId : this.currentInteraction.InSessionId]
+            ...this.emailBodies[(fetchFromOutbox && this.currentInteraction?.OutSessionId) ? this.currentInteraction.OutSessionId : this.currentInteraction.InSessionId]
         };
         this.currentInteraction = emailInteractionDetails;
         this.initEmailComponent();
@@ -1318,7 +1318,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.rejectEmailFailed'), 'failure');
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.rejectEmailSuccess'));
-                           // this.closeEmail(null, true);
+                            //this.closeEmail(null, true);
                         }
                         this._fuseProgressBarService.hide();
                     })
