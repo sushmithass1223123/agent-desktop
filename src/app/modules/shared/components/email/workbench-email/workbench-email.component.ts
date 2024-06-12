@@ -997,6 +997,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                 // console.error(res);
                                 loader.dismiss();
                                 const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
+                                const isCheckerEmailPullError = res.failedList.items.filter((f) => f.responseCode === -407);
                                 if (isAlreadyPulled.length) {
                                     if (isAlreadyPulled.length > 1) {
                                         if (isAlreadyPulled.length === emails.length) {
@@ -1016,19 +1017,35 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                             'failure'
                                         );
                                     }
+                                } else if (isCheckerEmailPullError.length) {
+                                    if (isCheckerEmailPullError.length > 1) {
+                                        if (isCheckerEmailPullError.length === emails.length) {
+                                            this.appUiService.showSnackbar(
+                                                this.translocoService.translate('sharedComponents.email.checkerEmailPullError'),
+                                                'failure'
+                                            );
                                 } else {
                                     this.appUiService.showSnackbar(
+                                        this.translocoService.translate('sharedComponents.email.checkerEmailPullError'),
+                                                'failure'
+                                            );
+                                        }
+                                    } 
+                                  else {
+                                        this.appUiService.showSnackbar(
                                         this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
                                         'failure'
                                     );
                                 }
                                 return;
-                            }
+                                    }
+                                
                             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
                                 this.openEmailRes.data.next(null);
                             }
                             loader.dismiss();
                             this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailSuccess'), 'success');
+                                }
                         },
                         error: (err) => {
                             console.error(err);
