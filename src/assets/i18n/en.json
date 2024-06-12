@@ -924,6 +924,7 @@
             "someEmailsAssigned": "Some emails are already assigned",
             "pullEmailFailed": "Unable to pull email",
             "pullEmailSuccess": "Emails pulled successfully",
+            "checkerEmailPullError": "Not authorized to pull checker email",
             "notReplied": "Not Replied",
             "spamConfirmTitle": "Confirm Spam",
             "spamConfirmMsg": "Are you sure to mark this email as spam?",

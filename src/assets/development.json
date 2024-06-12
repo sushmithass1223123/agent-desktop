@@ -3915,7 +3915,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx",
+                    "https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx",
                     "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"
                 ],
                 "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
