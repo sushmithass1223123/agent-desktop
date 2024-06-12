@@ -1030,13 +1030,20 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                             );
                                 } else {
                                     this.appUiService.showSnackbar(
+                                        this.translocoService.translate('sharedComponents.email.checkerEmailPullError'),
+                                                'failure'
+                                            );
+                                        }
+                                    } 
+                                  else {
+                                        this.appUiService.showSnackbar(
                                         this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
                                         'failure'
                                     );
                                 }
                                 return;
                                     }
-                            } 
+                                
                             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
                                 this.openEmailRes.data.next(null);
                             }
