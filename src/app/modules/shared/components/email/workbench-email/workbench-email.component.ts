@@ -1016,6 +1016,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                             'failure'
                                         );
                                     }
+                                } else if (res.failedList.items.some((f) => f.responseCode === -407)) {
+                                    // Handle -407 error (Not authorized to pull checker email)
+                                    this.appUiService.showSnackbar(
+                                        this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
+                                        'failure'
+                                    );
                                 } else {
                                     this.appUiService.showSnackbar(
                                         this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
