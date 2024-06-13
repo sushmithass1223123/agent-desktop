@@ -64,9 +64,9 @@ interface PostData {
 }
 
 const channelMapper: any = {
-    'fb': 'facebook',
-    'instagram': 'instagram'
-}
+    fb: 'facebook',
+    instagram: 'instagram'
+};
 
 /**
  * Various states of the component
@@ -1230,7 +1230,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.currentTab === 'draft' ||
                 this.currentTab === 'sentitem' ||
                 post.PostData.RouteReason === 'CheckerQueue';
-            let inboxRes: GetInboxItemResult;
+            let inboxRes: GetInboxItemResult | any;
             let outboxRes: GetInboxItemResult | any;
 
             const getRequestedSession = () => (fetchFromOutbox ? post.PostData.OutSessionId : post.PostData.SessionId);
@@ -1285,6 +1285,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             Engagement: inboxRes.SocialMediaData.Engagement,
                             IsOutbound: fetchFromOutbox,
                             IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
+                            IsCommentEdited: inboxRes.SocialMediaData.Comments?.IsEdited,
                             IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
                             RouteId: post.PostData.RouteId,
                             PostDetails: {
@@ -1304,7 +1305,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
                 let modifiedAttachmentData: any[] = [];
-                if(outboxRes?.SocialMediaData?.Comments?.CommentAttachments?.length) {
+                if (outboxRes?.SocialMediaData?.Comments?.CommentAttachments?.length) {
                     modifiedAttachmentData = [
                         {
                             IsCloud: true,
@@ -1337,6 +1338,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         Engagements: outboxRes.SocialMediaData.Engagement,
                         IsOutbound: fetchFromOutbox,
                         IsCommentDeleted: outboxRes.SocialMediaData.Comments?.IsDeleted,
+                        IsCommentEdited: outboxRes.SocialMediaData.Comments?.IsEdited,
                         IsPostDeleted: outboxRes.SocialMediaData.Posts?.IsDeleted,
                         RouteId: post.PostData.RouteId,
                         PostDetails: {
@@ -1615,8 +1617,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     activeCommentValidator(post: SMPost): boolean {
-        if(this.currentTab === 'posts') {
-            return post.PostData.PostId === this.selectedPostId
+        if (this.currentTab === 'posts') {
+            return post.PostData.PostId === this.selectedPostId;
         }
         return (
             (this.currentTab !== 'sentitem' &&
@@ -1627,8 +1629,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         );
     }
 
-    getActiveCommentStyle(): string {
-        if(this.hidePostActions) return ' theme-bg delete-border twd-border-opacity-100';
+    getActiveCommentStyle(validateObj: any): string {
+        if (this.hidePostActions) return ' theme-bg delete-border twd-border-opacity-100';
         switch (this.notificationAction) {
             case 'smc_e':
                 return ' theme-bg edit-border twd-border-opacity-100';
@@ -1675,7 +1677,15 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
 
         this._matDialog.open(AgentSkillListComponent, {
             data,
-            panelClass: ['agent-skill-dialog', 'twd-w-11/12', 'twd-h-10/12', 'lg:twd-w-7/12', 'lg:twd-h-8/12', 'xl:twd-w-6/12', '2xl:twd-w-5/12'],
+            panelClass: [
+                'agent-skill-dialog',
+                'twd-w-11/12',
+                'twd-h-10/12',
+                'lg:twd-w-7/12',
+                'lg:twd-h-8/12',
+                'xl:twd-w-6/12',
+                '2xl:twd-w-5/12'
+            ],
             minWidth: '30%',
             maxWidth: '100%',
             disableClose: true
@@ -1693,5 +1703,57 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             sessionKey = 'SessionId';
         }
         return sessionKey;
+    }
+
+    /**
+     * Closes posts
+     * @param {any} post post list
+     */
+    async closePosts(posts: SMPost[]): Promise<void> {
+        const loader = this._appUiService.showSnackbar(
+            this.translocoService.translate('sharedComponents.socialMediaPosts.closePostsLoading'),
+            'loading'
+        );
+        try {
+            if (this.currentTab === 'queue') {
+                const routeIds = posts.map((curr) => {
+                    if (this.selectedPostSessionId === curr.PostData.SessionId) {
+                        this.openPostRes.data.next(null);
+                    }
+                    return curr.PostData.RouteId;
+                });
+                await SDKClient.closeBulkEmailsInQueue(routeIds.join(','), undefined, true);
+            } else {
+                await Promise.all(
+                    posts.map((curr) => {
+                        if (this.selectedPostSessionId === curr.PostData.SessionId) {
+                            this.openPostRes.data.next(null);
+                        }
+                        return SDKClient.changeEmailStatus({
+                            routeId: curr.PostData.RouteId,
+                            sessionId: curr.PostData.SessionId,
+                            status: ['sentitem', 'draft'].includes(this.currentTab)
+                                ? `Outbox,Closed,sent,${curr.PostData.OutSessionId}`
+                                : 'Close'
+                        }, undefined, true);
+                    })
+                );
+            }
+            this._appUiService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.closePostsSuccess'),
+                'success'
+            );
+            setTimeout(() => {
+                this.doAdvancedSearch(true);
+                loader.dismiss();
+            }, 1000);
+        } catch (e) {
+            console.error(e);
+            loader.dismiss();
+            this._appUiService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.closePostsFailed'),
+                'failure'
+            );
+        }
     }
 }

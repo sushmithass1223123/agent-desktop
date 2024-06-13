@@ -33,6 +33,7 @@ import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { merge } from 'lodash';
 import { filter, take, takeUntil } from 'rxjs/operators';
+import { MatButton } from '@angular/material/button';
 
 declare var document: any;
 
@@ -438,7 +439,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 );
                 if (attachments) delete attachments[0]?.Url;
                 const res = await SDKClient.sendItem({
-                    attachmentFileList: attachments && attachments.length ? attachments : '',
+                    attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
                     body: body,
                     inboxSessionId: this.sessionId,
                     outboxSessionId: this.outSessionId || '',
@@ -639,43 +640,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         return { isModified: isModified, changes: result };
     }
 
-    /**
-     * Transfers post
-     */
-    transferPost(): void {
-        const transferConfig = this.data.Data.Transfer ?? {};
-        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Post');
-        data = merge({}, data, transferConfig);
-        data = {
-            ...data,
-            InteractionId: this.interactionId,
-            OtherData: {
-                type: 'transfer',
-                emails: [this.smpService.postBodies[this.activeSessionId]].map((p) => ({
-                    ...p,
-                    SessionId: this.activeSessionId
-                })),
-                useMediaMatrixProxyUrl: true
-            }
-        };
-
-        this._matDialog.open(AgentSkillListComponent, {
-            data,
-            panelClass: [
-                'agent-skill-dialog',
-                'twd-w-11/12',
-                'twd-h-10/12',
-                'lg:twd-w-7/12',
-                'lg:twd-h-8/12',
-                'xl:twd-w-6/12',
-                '2xl:twd-w-5/12'
-            ],
-            minWidth: '30%',
-            maxWidth: '100%',
-            disableClose: true
-        });
-    }
-
     clearDraftData(): void {
         try {
             this.postDraftData[this.interactionId] = {
@@ -828,6 +792,54 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             } catch (error) {
                 resolve(true);
                 console.error();
+            }
+        });
+    }
+
+    /**
+     * Closes post
+     * @param {MatButton} btn
+     */
+    closeEmail(btn?: MatButton): void {
+        if (btn) {
+            btn.disabled = true;
+        }
+        const confirmDialogRef = this._appUiService.showAppConfirmDialog('closeInteraction');
+        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
+            if (dialogResult) {
+                this._fuseProgressBarService.show();
+                if (btn) {
+                    btn.disabled = true;
+                }
+                SDKClient.changeEmailStatus(
+                    {
+                        routeId: this.smpService.postBodies[this.activeSessionId].RouteId,
+                        sessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
+                        status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
+                            ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
+                            : 'Close'
+                    },
+                    undefined,
+                    true
+                )
+                    .then(() => {
+                        this._fuseProgressBarService.hide();
+                        this.closeInteraction(true);
+                    })
+                    .catch(() => {
+                        this._fuseProgressBarService.hide();
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('interactionComponent.closeInteractionFailed'),
+                            'failure'
+                        );
+                    })
+                    .finally(() => {
+                        if (btn) {
+                            btn.disabled = false;
+                        }
+                    });
+            } else if (btn) {
+                btn.disabled = false;
             }
         });
     }

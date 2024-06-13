@@ -26,6 +26,7 @@ export interface SmpComponentInputs {
     PostText: SmPostText;
     IsOutbound: boolean;
     IsCommentDeleted: boolean;
+    IsCommentEdited: boolean;
     IsPostDeleted: boolean;
     PostAttachments: SmPostAttachments[];
     PostEngagements: PostEngagement[];

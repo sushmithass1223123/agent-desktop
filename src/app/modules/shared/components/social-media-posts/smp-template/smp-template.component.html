@@ -136,7 +136,7 @@
                     <div class="image-container twd-relative">
                         <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
                     </div>
-                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative active-comment {{findPreviousCommentIndex() ? 'edited' : ''}} {{postData.IsCommentDeleted ? 'deleted' : ''}}"
+                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative active-comment {{findPreviousCommentIndex() || isActiveCommentEdited ? 'edited' : ''}} {{postData.IsCommentDeleted || isActiveCommentDeleted ? 'deleted' : ''}}"
                         [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
 
                         <!-- Comment time -->
@@ -166,7 +166,7 @@
                         <div class="comment-info-flex">
                             <h5 class="font-weight-700 text-truncate">{{postData?.SmActiveComment?.FromName ?
                                 postData?.SmActiveComment?.FromName : postData?.PostAccountName}}<span
-                                    *ngIf="findPreviousCommentIndex()"> .
+                                    *ngIf="findPreviousCommentIndex() || isActiveCommentEdited"> .
                                     {{getGenericTimeFormat(findPreviousCommentIndex()?.CommentText?.UpdatedDateTime)}}
                                     . Edited</span></h5>
                             <p class="font-weight-500">{{postData?.SmActiveComment?.CommentText?.Text}}</p>
@@ -268,7 +268,7 @@
                         </div>
                     </ng-container>
 
-                    <mat-icon *ngIf="postData.IsCommentDeleted" class="deleted-icon">delete_forever</mat-icon>
+                    <mat-icon *ngIf="postData.IsCommentDeleted || isActiveCommentDeleted" class="deleted-icon">delete_forever</mat-icon>
                 </div>
 
                 <!-- Reply container -->

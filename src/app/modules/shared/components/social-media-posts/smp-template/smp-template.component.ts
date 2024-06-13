@@ -43,6 +43,8 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() draftData: any;
     @Input() previousCommentFromNotification: SmComment[];
     @Input() enhanceCommentContainer: boolean = false;
+    @Input() isActiveCommentEdited: boolean = false;
+    @Input() isActiveCommentDeleted: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
@@ -132,7 +134,15 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             this.postData.SmParentComments = null;
         }
         if (this.enhanceCommentContainer || this.mode === 'interaction-max') this.loadCommentHistory();
+        setTimeout(() => {
+            if(this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container')
+        }, 500);
         this.cdr.detectChanges();
+    }
+
+    scrollToBottom(className: string) {
+        const element = document.querySelector(`.${className}`);
+        element.scrollTop = element.scrollHeight;
     }
 
     getFileType(fileName) {
@@ -180,7 +190,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
 
     getGenericTimeFormat(dotnetDate: string): string {
         try {
-            if (!dotnetDate) return 'NA';
+            if (!dotnetDate) return '';
             const currentDate: any = new Date();
             let date: any = '';
             if (!dotnetDate.includes('Date')) date = new Date(dotnetDate);
@@ -316,7 +326,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                     );
                     resVal = {
                         Name: response.result.original_name,
-                        URL: response.result.downloadURL,
+                        URL: response.result.streamURL,
                         Source: 'mediastreamer'
                     };
                 } else {
