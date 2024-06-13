@@ -985,6 +985,7 @@
             "draftsLabel": "Draft",
             "postsLabel": "Posts",
             "postDetails": "Post details",
+            "close": "Close",
             "searchPlaceholder": "Search posts here...",
             "sortBy": "Sort by",
             "postSubject": "Post subject",
@@ -1015,7 +1016,10 @@
             "uploadFileLoading": "Please wait while the file uploads",
             "uploadFileSizeWarning": "File size exceeded!",
             "fileTypeNotSupported": "Selected file type is not allowed to upload!",
-            "noCommentsFoundMessage": "No comments found!"
+            "noCommentsFoundMessage": "No comments found!",
+            "closePostsLoading": "Closing post..",
+            "closePostsSuccess": "Successfully closed posts!",
+            "closePostsFailed": "Error closing posts!"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
