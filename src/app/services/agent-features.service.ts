@@ -4,6 +4,7 @@ import { AgentFeatures, AgentSettingsUpdatedEvent, AgentSnapShotEvent, SDKClient
 import { AGENT_FEATURES } from 'app/constants';
 import { Observable, Subject } from 'rxjs';
 import { AppUiService } from './app-ui.service';
+import { Router } from '@angular/router';
 
 /**
  * Navigator
@@ -80,6 +81,7 @@ export class AgentFeaturesService extends SharedWrapper {
      * Need more Description
      */
     private _featureUpdatedSubject: Subject<boolean>;
+    private _router:Router
 
     constructor(private _appUIService: AppUiService) {
         super('AgentFeaturesService');
@@ -299,10 +301,15 @@ export class AgentFeaturesService extends SharedWrapper {
                 this._agentFeatureInfo.data.displayStream = stream;
             })
             .catch((error: Error) => {
+            // Check if on the login page using Router snapshot
+            const isLoginPage = this._router.url.includes('/login'); 
+            if (isLoginPage) {
+            return; // Do not proceed if on the login page
+                }
                 this._agentFeatureInfo.permissions.display = false;
                 this._appUIService.showSnackbar('Error: Please share your entire screen for supervisor', 'failure');
                 setTimeout(() => {
-                    //this.captureDisplayStream();
+                    this.captureDisplayStream();
                 }, 2000);
                 // log the error to server for troubleshooting purpose
                 this.logger.error('Error in getDisplayMedia', error);
