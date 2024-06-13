@@ -1655,8 +1655,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // check for the response
             if (dt.response && dt.response.ResultCode === 0) {
                 // disconnect call success
-            } else if(dt.response.ResultCode == -3){
-                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
+            } else if (dt.response.ResultCode == -33){
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.resourseBusyError'), 'failure');
             } else {
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
             }
