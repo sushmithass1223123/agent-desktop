@@ -136,4 +136,15 @@ export class SocialMediaPostsService {
             listOfMailboxes: this.globalSmpWorkbenchState$.availableMailboxes.value
         });
     }
+
+    convertUrlsToLinks(text): string {
+        try {
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, function(url) {
+                return '<a href="' + url + '" target="_blank">' + url + '</a>';
+            });
+        } catch (error) {
+            console.error(error)
+        }
+    }
 }
