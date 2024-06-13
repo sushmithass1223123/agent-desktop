@@ -302,7 +302,7 @@ export class AgentFeaturesService extends SharedWrapper {
                 this._agentFeatureInfo.permissions.display = false;
                 this._appUIService.showSnackbar('Error: Please share your entire screen for supervisor', 'failure');
                 setTimeout(() => {
-                    this.captureDisplayStream();
+                    //this.captureDisplayStream();
                 }, 2000);
                 // log the error to server for troubleshooting purpose
                 this.logger.error('Error in getDisplayMedia', error);
