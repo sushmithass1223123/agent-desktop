@@ -38,7 +38,7 @@ export const SMP_SEND_STATUS = {
 };
 
 export const SMP_CURRENTSTATUS_CODES = {
-    SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
-    SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    SentToCustomer: 'sharedComponents.socialMediaPosts.replySendToCustomer',
+    SentToCheckerSession: 'sharedComponents.socialMediaPosts.replySendToChecker',
     EmailSending: 'sharedComponents.socialMediaPosts.postIsBeingSent'
 };

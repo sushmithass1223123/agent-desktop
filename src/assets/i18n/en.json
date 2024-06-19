@@ -1019,7 +1019,9 @@
             "noCommentsFoundMessage": "No comments found!",
             "closePostsLoading": "Closing post..",
             "closePostsSuccess": "Successfully closed posts!",
-            "closePostsFailed": "Error closing posts!"
+            "closePostsFailed": "Error closing posts!",
+            "replySendToCustomer": "Reply sent to customer",
+            "replySendToChecker": "Reply sent to checker"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

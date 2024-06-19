@@ -49,5 +49,6 @@ export const EMAIL_SEND_STATUS = {
 export const EMAIL_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
     SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    SentToCheckerQueue: 'sharedComponents.email.emailSendToChecker',
     EmailSending: 'sharedComponents.email.emailIsBeingSent'
 };
