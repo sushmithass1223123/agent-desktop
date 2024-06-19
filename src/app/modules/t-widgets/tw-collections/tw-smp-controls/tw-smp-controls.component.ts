@@ -585,7 +585,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         );
                 }
                 if (closePost) {
-                    this.closeInteraction(true);
+                    this.closePost();
                 }
             })
             .catch((err) => {
@@ -798,49 +798,30 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
     /**
      * Closes post
-     * @param {MatButton} btn
      */
-    closeEmail(btn?: MatButton): void {
-        if (btn) {
-            btn.disabled = true;
-        }
-        const confirmDialogRef = this._appUiService.showAppConfirmDialog('closeInteraction');
-        confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
-            if (dialogResult) {
-                this._fuseProgressBarService.show();
-                if (btn) {
-                    btn.disabled = true;
-                }
-                SDKClient.changeEmailStatus(
-                    {
-                        routeId: this.smpService.postBodies[this.activeSessionId].RouteId,
-                        sessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
-                        status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
-                            ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
-                            : 'Close'
-                    },
-                    undefined,
-                    true
-                )
-                    .then(() => {
-                        this._fuseProgressBarService.hide();
-                        this.closeInteraction(true);
-                    })
-                    .catch(() => {
-                        this._fuseProgressBarService.hide();
-                        this._appUiService.showSnackbar(
-                            this.translocoService.translate('interactionComponent.closeInteractionFailed'),
-                            'failure'
-                        );
-                    })
-                    .finally(() => {
-                        if (btn) {
-                            btn.disabled = false;
-                        }
-                    });
-            } else if (btn) {
-                btn.disabled = false;
-            }
-        });
+    closePost(): void {
+        this._fuseProgressBarService.show();
+        SDKClient.changeEmailStatus(
+            {
+                routeId: this.smpService.postBodies[this.activeSessionId].RouteId,
+                sessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
+                status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
+                    ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
+                    : 'Close'
+            },
+            undefined,
+            true
+        )
+            .then(() => {
+                this.closeInteraction(true);
+            })
+            .catch(() => {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('interactionComponent.closeInteractionFailed'),
+                    'failure'
+                );
+            }).finally(() => {
+                this._fuseProgressBarService.hide();
+            })
     }
 }
