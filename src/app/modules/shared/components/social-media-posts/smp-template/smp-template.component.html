@@ -328,7 +328,7 @@
                                 {{getGenericTimeFormat(commentData?.CommentText?.InsertionDateTime)}}</p>
 
                             <!-- Comment reactions -->
-                            <div class="active-comment-actions twd-flex twd-absolute" *ngIf="mode !== 'workbench'">
+                            <div class="active-comment-actions twd-flex twd-absolute">
                                 <div class="reaction-palette twd-flex"
                                     *ngIf="getTotalReactionCount(commentData?.CommentEngagements)">
                                     <ng-container *ngFor="let eng of commentData?.CommentEngagements">
