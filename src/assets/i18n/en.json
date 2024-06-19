@@ -342,7 +342,9 @@
             "broadCaseMsgSuccess": "Broadcast sent",
             "broadCaseMsgFailedGeneric": "Something went wrong while sending broacast",
             "removeGroupBy": "Clear grouping filter",
-            "groupAgents": "Group Agents"
+            "groupAgents": "Group Agents",
+            "actionInProgressAlert": "Hi #agent, #type in progress... Kindly use the hardphone to proceed further",
+            "confirmCloseSOMessage": "Closing the window will disconnect ongoing service observe call, are you sure to close ?"
         },
         "registerCallback": {
             "campaignNotFound": "No Campaigns Found!",

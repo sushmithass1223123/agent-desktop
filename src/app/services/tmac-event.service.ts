@@ -12,6 +12,7 @@ import {
     AgentStatusChangeEvent,
     AutoCloseTabEvent,
     CommandResultEvent,
+    EventData,
     IResponse,
     IUIEvent,
     SDKClient,
@@ -111,7 +112,7 @@ export class TMACEventService extends SharedWrapper {
 
     private _tmacCommandsArray: TMACCommandType[];
 
-
+    private _agentFeatureActionDialog: MatDialogRef<any, any>
 
     /** Events to manipulate AD elements from custom widget */
     _uiControlsEvents: Subject<any> = new Subject();
@@ -904,6 +905,44 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
     };
 
+    private VoiceCallInitiatingEvent = (evt: EventData) => {
+        try{
+            const message = this.translocoService.translate('widgets.activeAgents.actionInProgressAlert')
+            .replace('#agent', SDKClient.getAgentData().agentName)
+            .replace('#type', 'Service Observe');
+
+            this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, '', 
+                {
+                    yesMessage: 'Disconnect',
+                    closeIcon: true, 
+                    confirmClose: true,
+                    confirmMessage: this.translocoService.translate('widgets.activeAgents.confirmCloseSOMessage')
+                }, 
+                {
+                    disableClose : true
+                });
+                this._agentFeatureActionDialog.afterClosed().subscribe(response => {
+            if(response) {
+                this.logger.info('Disconnect to Handle called by agent ==>'+ SDKClient.getAgentData().agentId, true);
+                SDKClient.disconnectCallByHandle(evt.ConnectionHandle).then(value => {
+                    this._appUIService.showSnackbar('Disconnected call successfully','success');
+                }).catch(e => {
+                    this._appUIService.showSnackbar('Disconnect call failed','failure');
+                });
+            }
+        });
+
+        } catch(e) {
+            this.logger.error('Error occured during voicecall initiating event', e, true);
+        }
+        
+    }
+
+    private MakeCallOnExistingTabFailed = (evt) => {
+        this._agentFeatureActionDialog.close();
+        this.logger.info('Received MakeCallOnExistingTabFailed event, hence closing tab', true);
+    }
+
     /**
      * Post message received event
      *
@@ -1105,6 +1144,14 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             {
                 label: 'AutoCloseTabEvent',
                 callback: this.AutoCloseTabEvent
+            },
+            {
+                label: 'VoiceCallInitiatingEvent',
+                callback: this.VoiceCallInitiatingEvent
+            },
+            {
+                label: 'MakeCallOnExistingTabFailed',
+                callback: this.MakeCallOnExistingTabFailed
             }
         ]);
 
@@ -1176,6 +1223,14 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             {
                 label: 'AutoCloseTabEvent',
                 callback: this.AutoCloseTabEvent
+            },
+            {
+                label: 'VoiceCallInitiatingEvent',
+                callback: this.VoiceCallInitiatingEvent
+            },
+            {
+                label: 'MakeCallOnExistingTabFailed',
+                callback: this.MakeCallOnExistingTabFailed
             }
         ]);
 

@@ -645,7 +645,11 @@
                                             "AllowSupervisorToBargeIn": true,
                                             "AllowSupervisorToChatSilentMonitor": true,
                                             "AllowSupervisorToChatWhisper": true,
-                                            "AllowSupervisorToChatConference": true
+                                            "AllowSupervisorToChatConference": true,
+                                            "facCodes": [
+                                                { "feature": "barge-in", "code": "*79" },
+                                                { "feature": "silent", "code": "*78" }
+                                            ]
                                         }
                                     }
                                 }

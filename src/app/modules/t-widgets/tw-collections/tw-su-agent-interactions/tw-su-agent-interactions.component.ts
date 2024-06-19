@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 import { TwSuAgentInteractions } from '@ad/types';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { AgentFeaturesService } from '@services/agent-features.service';
 
 /**
  * Supervisor Agent Interactions Component
@@ -92,8 +93,8 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         private _appUIService: AppUiService,
         private _aotWidgetService: AOTWidgetService,
         private _tmacEventService: TMACEventService,
-        private translocoService: TranslocoService,
-        private _matDialog: MatDialog,
+        private _translocoService: TranslocoService,
+        private _agentFeaturesService: AgentFeaturesService
     ) {
         super('TwSuAgentInteractionsComponent');
         this.agentData = SDKClient.getAgentData();
@@ -141,7 +142,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * @param {InteractionDataModel} item Interaction data
      */
     private performChatBargeIn(type: 'silent' | 'whisper' | 'conf', item: InteractionDataModel): void {
-        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.connectingMsg'), 'loading');
+        this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.connectingMsg'), 'loading');
         // send request to server
         SDKClient.transferTextChat({
             agentId: this.configData.AgentLoginID,
@@ -173,7 +174,9 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
     private performVoiceBargeIn(type: 'barge-in' | 'silent', item: InteractionDataModel): void {
         try {
-            const phoneNumber = item.InteractionData.UserData.PhoneNumber + '' + item.InteractionData.AgentId + '' + this.configData.StationID;
+            this._agentFeaturesService._serviceObserverTriggered = true;
+            const facCode = this.data?.ExtraConfig?.facCodes?.find(f => f.feature === type)?.code;
+            const phoneNumber = facCode + '' + item.InteractionData.AgentId;
                 // make call to the provided number 
                 SDKClient.makeCall({
                     interactionId: item.InteractionID.toString(),
@@ -190,11 +193,12 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                         }
                     })
                 .catch((err) => {
-                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallError'), 'failure');
+                        this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.makeCallError'), 'failure');
                         this.logger.error('Error in makeCall', err);
                     });
             } catch(e) {
                 console.log('error while performing barge-in', e);
+                this.logger.error('error while performing barge-in', e);
             }
     
     }
@@ -269,7 +273,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             ) {
                 return (
                     feature.IsEnabled &&
-                    (this.data?.ExtraConfig && this.data?.ExtraConfig?.ValidateFor?.length
+                    (this.data?.ExtraConfig && this.data.ExtraConfig?.ValidateFor?.length
                         ? this.data.ExtraConfig[feature.Feature] && this.data.ExtraConfig.ValidateFor.includes(subType)
                         : true)
                 );
@@ -305,6 +309,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             case AGENT_FEATURES.AllowSupervisorToInteractionNotification:
                 break;
             case AGENT_FEATURES.AllowSupervisorToSilentMonitor:
+                this.performVoiceBargeIn('silent', item);
                 break;
             case AGENT_FEATURES.AllowSupervisorToViewEmailDetails:
                 break;
