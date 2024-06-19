@@ -564,6 +564,12 @@
                                             "AllowSupervisorToChatSilentMonitor": false,
                                             "AllowSupervisorToChatWhisper": false,
                                             "AllowSupervisorToChatConference": false
+                                        },
+                                        "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
                                         }
                                     }
                                 }
@@ -2885,7 +2891,7 @@
                 "protocol": "webSockets",
                 "timeout": 10,
                 "fallback": true,
-                "useDotNet6Wrapper": true
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,
