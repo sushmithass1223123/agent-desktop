@@ -344,7 +344,8 @@
             "removeGroupBy": "Clear grouping filter",
             "groupAgents": "Group Agents",
             "actionInProgressAlert": "Hi #agent, #type in progress... Kindly use the hardphone to proceed further",
-            "confirmCloseSOMessage": "Closing the window will disconnect ongoing service observe call, are you sure to close ?"
+            "confirmCloseSOMessage": "Closing the window will disconnect ongoing service observe call, are you sure to close ?",
+            "facConfigError": "FAC configurations not done"
         },
         "registerCallback": {
             "campaignNotFound": "No Campaigns Found!",

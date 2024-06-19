@@ -174,8 +174,14 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
 
     private performVoiceBargeIn(type: 'barge-in' | 'silent', item: InteractionDataModel): void {
         try {
-            this._agentFeaturesService._serviceObserverTriggered = true;
-            const facCode = this.data?.ExtraConfig?.facCodes?.find(f => f.feature === type)?.code;
+            this._agentFeaturesService._serviceObserver.active = true;
+
+            const facCode = this.data?.Data?.facCodes?.find(f => f.feature === type)?.code;
+            if(!facCode) {
+                this._appUIService.showSnackbar(this._translocoService.translate('widgets.activeAgents.facConfigError'),'warning');
+                return;
+            }
+
             const phoneNumber = facCode + '' + item.InteractionData.AgentId;
                 // make call to the provided number 
                 SDKClient.makeCall({
@@ -187,6 +193,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 .then((dt) => {
                         
                         if (dt.response.ResultCode === 0) {
+                            this._agentFeaturesService._serviceObserver.success = true;
                             this._appUIService.showSnackbar('Make call success', 'success');
                         } else {
                             this._appUIService.showSnackbar('Make call failed', 'failure');
@@ -194,11 +201,11 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                     })
                 .catch((err) => {
                         this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.makeCallError'), 'failure');
-                        this.logger.error('Error in makeCall', err);
+                        this.logger.error('Error in makeCall', err,true);
                     });
             } catch(e) {
                 console.log('error while performing barge-in', e);
-                this.logger.error('error while performing barge-in', e);
+                this.logger.error('error while performing barge-in', e, true);
             }
     
     }

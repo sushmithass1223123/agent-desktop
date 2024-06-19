@@ -645,12 +645,12 @@
                                             "AllowSupervisorToBargeIn": true,
                                             "AllowSupervisorToChatSilentMonitor": true,
                                             "AllowSupervisorToChatWhisper": true,
-                                            "AllowSupervisorToChatConference": true,
-                                            "facCodes": [
-                                                { "feature": "barge-in", "code": "*79" },
-                                                { "feature": "silent", "code": "*78" }
-                                            ]
-                                        }
+                                            "AllowSupervisorToChatConference": true
+                                        },
+                                        "facCodes": [
+                                            { "feature": "barge-in", "code": "*79" },
+                                            { "feature": "silent", "code": "*78" }
+                                        ]
                                     }
                                 }
                             ],
@@ -3322,5 +3322,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.7.0-beta.test.2"
+    "Version": "5.7.0-beta.test.3"
 }

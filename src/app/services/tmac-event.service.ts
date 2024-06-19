@@ -914,7 +914,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
 
     private VoiceCallInitiatingEvent = (evt: EventData) => {
         try{
-            if(this._agentFeaturesService._serviceObserverTriggered) {
+            if(this._agentFeaturesService._serviceObserver.active) {
                 const message = this.translocoService.translate('widgets.activeAgents.actionInProgressAlert')
                 .replace('#agent', SDKClient.getAgentData().agentName)
                 .replace('#type', 'Service Observe');
@@ -933,7 +933,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                 if(response) {
                     this.logger.info('Disconnect to Handle called by agent ==>'+ SDKClient.getAgentData().agentId, true);
                     SDKClient.disconnectCallByHandle(evt.ConnectionHandle).then(value => {
-                        this._agentFeaturesService._serviceObserverTriggered = false;
+                        this.resetServiceObserver();
                         this._appUIService.showSnackbar('Disconnected call successfully','success');
                     }).catch(e => {
                         this._appUIService.showSnackbar('Disconnect call failed','failure');
@@ -947,8 +947,16 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         
     }
 
+    resetServiceObserver() {
+        this._agentFeaturesService._serviceObserver.active = false;
+        this._agentFeaturesService._serviceObserver.success = false;
+    }
+
     private MakeCallOnExistingTabFailed = (evt) => {
-        this._agentFeaturesService._serviceObserverTriggered = false;
+        if(this._agentFeaturesService._serviceObserver.active && this._agentFeaturesService._serviceObserver.success) {
+            return;
+        }
+        this.resetServiceObserver();
         this._agentFeatureActionDialog.close();
         this.logger.info('Received MakeCallOnExistingTabFailed event, hence closing tab', true);
     }
