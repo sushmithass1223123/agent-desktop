@@ -14,7 +14,7 @@ import { addHours, format, format as formatDate } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { isEqual, sortBy } from 'lodash';
 import { maticonByExtension, throwADError } from 'app/utils';
-import { GetInboxItemResult, SDKClient, TUtils, PostAttachment, GetOutboxItemResult } from '@tmac/sdk';
+import { GetInboxItemResult, SDKClient, TUtils, PostAttachment } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
 import { OUTBOX_REASONS, SMP_CURRENTSTATUS_CODES } from 'app/constants';
 

@@ -34,6 +34,7 @@ import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
 import { SharedService } from './shared.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { AgentFeaturesService } from './agent-features.service';
 
 /**
  *  Componentless Event service
@@ -123,7 +124,13 @@ export class TMACEventService extends SharedWrapper {
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(private _appDataService: AppDataService, private translocoService: TranslocoService,private _sharedService: SharedService,private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
+    constructor(private _appDataService: AppDataService, 
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService,
+        private _appUIService: AppUiService, 
+        private _aotWidgetService: AOTWidgetService,
+        private _agentFeaturesService: AgentFeaturesService
+    ) {
         // intialize all the subject
         super('TMACEventService');
         this._unsubscribeAll = new Subject();
@@ -907,31 +914,33 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
 
     private VoiceCallInitiatingEvent = (evt: EventData) => {
         try{
-            const message = this.translocoService.translate('widgets.activeAgents.actionInProgressAlert')
-            .replace('#agent', SDKClient.getAgentData().agentName)
-            .replace('#type', 'Service Observe');
-
-            this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, '', 
-                {
-                    yesMessage: 'Disconnect',
-                    closeIcon: true, 
-                    confirmClose: true,
-                    confirmMessage: this.translocoService.translate('widgets.activeAgents.confirmCloseSOMessage')
-                }, 
-                {
-                    disableClose : true
-                });
-                this._agentFeatureActionDialog.afterClosed().subscribe(response => {
-            if(response) {
-                this.logger.info('Disconnect to Handle called by agent ==>'+ SDKClient.getAgentData().agentId, true);
-                SDKClient.disconnectCallByHandle(evt.ConnectionHandle).then(value => {
-                    this._appUIService.showSnackbar('Disconnected call successfully','success');
-                }).catch(e => {
-                    this._appUIService.showSnackbar('Disconnect call failed','failure');
-                });
+            if(this._agentFeaturesService._serviceObserverTriggered) {
+                const message = this.translocoService.translate('widgets.activeAgents.actionInProgressAlert')
+                .replace('#agent', SDKClient.getAgentData().agentName)
+                .replace('#type', 'Service Observe');
+    
+                this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, '', 
+                    {
+                        yesMessage: 'Disconnect',
+                        closeIcon: true, 
+                        confirmClose: true,
+                        confirmMessage: this.translocoService.translate('widgets.activeAgents.confirmCloseSOMessage')
+                    }, 
+                    {
+                        disableClose : true
+                    });
+                    this._agentFeatureActionDialog.afterClosed().subscribe(response => {
+                if(response) {
+                    this.logger.info('Disconnect to Handle called by agent ==>'+ SDKClient.getAgentData().agentId, true);
+                    SDKClient.disconnectCallByHandle(evt.ConnectionHandle).then(value => {
+                        this._agentFeaturesService._serviceObserverTriggered = false;
+                        this._appUIService.showSnackbar('Disconnected call successfully','success');
+                    }).catch(e => {
+                        this._appUIService.showSnackbar('Disconnect call failed','failure');
+                    });
+                }
+            });
             }
-        });
-
         } catch(e) {
             this.logger.error('Error occured during voicecall initiating event', e, true);
         }
@@ -939,6 +948,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
     }
 
     private MakeCallOnExistingTabFailed = (evt) => {
+        this._agentFeaturesService._serviceObserverTriggered = false;
         this._agentFeatureActionDialog.close();
         this.logger.info('Received MakeCallOnExistingTabFailed event, hence closing tab', true);
     }
