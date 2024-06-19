@@ -144,9 +144,9 @@
 
                         <!-- Comment actions -->
                         <div class="active-comment-actions twd-flex twd-absolute">
-                            <p class="font-weight-500"
+                            <!-- <p class="font-weight-500"
                                 *ngIf="!getTotalReactionCount(postData?.SmActiveComment?.CommentEngagements) && mode !== 'workbench'">
-                                Like</p>
+                                Like</p> -->
                             <div class="reaction-palette twd-flex"
                                 *ngIf="getTotalReactionCount(postData?.SmActiveComment?.CommentEngagements)">
                                 <ng-container *ngFor="let eng of postData?.SmActiveComment?.CommentEngagements">
