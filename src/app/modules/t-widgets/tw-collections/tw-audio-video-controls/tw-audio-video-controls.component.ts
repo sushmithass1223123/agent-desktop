@@ -27,6 +27,7 @@ import {
     TextChatDisconnectedEvent,
     TextChatMessageReceivedEvent,
     TextChatRemoteUserConnectedEvent,
+    TextChatTransferSuccessEvent,
     TUtils,
     WrcCallTypes
 } from '@tmac/sdk';
@@ -342,11 +343,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
-
-        // If transfer is being triggered, then end the call 
-        this.sharedService.getTransferMethod().pipe(takeUntil(this._unsubscribeAll)).subscribe((interactionId: number) => {
-            if(interactionId === this.interactionId) this.endCall(true, '' , 'CALL_TRANSFFERED');
-        })
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -413,6 +409,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             .getInteractionEventsExtended(
                 [
                     { event: 'TextChatRemoteUserConnectedEvent' },
+                    { event: 'TextChatTransferSuccessEvent' },
                     { event: 'DisconnectAVEvent' },
                     { event: 'AVControlMessageReceivedEvent' },
                     { event: 'TextChatMessageReceivedEvent' },
@@ -1015,6 +1012,12 @@ if (error === 'Screenshare Was Cancelled') {
             isInteractionEvent: true
         });
     };
+
+    TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
+        if(evt.InteractionID !== this.interactionId) return;
+        this.endCall(true, '' , 'CALL_TRANSFFERED');
+        this.destroyWidget();
+    }
 
     /**
      * AVControlMessageReceivedEvent Handler
