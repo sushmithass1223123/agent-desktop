@@ -3374,6 +3374,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     closeAttachments(): void {
         this.attachPreviewMode = '';
+         // Exit PiP mode if it's active
+         if (document.pictureInPictureElement) {
+            document.exitPictureInPicture()
+        }
     }
 
     /**
