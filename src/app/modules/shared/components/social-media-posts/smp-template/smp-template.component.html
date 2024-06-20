@@ -4,14 +4,18 @@
     config: (customFuse.config$ | async)
 } as customFuse">
 
-    <div class="smp-template twd-w-full wd-h-full theme-bg twd-relative"
+    <div class="smp-template twd-w-full wd-h-full theme-bg twd-relative" *transloco="let locale"
         [ngClass]="{'twd-p-1': mode !== 'workbench', 'twd-p-4': mode === 'workbench'}">
         <ng-container>
             <div class="smp-post-info-container twd-flex twd-w-full">
                 <div class="poster-info-flex twd-flex" *ngIf="mode !== 'interaction-min' && mode !== 'interaction-max'">
                     <img src="assets/images/vectors/{{postData?.SubChannel}}.svg" alt="Poster profile picture">
                     <div class="poster-identity-flex twd-flex twd-flex-col">
-                        <h5 class="font-weight-700">{{postData?.PostAccountName}} . <span>{{getGenericTimeFormat(!postData?.PostUpdatedTime?.includes('-') ? postData?.PostUpdatedTime : postData?.PostCreatedTime)}}{{!postData?.PostUpdatedTime?.includes('-') ? '. Edited' : ''}}</span>
+                        <h5 class="font-weight-700">{{postData?.PostAccountName}} .
+                            <span>{{getGenericTimeFormat(!postData?.PostUpdatedTime?.includes('-') ?
+                                postData?.PostUpdatedTime :
+                                postData?.PostCreatedTime)}}{{!postData?.PostUpdatedTime?.includes('-') ? '. Edited' :
+                                ''}}</span>
                         </h5>
                     </div>
                 </div>
@@ -20,8 +24,9 @@
                         <!-- <h3 class="font-weight-700" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
                             {{postData?.Subject}}
                         </h3> -->
-                        <p class="twd-pt-2 content-para" [innerHTML]="smpService.convertUrlsToLinks(postData?.PostText?.Text?.slice(0, lineClampCharacterCount))"><span
-                                *ngIf="postData?.PostText?.Text?.slice(lineClampCharacterCount)?.length">...</span>
+                        <p class="twd-pt-2 content-para"
+                            [innerHTML]="smpService.convertUrlsToLinks(postData?.PostText?.Text?.slice(0, lineClampCharacterCount))">
+                            <span *ngIf="postData?.PostText?.Text?.slice(lineClampCharacterCount)?.length">...</span>
                             <br> <span (click)="this.lineClampCharacterCount = 999999999999"
                                 *ngIf="postData?.PostText?.Text?.slice(lineClampCharacterCount)?.length">Read
                                 more</span>
@@ -99,7 +104,9 @@
                         <div class="comment-info-flex">
                             <h5 class="font-weight-700 text-truncate">{{postData?.SmParentComments?.FromName ?
                                 postData?.SmParentComments?.FromName : postData?.PostAccountName}}</h5>
-                            <p class="font-weight-500" [innerHTML]="smpService.convertUrlsToLinks(postData?.SmParentComments?.CommentText?.Text)"></p>
+                            <p class="font-weight-500"
+                                [innerHTML]="smpService.convertUrlsToLinks(postData?.SmParentComments?.CommentText?.Text)">
+                            </p>
                             <div class="media-data-placeholder twd-flex" role="button"
                                 (click)="this.renderParentCommentAttachment = true;"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
@@ -168,7 +175,9 @@
                                     *ngIf="findPreviousCommentIndex() || isActiveCommentEdited"> .
                                     {{getGenericTimeFormat(findPreviousCommentIndex()?.CommentText?.UpdatedDateTime)}}
                                     . Edited</span></h5>
-                            <p class="font-weight-500" [innerHTML]="smpService.convertUrlsToLinks(postData?.SmActiveComment?.CommentText?.Text)"></p>
+                            <p class="font-weight-500"
+                                [innerHTML]="smpService.convertUrlsToLinks(postData?.SmActiveComment?.CommentText?.Text)">
+                            </p>
                             <div class="media-data-placeholder twd-flex" role="button"
                                 (click)="this.renderActiveCommentAttachment = true;"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
@@ -267,7 +276,8 @@
                         </div>
                     </ng-container>
 
-                    <mat-icon *ngIf="postData.IsCommentDeleted || isActiveCommentDeleted" class="deleted-icon">delete_forever</mat-icon>
+                    <mat-icon *ngIf="postData.IsCommentDeleted || isActiveCommentDeleted"
+                        class="deleted-icon">delete_forever</mat-icon>
                 </div>
 
                 <!-- Reply container -->
@@ -283,23 +293,27 @@
                                 <img *ngIf="draftData?.mimeConstraints.includes('image')"
                                     (click)="previewMedia({MediaType: 'image', MediaUrl: draftData?.rawAttachmentData})"
                                     [src]="draftData?.rawAttachmentData">
-                                <video *ngIf="draftData?.mimeConstraints.includes('video')" (click)="previewMedia({MediaType: 'video', MediaUrl: draftData?.rawAttachmentData})" [src]="draftData?.rawAttachmentData"></video>
+                                <video *ngIf="draftData?.mimeConstraints.includes('video')"
+                                    (click)="previewMedia({MediaType: 'video', MediaUrl: draftData?.rawAttachmentData})"
+                                    [src]="draftData?.rawAttachmentData"></video>
                             </div>
                             <div class="reply-actions twd-w-full twd-flex">
                                 <div class="r-actions twd-flex">
-                                    <mat-icon (click)="this.showEmojiPicker = !this.showEmojiPicker"
+                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
+                                        (click)="this.showEmojiPicker = !this.showEmojiPicker"
                                         role="button">tag_faces</mat-icon>
-                                    <mat-icon
+                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
                                         [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
                                         (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                    <mat-icon
+                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
                                         [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
                                         (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
-                                    <mat-icon
+                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
                                         [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
                                         (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
                                 </div>
-                                <mat-icon role="button" (click)="onSendReply()">send</mat-icon>
+                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')" role="button"
+                                    (click)="onSendReply()">send</mat-icon>
                             </div>
                             <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"
                                 [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"
@@ -347,7 +361,8 @@
                             <div class="comment-info-flex">
                                 <h5 class="font-weight-700 text-truncate">{{commentData?.FromName ?
                                     commentData?.FromName : postData?.PostAccountName}}</h5>
-                                <p class="font-weight-500" [innerHTML]="smpService.convertUrlsToLinks(commentData?.CommentText?.Text)"></p>
+                                <p class="font-weight-500"
+                                    [innerHTML]="smpService.convertUrlsToLinks(commentData?.CommentText?.Text)"></p>
                                 <div class="media-data-placeholder twd-flex" role="button"
                                     (click)="commentData.renderMedia = true;"
                                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
@@ -375,7 +390,8 @@
                         </div>
                     </div>
                     <!-- Reply container -->
-                    <ng-container *ngIf="mode === 'interaction-max' && draftData && commentData?.CommentId === postData?.SmActiveComment?.CommentId">
+                    <ng-container
+                        *ngIf="mode === 'interaction-max' && draftData && commentData?.CommentId === postData?.SmActiveComment?.CommentId">
                         <div class="reply-area twd-relative"
                             [ngStyle]="{ 'paddingLeft': (commentData.nestLevel * 45)+'px'}">
                             <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
@@ -426,7 +442,8 @@
                 </div>
             </div>
 
-            <mat-icon *ngIf="postData.IsPostDeleted || isPostDeleted" class="deleted-icon abs-del">delete_forever</mat-icon>
+            <mat-icon *ngIf="postData.IsPostDeleted || isPostDeleted"
+                class="deleted-icon abs-del">delete_forever</mat-icon>
         </ng-container>
     </div>
 </ng-container>

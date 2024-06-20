@@ -335,7 +335,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 const confirmDialogRef = this._appUiService.showAppConfirmDialog(
                     'generic',
                     this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationHeader'),
-                    this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationBody')
+                    this.translocoService.translate('widgets.smpControls.saveAsDraftConfirmationBody'),
+                    'close:confirm'
                 );
 
                 const dialogResult = await confirmDialogRef
@@ -349,7 +350,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 } else {
                     this.closePost();
                     return;
-                    force = true;
                 }
             }
         }
