@@ -81,11 +81,11 @@ export class SocialMediaPostsService {
     }
 
     setPostFromNotification(data): void {
-        this._postFromNotification.next(data)
+        this._postFromNotification.next(data);
     }
 
     triggerEmittedNotificationData(data): void {
-        this._emittedNotificationData.next(data)
+        this._emittedNotificationData.next(data);
     }
 
     get getEmittedNotificationData(): Observable<any> {
@@ -97,7 +97,7 @@ export class SocialMediaPostsService {
     }
 
     setSwitchTabFromNotification(data): void {
-        this._switchTabFromNotification.next(data)
+        this._switchTabFromNotification.next(data);
     }
 
     get getSwitchTabFromNotification(): Observable<any> {
@@ -137,14 +137,28 @@ export class SocialMediaPostsService {
         });
     }
 
-    convertUrlsToLinks(text): string {
+    stylizeContent(text): string {
         try {
             const urlRegex = /(https?:\/\/[^\s]+)/g;
-            return text.replace(urlRegex, function(url) {
+            const hashtagRegex = /#(\w+)/g;
+            const mentionRegex = /@(\w+)/g;
+
+            text = text.replace(urlRegex, function (url) {
                 return '<a href="' + url + '" target="_blank">' + url + '</a>';
             });
+
+            text = text.replace(hashtagRegex, function (match, p1) {
+                return '<span class="hashtag">#' + p1 + '</span>';
+            });
+
+            text = text.replace(mentionRegex, function (match, p1) {
+                return '<span class="mention">@' + p1 + '</span>';
+            });
+
+            return text;
         } catch (error) {
-            console.error(error)
+            console.error(error);
+            return text;
         }
     }
 }
