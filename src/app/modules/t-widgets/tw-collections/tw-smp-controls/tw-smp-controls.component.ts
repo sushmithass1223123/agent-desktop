@@ -347,7 +347,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     this.savePostAsDraft(true, true);
                     return;
                 } else {
-                    this.deleteDraftPost();
+                    this.closePost();
+                    return;
                     force = true;
                 }
             }
@@ -585,7 +586,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         );
                 }
                 if (closePost) {
-                    this.closePost();
+                    this.closeInteraction(true);
                 }
             })
             .catch((err) => {
@@ -807,7 +808,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 sessionId: this.smpService.postBodies[this.activeSessionId].SessionId,
                 status: SMP_SENT_REASONS.concat(SMP_DRAFT_REASONS).includes(this.routeReason)
                     ? `Outbox,Closed,sent,${this.smpService.postBodies[this.activeSessionId].OutSessionId}`
-                    : 'Close'
+                    : 'CloseTab'
             },
             undefined,
             true

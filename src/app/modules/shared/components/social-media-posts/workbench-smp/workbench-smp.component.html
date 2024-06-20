@@ -147,7 +147,7 @@
                                                     <mat-icon role="button"
                                                         [id]="getObjectKeyString(skill).split('@')[0]"
                                                         (click)="toggleDropdown(getObjectKeyString(channel)+'-'+getObjectKeyString(skill).split('@')[0])">arrow_drop_down_circle</mat-icon>
-                                                    <p>{{getObjectKeyString(skill)}}</p>
+                                                    <p>{{getObjectKeyString(skill)?.replace('@social-media.com', '')}}</p>
                                                 </div>
                                                 <p>({{getTotalArrayCount(channel, getObjectKeyString(skill))}})</p>
                                             </div>

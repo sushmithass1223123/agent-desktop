@@ -15,6 +15,8 @@ export interface PostFile {
 export interface SmpComponentInputs {
     Files: any[];
     PostAccountName: string;
+    PostCreatedTime: string;
+    PostUpdatedTime: string
     ConversationID: string;
     SessionId: string;
     OutSessionId: string;
