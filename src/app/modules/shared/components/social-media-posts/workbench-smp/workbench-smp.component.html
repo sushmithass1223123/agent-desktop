@@ -159,7 +159,7 @@
                                                         ? getActiveCommentStyle()
                                                         : ' theme-bg'
                                                 " *ngFor="let post of getObjectValueData(skill)">
-                                                    <h5 class="font-weight-700 poster">{{post.PostData.From}}</h5>
+                                                    <h5 class="font-weight-700 poster">{{post.PostData.From?.replace('@social-media.com', '')}}</h5>
                                                     <p class="font-weight-500">{{post.PostData.Subject}}</p>
 
                                                     <!-- Comment reaction indicator -->
@@ -172,7 +172,7 @@
                                                         *ngIf="chosenPostData && notificationAction === 'smc_e' && activeCommentValidator(post)"
                                                         [ngStyle]="{'color': '#ffcf74'}"
                                                         class="del_edit-rimg">edit</mat-icon>
-                                                    <mat-icon *ngIf="hidePostActions && activeCommentValidator(post)"
+                                                    <mat-icon *ngIf="(hidePostActions || state?.openPostResData?.IsCommentDeleted || state?.openPostResData?.IsPostDeleted) && activeCommentValidator(post)"
                                                         [ngStyle]="{'color': '#ec5757'}"
                                                         class="del_edit-rimg">delete_forever</mat-icon>
 
@@ -315,7 +315,7 @@
                     *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                     <div class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p"
-                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId && currentTab !== 'posts' && !hidePostActions">
+                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId && currentTab !== 'posts' && !(hidePostActions || state?.openPostResData?.IsCommentDeleted || state?.openPostResData?.IsPostDeleted)">
                         <button mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
                             (click)="showPostDetails()">
                             {{ locale('sharedComponents.socialMediaPosts.postDetails') }}
@@ -334,7 +334,7 @@
                         </button>
                     </div>
                     <div class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
-                        [ngClass]="{'edit-border': (notificationAction === 'smc_e' || state.openPostResData.IsCommentEdited), 'delete-border': (hidePostActions || state.openPostResData.IsCommentDeleted)}">
+                        [ngClass]="{'edit-border': (notificationAction === 'smc_e' || state?.openPostResData?.IsCommentEdited), 'delete-border': (hidePostActions || state?.openPostResData?.IsCommentDeleted || state?.openPostResData?.IsPostDeleted)}">
                         <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
                             [isDraftMode]="currentTab === 'draft'"
@@ -342,6 +342,7 @@
                             [previousCommentFromNotification]="notificationAction === 'smc_e' ? [chosenPostData?.SocialMediaData?.Comments] : []"
                             [isActiveCommentEdited]="state.openPostResData.IsCommentEdited"
                             [isActiveCommentDeleted]="state.openPostResData.IsCommentDeleted"
+                            [isPostDeleted]="state.openPostResData.IsPostDeleted"
                             [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering" [mode]="'workbench'"
                             [postData]="state.openPostResData"
                             [enhanceCommentContainer]="currentTab === 'posts'"></smp-template>

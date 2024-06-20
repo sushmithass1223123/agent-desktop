@@ -425,7 +425,7 @@
                 </div>
             </div>
 
-            <mat-icon *ngIf="postData.IsPostDeleted" class="deleted-icon abs-del">delete_forever</mat-icon>
+            <mat-icon *ngIf="postData.IsPostDeleted || isPostDeleted" class="deleted-icon abs-del">delete_forever</mat-icon>
         </ng-container>
     </div>
 </ng-container>

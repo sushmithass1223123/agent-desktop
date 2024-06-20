@@ -45,6 +45,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() enhanceCommentContainer: boolean = false;
     @Input() isActiveCommentEdited: boolean = false;
     @Input() isActiveCommentDeleted: boolean = false;
+    @Input() isPostDeleted: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
