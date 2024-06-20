@@ -314,13 +314,15 @@ export class AppUiService extends SharedWrapper {
      *
      * @param title [OPTIONAL] Title for the confirmation
      * @param message [OPTIONAL] Message for the confirmation
+     * @param customActionButtons [OPTIONAL] Confirmation custom action button names
      */
-    public showAppConfirmDialog(type: AppConfirmDialogTypes, title?: string, message?: string): MatDialogRef<AppConfirmDialogComponent> {
+    public showAppConfirmDialog(type: AppConfirmDialogTypes, title?: string, message?: string, customActionButtons?: string): MatDialogRef<AppConfirmDialogComponent> {
         const dialogRef = this._matDialog.open(AppConfirmDialogComponent, {
             data: {
                 title,
                 type,
                 message,
+                customActionButtons: customActionButtons ? customActionButtons.split(':') : [],
                 confirm: () => dialogRef.close(true),
                 cancel: () => dialogRef.close(false)
             },

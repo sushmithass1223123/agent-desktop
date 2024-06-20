@@ -231,7 +231,12 @@
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
                 "transferInteraction": "Transfer interaction",
-                "clearData": "Clear data"
+                "clearData": "Clear data",
+                "attachVideo": "Add a video",
+                "attachImage": "Add an image",
+                "attachGif": "Add a GIF",
+                "addEmoji": "Add an emoji",
+                "sendReply": "Send reply"
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited! Please pull the post again to continue.",
@@ -1045,6 +1050,7 @@
             "confirm": "Confirm",
             "promptPlaceholder": "Enter here...",
             "cancel": "Cancel",
+            "close": "Close",
             "ok": "Ok",
             "done": "Done"
         },
