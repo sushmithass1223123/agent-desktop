@@ -1276,6 +1276,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             PostAccountName: inboxRes.SocialMediaData.Posts.AccountName
                                 ? inboxRes.SocialMediaData.Posts.AccountName
                                 : inboxRes.SocialMediaData.Posts.AccountId,
+                            PostCreatedTime: inboxRes.SocialMediaData.Posts.CreatedDateTime,
+                            PostUpdatedTime: inboxRes.SocialMediaData.Posts.UpdatedDateTime,
                             PostId: inboxRes.SocialMediaData.Posts.PostId,
                             SmActiveComment: inboxRes.SocialMediaData.Comments,
                             SmParentComments: inboxRes.SocialMediaData.ParentComments,
@@ -1300,7 +1302,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             if (fetchFromOutbox) {
-                outboxRes = (await SDKClient.getOutboxItem(post.PostData.OutSessionId)).response;
+                outboxRes = (await SDKClient.getOutboxItem(this.currentTab === 'draft' ? post.PostData.OutSessionId : `${post.PostData.OutSessionId}|${post.PostData.SessionId}`)).response;
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchSmpComponent.getOutboxItem', 'Unexpected Response from server');
                 }
@@ -1329,6 +1331,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         PostAccountName: outboxRes.SocialMediaData.Posts.AccountName
                             ? outboxRes.SocialMediaData.Posts.AccountName
                             : outboxRes.SocialMediaData.Posts.AccountId,
+                        PostCreatedTime: outboxRes.SocialMediaData.Posts.CreatedDateTime,
+                        PostUpdatedTime: outboxRes.SocialMediaData.Posts.UpdatedDateTime,
                         PostId: outboxRes.SocialMediaData.Posts.PostId,
                         SmActiveComment: outboxRes.SocialMediaData.Comments,
                         SmParentComments: outboxRes.SocialMediaData.ParentComments,
