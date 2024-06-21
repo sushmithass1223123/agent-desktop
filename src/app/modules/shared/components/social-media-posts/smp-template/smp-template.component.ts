@@ -554,4 +554,17 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             (commentData) => commentData?.CommentId === this.postData.SmActiveComment.CommentId
         );
     }
+
+    getCommentCount(): number {
+        try {
+            if(!this.enhanceCommentContainer) {
+                if(this.postData.SmActiveComment && this.postData.SmParentComments) return 2;
+                else 1;
+            } else {
+                this.flattenedCommentHistory?.filter((commentData) => commentData?.nestLevel === 0)?.length ?? 0;
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
 }
