@@ -1133,7 +1133,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             this.openEmailRes.data.next(Object.assign(email, { Body: '' }, { currentTab: this.currentTab }));
             this.setComponentState('email/open/loading');
             let fetchFromOutbox =
-                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue') && this.latestEmailPreview;
+                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue' || email.RouteReason === 'AgentDraftPull') && this.latestEmailPreview;
             let inboxRes: EmailInboxModel;
             let outboxRes: EmailOutboxModel;
 
