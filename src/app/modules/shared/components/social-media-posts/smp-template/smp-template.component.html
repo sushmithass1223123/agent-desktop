@@ -25,7 +25,7 @@
                             {{postData?.Subject}}
                         </h3> -->
                         <p class="twd-pt-2 content-para"
-                            [innerHTML]="smpService.convertUrlsToLinks(postData?.PostText?.Text?.slice(0, lineClampCharacterCount))">
+                            [innerHTML]="smpService.stylizeContent(postData?.PostText?.Text?.slice(0, lineClampCharacterCount))">
                             <span *ngIf="postData?.PostText?.Text?.slice(lineClampCharacterCount)?.length">...</span>
                             <br> <span (click)="this.lineClampCharacterCount = 999999999999"
                                 *ngIf="postData?.PostText?.Text?.slice(lineClampCharacterCount)?.length">Read
@@ -105,7 +105,7 @@
                             <h5 class="font-weight-700 text-truncate">{{postData?.SmParentComments?.FromName ?
                                 postData?.SmParentComments?.FromName : postData?.PostAccountName}}</h5>
                             <p class="font-weight-500"
-                                [innerHTML]="smpService.convertUrlsToLinks(postData?.SmParentComments?.CommentText?.Text)">
+                                [innerHTML]="smpService.stylizeContent(postData?.SmParentComments?.CommentText?.Text)">
                             </p>
                             <div class="media-data-placeholder twd-flex" role="button"
                                 (click)="this.renderParentCommentAttachment = true;"
@@ -176,7 +176,7 @@
                                     {{getGenericTimeFormat(findPreviousCommentIndex()?.CommentText?.UpdatedDateTime)}}
                                     . Edited</span></h5>
                             <p class="font-weight-500"
-                                [innerHTML]="smpService.convertUrlsToLinks(postData?.SmActiveComment?.CommentText?.Text)">
+                                [innerHTML]="smpService.stylizeContent(postData?.SmActiveComment?.CommentText?.Text)">
                             </p>
                             <div class="media-data-placeholder twd-flex" role="button"
                                 (click)="this.renderActiveCommentAttachment = true;"
@@ -362,7 +362,7 @@
                                 <h5 class="font-weight-700 text-truncate">{{commentData?.FromName ?
                                     commentData?.FromName : postData?.PostAccountName}}</h5>
                                 <p class="font-weight-500"
-                                    [innerHTML]="smpService.convertUrlsToLinks(commentData?.CommentText?.Text)"></p>
+                                    [innerHTML]="smpService.stylizeContent(commentData?.CommentText?.Text)"></p>
                                 <div class="media-data-placeholder twd-flex" role="button"
                                     (click)="commentData.renderMedia = true;"
                                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
