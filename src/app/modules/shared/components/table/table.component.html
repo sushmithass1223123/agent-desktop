@@ -280,7 +280,7 @@ The actual rendered columns are set as a property on the row definition" -->
                         >
                             {{ locale('sharedComponents.table.reset') }}
                         </button>
-                        <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary">{{ locale('global.search') }}</button>
+                        <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary" [disabled]="hasFutureDates()">{{ locale('global.search') }}</button>
                         <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary" (click)="closeAdvancedSearch()">
                             {{ locale('global.close') }}
                         </button>
