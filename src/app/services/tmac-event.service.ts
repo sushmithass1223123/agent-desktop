@@ -932,7 +932,8 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                     this._agentFeatureActionDialog.afterClosed().subscribe(response => {
                 if(response) {
                     this.logger.info('Disconnect to Handle called by agent ==>'+ SDKClient.getAgentData().agentId, true);
-                    SDKClient.disconnectCallByHandle(evt.ConnectionHandle).then(value => {
+                    const handle = evt.CallID + '!' + SDKClient.getAgentData().deviceId +'!0';
+                    SDKClient.disconnectCallByHandle(handle).then(value => {
                         this.resetServiceObserver();
                         this._appUIService.showSnackbar('Disconnected call successfully','success');
                     }).catch(e => {
