@@ -74,16 +74,6 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         loaded: false
     };
 
-    /**
-     * Make call dialog ref
-     */
-    makeCallDialogRef: MatDialogRef<any>;
-
-    /**
-     * Make call dialog
-     */
-    @ViewChild('makeCallDialog')
-    MakeCallDialog: TemplateRef<any>;
 
     /**
      * Constructor
