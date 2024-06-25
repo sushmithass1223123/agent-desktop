@@ -42,6 +42,10 @@ import { TranslocoService } from '@ngneat/transloco';
 })
 export class TMACEventService extends SharedWrapper {
     // Private
+    /** 
+     * Flag to check if dialog is open
+     */
+    private isDialogOpen: boolean = false; 
     /**
      * Unsubscribe all subject
      */
@@ -659,6 +663,10 @@ export class TMACEventService extends SharedWrapper {
  * @param evt The event data containing JSON data.
  */
 private AgentChangeStatusConfirmationEvent = async (evt: any) => {
+       if (this.isDialogOpen) {
+           return;
+       }
+   
     // Parse the JSON data from the event
     const jsonData = JSON.parse(evt.JsonData);
     const dynamicLabels = [
@@ -669,6 +677,9 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
     ]; 
     // Check if the JSON data type is a request
     if (jsonData.type === 'request') {
+    // Seting the flag to indicate a dialog is open
+        this.isDialogOpen = true;
+   
         // Show a confirmation dialog to the user
         const confirmDialogRef = this._appUIService.showAppConfirmDialog(
             'generic',
@@ -686,7 +697,10 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             takeUntil(this._unsubscribeAll),
             take(1)
         ).toPromise();
-        
+   
+        // Reseting the flag after the dialog is closed
+        this.isDialogOpen = false;
+   
         // If the user confirmed the action
         if (dialogResult) {
             // Trigger change status method in the shared service with auxiliary data
