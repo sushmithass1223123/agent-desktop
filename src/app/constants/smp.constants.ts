@@ -1,3 +1,10 @@
+// route reasons
+export const SMP_OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull'];
+export const SMP_SENT_REASONS = ['AgentSentPull'];
+export const SMP_DRAFT_REASONS = ['AgentDraftPull'];
+export const SMP_INBOX_REASONS = ['MakerQueue', 'AgentPull', 'TransferToAgent', 'TransferToSkill'];
+export const SMP_MAIL_REASONS = ['CheckerQueue', 'CheckerPull'];
+
 export const SMP_REASONCODE_VALUES = {
     0: 'success',
     1: 'success',
@@ -31,7 +38,7 @@ export const SMP_SEND_STATUS = {
 };
 
 export const SMP_CURRENTSTATUS_CODES = {
-    SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
-    SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    SentToCustomer: 'sharedComponents.socialMediaPosts.replySendToCustomer',
+    SentToCheckerSession: 'sharedComponents.socialMediaPosts.replySendToChecker',
     EmailSending: 'sharedComponents.socialMediaPosts.postIsBeingSent'
 };

@@ -564,6 +564,12 @@
                                             "AllowSupervisorToChatSilentMonitor": false,
                                             "AllowSupervisorToChatWhisper": false,
                                             "AllowSupervisorToChatConference": false
+                                        },
+                                        "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
                                         }
                                     }
                                 }
@@ -2053,7 +2059,6 @@
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
                                                     "AsyncReplySendTimeout": 60000,
-                                                    "DraftPollingInterval": 10000,
                                                     "MaximumAllowedPostImageRendering": 1
                                                 }
                                             },
@@ -2886,7 +2891,7 @@
                 "protocol": "webSockets",
                 "timeout": 10,
                 "fallback": true,
-                "useDotNet6Wrapper": true
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,
@@ -2902,5 +2907,5 @@
             ]
         }
     },
-    "Version": "5.7.0-beta.1"
+    "Version": "5.7.0-beta.5"
 }

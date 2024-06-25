@@ -3,9 +3,11 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    EventEmitter,
     Input,
     OnDestroy,
     OnInit,
+    Output,
     TemplateRef,
     ViewChild,
     ViewEncapsulation
@@ -13,7 +15,7 @@ import {
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { PostAttachment, SDKClient, TUtils } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MediaStreamerResponse, PostFile, SmpComponentInputs } from 'app/interfaces';
+import { MediaStreamerResponse, PostFile, SmComment, SmpComponentInputs } from 'app/interfaces';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { Subject } from 'rxjs';
@@ -29,7 +31,7 @@ import { SocialMediaPostsService } from '../social-media-posts.service';
 })
 export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() postData: SmpComponentInputs;
-    @Input() mode: 'workbench' | 'interaction-min';
+    @Input() mode: 'workbench' | 'interaction-min' | 'interaction-max';
     @ViewChild('fileInput') fileInput!: ElementRef;
     /**
      * Reply input children ref
@@ -37,7 +39,13 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
     @Input() hideStructureActions: boolean = false;
-    @Input() skipCommentContainer: boolean = false;
+    @Input() engagementFromNotification: any;
+    @Input() draftData: any;
+    @Input() previousCommentFromNotification: SmComment[];
+    @Input() enhanceCommentContainer: boolean = false;
+    @Input() isActiveCommentEdited: boolean = false;
+    @Input() isActiveCommentDeleted: boolean = false;
+    @Input() isPostDeleted: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
@@ -61,8 +69,11 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() maxFileUploadSize = 20971520;
     @Input() draftPollDuration = 60;
     @Input() isDraftMode: boolean = false;
+    @Output('emitReply') emitReply = new EventEmitter<any>();
+    @Output('dataChanged') dataChanged = new EventEmitter<any>();
     renderActiveCommentAttachment: boolean = false;
     renderParentCommentAttachment: boolean = false;
+    renderPrevCommentAttachment: boolean = false;
     showEmojiPicker: boolean = false;
 
     /**
@@ -83,6 +94,12 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
      * Subject that is used as takeUntil limiter for unsubscribing all subsctiption on destroy
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
+    flattenedCommentHistory: any[] = [];
+    indexHolder = {
+        0: [0, 5]
+    };
+    hasNoFurtherComments: boolean = false;
+    showPreviousComment: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -94,34 +111,39 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         private cdr: ChangeDetectorRef
     ) {}
 
-    ngOnDestroy(): void {}
+    ngOnDestroy(): void {
+        this.unsubscribeAll$.next(null);
+        this.unsubscribeAll$.complete();
+    }
 
     ngOnInit(): void {
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
-        if (this.skipCommentContainer) this.lineClampCharacterCount = 1000;
         this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
         this.postData = JSON.parse(JSON.stringify(this.postData));
-        if (this.isDraftMode && this.smpService.draftData[this.activeSessionId]) {
-            this.smpService.draftData[this.activeSessionId].body = this.postData.SmActiveComment.CommentText.Text;
+        if (this.isDraftMode && this.draftData) {
+            this.draftData.body = this.postData.SmActiveComment.CommentText.Text;
             if (this.postData.Files && this.postData.SmActiveComment?.CommentAttachments?.length) {
-                const fileIndex = this.postData.Files.findIndex(
-                    (fileData) => fileData.URL === this.postData.SmActiveComment.CommentAttachments[0].MediaUrl
-                );
-                this.smpService.draftData[this.activeSessionId].attachments = this.postData.Files[fileIndex];
+                this.draftData.attachments = this.postData.Files;
                 if (this.postData.Files.length) {
-                    this.smpService.draftData[this.activeSessionId].rawAttachmentData =
-                        this.postData.Files[fileIndex].URL;
-                    this.smpService.draftData[this.activeSessionId].mimeConstraints = this.getFileType(
-                        this.smpService.draftData[this.activeSessionId].rawAttachmentData
-                    );
+                    this.draftData.rawAttachmentData = this.postData.Files[0].URL;
+                    this.draftData.mimeConstraints = this.getFileType(this.draftData.rawAttachmentData);
                 }
             }
             this.postData.SmActiveComment = this.postData.SmParentComments;
             this.postData.SmParentComments = null;
         }
+        if (this.enhanceCommentContainer || this.mode === 'interaction-max') this.loadCommentHistory();
+        setTimeout(() => {
+            if(this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container')
+        }, 500);
         this.cdr.detectChanges();
+    }
+
+    scrollToBottom(className: string) {
+        const element = document.querySelector(`.${className}`);
+        element.scrollTop = element.scrollHeight;
     }
 
     getFileType(fileName) {
@@ -169,9 +191,11 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
 
     getGenericTimeFormat(dotnetDate: string): string {
         try {
-            if (!dotnetDate) return 'NA';
+            if (!dotnetDate) return '';
             const currentDate: any = new Date();
-            const date: any = this.parseDotnetDate(dotnetDate);
+            let date: any = '';
+            if (!dotnetDate.includes('Date')) date = new Date(dotnetDate);
+            else date = this.parseDotnetDate(dotnetDate);
             const diffMilliseconds = currentDate - date;
 
             const diffSeconds = Math.floor(diffMilliseconds / 1000);
@@ -211,7 +235,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
      */
     public previewMedia(previewData: PostAttachment): void {
         let otherData = null;
-        if (previewData.MediaType == 'image') {
+        if (previewData.MediaType.includes('image')) {
             otherData = {
                 scale: 1
             };
@@ -249,7 +273,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     }
 
     onAttach(fileType) {
-        this.smpService.draftData[this.activeSessionId].mimeConstraints = fileType;
+        this.draftData.mimeConstraints = fileType;
         setTimeout(() => {
             this.fileInput?.nativeElement?.click();
         });
@@ -260,10 +284,8 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         let resVal: Partial<PostFile>;
         if (input.files && input.files.length) {
             const f = input.files[0];
-            const fext = this.smpService.draftData[this.activeSessionId].mimeConstraints.includes('*')
-                ? f.type.split('/')[0]
-                : f.name.split('.').pop();
-            if (!this.smpService.draftData[this.activeSessionId].mimeConstraints.includes(fext)) {
+            const fext = this.draftData.mimeConstraints.includes('*') ? f.type.split('/')[0] : f.name.split('.').pop();
+            if (!this.draftData.mimeConstraints.includes(fext)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.fileTypeNotSupported'),
                     'failure'
@@ -282,7 +304,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 return;
             }
             const Base64 = await this.convertToBase64(f);
-            this.smpService.draftData[this.activeSessionId].rawAttachmentData = Base64;
+            this.draftData.rawAttachmentData = Base64;
             if (this.fileUploadUrl?.MediaUploader) {
                 const formData = new FormData();
                 formData.append('file', f);
@@ -305,7 +327,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                     );
                     resVal = {
                         Name: response.result.original_name,
-                        URL: response.result.downloadURL,
+                        URL: response.result.streamURL,
                         Source: 'mediastreamer'
                     };
                 } else {
@@ -318,18 +340,22 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             } else {
                 const {
                     response: [res]
-                } = await SDKClient.uploadFiles({
-                    files: [
-                        {
-                            Base64,
-                            FileName: f.name,
-                            RelativePath: '',
-                            Status: 0,
-                            Type: '',
-                            Url: ''
-                        }
-                    ]
-                });
+                } = await SDKClient.uploadFiles(
+                    {
+                        files: [
+                            {
+                                Base64,
+                                FileName: f.name,
+                                RelativePath: '',
+                                Status: 0,
+                                Type: '',
+                                Url: ''
+                            }
+                        ]
+                    },
+                    undefined,
+                    true
+                );
                 if (res.Url) {
                     this._appUiService.showSnackbar(
                         this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileSuccess')
@@ -347,8 +373,9 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
 
             const ext = resVal.Name.split('.').pop();
 
-            this.smpService.draftUploadStatus[this.activeSessionId] = false;
-            this.smpService.draftData[this.activeSessionId].attachments = [
+            this.dataChanged.emit(this.interactionId);
+
+            this.draftData.attachments = [
                 {
                     Id: TUtils.Generic.uuid(),
                     SessionID: this.sessionId,
@@ -381,7 +408,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     }
 
     onSendReply() {
-        this.smpService.sendReply.next(this.activeSessionId);
+        this.emitReply.emit(this.activeSessionId);
     }
 
     async onClearAttachment() {
@@ -397,21 +424,147 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             .pipe(take(1))
             .toPromise();
         if (dialogResult) {
-            this.smpService.draftUploadStatus[this.activeSessionId] = false;
-            this.smpService.draftData[this.activeSessionId].mimeConstraints = '';
-            this.smpService.draftData[this.activeSessionId].rawAttachmentData = '';
-            this.smpService.draftData[this.activeSessionId].attachments = [];
+            this.draftData.mimeConstraints = '';
+            this.draftData.rawAttachmentData = '';
+            this.draftData.attachments = [];
+            this.dataChanged.emit(this.interactionId);
         }
     }
 
     addEmoji(evt: any) {
-        const inputVal: string = this.smpService.draftData[this.activeSessionId].body || '';
+        const inputVal: string = this.draftData.body || '';
         const selectionStart = this.replyInputField.nativeElement.selectionStart;
         const selectionEnd = this.replyInputField.nativeElement.selectionEnd;
         const startSlice = inputVal.slice(0, selectionStart);
         const endSlice = inputVal.slice(selectionEnd);
-        this.smpService.draftData[this.activeSessionId].body = `${startSlice}${evt.emoji.native}${endSlice}`;
+        this.draftData.body = `${startSlice}${evt.emoji.native}${endSlice}`;
         this.replyInputField.nativeElement.focus();
-        this.smpService.draftUploadStatus[this.activeSessionId] = false;
+    }
+
+    getTotalReactionCount(reactions) {
+        if (!reactions) return 0;
+        return reactions.reduce((total, reaction) => total + reaction.ReactionCount, 0);
+    }
+
+    async loadCommentHistory() {
+        try {
+            const { response } = await SDKClient.loadComments({
+                postId: this.postData.PostId,
+                commentId: '',
+                startIndex: this.indexHolder[0][0],
+                endIndex: this.indexHolder[0][1]
+            });
+            if (!response || (Array.isArray(response) && !response?.length)) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.noCommentsFoundMessage'),
+                    'failure'
+                );
+                this.hasNoFurtherComments = true;
+                return;
+            }
+            this.generateSegregatedComment(response, -1);
+            if (this.engagementFromNotification || this.mode === 'interaction-max') {
+                const checkerId = this.engagementFromNotification
+                    ? this.engagementFromNotification.smmId
+                    : this.postData.SmActiveComment.CommentId;
+                const isActiveCommentFound = this.flattenedCommentHistory.findIndex(
+                    (commentData: any) => commentData.CommentId === checkerId || commentData.PostId === checkerId
+                );
+                if (isActiveCommentFound < 0) this.onLoadNextHistory('comments');
+                else this.validateVisibleComments(checkerId);
+            }
+            console.log(this.flattenedCommentHistory);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    generateSegregatedComment(commentArray: any[], nestLevel: number): void {
+        try {
+            commentArray.forEach((commentData) => {
+                let modCommentData = { ...commentData, nestLevel: nestLevel + 1, renderMedia: false };
+                if (nestLevel === -1) modCommentData.isVisible = true;
+                else modCommentData.isVisible = false;
+                this.flattenedCommentHistory.push(modCommentData);
+                if (commentData?.ReplyComments?.length) {
+                    this.generateSegregatedComment(commentData.ReplyComments, nestLevel + 1);
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    onForceLoadHistory(type: string, comment: any): void {
+        try {
+            if (type == 'replies') {
+                this.flattenedCommentHistory.forEach((commentData: any) => {
+                    if (commentData.ParentId === comment.CommentId) commentData.isVisible = true;
+                });
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    validateLoadHistory(type: string, comment: any): boolean {
+        return this.flattenedCommentHistory.some(
+            (commentData: any) => commentData.ParentId === comment.CommentId && commentData.isVisible
+        );
+    }
+
+    onLoadNextHistory(type: string): void {
+        try {
+            this.indexHolder[0][0] += 5;
+            this.indexHolder[0][1] += 5;
+            this.loadCommentHistory();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    validateVisibleComments(commentId: string): void {
+        try {
+            let foundCommentIndex = this.flattenedCommentHistory.findIndex(
+                (commentData: any) => commentData.CommentId === commentId || commentData.PostId === commentId
+            );
+            let { nestLevel, ParentId } = this.flattenedCommentHistory[foundCommentIndex];
+            if (nestLevel === 0) return;
+
+            // Forward visibility alteration
+            this.flattenedCommentHistory.forEach((commentData, i) => {
+                if (i >= foundCommentIndex && commentData.ParentId === ParentId) {
+                    commentData.isVisible = true;
+                }
+            });
+
+            // Backward visibility alteration
+            while (foundCommentIndex >= 0 && nestLevel > 0) {
+                this.flattenedCommentHistory[foundCommentIndex].isVisible = true;
+                nestLevel = this.flattenedCommentHistory[foundCommentIndex].nestLevel;
+                foundCommentIndex--;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    findPreviousCommentIndex(): SmComment {
+        return this.previousCommentFromNotification?.find(
+            (commentData) => commentData?.CommentId === this.postData.SmActiveComment.CommentId
+        );
+    }
+
+    getCommentCount(): number {
+        try {
+            if(!this.enhanceCommentContainer) {
+                if(this.postData.SmActiveComment && this.postData.SmParentComments) return 2;
+                else 1;
+            } else {
+                this.flattenedCommentHistory?.filter((commentData) => commentData?.nestLevel === 0)?.length ?? 0;
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
 }

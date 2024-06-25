@@ -230,8 +230,18 @@
             "tooltips": {
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
-                "transferInteraction": "Transfer interaction"
-            }
+                "transferInteraction": "Transfer interaction",
+                "clearData": "Clear data",
+                "attachVideo": "Add a video",
+                "attachImage": "Add an image",
+                "attachGif": "Add a GIF",
+                "addEmoji": "Add an emoji",
+                "sendReply": "Send reply"
+            },
+            "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
+            "commentEditedDialogMessage": "Comment has been edited! Please pull the post again to continue.",
+            "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
+            "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed."
         },
         "voiceControls": {
             "reset": "Reset",
@@ -329,7 +339,7 @@
             "loadingChangeStatus": "Please wait, changing status...",
             "agentStatusSuccess": "Status of Agent changed successfully to #newStatus",
             "agentStatusApproved": "Agent accepted the request and changed to #approvedStatus",
-            "changeStatuscancelled":"Status Change Cancelled",
+            "changeStatuscancelled": "Status Change Cancelled",
             "alertChangeStatus": "Supervisor wants to change your status to #status",
             "statusChangeRequestSuccess": "#agentName is on call, status change request sent successfully",
             "statusChangeFailed": "Status change failed!",
@@ -422,7 +432,10 @@
             "toFieldRequiredMsg": "Please provide the number to deflect",
             "deflectLoading": "Deflecting",
             "deflectError": "Unable to Deflect: ",
-            "deflectFailed": "Deflecting failed"
+            "deflectFailed": "Deflecting failed",
+            "typePlaceholder": "Send Type",
+            "typeSMS": "SMS",
+            "typeEmail": "EMAIL"
         },
         "customerJourney": {
             "voiceWith": "Voice with",
@@ -764,6 +777,13 @@
             "AHT": "AHT",
             "Transfer": "Transfer",
             "Conference": "Conference"
+        },
+        "campaignNotification": {
+            "title": "Call Reminder",
+            "message": "Hi #agent, you have a call at #time from #customerName[#customerPhoneNumber]",
+            "snoozeTimePlaceholder": "Select time",
+            "success": "Campaign #type details updated successfully",
+            "fail": "Failed to updated campaign #type details"
         }
     },
     "generalFormFields": {
@@ -921,6 +941,7 @@
             "someEmailsAssigned": "Some emails are already assigned",
             "pullEmailFailed": "Unable to pull email",
             "pullEmailSuccess": "Emails pulled successfully",
+            "CheckerEmailAutorization":"Not authorized to pull CheckerEmail",
             "notReplied": "Not Replied",
             "spamConfirmTitle": "Confirm Spam",
             "spamConfirmMsg": "Are you sure to mark this email as spam?",
@@ -970,7 +991,8 @@
             "emailSendErrorUnknown": "Unknown",
             "emailSendErrorEwsApiAdaptorDown": "EWS adapter down",
             "emailSendErrorPayloadTooLarge": "Attachments exceed maximum file size",
-            "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute"
+            "emailSendErrorEmailManagerLoading": "Email manager service is still loading, pls retry after a minute",
+            "emailSendErrorServerNotReachable": "Server not reachable"
         },
         "socialMediaPosts": {
             "queueLabel": "Queue",
@@ -979,6 +1001,7 @@
             "draftsLabel": "Draft",
             "postsLabel": "Posts",
             "postDetails": "Post details",
+            "close": "Close",
             "searchPlaceholder": "Search posts here...",
             "sortBy": "Sort by",
             "postSubject": "Post subject",
@@ -999,7 +1022,6 @@
             "selectPostLabel": "Select a post to read",
             "pullPostLoading": "Fetching post",
             "postsAssigned": "Posts are already assigned",
-            "somePostsAssigned": "Some posts are already assigned",
             "pullPostsFailed": "Unable to pull posts",
             "pullPostsSuccess": "Posts pulled successfully",
             "postPullConfirmHeader": "Post Pull Confirmation",
@@ -1009,7 +1031,13 @@
             "invalidPostResponse": "Could not read post data",
             "uploadFileLoading": "Please wait while the file uploads",
             "uploadFileSizeWarning": "File size exceeded!",
-            "fileTypeNotSupported": "Selected file type is not allowed to upload!"
+            "fileTypeNotSupported": "Selected file type is not allowed to upload!",
+            "noCommentsFoundMessage": "No comments found!",
+            "closePostsLoading": "Closing post..",
+            "closePostsSuccess": "Successfully closed posts!",
+            "closePostsFailed": "Error closing posts!",
+            "replySendToCustomer": "Reply sent to customer",
+            "replySendToChecker": "Reply sent to checker"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
@@ -1033,6 +1061,7 @@
             "confirm": "Confirm",
             "promptPlaceholder": "Enter here...",
             "cancel": "Cancel",
+            "close": "Close",
             "ok": "Ok",
             "done": "Done"
         },

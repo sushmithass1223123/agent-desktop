@@ -23,7 +23,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { AppDataService } from '@services/app-data.service';
 import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
-import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS} from 'app/constants';
 import { EmailComponentInputs, IWidget, ResData, MediaStreamerMultiResponse, MediaStreamerMetaResponse } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
@@ -972,9 +972,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         if (this.currentTab === 'draft') {
                             item.sessionId = curr.OutSessionId;
                         } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
-                            item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                            item.sessionId = curr.OutSessionId ? `${curr.InSessionId}|${curr.OutSessionId}` : curr.InSessionId;
                         } else if (this.currentTab === 'sentitem') {
-                            item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
+                            item.sessionId = curr.OutSessionId ? `${curr.InSessionId}|${curr.OutSessionId}` : curr.InSessionId;
                             // item.inSessionId = curr.OutSessionId;
                         }
                         delete this.emailBodies[curr.InSessionId];
@@ -1016,6 +1016,12 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                             'failure'
                                         );
                                     }
+                                } else if (res.failedList.items.some((f) => f.responseCode === -407)) {
+                                    // Handle -407 error (Not authorized to pull checker email)
+                                    this.appUiService.showSnackbar(
+                                        this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
+                                        'failure'
+                                    );
                                 } else {
                                     this.appUiService.showSnackbar(
                                         this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
@@ -1127,7 +1133,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             this.openEmailRes.data.next(Object.assign(email, { Body: '' }, { currentTab: this.currentTab }));
             this.setComponentState('email/open/loading');
             let fetchFromOutbox =
-                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue') && this.latestEmailPreview;
+                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue' || email.RouteReason === 'AgentDraftPull') && this.latestEmailPreview;
             let inboxRes: EmailInboxModel;
             let outboxRes: EmailOutboxModel;
 

@@ -1,3 +1,4 @@
+import { AgentSkillConfig } from './../components/agent-skill-list.interface';
 import { InteractionWidget } from '..';
 
 /**
@@ -37,6 +38,10 @@ export interface TwSmpControls<T> extends InteractionWidget<TwSmpControlsData, T
  */
 export interface TwSmpControlsData {
     /**
+     * Transfer config
+    */
+    Transfer: AgentSkillConfig;
+    /**
      * Number in bytes to specify maximum file upload size
      */
     MaxFileUploadSize: number;
@@ -48,8 +53,4 @@ export interface TwSmpControlsData {
      * Send reply timeout
      */
     AsyncReplySendTimeout: number;
-    /**
-     * Inverval to send drafts
-     */
-    DraftPollingInterval: number;
 }

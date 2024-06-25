@@ -24,7 +24,10 @@ export class AgentFeaturesService extends SharedWrapper {
      * Need More Description
      */
     private _processed: boolean;
-
+    /**
+     * Variable to store setTimeout reference
+     */
+    private displayStreamTimeout: any; 
     /**
      * Agent Features
      */
@@ -306,7 +309,8 @@ export class AgentFeaturesService extends SharedWrapper {
             .catch((error: Error) => {
                 this._agentFeatureInfo.permissions.display = false;
                 this._appUIService.showSnackbar('Error: Please share your entire screen for supervisor', 'failure');
-                setTimeout(() => {
+                 // Store setTimeout reference
+                this.displayStreamTimeout = setTimeout(() => {
                     this.captureDisplayStream();
                 }, 2000);
                 // log the error to server for troubleshooting purpose
@@ -401,7 +405,12 @@ export class AgentFeaturesService extends SharedWrapper {
             });
         }
     }
-
+    /**
+     * To clear DisplayStreamTimeout
+     */
+    public clearDisplayStreamTimeout(): void {
+        clearTimeout(this.displayStreamTimeout);
+    }
     /**
      * Subscribe to the available features
      */

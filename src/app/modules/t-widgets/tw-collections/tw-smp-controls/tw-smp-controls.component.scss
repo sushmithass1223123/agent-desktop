@@ -72,6 +72,7 @@ tw-smp-controls .mat-card-content {
     height: 100%;
     align-items: flex-start;
     justify-content: space-between;
+    overflow: hidden;
 
     .social-info-action {
         align-items: center;
@@ -105,6 +106,53 @@ tw-smp-controls .mat-card-content {
         }
     }
 
+    .banner-overlay {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9;
+        align-items: center;
+        justify-content: center;
+        
+        .bg-ol {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.5;
+        }
+
+        .custom-dialog {
+            width: 400px;
+            height: 300px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            z-index: 10;
+
+            img {
+                height: 220px;
+                margin-top: -50px;
+            }
+
+            h4{
+                font-size: 16px;
+                font-weight: 500;
+            }
+        }
+
+        .edited {
+            border: 2px solid #ffcf74 !important;
+        }
+        .deleted {
+            border: 2px solid #ec5757 !important;
+        }
+    }
+
     smp-template {
         width: 100%;
         height: 100%;
@@ -116,6 +164,7 @@ tw-smp-controls .mat-card-content {
             padding-left: 0px !important;
             padding-right: 0px !important;
             height: 50vh;
+            max-height: 100%;
         }
     }
 

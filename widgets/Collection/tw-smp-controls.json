@@ -21,8 +21,38 @@
         "Pinned": false
     },
     "Data": {
+        "Transfer": {
+            "Allowed": true,
+            "Agent": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": false,
+                "Source": {
+                    "Use": "agentId",
+                    "Display": "agentName",
+                    "FreeTextAllowed": false
+                },
+                "AllowedStates": [],
+                "TeamFilter": false,
+                "Columns": []
+            },
+            "Skill": {
+                "Allowed": true,
+                "Consult": true,
+                "Blind": true,
+                "Comments": false,
+                "Source": {
+                    "Use": "vdn",
+                    "Display": "skill",
+                    "FreeTextAllowed": true
+                },
+                "ChannelPrefix": ["EM"],
+                "Columns": []
+            }
+        },
         "MaxFileUploadSize": 20971520,
         "AsyncReplySendTimeout": 60000,
-        "DraftPollingInterval": 10000
+        "MaximumAllowedPostImageRendering": 1
     }
 }

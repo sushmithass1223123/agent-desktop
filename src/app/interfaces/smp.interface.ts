@@ -15,6 +15,8 @@ export interface PostFile {
 export interface SmpComponentInputs {
     Files: any[];
     PostAccountName: string;
+    PostCreatedTime: string;
+    PostUpdatedTime: string
     ConversationID: string;
     SessionId: string;
     OutSessionId: string;
@@ -25,7 +27,23 @@ export interface SmpComponentInputs {
     Subject: string;
     PostText: SmPostText;
     IsOutbound: boolean;
+    IsCommentDeleted: boolean;
+    IsCommentEdited: boolean;
+    IsPostDeleted: boolean;
     PostAttachments: SmPostAttachments[];
+    PostEngagements: PostEngagement[];
+    Engagement: Engagement;
+}
+export interface Engagement {
+    Channel: any;
+    SmmType: any;
+    SmmId: any;
+    ReactionType: any;
+}
+
+export interface PostEngagement {
+    ReactionType: string;
+    ReactionCount: number;
 }
 
 export interface SmComment {
@@ -34,6 +52,7 @@ export interface SmComment {
     CommentText: SmCommentText;
     FromName: string;
     CommentAttachments: SmCommentAttachment[];
+    CommentEngagements: Engagement[];
 }
 
 export interface SmCommentText {

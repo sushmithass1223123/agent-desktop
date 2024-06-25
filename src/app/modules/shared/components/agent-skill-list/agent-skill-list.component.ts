@@ -1030,11 +1030,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
-                        // End the call if its already ongoing during AV call - Observed in
-                        if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
-                            this.sharedService.triggerTransferMethod(this.interactionId);
-                        }
-
                         this.loading -= 1;
                         if (dt.response.ResultCode >= 0) {
                             this._appUIService.showSnackbar(
@@ -1060,11 +1055,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
             // blind transfer/confks
             else {
-                // End the call if its already ongoing during AV call - Observed in
-                if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
-                    this.sharedService.triggerTransferMethod(this.interactionId);
-                }
-
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
                     comment: this.comments,
@@ -1173,6 +1163,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     private transferEmail(): void {
         this.loading += 1;
         const emails: any[] = this._dialogData.OtherData.emails;
+        const useMediaMatrixProxyUrl: any = this._dialogData.OtherData?.useMediaMatrixProxyUrl;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
@@ -1184,7 +1175,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     toAgentId: transferTo
-                })
+                }, undefined, useMediaMatrixProxyUrl)
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1239,7 +1230,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     skillId: transferTo
-                })
+                }, undefined, useMediaMatrixProxyUrl)
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [

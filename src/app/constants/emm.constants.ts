@@ -3,6 +3,7 @@ export const OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull','MakerQueue'];
 export const SENT_REASONS = ['AgentSentPull'];
 export const DRAFT_REASONS = ['AgentDraftPull'];
 export const INBOX_REASONS = ['MakerQueue', 'AgentPull', 'TransferToAgent', 'TransferToSkill'];
+export const MAIL_REASONS = ['CheckerQueue', 'CheckerPull'];
 
 // entites
 export const AVAILABLE_ENTITIES = [
@@ -41,11 +42,13 @@ export const EMAIL_SEND_STATUS = {
     '-8': 'MailboxInstanceCreationError',
     '-9': 'EwsApiAdaptorDown',
     '-10': 'PayloadTooLarge',
-    '-11': 'EmailManagerLoading'
+    '-11': 'EmailManagerLoading',
+    '404': 'ServerNotReachable'
 };
 
 export const EMAIL_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.email.emailSendToCustomer',
     SentToCheckerSession: 'sharedComponents.email.emailSendToChecker',
+    SentToCheckerQueue: 'sharedComponents.email.emailSendToChecker',
     EmailSending: 'sharedComponents.email.emailIsBeingSent'
 };

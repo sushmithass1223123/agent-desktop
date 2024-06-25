@@ -314,13 +314,15 @@ export class AppUiService extends SharedWrapper {
      *
      * @param title [OPTIONAL] Title for the confirmation
      * @param message [OPTIONAL] Message for the confirmation
+     * @param customActionButtons [OPTIONAL] Confirmation custom action button names
      */
-    public showAppConfirmDialog(type: AppConfirmDialogTypes, title?: string, message?: string): MatDialogRef<AppConfirmDialogComponent> {
+    public showAppConfirmDialog(type: AppConfirmDialogTypes, title?: string, message?: string, customActionButtons?: string): MatDialogRef<AppConfirmDialogComponent> {
         const dialogRef = this._matDialog.open(AppConfirmDialogComponent, {
             data: {
                 title,
                 type,
                 message,
+                customActionButtons: customActionButtons ? customActionButtons.split(':') : [],
                 confirm: () => dialogRef.close(true),
                 cancel: () => dialogRef.close(false)
             },
@@ -454,7 +456,22 @@ export class AppUiService extends SharedWrapper {
 
         // check whether to show an alert
         if (notification.showAlert) {
-            this.showSnackbar(notification.message, 'info', 'top', 'center');
+            let message = '';
+            if (!notification.icon.includes('sm')) {
+                message = notification.message;
+            } else {
+                if (notification.icon.includes('smrc')) {
+                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Reaction to ${notification.message?.SocialMediaData?.Engagement?.smmType} on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smc_e')) {
+                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smc_d')) {
+                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smp_d')) {
+                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Post deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                }
+            }
+
+            this.showSnackbar(message, 'info', 'top', 'center');
         }
 
         // Notify the observers

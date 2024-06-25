@@ -16,11 +16,13 @@ import {
     IResponse,
     IUIEvent,
     SDKClient,
+    TCMDirectAgentNotifyEvent,
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
     TMACCommandType,
     TMACEventTypes,
-    TmacServerConnectionSuccess
+    TmacServerConnectionSuccess,
+    TUtils
 } from '@tmac/sdk';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
@@ -772,6 +774,86 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
     };
 
     /**
+     * To process TCM_DirectAgentNotifyEvent
+     * @param {TCMDirectAgentNotifyEvent} evt
+     */
+    private TCMDirectAgentNotifyEvent = (evt: TCMDirectAgentNotifyEvent) => {
+        this.logger.info('Received TCMDirectAgentNotifyEvent ---'+evt, true);
+        try {
+        const obj = JSON.parse(evt.JsonData);
+
+        const dateTime = this.getDateTime(obj.ScheduleTime, 'yyyymmddhhmmtt');
+
+        let message = this.translocoService.translate('widgets.campaignNotification.message');
+        message = message.replace('#agent', SDKClient.getAgentData().agentName).
+        replace('#time', '<strong>' + dateTime + '<strong>').
+        replace('#customerName',obj?.Name).
+        replace('#customerPhoneNumber', obj?.PhoneNumber);
+
+
+        this._appUIService.showRemiderTaskModal('meeting',message, this.translocoService.translate('widgets.campaignNotification.title'))
+        .afterClosed().subscribe(async res => {
+            if(res) {
+                const response = res.split(':')[0];
+                const inputData = {
+                    "fromAddr": obj.FromAddr,
+                    "response": response,
+                    "agentID": SDKClient.getAgentData().agentId,
+                    "extension": SDKClient.getAgentData().deviceId,
+                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], obj.ScheduleTime): ''
+                  }
+            
+                  let url = this.appConfig.Main.Urls.TCMClient;
+                  url = url.endsWith('/') ? url : url + '/';
+                  
+                  const result = await TUtils.HttpClient.sendRequest<IResponse>({
+                    urls: [url + 'OnAgentResponseToDacRequest'],
+                    requestArgs: inputData,
+                    header: {
+                            'Content-Type': 'application/json'
+                    },
+                    responseType: 'json',
+                    method: 'POST',
+                    log: true
+                  });
+
+                  if(result.response && result.response.toString() === '0') {
+                    const msg = this.translocoService.translate('widgets.campaignNotification.success').replace('#type', response);
+                    this._appUIService.showSnackbar(msg,'success');
+                  } else {
+                    const msg = this.translocoService.translate('widgets.campaignNotification.fail').replace('#type', response);
+                    this._appUIService.showSnackbar(msg,'failure');
+                  }
+            }
+        });
+    } catch(e) {
+        this.logger.error('Error in TCMDirectAgentNotifyEvent --', e, true);
+    }
+        
+       
+    }
+
+    private getUpdatedTCMScheduledTime = (snoozeTime,scheduleTime) => {
+        try{
+            const st = snoozeTime.length === 1 ? (0+snoozeTime) : snoozeTime;
+            return scheduleTime.substr(0,10) + st + scheduleTime.substr(12);
+        } catch(e) {
+            this.logger.error('Error in getUpdatedTCMScheduledTime --', e, true);
+        }
+    }
+
+    public getDateTime = (dateTime, fromFormat) => {
+        let updatedDate;
+        switch(fromFormat) {
+            case 'yyyymmddhhmmtt': 
+            updatedDate = dateTime.substr(8,2) + ':' + dateTime.substr(10,2) + ':' + dateTime.substr(12,2) + ' ' + 
+            dateTime.substr(0,4) + '/' + dateTime.substr(4,2) + '/' + dateTime.substr(6,2); 
+            break;
+        }
+        return updatedDate;
+    }
+
+    /**
      * To process AgentReminderEvent
      *
      * @param {AgentReminderEvent} evt
@@ -1114,6 +1196,10 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             {
                 label: 'TCMDirectAgentNotifyTimeoutEvent',
                 callback: this.TCMDirectAgentNotifyTimeoutEvent
+            },
+            {
+                label: 'TCMDirectAgentNotifyEvent',
+                callback: this.TCMDirectAgentNotifyEvent
             },
             {
                 label: 'ACWTimerEvent',

@@ -1,4 +1,4 @@
-import { AOTWidget, TwSuActiveAgents } from '@ad/types';
+import { AOTWidget, IAuxCodeConfig, TwSuActiveAgents } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
@@ -94,6 +94,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     activityWidget: IWidget;
     /**
+     * Aux codes config
+     */
+    auxCodeConfig: IAuxCodeConfig;
+    /**
      * Aux code list
      * Need more description
      */
@@ -161,6 +165,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     ngOnInit(): void {
+        // get the widget extra data
+            this.auxCodeConfig = this.data.Data.AuxCodes || {
+                Enabled: false,
+                ByTeam: false,
+                DefaultACW: false,
+                DefaultLogout: false
+        };
         // call the wrapper init method
         this.initWrapper(this.data);
 
@@ -174,7 +185,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
 
             
         // get agent aux codes
-        SDKClient.loadAUXCodes(false).then((result: IResponse) => {
+        SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null).then((result: IResponse) => {
             // check if the data is null
             if (result.response && result.response.length > 0) {
                 // filter and assign the aux codes

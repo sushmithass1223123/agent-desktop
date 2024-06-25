@@ -316,6 +316,43 @@
                                         "SLEnabled": true,
                                         "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
                                     }
+                                },
+                                {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "DepartmentFilters": { "Name": ["Deflect"] },
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false,
+                                        "Number": "IncomingCallEvent.PhoneNumber",
+                                        "DeflectExpiry": 5,
+                                        "DeflectIntent": "devtest",
+                                        "DestChannel": "textchat",
+                                        "DestSubChannel": "text",
+                                        "DisconnectTimeout": 1,
+                                        "FallbackSkillId": 42001,
+                                        "NextStatusName": "ACW",
+                                        "StatusLockTimeout": 1,
+                                        "ReservedStatusCode": 2,
+                                        "enableSendType": true
+                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -650,7 +687,13 @@
                                         "facCodes": [
                                             { "feature": "barge-in", "code": "*79" },
                                             { "feature": "silent", "code": "*78" }
-                                        ]
+                                        ],
+                                        "AuxCodes": {
+                                            "Enabled": true,
+                                            "ByTeam": true,
+                                            "DefaultACW": false,
+                                            "DefaultLogout": false
+                                            }
                                     }
                                 }
                             ],
@@ -1220,7 +1263,8 @@
                                         "FallbackSkillId": 42001,
                                         "NextStatusName": "ACW",
                                         "StatusLockTimeout": 1,
-                                        "ReservedStatusCode": 2
+                                        "ReservedStatusCode": 2,
+                                        "enableSendType": true
                                     }
                                 },
                                 {
@@ -2480,7 +2524,7 @@
                                                     "Anchor": true,
                                                     "AOT": false,
                                                     "AutoOpen": false,
-                                                    "Icon": "video_label",
+                                                    "Icon": "chat",
                                                     "Class": "",
                                                     "Position": { "X": 2, "Y": 1 },
                                                     "Actions": ["maximize", "collapse", "float"],
@@ -2489,9 +2533,49 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "TeamFilter": false,
+                                                            "Columns": [
+                                                                "FirstName",
+                                                                "LastName",
+                                                                "AgentID",
+                                                                "CurrentAgentStatus"
+                                                            ]
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
                                                     "MaxFileUploadSize": 20971520,
                                                     "AsyncReplySendTimeout": 60000,
-                                                    "DraftPollingInterval": 10000,
                                                     "MaximumAllowedPostImageRendering": 1
                                                 }
                                             },
@@ -2967,6 +3051,42 @@
                                                 "Enabled": true,
                                                 "Icon": "video_label",
                                                 "Config": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
                                                     "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
@@ -3223,7 +3343,7 @@
                 "MediaStreamer": "https://dicepoc.tetherfi.cloud:13022",
                 "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
-            "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
+            "TCMClient": "https://dicedev.tetherfi.cloud/TCMv4/TCM_ClientV4/swagger"
         }
     },
     "AppConfigs": {
@@ -3288,9 +3408,10 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx",
-                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"
+                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx",
+                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"
                 ],
+                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -3304,7 +3425,7 @@
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
                 "customApiURL": "",
-                "useDotNet6Wrapper": false
+                "useDotNet6Wrapper":false
             },
             "logging": {
                 "enabled": true,
