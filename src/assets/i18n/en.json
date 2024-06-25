@@ -773,6 +773,13 @@
             "AHT": "AHT",
             "Transfer": "Transfer",
             "Conference": "Conference"
+        },
+        "campaignNotification": {
+            "title": "Call Reminder",
+            "message": "Hi #agent, you have a call at #time from #customerName[#customerPhoneNumber]",
+            "snoozeTimePlaceholder": "Select time",
+            "success": "Campaign #type details updated successfully",
+            "fail": "Failed to updated campaign #type details"
         }
     },
     "generalFormFields": {
