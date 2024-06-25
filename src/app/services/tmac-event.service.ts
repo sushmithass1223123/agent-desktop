@@ -919,28 +919,15 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                 .replace('#agent', SDKClient.getAgentData().agentName)
                 .replace('#type', 'Service Observe');
     
-                this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, '', 
+                this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, this.translocoService.translate('widgets.activeAgents.actionInProgressAlertTitle'), 
                     {
-                        yesMessage: 'Disconnect',
-                        closeIcon: true, 
-                        confirmClose: true,
-                        confirmMessage: this.translocoService.translate('widgets.activeAgents.confirmCloseSOMessage')
                     }, 
                     {
                         disableClose : true
                     });
                     this._agentFeatureActionDialog.afterClosed().subscribe(response => {
-                if(response) {
-                    this.logger.info('Disconnect to Handle called by agent ==>'+ SDKClient.getAgentData().agentId, true);
-                    const handle = evt.CallID + '!' + SDKClient.getAgentData().deviceId +'!0';
-                    SDKClient.disconnectCallByHandle(handle).then(value => {
-                        this.resetServiceObserver();
-                        this._appUIService.showSnackbar('Disconnected call successfully','success');
-                    }).catch(e => {
-                        this._appUIService.showSnackbar('Disconnect call failed','failure');
+                        this.logger.info('Closing interaction action msg dialog triggered by ---'+ SDKClient.getAgentData().agentId + response, true)
                     });
-                }
-            });
             }
         } catch(e) {
             this.logger.error('Error occured during voicecall initiating event', e, true);
