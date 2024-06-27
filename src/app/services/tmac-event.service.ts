@@ -12,7 +12,6 @@ import {
     AgentStatusChangeEvent,
     AutoCloseTabEvent,
     CommandResultEvent,
-    EventData,
     IResponse,
     IUIEvent,
     SDKClient,
@@ -36,7 +35,6 @@ import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
 import { SharedService } from './shared.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { AgentFeaturesService } from './agent-features.service';
 
 /**
  *  Componentless Event service
@@ -119,7 +117,7 @@ export class TMACEventService extends SharedWrapper {
 
     private _tmacCommandsArray: TMACCommandType[];
 
-    private _agentFeatureActionDialog: MatDialogRef<any, any>
+
 
     /** Events to manipulate AD elements from custom widget */
     _uiControlsEvents: Subject<any> = new Subject();
@@ -130,13 +128,7 @@ export class TMACEventService extends SharedWrapper {
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(private _appDataService: AppDataService, 
-        private translocoService: TranslocoService,
-        private _sharedService: SharedService,
-        private _appUIService: AppUiService, 
-        private _aotWidgetService: AOTWidgetService,
-        private _agentFeaturesService: AgentFeaturesService
-    ) {
+    constructor(private _appDataService: AppDataService, private translocoService: TranslocoService,private _sharedService: SharedService,private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
         // intialize all the subject
         super('TMACEventService');
         this._unsubscribeAll = new Subject();
@@ -1009,43 +1001,6 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
     };
 
-    private VoiceCallInitiatingEvent = (evt: EventData) => {
-        try{
-            if(this._agentFeaturesService._serviceObserver.active) {
-                const message = this.translocoService.translate('widgets.activeAgents.actionInProgressAlert')
-                .replace('#agent', SDKClient.getAgentData().agentName)
-                .replace('#type', 'Service Observe');
-    
-                this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, this.translocoService.translate('widgets.activeAgents.actionInProgressAlertTitle'), 
-                    {
-                    }, 
-                    {
-                        disableClose : true
-                    });
-                    this._agentFeatureActionDialog.afterClosed().subscribe(response => {
-                        this.logger.info('Closing interaction action msg dialog triggered by ---'+ SDKClient.getAgentData().agentId + response, true)
-                    });
-            }
-        } catch(e) {
-            this.logger.error('Error occured during voicecall initiating event', e, true);
-        }
-        
-    }
-
-    resetServiceObserver() {
-        this._agentFeaturesService._serviceObserver.active = false;
-        this._agentFeaturesService._serviceObserver.success = false;
-    }
-
-    private MakeCallOnExistingTabFailed = (evt) => {
-        if(this._agentFeaturesService._serviceObserver.active && this._agentFeaturesService._serviceObserver.success) {
-            return;
-        }
-        this.resetServiceObserver();
-        this._agentFeatureActionDialog.close();
-        this.logger.info('Received MakeCallOnExistingTabFailed event, hence closing tab', true);
-    }
-
     /**
      * Post message received event
      *
@@ -1251,14 +1206,6 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             {
                 label: 'AutoCloseTabEvent',
                 callback: this.AutoCloseTabEvent
-            },
-            {
-                label: 'VoiceCallInitiatingEvent',
-                callback: this.VoiceCallInitiatingEvent
-            },
-            {
-                label: 'MakeCallOnExistingTabFailed',
-                callback: this.MakeCallOnExistingTabFailed
             }
         ]);
 
@@ -1330,14 +1277,6 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             {
                 label: 'AutoCloseTabEvent',
                 callback: this.AutoCloseTabEvent
-            },
-            {
-                label: 'VoiceCallInitiatingEvent',
-                callback: this.VoiceCallInitiatingEvent
-            },
-            {
-                label: 'MakeCallOnExistingTabFailed',
-                callback: this.MakeCallOnExistingTabFailed
             }
         ]);
 

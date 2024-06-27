@@ -46,5 +46,4 @@ export type CustomTMACEventTypes =
     | 'TeamChannelListEvent'
     | 'CannedResposeEvent'
     | 'VoiceCannedResponseEvent'
-    | 'CustomerContactInfoReceivedEvent'
-    | 'VoiceCallInitiatingEvent';
+    | 'CustomerContactInfoReceivedEvent';

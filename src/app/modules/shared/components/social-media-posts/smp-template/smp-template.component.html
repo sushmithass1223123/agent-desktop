@@ -61,7 +61,8 @@
                     </div>
                     <p *ngIf="!getTotalReactionCount(postData?.PostEngagements)"></p>
                     <div class="comment-util twd-flex" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                        <p (click)="scrollToActiveComment()" role="button" *ngIf="!hideStructureActions"
+                        <p (click)="scrollToActiveComment()" role="button"
+                            *ngIf="mode !== 'workbench' && enhanceCommentContainer"
                             class="active-scroller twd-pl-2 font-weight-600">
                             Active</p>
                         <p class="comments-count twd-pl-2 font-weight-600">
@@ -112,7 +113,7 @@
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                 *ngIf="!renderParentCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length === 1">
                                 <ng-container
-                                    [ngSwitch]="getFileType(postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl)">
+                                    [ngSwitch]="getFileType(postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl, postData?.SmParentComments?.CommentAttachments[0]?.MediaType)">
                                     <ng-container *ngSwitchCase="'image'">
                                         <mat-icon> insert_photo</mat-icon>
                                         <p>Image</p>
@@ -125,7 +126,7 @@
                             </div>
                             <ng-container
                                 *ngIf="renderParentCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length === 1"
-                                [ngSwitch]="getFileType(postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl)">
+                                [ngSwitch]="getFileType(postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl, postData?.SmParentComments?.CommentAttachments[0]?.MediaType)">
                                 <img *ngSwitchCase="'image'"
                                     [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl">
                                 <video *ngSwitchCase="'video'"
@@ -183,7 +184,7 @@
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                 *ngIf="!renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length === 1">
                                 <ng-container
-                                    [ngSwitch]="getFileType(postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl)">
+                                    [ngSwitch]="getFileType(postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl, postData?.SmActiveComment?.CommentAttachments[0]?.MediaType)">
                                     <ng-container *ngSwitchCase="'image'">
                                         <mat-icon> insert_photo</mat-icon>
                                         <p>Image</p>
@@ -196,7 +197,7 @@
                             </div>
                             <ng-container
                                 *ngIf="renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length === 1"
-                                [ngSwitch]="getFileType(postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl)">
+                                [ngSwitch]="getFileType(postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl, postData?.SmActiveComment?.CommentAttachments[0]?.MediaType)">
                                 <img *ngSwitchCase="'image'"
                                     [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl">
                                 <video *ngSwitchCase="'video'"
@@ -250,7 +251,7 @@
                                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                             *ngIf="prevComment?.CommentAttachments?.length === 1">
                                             <ng-container
-                                                [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl)">
+                                                [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl, prevComment?.CommentAttachments[0]?.MediaType)">
                                                 <ng-container *ngSwitchCase="'image'">
                                                     <mat-icon> insert_photo</mat-icon>
                                                     <p>Image</p>
@@ -263,7 +264,7 @@
                                         </div>
                                         <ng-container
                                             *ngIf="prevComment?.CommentAttachments?.length === 1 && renderPrevCommentAttachment"
-                                            [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl)">
+                                            [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl, prevComment?.CommentAttachments[0]?.MediaType)">
                                             <img *ngSwitchCase="'image'"
                                                 [src]="prevComment?.CommentAttachments[0]?.MediaUrl">
                                             <video *ngSwitchCase="'video'"
@@ -330,7 +331,7 @@
                         <div class="image-container twd-relative">
                             <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
                         </div>
-                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{((engagementFromNotification && engagementFromNotification?.smmId === commentData?.CommentId || engagementFromNotification?.smmId === commentData?.PostId) || (mode === 'interaction-max' && commentData?.CommentId === postData?.SmActiveComment?.CommentId)) ? 'active-comment' : ''}}"
+                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{((engagementFromNotification && engagementFromNotification?.smmId === commentData?.CommentId || engagementFromNotification?.smmId === commentData?.PostId) || (mode === 'interaction-max' && commentData?.CommentId === postData?.SmActiveComment?.CommentId)) ? 'active-comment' : ''}} {{commentData?.IsEdited ? 'edited' : ''}} {{commentData?.IsDeleted ? 'deleted' : ''}}"
                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
 
                             <!-- Reaction from notification -->
@@ -360,7 +361,10 @@
                             <!-- Actual comment detail -->
                             <div class="comment-info-flex">
                                 <h5 class="font-weight-700 text-truncate">{{commentData?.FromName ?
-                                    commentData?.FromName : postData?.PostAccountName}}</h5>
+                                    commentData?.FromName : postData?.PostAccountName}}<span
+                                        *ngIf="commentData.IsEdited"> .
+                                        {{getGenericTimeFormat(commentData?.CommentText?.UpdatedDateTime)}}
+                                        . Edited</span></h5>
                                 <p class="font-weight-500"
                                     [innerHTML]="smpService.stylizeContent(commentData?.CommentText?.Text)"></p>
                                 <div class="media-data-placeholder twd-flex" role="button"
@@ -368,7 +372,7 @@
                                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                                     *ngIf="!commentData.renderMedia && commentData?.CommentAttachments?.length === 1">
                                     <ng-container
-                                        [ngSwitch]="getFileType(commentData?.CommentAttachments[0]?.MediaUrl)">
+                                        [ngSwitch]="getFileType(commentData?.CommentAttachments[0]?.MediaUrl, commentData?.CommentAttachments[0]?.MediaType)">
                                         <ng-container *ngSwitchCase="'image'">
                                             <mat-icon> insert_photo</mat-icon>
                                             <p>Image</p>
@@ -381,19 +385,21 @@
                                 </div>
                                 <ng-container
                                     *ngIf="commentData.renderMedia && commentData?.CommentAttachments?.length === 1"
-                                    [ngSwitch]="getFileType(commentData?.CommentAttachments[0]?.MediaUrl)">
+                                    [ngSwitch]="getFileType(commentData?.CommentAttachments[0]?.MediaUrl, commentData?.CommentAttachments[0]?.MediaType)">
                                     <img *ngSwitchCase="'image'" [src]="commentData?.CommentAttachments[0]?.MediaUrl">
                                     <video *ngSwitchCase="'video'" [src]="commentData?.CommentAttachments[0]?.MediaUrl"
                                         [autoplay]="false" controls></video>
                                 </ng-container>
                             </div>
                         </div>
+
+                        <mat-icon *ngIf="commentData.IsDeleted" class="deleted-icon">delete_forever</mat-icon>
                     </div>
                     <!-- Reply container -->
                     <ng-container
                         *ngIf="mode === 'interaction-max' && draftData && commentData?.CommentId === postData?.SmActiveComment?.CommentId">
                         <div class="reply-area twd-relative"
-                            [ngStyle]="{ 'paddingLeft': (commentData.nestLevel * 45)+'px'}">
+                            [ngStyle]="{ 'paddingLeft': ((commentData.nestLevel + 1) * 45)+'px'}">
                             <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
                                 <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
                                     placeholder="Enter your reply here..."
@@ -403,22 +409,27 @@
                                     <img *ngIf="draftData?.mimeConstraints.includes('image')"
                                         (click)="previewMedia({MediaType: 'image', MediaUrl: draftData?.rawAttachmentData})"
                                         [src]="draftData?.rawAttachmentData">
+                                    <video *ngIf="draftData?.mimeConstraints.includes('video')"
+                                        (click)="previewMedia({MediaType: 'video', MediaUrl: draftData?.rawAttachmentData})"
+                                        [src]="draftData?.rawAttachmentData"></video>
                                 </div>
                                 <div class="reply-actions twd-w-full twd-flex">
                                     <div class="r-actions twd-flex">
-                                        <mat-icon (click)="this.showEmojiPicker = !this.showEmojiPicker"
+                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
+                                            (click)="this.showEmojiPicker = !this.showEmojiPicker"
                                             role="button">tag_faces</mat-icon>
-                                        <mat-icon
+                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
                                             [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
                                             (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                        <mat-icon
+                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
                                             [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
                                             (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
-                                        <mat-icon
+                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
                                             [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
                                             (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
                                     </div>
-                                    <mat-icon role="button" (click)="onSendReply()">send</mat-icon>
+                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
+                                        role="button" (click)="onSendReply()">send</mat-icon>
                                 </div>
                                 <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"
                                     [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"

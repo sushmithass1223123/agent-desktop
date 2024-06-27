@@ -6,7 +6,7 @@
     <tw-wrapper [data]="data" (maximizeEvent)="onMaximized($event)" (collapseEvent)="collapseEvent.emit($event)"
         (floatEvent)="onFloated($event)" *transloco="let locale">
         <div class="smp-interaction-container twd-w-full twd-flex"
-            [ngStyle]="{'pointerEvents': actionStatus.disableUIButtons ? 'none' : 'all'}">
+            [ngStyle]="{'pointerEvents': actionStatus.disableUIButtons || this.restrictPostActions[this.interactionId] ? 'none' : 'all'}">
             <div class="interaction-avatar twd-flex twd-flex-col twd-pl-2">
                 <div *ngFor="let interaction of interactionList" (click)="selectInteraction(interaction)"
                     class="avatar-box twd-rounded-3xl twd-relative twd-flex {{interaction.isActive ? 'active' : 'inactive'}}"
@@ -40,12 +40,12 @@
                     <smp-template [isDraftMode]="isDraftMode" [draftData]="postDraftData[interactionId]"
                         [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
                         [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
-                        (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
+                        (dataChanged)="this.postDraftData[$event].isReplyDrafted = false" [enhanceCommentContainer]="isMaximizedMode"
                         [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []"
-                        (emitReply)="emitReply($event)" [outSessionId]="outSessionId" [mode]="'interaction-min'"
-                        [postData]="this.smpService.postBodies[activeSessionId]"
+                        (emitReply)="emitReply($event)" [outSessionId]="outSessionId" [mode]="!isMaximizedMode ? 'interaction-min' : 'interaction-max'"
+                        [postData]="this.smpService.postBodies[activeSessionId]" (restrictPostAction)="restrictPostActionEvt($event)"
                         [ngClass]="{ 'max-mode': isMaximizedMode }"></smp-template>
-                    <div class="load-more twd-flex" *ngIf="!isMaximizedMode" role="button"
+                    <div class="load-more twd-flex" *ngIf="!isMaximizedMode && !isFloatedMode" role="button"
                         (click)="toggleInteractionPopup()">
                         <p>Load more</p>
                         <mat-icon>arrow_drop_down</mat-icon>
@@ -84,19 +84,20 @@
         </div>
     </tw-wrapper>
 
-    <div class="interaction-popup twd-flex" *ngIf="popupInteraction">
+    <div class="interaction-popup twd-flex" *ngIf="popupInteraction" [ngStyle]="{'pointerEvents': actionStatus.disableUIButtons || this.restrictPostActions[this.interactionId] ? 'none' : 'all'}">
         <div class="interaction-main twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
-            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content" *transloco="let locale">
             <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                 <div class="s-info twd-flex">
                     <img src="assets/images/vectors/{{smpService.postBodies[activeSessionId]?.SubChannel}}.svg" alt="">
                     <h5 class="font-weight-700">{{smpService.postBodies[activeSessionId]?.PostAccountName}}</h5>
                 </div>
                 <div class="s-actions twd-flex">
-                    <mat-icon role="button">reply</mat-icon>
-                    <mat-icon role="button">save</mat-icon>
-                    <mat-icon role="button">send</mat-icon>
-                    <mat-icon (click)="toggleInteractionPopup()" role="button">close</mat-icon>
+                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
+                    (click)="savePostAsDraft(false, true)" role="button">save</mat-icon>
+                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.clearData')"
+                    (click)="clearDraftData()" role="button">not_interested</mat-icon>
+                    <mat-icon (click)="toggleInteractionPopup()" matTooltip="Close" role="button">close</mat-icon>
                 </div>
             </div>
             <smp-template [MaximumAllowedPostImageRendering]="5" [isDraftMode]="isDraftMode"

@@ -561,7 +561,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 inbox: this.mapInboxPosts,
                 queue: this.mapQueuePosts,
                 draft: this.mapDraftPosts,
-                posts: this.mapInboxPosts,
+                posts: this.mapPosts,
                 sentitem: this.mapSentItemPosts
             };
 
@@ -939,6 +939,70 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {any} result This is the response form the search
      * @returns {SMPost[]} returns mapped posts parsed into SMPost type
      */
+    mapPosts(result: any): SMPost[] {
+        try {
+            if (!result || !result.length) {
+                return [];
+            }
+
+            return result.map((x: any): SMPost => {
+                const AddedTime = new Date(x.ReceivedDate);
+                if (!x.ReceivedTime) {
+                    console.log('Unable to split x.receivedTime', x);
+                }
+                const time = x.ReceivedTime.split(':');
+                AddedTime.setHours(time[0]);
+                AddedTime.setMinutes(time[1]);
+
+                return {
+                    Mailbox: x?.Mailbox,
+                    ConversationID: x?.ConversationID,
+                    AddedTime: `/Date(${AddedTime.getTime()})/`,
+                    AgentId: '',
+                    Channel: '',
+                    CreatedBy: '',
+                    CustomerIdentifier: '',
+                    ItemId: '',
+                    Key: '',
+                    OrderIndex: x?.OrderIndex,
+                    Reason: x?.Reason,
+                    RonaEnabled: x?.RonaEnabled,
+                    RouteDate: x?.RouteDate,
+                    RouteTime: x?.RouteTime,
+                    SkillId: x?.MakerSkill,
+                    SkillName: x?.MakerSkillName,
+                    Status: x?.Status,
+                    SubChannel: channelMapper[x?.Channel?.toLowerCase()],
+                    PostData: {
+                        SessionId: x?.SessionID,
+                        OutSessionId: '',
+                        PostId: x?.SocialMediaData?.Posts?.PostId,
+                        RouteId: '',
+                        From: x?.SocialMediaData?.Posts?.AccountName,
+                        To: '',
+                        Subject: x?.SocialMediaData?.Posts?.PostText?.Text,
+                        EmailType: '',
+                        Skill: '',
+                        Intent: x?.Intent,
+                        JsonData: '',
+                        SentimentInfo: '',
+                        RouteReason: '',
+                        HasAttachment: x?.HasAttachments,
+                        IsEmailProbableSpam: false,
+                        RejectReason: ''
+                    }
+                };
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * This method is used to formate the post list reponse from the search api
+     * @param {any} result This is the response form the search
+     * @returns {SMPost[]} returns mapped posts parsed into SMPost type
+     */
     mapDraftPosts(result: any): SMPost[] {
         try {
             if (!result || !result.length) {
@@ -1243,7 +1307,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             uploadedName = uploadedName.replace(getRequestedSession(), '');
                             item.Name = uploadedName;
                         }
-                        item.Ext = item.Name.split('.').pop();
                         item.Icon = maticonByExtension(item.Ext);
                         return item;
                     });
@@ -1312,7 +1375,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         {
                             IsCloud: true,
                             Url: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
-                            IsUploaded: true
+                            IsUploaded: true,
+                            Ext: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
                         }
                     ];
                 }
@@ -1356,9 +1420,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             this.hidePostActions =
-                inboxRes?.SocialMediaData?.Comments?.IsDeleted ||
                 inboxRes?.SocialMediaData?.Posts?.IsDeleted ||
-                outboxRes?.SocialMediaData?.Comments?.IsDeleted ||
                 outboxRes?.SocialMediaData?.Posts?.IsDeleted;
 
             this.openPostRes.data.next(

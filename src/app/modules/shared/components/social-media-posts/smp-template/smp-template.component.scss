@@ -345,6 +345,7 @@
                         right: 0px;
                         cursor: pointer;
                         font-size: 22px;
+                        z-index: 2;
                     }
 
                     img, video {
@@ -433,7 +434,8 @@
     right: 15px;
 }
 
-.hashtag, .mention {
-    font-weight: 800;
-    color: var(--twd-primary-100);
+.hashtag, .mention, .e_link {
+    font-weight: 800 !important;
+    opacity: 1 !important;
+    color: var(--twd-primary-600) !important;
 }

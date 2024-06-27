@@ -143,8 +143,10 @@ export class SocialMediaPostsService {
             const hashtagRegex = /#(\w+)/g;
             const mentionRegex = /@(\w+)/g;
 
+            if(!text) return;
+
             text = text.replace(urlRegex, function (url) {
-                return '<a href="' + url + '" target="_blank">' + url + '</a>';
+                return '<a class="e_link" href="' + url + '" target="_blank">' + url + '</a>';
             });
 
             text = text.replace(hashtagRegex, function (match, p1) {
