@@ -592,7 +592,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Position.W = 800;
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
-        widget.Data = {...item,...this.data.Data};
+        widget.Data = item;
         widget.ExtraConfig = this.data.Data.InteractionConstraints;
         this._aotWidgetService.addWidget(widget as AOTWidget);
     }

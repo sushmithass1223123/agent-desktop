@@ -1,13 +1,14 @@
 import { filter, take, takeUntil } from 'rxjs/operators';
 import {
-    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
     Input,
+    OnChanges,
     OnDestroy,
     OnInit,
     Output,
+    SimpleChanges,
     TemplateRef,
     ViewChild,
     ViewEncapsulation
@@ -29,7 +30,7 @@ import { SocialMediaPostsService } from '../social-media-posts.service';
     styleUrls: ['./smp-template.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class SmpTemplateComponent implements OnInit, OnDestroy {
+export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
     @Input() postData: SmpComponentInputs;
     @Input() mode: 'workbench' | 'interaction-min' | 'interaction-max';
     @ViewChild('fileInput') fileInput!: ElementRef;
@@ -38,7 +39,6 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
      */
     @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
-    @Input() hideStructureActions: boolean = false;
     @Input() engagementFromNotification: any;
     @Input() draftData: any;
     @Input() previousCommentFromNotification: SmComment[];
@@ -70,6 +70,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
     @Input() draftPollDuration = 60;
     @Input() isDraftMode: boolean = false;
     @Output('emitReply') emitReply = new EventEmitter<any>();
+    @Output('restrictPostAction') restrictPostAction = new EventEmitter<any>();
     @Output('dataChanged') dataChanged = new EventEmitter<any>();
     renderActiveCommentAttachment: boolean = false;
     renderParentCommentAttachment: boolean = false;
@@ -107,38 +108,52 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         private _appUiService: AppUiService,
         private translocoService: TranslocoService,
         private _appDataService: AppDataService,
-        public smpService: SocialMediaPostsService,
-        private cdr: ChangeDetectorRef
+        public smpService: SocialMediaPostsService
     ) {}
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes['interactionId'] || changes['enhanceCommentContainer']) {
+            this.initPostTemplate();
+        }
+    }
 
     ngOnDestroy(): void {
         this.unsubscribeAll$.next(null);
         this.unsubscribeAll$.complete();
     }
 
-    ngOnInit(): void {
-        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
-            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
-        });
+    initPostTemplate(): void {
         this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
         this.postData = JSON.parse(JSON.stringify(this.postData));
+        if(!this.postData.PostText.Text) this.postData.PostText.Text = `Post from ${this.postData.SubChannel}`
         if (this.isDraftMode && this.draftData) {
-            this.draftData.body = this.postData.SmActiveComment.CommentText.Text;
-            if (this.postData.Files && this.postData.SmActiveComment?.CommentAttachments?.length) {
+            if(!this.draftData.body) this.draftData.body = this.postData.SmActiveComment.CommentText.Text;
+            if (this.postData.Files && this.postData.SmActiveComment?.CommentAttachments?.length && !this.draftData.attachments?.length) {
                 this.draftData.attachments = this.postData.Files;
                 if (this.postData.Files.length) {
                     this.draftData.rawAttachmentData = this.postData.Files[0].URL;
-                    this.draftData.mimeConstraints = this.getFileType(this.draftData.rawAttachmentData);
+                    this.draftData.mimeConstraints = this.getFileType(this.draftData.rawAttachmentData, this.draftData.attachments[0].Ext);
                 }
             }
-            this.postData.SmActiveComment = this.postData.SmParentComments;
-            this.postData.SmParentComments = null;
+            if(this.postData.SmParentComments) {
+                this.postData.SmActiveComment = this.postData.SmParentComments;
+                this.postData.SmParentComments = null;
+            }
         }
+        this.indexHolder = {
+            0: [0, 5]
+        };
         if (this.enhanceCommentContainer || this.mode === 'interaction-max') this.loadCommentHistory();
         setTimeout(() => {
             if(this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container')
         }, 500);
-        this.cdr.detectChanges();
+    }
+
+    ngOnInit(): void {
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
+        this.initPostTemplate();
     }
 
     scrollToBottom(className: string) {
@@ -146,10 +161,10 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         element.scrollTop = element.scrollHeight;
     }
 
-    getFileType(fileName) {
+    getFileType(fileName: string, mediaType?: string) {
         const fileExtension = fileName.split('.').pop().toLowerCase();
-        const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'];
-        const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp'];
+        const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'gif'];
+        const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp'];
 
         if (videoExtensions.includes(fileExtension)) {
             return 'video';
@@ -159,7 +174,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
             return 'image';
         }
 
-        return 'image';
+        return mediaType?.split('/')?.[0] ?? 'image';
     }
 
     scrollToActiveComment(): void {
@@ -314,12 +329,16 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 formData.append('uploaded_by', SDKClient.getAgentData().agentId);
                 formData.append('other', '');
 
+                this.restrictPostAction.emit({interactionId: this.interactionId, restrict: true})
+
                 const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
                     urls: [this.fileUploadUrl.MediaUploader],
                     method: 'POST',
                     responseType: 'json',
                     formData
                 });
+                
+                this.restrictPostAction.emit({interactionId: this.interactionId, restrict: false})
 
                 if (response?.isSuccess) {
                     this._appUiService.showSnackbar(
@@ -338,6 +357,8 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                     throwADError('File not created at server', response);
                 }
             } else {
+                this.restrictPostAction.emit({interactionId: this.interactionId, restrict: true})
+                
                 const {
                     response: [res]
                 } = await SDKClient.uploadFiles(
@@ -356,6 +377,9 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                     undefined,
                     true
                 );
+
+                this.restrictPostAction.emit({interactionId: this.interactionId, restrict: false})
+
                 if (res.Url) {
                     this._appUiService.showSnackbar(
                         this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileSuccess')
@@ -485,7 +509,10 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
                 let modCommentData = { ...commentData, nestLevel: nestLevel + 1, renderMedia: false };
                 if (nestLevel === -1) modCommentData.isVisible = true;
                 else modCommentData.isVisible = false;
-                this.flattenedCommentHistory.push(modCommentData);
+                const isCommentAlreadyAvailable = this.flattenedCommentHistory.findIndex((ocd) => {
+                    return modCommentData.CommentId === ocd.CommentId
+                })
+                if(isCommentAlreadyAvailable < 0) this.flattenedCommentHistory.push(modCommentData);
                 if (commentData?.ReplyComments?.length) {
                     this.generateSegregatedComment(commentData.ReplyComments, nestLevel + 1);
                 }
@@ -559,9 +586,9 @@ export class SmpTemplateComponent implements OnInit, OnDestroy {
         try {
             if(!this.enhanceCommentContainer) {
                 if(this.postData.SmActiveComment && this.postData.SmParentComments) return 2;
-                else 1;
+                else return 1;
             } else {
-                this.flattenedCommentHistory?.filter((commentData) => commentData?.nestLevel === 0)?.length ?? 0;
+                return this.flattenedCommentHistory?.filter((commentData) => commentData?.nestLevel === 0)?.length ?? 0;
             }
         } catch (error) {
             console.error(error)

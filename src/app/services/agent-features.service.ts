@@ -84,11 +84,6 @@ export class AgentFeaturesService extends SharedWrapper {
      */
     private _featureUpdatedSubject: Subject<boolean>;
 
-    _serviceObserver = {
-        active: false,
-        success: false
-    };
-
     constructor(private _appUIService: AppUiService) {
         super('AgentFeaturesService');
         this._featureUpdatedSubject = new Subject();

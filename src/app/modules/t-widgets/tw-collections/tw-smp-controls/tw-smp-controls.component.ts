@@ -8,6 +8,7 @@ import {
 import { AgentSkillListData, InteractionWidgetBaseData, TwSmpControlsData } from '@ad/types';
 import {
     AfterViewInit,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Input,
@@ -77,6 +78,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     popupInteraction: boolean = false;
 
     isMaximizedMode: boolean = false;
+    isFloatedMode: boolean = false;
     /**
      * List of all available interactions
      */
@@ -111,6 +113,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     previousCommentData: any = {};
     deletedPostData: any = {};
     postDraftData: any = {};
+    restrictPostActions: any = {};
     /**
      * File upload url config
      */
@@ -125,7 +128,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         private _contentPageService: ContentPageService,
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _matDialog: MatDialog,
+        private cdr: ChangeDetectorRef,
         private _appDataService: AppDataService
     ) {
         super('TwSmpControlsComponent');
@@ -282,16 +285,19 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             );
             return;
         }
+        this.popupInteraction = false;
         this.onSendReply();
     }
 
     onMaximized(isMax: boolean): void {
         this.isMaximizedMode = isMax;
+        this.isFloatedMode = false;
         this.maximizeEvent.emit(isMax);
     }
 
     onFloated(isFloat: boolean): void {
-        this.isMaximizedMode = isFloat;
+        this.isFloatedMode = isFloat;
+        this.isMaximizedMode = false;
         this.floatEvent.emit(isFloat);
     }
 
@@ -613,7 +619,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             for (const obj of arr2) {
                 if (obj.IsUploaded) {
                     isModified = true;
-                    result.push(`${obj.URL}|1`);
+                    result.push(`${obj.URL}|${obj.Ext}|1`);
                 }
             }
             return { isModified: isModified, changes: result };
@@ -622,19 +628,19 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         for (const obj of arr2) {
             const match = arr1.find((item) => item.URL === obj.URL);
             if (match) {
-                result.push(`${obj.URL}|0`);
+                result.push(`${obj.URL}|${obj.Ext}|0`);
             } else {
                 if (obj.IsUploaded) {
                     isModified = true;
                 }
-                result.push(`${obj.URL}|${obj.IsUploaded ? '1' : '0'}`);
+                result.push(`${obj.URL}|${obj.Ext}|${obj.IsUploaded ? '1' : '0'}`);
             }
         }
         for (const obj of arr1) {
             const match = arr2.find((item) => item.URL === obj.URL);
             if (!match) {
                 isModified = true;
-                result.push(`${obj.URL}|2`);
+                result.push(`${obj.URL}|${obj.Ext}|2`);
             }
         }
 
@@ -741,7 +747,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                                 uploadedName = uploadedName.replace(sid, '');
                                 item.Name = uploadedName;
                             }
-                            item.Ext = item.Name.split('.').pop();
                             item.Icon = maticonByExtension(item.Ext);
                             return item;
                         });
@@ -750,7 +755,20 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 };
 
                 const setPostBody = async (resData: any, sid: any) => {
-                    let tempAttachments = await this.requestAttachmentData(resData.Attachments);
+                    let modifiedAttachmentData: any[] = [];
+                    if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
+                        modifiedAttachmentData = [
+                            {
+                                IsCloud: true,
+                                Url: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                                IsUploaded: true,
+                                Ext: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
+                            }
+                        ];
+                    }
+                    let tempAttachments = await this.requestAttachmentData(
+                        (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : resData.Attachments
+                    );
                     let smData = resData?.SocialMediaData;
                     this.smpService.postBodies = Object.assign(this.smpService.postBodies, {
                         [sid]: {
@@ -779,7 +797,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     });
                 };
 
-                if (!this.smpService.postBodies[this.sessionId]) {
+                if (!this.smpService.postBodies[this.sessionId] && !fetchFromOutbox) {
                     inboxRes = (await SDKClient.getInboxItem(this.sessionId)).response;
                     setPostBody(inboxRes, this.sessionId);
                 }
@@ -789,6 +807,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     setPostBody(outboxRes, this.outSessionId);
                 }
                 this.activeSessionId = fetchFromOutbox && this.outSessionId ? this.outSessionId : this.sessionId;
+                this.cdr.detectChanges();
                 resolve(true);
             } catch (error) {
                 resolve(true);
@@ -824,5 +843,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             }).finally(() => {
                 this._fuseProgressBarService.hide();
             })
+    }
+
+    restrictPostActionEvt(data: {interactionId: any, restrict: boolean}) {
+        this.restrictPostActions[data.interactionId] = data.restrict;
     }
 }
