@@ -863,7 +863,8 @@
             "advanceSearch": "Advanced Search",
             "reset": "Reset",
             "startDate": "Start date",
-            "endDate": "End date"
+            "endDate": "End date",
+            "noFutureDates": "Not to select future dates"
         },
         "resourceNotFound": {
             "subtitle": "Oops!",

@@ -284,6 +284,10 @@ The actual rendered columns are set as a property on the row definition" -->
                         <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary" (click)="closeAdvancedSearch()">
                             {{ locale('global.close') }}
                         </button>
+                        <mat-hint *ngIf="hasFutureDates()" class="twd-text-sm twd-text-red-600 twd-mt-2">
+                            <mat-icon class="twd-text-lg">info</mat-icon> <!-- Icon for info popup -->
+                            {{ locale('sharedComponents.table.noFutureDates') }}
+                        </mat-hint>
                     </div>
                 </form>
             </div>
