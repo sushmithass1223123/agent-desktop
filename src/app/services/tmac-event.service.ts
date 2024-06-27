@@ -41,12 +41,15 @@ import { TranslocoService } from '@ngneat/transloco';
     providedIn: 'root'
 })
 export class TMACEventService extends SharedWrapper {
-    private isDialogOpen: string[] = [];
     // Private
     /**
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
+    /**
+     * isDialogOpen
+     */
+    private isDialogOpen: string[] = [];
     /**
      * App config
      */
@@ -670,6 +673,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
     ]; 
     // Check if the JSON data type is a request
     if (jsonData.type === 'request') {
+        // Show a confirmation dialog to the user
         // Checking if dialog for this event is already open
         if (this.isDialogOpen.includes(evt.EventName)) {
             this.logger.info(`AgentChangeStatusConfirmationEvent: ${evt.EventName} dialog is already opened!`);
