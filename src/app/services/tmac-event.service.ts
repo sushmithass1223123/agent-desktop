@@ -41,6 +41,7 @@ import { TranslocoService } from '@ngneat/transloco';
     providedIn: 'root'
 })
 export class TMACEventService extends SharedWrapper {
+    private isDialogOpen: string[] = [];
     // Private
     /**
      * Unsubscribe all subject
@@ -669,7 +670,15 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
     ]; 
     // Check if the JSON data type is a request
     if (jsonData.type === 'request') {
-        // Show a confirmation dialog to the user
+        // Checking if dialog for this event is already open
+        if (this.isDialogOpen.includes(evt.EventName)) {
+            this.logger.info(`AgentChangeStatusConfirmationEvent: ${evt.EventName} dialog is already opened!`);
+            return;
+        }
+
+        // Pushing the event to indicate dialog opening
+        this.isDialogOpen.push(evt.EventName);
+
         const confirmDialogRef = this._appUIService.showAppConfirmDialog(
             'generic',
             this._appDataService.getUpdatedLabel(
@@ -686,7 +695,9 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             takeUntil(this._unsubscribeAll),
             take(1)
         ).toPromise();
-        
+
+        // Removeing the event name from the open dialogs list
+        this.isDialogOpen = this.isDialogOpen.filter(name => name !== evt.EventName);
         // If the user confirmed the action
         if (dialogResult) {
             // Trigger change status method in the shared service with auxiliary data
