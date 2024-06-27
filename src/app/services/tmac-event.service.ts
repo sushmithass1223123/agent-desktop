@@ -676,7 +676,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         // Show a confirmation dialog to the user
         // Checking if dialog for this event is already open
         if (this.isDialogOpen.includes(evt.EventName)) {
-            this.logger.info(`AgentChangeStatusConfirmationEvent: ${evt.EventName} dialog is already opened!`);
+            this.logger.info(`AgentChangeStatusConfirmationEvent: ${evt.EventName} dialog is already opened!`,true);
             return;
         }
 
