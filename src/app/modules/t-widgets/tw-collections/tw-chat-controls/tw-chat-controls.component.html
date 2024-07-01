@@ -214,7 +214,7 @@
     <tw-wrapper
         [data]="data"
         (maximizeEvent)="onMaximized($event)"
-        (collapseEvent)="collapseEvent.emit($event)"
+        (collapseEvent)="onMaximized($event)"
         (floatEvent)="floatEvent.emit($event)"
         *transloco="let locale"
     >
