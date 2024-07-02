@@ -41,7 +41,12 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     /**
      * selected send type
      */
-    sendType = new FormControl();
+    sendType:FormControl = new FormControl();
+
+    /**
+     * customer email id to send a notification 
+     */
+    emailId:FormControl = new FormControl();
 
 
     /**
@@ -138,10 +143,15 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 return;
             }
 
+            if(this.sendType.value === 'email' && this.emailId.invalid) {
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.emailIdNotFound'), 'failure');
+                return;
+            }
+
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectLoading'), 'loading');
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
-                customerContact: this.toNumber,
+                customerContact: this.getCustomerContact(),
                 templateMessage: template,
                 comment: this.comment,
                 additionalParams: JSON.stringify({
@@ -170,6 +180,19 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             } else {
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectFailed'), 'failure');
             }
+        }
+    }
+
+    /**
+     * To get customer contact detail based on the send type selected
+     */
+    private getCustomerContact() {
+        switch(this.sendType.value) {
+            case 'email':  
+                return this.emailId.value;
+            case 'sms':
+            default: 
+                return this.toNumber
         }
     }
 
