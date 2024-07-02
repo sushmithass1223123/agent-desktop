@@ -8,30 +8,60 @@
             ></mat-progress-bar>
         </ng-container>
         <div class="twd-w-5/12 twd-flex twd-flex-col">
-            <mat-form-field class="custom custom-matfield with-border" appearance="outline">
-                <input
-                    matInput
-                    [placeholder]="locale('widgets.composeMessage.toPlaceholder')"
-                    type="tel"
-                    [(ngModel)]="toNumber"
-                    autocomplete="off"
-                />
-                <button *ngIf="!toNumber; else clearBtn" mat-icon-button matSuffix disabled>
-                    <mat-icon matSuffix>smartphone</mat-icon>
-                </button>
-                <ng-template #clearBtn>
-                    <button
-                        mat-button
-                        color="primary"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="toNumber = ''"
-                    >
-                        <mat-icon>close</mat-icon>
+            <ng-container [ngSwitch]="sendType.value">
+                <!-- customer phone number -->
+                <mat-form-field *ngSwitchDefault class="custom custom-matfield with-border" appearance="outline">
+                    <input
+                        matInput
+                        [placeholder]="locale('widgets.composeMessage.toPlaceholder')"
+                        type="tel"
+                        [(ngModel)]="toNumber"
+                        autocomplete="off"
+                    />
+                    <button *ngIf="!toNumber; else clearBtn" mat-icon-button matSuffix disabled>
+                        <mat-icon matSuffix>smartphone</mat-icon>
                     </button>
-                </ng-template>
-            </mat-form-field>
+                    <ng-template #clearBtn>
+                        <button
+                            mat-button
+                            color="primary"
+                            matSuffix
+                            mat-icon-button
+                            aria-label="Clear"
+                            (click)="toNumber = ''"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </ng-template>
+                </mat-form-field>
+
+                <!-- customer email ID -->
+                <mat-form-field class="custom custom-matfield with-border" *ngSwitchCase="'email'" appearance="outline">
+                    <input
+                        matInput
+                        [placeholder]="locale('widgets.workbench.emailId')"
+                        type="email"
+                        [formControl]="emailId"
+                        autocomplete="off"
+                        [required]="sendType && sendType.value === 'email'"
+                    />
+                    <button *ngIf="!emailId.value; else clearEmailBtn" mat-icon-button matSuffix disabled>
+                        <mat-icon matSuffix>email</mat-icon>
+                    </button>
+                    <ng-template #clearEmailBtn>
+                        <button
+                            mat-button
+                            color="primary"
+                            matSuffix
+                            mat-icon-button
+                            aria-label="Clear"
+                            (click)="emailId.reset()"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </ng-template>
+                </mat-form-field>
+            </ng-container>
             <mat-form-field
                 class="custom custom-matfield with-border"
                 *ngIf="data.Data.enableSendType"

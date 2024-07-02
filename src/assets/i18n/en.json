@@ -435,7 +435,8 @@
             "deflectFailed": "Deflecting failed",
             "typePlaceholder": "Send Type",
             "typeSMS": "SMS",
-            "typeEmail": "EMAIL"
+            "typeEmail": "EMAIL",
+            "emailIdNotFound": "Please enter Email ID"
         },
         "customerJourney": {
             "voiceWith": "Voice with",
