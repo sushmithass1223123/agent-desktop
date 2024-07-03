@@ -10,7 +10,6 @@ export class SharedService {
 
     private holdMethodSubject = new Subject<void>();
     private changeStatusSubject = new Subject<any>();
-    private transferMethodSubject = new Subject<number>();
     private emailErrorNotifySubject = new Subject<number>();
     private appConfirmDialog = new Subject<void>();
     private whiteboardOpenSubject = new BehaviorSubject<boolean>(false);
@@ -34,14 +33,6 @@ export class SharedService {
 
     triggerHoldMethod() {
         this.holdMethodSubject.next();
-    }
-
-    triggerTransferMethod(interactionId: number): void {
-        this.transferMethodSubject.next(interactionId);
-    }
-
-    getTransferMethod(): Observable<any> {
-        return this.transferMethodSubject.asObservable();
     }
 
     getHoldMethod() {
