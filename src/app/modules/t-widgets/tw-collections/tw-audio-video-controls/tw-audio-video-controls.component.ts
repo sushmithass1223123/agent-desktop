@@ -19,6 +19,7 @@ import {
     AVEvent,
     CallHoldEvent,
     CallHoldReconnectEvent,
+    CallConferenceCompletedEvent,
     IAgentData,
     IRemoteStreamInfo,
     IResponse,
@@ -414,7 +415,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     { event: 'ActionMessageReceivedEvent' },
                     { event: 'TextChatDisconnectedEvent' },
                     { event: 'CallHoldEvent', noRepeat: true },
-                    { event: 'CallHoldReconnectEvent', noRepeat: true }
+                    { event: 'CallHoldReconnectEvent', noRepeat: true },
+                    { event: 'CallConferenceCompletedEvent', noRepeat: true }
                 ],
                 this.interactionId
             )
@@ -1481,6 +1483,63 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         // hold the call
         this.avConn.hold();
         this.hold = true;
+    };
+
+    CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
+        // check the interaction
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
+            return;
+        }
+
+        this.onCallHoldEvent = false;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
+
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
+
+            let type = 'AV' as any;
+            const actionMessage = {
+                source: 'agent',
+                options: {},
+                data: {
+                    interactionId: this.interactionId
+                },
+                status: 'request',
+                type: 'unmuteAudioVideo',
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+            };
+
+            if (this.muteAVOnHold.customerAudio && this.muteAVOnHold.customerVideo) {
+                type = 'AV';
+                actionMessage.type = 'unmuteAudioVideo';
+            } else if (this.muteAVOnHold.customerAudio) {
+                type = 'audio';
+                actionMessage.type = 'unmuteAudio';
+            } else if (this.muteAVOnHold.customerVideo) {
+                type = 'video';
+                actionMessage.type = 'unmuteVideo';
+            }
+
+            this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
+            return;
+        }
+
+        // un hold the call
+        this.avConn.unHold();
+        this.hold = false;
     };
 
     /**

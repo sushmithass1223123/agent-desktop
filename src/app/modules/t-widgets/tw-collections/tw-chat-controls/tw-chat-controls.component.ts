@@ -34,6 +34,7 @@ import {
     AVControlMessageReceivedEvent,
     CallHoldEvent,
     CallHoldReconnectEvent,
+    CallConferenceCompletedEvent,
     CCLDataEvent,
     HoldTimerEvent,
     IAgentData,
@@ -905,6 +906,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'InteractionDataEvent',
                     'CallHoldEvent',
                     'CallHoldReconnectEvent',
+                    'CallConferenceCompletedEvent',
                     'HoldTimerEvent',
                     'CCLDataEvent',
                     'AgentNotificaitonEvent',
@@ -2391,6 +2393,40 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 })
             });
         } catch (error) { }
+    }
+
+    CallConferenceCompletedEvent(evt: CallConferenceCompletedEvent): void {
+        try {
+            if(this.status !== 'hold') return;
+
+            this.interactionOnHold = unHoldState;
+            this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
+            this.status = 'connected';
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected'
+            });
+            this.interactionOnHold.loading = false;
+
+            if (evt.RecoveryEvent) return;
+            
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'unhold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     /**
