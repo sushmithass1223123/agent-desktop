@@ -1930,10 +1930,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // update the chatmode
         this.chatMode = evt.ChatMode as any;
         // Av call constraints from transfer notification event
-        let avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
-
+        let avCallConstraints: any = {};
+        if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
+            avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
+        }
         if (avCallConstraints) delete this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID];
-        else avCallConstraints = {};
         // to not open video dialog when interaction is over
         if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone)) {
             this.escalateToAV(this.chatMode as any, avCallConstraints);
