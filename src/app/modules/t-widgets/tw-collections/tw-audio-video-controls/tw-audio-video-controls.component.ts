@@ -577,6 +577,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } else if (this.interactionDetails.ConferenceType === 'silent') {
             this.avConn.join(this.wrcCallType, { mode: 'monitor' });
             this.showUI = true;
+        } else if (
+            this.interactionDetails.ConferenceType === 'transfer' &&
+            (this.data.Data.ChatMode !== 'text' || (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall && this.data.Data?.AvCallConstraints?.isAgentOnPhone))
+        ) {
+            this.avConn.join(this.wrcCallType, { mode: 'conference' });
+            this.showUI = true;
         } else if (this.interactionDetails.Direction === 'out') {
             this.avConn
                 ?.startCall(this.wrcCallType)

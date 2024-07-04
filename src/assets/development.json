@@ -1382,6 +1382,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "IsPhoneAudio": true,
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
