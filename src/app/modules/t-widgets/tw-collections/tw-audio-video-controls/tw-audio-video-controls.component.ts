@@ -1480,6 +1480,8 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'muteVideo';
+            } else {
+                return;
             }
 
             this.requestMuteUnmuteCustomerAV(type, 'mute', actionMessage);
