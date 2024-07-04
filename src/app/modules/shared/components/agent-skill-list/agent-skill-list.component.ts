@@ -263,6 +263,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             };
             const columns =
                 this._dialogData.Skill.Columns && this._dialogData.Skill.Columns.length ? this._dialogData.Skill.Columns : Object.keys(table.config);
+            /**
+             * Retricting consult button for transfer. 
+             * As consult transfer works similar to blind transfer at the backend
+            */  
             const conf: ISwitch = {
                 placeholder: 'Skill/VDN',
                 freeText: { allowed: !!(this._dialogData?.Skill.Source as AgentSkillListSource)?.FreeTextAllowed, active: false, value: '' },
@@ -274,7 +278,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult: this._dialogData.Skill.Consult
+                consult:  this._dialogData.OtherData.type === 'transfer' ? false : this._dialogData.Skill.Consult 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
