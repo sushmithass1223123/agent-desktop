@@ -2813,5 +2813,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.6.1-test.build.8"
+    "Version": "5.6.1"
 }
