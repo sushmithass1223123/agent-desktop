@@ -65,7 +65,8 @@ interface PostData {
 
 const channelMapper: any = {
     fb: 'facebook',
-    instagram: 'instagram'
+    instagram: 'instagram',
+    twitter: 'x'
 };
 
 /**
@@ -334,6 +335,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.switchTab('posts', true);
             } else if (this.notificationAction === 'smc_e' || this.notificationAction === 'smc_d') {
                 this.switchTab('inbox', true);
+            } else if (this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
+                this.switchTab('sentitem', true);
             }
         });
 
@@ -882,18 +885,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             return result.map((x: any): SMPost => {
-                const AddedTime = new Date(x.ReceivedDate);
-                if (!x.ReceivedTime) {
-                    console.log('Unable to split x.receivedTime', x);
-                }
-                const time = x.ReceivedTime.split(':');
-                AddedTime.setHours(time[0]);
-                AddedTime.setMinutes(time[1]);
-
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: `/Date(${AddedTime.getTime()})/`,
+                    AddedTime: x?.SocialMediaData?.Comments?.CommentText?.InsertionDateTime ?? x?.SocialMediaData?.Comments?.InsertionDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
@@ -916,7 +911,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteId: '',
                         From: x?.From,
                         To: '',
-                        Subject: x?.Subject,
+                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
                         Intent: x?.Intent,
@@ -946,18 +941,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             return result.map((x: any): SMPost => {
-                const AddedTime = new Date(x.ReceivedDate);
-                if (!x.ReceivedTime) {
-                    console.log('Unable to split x.receivedTime', x);
-                }
-                const time = x.ReceivedTime.split(':');
-                AddedTime.setHours(time[0]);
-                AddedTime.setMinutes(time[1]);
-
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: `/Date(${AddedTime.getTime()})/`,
+                    AddedTime: x?.SocialMediaData?.Posts?.CreatedDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
@@ -1010,23 +997,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             return result.map((x: any): SMPost => {
-                let AddedTime;
-                if (x?.CurrentStatusDate && x?.CurrentStatusTime) {
-                    AddedTime = new Date(x.CurrentStatusDate);
-                    if (!x.CurrentStatusTime) {
-                        console.log('Unable to split x.currentStatusTime', x);
-                    }
-                    const time = x.CurrentStatusTime.split(':');
-                    AddedTime.setHours(time[0]);
-                    AddedTime.setMinutes(time[1]);
-                } else {
-                    AddedTime = new Date();
-                }
-
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: `/Date(${AddedTime.getTime()})/`,
+                    AddedTime: x?.SocialMediaData?.Comments?.UpdatedDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
@@ -1048,7 +1022,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteId: x?.RouteId ?? '',
                         From: x?.From,
                         To: '',
-                        Subject: x?.Subject,
+                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
                         Intent: '',
@@ -1078,18 +1052,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             }
 
             return result.map((x: any): SMPost => {
-                const AddedTime = new Date(x.SendDate);
-                if (!x.SendTime) {
-                    console.log('Unable to split x.sendTime', x);
-                }
-                const time = x.SendTime.split(':');
-                AddedTime.setHours(time[0]);
-                AddedTime.setMinutes(time[1]);
-
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: `/Date(${AddedTime.getTime()})/`,
+                    AddedTime: x?.SocialMediaData?.Comments?.CommentText?.InsertionDateTime ?? x?.SocialMediaData?.Comments?.InsertionDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
@@ -1111,7 +1077,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteId: x?.RouteId ?? '',
                         From: x?.From,
                         To: '',
-                        Subject: x?.Subject,
+                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
                         Intent: '',
@@ -1214,6 +1180,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     formatDate(inputDateStr: string): { date: string; time: string } {
+        if(!inputDateStr || inputDateStr?.includes('-')) return {
+            date: 'NA',
+            time: 'NA'
+        }
         const inputDate = this.parseDotnetDate(inputDateStr);
         const months = [
             'January',
@@ -1263,6 +1233,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     toggleDropdown(className: string, alwaysExpand?: boolean) {
         const rippleEl = document.querySelector(`.${className}`);
         const triggerEl = document.getElementById(className);
+
+        if(!rippleEl || !triggerEl) return;
 
         if (alwaysExpand) {
             rippleEl.classList.remove('expanded');
@@ -1349,6 +1321,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             PostEngagements: inboxRes.SocialMediaData.Posts.PostEngagements,
                             Engagement: inboxRes.SocialMediaData.Engagement,
                             IsOutbound: fetchFromOutbox,
+                            IsParentCommentEdited: inboxRes.SocialMediaData.ParentComments?.IsEdited,
+                            IsParentCommentDeleted: inboxRes.SocialMediaData.ParentComments?.IsDeleted,
                             IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
                             IsCommentEdited: inboxRes.SocialMediaData.Comments?.IsEdited,
                             IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
@@ -1405,6 +1379,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         PostEngagements: outboxRes.SocialMediaData.Posts.PostEngagements,
                         Engagements: outboxRes.SocialMediaData.Engagement,
                         IsOutbound: fetchFromOutbox,
+                        IsParentCommentEdited: outboxRes.SocialMediaData.ParentComments?.IsEdited,
+                        IsParentCommentDeleted: outboxRes.SocialMediaData.ParentComments?.IsDeleted,
                         IsCommentDeleted: outboxRes.SocialMediaData.Comments?.IsDeleted,
                         IsCommentEdited: outboxRes.SocialMediaData.Comments?.IsEdited,
                         IsPostDeleted: outboxRes.SocialMediaData.Posts?.IsDeleted,
@@ -1430,13 +1406,20 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             );
             setTimeout(() => {
                 if (preserveChosenPost) {
-                    this.toggleDropdown(post.SubChannel ?? post.PostData.EmailType, true);
-                    this.toggleDropdown(
-                        (post.SubChannel ?? post.PostData.EmailType) +
-                            '-' +
-                            (post.SkillName ?? inboxRes.MakerSkillName ?? post.SkillId).split('@')[0],
-                        true
-                    );
+                    this.toggleDropdown(post.SubChannel, true);
+                    setTimeout(() => {
+                        if(this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
+                            this.toggleDropdown(
+                                `${post.SubChannel}-${post.Mailbox.split('@')[0]}`,
+                                true
+                            );
+                        } else {
+                            this.toggleDropdown(
+                                `${post.SubChannel}-${post.SkillName ? post.SkillName : post.SkillId}`,
+                                true
+                            );
+                        }
+                    }, 300);
 
                     // Just open the post and do nothing for post reaction notifications
                     if (this.notificationAction === 'smrp_a') {
@@ -1699,8 +1682,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         if (this.hidePostActions) return ' theme-bg delete-border twd-border-opacity-100';
         switch (this.notificationAction) {
             case 'smc_e':
+            case 'smco_e':
                 return ' theme-bg edit-border twd-border-opacity-100';
             case 'smc_d':
+            case 'smco_d':
                 return ' theme-bg delete-border twd-border-opacity-100';
             case 'smp_d':
                 return ' theme-bg delete-border twd-border-opacity-100';

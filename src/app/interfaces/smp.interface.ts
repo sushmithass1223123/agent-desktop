@@ -27,6 +27,8 @@ export interface SmpComponentInputs {
     Subject: string;
     PostText: SmPostText;
     IsOutbound: boolean;
+    IsParentCommentEdited: boolean;
+    IsParentCommentDeleted: boolean;
     IsCommentDeleted: boolean;
     IsCommentEdited: boolean;
     IsPostDeleted: boolean;

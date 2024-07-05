@@ -40,7 +40,8 @@ declare var document: any;
 
 const channelMapper: any = {
     fb: 'facebook',
-    instagram: 'instagram'
+    instagram: 'instagram',
+    twitter: 'x'
 };
 
 type SmpEventGeneric = IncomingEmailEvent;
@@ -114,6 +115,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     deletedPostData: any = {};
     postDraftData: any = {};
     restrictPostActions: any = {};
+    tempOutSessionId: string = '';
     /**
      * File upload url config
      */
@@ -449,7 +451,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     attachmentFileList: attachments && attachments.length ? JSON.stringify(attachments) : '',
                     body: body,
                     inboxSessionId: this.sessionId,
-                    outboxSessionId: this.outSessionId || '',
+                    outboxSessionId: !this.outSessionId && this.draftOutsessionId[this.activeSessionId] ? this.draftOutsessionId[this.activeSessionId] : (this.outSessionId || ''),
                     routeId: '',
                     toList: '',
                     bccList: '',

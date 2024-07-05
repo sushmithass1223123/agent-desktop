@@ -137,7 +137,7 @@ export class SocialMediaPostsService {
         });
     }
 
-    stylizeContent(text): string {
+    stylizeContent(text: string, clipped?: boolean): string {
         try {
             const urlRegex = /(https?:\/\/[^\s]+)/g;
             const hashtagRegex = /#(\w+)/g;
@@ -156,6 +156,8 @@ export class SocialMediaPostsService {
             text = text.replace(mentionRegex, function (match, p1) {
                 return '<span class="mention">@' + p1 + '</span>';
             });
+
+            if(clipped) text+='...'
 
             return text;
         } catch (error) {

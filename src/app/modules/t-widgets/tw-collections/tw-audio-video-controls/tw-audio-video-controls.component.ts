@@ -27,7 +27,6 @@ import {
     TextChatDisconnectedEvent,
     TextChatMessageReceivedEvent,
     TextChatRemoteUserConnectedEvent,
-    TextChatTransferSuccessEvent,
     TUtils,
     WrcCallTypes
 } from '@tmac/sdk';
@@ -409,7 +408,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             .getInteractionEventsExtended(
                 [
                     { event: 'TextChatRemoteUserConnectedEvent' },
-                    { event: 'TextChatTransferSuccessEvent' },
                     { event: 'DisconnectAVEvent' },
                     { event: 'AVControlMessageReceivedEvent' },
                     { event: 'TextChatMessageReceivedEvent' },
@@ -1013,12 +1011,6 @@ if (error === 'Screenshare Was Cancelled') {
         });
     };
 
-    TextChatTransferSuccessEvent = (evt: TextChatTransferSuccessEvent) => {
-        if(evt.InteractionID !== this.interactionId) return;
-        this.endCall(true, '' , 'CALL_TRANSFFERED');
-        this.destroyWidget();
-    }
-
     /**
      * AVControlMessageReceivedEvent Handler
      *
@@ -1436,7 +1428,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      */
     CallHoldEvent = (evt: CallHoldEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
+        if (evt.InteractionID !== this.interactionId || !this.connected) {
             return;
         }
 
@@ -1499,7 +1491,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      */
     CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
-        if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold || !this.connected) {
             return;
         }
 

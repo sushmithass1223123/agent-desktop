@@ -94,8 +94,9 @@ workbench-smp {
                             overflow: hidden;
                             text-overflow: ellipsis;
                             display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            line-clamp: 2;
+                            -webkit-line-clamp: 1;
+                            line-clamp: 1;
+                            white-space: pre-wrap;
                             -webkit-box-orient: vertical;
                             max-width: 75%;
                         }

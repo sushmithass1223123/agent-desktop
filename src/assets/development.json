@@ -3416,7 +3416,7 @@
                 "timeout": 60
             },
             "signalRProxy": {
-                "enabled": true,
+                "enabled": false,
                 "logging": true,
                 "protocol": "webSockets",
                 "timeout": 10,
