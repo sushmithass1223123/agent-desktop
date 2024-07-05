@@ -205,6 +205,10 @@ export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData,
  */
 export type TwChatControlsData = {
     /**
+     * Config to differentiate if the call is on hard phone
+     */
+    IsPhoneAudio?: boolean;
+    /**
      * Transfer configurations
      */
     Transfer: AgentSkillConfig;

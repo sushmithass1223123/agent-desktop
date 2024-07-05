@@ -1026,7 +1026,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     interactionId: this.interactionId.toString(),
                     otherData: JSON.stringify({
                         type: this._dialogData.OtherData.type,
-                        mode: this._dialogData.OtherData.mode
+                        mode: this._dialogData.OtherData.mode,
+                        isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
+                        isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                     }),
                     // uncomment this when freetext available for agent
                     // toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
@@ -1067,7 +1069,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     lineId: this._dialogData.OtherData.lineId,
                     sessionId: this._dialogData.OtherData.sessionId,
                     toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
-                    toTmacServer: this.selectedRow.row.TmacServer
+                    toTmacServer: this.selectedRow.row.TmacServer,
+                    isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
+                    isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                 })
                     .then((dt) => {
                         this.loading -= 1;
@@ -1121,7 +1125,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     chatMode: this._dialogData.OtherData.mode,
                     interactionId: this.interactionId.toString(),
                     isBlind: !this.isConsult,
-                    skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem
+                    skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
+                    isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
+                    isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                 })
                 .then((dt) => {
                         this.loading -= 1;
