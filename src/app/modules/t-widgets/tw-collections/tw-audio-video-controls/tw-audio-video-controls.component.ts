@@ -24,6 +24,7 @@ import {
     IResponse,
     SDKClient,
     TEnums,
+    CallConferenceCompletedEvent,
     TextChatDisconnectedEvent,
     TextChatMessageReceivedEvent,
     TextChatRemoteUserConnectedEvent,
@@ -414,7 +415,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     { event: 'ActionMessageReceivedEvent' },
                     { event: 'TextChatDisconnectedEvent' },
                     { event: 'CallHoldEvent', noRepeat: true },
-                    { event: 'CallHoldReconnectEvent', noRepeat: true }
+                    { event: 'CallHoldReconnectEvent', noRepeat: true },
+                    { event: 'CallConferenceCompletedEvent', noRepeat: true }
                 ],
                 this.interactionId
             )
@@ -575,6 +577,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         } else if (this.interactionDetails.ConferenceType === 'silent') {
             this.avConn.join(this.wrcCallType, { mode: 'monitor' });
             this.showUI = true;
+        } else if (
+            this.interactionDetails.ConferenceType === 'transfer' &&
+            (this.data.Data.ChatMode !== 'text' || (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall && this.data.Data?.AvCallConstraints?.isAgentOnPhone))
+        ) {
+            this.avConn.join(this.wrcCallType, { mode: 'conference' });
+            this.showUI = true;
         } else if (this.interactionDetails.Direction === 'out') {
             this.avConn
                 ?.startCall(this.wrcCallType)
@@ -677,9 +685,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         this.destroyWidget();
                         return;
                     }
-                    // If the incoming call is done by agent, return. Because this is handled in requestav
-                    // Validate this only if the call is triggered through TwChatControlsComponent
-                    if (evt.data?.owner && this.data?.Data?.Source === 'TwChatControlsComponent') return;
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
@@ -1047,7 +1052,9 @@ if (error === 'Screenshare Was Cancelled') {
             const requestType = JSON.parse(evt.Message).param;
             switch (evt.Type) {
                 case 'requestav':
-                    this.handleAvRequestFromAgent(evt);
+                    this.interactionDetails.Direction = 'in';
+                    this.callType = requestType;
+                    this.startAVCall();
                     break;
                 case 'addscreenshare':
                     this.displayToasters = false;
@@ -1091,58 +1098,6 @@ if (error === 'Screenshare Was Cancelled') {
             this.logger.error('error occured in AVControlMessageReceivedEvent', e, false);
         }
     };
-
-    /**
-     * Method to handle agent av call requests when customer is in conference
-     * @param {AVControlMessageReceivedEvent} evt - AV control message object
-     */
-    handleAvRequestFromAgent(evt: AVControlMessageReceivedEvent): void {
-        try {
-            let requestType = JSON.parse(evt.Message).param;
-            requestType = requestType.charAt(0).toUpperCase() + requestType.slice(1);
-
-            if (evt.User == 'customer') {
-                this.isAgentAvRequest = false;
-                this.interactionDetails.Direction = 'in';
-                this.callType = requestType;
-                this.startAVCall();
-            } else {
-                this.isAgentAvRequest = true;
-                const dynamicLabels = [
-                    {
-                        key: '#callType',
-                        value: this.translocoService.translate('dynamic_labels.audioVideoControls.callType.' + requestType)
-                    },
-                    {
-                        key: '#customerName',
-                        value: JSON.parse(evt.Message)?.owner?.split('_')?.pop() ?? 'Agent'
-                    }
-                ];
-
-                this.confirmDialogRef = this._appUIService.showCustomDialog(
-                    'confirm',
-                    this._appDataService.getUpdatedLabel(
-                        this.translocoService.translate('widgets.audioVideoControls.callRequestConfirmMsg'),
-                        dynamicLabels
-                    ),
-                    '',
-                    null,
-                    {
-                        disableClose: true
-                    }
-                );
-                this.confirmDialogRef.afterClosed().subscribe((resp) => {
-                    if (resp) {
-                        this.showUI = true;
-                        this.agentAvRequestConsented = true;
-                        if (this.isCustomerAcknowledged) this.startAVCall();
-                    } else this.destroyWidget();
-                });
-            }
-        } catch (e) {
-            this.logger.error('error occured in handleAvRequestFromAgent', e, false);
-        }
-    }
 
     /**
      *
@@ -1492,6 +1447,63 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
     CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
         if ((evt.InteractionID !== this.interactionId) || this.manualHold || !this.connected) {
+            return;
+        }
+
+        this.onCallHoldEvent = false;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
+
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
+
+            let type = 'AV' as any;
+            const actionMessage = {
+                source: 'agent',
+                options: {},
+                data: {
+                    interactionId: this.interactionId
+                },
+                status: 'request',
+                type: 'unmuteAudioVideo',
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+            };
+
+            if (this.muteAVOnHold.customerAudio && this.muteAVOnHold.customerVideo) {
+                type = 'AV';
+                actionMessage.type = 'unmuteAudioVideo';
+            } else if (this.muteAVOnHold.customerAudio) {
+                type = 'audio';
+                actionMessage.type = 'unmuteAudio';
+            } else if (this.muteAVOnHold.customerVideo) {
+                type = 'video';
+                actionMessage.type = 'unmuteVideo';
+            }
+
+            this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
+            return;
+        }
+
+        // un hold the call
+        this.avConn.unHold();
+        this.hold = false;
+    };
+
+    CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
+        // check the interaction
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
             return;
         }
 

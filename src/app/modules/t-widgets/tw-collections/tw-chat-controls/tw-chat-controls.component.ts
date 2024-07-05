@@ -58,6 +58,7 @@ import {
     TextChatTransferSuccessEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
+    CallConferenceCompletedEvent,
     TextTemplate,
     TUtils
 } from '@tmac/sdk';
@@ -610,6 +611,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
     createIconButtonDisabled: boolean = false;
     /**
+     * Is audio through hard phone
+     */
+    isPhoneAudio: boolean = false;
+
+    /**
      * Constructor
      */
     constructor(
@@ -772,6 +778,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
 
+        // check if the audio is through avaya/hard phone
+        this.isPhoneAudio = this.widgetData.IsPhoneAudio;
+
         // check if conversation api Url is configured
         if (this.widgetData.ConversationService && this.widgetData.ConversationService.Url) {
             // set the conversation service urls
@@ -913,6 +922,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'HoldInteractionEvent',
                     'UnholdInteractionEvent',
                     'ConfirmEndInteractionEvent',
+                    'CallConferenceCompletedEvent',
                     "EndInteractionEvent"
                 ],
                 this.interaction.InteractionID
@@ -1461,7 +1471,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'in' | 'out'} direction Direction of the call
      * @param {AVControlMessageReceivedEvent} avEvent [OPTIONAL] For incoming requestav to process AVControlMessageReceivedEvent
      */
-    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out'): void {
+    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out', AvCallConstraints?: any): void {
         // if the widget is created then ignore
         if (this.callWidget) {
             return;
@@ -1521,9 +1531,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         widget.InteractionDetails = this.data.InteractionDetails;
         // this.isMobileDevice = this.customerDevice;
-        widget.Data = { ...this.data.Data, 
+        widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -1920,9 +1930,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.conferenceType = evt.ConferenceType;
         // update the chatmode
         this.chatMode = evt.ChatMode as any;
+        // Av call constraints from transfer notification event
+        let avCallConstraints: any = {};
+        
+        if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
+            avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
+        }
+        if (avCallConstraints) delete this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID];
+
         // to not open video dialog when interaction is over
-        if (!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) {
-            this.escalateToAV(this.chatMode as any);
+        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone)) {
+            this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
         // check for bot history
@@ -2433,6 +2451,40 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (error) { }
     }
 
+    CallConferenceCompletedEvent(evt: CallConferenceCompletedEvent): void {
+        try {
+            if(this.status !== 'hold') return;
+
+            this.interactionOnHold = unHoldState;
+            this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
+            this.status = 'connected';
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected'
+            });
+            this.interactionOnHold.loading = false;
+
+            if (evt.RecoveryEvent) return;
+            
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'unhold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     /**
      * To handle HoldTimerEvent
      *
@@ -2503,7 +2555,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check the type
             const type = JSON.parse(evt.Message).param;
             // open the call widget
-            this.openCallWidget(type, 'in');
+            this.openCallWidget(type, 'in', {});
         }
     }
 
@@ -2942,9 +2994,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To escalate the chat to audio/video
      * @param {'audio' | 'video'} type Type of escalation
      */
-    public escalateToAV(type: 'audio' | 'video'): void {
+    public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
         // open call widget
-        this.openCallWidget(type, 'out');
+        this.openCallWidget(type, 'out', avCallConstraints);
 
         // this._tmacEventService.emitSDKEvent({
         //     event: {
@@ -3282,6 +3334,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             OtherData: {
                 type: type === 'transfer' ? 'transfer' : 'conf',
                 mode: this.chatMode,
+                isAgentOnPhone: this.isPhoneAudio,
+                isAgentOnActiveCall: this.callWidget ? true : false,
                 sessionId: this.sessionID,
                 lineId: this.lineId
             },

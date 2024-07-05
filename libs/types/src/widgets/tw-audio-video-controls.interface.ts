@@ -154,6 +154,19 @@ export type TwAudioVideoControlsData = {
      */
     IsScreenShareDisabled: boolean;
     /**
+     * To hold the chat mode
+     * 
+     * [INTERNAL]
+     */
+    ChatMode: string;
+    /**
+     * To hold av call constraints
+     * 
+     * [INTERNAL]
+     */
+    AvCallConstraints: any;
+
+    /**
      * [STANDALONE] Flag to allow screenshare
      */
     ScreenShareAllowed: boolean;

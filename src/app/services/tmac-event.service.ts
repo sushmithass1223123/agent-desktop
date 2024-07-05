@@ -124,6 +124,8 @@ export class TMACEventService extends SharedWrapper {
     /** Events to manipulate AD elements from custom widget */
     _uiControlsEvents: Subject<any> = new Subject();
 
+    avCallConstraints: any = {};
+
     /**
      * Constructor
      * @param {AppDataService} _appDataService
@@ -961,6 +963,14 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         const otherData = JSON.parse(evt.Data);
         // get the type
         const type = otherData.type === 'conf' ? 'conference' : 'transfer';
+
+        this.avCallConstraints[evt.FromAgentID] = {
+            isAgentOnPhone: otherData?.isAgentOnPhone,
+            isAgentOnActiveCall: otherData?.isAgentOnActiveCall,
+            mode: otherData?.mode,
+            type
+        };
+
         // get the mode
         const mode = upperFirst(otherData.mode) + ' Chat';
         let message = `Agent <b>${evt.FromAgentName}</b> is trying to ${type} a ${mode}`;
