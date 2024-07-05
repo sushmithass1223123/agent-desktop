@@ -1936,7 +1936,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
         if (avCallConstraints) delete this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID];
         // to not open video dialog when interaction is over
-        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone)) {
+        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone)) {
             this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
