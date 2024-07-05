@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 </ng-container>
-                <ng-container *ngIf="item.icon.includes('smc_e')">
+                <ng-container *ngIf="item.icon.includes('smc_e') || item.icon.includes('smco_e')">
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
                         <div fxLayout fxLayoutAlign="center center" class="mr-12">
                             <mat-icon mat-list-icon color="primary">edit</mat-icon>
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                 </ng-container>
-                <ng-container *ngIf="item.icon.includes('smc_d') || item.icon.includes('smp_d')">
+                <ng-container *ngIf="item.icon.includes('smc_d') || item.icon.includes('smp_d') || item.icon.includes('smco_d')">
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
                         <div fxLayout fxLayoutAlign="center center" class="mr-12">
                             <mat-icon mat-list-icon color="primary">delete_forever</mat-icon>

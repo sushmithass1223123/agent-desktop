@@ -45,6 +45,8 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
     @Input() enhanceCommentContainer: boolean = false;
     @Input() isActiveCommentEdited: boolean = false;
     @Input() isActiveCommentDeleted: boolean = false;
+    @Input() isParentCommentEdited: boolean = false;
+    @Input() isParentCommentDeleted: boolean = false;
     @Input() isPostDeleted: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
@@ -67,7 +69,6 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
      * Maximum file size default 20mbs
      */
     @Input() maxFileUploadSize = 20971520;
-    @Input() draftPollDuration = 60;
     @Input() isDraftMode: boolean = false;
     @Output('emitReply') emitReply = new EventEmitter<any>();
     @Output('restrictPostAction') restrictPostAction = new EventEmitter<any>();
@@ -112,8 +113,17 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
     ) {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if(changes['interactionId'] || changes['enhanceCommentContainer']) {
-            this.initPostTemplate();
+        if (changes['interactionId'] || changes['enhanceCommentContainer'] || changes['mode']) {
+            let loadCommentHistory = false;
+            if (changes['enhanceCommentContainer'])
+                loadCommentHistory =
+                    !changes['enhanceCommentContainer'].previousValue &&
+                    changes['enhanceCommentContainer'].currentValue === true;
+            else if (changes['mode'])
+                loadCommentHistory =
+                    changes['mode'].previousValue !== 'interaction-max' &&
+                    changes['mode'].currentValue === 'interaction-max';
+            this.initPostTemplate(loadCommentHistory);
         }
     }
 
@@ -122,7 +132,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
         this.unsubscribeAll$.complete();
     }
 
-    initPostTemplate(): void {
+    initPostTemplate(loadCommentHistory?: boolean): void {
         this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
         this.postData = JSON.parse(JSON.stringify(this.postData));
         if(!this.postData.PostText.Text) this.postData.PostText.Text = `Post from ${this.postData.SubChannel}`
@@ -140,10 +150,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
                 this.postData.SmParentComments = null;
             }
         }
-        this.indexHolder = {
-            0: [0, 5]
-        };
-        if (this.enhanceCommentContainer || this.mode === 'interaction-max') this.loadCommentHistory();
+        if ((this.enhanceCommentContainer || this.mode === 'interaction-max') && loadCommentHistory) this.loadCommentHistory();
         setTimeout(() => {
             if(this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container')
         }, 500);
@@ -153,7 +160,7 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll$)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
-        this.initPostTemplate();
+        // this.initPostTemplate();
     }
 
     scrollToBottom(className: string) {

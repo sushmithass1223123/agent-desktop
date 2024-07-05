@@ -38,8 +38,7 @@
                 </div>
                 <ng-container *ngIf="postDraftData[interactionId] && smpService.postBodies[activeSessionId]">
                     <smp-template [isDraftMode]="isDraftMode" [draftData]="postDraftData[interactionId]"
-                        [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
-                        [draftPollDuration]="draftPollDuration" [interactionId]="interactionId" [sessionId]="sessionId"
+                        [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering" [interactionId]="interactionId" [sessionId]="sessionId"
                         (dataChanged)="this.postDraftData[$event].isReplyDrafted = false" [enhanceCommentContainer]="isMaximizedMode"
                         [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []"
                         (emitReply)="emitReply($event)" [outSessionId]="outSessionId" [mode]="!isMaximizedMode ? 'interaction-min' : 'interaction-max'"
@@ -102,8 +101,7 @@
             </div>
             <smp-template [MaximumAllowedPostImageRendering]="5" [isDraftMode]="isDraftMode"
                 [draftData]="postDraftData[interactionId]"
-                (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
-                [draftPollDuration]="draftPollDuration" [maxFileUploadSize]="MaxFileUploadSize"
+                (dataChanged)="this.postDraftData[$event].isReplyDrafted = false" [maxFileUploadSize]="MaxFileUploadSize"
                 [previousCommentFromNotification]="previousCommentData[activeSessionId] ? [previousCommentData[activeSessionId]?.message] : []" [enhanceCommentContainer]="true"
                 [mode]="'interaction-max'" [interactionId]="interactionId" [outSessionId]="outSessionId"
                 [sessionId]="sessionId" [postData]="this.smpService.postBodies[activeSessionId]"

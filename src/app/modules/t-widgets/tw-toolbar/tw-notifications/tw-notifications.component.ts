@@ -124,6 +124,14 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                 showAlert: true
             });
             return;
+        } else if (type === 'socialmediacommentout_edit') {
+            this._appUIService.addNotification({
+                icon: 'smco_e',
+                message: JSON.parse(evt.Message),
+                status: 'new',
+                showAlert: true
+            });
+            return;
         } else if (type === 'socialmediareactionspost_add') {
             this._appUIService.addNotification({
                 icon: 'smrp_a',
@@ -135,6 +143,14 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
         } else if (type === 'socialmediacomment_delete') {
             this._appUIService.addNotification({
                 icon: 'smc_d',
+                message: JSON.parse(evt.Message),
+                status: 'new',
+                showAlert: true
+            });
+            return;
+        } else if (type === 'socialmediacommentout_delete') {
+            this._appUIService.addNotification({
+                icon: 'smco_d',
                 message: JSON.parse(evt.Message),
                 status: 'new',
                 showAlert: true
