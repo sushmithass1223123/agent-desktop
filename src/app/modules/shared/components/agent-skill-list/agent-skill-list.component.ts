@@ -1076,6 +1076,19 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
+                        SDKClient.saveDataToDataServer({
+                            type: "transfercall",
+                            subType: "textchat",
+                            key: this._dialogData.OtherData.sessionId,
+                            insertedBy: "50057",
+                            "insertedSource": "AD",
+                            "interactionId": this.interactionId.toString(),
+                            "ttl": "",
+                            "data": this.comments,
+                            "instance": "",
+                            "deviceId": SDKClient.getAgentData().agentId,
+                            "tmacServer": this.selectedRow.row.TmacServer
+                        })
                         this.loading -= 1;
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
