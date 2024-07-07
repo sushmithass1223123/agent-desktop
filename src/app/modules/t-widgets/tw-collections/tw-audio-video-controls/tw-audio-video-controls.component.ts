@@ -1973,8 +1973,11 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             this.logger.info('endCall - ending call');
             this.avConn.endCall(this.wrcCallType, reason, errorCode);
         }
-
-        // of endOnly then return
+    
+        // Reset interactionHold flag
+        this.resetInteractionHold();
+    
+        // if endOnly then return
         if (endOnly) {
             return true;
         }
@@ -1998,8 +2001,18 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
         return true;
     }
-
-
+    
+    // Add this method to reset interactionHold
+    private resetInteractionHold(): void {
+        this._tmacEventService.emitSDKEvent({
+            event: {
+                EventName: 'ResetInteractionHoldEvent',
+                InteractionID: this.interactionId
+            },
+            isInteractionEvent: true
+        });
+    }
+    
     /**
      * Opens webrtc stats inside an iframe
      */

@@ -187,8 +187,20 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
                 .getInteractionEvents(['CallHoldEvent', 'CallHoldReconnectEvent'], this.data.InteractionDetails.InteractionID)
                 .pipe(takeUntil(this._unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+    
+            // Subscribe to ResetInteractionHoldEvent
+            this._tmacEventService
+                .getInteractionEvents(['ResetInteractionHoldEvent'], this.data.InteractionDetails.InteractionID)
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe(() => this.resetInteractionHold());
         }
     }
+    
+    // Add this method to reset interactionHold
+    private resetInteractionHold(): void {
+        this.interactionHold = false;
+    }
+    
 
     /**
      * OnDestroy
