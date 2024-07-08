@@ -1407,6 +1407,9 @@
                                                     "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
+                                                    "AttachmentConstraints": {
+                                                        "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+                                                    },
                                                     "ScreenShareAllowed": true,
                                                     "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,

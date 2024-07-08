@@ -171,6 +171,9 @@ export type TwChatControlsWhiteboard = {
  *         "ReplyOnChatAllowed": true,
  *         "VoiceNoteAllowed": false,
  *         "AttachmentAllowed": true,
+ *         "AttachmentConstraints": {
+ *              "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+           },
  *         "ScreenShareAllowed": true,
  *         "InteractionCommentAllowed": true,
  *         "HoldInteractionAllowed": true,
@@ -256,6 +259,10 @@ export type TwChatControlsData = {
      * Flag to allow attachment
      */
     AttachmentAllowed: boolean;
+    /**
+     * Attachment mime constraints object
+     */
+    AttachmentConstraints: AttachmentConstraints;
     /**
      * Flag to allow screenshare
      */
@@ -464,6 +471,10 @@ export type TwChatControlsData = {
      */
     ToggleUserViewAllowed: boolean;
 };
+
+export interface AttachmentConstraints {
+    [platform: string]: string[];
+}
 
 export type TReplyOnSMM = {
     channels: string;
