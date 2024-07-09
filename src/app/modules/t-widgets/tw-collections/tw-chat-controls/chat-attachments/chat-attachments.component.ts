@@ -4,6 +4,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
 import { MediaStreamerResponse } from 'app/interfaces';
 import { TranslocoService } from '@ngneat/transloco';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 /**
  * Chat attachment module
  */
@@ -70,7 +71,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         /**
          * Base64 string of file
          */
-        base64: string;
+        base64: SafeUrl | string;
         /**
          * Size of file
          */
@@ -84,10 +85,13 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
          */
         ext: string;
     }[] = [];
-
+    /**
+     * flag to hold unsupported video playbacks
+     */
+    isPlaybackNotSupported: boolean = false;
 
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService,
-        private translocoService: TranslocoService) {}
+        private translocoService: TranslocoService, private sanitizer: DomSanitizer) {}
 
     /**
      * On init
@@ -190,7 +194,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 this.uploadingFiles.push({
                     file: input.files[0],
                     fileName,
-                    base64,
+                    base64: this.sanitizeUrl(base64),
                     size: input.files[0].size,
                     type: input.files[0].type,
                     ext: fileName.split('.').pop()
@@ -404,7 +408,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             } else {
                 // upload to TMAC proxy
                 const filesToUpload: FileSaveData[] = [];
-                this.uploadingFiles.forEach(async (file) => {
+                this.uploadingFiles.forEach(async (file: any) => {
                     // add to the list
                     filesToUpload.push({
                         FileName: file.fileName,
@@ -459,5 +463,25 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
        return this.uploadingFiles.find(item => 
             item.type.includes('image')
         ) ? true : false;
+    }
+
+    /**
+     * Method to handle error from audo/video html elements
+     */
+    onHandlePlaybackError(): void {
+        try {
+            this.isPlaybackNotSupported = true;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    /**
+     * Method to sanitize base64 to safe url
+     * @param base64Url Base 64 Url
+     * @returns Sanitized Safe Url
+     */
+    sanitizeUrl(base64Url: string): SafeUrl {
+        return this.sanitizer.bypassSecurityTrustUrl(base64Url);
     }
 }
