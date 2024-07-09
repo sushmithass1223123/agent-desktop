@@ -215,7 +215,7 @@
         [data]="data"
         (maximizeEvent)="onMaximized($event)"
         (collapseEvent)="onMaximized($event)"
-        (floatEvent)="floatEvent.emit($event)"
+        (floatEvent)="onMaximized($event)"
         *transloco="let locale"
     >
         <div class="w-100-p h-100-p chat-controls">
