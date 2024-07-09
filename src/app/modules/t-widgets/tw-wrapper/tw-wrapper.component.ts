@@ -184,15 +184,14 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         // register to hold/unhold event for interaction AOT widgets
         if (this.aot && this.data.InteractionDetails) {
             this._tmacEventService
-                .getInteractionEvents(['CallHoldEvent', 'CallHoldReconnectEvent'], this.data.InteractionDetails.InteractionID)
+                .getInteractionEvents(['CallHoldEvent', 'CallHoldReconnectEvent', 'ResetInteractionHoldEvent'], this.data.InteractionDetails.InteractionID)
                 .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
-    
-            // Subscribe to ResetInteractionHoldEvent
-            this._tmacEventService
-                .getInteractionEvents(['ResetInteractionHoldEvent'], this.data.InteractionDetails.InteractionID)
-                .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe(() => this.resetInteractionHold());
+                .subscribe((evts) => {evts.forEach((evt) => {
+                if (evt.EventName === 'ResetInteractionHoldEvent') {
+                this.resetInteractionHold();
+                } else {
+                    this[evt.EventName](evt);
+                }});});
         }
     }
     
