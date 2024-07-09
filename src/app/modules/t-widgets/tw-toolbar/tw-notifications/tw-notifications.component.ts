@@ -173,7 +173,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
             type !== 'executetask' &&
             type !== 'customersentimentdetected' &&
             type !== 'agentsentimentdetected' &&
-            type !== 'socialmediareactionscomment_add'
+            type !== 'parentagentstatus'
         ) {
             this._appUIService.addNotification({
                 icon: type === 'broadcast' ? 'announcement' : type === 'notify' ? 'notification_important' : 'info',

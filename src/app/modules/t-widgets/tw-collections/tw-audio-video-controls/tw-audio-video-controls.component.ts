@@ -568,7 +568,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.userView = 'call';
 
         // start call
-        if (this.interactionDetails.ConferenceType === 'conf') {
+        if (this.interactionDetails.ConferenceType === 'conf' &&
+            this.data.Data?.AvCallConstraints?.isAgentOnActiveCall) {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
             this.showUI = true;
         } else if (this.interactionDetails.ConferenceType === 'whisper') {
@@ -1965,14 +1966,28 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method endCall
      */
     public async endCall(endOnly = false, reason = '', errorCode?: string): Promise<boolean> {
-        // if there is only customer then endCall else dropCall
-        if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
+        const areParentAgentsOnCall = Object.keys(this._tmacEventService?.avCallConstraints).find(
+            (parentAgentId: string) => {
+                return this._tmacEventService.avCallConstraints[parentAgentId].isAgentOnActiveCall;
+            }
+        )?.length;
+        
+        // if there is only customer then endCall else dropCall or if parent agents are in active call
+        if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1 || areParentAgentsOnCall) {
             this.logger.info('endCall - droping call');
             this.avConn.dropCall(reason);
         } else {
             this.logger.info('endCall - ending call');
             this.avConn.endCall(this.wrcCallType, reason, errorCode);
         }
+
+        this._tmacEventService.emitSDKEvent({
+            event: {
+                EventName: 'UpdateParentAgentStatusEvent',
+                InteractionID: this.interactionId
+            },
+            isInteractionEvent: true
+        });
 
         // of endOnly then return
         if (endOnly) {

@@ -922,6 +922,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'HoldInteractionEvent',
                     'UnholdInteractionEvent',
                     'ConfirmEndInteractionEvent',
+                    'UpdateParentAgentStatusEvent',
                     'CallConferenceCompletedEvent',
                     "EndInteractionEvent"
                 ],
@@ -1936,7 +1937,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
             avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
         }
-        if (avCallConstraints) delete this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID];
 
         // to not open video dialog when interaction is over
         if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone)) {
@@ -2647,6 +2647,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // remove the agent from list
         this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
 
+        if(this._tmacEventService.avCallConstraints[evt.AgentId]) 
+            delete this._tmacEventService.avCallConstraints[evt.AgentId]
+
         // check if a bot is connected
         if (evt.IsBotAgent) {
             this.botConnected = false;
@@ -2800,6 +2803,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     ConfirmEndInteractionEvent(): void {
         this.confirmEndChat();
+    }
+
+    /**
+     * To process custom UpdateParentAgentStatusEvent and update other conference agents
+     * about the current user status
+     */
+    UpdateParentAgentStatusEvent(): void {
+        try {
+            const currentAgentStatus = {
+                isAgentOnPhone: this.isPhoneAudio,
+                isAgentOnActiveCall: false,
+                chatMode: this.chatMode
+            };
+
+            const agentIds = this.conferenceAgentList.map((cAgents) => cAgents.AgentId);
+            if(!agentIds) return;
+
+            SDKClient.sendNotification({
+                agentIds,
+                informAllTmac: false,
+                message: JSON.stringify(currentAgentStatus),
+                supervisorId: '',
+                teamId: '',
+                type: 'parentagentstatus',
+                tmacServer: this.conferenceAgentList.map((cAgents) => cAgents.TmacServer)[0]
+            });
+        } catch (error) {
+            console.error();
+        }
     }
 
 
@@ -2995,6 +3027,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'audio' | 'video'} type Type of escalation
      */
     public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
+        // Check for parent agent av constraints
+        if (avCallConstraints === undefined) {
+            avCallConstraints =
+                this._tmacEventService.avCallConstraints[
+                    Object.keys(this._tmacEventService.avCallConstraints).find((parentAgentId: string) => {
+                        return this._tmacEventService.avCallConstraints[parentAgentId].isAgentOnActiveCall;
+                    })
+                ];
+        }
+        
         // open call widget
         this.openCallWidget(type, 'out', avCallConstraints);
 
