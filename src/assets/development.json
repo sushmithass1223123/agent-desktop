@@ -1640,7 +1640,7 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": false,
+                                                            "Blind": true,
                                                             "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
