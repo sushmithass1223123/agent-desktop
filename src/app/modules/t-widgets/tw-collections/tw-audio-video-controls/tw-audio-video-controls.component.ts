@@ -482,7 +482,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
 
         // remove the repeatable events from the reference
-        this._tmacEventService.removeInteractionEvents(this.interactionId, ['AVControlMessageReceivedEvent', 'ActionMessageReceivedEvent']);
+        this._tmacEventService.removeInteractionEvents(this.interactionId, ['AVControlMessageReceivedEvent', 'ActionMessageReceivedEvent','CallHoldEvent', 'CallHoldReconnectEvent']);
         this._tmacEventService.removeNonInteractionEvents(['AgentAVMessageEvent']);
 
         this.avConn = null;
