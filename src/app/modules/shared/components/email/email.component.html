@@ -172,7 +172,7 @@
                 class="mx-4 border-radius-20"
                 [disabled]="state !== 'loaded'"
                 [matTooltip]="locale('sharedComponents.email.sendEmail')"
-                (click)="sendEmail.emit(_email)"
+                (click)="onSendEmail()"
             >
                 {{ locale('sharedComponents.email.send') }}
             </button>

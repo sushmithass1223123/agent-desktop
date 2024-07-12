@@ -305,7 +305,33 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             }
         }
     }
+    validateEmailPayloadSize(): void {
+        // Retrieveng mailbox configuration
+        SDKClient.getMailboxConfiguration('tmacServer', 'mailBox').then(mailboxConfig => {
+            const payloadSizeLimit = mailboxConfig.response.payloadSize;
 
+            // Calculating total size of body and attachments
+            const bodySize = new TextEncoder().encode(this._email.Body).length;
+            const attachmentSize = this._email.Files.reduce((total: number, attachment: any) => total + attachment.size, 0);
+            const totalSize = bodySize + attachmentSize;
+
+            // Comparing with payload size limit
+            if (totalSize > payloadSizeLimit) {
+                const msg = this.translocoService.translate('widgets.emailControls.emailPayloadSizeExceeded');
+                this._appUiService.showSnackbar(msg, 'failure');
+            } else {
+                // Proceeding with sending the email
+                this.sendEmail.emit(this._email);
+            }
+        }).catch(error => {
+            console.error('Error retrieving mailbox configuration:', error);
+        });
+    }
+
+    // Method to handle Send button click
+    onSendEmail(): void {
+        this.validateEmailPayloadSize();
+    }
     /**
      * Method to get the tool tip for file attachments
      */
