@@ -31,6 +31,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      */
     @Input() attachPreviewMode: string;
     /**
+     * Type of attachment previw
+     */
+    @Input() attachmentConstraints: string[];
+    /**
      * Event emitter to close the attachments
      */
     @Output() closeAttachments = new EventEmitter();
@@ -94,7 +98,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      */
     ngOnInit(): void {
         // add accept type for file input
-        this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : '*';
+        this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : this.attachmentConstraints.length ? this.attachmentConstraints.join(',') : '*';
     }
 
     /**
@@ -172,18 +176,15 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 if(this.attachPreviewMode === 'uploadMedia') {
                     const fileMime = input.files[0].type.split('/');
                     if(!['video', 'image'].includes(fileMime[0])) {
-                        const dynamicLabels = [
-                            {
-                                key: '#fileType',
-                                value: fileMime[1]
-                            }
-                        ]
-                        this._appUIService.showSnackbar(
-                            this.getUpdatedLabel(this.translocoService.translate('widgets.chatAttachments.invalidType'), dynamicLabels),
-                            'warning'
-                        );
+                        this.notifyInvalidFileSelection(fileMime[1]);
                         return;
                     }
+                }
+                if (this.attachmentConstraints.length && 
+                    !this.attachmentConstraints.includes(input.files[0].type)) {
+                    const fileMime = input.files[0].type.split('/');
+                    this.notifyInvalidFileSelection(fileMime[1]);
+                    return;
                 }
                 const base64 = await this.convertToBase64(input.files[0]);
                 const fileName = input.files[0].name;
@@ -201,6 +202,30 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
+        }
+    }
+
+    /**
+     * Method to notify agent that the selected file mime is invalid
+     * @param mime Mime type of the file
+     */
+    notifyInvalidFileSelection(mime: string): void {
+        try {
+            const dynamicLabels = [
+                {
+                    key: '#fileType',
+                    value: mime
+                }
+            ];
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(
+                    this.translocoService.translate('widgets.chatAttachments.invalidType'),
+                    dynamicLabels
+                ),
+                'warning'
+            );
+        } catch (error) {
+            console.error(error);
         }
     }
 
