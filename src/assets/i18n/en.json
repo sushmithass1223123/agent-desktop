@@ -484,7 +484,8 @@
             "msURLNotFound": "File upload failed, URL [MediaStreamer] not found, Please contact the administrator",
             "send": "Send",
             "close": "Close",
-            "invalidType": "#fileType files are not allowed to upload!"
+            "invalidType": "#fileType files are not allowed to upload!",
+            "playbackNotSupportedMessage": "Playback no supported for the selected file!"
         },
         "chatControls": {
             "rotate": "Rotate",
