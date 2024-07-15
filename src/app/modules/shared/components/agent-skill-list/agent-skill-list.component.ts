@@ -1076,23 +1076,58 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
-                        SDKClient.saveDataToDataServer({
-                            type: "transfercall",
-                            subType: "textchat",
-                            key: this._dialogData.OtherData.sessionId,
-                            insertedBy: "50057",
-                            "insertedSource": "AD",
-                            "interactionId": this.interactionId.toString(),
-                            "ttl": "",
-                            "data": this.comments,
-                            "instance": "",
-                            "deviceId": SDKClient.getAgentData().agentId,
-                            "tmacServer": this.selectedRow.row.TmacServer
+                        SDKClient.getProxyVersion()
+                        .then((response) => {
+                            if (dt) { 
+                                console.log("getProxyVersion Saved", response)
+                            }
                         })
+                        .catch((err) => {
+                            this.loading -= 1;
+                            console.error("getProxyVersion", err);
+                        });  
+                            
+
                         this.loading -= 1;
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
                             this.close(true);
+
+                        SDKClient.getDataFromDataServer({
+                            query: 'Type == "transfercall" AND SubType == "textchat"',
+                            instance: ""
+                        })  
+                        .then((response) => {
+                            if (dt) { 
+                                console.log("getDataFromDataServer Saved", response)
+                            }
+                        })
+                        .catch((err) => {
+                            this.loading -= 1;
+                            console.error("getDataFromDataServer", err);
+                        });  
+                            
+                        SDKClient.saveDataToDataServer({
+                            type: "transfercall",
+                            subType: "textchat",
+                            key: this._dialogData.OtherData.sessionId,
+                            insertedBy: SDKClient.getAgentData().agentId,
+                            insertedSource: "AD",
+                            interactionId: this.interactionId.toString(),
+                            ttl: "",
+                            data: this.comments,
+                            instance: ""
+                        })
+                        .then((response) => {
+                            if (dt) { 
+                                console.log("saveDataToDataServer Saved", response)
+                            }
+                        })
+                        .catch((err) => {
+                            this.loading -= 1;
+                            console.error("saveDataToDataServer", err);
+                        });
+
                         }
                         // transfer error
                         else {
@@ -1104,6 +1139,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                                 'failure'
                             );
                         }
+
+
                     })
                     .catch(() => {
                         this.loading -= 1;

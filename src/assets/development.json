@@ -2779,11 +2779,7 @@
             "sendACK": false
         },
         "SDK": {
-            "proxy": {
-                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy2/tmacproxy.asmx", "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx"],
-                "type": "soap",
-                "timeout": 60
-            },
+            "proxy": { "urls": ["https://dicedev.tetherfi.cloud//TMACSDKProxy/TmacProxy.asmx"], "type": "soap", "timeout": 60 },
             "signalRProxy": {
                 "enabled": true,
                 "logging": true,
