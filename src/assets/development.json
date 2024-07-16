@@ -1736,9 +1736,9 @@
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
-                                                        "AgentAudio": true,
-                                                        "AgentVideo": true,
-                                                        "CustomerAudio": true,
+                                                        "AgentAudio": false,
+                                                        "AgentVideo": false,
+                                                        "CustomerAudio": false,
                                                         "CustomerVideo": false
                                                     },
                                                     "ToggleUserViewAllowed": true,

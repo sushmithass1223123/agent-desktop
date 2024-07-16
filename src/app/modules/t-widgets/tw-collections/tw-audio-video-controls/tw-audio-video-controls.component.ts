@@ -1881,8 +1881,8 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
     public holdUnholdCall(): void {
         this.manualHold = !this.manualHold;
 
-        // check the hold flag
-        if (this.hold) {
+        // check the hold flag and checks if agentaudio is true or false
+        if (this.hold || !this.muteAVOnHold.agentAudio ) {
             // un hold the call
             this.avConn.unHold();
             if (this.data.Data.Source === 'TwChatControlsComponent') {
