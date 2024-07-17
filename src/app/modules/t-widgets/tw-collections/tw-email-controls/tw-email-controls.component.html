@@ -171,6 +171,7 @@
                     <email
                         #emailRef
                         class="twd-flex-1"
+                        [defaultMaxPayloadSize]="defaultMaxPayloadSize"
                         [mode]="emailComponentMode"
                         [email]="replyInfo$ | async"
                         [state]="getInboxMessageReq.error ? 'error' : getInboxMessageReq.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"

@@ -7,7 +7,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
-import { SDKClient, TUtils } from '@tmac/sdk';
+import { IGetMailboxConfiguration, SDKClient, TUtils } from '@tmac/sdk';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -44,6 +44,11 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Input()
     email: EmailComponentInputs;
+
+    /**
+     * Maximum body payload while sending email
+     */
+    @Input() defaultMaxPayloadSize: number = 29359488;
 
     /**
      * outputter for the send email method
@@ -305,32 +310,21 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             }
         }
     }
-    validateEmailPayloadSize(): void {
-        // Retrieveng mailbox configuration
-        SDKClient.getMailboxConfiguration('tmacServer', 'mailBox').then(mailboxConfig => {
-            const payloadSizeLimit = mailboxConfig.response.payloadSize;
 
-            // Calculating total size of body and attachments
-            const bodySize = new TextEncoder().encode(this._email.Body).length;
-            const attachmentSize = this._email.Files.reduce((total: number, attachment: any) => total + attachment.size, 0);
-            const totalSize = bodySize + attachmentSize;
-
-            // Comparing with payload size limit
-            if (totalSize > payloadSizeLimit) {
-                const msg = this.translocoService.translate('widgets.emailControls.emailPayloadSizeExceeded');
-                this._appUiService.showSnackbar(msg, 'failure');
-            } else {
-                // Proceeding with sending the email
-                this.sendEmail.emit(this._email);
+    /**
+     * Method to emit email send event to email controls component
+     * Provide payload size validations here
+     */
+    async onSendEmail() {
+        try {
+            const requestArgs: IGetMailboxConfiguration = {
+                mailBox: this._email.mailbox
             }
-        }).catch(error => {
-            console.error('Error retrieving mailbox configuration:', error);
-        });
-    }
-
-    // Method to handle Send button click
-    onSendEmail(): void {
-        this.validateEmailPayloadSize();
+            // const mailboxConfigRes = await SDKClient.getMailboxConfiguration(requestArgs);
+            
+        } catch (error) {
+            console.error(error)
+        }
     }
     /**
      * Method to get the tool tip for file attachments

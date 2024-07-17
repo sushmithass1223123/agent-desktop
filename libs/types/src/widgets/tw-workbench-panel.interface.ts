@@ -68,6 +68,10 @@ export type TwEmailWorkbenchConfig = {
      * Max limit of Selection in mail
      */
      MaxSelection: number;
+    /**
+     * Maximum payload size while sending email just in case if GetMailboxConfiguration method call fails.
+     */
+     DefaultMaxPayloadSize: number;
 };
 
 /**

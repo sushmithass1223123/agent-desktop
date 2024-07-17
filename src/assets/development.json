@@ -2257,7 +2257,8 @@
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "AsyncEmailSendTimeout": 60000
+                                                    "AsyncEmailSendTimeout": 60000,
+                                                    "DefaultMaxPayloadSize": 29359488
                                                 }
                                             },
                                             {
@@ -2980,7 +2981,7 @@
                                     },
                                     "Data": {
                                         "General": {
-                                            "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench"
+                                            "WorkbenchUrl": "http://dicedev.tetherfi.cloud:55005/api/workbench"
                                         },
                                         "Channels": [
                                             {
@@ -3033,7 +3034,8 @@
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
                                                     "MaxSearchRange": 30,
-                                                    "MaxSelection": 10
+                                                    "MaxSelection": 10,
+                                                    "DefaultMaxPayloadSize": 29359488
                                                 }
                                             },
                                             {
@@ -3409,8 +3411,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "https://localhost:55443/TMACSDKProxy/TmacProxy.asmx",
-                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"
+                    "http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"
                 ],
                 "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",

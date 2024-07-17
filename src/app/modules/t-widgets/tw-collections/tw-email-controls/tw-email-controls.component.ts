@@ -258,6 +258,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     @ViewChild(EmailComponent)
     emailRef: EmailComponent;
 
+    /**
+     * Maximum payload size of email body in send email
+     */
+    defaultMaxPayloadSize: number = 29359488;
+
     constructor(
         private _interactionManagerService: InteractionManagerService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -287,6 +292,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.currentInteraction = this.data.InteractionDetails;
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
+        this.defaultMaxPayloadSize = this.data.Data.DefaultMaxPayloadSize;
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.data.Data.TemplatesByTeam;
         this._emailService.emailTemplatesDepartmentsByHierarchy = !!this.data.Data.TemplatesByHierarchy;
 

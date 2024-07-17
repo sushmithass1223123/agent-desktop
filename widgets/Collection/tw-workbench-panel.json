@@ -61,7 +61,8 @@
                         }
                     },
                     "SearchPollingInterval": 10000,
-                    "QueueTransferForAgent": false
+                    "QueueTransferForAgent": false,
+                    "DefaultMaxPayloadSize": 29359488
                 }
             },
             {

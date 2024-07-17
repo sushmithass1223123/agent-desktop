@@ -1860,7 +1860,8 @@
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "AsyncEmailSendTimeout": 60000
+                                                    "AsyncEmailSendTimeout": 60000,
+                                                    "DefaultMaxPayloadSize": 29359488
                                                 }
                                             },
                                             {
@@ -2550,7 +2551,8 @@
                                                     "SearchDuration": 24,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "MaxSelection": 10
+                                                    "MaxSelection": 10,
+                                                    "DefaultMaxPayloadSize": 29359488
                                                 }
                                             },
                                             {
