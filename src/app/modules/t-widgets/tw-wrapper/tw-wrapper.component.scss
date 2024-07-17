@@ -58,9 +58,17 @@ tw-wrapper {
         }
 
         &.floating {
-            position: relative;
+            position: fixed;
             z-index: 100001;
-            transition-property: height, min-height, max-height;
+            width: auto;
+            height: auto;
+            left: auto;
+            right: auto;
+            top: auto;
+            
+            transition-property: none;
+            min-height: auto;
+            min-width: auto;
         }
 
         &.collapsed {
