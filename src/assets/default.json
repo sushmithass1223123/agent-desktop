@@ -1446,7 +1446,17 @@
                                                         "CustomerAudio": false,
                                                         "CustomerVideo": false
                                                     },
-                                                    "ToggleUserViewAllowed": false
+                                                    "ToggleUserViewAllowed": false,
+                                                    "XssSymbolEntityMap": {
+                                                        "&": "&amp;",
+                                                        "<": "&lt;",
+                                                        ">": "&gt;",
+                                                        "\"": "&quot;",
+                                                        "'": "&#39;",
+                                                        " ": "&nbsp;",
+                                                        "\n": "&#10;",
+                                                        "\r": "&#13;"
+                                                    }
                                                 }
                                             },
                                             {
