@@ -1,4 +1,4 @@
-import { AgentSkillListData, AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
+import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -614,6 +614,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Is audio through hard phone
      */
     isPhoneAudio: boolean = false;
+    /**
+     * Object to hold attachment mime constraints
+     */
+    attachmentConstraints: string[] = [];
 
     /**
      * Constructor
@@ -1907,8 +1911,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.intent = evt.TransferIntent || evt.Intent || 'Default';
         // check the channel
         this.channel = evt.Channel.toLowerCase() || 'textchat';
-        // Disable document attachment feature if the channel is instagram
-        if(this.channel === 'instagram') this.attachActions[0].enable = false;
+        // assign attachment constraints
+        this.attachmentConstraints = this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? [];
         // check social media
         this.isSMM = evt.IsSMM || false;
 

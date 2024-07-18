@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -140,7 +140,9 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService, private _fuseFacadeService: FuseFacadeService, private _appUiService: AppUiService) {
+    constructor(private _tmacEventService: TMACEventService, 
+        private _fuseFacadeService: FuseFacadeService, private _appUiService: AppUiService,
+    public hostElement: ElementRef) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -225,6 +227,8 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this.floating = !this.floating;
         if (this.floating) {
             this.dragPosition = { x: 10, y: 10 };
+            this.hostElement.nativeElement.children[0].style.width = this.hostElement.nativeElement.offsetWidth + 'px';
+            this.hostElement.nativeElement.children[0].style.height = this.hostElement.nativeElement.offsetHeight + 'px';
         } else {
             this.dragPosition = { x: 0, y: 0 };
             // check if collapsed then expand
