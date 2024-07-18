@@ -1912,7 +1912,9 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         if (this.hold || !this.muteAVOnHold.agentAudio ) {
             // un hold the call
             this.avConn.unHold();
-            this.unmuteAgentAV();
+           this.muteUnmuteVideoCall();
+           this.muteUnmuteAudioCall();
+
             if (this.data.Data.Source === 'TwChatControlsComponent') {
                 // if (typeof this.data.Data.Opener.unHoldInteraction === 'function') {
                 //     this.data.Data.Opener.unHoldInteraction();
@@ -1945,20 +1947,6 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         }
         // set the reference varaible
         this.hold = !this.hold;
-    }
-    /**
-    * Unmute agent's audio and video
-     * @method unmuteAgentAV
-    */
-    private unmuteAgentAV(): void {
-        if (this.audioMuted) {
-        this.avConn.unMute(true, false);
-        this.audioMuted = false;
-      }
-        if (this.videoMuted) {
-        this.avConn.unMute(false, true);
-        this.videoMuted = false;
-        }
     }
 
     async confirmDialogForEndInteraction()
