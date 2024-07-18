@@ -1879,10 +1879,31 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method holdCall
      */
     public holdUnholdCall(): void {
+        const actionMessage = {
+            source: 'customer',
+            options: {},
+            data: {
+                interactionId: this.interactionId
+            },
+            status: 'request',
+            type: 'muteAudioVideo',
+            eventName: 'ActionMessage',
+            id: TUtils.Generic.uuid()
+        };
+    
+        // Check if the call is already on hold 
+        if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
+            // Mute the AV connection
+            this.avConn.mute(true, false);
+            this.videoMuted = true;
+            this.audioMuted = true;
+            this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
+        }
+    
         this.manualHold = !this.manualHold;
 
-        // check the hold flag
-        if (this.hold) {
+        // check the hold flag and checks if agentaudio is true or false
+        if (this.hold || !this.muteAVOnHold.agentAudio ) {
             // un hold the call
             this.avConn.unHold();
             if (this.data.Data.Source === 'TwChatControlsComponent') {

@@ -261,7 +261,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.audioToVideo && (agentFeatures.oneWayVideo || callType?.toLowerCase() === 'audio') && selfVideo?.type !== 'video'"
+                        *ngIf="agentFeatures.audioToVideo && (agentFeatures.oneWayVideo || callType?.toLowerCase() === 'audio') && selfVideo?.type !== 'video' || !MuteAVOnHold?.CustomerAudio || !MuteAVOnHold?.CustomerVideo"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
