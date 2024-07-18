@@ -1909,7 +1909,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         this.manualHold = !this.manualHold;
 
         // check the hold flag and checks if agentaudio is true or false
-        if (this.hold || !this.muteAVOnHold.agentAudio || !this.muteAVOnHold.agentVideo ) {
+        if (this.hold || !this.muteAVOnHold.agentVideo ) {
             // un hold the call
             this.avConn.unHold();
            this.muteUnmuteVideoCall();
