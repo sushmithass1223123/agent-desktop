@@ -454,8 +454,16 @@ export type TwChatControlsData = {
      * Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /**
+     * Symbol entity mapping
+     */
+    XssSymbolEntityMap: XssSymbolEntityMap;
 };
 
 export type TReplyOnSMM = {
     channels: string;
 };
+
+export interface XssSymbolEntityMap {
+    [key: string]: string;
+}

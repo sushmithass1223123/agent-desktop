@@ -117,6 +117,16 @@
         },
         "ReplyAllowed": true,
         "EndInteractionOnAVEnd": false,
-        "CloseInteractionOnEnd": false
+        "CloseInteractionOnEnd": false,
+        "XssSymbolEntityMap": {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;",
+            " ": "&nbsp;",
+            "\n": "&#10;",
+            "\r": "&#13;"
+        }
     }
 }

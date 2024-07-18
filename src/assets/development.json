@@ -1479,7 +1479,17 @@
                                                         "CustomerVideo": false
                                                     },
                                                     "ToggleUserViewAllowed": true,
-                                                    "MuteVideoOnInitiateCall": true
+                                                    "MuteVideoOnInitiateCall": true,
+                                                    "XssSymbolEntityMap": {
+                                                        "&": "&amp;",
+                                                        "<": "&lt;",
+                                                        ">": "&gt;",
+                                                        "\"": "&quot;",
+                                                        "'": "&#39;",
+                                                        " ": "&nbsp;",
+                                                        "\n": "&#10;",
+                                                        "\r": "&#13;"
+                                                    }
                                                 }
                                             },
                                             {
