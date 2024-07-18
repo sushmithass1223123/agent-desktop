@@ -1140,6 +1140,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {any} email
      */
     transferEmail(emails: Mail[]): void {
+        if(this.currentTab === 'sentitem') {
+            this.appUiService.showSnackbar('Trasferring an email from `Sent Item` box is not possible !!', 'failure');
+            return;
+        } 
         const config = (this.channelConf?.Config || {}) as TwEmailWorkbenchConfig;
         const uiIds = emails.map((e) => e.uiId);
 
