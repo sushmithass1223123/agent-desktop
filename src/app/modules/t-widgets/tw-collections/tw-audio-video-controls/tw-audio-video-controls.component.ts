@@ -1886,7 +1886,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                 interactionId: this.interactionId
             },
             status: 'request',
-            type: 'muteAudioVideo',
+            type: this.hold ? 'unmuteAudioVideo' : 'muteAudioVideo',
             eventName: 'ActionMessage',
             id: TUtils.Generic.uuid()
         };
@@ -1898,6 +1898,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             this.videoMuted = true;
             this.audioMuted = true;
             this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
+        } else {
+            // Unmute the AV connection
+            this.avConn.unMute(true, true);
+            this.videoMuted = false;
+            this.audioMuted = false;
+            this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
         }
     
         this.manualHold = !this.manualHold;
