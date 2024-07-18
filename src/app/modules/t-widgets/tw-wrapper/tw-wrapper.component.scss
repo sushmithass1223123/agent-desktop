@@ -61,13 +61,11 @@ tw-wrapper {
 
         &.floating {
             position: fixed;
-            z-index: 100001;    
+            z-index: 100001;  
             left: auto;
             right: auto;
-            top: auto;            
-            transition-property: height, min-height, max-height;
-            min-height: auto;
-            min-width: auto;
+            top: auto;
+            transition-property: none;
         }
 
         &.collapsed {
