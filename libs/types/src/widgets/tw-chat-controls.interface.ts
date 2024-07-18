@@ -470,7 +470,15 @@ export type TwChatControlsData = {
      * Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /**
+     * Symbol entity mapping
+     */
+    XssSymbolEntityMap: XssSymbolEntityMap;
 };
+
+export interface XssSymbolEntityMap {
+    [key: string]: string;
+}
 
 export interface AttachmentConstraints {
     [platform: string]: string[];

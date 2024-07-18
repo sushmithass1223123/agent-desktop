@@ -1,4 +1,4 @@
-import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
+import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -74,6 +74,7 @@ import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -618,6 +619,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Object to hold attachment mime constraints
      */
     attachmentConstraints: string[] = [];
+    xssSymbolEntityMap: XssSymbolEntityMap = {};
 
     /**
      * Constructor
@@ -634,7 +636,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _fuseFacadeService: FuseFacadeService,
         private _agentFeaturesService: AgentFeaturesService,
         private translocoService: TranslocoService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private sanitize: DomSanitizer
     ) {
         super('TwChatControlsComponent');
 
@@ -690,6 +693,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
 
         this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
+
+        this.xssSymbolEntityMap = this.data.Data.XssSymbolEntityMap ?? {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            ' ': '&nbsp;',
+            '\n': '&#10;',
+            '\r': '&#13;'
+        };
 
         this.registerToEvents();
 
@@ -1339,7 +1353,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private sendMessage(template: any, isAutomated?): void {
         // get the typed message
-        const inputMessage = template?.Text || this.replyForm.form.value.message;
+        let inputMessage = template?.Text || this.replyForm.form.value.message;
+        inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
         let templateId = template?.ID ?? '';
@@ -1425,6 +1440,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // set ready to reply
         this.readyToReply();
+    }
+
+    /**
+     * Method to encode string
+     * @param str String to encode
+     * @returns Encoded string
+     */
+    encodedStr(str: string): string {
+        try {
+            let escapedStr = str.replace(/[&<>"'\s\r\n]/g, (char) => this.xssSymbolEntityMap[char]);
+            return escapedStr;
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     /**
