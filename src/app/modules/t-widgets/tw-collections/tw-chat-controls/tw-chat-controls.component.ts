@@ -1972,7 +1972,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // to not open video dialog when interaction is over
-        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone)) {
+        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone) || (this.conferenceType === 'conf' && avCallConstraints?.isAgentOnActiveCall)) {
             this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
