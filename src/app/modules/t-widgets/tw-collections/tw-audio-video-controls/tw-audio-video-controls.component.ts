@@ -1460,7 +1460,13 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                     this.avConn.unMute(true, true);
                     this.audioMuted = false;
                     this.videoMuted = false;
-                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                }
+                if (this.hold && !this.muteAVOnHold.agentVideo ) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                }
+                else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
                     this.avConn.unMute(true, false);
                     this.audioMuted = false;
                 } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
@@ -1879,12 +1885,42 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method holdCall
      */
     public holdUnholdCall(): void {
+        const actionMessage = {
+            source: 'customer',
+            options: {},
+            data: {
+                interactionId: this.interactionId
+            },
+            status: 'request',
+            type: this.hold ? 'unmuteAudioVideo' : 'muteAudioVideo',
+            eventName: 'ActionMessage',
+            id: TUtils.Generic.uuid()
+        };
+    
+        // Check if the call is already on hold 
+        if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
+            // Mute the AV connection
+            this.avConn.mute(false, false);
+            this.videoMuted = true;
+            this.audioMuted = true;
+            this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
+        } else {
+            // Unmute the AV connection
+            this.avConn.unMute(true, true);
+            this.videoMuted = false;
+            this.audioMuted = false;
+            this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
+        }
+    
         this.manualHold = !this.manualHold;
 
         // check the hold flag and checks if agentaudio is true or false
-        if (this.hold || !this.muteAVOnHold.agentAudio ) {
+        if (this.hold || !this.muteAVOnHold.agentVideo ) {
             // un hold the call
             this.avConn.unHold();
+           this.muteUnmuteVideoCall();
+           this.muteUnmuteAudioCall();
+
             if (this.data.Data.Source === 'TwChatControlsComponent') {
                 // if (typeof this.data.Data.Opener.unHoldInteraction === 'function') {
                 //     this.data.Data.Opener.unHoldInteraction();
