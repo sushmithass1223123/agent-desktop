@@ -1460,7 +1460,13 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                     this.avConn.unMute(true, true);
                     this.audioMuted = false;
                     this.videoMuted = false;
-                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                }
+                if (this.hold && !this.muteAVOnHold.agentVideo ) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                }
+                else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
                     this.avConn.unMute(true, false);
                     this.audioMuted = false;
                 } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
