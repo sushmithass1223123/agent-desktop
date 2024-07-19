@@ -693,7 +693,7 @@
                                             "ByTeam": true,
                                             "DefaultACW": false,
                                             "DefaultLogout": false
-                                            }
+                                        }
                                     }
                                 }
                             ],
@@ -3439,7 +3439,7 @@
                 "signalRReconnectThresholdCount": 3,
                 "signalRReconnectThresholdTime": 120,
                 "customApiURL": "",
-                "useDotNet6Wrapper":false
+                "useDotNet6Wrapper": false
             },
             "logging": {
                 "enabled": true,
@@ -3457,5 +3457,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.7.0-beta.7"
+    "Version": "5.7.0-beta.8"
 }
