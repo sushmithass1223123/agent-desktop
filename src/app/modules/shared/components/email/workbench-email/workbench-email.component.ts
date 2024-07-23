@@ -23,7 +23,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { AppDataService } from '@services/app-data.service';
 import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
-import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS} from 'app/constants';
+import { AGENT_FEATURES, DRAFT_REASONS, EMAIL_SEND_STATUS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS} from 'app/constants';
 import { EmailComponentInputs, IWidget, ResData, MediaStreamerMultiResponse, MediaStreamerMetaResponse } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
@@ -856,12 +856,40 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 { sessionIds: [], draftSessionIds: [], uiIds: [] }
             );
             if (this.currentTab === 'inbox') {
-                await SDKClient.maskInboxEmail({
+                const result = await SDKClient.maskInboxEmail({
                     sessionId: sessionIds.join(','),
                     source: 'agent-desktop'
                 });
+                if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailMaskFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailMaskError${
+                                    EMAIL_SEND_STATUS[result.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
             } else if (this.currentTab === 'draft') {
-                await SDKClient.deleteBulkEmailsInDraft(draftSessionIds.join(','));
+                const result = await SDKClient.deleteBulkEmailsInDraft(draftSessionIds.join(','));
+                if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailDeleteFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailDeleteError${
+                                    EMAIL_SEND_STATUS[result.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
             } else if (this.currentTab === 'queue') {
                 const { tmacServer, agentId } = SDKClient.getAgentData();
                 const res$ = this.http
@@ -878,6 +906,29 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     .pipe(takeUntil(this.unsubscribeAll));
                 const res: any = await res$.pipe(take(1)).toPromise();
                 if (res.status !== 'SUCCESS') {
+                    if(res?.failedList?.length === 1 && EMAIL_SEND_STATUS[res.failedList[0].responseCode]) {
+                        this.appUiService.showSnackbar(
+                            this.translocoService.translate(
+                                `${this.translocoService.translate(
+                                    `sharedComponents.email.emailDeleteFailed`
+                                )}${this.translocoService.translate(
+                                    `sharedComponents.email.emailDeleteError${
+                                        EMAIL_SEND_STATUS[res.failedList[0].responseCode]
+                                    }`
+                                )}`
+                            ),
+                            'failure'
+                        );
+                    } else {
+                        this.appUiService.showSnackbar(
+                            this.translocoService.translate(
+                                `${this.translocoService.translate(
+                                    `sharedComponents.email.emailsDeleteFailed`
+                                )}`
+                            ),
+                            'failure'
+                        ); 
+                    }
                     throw new Error(`Unable to delete emails ${sessionIds.join(',')}`);
                 }
             }
@@ -907,7 +958,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     }
                     return curr.RouteId;
                 });
-                await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+                const result = await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+                if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailCloseFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailCloseError${
+                                    EMAIL_SEND_STATUS[result.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
             } else {
                 await Promise.all(
                     emails.map((curr) => {
@@ -1022,6 +1087,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                         this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
                                         'failure'
                                     );
+                                } else if (res.failedList.length === 1 && EMAIL_SEND_STATUS[res.failedList[0].responseCode]) {
+                                    let errorMsg = `${this.translocoService.translate(
+                                        `sharedComponents.email.emailPullFailed`
+                                    )}${this.translocoService.translate(
+                                        `sharedComponents.email.emailPullError${EMAIL_SEND_STATUS[res.failedList[0].responseCode]}`
+                                    )}`;
+                                    this._appUIService.showSnackbar(errorMsg, 'failure');
                                 } else {
                                     this.appUiService.showSnackbar(
                                         this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
@@ -1300,6 +1372,20 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     routeId: email.RouteId,
                     sessionId: email[sessionKey]
                 });
+                if (EMAIL_SEND_STATUS[res.response] && EMAIL_SEND_STATUS[res.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailSpamFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailSpamError${
+                                    EMAIL_SEND_STATUS[res.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
                 if (res.response < 1) {
                     throw new Error('Email spam request failed');
                 }

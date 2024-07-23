@@ -31,7 +31,7 @@ import {
     UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, INBOX_REASONS, MAIL_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, EMAIL_SEND_STATUS, INBOX_REASONS, MAIL_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -1356,7 +1356,22 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 })
                     .then((res) => {
                         loader.dismiss();
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.markSpamSuccess'));
+                        if (EMAIL_SEND_STATUS[res.response] && EMAIL_SEND_STATUS[res.response] !== 'Success') {
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate(
+                                    `${this.translocoService.translate(
+                                        `sharedComponents.email.emailSpamFailed`
+                                    )}${this.translocoService.translate(
+                                        `sharedComponents.email.emailSpamError${
+                                            EMAIL_SEND_STATUS[res.response]
+                                        }`
+                                    )}`
+                                ),
+                                'failure'
+                            );
+                        } else {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.emailControls.markSpamSuccess'));
+                        }
                     })
                     .catch((err) => {
                         console.error(err);
