@@ -165,6 +165,12 @@ export type TwAudioVideoControlsData = {
      * [INTERNAL]
      */
     AvCallConstraints: any;
+    /**
+     * To hold conference agents list
+     * 
+     * [INTERNAL]
+     */
+    ConferenceAgentList: any;
 
     /**
      * [STANDALONE] Flag to allow screenshare

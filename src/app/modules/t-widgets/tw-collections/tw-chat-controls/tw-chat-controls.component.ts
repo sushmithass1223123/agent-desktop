@@ -203,6 +203,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Connected agent is bot flag
          */
         IsBotAgent: boolean;
+        /**
+         * Agent interaction id
+         */
+        InteractionId: any;
     }[] = [];
     /**
      * To hold interaction chat transcripts
@@ -1567,7 +1571,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // this.isMobileDevice = this.customerDevice;
         widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints, ConferenceAgentList: this.conferenceAgentList };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -2075,7 +2079,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             AgentName: evt.AgentName,
             ConferenceType: evt.ConferenceType,
             IsBotAgent: evt.IsBotAgent,
-            TmacServer: tmacServer
+            TmacServer: tmacServer,
+            InteractionId: JSON.parse(evt.AgentInfoJson)?.extraparam?.interactionId
         });
 
         // check if a bot is connected
