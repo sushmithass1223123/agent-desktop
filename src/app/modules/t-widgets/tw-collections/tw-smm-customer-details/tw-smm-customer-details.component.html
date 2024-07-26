@@ -1,0 +1,49 @@
+<tw-wrapper
+    [data]="data"
+    (maximizeEvent)="maximizeEvent.emit($event)"
+    (collapseEvent)="collapseEvent.emit($event)"
+    (floatEvent)="floatEvent.emit($event)"
+    #wrapper
+>
+    <div class="h-100-p twd-overflow-auto">
+        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
+
+                <div class="line-height-30 position-relative twd-p-1"
+                *ngFor="let control of data.Data.ControlFields">
+            <ng-container *ngIf="!editAllowed">
+                
+                <mat-form-field class="form-field custom no-border" fxFlex="100" appearance="full">
+                    <mat-label>{{ control.title }}</mat-label>
+                   <input matInput 
+                        type="text"
+                        [(ngModel)]="formData[control.id]"
+                        disabled="true"
+                        />
+                </mat-form-field>
+            </ng-container>
+            <ng-container *ngIf="editAllowed">
+                
+                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
+                    <mat-label>{{ control.title }}</mat-label>
+                <input matInput
+                     [type]="control.type"
+                     [(ngModel)]="formData[control.id]"
+                     [disabled]="control.disabled"
+                     />
+                    </mat-form-field>
+         </ng-container>
+                
+               </div>
+
+               
+                <button *ngIf="editAllowed" #submitBtn
+                type="submit"
+                color="primary"
+                class="teal-800 !twd-my-8 !twd-mx-auto !twd-block
+                 !twd-py-1 !twd-px-10 !twd-rounded-full"
+                (click)="updateCustomerDetails()">
+                {{ "Submit" }}
+            </button>     
+        </div>
+    </div>
+</tw-wrapper>
