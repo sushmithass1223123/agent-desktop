@@ -425,7 +425,9 @@
             "markSpamFailed": "Unable to spam the email",
             "emailDownloadLoading": "Downloading email",
             "emailDownloadFailed": "Unable to download email",
-            "emailSendConnectionError": "Error connecting to email server"
+            "emailSendConnectionError": "Error connecting to email server",
+            "comment": "Comment",
+            "reasonTags": "Reason Tags"
         },
         "deflectToDigital": {
             "commentPlaceholder": "Please enter comment...",
