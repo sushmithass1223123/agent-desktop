@@ -75,6 +75,8 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
         if (!this.data.Data.Number?.toLowerCase().includes('event')) {
             return;
         }
+        // setting default value for type is SMS
+        this.sendType.setValue(this.SendTypeList[0].value);
 
         const eventName = this.data.Data.Number?.split('.')?.shift() as any;
         this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
@@ -138,9 +140,9 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 return;
             }
 
-            if (!this.toNumber) {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
-                return;
+            if(this.sendType.value === 'sms' && !this.toNumber) {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
+                    return;
             }
 
             if(this.sendType.value === 'email' && this.emailId.invalid) {
