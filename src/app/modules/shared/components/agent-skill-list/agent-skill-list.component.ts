@@ -26,6 +26,7 @@ import { TableComponent } from '../table/table.component';
 import { TranslocoService } from '@ngneat/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { SharedService } from '@services/shared.service';
+import { EMAIL_SEND_STATUS } from 'app/constants';
 
 type ISwitch = {
     placeholder: string;
@@ -1207,6 +1208,17 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                                 'success'
                             );
                             this.close(true);
+                        } else if (
+                            EMAIL_SEND_STATUS[res.response] &&
+                            EMAIL_SEND_STATUS[res.response] !== 'Success'
+                        ) {
+                            console.error(res);
+                            let errorMsg = `${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferError${EMAIL_SEND_STATUS[res.response]}`
+                            )}`;
+                            this._appUIService.showSnackbar(errorMsg, 'failure');
                         } else if ([-2, -3].includes(res.response)) {
                             console.error(res);
                             this._appUIService.showSnackbar(
@@ -1258,6 +1270,17 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                                 'success'
                             );
                             this.close(true);
+                        } else if (
+                            EMAIL_SEND_STATUS[res.response] &&
+                            EMAIL_SEND_STATUS[res.response] !== 'Success'
+                        ) {
+                            console.error(res);
+                            let errorMsg = `${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferError${EMAIL_SEND_STATUS[res.response]}`
+                            )}`;
+                            this._appUIService.showSnackbar(errorMsg, 'failure');
                         } else {
                             console.error(res);
                             this._appUIService.showSnackbar(
