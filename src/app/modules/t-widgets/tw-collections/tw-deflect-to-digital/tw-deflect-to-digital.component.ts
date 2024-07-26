@@ -135,7 +135,6 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      */
     async sendTemplate(template: string): Promise<void> {
         try {
-            this.interactionId = 10001;
             // check if any interaction is present
             if (!this.interactionId) {
                 return;
