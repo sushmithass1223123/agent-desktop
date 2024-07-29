@@ -1449,7 +1449,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * To select skill id on manual typing
      */
     onSkillVdnInputChange(value: string): void {
-        if (value.length === 5) { 
           const skill = this.allSkills.find(s => s.SkillID.toString() === value);
           if (skill) {
             this.selectedSkill = skill.SkillID;
@@ -1457,7 +1456,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             this.selectedRow = { type: 'Skill List', row: skill };
           }
         }
-      }
+      
     /**
      * Load speed dial table
      */
