@@ -395,6 +395,7 @@
             "routeType": "Route Type",
             "mailBox": "Mailbox",
             "sentOn": "Sent On",
+            "maxPayloadSize": "Maximum payload size",
             "receivedOn": "Received on",
             "internetHeaders": "Internet Headers",
             "markAsSpam": "Mark As Spam",
@@ -895,7 +896,8 @@
         "email": {
             "getFrequentlyUsedEmailFailed": "Unable to fetch frequently used email addresses",
             "uploadFileLoading": "Uploading File",
-            "uploadFileSizeWarning": "File too large",
+            "uploadFileSizeWarning": "Attachment size exceeds maximum payload limit for this mailbox!",
+            "payloadSizeExceeded": "Payload size exceeded! Please trim/reduce content..",
             "uploadFileFailed": "Failed to upload file",
             "invalidEmailAddress": "Please enter a valid email address",
             "downloadFileFailed": "Download file failed",
