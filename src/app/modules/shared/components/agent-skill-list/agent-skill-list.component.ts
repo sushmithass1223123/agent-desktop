@@ -1468,7 +1468,18 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.selectedItem = '';
         this.clearDisplayValues();
     }
-
+    /**
+     * To select skill id on manual typing
+     */
+    onSkillVdnInputChange(value: string): void {
+          const skill = this.allSkills.find(s => s.SkillID.toString() === value);
+          if (skill) {
+            this.selectedSkill = skill.SkillID;
+            this.selectedItemDisplayName = skill.SkillName;
+            this.selectedRow = { type: 'Skill List', row: skill };
+          }
+        }
+      
     /**
      * Load speed dial table
      */
