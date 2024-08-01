@@ -21,6 +21,7 @@ import { TwChatPanelComponent } from './tw-chat-panel/tw-chat-panel.component';
 import { TwComposeMessagingComponent } from './tw-compose-messaging/tw-compose-messaging.component';
 import { TwCustomComponent } from './tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from './tw-customer-details/tw-customer-details.component';
+import { TwSmmCustomerDetailsComponent } from './tw-smm-customer-details/tw-smm-customer-details.component';
 import { TwCustomerJourneyComponent } from './tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwDeflectToDigitalComponent } from './tw-deflect-to-digital/tw-deflect-to-digital.component';
@@ -66,6 +67,7 @@ const collectionComponents = [
     TwWallboardComponent,
     TwVoicePanelComponent,
     TwCustomerDetailsComponent,
+    TwSmmCustomerDetailsComponent,
     TwCustomerJourneyComponent,
     TwVoiceControlsComponent,
     TwChatPanelComponent,
