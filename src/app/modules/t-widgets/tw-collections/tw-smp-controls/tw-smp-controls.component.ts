@@ -544,6 +544,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      * Save post as Draft
      */
     savePostAsDraft(closePost = false, isLoud: boolean): void {
+        const postBody = (this.postDraftData[this.interactionId].body || '').toString();
+        if(!postBody) {
+            this._appUiService.showSnackbar(
+                this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
+                'failure'
+            );
+            return;
+        }
         if (isLoud)
             this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
@@ -558,7 +566,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         SDKClient.saveEmailDraft(
             {
                 bccList: '',
-                body: (this.postDraftData[this.interactionId].body || '').toString(),
+                body: postBody,
                 ccList: '',
                 inboxSessionId: this.sessionId,
                 outboxSessionId: this.draftOutsessionId[this.activeSessionId]
@@ -792,6 +800,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             PostEngagements: smData.Posts.PostEngagements,
                             Engagement: smData.Engagement,
                             IsOutbound: fetchFromOutbox && this.outSessionId,
+                            IsParentCommentEdited: smData.ParentComments?.IsEdited,
+                            IsParentCommentDeleted: smData.ParentComments?.IsDeleted,
+                            IsCommentEdited: smData.Comments?.IsEdited,
                             IsCommentDeleted: smData.Comments?.IsDeleted,
                             IsPostDeleted: smData.Posts?.IsDeleted,
                             RouteId: resData?.RouteId

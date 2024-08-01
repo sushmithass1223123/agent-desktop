@@ -135,7 +135,6 @@ export class SmpTemplateComponent implements OnInit, OnDestroy, OnChanges {
     initPostTemplate(loadCommentHistory?: boolean): void {
         this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
         this.postData = JSON.parse(JSON.stringify(this.postData));
-        if(!this.postData.PostText.Text) this.postData.PostText.Text = `Post from ${this.postData.SubChannel}`
         if (this.isDraftMode && this.draftData) {
             if(!this.draftData.body) this.draftData.body = this.postData.SmActiveComment.CommentText.Text;
             if (this.postData.Files && this.postData.SmActiveComment?.CommentAttachments?.length && !this.draftData.attachments?.length) {

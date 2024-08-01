@@ -60,7 +60,7 @@ interface PostData {
     IsEmailProbableSpam: boolean;
     RejectReason: string;
     PostId?: string;
-    IsDeleted?: boolean;
+    IsItemDeleted?: boolean;
 }
 
 const channelMapper: any = {
@@ -543,21 +543,21 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     listOfMailboxes: searchFields.listOfMailboxes.join(','),
                     channel: 'socialmediachannel'
                 };
-                if (this.currentTab === 'inbox' || this.currentTab === 'posts') {
-                    searchParams.assignedTo = searchFields.assignedTo;
-                    searchParams.hasAttachments = searchFields.hasAttachments;
-                    searchParams.replied = searchFields.replied;
-                    searchParams.closed = searchFields.closed;
-                    searchParams.assigned = searchFields.assigned;
-                    searchParams.deviceId = '';
-                    searchParams.assignedValue = false;
-                    searchParams.closedValue = false;
-                    searchParams.repliedValue = false;
-                }
-                if (this.currentTab !== 'queue') {
-                    searchParams.insessionid = searchFields.inSessionId;
-                    searchParams.listOfMailboxes = searchFields.listOfMailboxes.join(',');
-                }
+            }
+            if (this.currentTab === 'inbox' || this.currentTab === 'posts') {
+                searchParams.assignedTo = searchFields.assignedTo;
+                searchParams.hasAttachments = searchFields.hasAttachments;
+                searchParams.replied = searchFields.replied;
+                searchParams.closed = searchFields.closed;
+                searchParams.assigned = searchFields.assigned;
+                searchParams.deviceId = '';
+                searchParams.assignedValue = false;
+                searchParams.closedValue = false;
+                searchParams.repliedValue = false;
+            }
+            if (this.currentTab !== 'queue') {
+                searchParams.insessionid = searchFields.inSessionId;
+                searchParams.listOfMailboxes = searchFields.listOfMailboxes.join(',');
             }
 
             const maps: Record<AvailableTabs, any> = {
@@ -888,7 +888,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 return {
                     Mailbox: x?.Mailbox,
                     ConversationID: x?.ConversationID,
-                    AddedTime: x?.SocialMediaData?.Comments?.CommentText?.InsertionDateTime ?? x?.SocialMediaData?.Comments?.InsertionDateTime,
+                    AddedTime:
+                        x?.SocialMediaData?.Comments?.CommentText?.InsertionDateTime ??
+                        x?.SocialMediaData?.Comments?.InsertionDateTime,
                     AgentId: '',
                     Channel: '',
                     CreatedBy: '',
@@ -920,7 +922,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteReason: '',
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
-                        RejectReason: ''
+                        RejectReason: '',
+                        IsItemDeleted:
+                            x?.SocialMediaData?.Comments?.IsDeleted ||
+                            x?.SocialMediaData?.Posts?.IsDeleted ||
+                            x?.SocialMediaData?.ParentComments?.IsDeleted
                     }
                 };
             });
@@ -1022,7 +1028,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteId: x?.RouteId ?? '',
                         From: x?.From,
                         To: '',
-                        Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
+                        Subject: x?.Subject,
                         EmailType: '',
                         Skill: '',
                         Intent: '',
