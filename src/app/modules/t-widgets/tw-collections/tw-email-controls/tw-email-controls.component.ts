@@ -21,6 +21,7 @@ import {
     EmailInboxModel,
     EmailOutboxModel,
     IAgentData,
+    IGetMailboxConfiguration,
     IncomingEmailEvent,
     InteractionDataEvent,
     IResponse,
@@ -257,6 +258,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
     @ViewChild(EmailComponent)
     emailRef: EmailComponent;
+    /**
+     * Maximum body payload while sending email
+     */
+    defaultMaxPayloadSize: number = 29359488;
+    /**
+     * Flag to show/hide payload size stats
+     */
+    showPayloadSizeStats: boolean = false;
 
     constructor(
         private _interactionManagerService: InteractionManagerService,
@@ -289,6 +298,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.draftPollDuration = this.data.Data.DraftPollingInterval;
         this._emailService.emailTemplatesDepartmentsByTeam = !!this.data.Data.TemplatesByTeam;
         this._emailService.emailTemplatesDepartmentsByHierarchy = !!this.data.Data.TemplatesByHierarchy;
+        this.defaultMaxPayloadSize = this.data.Data.DefaultMaxPayloadSize ?? 29359488;
+        this.showPayloadSizeStats = this.data.Data.ShowPayloadSizeStats;
 
         this._sharedService.getEmailFailure().subscribe((interactionId: number) => {
             if (this.currentInteraction.InteractionID === interactionId) {
@@ -389,12 +400,22 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Sets email component's input
      */
-    initEmailComponent(): void {
-        if (!this.replyInfo$) {
-            this.replyInfo$ = new BehaviorSubject(this.getReplyInfo());
-            return;
-        }
-        this.replyInfo$.next(this.getReplyInfo());
+    initEmailComponent(): Promise<any> {
+        return new Promise<any>(async (resolve) => {
+            try {
+                const emailComponentInputs: EmailComponentInputs = await this.getReplyInfo();
+                if (!this.replyInfo$) {
+                    this.replyInfo$ = new BehaviorSubject(emailComponentInputs);
+                    resolve(true)
+                    return;
+                }
+                this.replyInfo$.next(emailComponentInputs);
+                resolve(true)
+            } catch (error) {
+                console.log(error)
+                resolve(true)
+            }
+        })
     }
 
     /**
@@ -421,8 +442,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Shows editor for new compose email
      */
-    showComposeEditor(): void {
-        this.initEmailComponent();
+    async showComposeEditor() {
+        await this.initEmailComponent();
         this.emailComponentMode = 'compose';
         this.currentInteraction.CurrOutSessionId = this.currentInteraction.OutSessionId;
         this.saveEmailAsDraft();
@@ -525,7 +546,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 ...this.currentInteraction,
                 ...this.emailBodies[requestedSession]
             };
-            this.initEmailComponent();
+            await this.initEmailComponent();
         } else {
             this.setEmailDetails();
         }
@@ -596,7 +617,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     async setEmailDetails(retry = false): Promise<void> {
         const interaction = this.currentInteraction;
-        this.initEmailComponent();
+        await this.initEmailComponent();
         const fetchFromOutbox =
             OUTBOX_REASONS.concat(DRAFT_REASONS).concat(SENT_REASONS).includes(interaction.RouteReason) && this.emailInView === 'replied';
         this.getInboxMessageReq = { error: false, loading: true };
@@ -711,7 +732,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             ...this.emailBodies[(fetchFromOutbox && this.currentInteraction?.OutSessionId) ? this.currentInteraction.OutSessionId : this.currentInteraction.InSessionId]
         };
         this.currentInteraction = emailInteractionDetails;
-        this.initEmailComponent();
+        await this.initEmailComponent();
     }
 
     /**
@@ -1506,60 +1527,65 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Returns email info that is passed to <email /> component
      */
-    getReplyInfo(): EmailComponentInputs {
-        const {
-            Body,
-            Subject: subject,
-            From,
-            CCList,
-            BCCList,
-            EmailReceivedTime,
-            EmailSentTime,
-            To,
-            AttachmetList,
-            InSessionId,
-            OutSessionId
-        } = this.currentInteraction;
-        const SessionID = INBOX_REASONS.includes(this.currentInteraction.RouteReason) ? InSessionId : OutSessionId;
-        const Files: EmailFile[] =
+    getReplyInfo(): Promise<EmailComponentInputs> {
+        return new Promise<EmailComponentInputs>(async (resolve) => {
+            const {
+                Body,
+                Subject: subject,
+                From,
+                CCList,
+                BCCList,
+                EmailReceivedTime,
+                EmailSentTime,
+                To,
+                AttachmetList,
+                InSessionId,
+                OutSessionId
+            } = this.currentInteraction;
+            const SessionID = INBOX_REASONS.includes(this.currentInteraction.RouteReason) ? InSessionId : OutSessionId;
+            const Files: EmailFile[] =
             AttachmetList?.map((x) => ({
                 ...x,
                 Id: TUtils.Generic.uuid(),
                 SessionID
             })) || [];
-        const isSentEmail = SENT_REASONS.includes(this.currentInteraction.RouteReason);
-        const emailcomponentInput: EmailComponentInputs = {
-            BCC: (BCCList ? BCCList.split(',') : []).filter(Boolean),
-            CC: (CCList ? CCList.split(',') : []).filter(Boolean),
-            To: isSentEmail ? From : (To ? To.split(',') : []).filter(Boolean),
-            Body,
-            Subject: subject,
-            Files,
-            From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
-            mailbox: this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox,
-            CreatedTime: EmailReceivedTime,
-            SessionID
-        };
-        const prelude = `
-        <style>
-        ::-webkit-scrollbar{width:4px !important;height:4px !important;}
-        ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
-        </style>
-        <br/>
-        <div style='border-top: 1px solid gray; padding-top : 5px;'>
-            <div style='border-left: 3px solid gray;padding-left: 5px'>
-                <div> <strong> From: </strong> <span> ${isSentEmail ? emailcomponentInput.To : emailcomponentInput.From} </span> </div>
-                    <div> <strong> Sent: </strong> <span> ${
-                        isSentEmail ? EmailSentTime || emailcomponentInput.CreatedTime : emailcomponentInput.CreatedTime
-                    } </span> </div>
-                    <div> <strong> To: </strong> <span> ${isSentEmail ? emailcomponentInput.From : emailcomponentInput.To} </span> </div>
-                    <div> <strong> Subject: </strong> <span> ${emailcomponentInput.Subject} </span> </div>
+            const isSentEmail = SENT_REASONS.includes(this.currentInteraction.RouteReason);
+            const MailBox = this.currentInteraction.RecoveryData?.Email_Mailbox || this.currentInteraction.Email_Mailbox;
+            const MaxPayloadSize = await this.getEmailPayloadSize(MailBox);
+            const emailcomponentInput: EmailComponentInputs = {
+                BCC: (BCCList ? BCCList.split(',') : []).filter(Boolean),
+                CC: (CCList ? CCList.split(',') : []).filter(Boolean),
+                To: isSentEmail ? From : (To ? To.split(',') : []).filter(Boolean),
+                Body,
+                Subject: subject,
+                Files,
+                From: isSentEmail ? (To ? To.split(',') : []).filter(Boolean) : From,
+                mailbox: MailBox,
+                CreatedTime: EmailReceivedTime,
+                SessionID,
+                MaxPayloadSize
+            };
+            const prelude = `
+            <style>
+            ::-webkit-scrollbar{width:4px !important;height:4px !important;}
+            ::-webkit-scrollbar-thumb{box-shadow:inset 0 0 0 4px rgba(0,0,0,0.37) !important}
+            </style>
+            <br/>
+            <div style='border-top: 1px solid gray; padding-top : 5px;'>
+                <div style='border-left: 3px solid gray;padding-left: 5px'>
+                    <div> <strong> From: </strong> <span> ${isSentEmail ? emailcomponentInput.To : emailcomponentInput.From} </span> </div>
+                        <div> <strong> Sent: </strong> <span> ${
+                            isSentEmail ? EmailSentTime || emailcomponentInput.CreatedTime : emailcomponentInput.CreatedTime
+                        } </span> </div>
+                        <div> <strong> To: </strong> <span> ${isSentEmail ? emailcomponentInput.From : emailcomponentInput.To} </span> </div>
+                        <div> <strong> Subject: </strong> <span> ${emailcomponentInput.Subject} </span> </div>
+                    </div>
                 </div>
-            </div>
-        <br />
-        `;
-        emailcomponentInput.prelude = prelude;
-        return emailcomponentInput;
+            <br />
+            `;
+            emailcomponentInput.prelude = prelude;
+            resolve(emailcomponentInput);
+        })
     }
 
     /**
@@ -1568,6 +1594,26 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     showHeaders(): void {
         this._appUIService.showCustomDialog('alert', this.currentInteraction.InternetHeaders, 'Internet Headers', {
             messageClasses: 'twd-whitespace-pre-line twd-break-words'
+        });
+    }
+
+    /**
+     * Method to get the payload size for a particular mailbox
+     * @param mailBox Mailbox
+     * @returns Payload size
+     */
+    async getEmailPayloadSize(mailBox: string): Promise<number> {
+        return new Promise<number>(async (resolve, reject) => {
+            try {
+                const requestArgs: IGetMailboxConfiguration = { mailBox };
+                const mailboxConfigRes = await SDKClient.getMailboxConfiguration(requestArgs);
+                if(mailboxConfigRes.response?.PayloadSize) {
+                    resolve(mailboxConfigRes.response.PayloadSize * 1024 * 1024);
+                } else resolve(this.defaultMaxPayloadSize);
+            } catch (error) {
+                resolve(this.defaultMaxPayloadSize);
+                console.error(error);
+            }
         });
     }
 }

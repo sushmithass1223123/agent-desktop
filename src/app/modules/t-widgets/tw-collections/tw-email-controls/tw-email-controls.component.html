@@ -172,6 +172,7 @@
                         #emailRef
                         class="twd-flex-1"
                         [mode]="emailComponentMode"
+                        [showPayloadSizeStats]="showPayloadSizeStats"
                         [email]="replyInfo$ | async"
                         [state]="getInboxMessageReq.error ? 'error' : getInboxMessageReq.loading || sendingEmailAsMaker ? 'loading' : 'loaded'"
                         (sendEmail)="sendEmailAsMaker($event)"
