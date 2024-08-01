@@ -58,7 +58,7 @@ The actual rendered columns are set as a property on the row definition" -->
                                     [ngSwitch]="cell.type"
                                 >
                                     <ng-container *ngSwitchCase="'date'">
-                                        {{ cell.value ? (cell.value | date: 'd/M/yy, hh:mm a') : 'NA' }}
+                                        {{ cell.value ? (cell.value | date: 'M/d/yy, hh:mm a') : 'NA' }}
                                     </ng-container>
                                     <ng-container *ngSwitchCase="'controls'">
                                         <ng-container *ngIf="getCtrls(cell.value, element) as ctrls">
