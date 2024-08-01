@@ -241,7 +241,8 @@
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited! Please pull the post again to continue.",
             "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
-            "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed."
+            "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed.",
+            "invalidDraftTrigger": "Invalid data for saving reply as draft."
         },
         "voiceControls": {
             "reset": "Reset",

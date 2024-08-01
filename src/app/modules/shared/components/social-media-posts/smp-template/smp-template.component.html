@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="scrollable twd-w-full">
-                    <div class="poster-content-flex twd-w-full twd-pt-3">
+                    <div class="poster-content-flex twd-w-full twd-pt-3" *ngIf="postData?.PostText?.Text">
                         <!-- <h3 class="font-weight-700" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
                             {{postData?.Subject}}
                         </h3> -->
@@ -82,7 +82,7 @@
 
                         <!-- Comment time -->
                         <p class="duration font-weight-500 twd-absolute">
-                            {{getGenericTimeFormat(postData?.SmParentComments?.CommentText?.InsertionDateTime)}}</p>
+                            {{getGenericTimeFormat(postData?.SmParentComments?.CreatedDateTime)}}</p>
 
                         <!-- Comment reactions -->
                         <div class="active-comment-actions twd-flex twd-absolute" *ngIf="mode !== 'workbench'">
@@ -147,12 +147,12 @@
                     <div class="image-container twd-relative">
                         <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
                     </div>
-                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative active-comment {{findPreviousCommentIndex() || isActiveCommentEdited ? 'edited' : ''}} {{postData.IsCommentDeleted || isActiveCommentDeleted ? 'deleted' : ''}}"
+                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative active-comment {{findPreviousCommentIndex() || isActiveCommentEdited || postData.IsCommentEdited ? 'edited' : ''}} {{postData.IsCommentDeleted || isActiveCommentDeleted ? 'deleted' : ''}}"
                         [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
 
                         <!-- Comment time -->
                         <p class="duration font-weight-500 twd-absolute">
-                            {{getGenericTimeFormat(postData?.SmActiveComment?.CommentText?.InsertionDateTime)}}</p>
+                            {{getGenericTimeFormat(postData?.SmActiveComment?.CreatedDateTime)}}</p>
 
                         <!-- Comment actions -->
                         <div class="active-comment-actions twd-flex twd-absolute">
@@ -179,7 +179,7 @@
                                 postData?.SmActiveComment?.FromName : postData?.PostAccountName}}<span
                                     *ngIf="findPreviousCommentIndex()"> .
                                     {{getGenericTimeFormat(findPreviousCommentIndex()?.UpdatedDateTime)}}
-                                    . Edited</span><span *ngIf="isActiveCommentEdited"> .
+                                    . Edited</span><span *ngIf="isActiveCommentEdited || postData.IsCommentEdited"> .
                                     {{getGenericTimeFormat(postData.SmActiveComment?.UpdatedDateTime)}}
                                     . Edited</span></h5>
                             <p class="font-weight-500"
@@ -229,7 +229,7 @@
 
                                     <!-- Comment time -->
                                     <p class="duration font-weight-500 twd-absolute">
-                                        {{getGenericTimeFormat(prevComment?.CommentText?.InsertionDateTime)}}</p>
+                                        {{getGenericTimeFormat(prevComment?.CreatedDateTime)}}</p>
 
                                     <!-- Comment actions -->
                                     <div class="active-comment-actions twd-flex twd-absolute">
@@ -322,7 +322,7 @@
                                 <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')" role="button"
                                     (click)="onSendReply()">send</mat-icon>
                             </div>
-                            <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"
+                            <emoji-mart *ngIf="showEmojiPicker" style="z-index: 2;" (emojiClick)="addEmoji($event)"
                                 [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"
                                 isNative="true" navPosition="none" searchPosition="none"></emoji-mart>
                         </div>
@@ -347,7 +347,7 @@
 
                             <!-- Comment time -->
                             <p class="duration font-weight-500 twd-absolute">
-                                {{getGenericTimeFormat(commentData?.CommentText?.InsertionDateTime)}}</p>
+                                {{getGenericTimeFormat(commentData?.CreatedDateTime)}}</p>
 
                             <!-- Comment reactions -->
                             <div class="active-comment-actions twd-flex twd-absolute">
@@ -437,7 +437,7 @@
                                     <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
                                         role="button" (click)="onSendReply()">send</mat-icon>
                                 </div>
-                                <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"
+                                <emoji-mart *ngIf="showEmojiPicker" style="z-index: 2;" (emojiClick)="addEmoji($event)"
                                     [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"
                                     isNative="true" navPosition="none" searchPosition="none"></emoji-mart>
                             </div>

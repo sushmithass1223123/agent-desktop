@@ -172,7 +172,10 @@
                                                         *ngIf="chosenPostData && (notificationAction === 'smc_e' || notificationAction === 'smco_e') && activeCommentValidator(post)"
                                                         [ngStyle]="{'color': '#ffcf74'}"
                                                         class="del_edit-rimg">edit</mat-icon>
-                                                    <mat-icon *ngIf="(hidePostActions || state?.openPostResData?.IsPostDeleted) && activeCommentValidator(post)"
+                                                    <mat-icon
+                                                        *ngIf="(hidePostActions ||
+                                                        state?.openPostResData?.IsPostDeleted) &&
+                                                        activeCommentValidator(post) || post.PostData?.IsItemDeleted"
                                                         [ngStyle]="{'color': '#ec5757'}"
                                                         class="del_edit-rimg">delete_forever</mat-icon>
 
