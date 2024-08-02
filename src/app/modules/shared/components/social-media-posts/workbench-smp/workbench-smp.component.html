@@ -169,7 +169,7 @@
 
                                                     <!-- Delete / Edit icon indicator -->
                                                     <mat-icon
-                                                        *ngIf="chosenPostData && (notificationAction === 'smc_e' || notificationAction === 'smco_e') && activeCommentValidator(post)"
+                                                        *ngIf="chosenPostData && (notificationAction === 'smc_e' || notificationAction === 'smco_e' || notificationAction === 'smp_e') && activeCommentValidator(post)"
                                                         [ngStyle]="{'color': '#ffcf74'}"
                                                         class="del_edit-rimg">edit</mat-icon>
                                                     <mat-icon
@@ -323,21 +323,36 @@
                             (click)="showPostDetails()">
                             {{ locale('sharedComponents.socialMediaPosts.postDetails') }}
                         </button>
-                        <button *ngIf="currentTab !== 'sentitem'" mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="closePosts([selectedPost])">
+                        <button
+                            *ngIf="currentTab !== 'sentitem'"
+                            [disabled]="isPullOnProgress"
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            (click)="closePosts([selectedPost])"
+                        >
                             {{ locale('sharedComponents.socialMediaPosts.close') }}
                         </button>
-                        <button *ngIf="currentTab !== 'sentitem'" mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="transferPost([selectedPost])">
+                        <button
+                            *ngIf="currentTab !== 'sentitem'"
+                            [disabled]="isPullOnProgress"
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            (click)="transferPost([selectedPost])"
+                        >
                             {{ locale('sharedComponents.socialMediaPosts.transfer') }}
                         </button>
-                        <button *ngIf="currentTab !== 'sentitem'" mat-raised-button class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="pullPosts([selectedPost])">
+                        <button 
+                            *ngIf="currentTab !== 'sentitem'"
+                            [disabled]="isPullOnProgress"
+                            mat-raised-button
+                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
+                            (click)="pullPosts([selectedPost])"
+                        >
                             {{ locale('sharedComponents.socialMediaPosts.pull') }}
                         </button>
                     </div>
                     <div class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
-                        [ngClass]="{'edit-border': (notificationAction === 'smc_e' || notificationAction === 'smco_e'), 'delete-border': (hidePostActions || state?.openPostResData?.IsPostDeleted)}">
+                        [ngClass]="{'edit-border': (notificationAction === 'smc_e' || notificationAction === 'smco_e' || notificationAction === 'smp_e'), 'delete-border': (hidePostActions || state?.openPostResData?.IsPostDeleted)}">
                         <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
                             [isDraftMode]="currentTab === 'draft'"

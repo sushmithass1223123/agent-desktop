@@ -177,7 +177,7 @@
                         <div class="comment-info-flex">
                             <h5 class="font-weight-700 text-truncate">{{postData?.SmActiveComment?.FromName ?
                                 postData?.SmActiveComment?.FromName : postData?.PostAccountName}}<span
-                                    *ngIf="findPreviousCommentIndex()"> .
+                                    *ngIf="findPreviousCommentIndex() && !(isActiveCommentEdited || postData.IsCommentEdited)"> .
                                     {{getGenericTimeFormat(findPreviousCommentIndex()?.UpdatedDateTime)}}
                                     . Edited</span><span *ngIf="isActiveCommentEdited || postData.IsCommentEdited"> .
                                     {{getGenericTimeFormat(postData.SmActiveComment?.UpdatedDateTime)}}
