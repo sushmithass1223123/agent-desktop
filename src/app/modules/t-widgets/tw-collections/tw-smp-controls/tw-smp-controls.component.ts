@@ -111,8 +111,10 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     draftOutsessionId = {};
     isDraftMode: boolean = false;
     maximumAllowedPostImageRendering: number = 5;
-    previousCommentData: any = {};
+    editedCommentData: any = {};
     deletedPostData: any = {};
+    deletedCommentData: any = {};
+    editedPostData: any = {};
     postDraftData: any = {};
     restrictPostActions: any = {};
     tempOutSessionId: string = '';
@@ -156,19 +158,37 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.smpService.getEmittedNotificationData
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe(({ message, action }) => {
-                if (!this.previousCommentData[message?.SocialMediaData?.Comments?.SessionId] && action === 'smc_e') {
-                    this.previousCommentData[message?.SocialMediaData?.Comments?.SessionId] = {
-                        message: message?.SocialMediaData?.Comments,
-                        isConsented: false
-                    };
-                } else if (
-                    !this.deletedPostData[message?.SocialMediaData?.Comments?.SessionId] &&
-                    (action === 'smc_d' || action === 'smp_d')
-                ) {
-                    this.deletedPostData[message?.SocialMediaData?.Comments?.SessionId] = {
-                        isConsented: false,
-                        type: action
-                    };
+                switch(action) {
+                    case 'smc_e': {
+                        if (!this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
+                            this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
+                                message: message?.SocialMediaData?.Comments,
+                                isConsented: false
+                            };
+                        } 
+                        break;
+                    }
+                    case 'smp_e': {
+                        if(!this.editedPostData[message?.SocialMediaData?.Posts?.PostId]) {
+                            this.editedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+                        }
+                        break;
+                    }
+                    case 'smc_d': {
+                        if(!this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
+                            this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
+                                isConsented: false
+                            };
+                        }
+                        break;
+                    }
+                    case 'smp_d': {
+                        if(!this.deletedPostData[message?.SocialMediaData?.Posts?.PostId]) {
+                            this.deletedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+                        }
+                        break;
+                    }
+                    default: break;
                 }
             });
 
@@ -256,15 +276,22 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         const message = JSON.parse(evt.Message);
 
         if (type === 'socialmediacomment_edit') {
-            this.previousCommentData[message?.SocialMediaData?.Comments?.SessionId] = {
+            this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                 message: message?.SocialMediaData?.Comments,
                 isConsented: false
             };
-        } else if (type === 'socialmediacomment_delete' || type === 'socialmediapost_delete') {
-            this.deletedPostData[message?.SocialMediaData?.Comments?.SessionId] = {
-                type: type === 'socialmediacomment_delete' ? 'smc_d' : 'smp_d',
+        } else if (type === 'socialmediapost_edit') {
+            if(this.editedPostData[message?.SocialMediaData?.Posts?.PostId])
+                delete this.editedPostData[message?.SocialMediaData?.Posts?.PostId];
+            this.editedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
+        } else if (type === 'socialmediacomment_delete') {
+            this.deletedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                 isConsented: false
             };
+        } else if (type === 'socialmediapost_delete') {
+            if(this.deletedPostData[message?.SocialMediaData?.Posts?.PostId])
+                delete this.deletedPostData[message?.SocialMediaData?.Posts?.PostId];
+            this.deletedPostData[message?.SocialMediaData?.Posts?.PostId] = {};
         }
     };
 
@@ -739,7 +766,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Sets post's body and some other details
      */
-    async setPostDetails(): Promise<void> {
+    async setPostDetails(force?: boolean): Promise<void> {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 const fetchFromOutbox = SMP_OUTBOX_REASONS.concat(SMP_DRAFT_REASONS)
@@ -810,12 +837,12 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                     });
                 };
 
-                if (!this.smpService.postBodies[this.sessionId] && !fetchFromOutbox) {
+                if ((!this.smpService.postBodies[this.sessionId] || force) && !fetchFromOutbox) {
                     inboxRes = (await SDKClient.getInboxItem(this.sessionId)).response;
                     setPostBody(inboxRes, this.sessionId);
                 }
 
-                if (fetchFromOutbox && this.outSessionId && !this.smpService.postBodies[this.outSessionId]) {
+                if (fetchFromOutbox && this.outSessionId && (!this.smpService.postBodies[this.outSessionId] || force)) {
                     outboxRes = (await SDKClient.getOutboxItem(this.outSessionId)).response;
                     setPostBody(outboxRes, this.outSessionId);
                 }

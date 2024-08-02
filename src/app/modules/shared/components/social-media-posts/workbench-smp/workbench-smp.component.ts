@@ -295,6 +295,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     chosenPostData: any;
     notificationAction: string = '';
     hidePostActions: boolean = false;
+    isPullOnProgress: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -328,12 +329,12 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.chosenPostData = data.postData;
             this.notificationAction = data.action;
             if (
-                this.notificationAction === 'smrc_a' ||
                 this.notificationAction === 'smrp_a' ||
-                this.notificationAction === 'smp_d'
+                this.notificationAction === 'smp_d' ||
+                this.notificationAction === 'smp_e'
             ) {
                 this.switchTab('posts', true);
-            } else if (this.notificationAction === 'smc_e' || this.notificationAction === 'smc_d') {
+            } else if (this.notificationAction === 'smc_e' || this.notificationAction === 'smc_d' || this.notificationAction === 'smrc_a' ) {
                 this.switchTab('inbox', true);
             } else if (this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
                 this.switchTab('sentitem', true);
@@ -600,17 +601,18 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 this.sortPosts();
                 this.setComponentState('smposts/success', { silent });
                 if (this.chosenPostData && !silent) {
-                    if (this.notificationAction !== 'smp_d') {
+                    if (this.notificationAction === 'smrp_a' ||
+                        this.notificationAction === 'smp_d' ||
+                        this.notificationAction === 'smp_e') {
+                        const filteredPost = this.getPostObjectByPostId(
+                            this.segregatedPosts,
+                            this.chosenPostData?.SocialMediaData?.Posts?.PostId
+                        );
+                        if (filteredPost.length) this.openPost(filteredPost[0], true);
+                    } else {
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
                                 rres?.PostData?.SessionId === this.chosenPostData?.SocialMediaData?.Comments?.SessionId
-                        );
-                        if (filteredPost) this.openPost(filteredPost, true);
-                    } else {
-                        const filteredPost = [
-                            ...new Map(this.rawResponse.map((item) => [item?.PostData?.PostId, item])).values()
-                        ].find(
-                            (rres) => rres?.PostData?.PostId === this.chosenPostData?.SocialMediaData?.Posts?.PostId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     }
@@ -623,6 +625,38 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             console.error(error);
             this.setComponentState('smposts/failure', { silent });
             this.setComponentState('smposts/polling/inactive', { silent });
+        }
+    }
+
+    /**
+     * Method to retrieve post data in segregated posts using post id
+     * @param data Segregated post data
+     * @param postId Post id to filter
+     * @returns Post data
+     */
+    getPostObjectByPostId(data: any[], postId: string): any {
+        try {
+            let result = [];
+
+            data.forEach(item => {
+              if (item.facebook) {
+                item.facebook.forEach(facebookItem => {
+                  for (let key in facebookItem) {
+                    if (facebookItem[key] instanceof Array) {
+                      facebookItem[key].forEach(skillItem => {
+                        if (skillItem.PostData && skillItem.PostData.PostId === postId) {
+                          result.push(skillItem);
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            });
+          
+            return result;
+        } catch (ex) {
+            console.error(ex)
         }
     }
 
@@ -1028,7 +1062,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteId: x?.RouteId ?? '',
                         From: x?.From,
                         To: '',
-                        Subject: x?.Subject,
+                        Subject: x?.Body,
                         EmailType: '',
                         Skill: '',
                         Intent: '',
@@ -1542,6 +1576,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 },
                 { items: [] }
             );
+            this.isPullOnProgress = true;
             const { response } = await SDKClient.workbenchPull(
                 (this.currentTab === 'sentitem'
                     ? 'sent'
@@ -1555,6 +1590,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     items
                 }
             );
+            this.isPullOnProgress = false;
 
             if (response.Status === 'SUCCESS') {
                 this.openPostRes.data.next(null);
@@ -1586,6 +1622,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         } catch (e) {
             console.error(e);
             loader.dismiss();
+            this.isPullOnProgress = false;
             this._appUiService.showSnackbar(
                 this.translocoService.translate('sharedComponents.socialMediaPosts.pullPostsFailed'),
                 'failure'
@@ -1688,6 +1725,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         if (this.hidePostActions) return ' theme-bg delete-border twd-border-opacity-100';
         switch (this.notificationAction) {
             case 'smc_e':
+            case 'smp_e':
             case 'smco_e':
                 return ' theme-bg edit-border twd-border-opacity-100';
             case 'smc_d':

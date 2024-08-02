@@ -239,8 +239,9 @@
                 "sendReply": "Send reply"
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
-            "commentEditedDialogMessage": "Comment has been edited! Please pull the post again to continue.",
+            "commentEditedDialogMessage": "Comment has been edited!",
             "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
+            "postEditedDialogMessage": "Post has been edited!",
             "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed.",
             "invalidDraftTrigger": "Invalid data for saving reply as draft."
         },

@@ -468,6 +468,8 @@ export class AppUiService extends SharedWrapper {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smp_d')) {
                     message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Post deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smp_e')) {
+                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Post edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 }
             }
 
