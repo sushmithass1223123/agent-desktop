@@ -83,6 +83,10 @@ export class TMACEventService extends SharedWrapper {
      */
     private _aotWidgets: IWidget[];
     /**
+     *allowing flag to check if dialog for transfer chat is opened or closed
+     */
+    isRequestPending: boolean;
+    /**
      * Remider task dialog reference
      */
     private _remiderTaskDialog: {
@@ -974,6 +978,12 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
      * @param {TextChatTransferNotificationEvent} evt
      */
     private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+        if (this.isRequestPending) {
+        // If a request is already pending, ignore the new one
+        return;
+         }
+        this.isRequestPending = true; 
+
         // parse the otherData
         const otherData = JSON.parse(evt.Data);
         // get the type
@@ -985,14 +995,24 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         if (evt.Comment) {
             message += `<br /> with comment: ${evt.Comment}`;
         }
-        // get cofirmation
+        const dialogRef = 
         this._appUIService
             .showAppConfirmDialog('generic', `Confirm ${mode} ${upperFirst(type)}`, message)
-            .afterClosed()
+            ;
+        const timeoutId = setTimeout(() => {
+        dialogRef.close(); 
+        this.isRequestPending = false; 
+        },60000); 
+
+        dialogRef.afterClosed()
             .subscribe((resp1) => {
+        clearTimeout(timeoutId); 
+        if (resp1 !== undefined) { 
                 evt.Response(resp1);
-            });
-    };
+        }
+        this.isRequestPending = false; 
+    });
+};
 
     /**
      * To process TmacServerConnectionSuccess
