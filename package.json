@@ -68,7 +68,7 @@
         "@progress/kendo-licensing": "^1.2.2",
         "@progress/kendo-theme-default": "5.4.1",
         "@tmac/operators": "git+https://gitlab+deploy-token-40:adUz1ascDCfab1qtKLaz@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/operators",
-        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/-/tree/fix/PB-3893",
+        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.7.0-beta.7",
         "@tmac/styles": "git+https://gitlab+deploy-token-37:43tSyhD5CpPuLUzed32Y@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/styles",
         "abort-controller": "3.0.0",
         "angular-calendar": "0.29.0",
@@ -147,6 +147,10 @@
         "typescript": "4.5.5",
         "webpack-bundle-analyzer": "4.4.2"
     },
+    "overrides": {
+        "@parcel/watcher": "2.1.0"
+    },
+
     "config": {
         "commitizen": {
             "path": "cz-customizable"

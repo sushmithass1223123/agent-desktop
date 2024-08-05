@@ -1065,6 +1065,27 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     this.sharedService.triggerTransferMethod(this.interactionId);
                 }
 
+                // Saving comment added during transfer 
+                SDKClient.saveDataToDataServer({
+                    type: 'transfer-comment',
+                    subType: 'textchat',
+                    key: this._dialogData.OtherData.sessionId,
+                    insertedBy: SDKClient.getAgentData().agentName,
+                    insertedSource: 'AD',
+                    insertInteraction: this.interactionId.toString(),
+                    data: JSON.stringify({comment: this.comments, date: new Date()}),
+                    instance: '',
+                    ttl: ''
+                })
+                .then((response) => {
+                    console.log("saveDataToDataServer Saved", response);
+                   
+                })
+                .catch((err) => {
+                    this.loading -= 1;
+                    console.error("error during saveDataToDataServer", err);
+                });
+
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
                     comment: this.comments,
@@ -1075,8 +1096,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
-                    .then((dt) => {
-                        SDKClient.getProxyVersion()
+                .then((dt) => {
+                    SDKClient.getProxyVersion()
                         .then((response) => {
                             if (dt) { 
                                 console.log("getProxyVersion Saved", response)
@@ -1093,40 +1114,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                         if (dt.response.ResultCode >= 0) {
                             this.close(true);
 
-                        SDKClient.getDataFromDataServer({
-                            query: 'Type == "transfercall" AND SubType == "textchat"',
-                            instance: ""
-                        })  
-                        .then((response) => {
-                            if (dt) { 
-                                console.log("getDataFromDataServer Saved", response)
-                            }
-                        })
-                        .catch((err) => {
-                            this.loading -= 1;
-                            console.error("getDataFromDataServer", err);
-                        });  
-                            
-                        SDKClient.saveDataToDataServer({
-                            type: "transfercall",
-                            subType: "textchat",
-                            key: this._dialogData.OtherData.sessionId,
-                            insertedBy: SDKClient.getAgentData().agentId,
-                            insertedSource: "AD",
-                            interactionId: this.interactionId.toString(),
-                            ttl: "",
-                            data: this.comments,
-                            instance: ""
-                        })
-                        .then((response) => {
-                            if (dt) { 
-                                console.log("saveDataToDataServer Saved", response)
-                            }
-                        })
-                        .catch((err) => {
-                            this.loading -= 1;
-                            console.error("saveDataToDataServer", err);
-                        });
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                                
+                        
 
                         }
                         // transfer error
