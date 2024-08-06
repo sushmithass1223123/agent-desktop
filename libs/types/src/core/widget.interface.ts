@@ -93,6 +93,10 @@ export type AOTWidget<T = any, K = any> = Widget<T> & {
 
 export type WidgetConfig = {
     /**
+     * Flag to check static or dynamic
+     */ 
+    HasNoStaticWidgets?: boolean;
+    /**
      * Flag to enable this widget
      */
     Enabled: boolean;

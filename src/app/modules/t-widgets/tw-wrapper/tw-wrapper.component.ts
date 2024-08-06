@@ -136,6 +136,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         widget$: this._fuseFacadeService.widgetBgClasses$,
         config$: this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' })
     };
+    noStaticWidgets: boolean = false;
 
     /**
      * Constructor
@@ -163,6 +164,10 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         // check if the basic data input is provided, if not create a dummy widget data
         if (!this.data) {
             this.data = new TwWidgetModel('Widget', 'tw-widget');
+        }
+        // checking if the widget is dynamic and has no static widgets
+        if (this.data.Config.HasNoStaticWidgets) {
+            this.noStaticWidgets = true;
         }
 
         // check the default view of widget

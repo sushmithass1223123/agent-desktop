@@ -13,6 +13,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import packageInfo from '../../../package.json';
 import { FuseFacadeService } from './fuse-facade.service';
+import { IWidget } from 'app/interfaces';
 
 /**
  * Service to inject the data for widget from App config json
@@ -280,7 +281,12 @@ export class AppDataService extends SharedWrapper {
                 // apply the defaults to make sure no undefined exception
                 data.Login = merge({}, new LoginWidgetModel(), data.Login);
                 data.AppConfigs = merge({}, new AppConfigsModel(), data.AppConfigs);
-
+            // Adding HasNoStaticWidgets property to dynamic widgets
+                data.AppConfigs.Widgets.forEach((widget: IWidget) => {
+            if (widget.Type === 'dynamic') {
+            widget.Config.HasNoStaticWidgets = data.AppConfigs.Widgets.filter((w: IWidget) => w.Type === 'static').length === 0;
+            }
+            });
                 let conf = JSON.stringify(data);
                 const domain = window.location.hostname || '';
                 conf.replaceAll('${domainName}', domain);

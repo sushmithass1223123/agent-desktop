@@ -14,6 +14,7 @@
 <!-- if AOT widget: DragBoundary is 'body' 
     else it is taken from configurations -->
     <tw-card
+        [class.no-static-widgets]="data.Config.HasNoStaticWidgets"
         cdkDrag
         [cdkDragBoundary]="data.Config?.AOT ? 'body' : data.Config?.DragBoundary ?? '.container'"
         [cdkDragDisabled]="maximized || (!floating && !aot)"

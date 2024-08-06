@@ -51,7 +51,12 @@ tw-wrapper {
                 width: 66.33%;
                 height: 100%;
             }
-
+            &.no-static-widgets {
+                @include media-breakpoint('gt-md') {
+                  width: 100%;
+                  height: 100%;
+                }
+              }
             &.cover,
             &.mx-cover {
                 width: 100%;

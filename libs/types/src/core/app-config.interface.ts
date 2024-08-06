@@ -1,6 +1,7 @@
 import { IConfig, ILogging, IProxy, ISignalRProxy } from '@tmac/sdk';
 import { LoginConfig } from './login.interface';
 import { Main } from './main.interface';
+import { IWidget } from 'app/interfaces';
 
 /**
  * Agent Desktop's config
@@ -57,6 +58,10 @@ export type AppFontType = 'wf-muli' | 'wf-montserrat' | 'wf-source-sans-pro';
  * App configs
  */
 export type AppConfigs = {
+    /**
+     * widget config
+     */
+    Widgets: IWidget[];
     /**
      * Title of the application
      */

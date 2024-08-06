@@ -200,6 +200,10 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         } catch (error) {
             throwADError('Error in TwcInteractionComponent.createWidgetList', error);
         }
+        // Adding HasNoStaticWidgets property to dynamic widgets
+        dynamicWidgets.forEach((widget: IWidget) => {
+        widget.Config.HasNoStaticWidgets = staticWidgets.length === 0;
+        });
 
         const aotWidgets = [...this.tempAOTs, ...(widgets.AOT?.filter((w: IWidget) => w.Config.Enabled ?? []) ?? [])];
 
