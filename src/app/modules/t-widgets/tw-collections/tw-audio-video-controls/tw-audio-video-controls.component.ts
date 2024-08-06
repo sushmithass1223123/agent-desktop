@@ -1213,6 +1213,42 @@ if (error === 'Screenshare Was Cancelled') {
                 'warning'
             );
         }
+    
+        // Checking here  if both audio and video are muted or unmuted for the user
+        const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
+        const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
+    
+        const bothMutedLabels = [
+            {
+                key: '#userName',
+                value: userName
+            },
+            {
+                key: '#muteType',
+                value: data.Type
+            },
+            {
+                key: '#muteDisplayText',
+                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
+            },
+            {
+                key: '#streamType',
+                value: 'both audio and video'
+            }
+        ];
+    
+        if (isAudioMuted && isVideoMuted) {
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
+              'warning'
+            );
+        } else if (!isAudioMuted && !isVideoMuted) {
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
+               'warning'
+            );
+        }
+    
         this.displayToasters = true;
     }
 

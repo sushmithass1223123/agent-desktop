@@ -1739,10 +1739,10 @@
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
-                                                        "AgentAudio": false,
-                                                        "AgentVideo": false,
-                                                        "CustomerAudio": false,
-                                                        "CustomerVideo": false
+                                                        "AgentAudio": true,
+                                                        "AgentVideo": true,
+                                                        "CustomerAudio": true,
+                                                        "CustomerVideo": true
                                                     },
                                                     "ToggleUserViewAllowed": true,
                                                     "MuteVideoOnInitiateCall": true,
@@ -3424,7 +3424,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"
+                    "https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"
                 ],
                 "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
