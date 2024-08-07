@@ -1,9 +1,12 @@
 import { TwAuxCode } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
+import { TranslocoService } from '@ngneat/transloco';
+import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Aux codes components
@@ -49,7 +52,15 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
      */
     agentStatus = '';
 
-    constructor(private _fuseProgressBarService: FuseProgressBarService, private _tmacEventService: TMACEventService) {
+    /**
+     * Flag to enable / disable status change from custom widgets 
+     */
+    disableStatusChange = false;
+
+    constructor(private _fuseProgressBarService: FuseProgressBarService,
+        private _tmacEventService: TMACEventService,
+        private _appUIService: AppUiService,
+        private translocoService: TranslocoService ) {
         super('TwAuxCodesComponent');
     }
 
@@ -77,6 +88,11 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
                 // filter and assign the aux codes
                 this.auxCodesList = result.response;
             }
+        });
+
+        //observe ui control events from custom widgets
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+                this.handleUIControls(data);
         });
 
         // get agent details
@@ -122,6 +138,12 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
      * @param {IAUXCodes} item
      */
     changeStatus(item: IAUXCodes): void {
+        // check if status change has been restricted from other components
+        if(this.disableStatusChange) {
+            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.statusChangeDisabled'), 'warning');
+            return;
+        }
+
         // show the progress bar
         this._fuseProgressBarService.show();
 
@@ -131,7 +153,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
 
         this._tmacEventService.emitSDKEvent({
             event: customEvent
-        });
+        }); 
 
         // change the status
         SDKClient.changeStatus(
@@ -144,6 +166,19 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
             // hide the progress bar
             this._fuseProgressBarService.hide();
         });
+    }
+
+    /**
+     * 
+     * @param data: details passed from custom widgets to manipulate UI
+     */
+    handleUIControls(data) {
+        if (data.eventName === 'disableStatusChange') {
+            this.disableStatusChange = true;
+        }
+        if (data.eventName === 'enableStatusChange') {
+            this.disableStatusChange = false;
+        }
     }
 }
 

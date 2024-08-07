@@ -55,6 +55,11 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         }
     ];
 
+    /**
+     * Flag to enable / disable status change from custom widgets 
+     */
+    disableStatusChange = false;
+
     constructor(
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
@@ -82,6 +87,13 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
 
         // get agent details
         this.agentData = SDKClient.getAgentData();
+
+        //observe ui control events from custom widgets
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            this.handleUIControls(data);
+        });
+
+        
 
         // register to events
         this._tmacEventService
@@ -180,6 +192,12 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      * @param {IAUXCodes} item
      */
     changeStatus(item: IAUXCodes): void {
+
+        // check if status change has been restricted from other components
+        if(this.disableStatusChange) {
+            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.statusChangeDisabled'), 'warning');
+            return;
+        }
         // show the progress bar
         this._fuseProgressBarService.show();
         const oldStatus = this.agentData.agentStatus;
@@ -211,6 +229,19 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                 this.agentData.agentStatus = oldStatus;
             })
             .finally(() => this._fuseProgressBarService.hide());
+    }
+
+    /**
+     * 
+     * @param data: details passed from custom widgets to manipulate UI
+     */
+    handleUIControls(data) {
+        if (data.eventName === 'disableStatusChange') {
+            this.disableStatusChange = true;
+        }
+        if (data.eventName === 'enableStatusChange') {
+            this.disableStatusChange = false;
+        }
     }
 }
 
