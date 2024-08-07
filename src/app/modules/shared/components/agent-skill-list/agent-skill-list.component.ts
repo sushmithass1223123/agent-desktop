@@ -408,6 +408,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 this.actionTooltip = 'Transfer';
                 this.blindLabel = 'BT';
                 break;
+            case 'transferPost':
+                this.disableInput = true;
+                this.icon = 'forward_to_inbox';
+                this.actionTooltip = 'Transfer';
+                this.blindLabel = 'BT';
+                break;
             case 'transferFax':
                 this.disableInput = true;
                 this.icon = 'forward';
@@ -1302,6 +1308,116 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     /**
+     * Transfers post
+     */
+    private transferPost(): void {
+        this.loading += 1;
+        const posts: any[] = this._dialogData.OtherData.posts;
+        const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
+        const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
+
+        // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
+        if (this.selectedRow?.type !== 'Skill List') {
+            posts.forEach((post) => {
+                const { RouteId, SessionId } = post;
+                SDKClient.transferEmailToAgent({
+                    routeId: RouteId,
+                    sessionId: SessionId,
+                    toAgentId: transferTo
+                }, undefined, true)
+                    .then((res) => {
+                        this.loading -= 1;
+                        const dynamicLabels = [
+                            {
+                                key: '#transferTo',
+                                value: transferTo
+                            },
+                            {
+                                key: '#agentName',
+                                value: this.selectedRow.row.AgentName
+                            }
+                        ];
+                        if (res.response > 0) {
+                            this._appUIService.showSnackbar(
+                                this.appDataService.getUpdatedLabel(
+                                    this.translocoService.translate('sharedComponents.agentSkillList.transferPostSuccess'),
+                                    dynamicLabels
+                                ),
+                                'success'
+                            );
+                            this.close(true);
+                        } else if ([-2, -3].includes(res.response)) {
+                            console.error(res);
+                            this._appUIService.showSnackbar(
+                                this.appDataService.getUpdatedLabel(
+                                    this.translocoService.translate('sharedComponents.agentSkillList.transferPostAgentStateInvalid'),
+                                    dynamicLabels
+                                ),
+                                'failure'
+                            );
+                        } else {
+                            console.error(res);
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('sharedComponents.agentSkillList.transferPostFailed'),
+                                'failure'
+                            );
+                        }
+                    })
+                    .catch((err) => {
+                        this.loading -= 1;
+                        console.error(err);
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('sharedComponents.agentSkillList.transferPostError'),
+                            'failure'
+                        );
+                    });
+            });
+        } else {
+            posts.forEach((post) => {
+                const { RouteId, SessionId } = post;
+                SDKClient.transferEmailToSkill({
+                    routeId: RouteId,
+                    sessionId: SessionId,
+                    skillId: transferTo
+                }, undefined, true)
+                    .then((res) => {
+                        this.loading -= 1;
+                        const dynamicLabels = [
+                            {
+                                key: '#transferTo',
+                                value: transferTo
+                            }
+                        ];
+                        if (res.response > 0) {
+                            this._appUIService.showSnackbar(
+                                this.appDataService.getUpdatedLabel(
+                                    this.translocoService.translate('sharedComponents.agentSkillList.transferPostSuccess'),
+                                    dynamicLabels
+                                ),
+                                'success'
+                            );
+                            this.close(true);
+                        } else {
+                            console.error(res);
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('sharedComponents.agentSkillList.transferPostFailed'),
+                                'failure'
+                            );
+                        }
+                    })
+                    .catch((err) => {
+                        this.loading -= 1;
+                        console.error(err);
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('sharedComponents.agentSkillList.transferPostError'),
+                            'failure'
+                        );
+                    });
+            });
+        }
+    }
+
+    /**
      * Switch tab
      * @param {ITab} tab
      */
@@ -1784,6 +1900,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 break;
             case 'transferEmail':
                 this.transferEmail();
+                break;
+            case 'transferPost':
+                this.transferPost();
                 break;
             case 'pushChat':
                 this.close(true);

@@ -148,7 +148,8 @@ export type AgentSkillDataType =
     | 'conferenceChat'
     | 'transferEmail'
     | 'transferFax'
-    | 'pushChat';
+    | 'pushChat'
+    | 'transferPost';
 
 export type AgentSkillListData = {
     /**
