@@ -1740,19 +1740,18 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         const config = (this.channelConf?.Config || {}) as TwSmpWorkbenchConfig;
 
         const transferConfig = config?.Transfer ?? {};
-        let data = new AgentSkillListDataModel('transferEmail', 'Transfer Post');
+        let data = new AgentSkillListDataModel('transferPost', 'Transfer Post');
         data = merge({}, data, transferConfig);
         const sessionKey = this.getCurrentSessionKey();
         data = {
             ...data,
             OtherData: {
                 type: 'transfer',
-                emails: posts.map((p) => ({
+                posts: posts.map((p) => ({
                     ...p,
                     SessionId: p[sessionKey],
                     RouteId: p.PostData.RouteId
-                })),
-                useMediaMatrixProxyUrl: true
+                }))
             },
             Callback: ({ success }) => {
                 if (success) {
