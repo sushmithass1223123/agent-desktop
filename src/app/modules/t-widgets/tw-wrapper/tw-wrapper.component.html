@@ -19,7 +19,7 @@
         [cdkDragDisabled]="maximized || (!floating && !aot)"
         [cdkDragFreeDragPosition]="dragPosition"
         class="tw-card animate__animated animate__faster {{
-            data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
+            data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '') + (data.Config.HasNoStaticWidgets ? ' no-static-widgets' : '')
         }}"
         [ngClass]="{
             collapsed: collapsed,

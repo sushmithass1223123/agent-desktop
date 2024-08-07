@@ -46,7 +46,12 @@ tw-wrapper {
             width: 100%;
             height: calc(100vh - 82px);
             z-index: 100000;
+            &.no-static-widgets {
 
+                @include media-breakpoint('gt-md') {
+                    width: auto;
+                    height: auto;
+                }}
             @include media-breakpoint('gt-md') {
                 width: 66.33%;
                 height: 100%;

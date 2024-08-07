@@ -1,4 +1,4 @@
-import { AOTWidget } from '@ad/types';
+import { AOTWidget, WidgetConfig } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { TMACEventService } from '@services/tmac-event.service';
@@ -187,10 +187,10 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     private createWidgetList(evt: any, status: string, user: string, forceActive: boolean, otherData: any): void {
         // get the content widgets
+        const widgetConfig: WidgetConfig = evt.WidgetConfigData ? JSON.parse(evt.WidgetConfigData) : {};
         const widgets = cloneDeep(this.data.Data.Widgets) || [];
-
-        const staticWidgets = widgets.Static?.filter((w: IWidget) => w.Config.Enabled) ?? [];
-
+        const staticWidgets = widgetConfig.HasNoStaticWidgets ? [] : (widgets.Static?.filter((w: IWidget) => w.Config.Enabled) ?? []);       
+       
         // const dynamicWidgets = ((environment.production && evt.WidgetConfigData && JSON.parse(evt.WidgetConfigData)) || widgets.Dynamic) ?? [];
         let dynamicWidgets = widgets.Dynamic?.filter((w: IWidget) => w.Config.Enabled) ?? [];
         try {
