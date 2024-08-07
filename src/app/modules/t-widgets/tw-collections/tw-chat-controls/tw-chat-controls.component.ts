@@ -1,4 +1,4 @@
-import { AgentSkillListData, AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData } from '@ad/types';
+import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -58,6 +58,7 @@ import {
     TextChatTransferSuccessEvent,
     TextChatTypingStateChangedEvent,
     TextChatUserMessageWaitTimerEvent,
+    CallConferenceCompletedEvent,
     TextTemplate,
     TUtils
 } from '@tmac/sdk';
@@ -73,6 +74,7 @@ import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -201,6 +203,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Connected agent is bot flag
          */
         IsBotAgent: boolean;
+        /**
+         * Agent interaction id
+         */
+        InteractionId: any;
     }[] = [];
     /**
      * To hold interaction chat transcripts
@@ -610,6 +616,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          */
     createIconButtonDisabled: boolean = false;
     /**
+     * Is audio through hard phone
+     */
+    isPhoneAudio: boolean = false;
+    /**
+     * Object to hold attachment mime constraints
+     */
+    attachmentConstraints: string[] = [];
+    xssSymbolEntityMap: XssSymbolEntityMap = {};
+
+    /**
      * Constructor
      */
     constructor(
@@ -624,7 +640,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         private _fuseFacadeService: FuseFacadeService,
         private _agentFeaturesService: AgentFeaturesService,
         private translocoService: TranslocoService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private sanitize: DomSanitizer
     ) {
         super('TwChatControlsComponent');
 
@@ -680,6 +697,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
 
         this.DisableAvConstraints = this.widgetData?.DisableAvConstraints;
+
+        this.xssSymbolEntityMap = this.data.Data.XssSymbolEntityMap ?? {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            ' ': '&nbsp;',
+            '\n': '&#10;',
+            '\r': '&#13;'
+        };
 
         this.registerToEvents();
 
@@ -771,6 +799,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // check if this chat is init by supervisor
         this.supervisorInit = this.lineId === 'bargein';
+
+        // check if the audio is through avaya/hard phone
+        this.isPhoneAudio = this.widgetData.IsPhoneAudio;
 
         // check if conversation api Url is configured
         if (this.widgetData.ConversationService && this.widgetData.ConversationService.Url) {
@@ -913,6 +944,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     'HoldInteractionEvent',
                     'UnholdInteractionEvent',
                     'ConfirmEndInteractionEvent',
+                    'UpdateParentAgentStatusEvent',
+                    'CallConferenceCompletedEvent',
                     "EndInteractionEvent"
                 ],
                 this.interaction.InteractionID
@@ -1324,7 +1357,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     private sendMessage(template: any, isAutomated?): void {
         // get the typed message
-        const inputMessage = template?.Text || this.replyForm.form.value.message;
+        let inputMessage = template?.Text || this.replyForm.form.value.message;
+        inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
         let templateId = template?.ID ?? '';
@@ -1413,6 +1447,20 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
+     * Method to encode string
+     * @param str String to encode
+     * @returns Encoded string
+     */
+    encodedStr(str: string): string {
+        try {
+            let escapedStr = str.replace(/[&<>"'\s\r\n]/g, (char) => this.xssSymbolEntityMap[char]);
+            return escapedStr;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    /**
      * To call API to send message
      *
      * @param {String} message
@@ -1461,7 +1509,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'in' | 'out'} direction Direction of the call
      * @param {AVControlMessageReceivedEvent} avEvent [OPTIONAL] For incoming requestav to process AVControlMessageReceivedEvent
      */
-    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out'): void {
+    private openCallWidget(param: 'audio' | 'video', direction: 'in' | 'out', AvCallConstraints?: any): void {
         // if the widget is created then ignore
         if (this.callWidget) {
             return;
@@ -1521,9 +1569,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         widget.InteractionDetails = this.data.InteractionDetails;
         // this.isMobileDevice = this.customerDevice;
-        widget.Data = { ...this.data.Data, 
+        widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints, ConferenceAgentList: this.conferenceAgentList };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -1900,8 +1948,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.intent = evt.TransferIntent || evt.Intent || 'Default';
         // check the channel
         this.channel = evt.Channel.toLowerCase() || 'textchat';
-        // Disable document attachment feature if the channel is instagram
-        if(this.channel === 'instagram') this.attachActions[0].enable = false;
+        // assign attachment constraints
+        this.attachmentConstraints = this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? [];
         // check social media
         this.isSMM = evt.IsSMM || false;
 
@@ -1924,9 +1972,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.conferenceType = evt.ConferenceType;
         // update the chatmode
         this.chatMode = evt.ChatMode as any;
+        // Av call constraints from transfer notification event
+        let avCallConstraints: any = {};
+        
+        if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
+            avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
+        }
+
         // to not open video dialog when interaction is over
-        if (!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) {
-            this.escalateToAV(this.chatMode as any);
+        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone) || (this.conferenceType === 'conf' && avCallConstraints?.isAgentOnActiveCall)) {
+            this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
         // check for bot history
@@ -2028,7 +2083,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             AgentName: evt.AgentName,
             ConferenceType: evt.ConferenceType,
             IsBotAgent: evt.IsBotAgent,
-            TmacServer: tmacServer
+            TmacServer: tmacServer,
+            InteractionId: JSON.parse(evt.AgentInfoJson)?.extraparam?.interactionId
         });
 
         // check if a bot is connected
@@ -2437,6 +2493,40 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (error) { }
     }
 
+    CallConferenceCompletedEvent(evt: CallConferenceCompletedEvent): void {
+        try {
+            if(this.status !== 'hold') return;
+
+            this.interactionOnHold = unHoldState;
+            this.interactionOnHold.buttonTooltip = this.translocoService.translate('interactionComponent.hold');
+            this.status = 'connected';
+            this._interactionManagerService.updateInteraction(evt.InteractionID, {
+                status: 'connected'
+            });
+            this.interactionOnHold.loading = false;
+
+            if (evt.RecoveryEvent) return;
+            
+            SDKClient.sendActionMessage({
+                interactionId: this.interaction.InteractionID.toString(),
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interaction.InteractionID.toString(),
+                        onCall: this.disableAV === true
+                    },
+                    status: 'action',
+                    type: 'unhold',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            });
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     /**
      * To handle HoldTimerEvent
      *
@@ -2507,7 +2597,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check the type
             const type = JSON.parse(evt.Message).param;
             // open the call widget
-            this.openCallWidget(type, 'in');
+            this.openCallWidget(type, 'in', {});
         }
     }
 
@@ -2598,6 +2688,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
         // remove the agent from list
         this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
+
+        if(this._tmacEventService.avCallConstraints[evt.AgentId]) 
+            delete this._tmacEventService.avCallConstraints[evt.AgentId]
 
         // check if a bot is connected
         if (evt.IsBotAgent) {
@@ -2752,6 +2845,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     ConfirmEndInteractionEvent(): void {
         this.confirmEndChat();
+    }
+
+    /**
+     * To process custom UpdateParentAgentStatusEvent and update other conference agents
+     * about the current user status
+     */
+    UpdateParentAgentStatusEvent(): void {
+        try {
+            const currentAgentStatus = {
+                isAgentOnPhone: this.isPhoneAudio,
+                isAgentOnActiveCall: false,
+                chatMode: this.chatMode
+            };
+
+            const agentIds = this.conferenceAgentList.map((cAgents) => cAgents.AgentId);
+            if(!agentIds) return;
+
+            SDKClient.sendNotification({
+                agentIds,
+                informAllTmac: false,
+                message: JSON.stringify(currentAgentStatus),
+                supervisorId: '',
+                teamId: '',
+                type: 'parentagentstatus',
+                tmacServer: this.conferenceAgentList.map((cAgents) => cAgents.TmacServer)[0]
+            });
+        } catch (error) {
+            console.error();
+        }
     }
 
 
@@ -2946,9 +3068,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To escalate the chat to audio/video
      * @param {'audio' | 'video'} type Type of escalation
      */
-    public escalateToAV(type: 'audio' | 'video'): void {
+    public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
+        // Check for parent agent av constraints
+        if (avCallConstraints === undefined) {
+            avCallConstraints =
+                this._tmacEventService.avCallConstraints[
+                    Object.keys(this._tmacEventService.avCallConstraints).find((parentAgentId: string) => {
+                        return this._tmacEventService.avCallConstraints[parentAgentId].isAgentOnActiveCall;
+                    })
+                ];
+        }
+        
         // open call widget
-        this.openCallWidget(type, 'out');
+        this.openCallWidget(type, 'out', avCallConstraints);
 
         // this._tmacEventService.emitSDKEvent({
         //     event: {
@@ -3286,6 +3418,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             OtherData: {
                 type: type === 'transfer' ? 'transfer' : 'conf',
                 mode: this.chatMode,
+                isAgentOnPhone: this.isPhoneAudio,
+                isAgentOnActiveCall: this.callWidget ? true : false,
                 sessionId: this.sessionID,
                 lineId: this.lineId
             },
@@ -3378,6 +3512,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     closeAttachments(): void {
         this.attachPreviewMode = '';
+         // Exit PiP mode if it's active
+         if (document.pictureInPictureElement) {
+            document.exitPictureInPicture()
+        }
     }
 
     /**

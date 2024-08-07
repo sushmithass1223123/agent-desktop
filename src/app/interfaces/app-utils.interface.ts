@@ -237,7 +237,7 @@ export interface AppNotification {
     /**
      * Message of app notification
      */
-    message: string;
+    message: string | any;
     /**
      * Time of the app notification
      */
@@ -423,6 +423,21 @@ export interface CustomDialogOtherData {
      * Button's custom msg for cancel button
      */
     noMessage?: string;
+    /**
+     * close icon for the dialog
+     */
+    closeIcon?: boolean;
+
+    /**
+     * to enable confirmation on closing the dialog
+     */
+    confirmClose?: boolean;
+
+    /**
+     * message to be shown on confirmation dialog
+     */
+
+    confirmMessage?: string;
 }
 
 export interface InteractionComment {

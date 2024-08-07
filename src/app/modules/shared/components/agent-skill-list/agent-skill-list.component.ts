@@ -26,6 +26,7 @@ import { TableComponent } from '../table/table.component';
 import { TranslocoService } from '@ngneat/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { SharedService } from '@services/shared.service';
+import { EMAIL_SEND_STATUS } from 'app/constants';
 
 type ISwitch = {
     placeholder: string;
@@ -263,6 +264,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             };
             const columns =
                 this._dialogData.Skill.Columns && this._dialogData.Skill.Columns.length ? this._dialogData.Skill.Columns : Object.keys(table.config);
+            /**
+             * Retricting consult button for transfer. 
+             * As consult transfer works similar to blind transfer at the backend
+            */  
             const conf: ISwitch = {
                 placeholder: 'Skill/VDN',
                 freeText: { allowed: !!(this._dialogData?.Skill.Source as AgentSkillListSource)?.FreeTextAllowed, active: false, value: '' },
@@ -274,7 +279,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult: this._dialogData.Skill.Consult
+                consult:  this._dialogData.OtherData.type === 'transfer' ? false : this._dialogData.Skill.Consult 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
@@ -1022,7 +1027,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     interactionId: this.interactionId.toString(),
                     otherData: JSON.stringify({
                         type: this._dialogData.OtherData.type,
-                        mode: this._dialogData.OtherData.mode
+                        mode: this._dialogData.OtherData.mode,
+                        isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
+                        isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                     }),
                     // uncomment this when freetext available for agent
                     // toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
@@ -1030,11 +1037,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     toTmacServer: this.selectedRow.row.TmacServer
                 })
                     .then((dt) => {
-                        // End the call if its already ongoing during AV call - Observed in
-                        if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
-                            this.sharedService.triggerTransferMethod(this.interactionId);
-                        }
-
                         this.loading -= 1;
                         if (dt.response.ResultCode >= 0) {
                             this._appUIService.showSnackbar(
@@ -1060,11 +1062,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
             // blind transfer/confks
             else {
-                // End the call if its already ongoing during AV call - Observed in
-                if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
-                    this.sharedService.triggerTransferMethod(this.interactionId);
-                }
-
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
                     comment: this.comments,
@@ -1073,7 +1070,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     lineId: this._dialogData.OtherData.lineId,
                     sessionId: this._dialogData.OtherData.sessionId,
                     toAgentId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
-                    toTmacServer: this.selectedRow.row.TmacServer
+                    toTmacServer: this.selectedRow.row.TmacServer,
+                    isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
+                    isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                 })
                     .then((dt) => {
                         this.loading -= 1;
@@ -1127,7 +1126,9 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     chatMode: this._dialogData.OtherData.mode,
                     interactionId: this.interactionId.toString(),
                     isBlind: !this.isConsult,
-                    skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem
+                    skillId: freeTextConf.active ? freeTextConf.value : this.selectedItem,
+                    isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
+                    isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                 })
                 .then((dt) => {
                         this.loading -= 1;
@@ -1173,6 +1174,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     private transferEmail(): void {
         this.loading += 1;
         const emails: any[] = this._dialogData.OtherData.emails;
+        const useMediaMatrixProxyUrl: any = this._dialogData.OtherData?.useMediaMatrixProxyUrl;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         const transferTo = freeTextConf.active ? freeTextConf.value : this.selectedItem;
 
@@ -1184,7 +1186,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     toAgentId: transferTo
-                })
+                }, undefined, useMediaMatrixProxyUrl)
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1206,6 +1208,17 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                                 'success'
                             );
                             this.close(true);
+                        } else if (
+                            EMAIL_SEND_STATUS[res.response] &&
+                            EMAIL_SEND_STATUS[res.response] !== 'Success'
+                        ) {
+                            console.error(res);
+                            let errorMsg = `${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferError${EMAIL_SEND_STATUS[res.response]}`
+                            )}`;
+                            this._appUIService.showSnackbar(errorMsg, 'failure');
                         } else if ([-2, -3].includes(res.response)) {
                             console.error(res);
                             this._appUIService.showSnackbar(
@@ -1239,7 +1252,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     routeId: RouteId,
                     sessionId: SessionId,
                     skillId: transferTo
-                })
+                }, undefined, useMediaMatrixProxyUrl)
                     .then((res) => {
                         this.loading -= 1;
                         const dynamicLabels = [
@@ -1257,6 +1270,17 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                                 'success'
                             );
                             this.close(true);
+                        } else if (
+                            EMAIL_SEND_STATUS[res.response] &&
+                            EMAIL_SEND_STATUS[res.response] !== 'Success'
+                        ) {
+                            console.error(res);
+                            let errorMsg = `${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailTransferError${EMAIL_SEND_STATUS[res.response]}`
+                            )}`;
+                            this._appUIService.showSnackbar(errorMsg, 'failure');
                         } else {
                             console.error(res);
                             this._appUIService.showSnackbar(
@@ -1444,7 +1468,18 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         this.selectedItem = '';
         this.clearDisplayValues();
     }
-
+    /**
+     * To select skill id on manual typing
+     */
+    onSkillVdnInputChange(value: string): void {
+          const skill = this.allSkills.find(s => s.SkillID.toString() === value);
+          if (skill) {
+            this.selectedSkill = skill.SkillID;
+            this.selectedItemDisplayName = skill.SkillName;
+            this.selectedRow = { type: 'Skill List', row: skill };
+          }
+        }
+      
     /**
      * Load speed dial table
      */

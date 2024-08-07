@@ -62,7 +62,7 @@
             </button>
         </div>
     </div>
-    <div class="preview-content" fxFlex>
+    <div class="preview-content" fxFlex *transloco="let locale">
         <div class="preview-item">
             <ng-container *ngIf="attachPreviewMode === 'camera'">
                 <video class="selfie" #camera autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
@@ -76,13 +76,20 @@
 
                     <ng-template #audio>
                         <ng-container *ngIf="item.type.includes('audio'); else videos">
-                            <audio [src]="item.base64" controls></audio>
+                            <audio [src]="item.base64" controls (error)="onHandlePlaybackError()"></audio>
+                            <h2 *ngIf="isPlaybackNotSupported">
+                                {{locale('widgets.chatAttachments.playbackNotSupportedMessage')}}
+                            </h2>
                         </ng-container>
                     </ng-template>
 
                     <ng-template #videos>
                         <ng-container *ngIf="item.type.includes('video'); else files">
-                            <video [src]="item.base64" controls></video>
+                            <video *ngIf="!isPlaybackNotSupported" [src]="item.base64" (error)="onHandlePlaybackError()"
+                                preload="metadata" controls></video>
+                            <h2 *ngIf="isPlaybackNotSupported">
+                                {{locale('widgets.chatAttachments.playbackNotSupportedMessage')}}
+                            </h2>
                         </ng-container>
                     </ng-template>
 

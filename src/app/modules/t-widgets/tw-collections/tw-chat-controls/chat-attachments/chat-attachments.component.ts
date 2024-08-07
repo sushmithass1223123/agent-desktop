@@ -4,6 +4,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
 import { MediaStreamerResponse } from 'app/interfaces';
 import { TranslocoService } from '@ngneat/transloco';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 /**
  * Chat attachment module
  */
@@ -30,6 +31,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      * Type of attachment previw
      */
     @Input() attachPreviewMode: string;
+    /**
+     * Type of attachment previw
+     */
+    @Input() attachmentConstraints: string[];
     /**
      * Event emitter to close the attachments
      */
@@ -70,7 +75,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         /**
          * Base64 string of file
          */
-        base64: string;
+        base64: SafeUrl | string;
         /**
          * Size of file
          */
@@ -84,17 +89,20 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
          */
         ext: string;
     }[] = [];
-
+    /**
+     * flag to hold unsupported video playbacks
+     */
+    isPlaybackNotSupported: boolean = false;
 
     constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService,
-        private translocoService: TranslocoService) {}
+        private translocoService: TranslocoService, private sanitizer: DomSanitizer) {}
 
     /**
      * On init
      */
     ngOnInit(): void {
         // add accept type for file input
-        this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : '*';
+        this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : this.attachmentConstraints.length ? this.attachmentConstraints.join(',') : '*';
     }
 
     /**
@@ -172,25 +180,22 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 if(this.attachPreviewMode === 'uploadMedia') {
                     const fileMime = input.files[0].type.split('/');
                     if(!['video', 'image'].includes(fileMime[0])) {
-                        const dynamicLabels = [
-                            {
-                                key: '#fileType',
-                                value: fileMime[1]
-                            }
-                        ]
-                        this._appUIService.showSnackbar(
-                            this.getUpdatedLabel(this.translocoService.translate('widgets.chatAttachments.invalidType'), dynamicLabels),
-                            'warning'
-                        );
+                        this.notifyInvalidFileSelection(fileMime[1]);
                         return;
                     }
+                }
+                if (this.attachmentConstraints.length && 
+                    !this.attachmentConstraints.includes(input.files[0].type)) {
+                    const fileMime = input.files[0].type.split('/');
+                    this.notifyInvalidFileSelection(fileMime[1]);
+                    return;
                 }
                 const base64 = await this.convertToBase64(input.files[0]);
                 const fileName = input.files[0].name;
                 this.uploadingFiles.push({
                     file: input.files[0],
                     fileName,
-                    base64,
+                    base64: this.sanitizeUrl(base64),
                     size: input.files[0].size,
                     type: input.files[0].type,
                     ext: fileName.split('.').pop()
@@ -201,6 +206,30 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
+        }
+    }
+
+    /**
+     * Method to notify agent that the selected file mime is invalid
+     * @param mime Mime type of the file
+     */
+    notifyInvalidFileSelection(mime: string): void {
+        try {
+            const dynamicLabels = [
+                {
+                    key: '#fileType',
+                    value: mime
+                }
+            ];
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(
+                    this.translocoService.translate('widgets.chatAttachments.invalidType'),
+                    dynamicLabels
+                ),
+                'warning'
+            );
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -404,7 +433,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             } else {
                 // upload to TMAC proxy
                 const filesToUpload: FileSaveData[] = [];
-                this.uploadingFiles.forEach(async (file) => {
+                this.uploadingFiles.forEach(async (file: any) => {
                     // add to the list
                     filesToUpload.push({
                         FileName: file.fileName,
@@ -459,5 +488,25 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
        return this.uploadingFiles.find(item => 
             item.type.includes('image')
         ) ? true : false;
+    }
+
+    /**
+     * Method to handle error from audo/video html elements
+     */
+    onHandlePlaybackError(): void {
+        try {
+            this.isPlaybackNotSupported = true;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    /**
+     * Method to sanitize base64 to safe url
+     * @param base64Url Base 64 Url
+     * @returns Sanitized Safe Url
+     */
+    sanitizeUrl(base64Url: string): SafeUrl {
+        return this.sanitizer.bypassSecurityTrustUrl(base64Url);
     }
 }

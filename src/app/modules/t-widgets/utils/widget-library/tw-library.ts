@@ -37,6 +37,8 @@ import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/t
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
+import { TwSmpControlsComponent } from '@modules/t-widgets/tw-collections/tw-smp-controls/tw-smp-controls.component';
+import { TwSmpPanelComponent } from '@modules/t-widgets/tw-collections/tw-smp-panel/tw-smp-panel.component';
 import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component';
 import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
@@ -77,6 +79,9 @@ export class TWLibrary {
         'twc-voice': TwcInteractionComponent,
         'twc-textchat': TwcInteractionComponent,
         'twc-email': TwcInteractionComponent,
+        'twc-smp': TwcInteractionComponent,
+        'tw-smp-panel': TwSmpPanelComponent,
+        'tw-smp-controls': TwSmpControlsComponent,
         'twc-fax': TwcInteractionComponent,
         'twc-generic': TwcInteractionComponent,
         'tw-sample': TwSampleComponent,
