@@ -296,6 +296,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     notificationAction: string = '';
     hidePostActions: boolean = false;
     isPullOnProgress: boolean = false;
+    Object: Object = Object;
+    activePostObj: SMPost;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -1194,29 +1196,18 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 });
             });
 
+            this.segregatedPosts.forEach((segPost: any) => {
+                segPost.skillCount = segPost[Object.keys(segPost)[0]].length;
+
+                segPost[Object.keys(segPost)[0]].forEach((segPostSkill: any) => {
+                    segPostSkill.itemCount = segPostSkill[Object.keys(segPostSkill)[0]].length
+                })
+            })
+
             console.log(this.segregatedPosts);
         } catch (error) {
             console.error(error);
         }
-    }
-
-    getTotalArrayCount(channel: any, skillname?: string) {
-        const dataArray: any = Object.values(channel)[0];
-        let count = 0;
-        dataArray.forEach((skillArray: any) => {
-            if (skillname && Object.keys(skillArray)[0] !== skillname) return;
-            let arrc: any = Object.values(skillArray)[0];
-            count += arrc.length;
-        });
-        return count;
-    }
-
-    getObjectKeyString(data: any): string {
-        return Object.keys(data)[0];
-    }
-
-    getObjectValueData(data: any): any {
-        return Object.values(data)[0];
     }
 
     formatDate(inputDateStr: string): { date: string; time: string } {
@@ -1293,6 +1284,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     async openPost(post: SMPost, preserveChosenPost?: boolean): Promise<void> {
         try {
+            this.activePostObj = post;
             if (this.openPostRes.loading) return;
             this.hidePostActions = false;
             if (!preserveChosenPost) {

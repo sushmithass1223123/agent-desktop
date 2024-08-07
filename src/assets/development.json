@@ -3093,7 +3093,7 @@
                                                                 "Display": "skill",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "ChannelPrefix": ["EM"],
+                                                            "ChannelPrefix": ["SocialMedia"],
                                                             "Columns": [],
                                                             "Rules": {
                                                                 "Enabled": true,
@@ -3424,7 +3424,7 @@
         "SDK": {
             "proxy": {
                 "urls": [
-                    "http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"
+                    "https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"
                 ],
                 "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
