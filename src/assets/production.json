@@ -1,1 +1,1 @@
-{ "ProxyUrl": "https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx", "ConfigMode": "remote", "Version": "5.7.0-beta.9" }
+{ "ProxyUrl": "../../TMACSDKProxy/TmacProxy.asmx", "ConfigMode": "remote", "Version": "5.7.0-beta.9" }
