@@ -187,6 +187,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Blind action label
      */
     blindLabel: string;
+     /**
+     * Property to store previously selected agent 
+     */
+    private previouslySelectedAgent: AgentModel | null = null;
 
     /**
      * Constructor
@@ -1758,6 +1762,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
+       if (this.selectedRow && this.previouslySelectedAgent && this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID) {
+       return;
+        }
+        this.previouslySelectedAgent = this.selectedRow.row;
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
