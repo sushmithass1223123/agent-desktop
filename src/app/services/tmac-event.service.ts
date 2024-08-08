@@ -999,14 +999,10 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         this._appUIService
             .showAppConfirmDialog('generic', `Confirm ${mode} ${upperFirst(type)}`, message)
             ;
-        const timeoutId = setTimeout(() => {
-        dialogRef.close(); 
-        this.isRequestPending = false; 
-        },60000); 
+     
 
         dialogRef.afterClosed()
             .subscribe((resp1) => {
-        clearTimeout(timeoutId); 
         if (resp1 !== undefined) { 
                 evt.Response(resp1);
         }
