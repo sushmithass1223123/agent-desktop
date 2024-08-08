@@ -191,6 +191,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Property to store previously selected agent 
      */
     private previouslySelectedAgent: AgentModel | null = null;
+  // Initialize a flag to track the TextChatTransferRejectEvent occurrence
+private isTextChatTransferRejected: boolean = false;
 
     /**
      * Constructor
@@ -1762,9 +1764,14 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
-       if (this.selectedRow && this.previouslySelectedAgent && this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID) {
-       return;
+        SDKClient.events.on('TextChatTransferRejectEvent', () => {
+        this.isTextChatTransferRejected = true;
+        this.isConsult = false;
+        });
+        if (this.selectedRow && this.previouslySelectedAgent &&  this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID && !this.isTextChatTransferRejected) {
+        return;
         }
+        this.isTextChatTransferRejected = false;
         this.previouslySelectedAgent = this.selectedRow.row;
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
