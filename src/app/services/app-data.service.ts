@@ -179,12 +179,32 @@ export class AppDataService extends SharedWrapper {
         const respnse = await fetch(this.devConfigPath);
         return await respnse.json();
     }
-
+    /**
+     * Method to modify / validate dynamic widgets config
+     * @param {any} config
+     */
+    validateDynamicWidgets(config: any) {
+        try {
+            if(config?.Main?.Content?.Widgets?.length) {
+                config.Main.Content.Widgets.forEach((Widget: any) => {
+                    if(Widget?.Data?.Widgets?.Dynamic?.length) {
+                        let hasNoStaticWidgets = Boolean(Widget?.Data?.Widgets?.Static?.length);
+                        Widget.Data.Widgets.Dynamic.forEach((WidgetDynamic: any) => {
+                            WidgetDynamic.Config.HasNoStaticWidgets = !hasNoStaticWidgets;
+                        });
+                    }
+                });
+            }
+        } catch (e) {
+           console.error(e)
+        }
+    }
     /**
      * To set json config
      */
     private setJsonConfig(config: AppRootConfig): void {
         try {
+             this.validateDynamicWidgets(config);
             // set the title
             if (config.AppConfigs.TitleName) {
                 this._titleService.setTitle(config.AppConfigs.TitleName);
