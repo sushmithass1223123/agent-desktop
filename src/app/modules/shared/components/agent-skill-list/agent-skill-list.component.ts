@@ -191,8 +191,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Property to store previously selected agent 
      */
     private previouslySelectedAgent: AgentModel | null = null;
-  // Initialize a flag to track the TextChatTransferRejectEvent occurrence
-private isTextChatTransferRejected: boolean = false;
+    /**
+     *  flag to track the TextChatTransferRejectEvent occurrence
+     */
+    private isTextChatTransferRejected: boolean = false;
 
     /**
      * Constructor
@@ -1764,24 +1766,29 @@ private isTextChatTransferRejected: boolean = false;
      * @param consult
      */
     executeAction(consult: boolean): void {
+        // Add event listener for TextChatTransferRejectEvent
         SDKClient.events.on('TextChatTransferRejectEvent', () => {
-        this.isTextChatTransferRejected = true;
-        this.isConsult = false;
+            this.isTextChatTransferRejected = true;
+            this.isConsult = false;
         });
-        if (this.selectedRow && this.previouslySelectedAgent &&  this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID && !this.isTextChatTransferRejected) {
-        return;
+    
+        // Check if a consultation or transfer request is already in progress for the selected agent
+        if (this.selectedRow && this.previouslySelectedAgent && this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID && !this.isTextChatTransferRejected) {
+            return;
         }
+    
+        // Reset properties
         this.isTextChatTransferRejected = false;
         this.previouslySelectedAgent = this.selectedRow.row;
         this.isConsult = consult;
+    
+        // Rest of the executeAction method
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
-        // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
         if (!freeTextConf.active && !PRESET_TABLES.includes(this.selectedRow.type as ITab)) {
             this.close(true);
             return;
         }
-
-        // check the type if not dynamic list selection
+    
         const type = this._dialogData?.Type || '';
         switch (type) {
             case 'makeCall':
@@ -1812,7 +1819,6 @@ private isTextChatTransferRejected: boolean = false;
                 break;
         }
     }
-
     /**
      * Searches agents based on skill
      */
