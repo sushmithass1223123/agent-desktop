@@ -1766,29 +1766,29 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
-        // Add event listener for TextChatTransferRejectEvent
+        // Addinf event listener for TextChatTransferRejectEvent
         SDKClient.events.on('TextChatTransferRejectEvent', () => {
             this.isTextChatTransferRejected = true;
             this.isConsult = false;
         });
     
-        // Check if a consultation or transfer request is already in progress for the selected agent
+        // Checking if a consultation or transfer request is already in progress for the selected agent
         if (this.selectedRow && this.previouslySelectedAgent && this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID && !this.isTextChatTransferRejected) {
             return;
         }
     
-        // Reset properties
+        // Reseting properties
         this.isTextChatTransferRejected = false;
         this.previouslySelectedAgent = this.selectedRow.row;
         this.isConsult = consult;
     
-        // Rest of the executeAction method
+       
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         if (!freeTextConf.active && !PRESET_TABLES.includes(this.selectedRow.type as ITab)) {
             this.close(true);
             return;
         }
-    
+        // check the type if not dynamic list selection
         const type = this._dialogData?.Type || '';
         switch (type) {
             case 'makeCall':
