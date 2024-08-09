@@ -1201,7 +1201,7 @@ if (error === 'Screenshare Was Cancelled') {
             },
             {
                 key: '#muteDisplayText',
-                value: data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1] 
+                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
             },
             {
                 key: '#streamType',
