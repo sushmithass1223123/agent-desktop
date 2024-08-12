@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwControlInfo, TwCustomerInfo, TwSmmCustomerDetails } from '@ad/types';
-import { SDKClient } from '@tmac/sdk';
+import { SDKClient, TextChatMessageReceivedEvent } from '@tmac/sdk';
 import { HttpClient } from '@angular/common/http';
 import { AppUiService } from '@services/app-ui.service';
 
@@ -68,6 +68,10 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
+
+        SDKClient.events.on("TextChatMessageReceivedEvent", this.TextChatMessageReceivedEvent);
+
         this.editAllowed = this.data.Data.EditAllowed;        
         try {
             console.log("Controls", this.data.Data.ControlFields);
@@ -132,7 +136,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             
         });
 
-        let apiUrl = this.data.Data.SocialMediaAPIs + this.data.Data.UpdateMethodName 
+        let apiUrl = this.data.Data.SocialMediaAPIs + this.data.Data.ViewMethodName 
           + this.customerId; 
        if(this.test) {
         apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
@@ -156,5 +160,17 @@ ngOnDestroy(): void {
     this.destroyWrapper();
 }
    
-
+IncomingEmailEvent(evt) {
+    console.log("Event: ", evt);    
 }
+
+/**
+ * TextChatMessageReceivedEvent Handler
+ * @param evt
+ */
+TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
+    console.log("TextChatMessageReceivedEvent", evt)
+        
+};
+}
+

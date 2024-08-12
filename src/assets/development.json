@@ -280,7 +280,7 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "SocialMediaAPIs": ["http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia"],
+                                        "SocialMediaAPIs": ["http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/"],
                                         "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
                                         "UpdateMethodName": "UpdateCustomerDetails",
                                         "EditAllowed": true,
