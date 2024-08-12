@@ -398,7 +398,17 @@ export class TableComponent implements OnInit {
         this.source.filter = Object.keys(filters).length ? JSON.stringify(filters) : '';
         this.advanceSearchModalRef?.close();
     }
-
+    /**
+     * Does FutureDates enabling and disabling
+     */
+    hasFutureDates(): boolean {
+       const now = new Date();
+       now.setHours(0, 0, 0, 0); // Setting time to midnight for comparison
+       return Object.values(this.advancedSearchForm).some((dateStr) => {
+           const date = new Date(dateStr);
+           return date.getTime() > now.getTime();
+       });
+    }
     /**
      * Closes advanced search modal
      */

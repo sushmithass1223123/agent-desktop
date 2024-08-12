@@ -27,6 +27,8 @@ import { TwCustomerSentimentComponent } from './tw-customer-sentiment/tw-custome
 import { TwDeflectToDigitalComponent } from './tw-deflect-to-digital/tw-deflect-to-digital.component';
 import { TwEmailControlsComponent } from './tw-email-controls/tw-email-controls.component';
 import { TwEmailPanelComponent } from './tw-email-panel/tw-email-panel.component';
+import { TwSmpPanelComponent } from './tw-smp-panel/tw-smp-panel.component';
+import { TwSmpControlsComponent } from './tw-smp-controls/tw-smp-controls.component';
 import { TwEmailTemplatePreviewComponent } from './tw-email-template-preview/tw-email-template-preview.component';
 import { TwEntitiesComponent } from './tw-entities/tw-entities.component';
 import { TwFaxControlsComponent } from './tw-fax-controls/tw-fax-controls.component';
@@ -95,6 +97,8 @@ const collectionComponents = [
     TwPieChartComponent,
     TwVoiceCannedResponsesComponent,
     TwEmailPanelComponent,
+    TwSmpPanelComponent,
+    TwSmpControlsComponent,
     TwEmailControlsComponent,
     TwPendingCallbacksComponent,
     TwGamificationComponent,

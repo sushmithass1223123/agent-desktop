@@ -6,6 +6,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { SDKClient } from '@tmac/sdk';
 import { EmailService } from '../email.service';
 import { TranslocoService } from '@ngneat/transloco';
+import { EMAIL_SEND_STATUS } from 'app/constants';
 @Component({
     selector: 'app-mailbox-settings',
     templateUrl: './mailbox-settings.component.html',
@@ -91,7 +92,22 @@ export class MailboxSettingsComponent implements OnInit {
         btn.disabled = true;
         SDKClient.composeNewEmail(this.mailboxes.form.controls.default.value)
             .then((res) => {
-                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestSuccess'));
+                if(EMAIL_SEND_STATUS[res.response] && EMAIL_SEND_STATUS[res.response] !== 'Success') {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailComposeFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailComposeError${
+                                    EMAIL_SEND_STATUS[res.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                } else {
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestSuccess'));
+                }
                 this.data.close();
             })
             .catch((e) => {

@@ -171,6 +171,9 @@ export type TwChatControlsWhiteboard = {
  *         "ReplyOnChatAllowed": true,
  *         "VoiceNoteAllowed": false,
  *         "AttachmentAllowed": true,
+ *         "AttachmentConstraints": {
+ *              "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+           },
  *         "ScreenShareAllowed": true,
  *         "InteractionCommentAllowed": true,
  *         "HoldInteractionAllowed": true,
@@ -204,6 +207,10 @@ export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData,
  * Chat control config's Data
  */
 export type TwChatControlsData = {
+    /**
+     * Config to differentiate if the call is on hard phone
+     */
+    IsPhoneAudio?: boolean;
     /**
      * Transfer configurations
      */
@@ -252,6 +259,10 @@ export type TwChatControlsData = {
      * Flag to allow attachment
      */
     AttachmentAllowed: boolean;
+    /**
+     * Attachment mime constraints object
+     */
+    AttachmentConstraints: AttachmentConstraints;
     /**
      * Flag to allow screenshare
      */
@@ -459,7 +470,19 @@ export type TwChatControlsData = {
      * Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /**
+     * Symbol entity mapping
+     */
+    XssSymbolEntityMap: XssSymbolEntityMap;
 };
+
+export interface XssSymbolEntityMap {
+    [key: string]: string;
+}
+
+export interface AttachmentConstraints {
+    [platform: string]: string[];
+}
 
 export type TReplyOnSMM = {
     channels: string;

@@ -21,6 +21,7 @@
         "Pinned": false
     },
     "Data": {
+        "IsPhoneAudio": true,
         "Transfer": {
             "Allowed": true,
             "Agent": {
@@ -88,6 +89,9 @@
         "ReplyOnChatAllowed": true,
         "VoiceNoteAllowed": false,
         "AttachmentAllowed": true,
+        "AttachmentConstraints": {
+            "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+        },
         "ScreenShareAllowed": true,
         "InteractionCommentAllowed": true,
         "HoldInteractionAllowed": true,
@@ -117,6 +121,16 @@
         },
         "ReplyAllowed": true,
         "EndInteractionOnAVEnd": true,
-        "CloseInteractionOnEnd": false
+        "CloseInteractionOnEnd": false,
+        "XssSymbolEntityMap": {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;",
+            " ": "&nbsp;",
+            "\n": "&#10;",
+            "\r": "&#13;"
+        }
     }
 }
