@@ -3288,7 +3288,8 @@
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24,
-                                                    "MaximumAllowedPostImageRendering": 1
+                                                    "MaximumAllowedPostImageRendering": 1,
+                                                    "ShowPostDetails": false
                                                 }
                                             }
                                         ]
@@ -3604,9 +3605,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": [
-                    "http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"
-                ],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
                 "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
@@ -3639,5 +3638,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.7.0-beta.9"
+    "Version": "5.7.0"
 }
