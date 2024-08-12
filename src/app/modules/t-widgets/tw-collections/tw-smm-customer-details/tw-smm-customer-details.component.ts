@@ -64,10 +64,12 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      * Lifecycle hook
      * @method
      */
-    ngOnInit() {        
+    ngOnInit() {              
+        try {
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this.getCustomerDetails();
         this._tmacEventService
         .getAllSubscribedEvents<IUIEvent>(['IncomingEmailEvent'])
         .pipe(takeUntil(this.unsubscribeAll))
@@ -77,18 +79,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                 this[evt.EventName](evt);
             })
         );
-
-
         SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
-
-        // SDKClient.events.on("TextChatMessageReceivedEvent", this.TextChatMessageReceivedEvent);
-
-        this.editAllowed = this.data.Data.EditAllowed;        
-        try {
-            console.log("Controls", this.data.Data.ControlFields);
-            console.log("All Data for SMM", this.data.Data);
-
-           
+        this.editAllowed = this.data.Data.EditAllowed;           
         
         } catch (error) {
             console.error('Error in TwSmmCustomerDetails', error);
