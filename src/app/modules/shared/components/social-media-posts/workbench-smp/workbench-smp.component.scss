@@ -236,8 +236,12 @@ workbench-smp {
         transform: translate(-50%, -50%);
     }
 
-    input[type=time] {
-        height: 5px;
+    .mat-form-field-suffix {
+        top: -0.25em !important;
+    }
+
+    input {
+        height: 30px;
     }
 }
 

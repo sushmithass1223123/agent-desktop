@@ -1,21 +1,33 @@
-<ng-container *ngIf="{
-    anchor: (customFuse.anchor$ | async),
-    widget: (customFuse.widget$ | async),
-    config: (customFuse.config$ | async)
-} as customFuse">
-
-    <div class="smp-template twd-w-full wd-h-full theme-bg twd-relative" *transloco="let locale"
-        [ngClass]="{'twd-p-1': mode !== 'workbench', 'twd-p-4': mode === 'workbench'}">
+<ng-container
+    *ngIf="{
+        anchor: (customFuse.anchor$ | async),
+        widget: (customFuse.widget$ | async),
+        config: (customFuse.config$ | async)
+    } as customFuse"
+>
+    <div
+        class="smp-template twd-w-full wd-h-full theme-bg twd-relative"
+        *transloco="let locale"
+        [ngClass]="{ 'twd-p-1': mode !== 'workbench', 'twd-p-4': mode === 'workbench' }"
+    >
         <ng-container>
             <div class="smp-post-info-container twd-flex twd-w-full">
                 <div class="poster-info-flex twd-flex" *ngIf="mode !== 'interaction-min' && mode !== 'interaction-max'">
-                    <img src="assets/images/vectors/{{postData?.SubChannel}}.svg" alt="Poster profile picture">
+                    <img src="assets/images/vectors/{{ postData?.SubChannel }}.svg" alt="Poster profile picture" />
                     <div class="poster-identity-flex twd-flex twd-flex-col">
-                        <h5 class="font-weight-700">{{postData?.PostAccountName}} .
-                            <span>{{getGenericTimeFormat(!postData?.PostUpdatedTime?.includes('-') ?
-                                postData?.PostUpdatedTime :
-                                postData?.PostCreatedTime)}}{{!postData?.PostUpdatedTime?.includes('-') ? '. Edited' :
-                                ''}}</span>
+                        <h5 class="font-weight-700">
+                            {{ postData?.PostAccountName }} .
+                            <span
+                                >{{
+                                    'formatSinceWithDotnetDate'
+                                        | CustomDatePipe
+                                            : (!('includes' | MiscellaneousPipe: postData?.PostUpdatedTime:['-'])
+                                                  ? postData?.PostUpdatedTime
+                                                  : postData?.PostCreatedTime)
+                                }}{{
+                                    !('includes' | MiscellaneousPipe: postData?.PostUpdatedTime:['-']) ? '. Edited' : ''
+                                }}</span
+                            >
                         </h5>
                     </div>
                 </div>
@@ -24,97 +36,206 @@
                         <!-- <h3 class="font-weight-700" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
                             {{postData?.Subject}}
                         </h3> -->
-                        <p class="twd-pt-2 content-para"
-                            [innerHTML]="smpService.stylizeContent(postData?.PostText?.Text?.slice(0, lineClampCharacterCount), postData.PostText?.Text?.slice(lineClampCharacterCount)?.length)">
-                        </p><span class="read-more" (click)="this.lineClampCharacterCount = 999999999999"
-                            *ngIf="postData.PostText?.Text?.slice(lineClampCharacterCount)?.length">Read
-                            more</span>
+                        <p
+                            class="twd-pt-2 content-para"
+                            [innerHTML]="
+                                'stylizeContent'
+                                    | SMPPipe
+                                        : ('slice'
+                                              | MiscellaneousPipe
+                                                  : postData?.PostText?.Text
+                                                  : [0, lineClampCharacterCount])
+                                        : [
+                                              (
+                                                  'slice'
+                                                  | MiscellaneousPipe
+                                                      : postData?.PostText?.Text
+                                                      : [lineClampCharacterCount]
+                                              )?.length
+                                          ]
+                            "
+                        ></p>
+                        <span
+                            class="read-more"
+                            (click)="this.lineClampCharacterCount = 999999999999"
+                            *ngIf="
+                                ('slice' | MiscellaneousPipe: postData?.PostText?.Text:[lineClampCharacterCount])
+                                    ?.length
+                            "
+                            >Read more</span
+                        >
                     </div>
                     <div *ngIf="postData?.PostAttachments?.length" class="poster-gallery twd-w-full twd-pt-2">
-                        <div class="post-image-container"
-                            *ngFor="let postImage of postData.PostAttachments.slice(0, MaximumAllowedPostImageRendering)">
-                            <img *ngIf="postImage.MediaType.includes('image')" [src]="postImage?.MediaUrl"
-                                (click)="previewMedia(postImage)">
-                            <video *ngIf="postImage.MediaType.includes('video')" [src]="postImage?.MediaUrl"
-                                (click)="previewMedia(postImage)" [autoplay]="false"></video>
+                        <div
+                            class="post-image-container"
+                            *ngFor="
+                                let postImage of 'slice'
+                                    | MiscellaneousPipe: postData.PostAttachments:[0, MaximumAllowedPostImageRendering]
+                            "
+                        >
+                            <img
+                                *ngIf="'includes' | MiscellaneousPipe: postImage.MediaType:['image']"
+                                [src]="postImage?.MediaUrl"
+                                (click)="previewMedia(postImage)"
+                            />
+                            <video
+                                *ngIf="'includes' | MiscellaneousPipe: postImage.MediaType:['video']"
+                                [src]="postImage?.MediaUrl"
+                                (click)="previewMedia(postImage)"
+                                [autoplay]="false"
+                            ></video>
                         </div>
-                        <div class="post-image-container twd-flex extras"
-                            *ngIf="postData.PostAttachments.slice(MaximumAllowedPostImageRendering)?.length"
-                            (click)="this.MaximumAllowedPostImageRendering = 99">
-                            <p>+{{postData.PostAttachments.slice(MaximumAllowedPostImageRendering).length}}
+                        <div
+                            class="post-image-container twd-flex extras"
+                            *ngIf="
+                                (
+                                    'slice'
+                                    | MiscellaneousPipe: postData.PostAttachments:[MaximumAllowedPostImageRendering]
+                                )?.length
+                            "
+                            (click)="this.MaximumAllowedPostImageRendering = 99"
+                        >
+                            <p>
+                                +{{
+                                    (
+                                        'slice'
+                                        | MiscellaneousPipe: postData.PostAttachments:[MaximumAllowedPostImageRendering]
+                                    ).length
+                                }}
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="poster-stats-flex twd-flex twd-w-full bt">
-                    <div class="reaction-palette twd-flex" *ngIf="getTotalReactionCount(postData?.PostEngagements)">
+                    <div
+                        class="reaction-palette twd-flex"
+                        *ngIf="'getTotalReactionCount' | SMPPipe: postData?.PostEngagements"
+                    >
                         <ng-container *ngFor="let eng of postData?.PostEngagements">
-                            <img *ngIf="eng.ReactionCount"
-                                src="assets/images/vectors/{{eng.ReactionType.replaceAll(' ', '')}}.svg">
+                            <img
+                                *ngIf="eng.ReactionCount"
+                                src="assets/images/vectors/{{
+                                    'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                }}.svg"
+                            />
                         </ng-container>
-                        <p class="reaction-count twd-pl-2 font-weight-600"
-                            [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                            {{getTotalReactionCount(postData?.PostEngagements)}}
+                        <p
+                            class="reaction-count twd-pl-2 font-weight-600"
+                            [ngStyle]="{ color: 'var(--twd-primary-300)' }"
+                        >
+                            {{ 'getTotalReactionCount' | SMPPipe: postData?.PostEngagements }}
                         </p>
                     </div>
-                    <p *ngIf="!getTotalReactionCount(postData?.PostEngagements)"></p>
-                    <div class="comment-util twd-flex" [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                        <p (click)="scrollToActiveComment()" role="button"
+                    <p *ngIf="!'getTotalReactionCount' | SMPPipe: postData?.PostEngagements"></p>
+                    <div class="comment-util twd-flex" [ngStyle]="{ color: 'var(--twd-primary-300)' }">
+                        <p
+                            (click)="scrollToActiveComment()"
+                            role="button"
                             *ngIf="mode !== 'workbench' && enhanceCommentContainer"
-                            class="active-scroller twd-pl-2 font-weight-600">
-                            Active</p>
+                            class="active-scroller twd-pl-2 font-weight-600"
+                        >
+                            Active
+                        </p>
                         <p class="comments-count twd-pl-2 font-weight-600">
                             Comments
-                            {{getCommentCount()}}</p>
+                            {{
+                                'getCommentCount' | SMPPipe: flattenedCommentHistory:[enhanceCommentContainer, postData]
+                            }}
+                        </p>
                     </div>
                 </div>
             </div>
 
             <div class="smp-post-comment-container twd-w-full" *ngIf="!enhanceCommentContainer">
                 <!-- Parent comment -->
-                <div [id]="postData?.SmParentComments?.CommentId" *ngIf="postData?.SmParentComments"
-                    class="comment-flex twd-w-full">
+                <div
+                    [id]="postData?.SmParentComments?.CommentId"
+                    *ngIf="postData?.SmParentComments"
+                    class="comment-flex twd-w-full"
+                >
                     <div class="image-container twd-relative">
-                        <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
+                        <img src="assets/images/avatars/profile.jpg" alt="Commenter image" />
                     </div>
-                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{postData.IsParentCommentEdited || isParentCommentEdited ? 'edited' : ''}} {{postData.IsParentCommentDeleted || isParentCommentDeleted ? 'deleted' : ''}}"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-
+                    <div
+                        class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{
+                            postData.IsParentCommentEdited || isParentCommentEdited ? 'edited' : ''
+                        }} {{ postData.IsParentCommentDeleted || isParentCommentDeleted ? 'deleted' : '' }}"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                    >
                         <!-- Comment time -->
                         <p class="duration font-weight-500 twd-absolute">
-                            {{getGenericTimeFormat(postData?.SmParentComments?.CreatedDateTime)}}</p>
+                            {{
+                                'formatSinceWithDotnetDate'
+                                    | CustomDatePipe: postData?.SmParentComments?.CreatedDateTime
+                            }}
+                        </p>
 
                         <!-- Comment reactions -->
-                        <div class="active-comment-actions twd-flex twd-absolute" *ngIf="mode !== 'workbench'">
-                            <div class="reaction-palette twd-flex"
-                                *ngIf="getTotalReactionCount(postData?.SmParentComments?.CommentEngagements)">
+                        <div class="active-comment-actions twd-flex twd-absolute">
+                            <div
+                                class="reaction-palette twd-flex"
+                                *ngIf="
+                                    'getTotalReactionCount' | SMPPipe: postData?.SmParentComments?.CommentEngagements
+                                "
+                            >
                                 <ng-container *ngFor="let eng of postData?.SmParentComments?.CommentEngagements">
-                                    <img *ngIf="eng.ReactionCount"
-                                        src="assets/images/vectors/{{eng.ReactionType.replaceAll(' ', '')}}.svg">
+                                    <img
+                                        *ngIf="eng.ReactionCount"
+                                        src="assets/images/vectors/{{
+                                            'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                        }}.svg"
+                                    />
                                 </ng-container>
-                                <p class="reaction-count twd-pl-2 font-weight-600"
-                                    [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                                    {{getTotalReactionCount(postData?.SmParentComments?.CommentEngagements)}}
+                                <p
+                                    class="reaction-count twd-pl-2 font-weight-600"
+                                    [ngStyle]="{ color: 'var(--twd-primary-300)' }"
+                                >
+                                    {{
+                                        'getTotalReactionCount'
+                                            | SMPPipe: postData?.SmParentComments?.CommentEngagements
+                                    }}
                                 </p>
                             </div>
                         </div>
 
                         <!-- Actual comment detail -->
                         <div class="comment-info-flex">
-                            <h5 class="font-weight-700 text-truncate">{{postData?.SmParentComments?.FromName ?
-                                postData?.SmParentComments?.FromName : postData?.PostAccountName}}<span
-                                    *ngIf="postData.IsParentCommentEdited || isParentCommentEdited"> .
-                                    {{getGenericTimeFormat(postData?.SmParentComments?.UpdatedDateTime)}}
-                                    . Edited</span></h5>
-                            <p class="font-weight-500"
-                                [innerHTML]="smpService.stylizeContent(postData?.SmParentComments?.CommentText?.Text)">
-                            </p>
-                            <div class="media-data-placeholder twd-flex" role="button"
-                                (click)="this.renderParentCommentAttachment = true;"
+                            <h5 class="font-weight-700 text-truncate">
+                                {{
+                                    postData?.SmParentComments?.FromName
+                                        ? postData?.SmParentComments?.FromName
+                                        : postData?.PostAccountName
+                                }}<span *ngIf="postData.IsParentCommentEdited || isParentCommentEdited">
+                                    .
+                                    {{
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe: postData?.SmParentComments?.UpdatedDateTime
+                                    }}
+                                    . Edited</span
+                                >
+                            </h5>
+                            <p
+                                class="font-weight-500"
+                                [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmParentComments?.CommentText?.Text"
+                            ></p>
+                            <div
+                                class="media-data-placeholder twd-flex"
+                                role="button"
+                                (click)="this.renderParentCommentAttachment = true"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                                *ngIf="!renderParentCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length === 1">
+                                *ngIf="
+                                    !renderParentCommentAttachment &&
+                                    postData?.SmParentComments?.CommentAttachments?.length === 1
+                                "
+                            >
                                 <ng-container
-                                    [ngSwitch]="getFileType(postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl, postData?.SmParentComments?.CommentAttachments[0]?.MediaType)">
+                                    [ngSwitch]="
+                                        'getFileType'
+                                            | SMPPipe
+                                                : postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl
+                                                : [postData?.SmParentComments?.CommentAttachments[0]?.MediaType]
+                                    "
+                                >
                                     <ng-container *ngSwitchCase="'image'">
                                         <mat-icon> insert_photo</mat-icon>
                                         <p>Image</p>
@@ -126,48 +247,86 @@
                                 </ng-container>
                             </div>
                             <ng-container
-                                *ngIf="renderParentCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length === 1"
-                                [ngSwitch]="getFileType(postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl, postData?.SmParentComments?.CommentAttachments[0]?.MediaType)">
-                                <img *ngSwitchCase="'image'"
-                                    [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl">
-                                <video *ngSwitchCase="'video'"
+                                *ngIf="
+                                    renderParentCommentAttachment &&
+                                    postData?.SmParentComments?.CommentAttachments?.length === 1
+                                "
+                                [ngSwitch]="
+                                    'getFileType'
+                                        | SMPPipe
+                                            : postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl
+                                            : [postData?.SmParentComments?.CommentAttachments[0]?.MediaType]
+                                "
+                            >
+                                <img
+                                    *ngSwitchCase="'image'"
                                     [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl"
-                                    [autoplay]="false" controls></video>
+                                />
+                                <video
+                                    *ngSwitchCase="'video'"
+                                    [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl"
+                                    [autoplay]="false"
+                                    controls
+                                ></video>
                             </ng-container>
                         </div>
                     </div>
 
-                    <mat-icon *ngIf="postData.IsParentCommentDeleted || isParentCommentDeleted"
-                        class="deleted-icon">delete_forever</mat-icon>
+                    <mat-icon *ngIf="postData.IsParentCommentDeleted || isParentCommentDeleted" class="deleted-icon"
+                        >delete_forever</mat-icon
+                    >
                 </div>
 
                 <!-- Active comment -->
-                <div [id]="postData?.SmActiveComment?.CommentId" class="comment-flex twd-w-full"
-                    [ngStyle]="{ 'paddingLeft': (postData?.SmActiveComment?.ParentId !== postData?.PostId) ? '45px' : 0 }">
+                <div
+                    [id]="postData?.SmActiveComment?.CommentId"
+                    class="comment-flex twd-w-full"
+                    [ngStyle]="{ paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '45px' : 0 }"
+                >
                     <div class="image-container twd-relative">
-                        <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
+                        <img src="assets/images/avatars/profile.jpg" alt="Commenter image" />
                     </div>
-                    <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative active-comment {{findPreviousCommentIndex() || isActiveCommentEdited || postData.IsCommentEdited ? 'edited' : ''}} {{postData.IsCommentDeleted || isActiveCommentDeleted ? 'deleted' : ''}}"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-
+                    <div
+                        class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative active-comment {{
+                            ('findPreviousCommentIndex' | SMPPipe: previousCommentFromNotification:[postData]) ||
+                            isActiveCommentEdited ||
+                            postData.IsCommentEdited
+                                ? 'edited'
+                                : ''
+                        }} {{ postData.IsCommentDeleted || isActiveCommentDeleted ? 'deleted' : '' }}"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                    >
                         <!-- Comment time -->
                         <p class="duration font-weight-500 twd-absolute">
-                            {{getGenericTimeFormat(postData?.SmActiveComment?.CreatedDateTime)}}</p>
+                            {{
+                                'formatSinceWithDotnetDate' | CustomDatePipe: postData?.SmActiveComment?.CreatedDateTime
+                            }}
+                        </p>
 
                         <!-- Comment actions -->
                         <div class="active-comment-actions twd-flex twd-absolute">
                             <!-- <p class="font-weight-500"
                                 *ngIf="!getTotalReactionCount(postData?.SmActiveComment?.CommentEngagements) && mode !== 'workbench'">
                                 Like</p> -->
-                            <div class="reaction-palette twd-flex"
-                                *ngIf="getTotalReactionCount(postData?.SmActiveComment?.CommentEngagements)">
+                            <div
+                                class="reaction-palette twd-flex"
+                                *ngIf="'getTotalReactionCount' | SMPPipe: postData?.SmActiveComment?.CommentEngagements"
+                            >
                                 <ng-container *ngFor="let eng of postData?.SmActiveComment?.CommentEngagements">
-                                    <img *ngIf="eng.ReactionCount"
-                                        src="assets/images/vectors/{{eng.ReactionType.replaceAll(' ', '')}}.svg">
+                                    <img
+                                        *ngIf="eng.ReactionCount"
+                                        src="assets/images/vectors/{{
+                                            'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                        }}.svg"
+                                    />
                                 </ng-container>
-                                <p class="reaction-count twd-pl-2 font-weight-600"
-                                    [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                                    {{getTotalReactionCount(postData?.SmActiveComment?.CommentEngagements)}}
+                                <p
+                                    class="reaction-count twd-pl-2 font-weight-600"
+                                    [ngStyle]="{ color: 'var(--twd-primary-300)' }"
+                                >
+                                    {{
+                                        'getTotalReactionCount' | SMPPipe: postData?.SmActiveComment?.CommentEngagements
+                                    }}
                                 </p>
                             </div>
                             <!-- <p class="font-weight-500">Reply</p> -->
@@ -175,22 +334,59 @@
 
                         <!-- Actual comment detail -->
                         <div class="comment-info-flex">
-                            <h5 class="font-weight-700 text-truncate">{{postData?.SmActiveComment?.FromName ?
-                                postData?.SmActiveComment?.FromName : postData?.PostAccountName}}<span
-                                    *ngIf="findPreviousCommentIndex() && !(isActiveCommentEdited || postData.IsCommentEdited)"> .
-                                    {{getGenericTimeFormat(findPreviousCommentIndex()?.UpdatedDateTime)}}
-                                    . Edited</span><span *ngIf="isActiveCommentEdited || postData.IsCommentEdited"> .
-                                    {{getGenericTimeFormat(postData.SmActiveComment?.UpdatedDateTime)}}
-                                    . Edited</span></h5>
-                            <p class="font-weight-500"
-                                [innerHTML]="smpService.stylizeContent(postData?.SmActiveComment?.CommentText?.Text)">
-                            </p>
-                            <div class="media-data-placeholder twd-flex" role="button"
-                                (click)="this.renderActiveCommentAttachment = true;"
+                            <h5 class="font-weight-700 text-truncate">
+                                {{
+                                    postData?.SmActiveComment?.FromName
+                                        ? postData?.SmActiveComment?.FromName
+                                        : postData?.PostAccountName
+                                }}<span
+                                    *ngIf="
+                                        ('findPreviousCommentIndex'
+                                            | SMPPipe: previousCommentFromNotification:[postData]) &&
+                                        !(isActiveCommentEdited || postData.IsCommentEdited)
+                                    "
+                                >
+                                    .
+                                    {{
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe
+                                                : (
+                                                      'findPreviousCommentIndex'
+                                                      | SMPPipe: previousCommentFromNotification:[postData]
+                                                  )?.UpdatedDateTime
+                                    }}
+                                    . Edited</span
+                                ><span *ngIf="isActiveCommentEdited || postData.IsCommentEdited">
+                                    .
+                                    {{
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe: postData.SmActiveComment?.UpdatedDateTime
+                                    }}
+                                    . Edited</span
+                                >
+                            </h5>
+                            <p
+                                class="font-weight-500"
+                                [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmActiveComment?.CommentText?.Text"
+                            ></p>
+                            <div
+                                class="media-data-placeholder twd-flex"
+                                role="button"
+                                (click)="this.renderActiveCommentAttachment = true"
                                 [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                                *ngIf="!renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length === 1">
+                                *ngIf="
+                                    !renderActiveCommentAttachment &&
+                                    postData?.SmActiveComment?.CommentAttachments?.length === 1
+                                "
+                            >
                                 <ng-container
-                                    [ngSwitch]="getFileType(postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl, postData?.SmActiveComment?.CommentAttachments[0]?.MediaType)">
+                                    [ngSwitch]="
+                                        'getFileType'
+                                            | SMPPipe
+                                                : postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl
+                                                : [postData?.SmActiveComment?.CommentAttachments[0]?.MediaType]
+                                    "
+                                >
                                     <ng-container *ngSwitchCase="'image'">
                                         <mat-icon> insert_photo</mat-icon>
                                         <p>Image</p>
@@ -202,62 +398,111 @@
                                 </ng-container>
                             </div>
                             <ng-container
-                                *ngIf="renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length === 1"
-                                [ngSwitch]="getFileType(postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl, postData?.SmActiveComment?.CommentAttachments[0]?.MediaType)">
-                                <img *ngSwitchCase="'image'"
-                                    [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl">
-                                <video *ngSwitchCase="'video'"
+                                *ngIf="
+                                    renderActiveCommentAttachment &&
+                                    postData?.SmActiveComment?.CommentAttachments?.length === 1
+                                "
+                                [ngSwitch]="
+                                    'getFileType'
+                                        | SMPPipe
+                                            : postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl
+                                            : [postData?.SmActiveComment?.CommentAttachments[0]?.MediaType]
+                                "
+                            >
+                                <img
+                                    *ngSwitchCase="'image'"
                                     [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl"
-                                    [autoplay]="false" controls></video>
+                                />
+                                <video
+                                    *ngSwitchCase="'video'"
+                                    [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl"
+                                    [autoplay]="false"
+                                    controls
+                                ></video>
                             </ng-container>
                         </div>
                     </div>
 
                     <!-- Previous -->
-                    <ng-container *ngIf="findPreviousCommentIndex() as prevComment">
-                        <mat-icon role="button" (click)="this.showPreviousComment = !this.showPreviousComment"
-                            class="prev-com-trigger">info</mat-icon>
-                        <div *ngIf="showPreviousComment" style="margin-left: -5px;"
-                            class="previous-comment-holder mat-elevation-z1">
+                    <ng-container
+                        *ngIf="
+                            'findPreviousCommentIndex'
+                                | SMPPipe: previousCommentFromNotification:[postData] as prevComment
+                        "
+                    >
+                        <mat-icon
+                            role="button"
+                            (click)="this.showPreviousComment = !this.showPreviousComment"
+                            class="prev-com-trigger"
+                            >info</mat-icon
+                        >
+                        <div
+                            *ngIf="showPreviousComment"
+                            style="margin-left: -5px"
+                            class="previous-comment-holder mat-elevation-z1"
+                        >
                             <h4>Previous comment</h4>
                             <div class="comment-flex twd-w-full">
                                 <div class="image-container twd-relative">
-                                    <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
+                                    <img src="assets/images/avatars/profile.jpg" alt="Commenter image" />
                                 </div>
-                                <div style="max-width: 100%;"
-                                    class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative">
-
+                                <div
+                                    style="max-width: 100%"
+                                    class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative"
+                                >
                                     <!-- Comment time -->
                                     <p class="duration font-weight-500 twd-absolute">
-                                        {{getGenericTimeFormat(prevComment?.CreatedDateTime)}}</p>
+                                        {{ 'formatSinceWithDotnetDate' | CustomDatePipe: prevComment?.CreatedDateTime }}
+                                    </p>
 
                                     <!-- Comment actions -->
                                     <div class="active-comment-actions twd-flex twd-absolute">
-                                        <div class="reaction-palette twd-flex"
-                                            *ngIf="getTotalReactionCount(prevComment?.CommentEngagements)">
+                                        <div
+                                            class="reaction-palette twd-flex"
+                                            *ngIf="'getTotalReactionCount' | SMPPipe: prevComment?.CommentEngagements"
+                                        >
                                             <ng-container *ngFor="let eng of prevComment?.CommentEngagements">
-                                                <img *ngIf="eng.ReactionCount"
-                                                    src="assets/images/vectors/{{eng.ReactionType.replaceAll(' ', '')}}.svg">
+                                                <img
+                                                    *ngIf="eng.ReactionCount"
+                                                    src="assets/images/vectors/{{
+                                                        'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                                    }}.svg"
+                                                />
                                             </ng-container>
-                                            <p class="reaction-count twd-pl-2 font-weight-600"
-                                                [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                                                {{getTotalReactionCount(prevComment?.CommentEngagements)}}
+                                            <p
+                                                class="reaction-count twd-pl-2 font-weight-600"
+                                                [ngStyle]="{ color: 'var(--twd-primary-300)' }"
+                                            >
+                                                {{ 'getTotalReactionCount' | SMPPipe: prevComment?.CommentEngagements }}
                                             </p>
                                         </div>
                                     </div>
 
                                     <!-- Actual comment detail -->
                                     <div class="comment-info-flex">
-                                        <h5 style="max-width: 10vw;" class="font-weight-700 text-truncate">
-                                            {{prevComment?.FromName ?
-                                            prevComment?.FromName : postData?.PostAccountName}}</h5>
-                                        <p class="font-weight-500">{{prevComment?.CommentText?.PreviousComment}}</p>
-                                        <div class="media-data-placeholder twd-flex" role="button"
-                                            (click)="this.renderPrevCommentAttachment = true;"
+                                        <h5 style="max-width: 10vw" class="font-weight-700 text-truncate">
+                                            {{
+                                                prevComment?.FromName
+                                                    ? prevComment?.FromName
+                                                    : postData?.PostAccountName
+                                            }}
+                                        </h5>
+                                        <p class="font-weight-500">{{ prevComment?.CommentText?.PreviousComment }}</p>
+                                        <div
+                                            class="media-data-placeholder twd-flex"
+                                            role="button"
+                                            (click)="this.renderPrevCommentAttachment = true"
                                             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                                            *ngIf="prevComment?.CommentAttachments?.length === 1">
+                                            *ngIf="prevComment?.CommentAttachments?.length === 1"
+                                        >
                                             <ng-container
-                                                [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl, prevComment?.CommentAttachments[0]?.MediaType)">
+                                                [ngSwitch]="
+                                                    'getFileType'
+                                                        | SMPPipe
+                                                            : prevComment?.CommentAttachments[0]?.MediaUrl
+                                                            : [prevComment?.CommentAttachments[0]?.MediaType]
+                                                "
+                                            >
                                                 <ng-container *ngSwitchCase="'image'">
                                                     <mat-icon> insert_photo</mat-icon>
                                                     <p>Image</p>
@@ -269,13 +514,27 @@
                                             </ng-container>
                                         </div>
                                         <ng-container
-                                            *ngIf="prevComment?.CommentAttachments?.length === 1 && renderPrevCommentAttachment"
-                                            [ngSwitch]="getFileType(prevComment?.CommentAttachments[0]?.MediaUrl, prevComment?.CommentAttachments[0]?.MediaType)">
-                                            <img *ngSwitchCase="'image'"
-                                                [src]="prevComment?.CommentAttachments[0]?.MediaUrl">
-                                            <video *ngSwitchCase="'video'"
-                                                [src]="prevComment?.CommentAttachments[0]?.MediaUrl" [autoplay]="false"
-                                                controls></video>
+                                            *ngIf="
+                                                prevComment?.CommentAttachments?.length === 1 &&
+                                                renderPrevCommentAttachment
+                                            "
+                                            [ngSwitch]="
+                                                'getFileType'
+                                                    | SMPPipe
+                                                        : prevComment?.CommentAttachments[0]?.MediaUrl
+                                                        : [prevComment?.CommentAttachments[0]?.MediaType]
+                                            "
+                                        >
+                                            <img
+                                                *ngSwitchCase="'image'"
+                                                [src]="prevComment?.CommentAttachments[0]?.MediaUrl"
+                                            />
+                                            <video
+                                                *ngSwitchCase="'video'"
+                                                [src]="prevComment?.CommentAttachments[0]?.MediaUrl"
+                                                [autoplay]="false"
+                                                controls
+                                            ></video>
                                         </ng-container>
                                     </div>
                                 </div>
@@ -283,48 +542,93 @@
                         </div>
                     </ng-container>
 
-                    <mat-icon *ngIf="postData.IsCommentDeleted || isActiveCommentDeleted"
-                        class="deleted-icon">delete_forever</mat-icon>
+                    <mat-icon *ngIf="postData.IsCommentDeleted || isActiveCommentDeleted" class="deleted-icon"
+                        >delete_forever</mat-icon
+                    >
                 </div>
 
                 <!-- Reply container -->
                 <ng-container *ngIf="mode === 'interaction-min' && draftData">
-                    <div class="reply-area twd-relative"
-                        [ngStyle]="{'paddingLeft': postData?.SmActiveComment?.ParentId !== postData?.PostId ? '40px' : '45px'}">
+                    <div
+                        class="reply-area twd-relative"
+                        [ngStyle]="{
+                            paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '40px' : '45px'
+                        }"
+                    >
                         <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
-                            <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
+                            <textarea
+                                #replyInput
+                                [(ngModel)]="draftData.body"
+                                name="reply"
+                                id="reply"
+                                [rows]="2"
                                 placeholder="Enter your reply here..."
-                                (input)="dataChanged.emit(interactionId)"></textarea>
+                                (input)="dataChanged.emit(interactionId)"
+                            ></textarea>
                             <div class="attachment-container" *ngIf="draftData?.rawAttachmentData">
                                 <mat-icon role="button" (click)="onClearAttachment()">close</mat-icon>
-                                <img *ngIf="draftData?.mimeConstraints.includes('image')"
-                                    (click)="previewMedia({MediaType: 'image', MediaUrl: draftData?.rawAttachmentData})"
-                                    [src]="draftData?.rawAttachmentData">
-                                <video *ngIf="draftData?.mimeConstraints.includes('video')"
-                                    (click)="previewMedia({MediaType: 'video', MediaUrl: draftData?.rawAttachmentData})"
-                                    [src]="draftData?.rawAttachmentData"></video>
+                                <img
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
+                                    (click)="
+                                        previewMedia({ MediaType: 'image', MediaUrl: draftData?.rawAttachmentData })
+                                    "
+                                    [src]="draftData?.rawAttachmentData"
+                                />
+                                <video
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                    (click)="
+                                        previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })
+                                    "
+                                    [src]="draftData?.rawAttachmentData"
+                                ></video>
                             </div>
                             <div class="reply-actions twd-w-full twd-flex">
                                 <div class="r-actions twd-flex">
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
                                         (click)="this.showEmojiPicker = !this.showEmojiPicker"
-                                        role="button">tag_faces</mat-icon>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
-                                        [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
-                                        (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
-                                        [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
-                                        (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
-                                        [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
-                                        (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
+                                        role="button"
+                                        >tag_faces</mat-icon
+                                    >
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
+                                        [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                        (click)="onAttach('image/gif')"
+                                        role="button"
+                                        >gif</mat-icon
+                                    >
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
+                                        [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                        (click)="onAttach('image/*')"
+                                        role="button"
+                                        >camera_alt</mat-icon
+                                    >
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
+                                        [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                        (click)="onAttach('video/mp4')"
+                                        role="button"
+                                        >movie</mat-icon
+                                    >
                                 </div>
-                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')" role="button"
-                                    (click)="onSendReply()">send</mat-icon>
+                                <mat-icon
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
+                                    role="button"
+                                    (click)="onSendReply()"
+                                    >send</mat-icon
+                                >
                             </div>
-                            <emoji-mart *ngIf="showEmojiPicker" style="z-index: 2;" (emojiClick)="addEmoji($event)"
-                                [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"
-                                isNative="true" navPosition="none" searchPosition="none"></emoji-mart>
+                            <emoji-mart
+                                *ngIf="showEmojiPicker"
+                                style="z-index: 2"
+                                (emojiClick)="addEmoji($event)"
+                                [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme:['dark']"
+                                [showPreview]="false"
+                                isNative="true"
+                                navPosition="none"
+                                searchPosition="none"
+                            ></emoji-mart>
                         </div>
                     </div>
                 </ng-container>
@@ -332,53 +636,107 @@
 
             <div class="smp-post-comment-container twd-w-full" *ngIf="enhanceCommentContainer">
                 <ng-container *ngFor="let commentData of flattenedCommentHistory">
-                    <div [id]="commentData?.CommentId" *ngIf="commentData?.isVisible" class="comment-flex twd-w-full"
-                        [ngStyle]="{ 'paddingLeft': (commentData.nestLevel * 45)+'px', 'marginTop' : engagementFromNotification && (engagementFromNotification?.smmId === commentData.CommentId || engagementFromNotification?.SmmId === commentData.PostId) ? '10px' : 0}">
+                    <div
+                        [id]="commentData?.CommentId"
+                        *ngIf="commentData?.isVisible"
+                        class="comment-flex twd-w-full"
+                        [ngStyle]="{
+                            paddingLeft: commentData.nestLevel * 45 + 'px',
+                            marginTop:
+                                engagementFromNotification &&
+                                (engagementFromNotification?.smmId === commentData.CommentId ||
+                                    engagementFromNotification?.SmmId === commentData.PostId)
+                                    ? '10px'
+                                    : 0
+                        }"
+                    >
                         <div class="image-container twd-relative">
-                            <img src="assets/images/avatars/profile.jpg" alt="Commenter image">
+                            <img src="assets/images/avatars/profile.jpg" alt="Commenter image" />
                         </div>
-                        <div class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{((engagementFromNotification && engagementFromNotification?.smmId === commentData?.CommentId || engagementFromNotification?.smmId === commentData?.PostId) || (mode === 'interaction-max' && commentData?.CommentId === postData?.SmActiveComment?.CommentId)) ? 'active-comment' : ''}} {{commentData?.IsEdited ? 'edited' : ''}} {{commentData?.IsDeleted ? 'deleted' : ''}}"
-                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-
+                        <div
+                            class="comment-box bubble mat-elevation-z1 twd-p-3 twd-rounded-3xl twd-relative {{
+                                (engagementFromNotification &&
+                                    engagementFromNotification?.smmId === commentData?.CommentId) ||
+                                engagementFromNotification?.smmId === commentData?.PostId ||
+                                (mode === 'interaction-max' &&
+                                    commentData?.CommentId === postData?.SmActiveComment?.CommentId)
+                                    ? 'active-comment'
+                                    : ''
+                            }} {{ commentData?.IsEdited ? 'edited' : '' }} {{
+                                commentData?.IsDeleted ? 'deleted' : ''
+                            }}"
+                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                        >
                             <!-- Reaction from notification -->
-                            <img class="not-rimg"
-                                *ngIf="engagementFromNotification && (engagementFromNotification?.smmId === commentData.CommentId || engagementFromNotification?.SmmId === commentData.PostId)"
-                                src="assets/images/vectors/{{engagementFromNotification?.reactionType?.replaceAll(' ', '')}}.svg">
+                            <img
+                                class="not-rimg"
+                                *ngIf="
+                                    engagementFromNotification &&
+                                    (engagementFromNotification?.smmId === commentData.CommentId ||
+                                        engagementFromNotification?.SmmId === commentData.PostId)
+                                "
+                                src="assets/images/vectors/{{
+                                    'replaceAll' | MiscellaneousPipe: engagementFromNotification:[' ', '']
+                                }}.svg"
+                            />
 
                             <!-- Comment time -->
                             <p class="duration font-weight-500 twd-absolute">
-                                {{getGenericTimeFormat(commentData?.CreatedDateTime)}}</p>
+                                {{ 'formatSinceWithDotnetDate' | CustomDatePipe: commentData?.CreatedDateTime }}
+                            </p>
 
                             <!-- Comment reactions -->
                             <div class="active-comment-actions twd-flex twd-absolute">
-                                <div class="reaction-palette twd-flex"
-                                    *ngIf="getTotalReactionCount(commentData?.CommentEngagements)">
+                                <div
+                                    class="reaction-palette twd-flex"
+                                    *ngIf="'getTotalReactionCount' | SMPPipe: commentData?.CommentEngagements"
+                                >
                                     <ng-container *ngFor="let eng of commentData?.CommentEngagements">
-                                        <img *ngIf="eng.ReactionCount"
-                                            src="assets/images/vectors/{{eng.ReactionType.replaceAll(' ', '')}}.svg">
+                                        <img
+                                            *ngIf="eng.ReactionCount"
+                                            src="assets/images/vectors/{{
+                                                'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
+                                            }}.svg"
+                                        />
                                     </ng-container>
-                                    <p class="reaction-count twd-pl-2 font-weight-600"
-                                        [ngStyle]="{'color': 'var(--twd-primary-300)'}">
-                                        {{getTotalReactionCount(commentData?.CommentEngagements)}}
+                                    <p
+                                        class="reaction-count twd-pl-2 font-weight-600"
+                                        [ngStyle]="{ color: 'var(--twd-primary-300)' }"
+                                    >
+                                        {{ 'getTotalReactionCount' | SMPPipe: commentData?.CommentEngagements }}
                                     </p>
                                 </div>
                             </div>
 
                             <!-- Actual comment detail -->
                             <div class="comment-info-flex">
-                                <h5 class="font-weight-700 text-truncate">{{commentData?.FromName ?
-                                    commentData?.FromName : postData?.PostAccountName}}<span
-                                        *ngIf="commentData.IsEdited"> .
-                                        {{getGenericTimeFormat(commentData?.UpdatedDateTime)}}
-                                        . Edited</span></h5>
-                                <p class="font-weight-500"
-                                    [innerHTML]="smpService.stylizeContent(commentData?.CommentText?.Text)"></p>
-                                <div class="media-data-placeholder twd-flex" role="button"
-                                    (click)="commentData.renderMedia = true;"
+                                <h5 class="font-weight-700 text-truncate">
+                                    {{ commentData?.FromName ? commentData?.FromName : postData?.PostAccountName
+                                    }}<span *ngIf="commentData.IsEdited">
+                                        .
+                                        {{ 'formatSinceWithDotnetDate' | CustomDatePipe: commentData?.UpdatedDateTime }}
+                                        . Edited</span
+                                    >
+                                </h5>
+                                <p
+                                    class="font-weight-500"
+                                    [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text"
+                                ></p>
+                                <div
+                                    class="media-data-placeholder twd-flex"
+                                    role="button"
+                                    (click)="commentData.renderMedia = true"
                                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
-                                    *ngIf="!commentData.renderMedia && commentData?.CommentAttachments?.length === 1">
+                                    *ngIf="!commentData.renderMedia && commentData?.CommentAttachments?.length === 1"
+                                >
                                     <ng-container
-                                        [ngSwitch]="getFileType(commentData?.CommentAttachments[0]?.MediaUrl, commentData?.CommentAttachments[0]?.MediaType)">
+                                        [ngSwitch]="
+                                            'getFileType'
+                                                | SMPPipe
+                                                    : commentData?.CommentAttachments[0]?.MediaUrl
+                                                    : [commentData?.CommentAttachments[0]?.MediaType]
+                                        "
+                                    >
                                         <ng-container *ngSwitchCase="'image'">
                                             <mat-icon> insert_photo</mat-icon>
                                             <p>Image</p>
@@ -391,10 +749,20 @@
                                 </div>
                                 <ng-container
                                     *ngIf="commentData.renderMedia && commentData?.CommentAttachments?.length === 1"
-                                    [ngSwitch]="getFileType(commentData?.CommentAttachments[0]?.MediaUrl, commentData?.CommentAttachments[0]?.MediaType)">
-                                    <img *ngSwitchCase="'image'" [src]="commentData?.CommentAttachments[0]?.MediaUrl">
-                                    <video *ngSwitchCase="'video'" [src]="commentData?.CommentAttachments[0]?.MediaUrl"
-                                        [autoplay]="false" controls></video>
+                                    [ngSwitch]="
+                                        'getFileType'
+                                            | SMPPipe
+                                                : commentData?.CommentAttachments[0]?.MediaUrl
+                                                : [commentData?.CommentAttachments[0]?.MediaType]
+                                    "
+                                >
+                                    <img *ngSwitchCase="'image'" [src]="commentData?.CommentAttachments[0]?.MediaUrl" />
+                                    <video
+                                        *ngSwitchCase="'video'"
+                                        [src]="commentData?.CommentAttachments[0]?.MediaUrl"
+                                        [autoplay]="false"
+                                        controls
+                                    ></video>
                                 </ng-container>
                             </div>
                         </div>
@@ -403,64 +771,128 @@
                     </div>
                     <!-- Reply container -->
                     <ng-container
-                        *ngIf="mode === 'interaction-max' && draftData && commentData?.CommentId === postData?.SmActiveComment?.CommentId">
-                        <div class="reply-area twd-relative"
-                            [ngStyle]="{ 'paddingLeft': ((commentData.nestLevel + 1) * 45)+'px'}">
+                        *ngIf="
+                            mode === 'interaction-max' &&
+                            draftData &&
+                            commentData?.CommentId === postData?.SmActiveComment?.CommentId
+                        "
+                    >
+                        <div
+                            class="reply-area twd-relative"
+                            [ngStyle]="{ paddingLeft: (commentData.nestLevel + 1) * 45 + 'px' }"
+                        >
                             <div class="reply-box twd-rounded-3xl twd-flex twd-flex-col twd-p-2 mat-elevation-z1">
-                                <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
+                                <textarea
+                                    #replyInput
+                                    [(ngModel)]="draftData.body"
+                                    name="reply"
+                                    id="reply"
+                                    [rows]="2"
                                     placeholder="Enter your reply here..."
-                                    (input)="dataChanged.emit(interactionId)"></textarea>
+                                    (input)="dataChanged.emit(interactionId)"
+                                ></textarea>
                                 <div class="attachment-container" *ngIf="draftData?.rawAttachmentData">
                                     <mat-icon role="button" (click)="onClearAttachment()">close</mat-icon>
-                                    <img *ngIf="draftData?.mimeConstraints.includes('image')"
-                                        (click)="previewMedia({MediaType: 'image', MediaUrl: draftData?.rawAttachmentData})"
-                                        [src]="draftData?.rawAttachmentData">
-                                    <video *ngIf="draftData?.mimeConstraints.includes('video')"
-                                        (click)="previewMedia({MediaType: 'video', MediaUrl: draftData?.rawAttachmentData})"
-                                        [src]="draftData?.rawAttachmentData"></video>
+                                    <img
+                                        *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
+                                        (click)="
+                                            previewMedia({ MediaType: 'image', MediaUrl: draftData?.rawAttachmentData })
+                                        "
+                                        [src]="draftData?.rawAttachmentData"
+                                    />
+                                    <video
+                                        *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                        (click)="
+                                            previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })
+                                        "
+                                        [src]="draftData?.rawAttachmentData"
+                                    ></video>
                                 </div>
                                 <div class="reply-actions twd-w-full twd-flex">
                                     <div class="r-actions twd-flex">
-                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
+                                        <mat-icon
+                                            [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
                                             (click)="this.showEmojiPicker = !this.showEmojiPicker"
-                                            role="button">tag_faces</mat-icon>
-                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
-                                            [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
-                                            (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
-                                            [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
-                                            (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
-                                        <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
-                                            [ngStyle]="{'pointerEvents': draftData?.attachments?.length ? 'none' : 'all'}"
-                                            (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
+                                            role="button"
+                                            >tag_faces</mat-icon
+                                        >
+                                        <mat-icon
+                                            [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
+                                            [ngStyle]="{
+                                                pointerEvents: draftData?.attachments?.length ? 'none' : 'all'
+                                            }"
+                                            (click)="onAttach('image/gif')"
+                                            role="button"
+                                            >gif</mat-icon
+                                        >
+                                        <mat-icon
+                                            [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
+                                            [ngStyle]="{
+                                                pointerEvents: draftData?.attachments?.length ? 'none' : 'all'
+                                            }"
+                                            (click)="onAttach('image/*')"
+                                            role="button"
+                                            >camera_alt</mat-icon
+                                        >
+                                        <mat-icon
+                                            [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
+                                            [ngStyle]="{
+                                                pointerEvents: draftData?.attachments?.length ? 'none' : 'all'
+                                            }"
+                                            (click)="onAttach('video/mp4')"
+                                            role="button"
+                                            >movie</mat-icon
+                                        >
                                     </div>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
-                                        role="button" (click)="onSendReply()">send</mat-icon>
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
+                                        role="button"
+                                        (click)="onSendReply()"
+                                        >send</mat-icon
+                                    >
                                 </div>
-                                <emoji-mart *ngIf="showEmojiPicker" style="z-index: 2;" (emojiClick)="addEmoji($event)"
-                                    [darkMode]="customFuse.config.colorTheme.includes('dark')" [showPreview]="false"
-                                    isNative="true" navPosition="none" searchPosition="none"></emoji-mart>
+                                <emoji-mart
+                                    *ngIf="showEmojiPicker"
+                                    style="z-index: 2"
+                                    (emojiClick)="addEmoji($event)"
+                                    [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme:['dark']"
+                                    [showPreview]="false"
+                                    isNative="true"
+                                    navPosition="none"
+                                    searchPosition="none"
+                                ></emoji-mart>
                             </div>
                         </div>
                     </ng-container>
 
                     <!-- Load replies for this comment -->
-                    <div class="load-template twd-flex" (click)="onForceLoadHistory('replies', commentData)"
-                        *ngIf="commentData?.ReplyComments?.length && commentData?.isVisible && !validateLoadHistory('replies', commentData)"
-                        [ngStyle]="{ 'paddingLeft': ((commentData.nestLevel + 1) * 45)+'px'}">
+                    <div
+                        class="load-template twd-flex"
+                        (click)="onForceLoadHistory(commentData)"
+                        *ngIf="
+                            commentData?.ReplyComments?.length &&
+                            commentData?.isVisible &&
+                            !('validateLoadHistory' | SMPPipe: commentData:[flattenedCommentHistory])
+                        "
+                        [ngStyle]="{ paddingLeft: (commentData.nestLevel + 1) * 45 + 'px' }"
+                    >
                         <mat-icon> add_comment</mat-icon>
                         <p>Load replies</p>
                     </div>
                 </ng-container>
-                <div class="load-template twd-flex" (click)="onLoadNextHistory('comments')"
-                    *ngIf="flattenedCommentHistory?.length && !hasNoFurtherComments">
+                <div
+                    class="load-template twd-flex"
+                    (click)="onLoadNextHistory()"
+                    *ngIf="flattenedCommentHistory?.length && !hasNoFurtherComments"
+                >
                     <mat-icon> comment</mat-icon>
                     <p>Load next comments</p>
                 </div>
             </div>
 
-            <mat-icon *ngIf="postData.IsPostDeleted || isPostDeleted"
-                class="deleted-icon abs-del">delete_forever</mat-icon>
+            <mat-icon *ngIf="postData.IsPostDeleted || isPostDeleted" class="deleted-icon abs-del"
+                >delete_forever</mat-icon
+            >
         </ng-container>
     </div>
 </ng-container>
@@ -472,8 +904,14 @@
             <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
         </div>
         <div>
-            <button mat-icon-button color="warn" mat-dialog-close (click)="previewMediaDialogData = null" tabindex="-1"
-                [matTooltip]="locale('interactionComponent.close')">
+            <button
+                mat-icon-button
+                color="warn"
+                mat-dialog-close
+                (click)="previewMediaDialogData = null"
+                tabindex="-1"
+                [matTooltip]="locale('interactionComponent.close')"
+            >
                 <mat-icon>close</mat-icon>
             </button>
         </div>
@@ -481,17 +919,37 @@
 
     <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
         <drag-scroll scrollbar-hidden>
-            <div class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
+            <div
+                class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
                 [style.transform]="'scale(' + previewMediaDialogData?.otherData?.scale + ')'"
-                [ngClass]="{ 'twd-cursor-move': previewMediaDialogData?.otherData?.scale > 1 }">
-                <img *ngIf="previewMediaDialogData?.attachment?.type?.includes('image')" title="Attachment preview"
-                    [src]="previewMediaDialogData?.attachment?.src" width="100%" width="100%" />
+                [ngClass]="{ 'twd-cursor-move': previewMediaDialogData?.otherData?.scale > 1 }"
+            >
+                <img
+                    *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['image']"
+                    title="Attachment preview"
+                    [src]="previewMediaDialogData?.attachment?.src"
+                    width="100%"
+                    width="100%"
+                />
             </div>
-            <video *ngIf="previewMediaDialogData?.attachment?.type?.includes('video')" controls autoplay
-                [src]="previewMediaDialogData?.attachment?.src" width="100%" width="100%"></video>
+            <video
+                *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['video']"
+                controls
+                autoplay
+                [src]="previewMediaDialogData?.attachment?.src"
+                width="100%"
+                width="100%"
+            ></video>
         </drag-scroll>
     </div>
 </ng-template>
 
-<input type="file" *ngIf="draftData" #fileInput style="display: none;" [accept]="draftData?.mimeConstraints"
-    [multiple]="false" (change)="onFileSelected($event)">
+<input
+    type="file"
+    *ngIf="draftData"
+    #fileInput
+    style="display: none"
+    [accept]="draftData?.mimeConstraints"
+    [multiple]="false"
+    (change)="onFileSelected($event)"
+/>
