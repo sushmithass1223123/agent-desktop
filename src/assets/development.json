@@ -1755,7 +1755,8 @@
                                                         " ": "&nbsp;",
                                                         "\n": "&#10;",
                                                         "\r": "&#13;"
-                                                    }
+                                                    },
+                                                    "SystemMessagesList": ["action_danger", "action_primary", "action_success"]
                                                 }
                                             },
                                             {
@@ -3392,7 +3393,7 @@
             "AppAlertTimeout": 5000,
             "AppAlertOnConnectivityStatus": true
         },
-        "CheckForResolution": true,
+        "CheckForResolution": false,
         "AV": {
             "webRTCConfig": {
                 "iceServers": [

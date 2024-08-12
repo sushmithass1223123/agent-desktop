@@ -1093,6 +1093,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const data = {
             messageId: evt.EventId,
             type: 'text',
+            systemMessage: false,
             message: evt.Message,
             replyId: '',
             replyJson: null, // TODO:: to implement reply
@@ -1128,6 +1129,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     // message from livechat
                     data.messageId = json.messageId;
                     data.type = json.type === 'attachment' ? json.attachment.type : json.type;
+                    data.systemMessage = json.systemMessage;
                     data.message = json.message;
                     data.replyId = json.replyId;
                     data.attachment = json.attachment ? json.attachment : null;
@@ -1172,7 +1174,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const getTranscript = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
             repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
         }
+        if(data.systemMessage) {
+            if(data.message.includes('Agent')) {        
+                // Incase the agentname is not sent from VIVR
+                // message will be Ex: 'Agent has missed the call'
+                //so we replace Agent with AgentName here
+                //Ex: 'David has missed the call' 
+                //This happens when VIVR has missed the key in configuration
+                data.message = data.message.replace('Agent', 'You');
+                data.message = data.message.replace("has", "have")
+            } else if(data.message.includes(this.user.agentName.split(' ')[0])) {
+                //Ex: 'David has missed the call' 
+                //incase of conference call: if its from the other agent we can show it as it is
+                // For normal call we can replace it with 'You have missed the call'
+                //If agentname is sent from VIVR compare with AD Agent FirstName 
+                //and if both are same replace with 'You'
+                data.message = data.message.replace(this.user.agentName.split(' ')[0], 'You')
+                data.message = data.message.replace("has", "have")
+            }
+        }
 
+        
+        
         // add message to the transcripts
         this.pushToTranscript({
             who: user,
@@ -1180,12 +1203,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             position: user === this.customerName ? 'left' : 'right',
             messageId: data.messageId,
             message: data.message,
-            type: data.attachment?.type || 'text',
+            type: data.attachment?.type || data.type,
             time: new Date(),
             attachment: {
                 ...data.attachment,
                 angle: 0
             },
+            dividerMessage: data.systemMessage,
             repliedToMessage: repliedMsg
         });
 
