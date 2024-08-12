@@ -119,22 +119,28 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
      */
     async getPendingCallbacks(): Promise<void> {
         try {
-            const url = new URL(`${this.dataConfig.TCMProxyUrl}/Contact/GetContactsByPhoneNumber`);
-            url.searchParams.append('phone', this.phone.toString());
-            this.getPendingCallbacksReq = { loading: true, error: false };
-            this.http.get(url.toString()).subscribe({
-                next: (res: any) => {
-                    this.pendingCallbacksTable.source.data = res.map((x: any) => ({
-                        ...x,
-                        ScheduleTime: moment(x.ScheduleTime, 'YYYYMMDDHHmmss').format('DD-MM-YYYY hh:mm:ss A')
-                    }));
-                    this.getPendingCallbacksReq = { loading: false, error: false, data: true };
-                },
-                error: (err) => {
-                    console.error({ err });
-                    this.getPendingCallbacksReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.fetchPendingCallbacksFailed'), data: false };
-                }
-            });
+            let proxyURL =  this.dataConfig.TCMProxyUrl;
+            if(proxyURL) {
+                const url = new URL(proxyURL + `Contact/GetContactsByPhoneNumber`);
+                url.searchParams.append('phone', this.phone.toString());
+                this.getPendingCallbacksReq = { loading: true, error: false };
+                this.http.get(url.toString()).subscribe({
+                    next: (res: any) => {
+                        this.pendingCallbacksTable.source.data = res.map((x: any) => ({
+                            ...x,
+                            ScheduleTime: moment(x.ScheduleTime, 'YYYYMMDDHHmmss').format('DD-MM-YYYY hh:mm:ss A')
+                        }));
+                        this.getPendingCallbacksReq = { loading: false, error: false, data: true };
+                    },
+                    error: (err) => {
+                        console.error({ err });
+                        this.getPendingCallbacksReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.fetchPendingCallbacksFailed'), data: false };
+                    }
+                });
+            } else {
+                this.logger.warn('TCMProxyUrl not configured correctly configured as=>'+ this.dataConfig.TCMProxyUrl, true )
+            }
+            
         } catch (err) {
             console.error({ err });
             this.getPendingCallbacksReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.fetchPendingCallbacksFailed'), data: false };
@@ -149,8 +155,10 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
         try {
             // const { agentStatus } = SDKClient.getAgentData();
             this.changeContactStatusReq = { loading: true, error: false, data: callback.id };
+            let proxyURL =  this.dataConfig.TCMProxyUrl;
+            if(proxyURL) {
             this.http
-                .post(`${this.dataConfig.TCMProxyUrl}/api/Contact/ChangeContactStatus`, {
+                .post(proxyURL +`api/Contact/ChangeContactStatus`, {
                     campaignId: callback.campaignId,
                     contactIds: [callback.id],
                     contactStatus: 'Completed',
@@ -173,6 +181,9 @@ export class TwPendingCallbacksComponent extends TWidgetWrapper implements OnIni
                         this.appUiService.showSnackbar(this.translocoService.translate('widgets.pendingCallback.closeCallbacksFailed') , 'failure');
                     }
                 });
+            } else {
+                this.logger.warn('TCMProxyUrl not configured correctly configured as=>'+ this.dataConfig.TCMProxyUrl, true )
+            }
         } catch (err) {
             console.error({ err });
             this.changeContactStatusReq = { loading: false, error: true, msg: this.translocoService.translate('widgets.pendingCallback.closeCallbacksFailed')  };

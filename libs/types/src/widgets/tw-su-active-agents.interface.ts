@@ -33,7 +33,11 @@ export interface TwSuActiveAgents extends Widget<TwSuActiveAgentsData> {}
  * Data config for active agents widget
  */
 export type TwSuActiveAgentsData = {
-       /**
+    /**
+     * Auxcodes ref
+     */
+    AuxCodes: IAuxCodeConfig;
+    /**
      * interactionConstraints for bargin, silent monito, whisper
      */
     InteractionConstraints: TwInteractionConstraints;
@@ -54,7 +58,24 @@ export type TwSuActiveAgentsData = {
      */
     SortType: 'desc' | 'asc';
 };
-
+export type IAuxCodeConfig = {
+  /**
+   * Enabled flag
+   */
+  Enabled: boolean;
+  /**
+   * Load by team flag
+   */
+  ByTeam: boolean;
+  /**
+   * To show default ACW status
+   */
+  DefaultACW: boolean;
+  /**
+   * To show default Logout status
+   */
+  DefaultLogout: boolean;
+};
 /**
  * Constraints for bargin, whisper, silent monitor
  */

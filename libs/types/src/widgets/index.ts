@@ -23,6 +23,8 @@ export * from './tw-customer-sentiment.interface';
 export * from './tw-deflect-to-digital.interface';
 export * from './tw-email-controls.interface';
 export * from './tw-email-panel.interface';
+export * from './tw-smp-panel.interface';
+export * from './tw-smp-controls.interface';
 export * from './tw-email-template-preview.interface';
 export * from './tw-entities.interface';
 export * from './tw-fax-controls.interface';

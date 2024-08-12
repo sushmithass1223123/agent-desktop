@@ -89,11 +89,6 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     state: 'loading' | 'error' | 'loaded' = 'loaded';
 
     /**
-     * Maximum file size default 20mbs
-     */
-    maxFileSize = 20971520;
-
-    /**
      * Suggested users for autocomplete
      */
     suggestedUsers: string[] = [];
@@ -127,6 +122,17 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * File upload url config
      */
     fileUploadUrl: any;
+
+    /**
+     * Property to hold attachment data size and email body size
+     */
+    currentAttachmentSize: number = 0;
+    currentBodySize: number = 0;
+    attachmentFileSizeMap: any = {}
+    /**
+     * Flag to show/hide payload size stats
+     */
+    @Input() showPayloadSizeStats: boolean = false;
 
     constructor(
         private _appUiService: AppUiService,
@@ -182,6 +188,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             </style>
             ${this.email.Body}
             `;
+            this.currentBodySize = new Blob([this.email.Body ? this.email.Body : this._email.Body]).size;
         }
     }
 
@@ -416,8 +423,13 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             if (input.files && input.files.length) {
                 const f = input.files[0];
                 const ref = this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileLoading'), 'loading');
-                if (f.size > this.maxFileSize) {
-                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'), 'failure');
+                if (
+                    this.email.MaxPayloadSize < (this.currentAttachmentSize + this.currentBodySize + f.size)
+                ) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
+                        'failure'
+                    );
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
@@ -464,8 +476,13 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
                 const ext = resVal.Name.split('.').pop();
 
+                this.currentAttachmentSize+=f.size;
+                
+                const Id = TUtils.Generic.uuid();
+                this.attachmentFileSizeMap[Id] = f.size;
+
                 this._email.Files.push({
-                    Id: TUtils.Generic.uuid(),
+                    Id,
                     SessionID: this.email.SessionID,
                     Direction: 'OUT',
                     Icon: maticonByExtension(ext),
@@ -489,6 +506,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     removeFiles(fileId: string): void {
         this._email.Files = this._email.Files.filter((x) => x.Id !== fileId);
+        this.currentAttachmentSize-=this.attachmentFileSizeMap[fileId];
+        delete this.attachmentFileSizeMap[fileId];
     }
 
     /**
@@ -622,5 +641,39 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
         };
 
         this.uiActionEventService.emitUIActionEvent(emailActionData);
+    }
+
+    /**
+     * Method to convert Bytes to MB
+     * @param bytes Bytes
+     * @returns MegaBytes
+     */
+    bytesToMB(bytes: number): string {
+        const MB = bytes / (1024 * 1024);
+        return `${MB.toFixed(1)}mb`;
+    }
+
+    /**
+     * Method to observe for body content change from tiny mce module
+     * @param event modified body
+     */
+    onBodyChange(event: string): void {
+        try {
+           this.currentBodySize = new Blob([event]).size;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    onSendEmail(email): void {
+        try {
+            if((this.currentAttachmentSize + this.currentBodySize) > this.email.MaxPayloadSize) {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.payloadSizeExceeded'), 'failure');
+                return;
+            }
+            this.sendEmail.emit(email)
+        } catch (error) {
+            console.error(error)
+        }
     }
 }

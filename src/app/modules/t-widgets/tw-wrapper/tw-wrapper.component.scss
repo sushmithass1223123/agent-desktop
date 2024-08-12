@@ -9,7 +9,9 @@ tw-wrapper {
     &.hold {
         z-index: 0;
     }
-
+    &.dragging {
+        z-index: 1000 !important; 
+    }
     tw-card {
         top: 0;
         right: 0;

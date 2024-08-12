@@ -1,3 +1,4 @@
+import { SocialMediaPostsModule } from './components/social-media-posts/social-media-posts.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
@@ -47,7 +48,7 @@ Chart.defaults.global.plugins = {
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ng2Charts, PickerModule, EmailModule, ChartsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ng2Charts, PickerModule, EmailModule, ChartsModule, SocialMediaPostsModule];
 
 /**
  * Shared components

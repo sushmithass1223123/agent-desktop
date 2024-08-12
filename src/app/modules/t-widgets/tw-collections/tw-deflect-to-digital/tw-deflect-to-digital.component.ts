@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AGENT_FEATURES } from 'app/constants';
+import { FormControl } from '@angular/forms';
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
@@ -38,6 +39,17 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     comment = '';
 
     /**
+     * selected send type
+     */
+    sendType:FormControl = new FormControl();
+
+    /**
+     * customer email id to send a notification 
+     */
+    emailId:FormControl = new FormControl();
+
+
+    /**
      * Text template componet ref
      */
     @ViewChild(TextTemplatesComponent)
@@ -63,6 +75,8 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
         if (!this.data.Data.Number?.toLowerCase().includes('event')) {
             return;
         }
+        // setting default value for type is SMS
+        this.sendType.setValue(this.SendTypeList[0].value);
 
         const eventName = this.data.Data.Number?.split('.')?.shift() as any;
         this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
@@ -126,18 +140,25 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 return;
             }
 
-            if (!this.toNumber) {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
+            if(this.sendType.value === 'sms' && !this.toNumber) {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
+                    return;
+            }
+
+            if(this.sendType.value === 'email' && this.emailId.invalid) {
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.emailIdNotFound'), 'failure');
                 return;
             }
 
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectLoading'), 'loading');
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
-                customerContact: this.toNumber,
+                customerContact: this.getCustomerContact(),
                 templateMessage: template,
                 comment: this.comment,
-                additionalParams: JSON.stringify({}),
+                additionalParams: JSON.stringify({
+                    sendType: this.sendType.value
+                }),
                 deflectExpiry: this.data.Data.DeflectExpiry,
                 deflectIntent: this.data.Data.DeflectIntent,
                 destChannel: this.data.Data.DestChannel,
@@ -165,6 +186,19 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     }
 
     /**
+     * To get customer contact detail based on the send type selected
+     */
+    private getCustomerContact() {
+        switch(this.sendType.value) {
+            case 'email':  
+                return this.emailId.value;
+            case 'sms':
+            default: 
+                return this.toNumber
+        }
+    }
+
+    /**
      * To check agent features for IsDeflectToDigitalEditTextMessageEnabled
      */
     private checkAgentFeatures(): void {
@@ -187,6 +221,20 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
         } catch (error) {}
     }
+
+    /**
+     * Types of sending notification
+     */
+    SendTypeList = [
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeSMS'),
+            value: "sms"
+        },
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeEmail'),
+            value: "email"
+        }
+    ];
     
 }
 interface WidgetData {
