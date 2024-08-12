@@ -295,7 +295,7 @@
                             <button
                                 mat-mini-fab
                                 color="default"
-                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper'"
+                                [disabled]="interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper'"
                                 [ngClass]="
                                     ((status === 'connected' || status === 'hold' || status === 'unhold') &&
                                         (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
