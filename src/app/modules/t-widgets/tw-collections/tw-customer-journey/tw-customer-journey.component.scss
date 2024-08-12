@@ -108,6 +108,9 @@ tw-customer-journey {
                 .chat-messages {
                     position: relative;
                     padding: 16px 0 40px 0px;
+                    height: 300px; 
+                    overflow-y: auto;
+
 
                     .message-row {
                         position: relative;
