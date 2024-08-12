@@ -1,8 +1,10 @@
 import { TwWorkbenchPanel } from '@ad/types';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatTabGroup } from '@angular/material/tabs';
+import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /**
  * Workbench Panel Component
@@ -18,6 +20,10 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
      * Holds all the data related to this widget from the config
      */
     @Input() data: TwWorkbenchPanel;
+    /**
+     * Element ref for workbench tab group
+     */
+    @ViewChild('workbenchTabGroup') workbenchTabGroup!: MatTabGroup;
 
     /**
      * Fuse custom config
@@ -35,7 +41,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * Constructor
      */
-    constructor(private _fuseFacadeService: FuseFacadeService) {
+    constructor(private _fuseFacadeService: FuseFacadeService, private _smpService: SocialMediaPostsService) {
         super('TwWorkbenchPanelComponent');
     }
 
@@ -48,6 +54,11 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
 
         // set the channels
         this.channels = this.data.Data.Channels.filter((c) => (typeof c.Enabled === 'boolean' ? c.Enabled : true));
+
+        // subscribe to notification tab switch
+        this._smpService.getSwitchTabFromNotification.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            if(data) this.selectTabByLabel(data);
+        })
     }
 
     /**
@@ -56,6 +67,20 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+    }
+
+    /**
+     * Method to select a tab using tab label
+     * @param label Group label
+     */
+    selectTabByLabel(label: string): void {
+        const tabs = this.workbenchTabGroup._allTabs.toArray();
+        const index = tabs.findIndex((tab) => tab.textLabel === label);
+        if (index !== -1) {
+            this.workbenchTabGroup.selectedIndex = index;
+        } else {
+            console.warn(`Tab with label "${label}" not found.`);
+        }
     }
 }
 

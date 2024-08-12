@@ -45,6 +45,7 @@
                                             required
                                             [placeholder]="'Enter ' + tabConf.placeholder"
                                             [(ngModel)]="tabConf.freeText.value"
+                                            #skillVdnInput (input)="onSkillVdnInputChange($event.target.value)"
                                         />
                                         <button
                                             mat-button

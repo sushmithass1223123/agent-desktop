@@ -91,7 +91,8 @@
                             }
 
                             &:hover {
-                                background:black;
+                                background:#FFFFFF;
+
                                 height: 35px;
 
                                 mat-icon {
@@ -111,7 +112,8 @@
 
                         .active-dot,
                         .active-shape {
-                            background: #070101;
+                            background:#FFFFFF;
+
 
                             mat-icon {
                                 color: #070101;
