@@ -47,10 +47,7 @@ tw-wrapper {
             height: calc(100vh - 82px);
             z-index: 100000;
 
-            @include media-breakpoint('gt-md') {
-                width: 66.33%;
-                height: 100%;
-            }
+            
 
             &.cover,
             &.mx-cover {
@@ -58,7 +55,12 @@ tw-wrapper {
                 height: 100%;
             }
         }
-
+        &.maximized.has-static-widgets {
+            @include media-breakpoint('gt-md') {
+                width: 66.33%;
+                height: 100%;
+                }
+        }
         &.floating {
             position: relative;
             z-index: 100001;
