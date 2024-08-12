@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwControlInfo, TwCustomerInfo, TwSmmCustomerDetails } from '@ad/types';
-import { SDKClient, TextChatMessageReceivedEvent } from '@tmac/sdk';
+import { IUIEvent, SDKClient } from '@tmac/sdk';
 import { HttpClient } from '@angular/common/http';
 import { AppUiService } from '@services/app-ui.service';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Custommer details widget
@@ -63,21 +64,31 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      * Lifecycle hook
      * @method
      */
-    ngOnInit() {
-        
+    ngOnInit() {        
         // call the wrapper init method
         this.initWrapper(this.data);
 
+        this._tmacEventService
+        .getAllSubscribedEvents<IUIEvent>(['IncomingEmailEvent'])
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((evts) =>
+            evts.forEach((evt) => {
+                console.log("Event:", evt);
+                this[evt.EventName](evt);
+            })
+        );
+
+
         SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
 
-        SDKClient.events.on("TextChatMessageReceivedEvent", this.TextChatMessageReceivedEvent);
+        // SDKClient.events.on("TextChatMessageReceivedEvent", this.TextChatMessageReceivedEvent);
 
         this.editAllowed = this.data.Data.EditAllowed;        
         try {
             console.log("Controls", this.data.Data.ControlFields);
             console.log("All Data for SMM", this.data.Data);
 
-            this.getCustomerDetails();
+           
         
         } catch (error) {
             console.error('Error in TwSmmCustomerDetails', error);
@@ -156,21 +167,15 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         });
         return this.formData;
     }
-ngOnDestroy(): void {
-    this.destroyWrapper();
-}
-   
-IncomingEmailEvent(evt) {
-    console.log("Event: ", evt);    
-}
+    ngOnDestroy(): void {
+        this.destroyWrapper();
+    }
+    
+    IncomingEmailEvent(evt) {
+        console.log("Event: ", evt);   
+        this.customerId = evt.JsonData.CustomerId;
 
-/**
- * TextChatMessageReceivedEvent Handler
- * @param evt
- */
-TextChatMessageReceivedEvent = (evt: TextChatMessageReceivedEvent) => {
-    console.log("TextChatMessageReceivedEvent", evt)
-        
-};
+        this.getCustomerDetails(); 
+}
 }
 

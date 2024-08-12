@@ -11,7 +11,6 @@ import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TMACEventService } from '@services/tmac-event.service';
 
 /**
  * Active interactions
