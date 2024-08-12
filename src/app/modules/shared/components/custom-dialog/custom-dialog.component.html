@@ -1,10 +1,29 @@
 <ng-container *transloco="let locale">
-    <h1 matDialogTitle class="mb-8">
-        {{ data.title || (data.type === 'alert' ? locale('sharedComponents.customDialog.alert') : locale('sharedComponents.customDialog.confirm')) }}
-    </h1>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+        <h1 matDialogTitle class="mb-8">
+            {{
+                data.title ||
+                    (data.type === 'alert'
+                        ? locale('sharedComponents.customDialog.alert')
+                        : locale('sharedComponents.customDialog.confirm'))
+            }}
+        </h1>
+        <button
+            *ngIf="data.closeIcon"
+            mat-icon-button
+            color="accent"
+            (click)="data.confirmClose ? confirmClose() : data.cancel()"
+        >
+            <mat-icon class="twd-text-lg"> close </mat-icon>
+        </button>
+    </div>
 
     <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
-        <p class="font-size-16 font-weight-600 my-8" [ngClass]="data.messageClasses || ''" [innerHTML]="data.message"></p>
+        <p
+            class="font-size-16 font-weight-600 my-8"
+            [ngClass]="data.messageClasses || ''"
+            [innerHTML]="data.message"
+        ></p>
 
         <mat-form-field
             fxFlex

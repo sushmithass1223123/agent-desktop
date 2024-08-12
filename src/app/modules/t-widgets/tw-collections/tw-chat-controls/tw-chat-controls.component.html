@@ -214,8 +214,8 @@
     <tw-wrapper
         [data]="data"
         (maximizeEvent)="onMaximized($event)"
-        (collapseEvent)="collapseEvent.emit($event)"
-        (floatEvent)="floatEvent.emit($event)"
+        (collapseEvent)="onMaximized($event)"
+        (floatEvent)="onMaximized($event)"
         *transloco="let locale"
     >
         <div class="w-100-p h-100-p chat-controls">
@@ -681,6 +681,7 @@
                     <chat-attachments
                         *ngIf="attachPreviewMode"
                         [isSMM]="isSMM"
+                        [attachmentConstraints]="attachmentConstraints"
                         [fileUploadUrl]="fileUploadUrl"
                         [sessionID]="sessionID"
                         [attachPreviewMode]="attachPreviewMode"

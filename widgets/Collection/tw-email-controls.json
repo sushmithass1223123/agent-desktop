@@ -54,6 +54,8 @@
         "ForwardAllowed": true,
         "ReplyAllAllowed": true,
         "InteractionCommentAllowed": true,
-        "DraftPollingInterval": 10000
+        "DraftPollingInterval": 10000,
+        "DefaultMaxPayloadSize": 29359488,
+        "ShowPayloadSizeStats": true
     }
 }

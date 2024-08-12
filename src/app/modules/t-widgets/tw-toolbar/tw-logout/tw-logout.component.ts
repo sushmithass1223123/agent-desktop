@@ -8,6 +8,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { TranslocoService } from '@ngneat/transloco';
+import { AgentFeaturesService } from '@services/agent-features.service';
 /**
  * Logout button component
  */
@@ -48,7 +49,8 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
         private _activatedRouter: ActivatedRoute,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private agentFeaturesService: AgentFeaturesService
     ) {
         super('TwLogoutComponent');
         this.logoutAux = [];
@@ -158,6 +160,8 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
     
             // Check if user confirmed logout
             if (dialogResult) {
+                //To clear displaystreamtimeout
+                this.agentFeaturesService.clearDisplayStreamTimeout();
                 // logout error
                 this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutLoading'), 'loading');
                 // show the progress bar
@@ -192,7 +196,9 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                             log: true
                         });
                     })
-                    
+                    .catch(() => {
+                        this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
+                    })
                     .finally(() => {
                         // Reset logoutDisableAfterAcceptance flag on catch
                         this.logoutDisableAfterAcceptance = false;
@@ -200,7 +206,6 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
             } else {
                 // Reset logoutDisableAfterAcceptance if user cancels logout
                 this.logoutDisableAfterAcceptance = false;
-
             }
         });
     }

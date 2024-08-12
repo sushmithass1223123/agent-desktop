@@ -1,0 +1,24 @@
+{
+    "Name": "Social Media Posts",
+    "Description": "",
+    "Type": "twc-smp",
+    "Config": {
+        "Enabled": true,
+        "Class": "",
+        "Position": {
+            "X": 1,
+            "Y": 1
+        },
+        "Actions": [],
+        "Header": false
+    },
+    "Data": {
+        "Path": "/smp",
+        "RouteOnInteraction": true,
+        "Widgets": {
+            "Static": [],
+            "Dynamic": [],
+            "AOT": []
+        }
+    }
+}
