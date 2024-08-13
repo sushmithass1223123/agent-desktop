@@ -192,10 +192,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * Property to store previously selected agent 
      */
     private previouslySelectedAgent: AgentModel | null = null;
-    /**
-     *  flag to track the TextChatTransferRejectEvent occurrence
-     */
-    private isTextChatTransferRejected: boolean = false;
 
     /**
      * Constructor
@@ -1883,22 +1879,20 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
-            // Adding event listener for TextChatTransferRejectEvent
-           if (!this.isTextChatTransferRejected) {
-            SDKClient.events.on('TextChatTransferRejectEvent', () => {
-                this.isTextChatTransferRejected = true;
-                this.isConsult = false;
-            });
-            }
-
-            // Checking if a consultation or transfer request is already in progress for the selected agent
-            if (this.selectedRow?.row?.LoginID === this.previouslySelectedAgent?.LoginID && !this.isTextChatTransferRejected) {
-                return;
-            }
-        
-            // Reseting properties
-            this.isTextChatTransferRejected = false;
-            this.previouslySelectedAgent = this.selectedRow?.row;
+        SDKClient.events.on('TextChatTransferRejectEvent', () => {
+            this.previouslySelectedAgent = null
+        });
+         
+        if (this.selectedRow?.row?.LoginID === this.previouslySelectedAgent?.LoginID) {
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('sharedComponents.agentSkillList.alreadySent'),
+                'failure'
+            );
+            return;
+        }
+                
+        // Reseting properties
+        this.previouslySelectedAgent = this.selectedRow?.row;
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
