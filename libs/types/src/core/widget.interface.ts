@@ -159,6 +159,10 @@ export type WidgetConfig = {
      * Flag to show the header
      */
     Header: boolean;
+    /**
+     * Flag to hold whether page has static widgets or not
+     */
+    HasNoStaticWidgets?: boolean;
 };
 
 export type ViewState = 'maximize' | 'float' | 'restore' | 'collapse' | 'hidden';
