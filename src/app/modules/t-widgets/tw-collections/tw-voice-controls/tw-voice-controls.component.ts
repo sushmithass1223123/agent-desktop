@@ -317,6 +317,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     failedCounter = 0;
     @ViewChild('closeBtn') closeButton: MatButton;
+    /**
+     * Property to hold the timer started timestamp
+     */
+    startTimeRef: number;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -837,6 +841,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     OutgoingCallEvent(evt: OutgoingCallEvent): void {
         // stop duration timer
         this.duration = 0;
+        // reset the start timer reference
+        this.startTimeRef = Date.now();
 
         // set direction
         this.direction = 'Out';
@@ -872,12 +878,16 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     CallConnectedEvent(evt: CallConnectedEvent): void {
         // stop duration timer
         this.stopTimer.next(null);
+        this.startTimeRef = Date.now();
 
         // subscribe to the timer
         timer(1000, 1000)
             .pipe(
                 takeUntil(this.stopTimer),
-                map(() => this.duration + 1)
+                map(() => {
+                    const currentTime = Date.now();
+                    return Math.floor((currentTime - this.startTimeRef) / 1000);
+                })
             )
             .subscribe((val) => {
                 this.duration = val;
