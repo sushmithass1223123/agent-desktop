@@ -624,6 +624,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     attachmentConstraints: string[] = [];
     xssSymbolEntityMap: XssSymbolEntityMap = {};
+    /**
+     * Property to disable and enable action.icon
+     */
+    isEscalateAudioClicked = false;
 
     /**
      * Constructor
@@ -3065,6 +3069,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'audio' | 'video'} type Type of escalation
      */
     public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
+        this.isEscalateAudioClicked = true;
+        SDKClient.events.on('UpdateParentAgentStatusEvent', () => {
+            this.isEscalateAudioClicked  = false
+        });
         // Check for parent agent av constraints
         if (avCallConstraints === undefined) {
             avCallConstraints =
