@@ -1883,7 +1883,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
-            // Addinf event listener for TextChatTransferRejectEvent
+            // Adding event listener for TextChatTransferRejectEvent
            if (!this.isTextChatTransferRejected) {
             SDKClient.events.on('TextChatTransferRejectEvent', () => {
                 this.isTextChatTransferRejected = true;
