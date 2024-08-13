@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewEncapsul
 import { TMACEventService } from '@services/tmac-event.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { TwControlInfo, TwCustomerInfo, TwSmmCustomerDetails } from '@ad/types';
-import { SDKClient } from '@tmac/sdk';
+import { IUIEvent, SDKClient } from '@tmac/sdk';
 import { HttpClient } from '@angular/common/http';
 import { AppUiService } from '@services/app-ui.service';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Custommer details widget
@@ -63,17 +64,23 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      * Lifecycle hook
      * @method
      */
-    ngOnInit() {
-        
+    ngOnInit() {              
+        try {
         // call the wrapper init method
         this.initWrapper(this.data);
 
-        this.editAllowed = this.data.Data.EditAllowed;        
-        try {
-            console.log("Controls", this.data.Data.ControlFields);
-            console.log("All Data for SMM", this.data.Data);
-
-            this.getCustomerDetails();
+        this.getCustomerDetails();
+        this._tmacEventService
+        .getAllSubscribedEvents<IUIEvent>(['IncomingEmailEvent'])
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((evts) =>
+            evts.forEach((evt) => {
+                console.log("Event:", evt);
+                this[evt.EventName](evt);
+            })
+        );
+        SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
+        this.editAllowed = this.data.Data.EditAllowed;           
         
         } catch (error) {
             console.error('Error in TwSmmCustomerDetails', error);
@@ -132,7 +139,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             
         });
 
-        let apiUrl = this.data.Data.SocialMediaAPIs + this.data.Data.UpdateMethodName 
+        let apiUrl = this.data.Data.SocialMediaAPIs + this.data.Data.ViewMethodName 
           + this.customerId; 
        if(this.test) {
         apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
@@ -152,9 +159,15 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         });
         return this.formData;
     }
-ngOnDestroy(): void {
-    this.destroyWrapper();
-}
-   
+    ngOnDestroy(): void {
+        this.destroyWrapper();
+    }
+    
+    IncomingEmailEvent(evt) {
+        console.log("Event: ", evt);   
+        this.customerId = evt.JsonData.CustomerId;
 
+        this.getCustomerDetails(); 
 }
+}
+
