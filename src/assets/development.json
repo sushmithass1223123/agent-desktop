@@ -1755,8 +1755,7 @@
                                                         " ": "&nbsp;",
                                                         "\n": "&#10;",
                                                         "\r": "&#13;"
-                                                    }
-                                                }
+                                                    }                                                }
                                             },
                                             {
                                                 "Name": "Customer Details",
@@ -3392,7 +3391,7 @@
             "AppAlertTimeout": 5000,
             "AppAlertOnConnectivityStatus": true
         },
-        "CheckForResolution": true,
+        "CheckForResolution": false,
         "AV": {
             "webRTCConfig": {
                 "iceServers": [

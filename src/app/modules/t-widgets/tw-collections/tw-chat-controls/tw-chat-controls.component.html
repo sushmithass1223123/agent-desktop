@@ -483,8 +483,12 @@
                                 <div
                                     *ngIf="message.dividerMessage"
                                     class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1"
-                                    [innerHTML]="message.message"
-                                ></div>
+                                >
+                                <span [innerHTML]="message.message"></span>
+                                <br />
+                                {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
+                            </div>
+                          
 
                                 <ng-container *ngIf="!message.dividerMessage">
                                     <!-- animate__animated animate__slideInUp animate__faster -->
