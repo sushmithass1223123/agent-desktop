@@ -1884,19 +1884,21 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     executeAction(consult: boolean): void {
             // Addinf event listener for TextChatTransferRejectEvent
+           if (!this.isTextChatTransferRejected) {
             SDKClient.events.on('TextChatTransferRejectEvent', () => {
                 this.isTextChatTransferRejected = true;
                 this.isConsult = false;
             });
-        
+            }
+
             // Checking if a consultation or transfer request is already in progress for the selected agent
-            if (this.selectedRow && this.previouslySelectedAgent && this.selectedRow.row.LoginID === this.previouslySelectedAgent.LoginID && !this.isTextChatTransferRejected) {
+            if (this.selectedRow?.row?.LoginID === this.previouslySelectedAgent?.LoginID && !this.isTextChatTransferRejected) {
                 return;
             }
         
             // Reseting properties
             this.isTextChatTransferRejected = false;
-            this.previouslySelectedAgent = this.selectedRow.row;
+            this.previouslySelectedAgent = this.selectedRow?.row;
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
