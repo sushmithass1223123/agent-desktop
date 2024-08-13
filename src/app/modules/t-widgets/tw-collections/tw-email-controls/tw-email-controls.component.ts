@@ -1162,6 +1162,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         //     }
         // };
 
+        if(SENT_REASONS.includes(this.currentInteraction.RouteReason)) {
+            this._appUIService.showSnackbar('Trasferring an email which is pulled from `Sent Item` box is not possible !!', 'failure');
+            return;
+        }
+
         const transferConfig = this.data.Data.Transfer ?? {};
         let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
         data = merge({}, data, transferConfig);
