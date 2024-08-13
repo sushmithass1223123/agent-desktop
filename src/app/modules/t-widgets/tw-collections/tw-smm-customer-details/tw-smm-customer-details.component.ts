@@ -6,6 +6,9 @@ import { IUIEvent, SDKClient } from '@tmac/sdk';
 import { HttpClient } from '@angular/common/http';
 import { AppUiService } from '@services/app-ui.service';
 import { takeUntil } from 'rxjs/operators';
+import moment from 'moment';
+import { InteractionManagerService } from '@services/interaction-manager.service';
+import { InteractionRef } from 'app/interfaces';
 
 /**
  * Custommer details widget
@@ -22,10 +25,6 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      */
     @Input() data: TwSmmCustomerDetails<any>;
 
-    /**
-     * Current interaction data
-     */
-    interactionId: number;
     /**
      * Customer info
      */
@@ -51,8 +50,14 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
     editAllowed: boolean = false;
     formData: TwCustomerInfo;
     test: boolean = false;
+     /**
+      * Current intreaction id
+      */
+     interactionId: number;
+ 
     constructor(private _tmacEventService: TMACEventService, private httpClient: HttpClient,
-        private _appUIService: AppUiService    ) {
+        private _appUIService: AppUiService, 
+        private _interactionManagerService: InteractionManagerService    ) {
         super('TwSmmCustomerDetailsComponent');
     }
 
@@ -68,6 +73,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         try {
         // call the wrapper init method
         this.initWrapper(this.data);
+        console.log("this.data", this.data);
+        this.interactionId = this.data.InteractionDetails.InteractionID;
 
         this.getCustomerDetails();
         this._tmacEventService
@@ -79,21 +86,42 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                 this[evt.EventName](evt);
             })
         );
-        SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
-        this.editAllowed = this.data.Data.EditAllowed;           
         
+        this._interactionManagerService.interactions
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((interactions: InteractionRef[]) => {
+            interactions
+                .filter((i: InteractionRef) => i.type === 'smp')
+                .map((i) => {
+                    if(this.interactionId === i.interactionId) {
+                        console.log("This.interactionId: ", this.interactionId, i)
+                        this.customerId = JSON.parse(i.otherData?.JsonData).CustomerId;
+                        this.getCustomerDetails();
+                    }
+                });
+        });
+        // SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
+        this.editAllowed = this.data.Data.EditAllowed;             
         } catch (error) {
             console.error('Error in TwSmmCustomerDetails', error);
         }
-
+    }
+    
+    IncomingEmailEvent(evt) {
+        if(evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
+        console.log("Event: ", evt);   
+        this.customerId = JSON.parse(evt.JsonData).CustomerId;
+        this.getCustomerDetails(); 
+    }
     }
 
     updateCustomerDetails() {
-        let updateUrl = this.data.Data.SocialMediaAPIs + this.data.Data.UpdateMethodName;
+        let updateUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.UpdateMethodName;
         if(this.test) {
             updateUrl = "https://webhook.site/17f9233b-b42f-4d75-9c2a-5d8740054d95";
         }
-        this.formData.lastChangedOn = new Date().toString();
+        let date = moment().format('yyyy-MM-DDThh:mm:ssZ');
+        this.formData.lastChangedOn = date.toString();
         this.formData.lastChangedBy = SDKClient.getAgentData().agentName;
 
         this.httpClient.post(updateUrl, this.formData)
@@ -107,14 +135,14 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             if(res.errCode == 1 && res.errMsg == "Success" && res.data == 1) {
                 this._appUIService.showSnackbar("Updated Successfully Details for: " + 
                     this.formData["firstName"]);
-
                 console.log("Updated Successfully Details for: ", this.formData["firstName"]);
             }
         });
     }
 
     getCustomerDetails() {
-        // formData = {
+        {   
+         // formData = {
         //     "customerID": "19",
         //     "salutation": "",
         //     "firstName": "Hardcoded",
@@ -133,13 +161,16 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         //     "lastChangedBy": "devbox\\select_starsh",
         //     "lastChangedOn": "2024-01-22T17:11:47"
         //   };
+       }
+       console.log("Getting Data for Customer ID: ", this.customerId)
+          if(!this.customerId) return;
         this.formData = {};
         this.data.Data.ControlFields.forEach(control => {
-            this.formData[control.id] = '-';
-            
+            this.formData[control.id + '_' + this.interactionId] = '-';  
+            this.formData["fieldId"] = this.formData[control.id + '_' + this.interactionId];  
         });
 
-        let apiUrl = this.data.Data.SocialMediaAPIs + this.data.Data.ViewMethodName 
+        let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
           + this.customerId; 
        if(this.test) {
         apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
@@ -148,8 +179,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         .subscribe((res: any) => {
             console.log("Response", res)
              if(res.errCode == 0 && res.errMsg == "Success") {
-                 this.formData = res.data;
-                 
+                 this.formData = res.data;               
                 Object.keys(this.formData).forEach(element => {
                     if(this.formData[element] == '')
                         this.formData[element] = '-';
@@ -159,15 +189,9 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         });
         return this.formData;
     }
+
     ngOnDestroy(): void {
         this.destroyWrapper();
     }
-    
-    IncomingEmailEvent(evt) {
-        console.log("Event: ", evt);   
-        this.customerId = evt.JsonData.CustomerId;
-
-        this.getCustomerDetails(); 
-}
 }
 

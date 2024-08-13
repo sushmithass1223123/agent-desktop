@@ -28,7 +28,7 @@ export class TwSmpPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     maximized = [
         {
             'tw-smp-controls': false,
-            'tw-customer-details': false
+            'tw-smm-customer-details': false
         }
     ];
     /**
@@ -37,7 +37,7 @@ export class TwSmpPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     collapsed = [
         {
             'tw-smp-controls': false,
-            'tw-customer-details': false
+            'tw-smm-customer-details': false
         }
     ];
     /**
@@ -46,7 +46,7 @@ export class TwSmpPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     floating = [
         {
             'tw-smp-controls': false,
-            'tw-customer-details': false
+            'tw-smm-customer-details': false
         }
     ];
 
