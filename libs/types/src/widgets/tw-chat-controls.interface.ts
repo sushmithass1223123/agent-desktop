@@ -86,8 +86,8 @@ export type TwChatControlsWhiteboard = {
      */
     Url: string;
     /*
-    *  Whiteboard url for customer
-    */
+     *  Whiteboard url for customer
+     */
     CustomerUrl: string;
 };
 
@@ -171,6 +171,9 @@ export type TwChatControlsWhiteboard = {
  *         "ReplyOnChatAllowed": true,
  *         "VoiceNoteAllowed": false,
  *         "AttachmentAllowed": true,
+ *         "AttachmentConstraints": {
+ *              "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+           },
  *         "ScreenShareAllowed": true,
  *         "InteractionCommentAllowed": true,
  *         "HoldInteractionAllowed": true,
@@ -198,12 +201,16 @@ export type TwChatControlsWhiteboard = {
  * }
  * ```
  */
-export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> { }
+export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData, T> {}
 
 /**
  * Chat control config's Data
  */
 export type TwChatControlsData = {
+    /**
+     * Config to differentiate if the call is on hard phone
+     */
+    IsPhoneAudio?: boolean;
     /**
      * Transfer configurations
      */
@@ -217,9 +224,17 @@ export type TwChatControlsData = {
      */
     AudioEscalateAllowed: boolean;
     /**
+     * Flag to allow audio call request
+     */
+    RequestAudioCallAllowed: boolean;
+    /**
      * Flag to allow esacalation to video
      */
     VideoEscalateAllowed: boolean;
+    /**
+     * Flag to allow video call request
+     */
+    RequestVideoCallAllowed: boolean;
     /**
      * Flag to enable signature
      */
@@ -233,7 +248,7 @@ export type TwChatControlsData = {
      */
     ReplyOnChatAllowed: boolean;
     /**
-     * To allow reply to a chat at SMM channel level 
+     * To allow reply to a chat at SMM channel level
      */
     ReplyOnSMM: TReplyOnSMM;
     /**
@@ -244,6 +259,10 @@ export type TwChatControlsData = {
      * Flag to allow attachment
      */
     AttachmentAllowed: boolean;
+    /**
+     * Attachment mime constraints object
+     */
+    AttachmentConstraints: AttachmentConstraints;
     /**
      * Flag to allow screenshare
      */
@@ -256,6 +275,12 @@ export type TwChatControlsData = {
      * Flag to hold interaction
      */
     HoldInteractionAllowed: boolean;
+
+    /**
+     * Hides audio mute button
+     */
+    MuteAudioHidden: boolean;
+
     /**
      * Whiteboard reference
      */
@@ -269,14 +294,50 @@ export type TwChatControlsData = {
          */
         Url: string;
         /*
-        *  Whiteboard url for customer
-        */
+         *  Whiteboard url for customer
+         */
         CustomerUrl: string;
     };
-     /**
+    /**
+     * Method to disable AV escalations when customer connects through mobile device
+     */
+    DisableAvConstraints:
+        | {
+              /**
+               * Device OS list
+               */
+              Devices: string[];
+              /**
+               * Social channels list
+               */
+              SocialChannels: string[];
+              /**
+               * Disable Escalate Audio Calls
+               */
+              EscalateAudioCall: boolean;
+              /**
+               * Disable Escalate Video Calls
+               */
+              EscalateVideoCall: boolean;
+              /**
+               * Disable Request Audio Calls
+               */
+              RequestAudioCall: boolean;
+              /**
+               * Disable Request Video Calls
+               */
+              RequestVideoCall: boolean;
+              /**
+               * Disable Request ScreenShare
+               */
+              RequestScreenShare: boolean;
+              
+          }
+        | undefined;
+    /**
      * Cobrowse reference
      */
-      Cobrowse: {
+    Cobrowse: {
         /**
          * Flag to enable cobrowse
          */
@@ -286,8 +347,8 @@ export type TwChatControlsData = {
          */
         AgentUrl: string;
         /*
-        *  cobrowse url for customer
-        */
+         *  cobrowse url for customer
+         */
         CustomerUrls: { [name: string]: string }[];
     };
     /**
@@ -409,8 +470,20 @@ export type TwChatControlsData = {
      * Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /**
+     * Symbol entity mapping
+     */
+    XssSymbolEntityMap: XssSymbolEntityMap;
 };
 
-export type TReplyOnSMM = {
-    channels: string
+export interface XssSymbolEntityMap {
+    [key: string]: string;
 }
+
+export interface AttachmentConstraints {
+    [platform: string]: string[];
+}
+
+export type TReplyOnSMM = {
+    channels: string;
+};

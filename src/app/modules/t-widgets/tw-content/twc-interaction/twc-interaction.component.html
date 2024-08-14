@@ -6,7 +6,7 @@
         [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }"
         [title]="locale('contentComponent.noInteractions')"
         type="interaction"
-        [message]="locale('contentComponent.noInteractionsYetMsg').replace('#type', type)"
+        [message]="locale('contentComponent.noInteractionsYetMsg').replace('#type', type === 'smp' ? 'social media post' : type)"
     ></twc-not-found>
 </ng-container>
 

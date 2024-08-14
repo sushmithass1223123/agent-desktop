@@ -21,9 +21,10 @@ import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
-import { EmailInboxModel, EmailOutboxModel, SDKClient } from '@tmac/sdk';
-import { AGENT_FEATURES, DRAFT_REASONS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
-import { EmailComponentInputs, IWidget, ResData } from 'app/interfaces';
+import { AppDataService } from '@services/app-data.service';
+import { EmailInboxModel, EmailOutboxModel, SDKClient, TUtils } from '@tmac/sdk';
+import { AGENT_FEATURES, DRAFT_REASONS, EMAIL_SEND_STATUS, INBOX_REASONS, OUTBOX_REASONS, SENT_REASONS} from 'app/constants';
+import { EmailComponentInputs, IWidget, ResData, MediaStreamerMultiResponse, MediaStreamerMetaResponse } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { maticonByExtension, throwADError } from 'app/utils';
 import { addHours, format, format as formatDate } from 'date-fns';
@@ -58,7 +59,7 @@ export class Mail {
     RouteReason?: string;
     EmailType?: string;
     InternetHeaders?: string;
-};
+}
 
 /**
  * Various states of the component
@@ -144,9 +145,9 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     emailBodies: Record<string, any> = {};
 
-    selectedEmailInSessionId : string;
-    selectedEmailOutSessionId : string;
-    selectedEmailRouteReason : string;
+    selectedEmailInSessionId: string;
+    selectedEmailOutSessionId: string;
+    selectedEmailRouteReason: string;
 
     /**
      * Email reply dialog ref
@@ -293,10 +294,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Available tabs ref
      */
     availableTabs = [
-        { label: 'Queue', enabled: true, icon: 'queue', key: 'queue' },
-        { label: 'Inbox', enabled: true, icon: 'mail', key: 'inbox' },
-        { label: 'Sent', enabled: true, icon: 'mark_email_read', key: 'sentitem' },
-        { label: 'Drafts', enabled: true, icon: 'drafts', key: 'draft' }
+        { label: this.translocoService.translate('sharedComponents.email.queueLabel'), enabled: true, icon: 'queue', key: 'queue' },
+        { label: this.translocoService.translate('sharedComponents.email.inboxLabel'), enabled: true, icon: 'mail', key: 'inbox' },
+        { label: this.translocoService.translate('sharedComponents.email.sentLabel'), enabled: true, icon: 'mark_email_read', key: 'sentitem' },
+        { label: this.translocoService.translate('sharedComponents.email.draftsLabel'), enabled: true, icon: 'drafts', key: 'draft' }
     ];
 
     /**
@@ -332,6 +333,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     showInternetHeaders = false;
 
     /**
+     * Disable advance Search submit button
+     */
+    disableBtn: Boolean = false;
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
+    /**
      * Constructor
      */
     constructor(
@@ -340,11 +349,13 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private http: HttpClient,
         private appUiService: AppUiService,
         private matDialog: MatDialog,
+        private emailDialog: MatDialog,
         private _emailService: EmailService,
         private _aotWidgetService: AOTWidgetService,
         private _agentFeaturesService: AgentFeaturesService,
         private _appUIService: AppUiService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _appDataService: AppDataService
     ) {
         super('WorkbenchEmailComponent');
     }
@@ -382,6 +393,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             if (change) {
                 this.checkAgentFeatures();
             }
+        });
+
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
 
         // check for the agent features
@@ -579,6 +594,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param mails
      */
     groupNodes(mails?: Mail[]): void {
+        this.disableBtn = false;
+
         if (!mails) {
             mails = this.getAllEmailNodes();
         }
@@ -669,20 +686,28 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     doAdvancedSearch(silent = false): void {
         try {
-            const errorInDate = this.checkForErrorInDate()
-            if(errorInDate) {
-                switch(errorInDate.type) {
-                   case 'INVALID_RANGE':  this.setComponentState('emails/search/failure', { msg: 'From date can not be greater than To Date, Please select valid dates'});
+            const errorInDate = this.checkForErrorInDate();
+            if (errorInDate) {
+                switch (errorInDate.type) {
+                    case 'INVALID_RANGE':
+                        this.setComponentState('emails/search/failure', {
+                            msg: 'From date can not be greater than To Date, Please select valid dates'
+                        });
                         return;
-                   case 'OUT_OF_RANGE': const searchRange = ((this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange) ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange : 30;
-                   this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of '+ searchRange + ' days'});
-                   return;
+                    case 'OUT_OF_RANGE':
+                        const searchRange = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange
+                            ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange
+                            : 30;
+                        this.setComponentState('emails/search/failure', { msg: 'Please select dates within the range of ' + searchRange + ' days' });
+                        return;
                 }
             }
 
-
             if (!this.data.Data.WorkbenchUrl) {
-                this.setComponentState('emails/failure', { msg: this.translocoService.translate('sharedComponents.email.workbenchURLNotFound'), silent });
+                this.setComponentState('emails/failure', {
+                    msg: this.translocoService.translate('sharedComponents.email.workbenchURLNotFound'),
+                    silent
+                });
                 return;
             }
 
@@ -691,7 +716,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             } else {
                 this.setComponentState('emails/loading', { silent });
             }
-
+            this.disableBtn = true;
             const currentSearchFilters = this.advancedSearch.data[this.currentTab];
             const searchFields = this.parseDateFromSearchParams(currentSearchFilters.data);
             let searchParams: any;
@@ -750,11 +775,15 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 .pipe(
                     timeout(50000),
                     map((res: any) => {
+                        this.disableBtn = false;
                         if (res.find((x: any) => x.status !== 'SUCCESS')) {
                             const resultStr = JSON.parse(JSON.stringify(res.find((x) => x.status !== 'SUCCESS'))?.toLowerCase());
-                            
-                            if(resultStr?.errorcode && resultStr.errorcode == '-101') {
-                                this.appUiService.showSnackbar('Number of emails present in the search has reached maximum limit, Please select a shorter date range', 'warning');
+
+                            if (resultStr?.errorcode && resultStr.errorcode == '-101') {
+                                this.appUiService.showSnackbar(
+                                    'Number of emails present in the search has reached maximum limit, Please select a shorter date range',
+                                    'warning'
+                                );
                                 return;
                             }
 
@@ -789,6 +818,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         this.setComponentState('email/polling/inactive', { silent });
                     }
                 });
+            
         } catch (e) {
             console.error(e);
             this.setComponentState('emails/failure', { silent });
@@ -826,12 +856,40 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 { sessionIds: [], draftSessionIds: [], uiIds: [] }
             );
             if (this.currentTab === 'inbox') {
-                await SDKClient.maskInboxEmail({
+                const result = await SDKClient.maskInboxEmail({
                     sessionId: sessionIds.join(','),
                     source: 'agent-desktop'
                 });
+                if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailMaskFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailMaskError${
+                                    EMAIL_SEND_STATUS[result.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
             } else if (this.currentTab === 'draft') {
-                await SDKClient.deleteBulkEmailsInDraft(draftSessionIds.join(','));
+                const result = await SDKClient.deleteBulkEmailsInDraft(draftSessionIds.join(','));
+                if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailDeleteFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailDeleteError${
+                                    EMAIL_SEND_STATUS[result.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
             } else if (this.currentTab === 'queue') {
                 const { tmacServer, agentId } = SDKClient.getAgentData();
                 const res$ = this.http
@@ -848,6 +906,29 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     .pipe(takeUntil(this.unsubscribeAll));
                 const res: any = await res$.pipe(take(1)).toPromise();
                 if (res.status !== 'SUCCESS') {
+                    if(res?.failedList?.length === 1 && EMAIL_SEND_STATUS[res.failedList[0].responseCode]) {
+                        this.appUiService.showSnackbar(
+                            this.translocoService.translate(
+                                `${this.translocoService.translate(
+                                    `sharedComponents.email.emailDeleteFailed`
+                                )}${this.translocoService.translate(
+                                    `sharedComponents.email.emailDeleteError${
+                                        EMAIL_SEND_STATUS[res.failedList[0].responseCode]
+                                    }`
+                                )}`
+                            ),
+                            'failure'
+                        );
+                    } else {
+                        this.appUiService.showSnackbar(
+                            this.translocoService.translate(
+                                `${this.translocoService.translate(
+                                    `sharedComponents.email.emailsDeleteFailed`
+                                )}`
+                            ),
+                            'failure'
+                        ); 
+                    }
                     throw new Error(`Unable to delete emails ${sessionIds.join(',')}`);
                 }
             }
@@ -877,7 +958,21 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     }
                     return curr.RouteId;
                 });
-                await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+                const result = await SDKClient.closeBulkEmailsInQueue(routeIds.join(','));
+                if (EMAIL_SEND_STATUS[result.response] && EMAIL_SEND_STATUS[result.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailCloseFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailCloseError${
+                                    EMAIL_SEND_STATUS[result.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
             } else {
                 await Promise.all(
                     emails.map((curr) => {
@@ -910,82 +1005,195 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Pull email
      * @method pullEmail
      */
-    pullEmails(emails: Mail[]): void {
-        const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailLoading'), 'loading');
-        try {
-            const { agentId, tmacServer } = SDKClient.getAgentData();
-            if(emails.find(email => !email.InSessionId)) {
-                this.getValidDataForSelectedEmail();
-                return;
+    async pullEmails(emails: Mail[]): Promise<void> {
+        let archivedAttachments = emails.find((e) => {
+            let filesInArchive = e.Files.find((f) => {
+                return f.ArchiveStatus || f.FileError;
+            });
+            if (filesInArchive) {
+                return true;
+            } else {
+                return false;
             }
-            const { items, uiIds } = emails.reduce(
-                (acc, curr) => {
-                    const item = {
-                        routeId: curr.RouteId || '',
-                        sessionId: curr.InSessionId,
-                        inSessionId: curr.InSessionId,
-                        conversationId: curr.ConversationID || '',
-                        mailbox: curr.Mailbox
-                    };
-                    if (this.currentTab === 'draft') {
-                        item.sessionId = curr.OutSessionId;
-                    } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
-                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
-                    } else if (this.currentTab === 'sentitem') {
-                        item.sessionId = `${curr.InSessionId}|${curr.OutSessionId}`;
-                        // item.inSessionId = curr.OutSessionId;
+        });
+
+        let pullEmailOp = () => {
+            const loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailLoading'), 'loading');
+            try {
+                const { agentId, tmacServer } = SDKClient.getAgentData();
+                if (emails.find((email) => !email.InSessionId)) {
+                    this.getValidDataForSelectedEmail();
+                    return;
+                }
+                const { items, uiIds } = emails.reduce(
+                    (acc, curr) => {
+                        const item = {
+                            routeId: curr.RouteId || '',
+                            sessionId: curr.InSessionId,
+                            inSessionId: curr.InSessionId,
+                            conversationId: curr.ConversationID || '',
+                            mailbox: curr.Mailbox
+                        };
+                        if (this.currentTab === 'draft') {
+                            item.sessionId = curr.OutSessionId;
+                        } else if (this.currentTab === 'queue' && curr.EmailType !== 'Dummy' && OUTBOX_REASONS.includes(curr.RouteReason)) {
+                            item.sessionId = curr.OutSessionId ? `${curr.InSessionId}|${curr.OutSessionId}` : curr.InSessionId;
+                        } else if (this.currentTab === 'sentitem') {
+                            item.sessionId = curr.OutSessionId ? `${curr.InSessionId}|${curr.OutSessionId}` : curr.InSessionId;
+                            // item.inSessionId = curr.OutSessionId;
+                        }
+                        delete this.emailBodies[curr.InSessionId];
+                        delete this.emailBodies[curr.OutSessionId];
+                        acc.items.push(item);
+                        acc.uiIds.push(curr.uiId);
+                        return acc;
+                    },
+                    { items: [], uiIds: [] }
+                );
+                this.http
+                    .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
+                        tmacServer,
+                        agentId,
+                        items
+                    })
+                    .subscribe({
+                        next: (res: any) => {
+                            if (res.status === 'FAILED') {
+                                // console.error(res);
+                                loader.dismiss();
+                                const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
+                                if (isAlreadyPulled.length) {
+                                    if (isAlreadyPulled.length > 1) {
+                                        if (isAlreadyPulled.length === emails.length) {
+                                            this.appUiService.showSnackbar(
+                                                this.translocoService.translate('sharedComponents.email.emailsAssigned'),
+                                                'failure'
+                                            );
+                                        } else {
+                                            this.appUiService.showSnackbar(
+                                                this.translocoService.translate('sharedComponents.email.someEmailsAssigned'),
+                                                'failure'
+                                            );
+                                        }
+                                    } else {
+                                        this.appUiService.showSnackbar(
+                                            this.translocoService.translate('sharedComponents.email.emailsAssigned'),
+                                            'failure'
+                                        );
+                                    }
+                                } else if (res.failedList.items.some((f) => f.responseCode === -407)) {
+                                    // Handle -407 error (Not authorized to pull checker email)
+                                    this.appUiService.showSnackbar(
+                                        this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
+                                        'failure'
+                                    );
+                                } else if (res.failedList.length === 1 && EMAIL_SEND_STATUS[res.failedList[0].responseCode]) {
+                                    let errorMsg = `${this.translocoService.translate(
+                                        `sharedComponents.email.emailPullFailed`
+                                    )}${this.translocoService.translate(
+                                        `sharedComponents.email.emailPullError${EMAIL_SEND_STATUS[res.failedList[0].responseCode]}`
+                                    )}`;
+                                    this._appUIService.showSnackbar(errorMsg, 'failure');
+                                } else {
+                                    this.appUiService.showSnackbar(
+                                        this.translocoService.translate('sharedComponents.email.pullEmailFailed'),
+                                        'failure'
+                                    );
+                                }
+                                return;
+                            }
+                            if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
+                                this.openEmailRes.data.next(null);
+                            }
+                            loader.dismiss();
+                            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailSuccess'), 'success');
+                        },
+                        error: (err) => {
+                            console.error(err);
+                            loader.dismiss();
+                            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+                        }
+                    });
+            } catch (e) {
+                console.error(e);
+                loader.dismiss();
+                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+            }
+        };
+
+        if (archivedAttachments) {
+            const confirmDialogRef = this.appUiService.showAppConfirmDialog(
+                'generic',
+                this.translocoService.translate('sharedComponents.email.emailPullConfirmHeader'),
+                this.translocoService.translate('sharedComponents.email.emailConfirmBody')
+            );
+
+            const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
+            if (dialogResult) {
+                pullEmailOp();
+            }
+        } else {
+            pullEmailOp();
+        }
+    }
+
+    /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: any[]): Promise<any> {
+        try {
+            //extract file id's
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.URL.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId });
+                        } else {
+                            acc.att.push({ ...cur });
+                        }
+                    } else {
+                        acc.att.push({ ...cur });
                     }
-                    delete this.emailBodies[curr.InSessionId];
-                    delete this.emailBodies[curr.OutSessionId];
-                    acc.items.push(item);
-                    acc.uiIds.push(curr.uiId);
                     return acc;
                 },
-                { items: [], uiIds: [] }
+                { ids: [], att: [] }
             );
-            this.http
-                .post(this.data.Data.WorkbenchUrl + `/${this.currentTab}/pull`, {
-                    tmacServer,
-                    agentId,
-                    items
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        if (res.status === 'FAILED') {
-                            // console.error(res);
-                            loader.dismiss();
-                            const isAlreadyPulled = res.failedList.items.filter((f) => f.responseCode === -405);
-                            if (isAlreadyPulled.length) {
-                                if (isAlreadyPulled.length > 1) {
-                                    if (isAlreadyPulled.length === emails.length) {
-                                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailsAssigned'), 'failure');
-                                    } else {
-                                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.someEmailsAssigned'), 'failure');
-                                    }
-                                } else {
-                                    this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.emailsAssigned'), 'failure');
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                try {
+                    const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
+                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                        method: 'GET',
+                        responseType: 'json'
+                    });
+
+                    if (response?.result?.length > 0) {
+                        attachmentMap.att.forEach((cur) => {
+                            if (cur.IsCloud) {
+                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                                if (fileMeta) {
+                                    cur.ArchiveStatus = fileMeta.archiveStatus;
+                                    cur.RestoreStatus = fileMeta.restoreStatus;
+                                    cur.FileError = fileMeta.fileError;
                                 }
-                            } else {
-                                this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
                             }
-                            return;
-                        }
-                        if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
-                            this.openEmailRes.data.next(null);
-                        }
-                        loader.dismiss();
-                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailSuccess'), 'success');
-                    },
-                    error: (err) => {
-                        console.error(err);
-                        loader.dismiss();
-                        this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+                        }, []);
                     }
-                });
-        } catch (e) {
-            console.error(e);
-            loader.dismiss();
-            this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.pullEmailFailed'), 'failure');
+                } catch (ex) {
+                    this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaError'), 'failure');
+                    attachmentMap.att.forEach((cur) => {
+                        cur.ArchiveStatus = null;
+                        cur.RestoreStatus = null;
+                        cur.FileError = true;
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
         }
     }
 
@@ -997,7 +1205,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             this.openEmailRes.data.next(Object.assign(email, { Body: '' }, { currentTab: this.currentTab }));
             this.setComponentState('email/open/loading');
             let fetchFromOutbox =
-                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue') && this.latestEmailPreview;
+                (this.currentTab === 'draft' || this.currentTab === 'sentitem' || email.RouteReason === 'CheckerQueue' || email.RouteReason === 'AgentDraftPull') && this.latestEmailPreview;
             let inboxRes: EmailInboxModel;
             let outboxRes: EmailOutboxModel;
 
@@ -1006,6 +1214,8 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             const getAttachments = (attachments: any[]): any[] => {
                 // check if attachements are there
                 if (attachments && attachments.length) {
+                    // request meta data from media streamer
+
                     return attachments.map((item: any) => {
                         let uploadedName = item.URL.split('/').pop();
                         if (!item.Name) {
@@ -1038,12 +1248,16 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         throwADError('Error in WorkbenchEmailComponent.getInboxEmail', 'Unexpected Response from server');
                     }
                 } else {
+                    let tempAttachments = await this.requestAttachmentData(inboxRes.Attachments);
                     this.emailBodies = Object.assign(this.emailBodies, {
                         [email.InSessionId]: {
-                            Files: getAttachments(inboxRes.Attachments),
+                            Files: getAttachments(tempAttachments),
                             AgentName: inboxRes.AgentName,
                             Intent: inboxRes.Intent,
-                            RepliedStatus: inboxRes.RepliedStatus === '1' ? this.translocoService.translate('sharedComponents.email.replied') : this.translocoService.translate('sharedComponents.email.notReplied'),
+                            RepliedStatus:
+                                inboxRes.RepliedStatus === '1'
+                                    ? this.translocoService.translate('sharedComponents.email.replied')
+                                    : this.translocoService.translate('sharedComponents.email.notReplied'),
                             ConversationID: inboxRes.ConversationID,
                             CurrentStatus: inboxRes.CurrentStatus,
                             ClosedBy: inboxRes.ClosedBy,
@@ -1070,10 +1284,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 if (!outboxRes) {
                     throwADError('Error in WorkbenchEmailComponent.getOutboxEmail', 'Unexpected Response from server');
                 }
+                let tempAttachments = await this.requestAttachmentData(outboxRes.Attachments);
 
                 this.emailBodies = Object.assign(this.emailBodies, {
                     [email.OutSessionId]: {
-                        Files: getAttachments(outboxRes.Attachments),
+                        Files: getAttachments(tempAttachments),
                         AgentName: outboxRes.AgentName,
                         ConversationID: outboxRes.ConversationID,
                         CurrentStatus: outboxRes.CurrentStatus,
@@ -1087,7 +1302,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                         OutSessionId: email.OutSessionId,
 
                         Priority: inboxRes?.Priority,
-                        RepliedStatus: inboxRes?.RepliedStatus === '1' ? this.translocoService.translate('sharedComponents.email.replied') : this.translocoService.translate('sharedComponents.email.notReplied'),
+                        RepliedStatus:
+                            inboxRes?.RepliedStatus === '1'
+                                ? this.translocoService.translate('sharedComponents.email.replied')
+                                : this.translocoService.translate('sharedComponents.email.notReplied'),
                         Intent: inboxRes?.Intent
                     }
                 });
@@ -1140,7 +1358,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     async markAsSpam(email: Mail): Promise<void> {
         let loader;
         try {
-            const confirmDialogRef = this.appUiService.showAppConfirmDialog('generic', this.translocoService.translate('sharedComponents.email.spamConfirmTitle'), this.translocoService.translate('sharedComponents.email.spamConfirmMsg'));
+            const confirmDialogRef = this.appUiService.showAppConfirmDialog(
+                'generic',
+                this.translocoService.translate('sharedComponents.email.spamConfirmTitle'),
+                this.translocoService.translate('sharedComponents.email.spamConfirmMsg')
+            );
             const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
             if (dialogResult) {
                 loader = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.spamEmailLoading'), 'loading');
@@ -1150,6 +1372,20 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     routeId: email.RouteId,
                     sessionId: email[sessionKey]
                 });
+                if (EMAIL_SEND_STATUS[res.response] && EMAIL_SEND_STATUS[res.response] !== 'Success') {
+                    this.appUiService.showSnackbar(
+                        this.translocoService.translate(
+                            `${this.translocoService.translate(
+                                `sharedComponents.email.emailSpamFailed`
+                            )}${this.translocoService.translate(
+                                `sharedComponents.email.emailSpamError${
+                                    EMAIL_SEND_STATUS[res.response]
+                                }`
+                            )}`
+                        ),
+                        'failure'
+                    );
+                }
                 if (res.response < 1) {
                     throw new Error('Email spam request failed');
                 }
@@ -1338,7 +1574,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      */
     setComponentState(action: ComponentActions, payload?: any): void {
         switch (action) {
-            case 'emails/search/failure': 
+            case 'emails/search/failure':
                 this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(payload?.msg, 'failure');
                 return;
 
@@ -1346,7 +1582,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 this.emailSearchRes.loading = true;
                 this.emailSearchRes.error = false;
                 this.openEmailRes.data.next(null);
-                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.getEmailsLoading'), 'loading');
+                this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.getEmailsLoading'),
+                    'loading'
+                );
                 break;
 
             case 'emails/success':
@@ -1366,7 +1605,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 break;
 
             case 'email/reply/loading':
-                this.replyEditorModal.sendingEmail = this.appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.replyEmailLoading'), 'loading');
+                this.replyEditorModal.sendingEmail = this.appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.replyEmailLoading'),
+                    'loading'
+                );
                 break;
             case 'email/reply/success':
                 if (this.replyEditorModal.sendingEmail) {
@@ -1645,10 +1887,31 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * @param {boolean} checked state of the checkbox
      * @param {Mail[]} emails if this isnt passed, all the emails across all folders are used for this check
      */
-    selectEmails = (checked: boolean, emails?: Mail[]) => {
+    selectEmails = (checked: boolean, emails?: Mail[], event?:any) => {
         const mails = emails ?? this.getAllEmailNodes();
+        const maxSelection =(this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSelection?? 10;
+        let totalCurrentSelections = this.getAllEmailNodes().filter((email:any) => email.checked)?.length ?? 0;
+        const dynamicLabels = [
+            {
+                key: '#maxBulkMailCount',
+                value: maxSelection.toString()
+            }
+        ];
         for (const n of mails) {
+            if((totalCurrentSelections == maxSelection) && checked) {
+                if(event) {
+                    event.checked = false;
+                    event.source.checked = false;
+                }
+                this._appUIService.showSnackbar(this._appDataService.getUpdatedLabel(
+                    this.translocoService.translate('widgets.workbench.maxBulkMailCount'),
+                    dynamicLabels
+                ));
+                return;
+            }
+
             n.checked = checked;
+            totalCurrentSelections++;
         }
     };
 
@@ -1663,51 +1926,52 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     };
 
     /**
-     * Method to check if max search range for dates is configured, if yes then check if dates selected in 
-     * advance search is within the given range 
-     * @returns True / False 
+     * Method to check if max search range for dates is configured, if yes then check if dates selected in
+     * advance search is within the given range
+     * @returns True / False
      */
-     checkForErrorInDate = () => {
+    checkForErrorInDate = () => {
         try {
-            const searchRange = ((this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange) ? 
-            (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange : 30;
+            const searchRange = (this.channelConf.Config as TwEmailWorkbenchConfig)?.MaxSearchRange
+                ? (this.channelConf.Config as TwEmailWorkbenchConfig).MaxSearchRange
+                : 30;
             const searchValues = this.advancedSearch.form?.value;
-            if(searchRange && searchValues) {
+            if (searchRange && searchValues) {
                 const fromDateTime: Date = this.getUpdatedDateTime(searchValues.fromDate, searchValues.fromTime);
                 const toDateTime: Date = this.getUpdatedDateTime(searchValues.toDate, searchValues.toTime);
 
-                if(toDateTime.getTime() < fromDateTime.getTime()) {
+                if (toDateTime.getTime() < fromDateTime.getTime()) {
                     return { type: 'INVALID_RANGE' };
                 }
 
                 const dateRange = Math.round((toDateTime.getTime() - fromDateTime.getTime()) / (1000 * 3600 * 24));
 
-                if(dateRange > Number(searchRange)) {
+                if (dateRange > Number(searchRange)) {
                     return { type: 'OUT_OF_RANGE' };
-                } 
-                
+                }
+
                 return false;
             }
             return false;
-        } catch(e) {
+        } catch (e) {
             this.logger.error('Error occured while validating dates in advance search', e, true);
             return false;
         }
-    }
-    
+    };
+
     getUpdatedDateTime = (date: Date, time) => {
         date.setHours(time?.split(':')[0] || '00');
         date.setMinutes(time?.split(':')[1] || '00');
         date.setSeconds(0);
         return date;
-    }
+    };
 
     async getValidDataForSelectedEmail() {
-        try{
+        try {
             const inboxRes: EmailInboxModel = (await SDKClient.getInboxEmail(this.selectedEmailInSessionId)).response;
             const outboxRes: EmailOutboxModel = (await SDKClient.getOutboxEmail(this.selectedEmailOutSessionId)).response;
             const emailData: Mail = new Mail();
-            
+
             emailData.Mailbox = inboxRes.Mailbox;
             emailData.RouteId = inboxRes.RouteId;
             emailData.InSessionId = inboxRes.SessionID;
@@ -1717,13 +1981,10 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
             emailData.uiId = inboxRes.SessionID;
             emailData.EmailType = inboxRes.EmailType;
             this.pullEmails([emailData]);
-        } catch(e) {
-            this.logger.error('Error occured while getting valid data for selected email:', JSON.stringify(e),true);
+        } catch (e) {
+            this.logger.error('Error occured while getting valid data for selected email:', JSON.stringify(e), true);
         }
-        
     }
-
-
 }
 
 // for more info visit - https://angular.io/api/core

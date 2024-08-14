@@ -1,4 +1,4 @@
-import { AOTWidget, TwSuActiveAgents } from '@ad/types';
+import { AOTWidget, IAuxCodeConfig, TwSuActiveAgents } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
@@ -26,10 +26,11 @@ import { CustomSDKEvent, IWidget, QuizEventJsonData } from 'app/interfaces';
 import { InstantMessagingService } from 'app/layout/components/instant-messaging/instant-messaging.service';
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil,take} from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { from } from 'rxjs';
 import { groupBy, mergeMap, toArray } from 'rxjs/operators';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Active agents component widget
@@ -93,6 +94,10 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      */
     activityWidget: IWidget;
     /**
+     * Aux codes config
+     */
+    auxCodeConfig: IAuxCodeConfig;
+    /**
      * Aux code list
      * Need more description
      */
@@ -141,7 +146,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _fuseSidebarService: FuseSidebarService,
         private _instantMessagingService: InstantMessagingService,
         private _agentFeaturesService: AgentFeaturesService,
-        private translocoService: TranslocoService
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService
     ) {
         super('TwSuActiveAgentsComponent');
 
@@ -159,6 +165,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
      * and before any of the view or content children have been checked. It is invoked only once when the directive is instantiated.
      */
     ngOnInit(): void {
+        // get the widget extra data
+            this.auxCodeConfig = this.data.Data.AuxCodes || {
+                Enabled: false,
+                ByTeam: false,
+                DefaultACW: false,
+                DefaultLogout: false
+        };
         // call the wrapper init method
         this.initWrapper(this.data);
 
@@ -170,8 +183,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
+            
         // get agent aux codes
-        SDKClient.loadAUXCodes(false).then((result: IResponse) => {
+        SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null).then((result: IResponse) => {
             // check if the data is null
             if (result.response && result.response.length > 0) {
                 // filter and assign the aux codes
@@ -200,7 +214,12 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         // call the wrapper destroy method
         this.destroyWrapper();
     }
+    /**
+     * Private method for handling AgentChangeStatusConfirmationEvent
+     */
 
+   
+    
     /**
      * To check agent features for IsSetBroadcastEnabled
      */
@@ -528,6 +547,9 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                                 // logout error
                                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFailed'), 'failure');
                             }
+                        }).catch(() => {
+                            // Handle logout failure due to internet connection issues
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFail'), 'failure');
                         });
                     }
                 });
@@ -570,19 +592,46 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         widget.Config.Position.W = 800;
         widget.Config.Position.H = 300;
         widget.Config.Actions = ['maximize', 'collapse', 'destroy'];
-        widget.Data = item;
+        widget.Data = {...item,...this.data.Data};
+        widget.ExtraConfig = this.data.Data.InteractionConstraints;
         this._aotWidgetService.addWidget(widget as AOTWidget);
     }
 
-    /**
-     * Change agent status
-     * @method changeAgentStatus
-     * @param {SuAgentDataModel} agent
-     * @param {IAUXCodes} item
-     */
-    public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
-        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'), 'loading');
-        // change the status
+   /**
+ * Change agent status
+ * @method changeAgentStatus
+ * @param {SuAgentModel} agent 
+ * @param {IAUXCodes} item 
+ */
+public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
+    // Show a snackbar indicating that the status change is in progress
+    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'));
+    if (this.data.Data.agentStatusChange){
+    // Constructing a request packet to change the agent's status
+    const reqPacket = {
+        agentId: agent.AgentLoginID,
+        eventString: JSON.stringify({
+            EventName: 'GenericEvent',
+            SubEventName: 'AgentChangeStatusConfirmationEvent',
+            JsonData: JSON.stringify({
+                type: 'request',
+                status: `${item.Name}!`, 
+                auxData: item,
+                requestedBy: {
+                    agentId: this.user.agentId,
+                    tmacserver: this.user.tmacServer
+                }
+            })
+        }),
+        isPriority: true,
+        toTmacServer: agent.TmacServer
+    };
+
+    // Adding the status change event to the agent's session
+    SDKClient.addEventToAgentSession(reqPacket);
+}
+
+else if (!this.data.Data.agentStatusChange){
         SDKClient.changeStatus(
             {
                 deviceId: agent.StationID,
@@ -599,7 +648,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     // notification to the agent
                     let notification = `Supervisor ${this.user.agentName} has changed your status to ${response.Status}`;
                     // snackbar message
-                    let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess');
+                    let message = this.translocoService.translate('widgets.activeAgents.agentStatusSuccess').replace('#newStatus', response.Status);
                     // check if the agent is on call
                     if (agent.CurrentAgentStatus.includes('On Call')) {
                         message = this.translocoService.translate('widgets.activeAgents.statusChangeRequestSuccess');
@@ -635,8 +684,8 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 // logout error
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.statusChangeError'), 'failure');
             });
+        }
     }
-
     /**
      *  Send Quiz intent to agent
      * @param {String} intentName

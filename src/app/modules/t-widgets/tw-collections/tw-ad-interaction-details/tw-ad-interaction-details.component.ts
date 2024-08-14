@@ -67,8 +67,12 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @ViewChild('agentCommentRef')
     agentCommentRef: TemplateRef<any>;
 
-    constructor(private _tmacEventService: TMACEventService,
-        private translocoService: TranslocoService, private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
+    constructor(
+        private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService,
+        private _appUIService: AppUiService,
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         super('TwAdInteractionDetailsComponent');
     }
 
@@ -110,6 +114,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             audio: 'wifi_calling_3',
             video: 'duo',
             whatsapp: 'custom-whatsapp',
+            instagram: 'custom-instagram',
             we: 'custom-we',
             line: 'custom-line',
             viber: 'custom-viber',
@@ -122,51 +127,60 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         };
         this.table.config = {
             Channel: {
+                langCode: 'tableFields_common.InteractionDetails.Channel',
                 searchable: true,
                 tooltip: true,
                 width: '120px',
                 icon: (el: any) => ({ name: iconMap[(el.Channel || '').toLowerCase()] || 'feed', only: true })
             },
             SubChannel: {
+                langCode: 'tableFields_common.InteractionDetails.SubChannel',
                 searchable: true,
                 tooltip: true,
                 icon: (el: any) => ({ name: iconMap[(el.SubChannel || '').toLowerCase()] || 'feed', only: true })
             },
             Direction: {
+                langCode: 'tableFields_common.InteractionDetails.Direction',
                 searchable: true,
                 uppercase: true,
                 icon: (el: any) => ({ name: iconMap[(el.Direction || '').toLowerCase()] || 'feed', color: 'accent' })
             },
             CreatedDateTime: {
+                langCode: 'tableFields_common.InteractionDetails.CreatedDateTime',
                 searchable: true,
-                title: 'Created On',
+                title: this.translocoService.translate('widgets.adInteractionDetails.CreatedDateTime'),
                 type: 'date'
             },
             ClosedDateTime: {
+                langCode: 'tableFields_common.InteractionDetails.ClosedDateTime',
                 searchable: true,
-                title: 'Closed On',
+                title: this.translocoService.translate('widgets.adInteractionDetails.ClosedDateTime'),
                 type: 'date'
             },
             AgentComment: {
+                langCode: 'tableFields_common.InteractionDetails.AgentComment',
                 title: 'Comments',
                 searchable: true,
                 custom: this.agentCommentRef
             },
             User: {
+                langCode: 'tableFields_common.InteractionDetails.User',
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             Dnis: {
-                title: 'DNIS',
+                langCode: 'tableFields_common.InteractionDetails.Dnis',
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             Intent: {
+                langCode: 'tableFields_common.InteractionDetails.Intent',
                 searchable: true
             },
             ActiveTime: {
+                langCode: 'tableFields_common.InteractionDetails.ActiveTime',
                 value: (el: any) => el.ActiveTime
             }
         };
@@ -206,7 +220,6 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
      */
     maximizeEvent(state: boolean): void {
         if (!state) {
-            this.table.advancedSearchForm = {};
             this.table.doAdvancedSearch();
             this.table.source.paginator.firstPage();
         }

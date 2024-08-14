@@ -136,11 +136,11 @@
                 </div>
             </form>
 
-            <div *ngIf="_email.Files?.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list twd-pb-1.5">
+            <div *ngIf="_email.Files?.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-text-xs attachment-list twd-pb-1.5">
                 <ng-template *ngTemplateOutlet="attachmentsRef; context: { attachments: _email.Files, removable: true }"></ng-template>
             </div>
 
-            <email-editor class="border-primary twd-flex-1 border-radius-20 twd-mb-2 twd-overflow-hidden" [(body)]="_email.Body"></email-editor>
+            <email-editor class="border-primary twd-flex-1 border-radius-20 twd-mb-2 twd-overflow-hidden" [(body)]="_email.Body" (bodyChange)="onBodyChange($event)"></email-editor>
         </ng-container>
 
         <div *ngIf="state === 'error'" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
@@ -163,19 +163,26 @@
                     (click)="attachFileRef.click()"
                 >
                     <mat-icon>attach_file</mat-icon>
-                    <input #attachFileRef type="file" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
+                    <input #attachFileRef type="file" [multiple]="false" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
                 </button>
             </div>
-            <button
-                mat-raised-button
-                color="primary"
-                class="mx-4 border-radius-20"
-                [disabled]="state !== 'loaded'"
-                [matTooltip]="locale('sharedComponents.email.sendEmail')"
-                (click)="sendEmail.emit(_email)"
-            >
-                {{ locale('sharedComponents.email.send') }}
-            </button>
+            <div class="twd-flex">
+                <div *ngIf="showPayloadSizeStats" class="payload-stat twd-flex">
+                    <mat-icon *ngIf="(this.currentAttachmentSize +
+                    this.currentBodySize) > this.email.MaxPayloadSize">info</mat-icon>
+                    <p>{{ bytesToMB(this.currentAttachmentSize +
+                        this.currentBodySize) }}/{{ bytesToMB(this.email.MaxPayloadSize) }}</p>
+                </div>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    class="mx-4 border-radius-20"
+                    [disabled]="state !== 'loaded'"
+                    [matTooltip]="locale('sharedComponents.email.sendEmail')"
+                    (click)="onSendEmail(_email)">
+                        {{ locale('sharedComponents.email.send') }}
+                </button>
+            </div>
         </div>
     </div>
 
@@ -222,17 +229,50 @@
         <mat-chip-list class="attachments-summary">
             <mat-chip
                 *ngFor="let file of attachments | slice: 0:2"
+                [ngClass]="{
+                    'email-attachment-available': !file.ArchiveStatus,
+                    'email-attachment-archived': file.ArchiveStatus === 'ARCHIVE_ACCESS',
+                    'email-attachment-deep-archived': file.ArchiveStatus === 'DEEP_ARCHIVE_ACCESS',
+                    'email-attachment-failed': file.FileError
+                }"
                 [removable]="removable"
                 class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                [matTooltip]="file.Name"
-                (click)="openFile(file)"
+                [matTooltip]="getAttachmentToolTip(file)"
                 (removed)="removeFiles(file.Id)"
             >
-                <div class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
+                <div
+                    *ngIf="!file.ArchiveStatus && !file.FileError"
+                    (click)="openFile(file)"
+                    class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                >
                     <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                     <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
                     <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                 </div>
+                <div
+                    *ngIf="file.ArchiveStatus || file.FileError"
+                    [matMenuTriggerFor]="(file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptList : null"
+                    class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                >
+                    <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                    <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
+                    <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+                </div>
+                <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
+                    <button *ngIf="file.ArchiveStatus" mat-menu-item (click)="restoreFromArchive(file)">
+                        <mat-icon>restore</mat-icon>
+                        Restore
+                    </button>
+                    <button
+                        *ngIf="file.FileError"
+                        mat-menu-item
+                        (click)="getMetaDataForFile(file)"
+                        [matTooltip]="locale('sharedComponents.email.fileRetryTooltip')"
+                    >
+                        <mat-icon>refresh</mat-icon>
+                        Retry
+                    </button>
+                </mat-menu>
             </mat-chip>
             <mat-chip
                 *ngIf="attachments.length > 2"
@@ -244,22 +284,62 @@
             </mat-chip>
         </mat-chip-list>
 
+        <!-- <mat-menu class="custom attachment-overlay" #attachOptList="matMenu">
+            <button mat-menu-item (click)="restoreFromArchive(file)">
+                <mat-icon>restore</mat-icon>
+                Restore
+            </button>
+        </mat-menu> -->
+
         <mat-menu class="custom attachment-overlay" #attachList="matMenu">
             <div class="attachment-menu twd-mx-2">
                 <mat-chip-list class="mat-chip-list-stacked">
                     <mat-chip
                         *ngFor="let file of attachments | slice: 2:attachments.length"
+                        [ngClass]="{
+                            'email-attachment-available': !file.ArchiveStatus,
+                            'email-attachment-archived': file.ArchiveStatus === 'ARCHIVE_ACCESS',
+                            'email-attachment-deep-archived': file.ArchiveStatus === 'DEEP_ARCHIVE_ACCESS',
+                            'email-attachment-failed': file.FileError
+                        }"
                         [removable]="removable"
                         class="border-radius-20 twd-flex twd-items-center twd-justify-between"
-                        [matTooltip]="file.Name"
-                        (click)="openFile(file)"
+                        [matTooltip]="getAttachmentToolTip(file)"
                         (removed)="removeFiles(file.Id)"
                     >
-                        <div class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5">
+                        <div
+                            *ngIf="!file.ArchiveStatus && !file.FileError"
+                            class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                            (click)="openFile(file)"
+                        >
                             <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
                             <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
                             <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
                         </div>
+                        <div
+                            *ngIf="file.ArchiveStatus || file.FileError"
+                            [matMenuTriggerFor]="(file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptListSecondary : null"
+                            class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
+                        >
+                            <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
+                            <span class="twd-truncate twd-ml-2 twd-text-accent"> {{ file.Name }} </span>
+                            <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
+                        </div>
+                        <mat-menu class="custom attachment-overlay" #attachOptListSecondary="matMenu">
+                            <button *ngIf="file.ArchiveStatus" mat-menu-item (click)="restoreFromArchive(file)">
+                                <mat-icon>restore</mat-icon>
+                                Restore
+                            </button>
+                            <button
+                                *ngIf="file.FileError"
+                                mat-menu-item
+                                (click)="getMetaDataForFile(file)"
+                                [matTooltip]="locale('sharedComponents.email.fileRetryTooltip')"
+                            >
+                                <mat-icon>refresh</mat-icon>
+                                Retry
+                            </button>
+                        </mat-menu>
                     </mat-chip>
                 </mat-chip-list>
             </div>

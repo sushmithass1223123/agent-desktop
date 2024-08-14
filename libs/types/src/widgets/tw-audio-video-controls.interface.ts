@@ -148,11 +148,44 @@ export type TwAudioVideoControlsData = {
      */
     HoldInteractionAllowed: boolean;
     /**
+     * To identify the customer device
+     * 
+     * [INTERNAL] Used when opened as AOT from tw-chat-controls-widget
+     */
+    IsScreenShareDisabled: boolean;
+    /**
+     * To hold the chat mode
+     * 
+     * [INTERNAL]
+     */
+    ChatMode: string;
+    /**
+     * To hold av call constraints
+     * 
+     * [INTERNAL]
+     */
+    AvCallConstraints: any;
+    /**
+     * To hold conference agents list
+     * 
+     * [INTERNAL]
+     */
+    ConferenceAgentList: any;
+
+    /**
      * [STANDALONE] Flag to allow screenshare
      */
     ScreenShareAllowed: boolean;
     /**
+     * [STANDALONE] Flag to allow screenshare requesting
+     */
+    ReqScreenShareAllowed: boolean;
+    /**
      * [STANDALONE] Flag to toggle user view
      */
     ToggleUserViewAllowed: boolean;
+    /**
+     * [STANDALONE] To hide audio mute button or not
+     */
+    MuteAudioHidden: boolean;
 };

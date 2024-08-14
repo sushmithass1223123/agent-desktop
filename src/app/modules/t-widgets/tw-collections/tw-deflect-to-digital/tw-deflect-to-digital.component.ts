@@ -8,7 +8,9 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
-
+import { AgentFeaturesService } from '@services/agent-features.service';
+import { AGENT_FEATURES } from 'app/constants';
+import { FormControl } from '@angular/forms';
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
@@ -21,7 +23,6 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      */
     // @Input() data: IWidget<any, WidgetData>;
     @Input() data: TwDeflectToDigital;
-
     /**
      * Interaction Id
      */
@@ -38,16 +39,27 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     comment = '';
 
     /**
+     * selected send type
+     */
+    sendType:FormControl = new FormControl();
+
+    /**
+     * customer email id to send a notification 
+     */
+    emailId:FormControl = new FormControl();
+
+
+    /**
      * Text template componet ref
      */
     @ViewChild(TextTemplatesComponent)
     textTemplatesRef: TextTemplatesComponent;
-
+    IsDeflectToDigitalEditTextMessageEnabled: boolean = false;
     /**
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService,
-        private translocoService: TranslocoService) {
+        private translocoService: TranslocoService, private _agentFeaturesService: AgentFeaturesService) {
         super('TwDeflectToDigitalComponent');
     }
 
@@ -57,15 +69,23 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     ngOnInit(): void {
         this.initWrapper(this.data);
 
-        this.interactionId = this.data.InteractionDetails.InteractionID;
+        this.interactionId = this.data.InteractionDetails?.InteractionID;
 
         // check if number to be taken from TMAC event
         if (!this.data.Data.Number?.toLowerCase().includes('event')) {
             return;
         }
+        // setting default value for type is SMS
+        this.sendType.setValue(this.SendTypeList[0].value);
 
         const eventName = this.data.Data.Number?.split('.')?.shift() as any;
-
+        this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
+            if (change) {
+                // check agent features
+                this.checkAgentFeatures();
+            }
+        });
+        this.checkAgentFeatures();
         // register to tmac events
         if (eventName) {
             this._tmacEventService
@@ -120,18 +140,25 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 return;
             }
 
-            if (!this.toNumber) {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
+            if(this.sendType.value === 'sms' && !this.toNumber) {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.toFieldRequiredMsg'), 'failure');
+                    return;
+            }
+
+            if(this.sendType.value === 'email' && this.emailId.invalid) {
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.emailIdNotFound'), 'failure');
                 return;
             }
 
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectLoading'), 'loading');
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
-                customerContact: this.toNumber,
+                customerContact: this.getCustomerContact(),
                 templateMessage: template,
                 comment: this.comment,
-                additionalParams: JSON.stringify({}),
+                additionalParams: JSON.stringify({
+                    sendType: this.sendType.value
+                }),
                 deflectExpiry: this.data.Data.DeflectExpiry,
                 deflectIntent: this.data.Data.DeflectIntent,
                 destChannel: this.data.Data.DestChannel,
@@ -157,8 +184,59 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             }
         }
     }
-}
 
+    /**
+     * To get customer contact detail based on the send type selected
+     */
+    private getCustomerContact() {
+        switch(this.sendType.value) {
+            case 'email':  
+                return this.emailId.value;
+            case 'sms':
+            default: 
+                return this.toNumber
+        }
+    }
+
+    /**
+     * To check agent features for IsDeflectToDigitalEditTextMessageEnabled
+     */
+    private checkAgentFeatures(): void {
+        try {
+
+            const featureDetails = SDKClient.getAgentData().featuresList.filter(
+                (f) => 
+                f.Feature.toLowerCase() === AGENT_FEATURES.IsDeflectToDigitalEditTextMessageEnabled.toLowerCase()
+            );
+            console.log("IsDeflectToDigitalEditTextMessageEnabled", featureDetails)
+            if(featureDetails.length == 1)
+            {
+                console.log("IsDeflectToDigitalEditTextMessageEnabled featureDetails.length", featureDetails[0].IsEnabled)
+                this.IsDeflectToDigitalEditTextMessageEnabled = featureDetails[0].IsEnabled;
+            }
+            else
+            {
+                console.log("IsDeflectToDigitalEditTextMessageEnabled EditAllowed", this.data.Data.EditAllowed)
+                this.IsDeflectToDigitalEditTextMessageEnabled = this.data.Data.EditAllowed;
+            }
+        } catch (error) {}
+    }
+
+    /**
+     * Types of sending notification
+     */
+    SendTypeList = [
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeSMS'),
+            value: "sms"
+        },
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeEmail'),
+            value: "email"
+        }
+    ];
+    
+}
 interface WidgetData {
     DeflectExpiry: number;
     DeflectIntent: string;
@@ -171,5 +249,4 @@ interface WidgetData {
     ReservedStatusCode: string;
     Number: string;
 }
-
 // for more info visit - https://angular.io/api/core

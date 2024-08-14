@@ -2,7 +2,7 @@ import { TwUserLocation } from '@ad/types';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { TMACEventService } from '@services/tmac-event.service';
-import { TextChatRemoteUserConnectedEvent } from '@tmac/sdk';
+import { TextChatRemoteUserConnectedEvent, TextChatMessageReceivedEvent } from '@tmac/sdk';
 import * as L from 'leaflet';
 import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
@@ -69,7 +69,7 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
             this.error = this.translocoService.translate('widgets.userLocation.unableToSetLocation');
         }
         this._tmacEventService
-            .getInteractionEvents(['TextChatRemoteUserConnectedEvent'], interactionId)
+            .getInteractionEvents(['TextChatRemoteUserConnectedEvent', 'TextChatMessageReceivedEvent'], interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
     }
@@ -93,6 +93,27 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
     }
 
     /**
+     * To process TextChatMessageReceivedEvent
+     * @param evt TextChatMessageReceivedEvent evt
+     */
+    TextChatMessageReceivedEvent(evt: TextChatMessageReceivedEvent): void {
+        // // check if app message
+        if (evt.IsAppMessage) {
+            const msg = JSON.parse(evt.Message);
+            const mType = msg.type ? msg.type : msg.msg ? msg.msg.type : 'unknown';
+            switch (mType?.toLowerCase()) {
+                case 'location': {
+                    let lat = parseFloat(msg.latitude ? msg.latitude : msg?.msg?.content?.latitude ? msg?.msg?.content?.latitude : '0');
+                    let long = parseFloat(msg.longitude ? msg.longitude : msg?.msg?.content?.longitude ? msg?.msg?.content?.longitude : '0');
+                    this.setLocation(lat, long);
+                    break;
+                }
+            }
+            return;
+        }
+    }
+
+    /**
      * To process TextChatRemoteUserConnectedEvent
      *
      * @param {TextChatRemoteUserConnectedEvent} event
@@ -107,10 +128,10 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
                 this.error = this.translocoService.translate('widgets.userLocation.locationUndefined');
                 this.clearLoading();
                 return;
+            } else {
+                const [lat, long] = location.split(',');
+                this.setLocation(lat, long);
             }
-
-            const [lat, long] = location.split(',');
-            this.setLocation(lat, long);
         } catch (e) {
             this.logger.error('Unable to set location', e);
             this.error = this.translocoService.translate('widgets.userLocation.unableToSetLocation');
@@ -123,19 +144,28 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
      * @param {Number} long
      */
     setLocation(lat: number, long: number): void {
-        this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(this.map);
-        const icon = L.icon({
-            iconUrl: 'assets/images/leaflet/marker-icon.png',
-            shadowUrl: 'assets/images/leaflet/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [13, 41]
-        });
-        L.marker([lat, long], { icon }).addTo(this.map).openPopup();
-        this.clearLoading();
-        setTimeout(() => {
-            this.map.invalidateSize();
-        }, 1000);
+        try {
+            if(this.map){
+                this.map.remove();
+            }            
+            this.error = undefined;
+            this.map = L.map(this.mapContainerRef.nativeElement).setView([lat, long], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png').addTo(this.map);
+            const icon = L.icon({
+                iconUrl: 'assets/images/leaflet/marker-icon.png',
+                shadowUrl: 'assets/images/leaflet/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [13, 41]
+            });
+            L.marker([lat, long], { icon }).addTo(this.map).openPopup();
+            this.clearLoading();
+            setTimeout(() => {
+                this.map.invalidateSize();
+            }, 1000);
+        } catch (ex) {
+            this.logger.error('Unable to set location', ex);
+            this.error = this.translocoService.translate('widgets.userLocation.unableToSetLocation');
+        }
     }
 
     /**

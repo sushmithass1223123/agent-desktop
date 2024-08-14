@@ -170,7 +170,8 @@
                     <textarea
                         matInput
                         #replyInput
-                        ngModel
+                        [(ngModel)]="allNewChats[selectedContact.id]"
+                       
                         name="message"
                         placeholder="Type your message"
                         [rows]="1"
@@ -185,7 +186,7 @@
                     mat-icon-button
                     type="submit"
                     aria-label="Send message"
-                    [disabled]="selectedContact.status === 'Not Logged In' ||!replyInput.value.trim() " 
+                    [disabled]="selectedContact.status === 'Not Logged In' ||!replyInput.value.trim() || !isAgentOnline" 
                 >
                     <mat-icon class="secondary-text">send</mat-icon>
                 </button>

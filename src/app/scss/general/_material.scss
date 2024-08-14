@@ -411,14 +411,12 @@ mat-dialog-container {
 
 // mat dialog
 
-// mat tooltip
+// Email attachment tooltip to break words
 .mat-tooltip {
     font-size: 1.4rem !important;
     white-space: pre-line;
-    word-wrap: normal;
+    word-break: break-all; 
 }
-
-// mat tooltip
 
 .mat-badge-content {
     background: $tw-warning !important;
@@ -460,4 +458,11 @@ mat-dialog-container {
 
 .mat-card-header-text {
     width: 100%;
+}
+
+// Email template mat menu text overflow changes
+.mat-menu-content div button div {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

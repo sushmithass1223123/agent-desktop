@@ -215,6 +215,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             audio: 'wifi_calling_3',
             video: 'duo',
             whatsapp: 'custom-whatsapp',
+            instagram: 'custom-instagram',
             we: 'custom-we',
             line: 'custom-line',
             viber: 'custom-viber',
@@ -293,7 +294,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 searchable: true
             },
             OverallSentiment: {
-                title: this.translocoService.translate('interactionComopnent.sentiment')
+                title: this.translocoService.translate('interactionComponent.sentiment')
             },
             Actions: {
                 title: '',

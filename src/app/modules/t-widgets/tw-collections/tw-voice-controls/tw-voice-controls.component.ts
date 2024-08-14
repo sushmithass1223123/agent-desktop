@@ -313,11 +313,19 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     callConnected: boolean;
 
+    disableResetCall:boolean; 
+
+    isAnswerLoading = false;
+
+    connectionTimeout = null;
+
     /**
      * counter for failed scenarios for answer / disconnect call 
      */
     failedCounter = 0;
     @ViewChild('closeBtn') closeButton: MatButton;
+
+    @ViewChild('answerBtn') answerButton: MatButton;
 
     /** to track Media server session ID in case of MS call */
     msSessionId;
@@ -352,6 +360,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
         this.widgetData = this.data.Data;
 
+        this.disableResetCall = this.widgetData.disableResetCall;
         // get the user info
         this.user = SDKClient.getAgentData() || null;
 
@@ -513,6 +522,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         
         // stop duration timer
         this.stopTimer.next(null);
+
+        this.resetConnectionTimeout();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -554,7 +565,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     ...this.tempCallRef,
                     status: 'init',
                     sessionID: sessionId,
-                    type: ''
+                    type: this.tempCallRef.type ?  this.tempCallRef.type : ''
                 };
             }
 
@@ -624,8 +635,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 break;
             case 'onEnd':
                 // remove the av reference on end
-                // delete this.avConns[evt.sessionId];
-                delete this.getAVConnection;
+                // delete this.avConns[evt.sessionId]; // to do: remove AVConnections of valid session ids to be removed on End
+                // delete this.getAVConnection();
                 // get the index of session id from call line list
                 const index = this.callLines.indexOf(evt.sessionId);
                 // if found, then remove
@@ -750,6 +761,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.toggleButton(true, btn);
         SDKClient.disconnectCall(this.interaction.InteractionID.toString(), null)
             .then((dt: IResponse) => {
+                this.resetConnectionTimeout();
                 // toggle the button
                 this.toggleButton(false, btn);
                 // check for the response
@@ -776,7 +788,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     private handleConferenceMixer(): void {
         // get the main line and conference line
-        const mainLine = this.getAVConnection();
+        const mainLine = this.getAVConnection(this.callLines[0]);
         // this.avConns[this.callLines[0]];
         const conferenceLine = this.getAVConnection(this.tempCallRef.sessionID);
         // this.avConns[this.tempCallRef.sessionID];
@@ -786,7 +798,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceError'));
             return;
         }
-
+        
         // add the conference peer connection to the conference
         mainLine.addConference(conferenceLine.getPeerConnection());
     }
@@ -894,8 +906,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 this.duration = val;
             });
 
+        this._fuseProgressBarService.hide();
+
         // set the status
         this.status = 'connected';
+        
 
         // update the interaction status and user
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
@@ -1118,12 +1133,15 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // change the mute flag
                 this.muted = false;
             }
+
+            /*
             // set the status
             this.status = 'connected';
             // update the interaction status
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 status: 'connected'
             });
+            */
         }
     }
 
@@ -1138,18 +1156,27 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             // since conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
             // so we use mute/unmute instead
 
+            
             // check if muted then unmute
             if (this.muted) {
                 // so we use mute/unmute instead
-                const connection: AVChannel = this.getAVConnection();
+                const connection: AVChannel = this.getAVConnection(this.callLines[0]);
                 //this.avConns[this.callLines[0]];
                 // un mute the call
                 connection.unMute(true, false);
                 // change the mute flag
                 this.muted = false;
             }
+
+            if(this.status === 'hold') {
+                const connection: AVChannel = this.getAVConnection(this.callLines[0]);
+                connection.unHold();
+            }
             // // do conference mixing
-            this.handleConferenceMixer();
+            if(this.widgetData.Conference?.MediaServerConferenceEnabled && evt?.MediaServer_ConferenceEnabled) {
+                this.handleConferenceMixer();
+                this.logger.debug(`Conference mixing from Agent Desktop`, true);
+            } else this.logger.debug(`Conference mixed by Media Server`, true);
         }
         // else {
         // set the status
@@ -1190,8 +1217,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     break;
                 case 'call-connecting':
                     // create WebRTC peer connection
-                    connection = this.createAVConnection(evt.SessionID, 'out');
-                    connection?.directCall(TEnums.WrcCallTypes.Audio);
+                    if(!this.widgetData.Conference?.MediaServerConferenceEnabled) {
+                        connection = this.createAVConnection(evt.SessionID, 'out');
+                        connection?.directCall(TEnums.WrcCallTypes.Audio);
+                    };
                     // play incoming call sound
                     this._appUIService.playAudio('ringing', 0.5, true);
                     break;
@@ -1390,7 +1419,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             },
             {
                 key: '#customerName',
-                value: this.callerID
+                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.callerID)
             },
             {
                 key: '#sessionID',
@@ -1436,6 +1465,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {MatButton} btn
      */
     answerCall(btn: MatButton): void {
+        this.isAnswerLoading = true;
+        // toggle the button
+        this.toggleButton(true, btn);
         // check if ms call then do not call api, just process the media server messages
         if (this.isMSCall) {
             // get the connection variable
@@ -1456,15 +1488,23 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                 // clear the array after processing
                 this.mediaServerMessages = [];
             } else {
-                this.logger.warn(`answerCall: AV connection is not found - ${this.sessionID}`);
+                this.logger.warn(`answerCall: AV connection is not found - ${this.msSessionId}`, true);
+                this._appUIService.showAppSnackbar({
+                    'message': this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ' <br> AV Connection not found !!',
+                    'state': 'danger',
+                    'vPos':'top',
+                    'hPos': 'center'
+                });
             }
             // set the process media message to true for further messages
             this.processMediaMessages = true;
+            this.isAnswerLoading = false;
+            this.checkIfConnected();
             return;
         }
-        // toggle the button
-        this.toggleButton(true, btn);
+        
         SDKClient.answerCall(this.interaction.InteractionID.toString(), null).then((dt: IResponse) => {
+            this.isAnswerLoading = false;
             // toggle the button
             this.toggleButton(false, btn);
             // check for the response
@@ -1473,12 +1513,40 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             } else {
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
                 this.handleCallFailure('Answer call');
+                this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + ':' + JSON.stringify(dt),true);
             }
         })
-        .catch(() => {
+        .catch((e) => {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.answerCallFailed'), 'failure');
             this.handleCallFailure('Answer call');
+            this.logger.warn(this.translocoService.translate('widgets.voiceControls.answerCallFailed') + JSON.stringify(e),true);
+            this.isAnswerLoading = false;
         });
+    }
+
+    checkIfConnected() {
+        try{
+            if(this.connectionTimeout !== null) {
+                return;
+            }
+    
+            const timeout = this.data?.Data?.connectionTimeout ? this.data.Data.connectionTimeout : 10;
+            this.connectionTimeout = setTimeout(() => {
+                if(this.status === 'incoming') {
+                    this.toggleButton(false, this.answerButton);
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.connectionTimedOut'), 'failure');
+                    this.continueToResetCall(true);
+                }
+            }, timeout*1000);
+        } catch(e) {
+            console.log('error occured while checking if call connected', e);
+        }
+        
+    }
+
+    resetConnectionTimeout() {
+        clearTimeout(this.connectionTimeout);
+        this.connectionTimeout = null;
     }
 
     /**
@@ -1824,12 +1892,20 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                     // get the connection variable for main line
                     // s conference is handled in UI for MS calls, we cannot hold the call and unhold as it will cause state issue in UI
                     // so we use mute/unmute instead
-                    const connection: AVChannel = this.getAVConnection();
+                    const connection: AVChannel = this.getAVConnection(this.callLines[0]);
                     //this.avConns[this.callLines[0]];
-                    // mute the call
-                    connection.mute(true, false);
-                    // mute flag
-                    this.muted = true;
+                    
+                    
+                    if(this.widgetData.Conference?.EnableMuteOnInitiation) {
+                        // mute the call
+                        connection.mute(true, false);
+                        // mute flag
+                        this.muted = true;
+                    } else {
+                        connection.hold();
+                    }
+                    
+
                     // change status for hold temp.
                     this.status = 'hold';
                     // update the interaction status
@@ -2126,7 +2202,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             this.handleUIControls({
                 eventName: 'enableCloseInteraction'
             });
-            this.logger.debug(`Enabling force close as ${operation} failed more than 3 times`);
+            this.logger.debug(`Enabling force close as ${operation} failed more than 3 times`, true);
         }
     }
 
@@ -2143,5 +2219,38 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             console.log('Error occured while getting the AV connection', e);
         }
         return this.avConns[this.sessionID];
+    }
+
+    resetCall = () => {
+        this.logger.info(`Reset Call trggered`, true);
+        this.dialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.voiceControls.resetCallTitle'), this.translocoService.translate('widgets.voiceControls.resetCallMsg'));
+        this.dialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                this.logger.info(`Reset Call trggered confirmed`, true);
+                this.continueToResetCall();
+            } else {
+                this.logger.info(`Reset Call cancelled by agent`, true);
+            }
+        });
+    }
+
+    continueToResetCall = (isAutoReset?) => {
+        try{
+            const requestArgs = {
+                interactionId : this.interaction?.InteractionID.toString(),
+                type : 'RESETWEBPHONE',
+                message: 'Reset webphone'
+            };
+            SDKClient.sendAVControlMessage(requestArgs).then(response => {
+                this.logger.info('AV control message resetting webphone '+ isAutoReset ? '[connection timed out]' : '' + ' success:' + JSON.stringify(response), true);
+                this.CallDisconnectedEvent(<CallDisconnectedEvent>{
+                    InteractionID: this.interaction?.InteractionID
+                });
+            }).catch(e => {
+                this.logger.info('Error occured while resetting webphone:' + JSON.stringify(e), true);
+            });
+        } catch(e) {
+            this.logger.error('Error occured on resetting web phone', e, true);
+        }
     }
 }

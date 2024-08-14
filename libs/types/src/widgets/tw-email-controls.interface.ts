@@ -109,4 +109,17 @@ export interface TwEmailControlsData {
      * @default false
      */
     TemplatesByHierarchy: boolean;
+    /**
+     * Asynchronous email send timeout
+     * @default 60000
+     */
+    AsyncEmailSendTimeout: number;
+    /**
+     * Maximum payload size while sending email just in case if GetMailboxConfiguration method call fails.
+     */
+    DefaultMaxPayloadSize: number;
+    /**
+     * Flag to show the (current payload size/max payload size)
+     */
+    ShowPayloadSizeStats: boolean;
 }

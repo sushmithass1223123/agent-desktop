@@ -167,7 +167,11 @@
 
                         <div class="button-group">
                             <button
-                                *ngIf="user.streamInfo.type === 'video' && agentFeatures.snapshot"
+                                *ngIf="
+                                    user.streamInfo.type === 'video' &&
+                                    agentFeatures.snapshot &&
+                                    user.streamInfo.user === interactionDetails.CustomerName
+                                "
                                 mat-flat-button
                                 mat-icon-button
                                 [disabled]="!connected || hold || snapshotRequested"
@@ -229,6 +233,7 @@
                 <div class="call-controls twd-flex twd-flex-row twd-flex-wrap">
                     <div class="actions-1 twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-max twd-max-w-5/12">
                         <button
+                            *ngIf="!muteAudioHidden"
                             mat-flat-button
                             mat-icon-button
                             [disabled]="!connected || hold"
@@ -256,7 +261,7 @@
                         </button>
 
                         <button
-                            *ngIf="agentFeatures.oneWayVideo || callType === 'audio'"
+                            *ngIf="agentFeatures.audioToVideo && (agentFeatures.oneWayVideo || callType?.toLowerCase() === 'audio') && selfVideo?.type !== 'video'"
                             #upgradeToVideoBtn
                             mat-flat-button
                             mat-icon-button
@@ -281,6 +286,18 @@
                             (click)="shareScreen()"
                         >
                             <mat-icon> {{ screenSharing ? 'stop_screen_share' : 'screen_share' }} </mat-icon>
+                        </button>
+
+                        <button
+                            *ngIf="agentFeatures.reqScreenshare"
+                            mat-flat-button
+                            mat-icon-button
+                            [disabled]="!connected || hold || remoteScreenSharing || onCallHoldEvent || IsScreenShareDisabled"
+                            [matTooltip]="locale('widgets.audioVideoControls.requestScreenShare')"
+                            [ngClass]="{ 'bg-alt-danger': screenSharing }"
+                            (click)="requestToShareScreen()"
+                        >
+                            <mat-icon> {{ screenSharing ? 'tv' : 'tv' }} </mat-icon>
                         </button>
 
                         <button
@@ -335,7 +352,7 @@
                             mat-icon-button
                             color="warn"
                             [matTooltip]="locale('widgets.audioVideoControls.endCall')"
-                            (click)="endCall()"
+                            (click)="screenSharing ? shareScreen(true) : endAVCallClicked()"
                         >
                             <mat-icon>call_end</mat-icon>
                         </button>

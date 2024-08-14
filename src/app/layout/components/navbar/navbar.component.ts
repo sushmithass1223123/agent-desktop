@@ -9,6 +9,8 @@ import { AppDataService } from 'app/services/app-data.service';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { SharedService } from '@services/shared.service';
+import { AOTWidgetService } from '@services/aot-widget.service';
 
 /**
  * Navbar component
@@ -66,6 +68,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * Customer logo
      */
     customerLogo = null;
+    /**
+     * Opened widget IDs 
+     */
+    widgetIDs: any[];
+    /**
+     * Flag to hold active interactions on switching between tabs
+     */
+    holdInteractionOnTabChange: boolean;
 
     /**
      * Unsubscribe All subject
@@ -85,7 +95,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         private _appDataService: AppDataService,
         private _contentPageService: ContentPageService,
         private _fuseSidebarService: FuseSidebarService,
-        private _interactionManagerService: InteractionManagerService
+        private _interactionManagerService: InteractionManagerService,
+        private sharedService: SharedService,
+        private _aotWidgetService: AOTWidgetService,
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -113,6 +125,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 this.topWidgets = sidebarWidgets.Top || [];
                 // get the bottom widgets
                 this.bottomWidgets = sidebarWidgets.Bottom || [];
+                // flag to hold interaction on tab switch
+                this.holdInteractionOnTabChange = config.Main.Navbar.HoldInteractionOnTabChange;
 
                 // set a flag to check if selected
                 let selected = false;
@@ -160,6 +174,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 }
             });
         });
+
+        // Subscribe to get the IDs of opened widgets 
+        this._aotWidgetService.widgets.subscribe((widgets) => {
+            this.widgetIDs = widgets.map((widget) => widget.ID);
+            console.log("Opened widget IDs:", this.widgetIDs)
+        });
     }
 
     /**
@@ -177,6 +197,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
      * @param {any} item
      */
     selectTab(item: any): void {
+        //triggerHoldMethod added in order to invoke holdinteraction method in tw-chat-controls.component.
+        if (item.Name.toLowerCase() != 'textchat' && this.holdInteractionOnTabChange) {
+            this.sharedService.triggerHoldMethod();
+        }
+        if (item.Name.toLowerCase() != 'supervisor') {
+            this.destroySupervisorInteractionWidget();
+        }
+
         this._contentPageService.mode = item.Data.Path;
     }
 
@@ -188,6 +216,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
     toggleSidebarOpen(key: string): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
+
+    /**
+     * To destroy the supervisor interaction details widget
+     */
+    destroySupervisorInteractionWidget(): void {
+        const supervisorInteractionWidgetID = this.widgetIDs?.find((widgetID) => widgetID.includes('tw-su-agent-interactions'));
+        if(supervisorInteractionWidgetID){
+            this._aotWidgetService.destroyWidget(supervisorInteractionWidgetID);
+        }
+    }
+
 
     // /**
     //  * To filter widgets based on the accessibility

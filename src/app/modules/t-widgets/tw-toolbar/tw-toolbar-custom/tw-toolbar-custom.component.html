@@ -1,0 +1,14 @@
+<div class="wrap">
+    <iframe
+    *ngIf="url"
+    [src]="url"
+    [id]="idName"
+    [name]="idName"
+    class="frame"
+    [ngClass]="{ 'border-radius-0': (customFuse$ | async).flatTheme }"
+    frameborder="0"
+    seamless="seamless"
+    (load)="frameLoaded($event)"
+    allow="geolocation; microphone; camera;"
+></iframe>
+</div>

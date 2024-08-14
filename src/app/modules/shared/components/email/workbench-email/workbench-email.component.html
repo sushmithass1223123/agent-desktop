@@ -125,6 +125,7 @@
                                         class="twd-absolute twd-h-2 twd-w-2 twd-top-1.5 twd-right-1.5 twd-rounded-full twd-bg-primary-default"
                                     ></span>
                                     <mat-icon> more_vert </mat-icon>
+
                                     <ng-template
                                         cdkConnectedOverlay
                                         [cdkConnectedOverlayOrigin]="advancedSearchMenu"
@@ -141,10 +142,18 @@
 
                                             <form
                                                 [formGroup]="advancedSearch.form"
+                                                [style.pointer-events]="this.disableBtn ? 'none' : 'auto'"
                                                 class="px-12 twd-grid twd-grid-cols-2 twd-gap-1 lg:twd-gap-2 twd-h-[calc(100%-52px)] twd-overflow-y-auto"
                                                 (ngSubmit)="submitAdvanceSearchForm()"
                                                 novalidate
                                             >
+                                                <div
+                                                    *ngIf="disableBtn === true"
+                                                    class="twd-col-span-2 twd-flex twd-justify-center twd-items-center twd-spinner"
+                                                >
+                                                    <mat-spinner></mat-spinner>
+                                                </div>
+
                                                 <mat-form-field class="twd-text-sm twd-col-span-2" appearance="outline">
                                                     <mat-label>{{ locale('widgets.workbench.emailId') }} </mat-label>
                                                     <input matInput formControlName="email" type="text" />
@@ -295,7 +304,11 @@
                                                     </mat-radio-group>
                                                 </div>
                                                 <div class="twd-col-span-2 twd-grid twd-grid-cols-2 twd-gap-3">
-                                                    <button mat-raised-button class="adv-search-btn h-40 mb-8 border-radius-20">
+                                                    <button
+                                                        mat-raised-button
+                                                        class="adv-search-btn h-40 mb-8 border-radius-20"
+                                                        [disabled]="this.disableBtn"
+                                                    >
                                                         {{ locale('global.search') }}
                                                     </button>
                                                     <button
@@ -303,6 +316,7 @@
                                                         class="adv-search-btn h-40 mb-8 border-radius-20"
                                                         type="button"
                                                         (click)="resetForm(); doAdvancedSearch()"
+                                                        [disabled]="this.disableBtn"
                                                     >
                                                         {{ locale('sharedComponents.email.reset') }}
                                                     </button>
@@ -692,7 +706,7 @@
                                 "
                             >
                                 <div class="twd-p-3" *ngIf="state.bulkSelection">
-                                    <mat-checkbox [value]="node.uiId" [(ngModel)]="node.checked"></mat-checkbox>
+                                    <mat-checkbox (change)="selectEmails($event.checked, [node], $event)"[value]="node.checked" [checked]="node.checked"></mat-checkbox>
                                 </div>
 
                                 <div

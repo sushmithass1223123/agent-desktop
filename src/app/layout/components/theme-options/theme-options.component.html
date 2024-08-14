@@ -8,9 +8,22 @@
     </div>
 
     <form [formGroup]="form">
+        <!-- LANGUAGES -->
+        <div *ngIf="languageSelectionEnabled">
+            <div class="group">
+                <h2>{{ locale('themeOptions.language') }}</h2>
+                 
+                <mat-select class="lang-selection" (selectionChange)="changeLanguage($event.value)" [(value)]="selectedLanguage">
+                    <mat-option *ngFor="let lang of languages" [value]="lang">
+                         {{ lang }}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        
         <!-- COLOR THEME -->
         <div class="group">
-            <h2>Color themes</h2>
+            <h2>{{ locale('themeOptions.colorThemeTitle') }}</h2>
 
             <mat-radio-group class="twd-flex twd-flex-col twd-justify-start twd-items-start" formControlName="colorTheme">
                 <mat-radio-button class="mb-12" value="theme-default">{{ locale('themeOptions.defaultLight') }}</mat-radio-button>

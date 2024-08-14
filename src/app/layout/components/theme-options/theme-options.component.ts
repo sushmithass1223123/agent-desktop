@@ -8,6 +8,9 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { getFuseConfigByTheme } from 'app/utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
+import { AppDataService } from '@services/app-data.service';
+import { AppRootConfig } from '@ad/types';
 
 /**
  * Need more Description
@@ -47,12 +50,21 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      */
     disableCustom: boolean;
 
+    /**
+     * App configuration
+     */
+    appConfig: AppRootConfig;
+
     // Private
 
     /**
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
+
+    languageSelectionEnabled = false;
+    languages = this.translocoService.getAvailableLangs();
+    selectedLanguage = this.translocoService.getActiveLang();
 
     /**
      * Constructor
@@ -68,7 +80,9 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         private _formBuilder: FormBuilder,
         private _fuseFacadeService: FuseFacadeService,
         private _fuseSidebarService: FuseSidebarService,
-        private _renderer: Renderer2
+        private _renderer: Renderer2,
+        private translocoService: TranslocoService,
+        private _appDataService: AppDataService
     ) {
         // Set the defaults
         this.barClosed = true;
@@ -76,6 +90,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+        this.loadConfig();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -190,7 +205,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
                 // selected layout style
                 this._setTheme(value);
             });
-
+        
         // Subscribe to the form value changes
         this.form.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: FuseConfig) => {
             // Update the config
@@ -206,6 +221,19 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
+    }
+
+    async loadConfig(): Promise<void> {
+
+        this._appDataService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe((config: any) => {
+            // check if the config is not null
+            this.appConfig = config;
+            this.languageSelectionEnabled = this.appConfig?.Login?.enableLanguageSelection;
+        });
+        // load the config
+        /* const config = await this._appDataService.getJsonConfig();
+        this.appConfig = config;
+        this.languageSelectionEnabled = this.appConfig?.Login?.enableLanguageSelection; */
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -299,5 +327,10 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      */
     toggleSidebarOpen(key): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
+    }
+    
+    //change the active language
+    changeLanguage(lan) {
+        this.translocoService.setActiveLang(lan);
     }
 }

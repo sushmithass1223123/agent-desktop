@@ -81,6 +81,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     interactionId: number;
 
     /**
+     * Check if there are any work codes available
+     */
+    workCodesAvailable : boolean;
+
+    /**
      * Workcode model ref
      */
     @ViewChild('addWorkcodeModalRef')
@@ -112,9 +117,14 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             Role: null
         };
 
+        /**
+        * Handle Filtering and displaying workcodes based on user input.
+        * Check if any value available in search area and if it's not set `workCodesAvailable` to `true`.
+        */
         this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
             startWith(''),
             map((wc) => (typeof wc === 'string' ? wc : '')),
+            map((wc) => (this.workCodesAvailable = !wc, wc)),
             map((wc) => (wc ? this._filterOptions(wc) : this.loadWorkCodesReq.data))
         );
 
@@ -325,11 +335,16 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {String} name
      */
     _filterOptions(name: string): Record<string, WorkCode[]> {
-        return Object.entries(this.loadWorkCodesReq.data).reduce((acc, curr) => {
+        const filteredResults = Object.entries(this.loadWorkCodesReq.data).reduce((acc, curr) => {
             const [key, val] = curr;
             acc[key] = val.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
             return acc;
         }, {});
+
+        // Check if any category has work codes (If so, `workCodesAvailable` will be `true`)
+        this.workCodesAvailable = Object.values<WorkCode[]>(filteredResults).some((arr) => arr.length >= 1);
+
+        return filteredResults;
     }
 
     /**
@@ -346,6 +361,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * To open work code modal
      */
     openAddWorkCodeModal(): void {
+        this.workCodesAvailable = true;
         this.matDialog.open(this.addWorkcodeModalRef, {
             width: '40%',
             minHeight: '400px',

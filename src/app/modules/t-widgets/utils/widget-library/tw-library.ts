@@ -19,6 +19,7 @@ import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-
 import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/tw-compose-messaging/tw-compose-messaging.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-customer-details/tw-customer-details.component';
+import { TwSmmCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-smm-customer-details/tw-smm-customer-details.component';
 import { TwCustomerJourneyComponent } from '@modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwDeflectToDigitalComponent } from '@modules/t-widgets/tw-collections/tw-deflect-to-digital/tw-deflect-to-digital.component';
@@ -36,6 +37,8 @@ import { TwPendingCallbacksComponent } from '@modules/t-widgets/tw-collections/t
 import { TwPieChartComponent } from '@modules/t-widgets/tw-collections/tw-pie-chart/tw-pie-chart.component';
 import { TwRegisterCallbackComponent } from '@modules/t-widgets/tw-collections/tw-register-callback/tw-register-callback.component';
 import { TwSampleComponent } from '@modules/t-widgets/tw-collections/tw-sample/tw-sample.component';
+import { TwSmpControlsComponent } from '@modules/t-widgets/tw-collections/tw-smp-controls/tw-smp-controls.component';
+import { TwSmpPanelComponent } from '@modules/t-widgets/tw-collections/tw-smp-panel/tw-smp-panel.component';
 import { TwSuActiveAgentsComponent } from '@modules/t-widgets/tw-collections/tw-su-active-agents/tw-su-active-agents.component';
 import { TwSuAgentActivityComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-activity/tw-su-agent-activity.component';
 import { TwSuAgentInteractionsComponent } from '@modules/t-widgets/tw-collections/tw-su-agent-interactions/tw-su-agent-interactions.component';
@@ -76,6 +79,9 @@ export class TWLibrary {
         'twc-voice': TwcInteractionComponent,
         'twc-textchat': TwcInteractionComponent,
         'twc-email': TwcInteractionComponent,
+        'twc-smp': TwcInteractionComponent,
+        'tw-smp-panel': TwSmpPanelComponent,
+        'tw-smp-controls': TwSmpControlsComponent,
         'twc-fax': TwcInteractionComponent,
         'twc-generic': TwcInteractionComponent,
         'tw-sample': TwSampleComponent,
@@ -92,6 +98,7 @@ export class TWLibrary {
         'tw-generic-panel': TwGenericPanelComponent,
         'tw-generic-controls': TwGenericControlsComponent,
         'tw-customer-details': TwCustomerDetailsComponent,
+        'tw-smm-customer-details': TwSmmCustomerDetailsComponent,
         'tw-customer-journey': TwCustomerJourneyComponent,
         'tw-workbench-panel': TwWorkbenchPanelComponent,
         'tw-ad-interaction-details': TwAdInteractionDetailsComponent,
