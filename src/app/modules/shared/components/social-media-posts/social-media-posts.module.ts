@@ -9,13 +9,25 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { SMPPipe } from './pipes/smp.pipe';
+import { FusePipesModule } from '@fuse/pipes/pipes.module';
 
-const shared = [WorkbenchSmpComponent, SmpTemplateComponent];
+const shared = [WorkbenchSmpComponent, SmpTemplateComponent, SMPPipe];
 
 @NgModule({
     declarations: shared,
     exports: shared,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, BrowserModule, TranslocoRootModule, MaterialModule, ScrollingModule, PickerModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserModule,
+        TranslocoRootModule,
+        MaterialModule,
+        ScrollingModule,
+        PickerModule,
+        FusePipesModule
+    ],
     providers: [
         {
             provide: APP_BASE_HREF,

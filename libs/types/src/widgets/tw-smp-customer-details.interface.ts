@@ -87,7 +87,7 @@ import { InteractionWidget } from '..';
  * {
  *   "Name": "SMM Customer Details",
  *   "Description": "",
- *   "Type": "tw-smm-customer-details",
+ *   "Type": "tw-smp-customer-details",
  *   "Config": {
  *      "Enabled": true,
  *      "Hidden": false,

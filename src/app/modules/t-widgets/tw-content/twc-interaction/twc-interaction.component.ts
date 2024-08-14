@@ -200,7 +200,11 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         } catch (error) {
             throwADError('Error in TwcInteractionComponent.createWidgetList', error);
         }
-
+        if(dynamicWidgets?.length) {
+            dynamicWidgets.forEach((WidgetDynamic) => {
+            WidgetDynamic.Config.HasNoStaticWidgets = !Boolean(staticWidgets?.length);
+            });
+        }
         const aotWidgets = [...this.tempAOTs, ...(widgets.AOT?.filter((w: IWidget) => w.Config.Enabled ?? []) ?? [])];
 
         const routeOnInteraction = (forceActive || this.data.Data.RouteOnInteraction) ?? (['voice', 'textchat', 'smp', 'email'].includes(this.type) ? true : false);
