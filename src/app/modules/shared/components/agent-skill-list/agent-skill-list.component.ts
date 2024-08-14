@@ -1060,31 +1060,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
             // blind transfer/confks
             else {
+                this.saveToDataServer();
                 // End the call if its already ongoing during AV call - Observed in
                 if(type === 'transfer' && this._dialogData.OtherData.mode === 'text') {
                     this.sharedService.triggerTransferMethod(this.interactionId);
                 }
-
-                // Saving comment added during transfer 
-                SDKClient.saveDataToDataServer({
-                    type: 'transfer-comment',
-                    subType: 'textchat',
-                    key: this._dialogData.OtherData.sessionId,
-                    insertedBy: SDKClient.getAgentData().agentName,
-                    insertedSource: 'AD',
-                    insertInteraction: this.interactionId.toString(),
-                    data: JSON.stringify({comment: this.comments, date: new Date()}),
-                    instance: '',
-                    ttl: ''
-                })
-                .then((response) => {
-                    console.log("saveDataToDataServer Saved", response);
-                   
-                })
-                .catch((err) => {
-                    this.loading -= 1;
-                    console.error("error during saveDataToDataServer", err);
-                });
 
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
@@ -1113,16 +1093,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
                             this.close(true);
-
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                                
-                        
 
                         }
                         // transfer error
@@ -1214,6 +1184,40 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     /**
+     * Method to save comments entered during tranfer 
+     * @param channel - interaction channel, it is just for the UI reference,
+     *  no impact as we can save any data here 
+     */
+
+    private saveToDataServer(channel?) {
+        const input = {
+            type: 'transfer-comment',
+            subType: channel ? channel : 'textchat',
+            key: this._dialogData.OtherData.sessionId,
+            insertedBy: SDKClient.getAgentData().agentName,
+            insertedSource: 'AD',
+            insertInteraction: this.interactionId.toString(),
+            data: JSON.stringify({comment: this.comments, date: new Date()}),
+            instance: '',
+            ttl: ''
+        }
+
+        if(channel === 'email') {
+            input['key'] = this._dialogData.OtherData.emails[0].SessionId;
+            input['insertInteraction'] = this._dialogData.OtherData.emails[0].InteractionID;
+        }
+
+        SDKClient.saveDataToDataServer(input)
+        .then((response) => {
+            console.log("saveDataToDataServer Saved", response);
+        })
+        .catch((err) => {
+            this.loading -= 1;
+            console.error("error during saveDataToDataServer", err);
+        });
+    }
+
+    /**
      * Transfers email
      */
     private transferEmail(): void {
@@ -1224,6 +1228,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
 
         // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
         if (this.selectedRow?.type !== 'Skill List') {
+            this.saveToDataServer('email');
             emails.forEach((email) => {
                 const { RouteId, SessionId } = email;
                 SDKClient.transferEmailToAgent({
