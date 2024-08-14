@@ -67,7 +67,8 @@
         "changeStatusError": "Change status error, please try again!",
         "msDisconnectedMsg": "Media Server disconnected !! Please wait...",
         "msReconnectedMsg": "Media Server re-connected successfully",
-        "msStatusWarningMsg": "Something went wrong with Media server !! Please wait..."
+        "msStatusWarningMsg": "Something went wrong with Media server !! Please wait...",
+        "statusChangeDisabled": "Status change is not allowed !!"
     },
     "global": {
         "commonErrorMessage": "Something went wrong",

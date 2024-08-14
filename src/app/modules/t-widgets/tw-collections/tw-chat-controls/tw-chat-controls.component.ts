@@ -1873,8 +1873,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check the response
             if (response && response.ResultCode === 0) {
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+
+                this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
+
                 // remove the interaction reference
                 this._interactionManagerService.removeInteraction(response.InteractionID);
+
             } else {
                 // enable if something goes wrong
                 if (this.closeButton) {
