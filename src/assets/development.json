@@ -3423,9 +3423,7 @@
         },
         "SDK": {
             "proxy": {
-                "urls": [
-                    "http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"
-                ],
+                "urls": ["http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"],
                 "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
@@ -3458,5 +3456,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.7.0"
+    "Version": "5.7.1"
 }
