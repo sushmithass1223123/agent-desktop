@@ -188,6 +188,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     blindLabel: string;
 
+     /**
+     * Property to store previously selected agent 
+     */
+    private previouslySelectedAgent: AgentModel | null = null;
+
     /**
      * Constructor
      */
@@ -1874,6 +1879,20 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
+        SDKClient.events.on('TextChatTransferRejectEvent', () => {
+            this.previouslySelectedAgent = null
+        });
+         
+        if (this.selectedRow?.row?.LoginID === this.previouslySelectedAgent?.LoginID) {
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('sharedComponents.agentSkillList.alreadySent'),
+                'failure'
+            );
+            return;
+        }
+                
+        // Reseting properties
+        this.previouslySelectedAgent = this.selectedRow?.row;
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
