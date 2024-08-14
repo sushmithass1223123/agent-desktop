@@ -64,29 +64,31 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         this.initWrapper(this.data);
 
         // subscribe to interactions subject
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // setTimeout(() => {
-            // non email interactions
-            this.interactionList = interactions.filter((i) => i.type !== 'email');
-            // filter email interactions
-            this.emailInteractionList = interactions.filter((i) => i.type === 'email');
-            // }, 500);
-        });
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // setTimeout(() => {
+                // non email interactions
+                this.interactionList = interactions.filter((i) => i.type !== 'email');
+                // filter email interactions
+                this.emailInteractionList = interactions.filter((i) => i.type === 'email');
+                // }, 500);
+            });
 
         // subscribe to content page subject
         this._contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((mode: string) => {
             this.currentViewMode = mode;
         });
-                        // subscribe to UI control events
-                        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-                            try {
-                              if (data && data.interactionId)  {
-                                this.handleUIControls(data);
-                              }
-                            } catch (e) {
-                              console.log('Error occurred on UIControl event received', e);
-                            }
-                          });
+        // subscribe to UI control events
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+            try {
+                if (data && data.interactionId) {
+                    this.handleUIControls(data);
+                }
+            } catch (e) {
+                console.log('Error occurred on UIControl event received', e);
+            }
+        });
     }
 
     /**

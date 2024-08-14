@@ -11,13 +11,15 @@
         config: customFuse.config$ | async
     } as customFuse"
 >
+<!-- if AOT widget: DragBoundary is 'body' 
+    else it is taken from configurations -->
     <tw-card
         cdkDrag
-        [cdkDragBoundary]="data.Config?.DragBoundary ?? '.container'"
+        [cdkDragBoundary]="data.Config?.AOT ? 'body' : data.Config?.DragBoundary ?? '.container'"
         [cdkDragDisabled]="maximized || (!floating && !aot)"
         [cdkDragFreeDragPosition]="dragPosition"
         class="tw-card animate__animated animate__faster {{
-            data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '')
+            data.Config.Class + ' ' + (data.Config.Static ? 'tw-static' : '') + ' ' + (maximized ? 'animate__zoomIn' : '') + ' ' + (!data.Config.HasNoStaticWidgets ? 'has-static-widgets' : '')
         }}"
         [ngClass]="{
             collapsed: collapsed,

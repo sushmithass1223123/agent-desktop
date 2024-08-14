@@ -1,0 +1,6 @@
+{
+    "/api": {
+    "target": "http://dicedev.tetherfi.cloud",
+    "secure": false
+    }
+    }

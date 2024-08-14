@@ -44,6 +44,7 @@ export interface EmailComponentInputs {
     Body: string;
     Subject: string;
     Files: EmailFile[];
+    MaxPayloadSize: number;
 }
 
 export type EmailComponentMode = 'preview' | 'compose' | 'reply' | 'reply-all' | 'forward' | 'draft' | 'quick-reply';

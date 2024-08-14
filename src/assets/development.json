@@ -1,7 +1,10 @@
 {
     "Login": {
         "Modes": { "Enabled": true, "Type": "nonpbx" },
-        "FaceAuth": { "Enabled": false, "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages" },
+        "FaceAuth": {
+            "Enabled": false,
+            "AuthServerUrl": "https://tmac.tetherfilabs.com/TFaceAuthProxyNew/Proxy.asmx/VerifyFaceImages"
+        },
         "DomainListEnabled": false,
         "Password": { "Agent": false, "Station": false },
         "StationEnabled": false,
@@ -15,7 +18,13 @@
     "Main": {
         "Toolbar": {
             "Widgets": [
-                { "Name": "Interaction indicators", "Description": "", "Type": "tw-active-interaction", "Config": { "Enabled": true }, "Data": {} },
+                {
+                    "Name": "Interaction indicators",
+                    "Description": "",
+                    "Type": "tw-active-interaction",
+                    "Config": { "Enabled": true },
+                    "Data": {}
+                },
                 {
                     "Name": "Toolbar Menu",
                     "Description": "",
@@ -23,8 +32,20 @@
                     "Config": { "Enabled": true },
                     "Data": {
                         "Widgets": [
-                            { "Name": "Broadcast Message", "Description": "", "Type": "tw-broadcast", "Config": { "Enabled": true }, "Data": {} },
-                            { "Name": "Aux Timer", "Description": "", "Type": "tw-aux-timer", "Config": { "Enabled": true }, "Data": {} },
+                            {
+                                "Name": "Broadcast Message",
+                                "Description": "",
+                                "Type": "tw-broadcast",
+                                "Config": { "Enabled": true },
+                                "Data": {}
+                            },
+                            {
+                                "Name": "Aux Timer",
+                                "Description": "",
+                                "Type": "tw-aux-timer",
+                                "Config": { "Enabled": true },
+                                "Data": {}
+                            },
                             {
                                 "Name": "Agent Details",
                                 "Description": "",
@@ -33,7 +54,12 @@
                                 "Data": {
                                     "ProfilePicture": true,
                                     "Status": true,
-                                    "AuxCodes": { "Enabled": true, "ByTeam": true, "DefaultACW": false, "DefaultLogout": false }
+                                    "AuxCodes": {
+                                        "Enabled": true,
+                                        "ByTeam": true,
+                                        "DefaultACW": false,
+                                        "DefaultLogout": false
+                                    }
                                 }
                             },
                             {
@@ -48,7 +74,11 @@
                                 "Description": "",
                                 "Type": "tw-logout",
                                 "Config": { "Enabled": true },
-                                "Data": { "LogoutAux": ["logout"], "AllowLogoutOnOpenInteractions": true, "AllowLogoutOnAvailable": false }
+                                "Data": {
+                                    "LogoutAux": ["logout"],
+                                    "AllowLogoutOnOpenInteractions": true,
+                                    "AllowLogoutOnAvailable": false
+                                }
                             },
                             {
                                 "Name": "Agent IM",
@@ -62,7 +92,13 @@
                                     "ScreenShareAllowed": true
                                 }
                             },
-                            { "Name": "Notification", "Description": "", "Type": "tw-notifications", "Config": { "Enabled": true }, "Data": {} },
+                            {
+                                "Name": "Notification",
+                                "Description": "",
+                                "Type": "tw-notifications",
+                                "Config": { "Enabled": true },
+                                "Data": {}
+                            },
                             {
                                 "Name": "Available Media Devices",
                                 "Description": "",
@@ -95,7 +131,11 @@
                                             "Icon": "call",
                                             "Data": {
                                                 "Agent": {
-                                                    "Source": { "Use": "station", "Display": "${LastName}, ${FirstName}", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "station",
+                                                        "Display": "${LastName}, ${FirstName}",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "AllowedStates": [],
                                                     "TeamFilter": false,
                                                     "Columns": []
@@ -105,7 +145,11 @@
                                                     "Consult": true,
                                                     "Blind": false,
                                                     "Comments": false,
-                                                    "Source": { "Use": "Number", "Display": "${Name} - ${Number}", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "Number",
+                                                        "Display": "${Name} - ${Number}",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "Columns": [],
                                                     "TeamFilter": true
                                                 },
@@ -114,7 +158,11 @@
                                                     "Consult": true,
                                                     "Blind": true,
                                                     "Comments": true,
-                                                    "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                    "Source": {
+                                                        "Use": "vdn",
+                                                        "Display": "skill",
+                                                        "FreeTextAllowed": true
+                                                    },
                                                     "ChannelPrefix": ["VO"],
                                                     "Columns": [],
                                                     "Rules": {
@@ -168,7 +216,7 @@
                         "Description": "",
                         "Type": "twn-supervisor",
                         "Config": { "Enabled": true, "Icon": "supervised_user_circle" },
-                        "Data": { "Path": "/supervisor", "Active": false }
+                        "Data": { "Path": "/supervisor", "Active": true }
                     },
                     {
                         "Name": "Voice",
@@ -190,6 +238,13 @@
                         "Type": "twn-email",
                         "Config": { "Enabled": true, "Icon": "email" },
                         "Data": { "Path": "/email", "Active": false }
+                    },
+                    {
+                        "Name": "Social Media Posts",
+                        "Description": "",
+                        "Type": "twn-smp",
+                        "Config": { "Enabled": true, "Icon": "video_label" },
+                        "Data": { "Path": "/smp", "Active": false }
                     },
                     {
                         "Name": "Generic",
@@ -256,10 +311,235 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Role": "agent", "SLEnabled": true, "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] } }
+                                    "Data": {
+                                        "Role": "agent",
+                                        "SLEnabled": true,
+                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
+                                    }
+                                },
+                                {
+                                    "Name": "Deflect To Digital",
+                                    "Description": "",
+                                    "Key": "TWDeflectToDigital",
+                                    "Type": "tw-deflect-to-digital",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "DepartmentFilters": { "Name": ["Deflect"] },
+                                        "ResponseMode": "manual",
+                                        "EditAllowed": false,
+                                        "Number": "IncomingCallEvent.PhoneNumber",
+                                        "DeflectExpiry": 5,
+                                        "DeflectIntent": "devtest",
+                                        "DestChannel": "textchat",
+                                        "DestSubChannel": "text",
+                                        "DisconnectTimeout": 1,
+                                        "FallbackSkillId": 42001,
+                                        "NextStatusName": "ACW",
+                                        "StatusLockTimeout": 1,
+                                        "ReservedStatusCode": 2,
+                                        "enableSendType": true
+                                    }
                                 }
                             ],
                             "Dynamic": [
+                                {
+                                    "Name": "SMM View Customer Details",
+                                    "Description": "",
+                                    "Type": "tw-smm-customer-details",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "person",
+                                        "Class": "",
+                                        "Position": { "X": 4, "Y": 2 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "SocialMediaAPIs": [
+                                            "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/",
+                                            "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/"
+                                        ],
+                                        "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
+                                        "UpdateMethodName": "UpdateCustomerDetails",
+                                        "EditAllowed": true,
+                                        "ControlFields": [
+                                            {
+                                                "id": "customerID",
+                                                "type": "text",
+                                                "title": "Customer Id",
+                                                "maxValue": 100,
+                                                "disabled": true,
+                                                "placeHolder": "Customer ID",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "salutation",
+                                                "type": "text",
+                                                "title": "Salutation",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Salutation",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "firstName",
+                                                "type": "text",
+                                                "title": "First Name",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "First Name",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "lastName",
+                                                "type": "text",
+                                                "title": "Last Name",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Last Name",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "cif",
+                                                "type": "text",
+                                                "title": "CIF",
+                                                "disabled": false,
+                                                "placeHolder": "Customer Identification Number",
+                                                "maxValue": 100,
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "secondaryCIF",
+                                                "type": "text",
+                                                "title": "Secondary Cif",
+                                                "disabled": false,
+                                                "maxValue": 100,
+                                                "placeHolder": "Secondary CIF",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "email",
+                                                "type": "email",
+                                                "title": "Email",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Email",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "phone",
+                                                "type": "tel",
+                                                "title": "Phone",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Phone",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "address",
+                                                "type": "text",
+                                                "title": "Address",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Address",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "city",
+                                                "type": "text",
+                                                "title": "City",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "City",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "state",
+                                                "type": "text",
+                                                "title": "State",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "State",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "country",
+                                                "type": "text",
+                                                "title": "Country",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Country",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "postalCode",
+                                                "type": "text",
+                                                "title": "Phone",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Postal Code",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "secondaryPhone",
+                                                "type": "tel",
+                                                "title": "Secondary Phone",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Secondary Phone",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "secondaryEmail",
+                                                "type": "email",
+                                                "title": "Secondary Email",
+                                                "maxValue": 100,
+                                                "disabled": false,
+                                                "placeHolder": "Secondary Email",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "lastChangedBy",
+                                                "type": "text",
+                                                "title": "Last Changed By",
+                                                "maxValue": 100,
+                                                "disabled": true,
+                                                "placeHolder": "Last Changed By",
+                                                "visible": true
+                                            },
+                                            {
+                                                "id": "lastChangedOn",
+                                                "type": "text",
+                                                "title": "Last Changed On",
+                                                "maxValue": 100,
+                                                "disabled": true,
+                                                "placeHolder": "Last Changed On",
+                                                "visible": false
+                                            }
+                                        ]
+                                    }
+                                },
                                 {
                                     "Name": "Bookmarks",
                                     "Description": "",
@@ -305,7 +585,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "totalinteractions", "ChartType": "pie", "Role": "agent", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "totalinteractions",
+                                        "ChartType": "pie",
+                                        "Role": "agent",
+                                        "Limit": 0,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "AHT/Transfer/Conference",
@@ -349,7 +635,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "auxstatus", "ChartType": "pie", "Role": "agent", "Limit": 5, "Label": false }
+                                    "Data": {
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "agent",
+                                        "Limit": 5,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Interaction Details",
@@ -495,8 +787,14 @@
                                     "Data": {
                                         "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
-                                            "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "Mr. Tan" },
-                                            "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "6596975347" }
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
                                         }
                                     }
                                 },
@@ -569,6 +867,16 @@
                                             "AllowSupervisorToChatSilentMonitor": true,
                                             "AllowSupervisorToChatWhisper": true,
                                             "AllowSupervisorToChatConference": true
+                                        },
+                                        "facCodes": [
+                                            { "feature": "barge-in", "code": "*79" },
+                                            { "feature": "silent", "code": "*78" }
+                                        ],
+                                        "AuxCodes": {
+                                            "Enabled": true,
+                                            "ByTeam": true,
+                                            "DefaultACW": false,
+                                            "DefaultLogout": false
                                         }
                                     }
                                 }
@@ -592,7 +900,8 @@
                                         "Actions": ["maximize", "float"],
                                         "ViewState": "restore",
                                         "Header": true,
-                                        "Pinned": false
+                                        "Pinned": false,
+                                        "DragBoundary": "body"
                                     },
                                     "Data": {
                                         "Source": "totalinteractions",
@@ -642,7 +951,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "ciq", "ChartType": "doughnut", "Role": "supervisor", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "ciq",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Intent List",
@@ -664,7 +979,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "intentlist", "ChartType": "pie", "Role": "supervisor", "Limit": 5, "Label": false }
+                                    "Data": {
+                                        "Source": "intentlist",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 5,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Skill Dashboard",
@@ -710,7 +1031,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "activechannels", "ChartType": "doughnut", "Role": "supervisor", "Limit": 0, "Label": false }
+                                    "Data": {
+                                        "Source": "activechannels",
+                                        "ChartType": "doughnut",
+                                        "Role": "supervisor",
+                                        "Limit": 0,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Status",
@@ -732,7 +1059,13 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "Source": "auxstatus", "ChartType": "pie", "Role": "supervisor", "Limit": 10, "Label": false }
+                                    "Data": {
+                                        "Source": "auxstatus",
+                                        "ChartType": "pie",
+                                        "Role": "supervisor",
+                                        "Limit": 10,
+                                        "Label": false
+                                    }
                                 },
                                 {
                                     "Name": "Work Codes",
@@ -777,7 +1110,9 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "GamificationProxyUrl": "https://dicedev.tetherfi.cloud/GamificationProxy/Proxy.asmx" }
+                                    "Data": {
+                                        "GamificationProxyUrl": "https://dicedev.tetherfi.cloud/GamificationProxy/Proxy.asmx"
+                                    }
                                 },
                                 {
                                     "Name": "Add Products",
@@ -799,7 +1134,10 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": true, "Url": "https://dicedev.tetherfi.cloud/TVirtualStore/product.html" }
+                                    "Data": {
+                                        "OpenInNew": true,
+                                        "Url": "https://dicedev.tetherfi.cloud/TVirtualStore/product.html"
+                                    }
                                 }
                             ]
                         }
@@ -877,7 +1215,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["VO"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -892,7 +1234,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": false,
-                                                            "Source": { "Use": "Number", "Display": "Number", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "Number",
+                                                                "Display": "Number",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "Columns": [],
                                                             "TeamFilter": false
                                                         }
@@ -905,7 +1251,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "station", "Display": "agentName", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "station",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -915,7 +1265,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["VO"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -929,10 +1283,22 @@
                                                     },
                                                     "IVR": {
                                                         "MenuEnabled": true,
-                                                        "DefaultMenu": ["Main Menu TRPS Way", "Products", "Mobile", "Agent"],
+                                                        "DefaultMenu": [
+                                                            "Main Menu TRPS Way",
+                                                            "Products",
+                                                            "Mobile",
+                                                            "Agent"
+                                                        ],
                                                         "Transfer": {
                                                             "Allowed": true,
-                                                            "Menu": [{ "Text": "Accesscode+TPIN", "Type": "v_nv", "Value": "tpin", "Icon": "lock" }]
+                                                            "Menu": [
+                                                                {
+                                                                    "Text": "Accesscode+TPIN",
+                                                                    "Type": "v_nv",
+                                                                    "Value": "tpin",
+                                                                    "Icon": "lock"
+                                                                }
+                                                            ]
                                                         }
                                                     },
                                                     "DialpadAllowed": true,
@@ -972,10 +1338,30 @@
                                                             "DefaultValue": "",
                                                             "MaskData": true
                                                         },
-                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Email", "ValueSource": "CCLDataEvent.Email", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Address", "ValueSource": "CCLDataEvent.Address", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "NRIC", "ValueSource": "CCLDataEvent.NRIC", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "NRIC",
+                                                            "ValueSource": "CCLDataEvent.NRIC",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "Account Number",
                                                             "ValueSource": "CCLDataEvent.AccountNumber",
@@ -1061,7 +1447,8 @@
                                         "FallbackSkillId": 42001,
                                         "NextStatusName": "ACW",
                                         "StatusLockTimeout": 1,
-                                        "ReservedStatusCode": 2
+                                        "ReservedStatusCode": 2,
+                                        "enableSendType": true
                                     }
                                 },
                                 {
@@ -1227,7 +1614,10 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}" }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud/TVoiceBio/?agentid=${AgentData.agentId}"
+                                    }
                                 },
                                 {
                                     "Name": "Register Callback",
@@ -1252,8 +1642,14 @@
                                     "Data": {
                                         "TCMProxyUrl": "https://dicedev.tetherfi.cloud/TCM_Proxy/api",
                                         "DataMap": {
-                                            "Name": { "ValueSource": "CCLDataEvent.CallerName", "DefaultValue": "Mr. Tan" },
-                                            "Phone": { "ValueSource": "CCLDataEvent.RegisteredPhone", "DefaultValue": "6596975347" }
+                                            "Name": {
+                                                "ValueSource": "CCLDataEvent.CallerName",
+                                                "DefaultValue": "Mr. Tan"
+                                            },
+                                            "Phone": {
+                                                "ValueSource": "CCLDataEvent.RegisteredPhone",
+                                                "DefaultValue": "6596975347"
+                                            }
                                         }
                                     }
                                 },
@@ -1299,7 +1695,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "autoPlayAfterTime": 10, "autoPlayLoopEnabled": true, "autoPlauLoopPlaytime": 20 }
+                                    "Data": {
+                                        "autoPlayAfterTime": 10,
+                                        "autoPlayLoopEnabled": true,
+                                        "autoPlauLoopPlaytime": 20
+                                    }
                                 },
                                 {
                                     "Name": "Agent Assist",
@@ -1382,6 +1782,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "IsPhoneAudio": false,
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
@@ -1389,7 +1790,11 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1399,7 +1804,11 @@
                                                             "Consult": false,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": [],
                                                             "Columns": [],
                                                             "Rules": {
@@ -1415,9 +1824,13 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": false,
+                                                            "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -1427,7 +1840,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": ["CH"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -1456,6 +1873,9 @@
                                                     "ReplyOnChatAllowed": true,
                                                     "VoiceNoteAllowed": false,
                                                     "AttachmentAllowed": true,
+                                                    "AttachmentConstraints": {
+                                                        "Instagram": ["audio/aac", "audio/mp4", "audio/wav"]
+                                                    },
                                                     "ScreenShareAllowed": true,
                                                     "ReqScreenShareAllowed": false,
                                                     "InteractionCommentAllowed": true,
@@ -1488,7 +1908,11 @@
                                                         "RemoteRequestTimeout": 10
                                                     },
                                                     "ShowUserLabel": false,
-                                                    "ChatTemplate": { "Allowed": true, "Filter": "startswith", "FilterByTime": false },
+                                                    "ChatTemplate": {
+                                                        "Allowed": true,
+                                                        "Filter": "startswith",
+                                                        "FilterByTime": false
+                                                    },
                                                     "WebRTCTest": {
                                                         "Allowed": true,
                                                         "Url": "https://mx.tetherfi.cloud/testrtc/index.html?turnURI=turn%3Amx.tetherfi.cloud%3A3585&turnUsername=tetherfi&turnCredential=nuwan",
@@ -1502,10 +1926,20 @@
                                                         "AgentAudio": true,
                                                         "AgentVideo": true,
                                                         "CustomerAudio": true,
-                                                        "CustomerVideo": false
+                                                        "CustomerVideo": true
                                                     },
                                                     "ToggleUserViewAllowed": true,
-                                                    "MuteVideoOnInitiateCall": true
+                                                    "MuteVideoOnInitiateCall": true,
+                                                    "XssSymbolEntityMap": {
+                                                        "&": "&amp;",
+                                                        "<": "&lt;",
+                                                        ">": "&gt;",
+                                                        "\"": "&quot;",
+                                                        "'": "&#39;",
+                                                        " ": "&nbsp;",
+                                                        "\n": "&#10;",
+                                                        "\r": "&#13;"
+                                                    }
                                                 }
                                             },
                                             {
@@ -1547,7 +1981,12 @@
                                                             "Unit": "",
                                                             "DefaultValue": ""
                                                         },
-                                                        { "Title": "Name", "ValueSource": "CCLDataEvent.CallerName", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Name",
+                                                            "ValueSource": "CCLDataEvent.CallerName",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "Auth Type",
                                                             "ValueSource": "TextChatRemoteUserConnectedEvent.BotVariables.authType",
@@ -1560,14 +1999,27 @@
                                                             "Unit": "",
                                                             "DefaultValue": ""
                                                         },
-                                                        { "Title": "Email", "ValueSource": "CCLDataEvent.Email", "Unit": "", "DefaultValue": "" },
-                                                        { "Title": "Address", "ValueSource": "CCLDataEvent.Address", "Unit": "", "DefaultValue": "" },
+                                                        {
+                                                            "Title": "Email",
+                                                            "ValueSource": "CCLDataEvent.Email",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
+                                                        {
+                                                            "Title": "Address",
+                                                            "ValueSource": "CCLDataEvent.Address",
+                                                            "Unit": "",
+                                                            "DefaultValue": ""
+                                                        },
                                                         {
                                                             "Title": "NRIC",
                                                             "ValueSource": "CCLDataEvent.NRIC",
                                                             "Unit": "",
                                                             "DefaultValue": "",
-                                                            "MaskData": { "UnMaskedStartChars": 2, "UnMaskedEndChars": 2 }
+                                                            "MaskData": {
+                                                                "UnMaskedStartChars": 2,
+                                                                "UnMaskedEndChars": 2
+                                                            }
                                                         },
                                                         {
                                                             "Title": "Account Number",
@@ -1960,17 +2412,30 @@
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": ["Available", "Ready"],
                                                             "TeamFilter": false,
-                                                            "Columns": ["FirstName", "LastName", "AgentID", "CurrentAgentStatus"]
+                                                            "Columns": [
+                                                                "FirstName",
+                                                                "LastName",
+                                                                "AgentID",
+                                                                "CurrentAgentStatus"
+                                                            ]
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": true,
                                                             "Comments": true,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": true },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -1989,7 +2454,9 @@
                                                     "TemplatesByTeam": false,
                                                     "InternetHeadersAllowed": true,
                                                     "TemplatesByHierarchy": false,
-                                                    "AsyncEmailSendTimeout": 60000
+                                                    "AsyncEmailSendTimeout": 60000,
+                                                    "DefaultMaxPayloadSize": 29359488,
+                                                    "ShowPayloadSizeStats": true
                                                 }
                                             },
                                             {
@@ -2208,6 +2675,386 @@
                                             }
                                         }
                                     }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Name": "Social Media Posts",
+                    "Description": "",
+                    "Type": "twc-smp",
+                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 } },
+                    "Data": {
+                        "Path": "/smp",
+                        "Duration": 100,
+                        "RouteOnInteraction": true,
+                        "PreserveOnTabChange": false,
+                        "Widgets": {
+                            "Static": [
+                                {
+                                    "Name": "Smp-Panel",
+                                    "Description": "",
+                                    "Type": "tw-smp-panel",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": true,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 3 },
+                                        "Actions": [],
+                                        "ViewState": "restore",
+                                        "Header": false,
+                                        "Pinned": false
+                                    },
+                                    "Data": {
+                                        "Widgets": [
+                                            {
+                                                "Name": "Social Media Posts",
+                                                "Description": "",
+                                                "Type": "tw-smp-controls",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "chat",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse", "float"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "TeamFilter": false,
+                                                            "Columns": [
+                                                                "FirstName",
+                                                                "LastName",
+                                                                "AgentID",
+                                                                "CurrentAgentStatus"
+                                                            ]
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": true,
+                                                            "Comments": true,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": true
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
+                                                    "MaxFileUploadSize": 20971520,
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "MaximumAllowedPostImageRendering": 1
+                                                }
+                                            },
+                                            {
+                                                "Name": "SMM View Customer Details",
+                                                "Description": "",
+                                                "Type": "tw-smm-customer-details",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": false,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "person",
+                                                    "Class": "",
+                                                    "Position": { "X": 4, "Y": 2 },
+                                                    "Actions": ["maximize", "float"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "SocialMediaAPIs": [
+                                                        "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/",
+                                                        "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/"
+                                                    ],
+                                                    "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
+                                                    "UpdateMethodName": "UpdateCustomerDetails",
+                                                    "EditAllowed": true,
+                                                    "ControlFields": [
+                                                        {
+                                                            "id": "customerID",
+                                                            "type": "text",
+                                                            "title": "Customer Id",
+                                                            "maxValue": 100,
+                                                            "disabled": true,
+                                                            "placeHolder": "Customer ID",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "salutation",
+                                                            "type": "text",
+                                                            "title": "Salutation",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Salutation",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "firstName",
+                                                            "type": "text",
+                                                            "title": "First Name",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "First Name",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "lastName",
+                                                            "type": "text",
+                                                            "title": "Last Name",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Last Name",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "cif",
+                                                            "type": "text",
+                                                            "title": "CIF",
+                                                            "disabled": false,
+                                                            "placeHolder": "Customer Identification Number",
+                                                            "maxValue": 100,
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "secondaryCIF",
+                                                            "type": "text",
+                                                            "title": "Secondary Cif",
+                                                            "disabled": false,
+                                                            "maxValue": 100,
+                                                            "placeHolder": "Secondary CIF",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "email",
+                                                            "type": "email",
+                                                            "title": "Email",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Email",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "phone",
+                                                            "type": "tel",
+                                                            "title": "Phone",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Phone",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "address",
+                                                            "type": "text",
+                                                            "title": "Address",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Address",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "city",
+                                                            "type": "text",
+                                                            "title": "City",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "City",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "state",
+                                                            "type": "text",
+                                                            "title": "State",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "State",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "country",
+                                                            "type": "text",
+                                                            "title": "Country",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Country",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "postalCode",
+                                                            "type": "text",
+                                                            "title": "Phone",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Postal Code",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "secondaryPhone",
+                                                            "type": "tel",
+                                                            "title": "Secondary Phone",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Secondary Phone",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "secondaryEmail",
+                                                            "type": "email",
+                                                            "title": "Secondary Email",
+                                                            "maxValue": 100,
+                                                            "disabled": false,
+                                                            "placeHolder": "Secondary Email",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "lastChangedBy",
+                                                            "type": "text",
+                                                            "title": "Last Changed By",
+                                                            "maxValue": 100,
+                                                            "disabled": true,
+                                                            "placeHolder": "Last Changed By",
+                                                            "visible": true
+                                                        },
+                                                        {
+                                                            "id": "lastChangedOn",
+                                                            "type": "text",
+                                                            "title": "Last Changed On",
+                                                            "maxValue": 100,
+                                                            "disabled": true,
+                                                            "placeHolder": "Last Changed On",
+                                                            "visible": false
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "Dynamic": [
+                                {
+                                    "Name": "Speech Transcripts",
+                                    "Description": "",
+                                    "Key": "SpeechTranscript",
+                                    "Type": "tw-voice-bot-transcripts",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Account Information",
+                                    "Description": "",
+                                    "Key": "CustomerAccountInfo",
+                                    "Type": "tw-account-information",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": { "IsAuthenticated": true }
+                                },
+                                {
+                                    "Name": "AMDOC-BCC",
+                                    "Description": "",
+                                    "Key": "AmdocBCC",
+                                    "Type": "tw-amdocs-bcc",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
+                                },
+                                {
+                                    "Name": "Customer Sentiment",
+                                    "Description": "feedback",
+                                    "Key": "CustomerSentiment",
+                                    "Type": "tw-customer-sentiment",
+                                    "Config": {
+                                        "Enabled": true,
+                                        "Hidden": false,
+                                        "Static": false,
+                                        "Anchor": false,
+                                        "AOT": false,
+                                        "AutoOpen": false,
+                                        "Icon": "sentiment_satisfied_alt",
+                                        "Class": "",
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "float"],
+                                        "ViewState": "restore",
+                                        "Header": true,
+                                        "Pinned": false
+                                    },
+                                    "Data": {}
                                 }
                             ]
                         }
@@ -2455,7 +3302,9 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "General": { "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench" },
+                                        "General": {
+                                            "WorkbenchUrl": "http://dicedev.tetherfi.cloud:55005/api/workbench"
+                                        },
                                         "Channels": [
                                             {
                                                 "Type": "Email",
@@ -2469,7 +3318,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "agentId", "Display": "agentName", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "AllowedStates": [],
                                                             "TeamFilter": false,
                                                             "Columns": []
@@ -2479,7 +3332,11 @@
                                                             "Consult": true,
                                                             "Blind": false,
                                                             "Comments": false,
-                                                            "Source": { "Use": "vdn", "Display": "skill", "FreeTextAllowed": false },
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
                                                             "Rules": {
@@ -2512,6 +3369,55 @@
                                                     "PushAllowed": true,
                                                     "SearchPollingInterval": 5000
                                                 }
+                                            },
+                                            {
+                                                "Type": "Social Media",
+                                                "Enabled": true,
+                                                "Icon": "video_label",
+                                                "Config": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
+                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
+                                                    "SearchPollingInterval": 0,
+                                                    "MaxSearchRange": 30,
+                                                    "SearchDuration": 24,
+                                                    "MaximumAllowedPostImageRendering": 1,
+                                                    "ShowPostDetails": false
+                                                }
                                             }
                                         ]
                                     }
@@ -2524,7 +3430,13 @@
                     "Name": "TMeet",
                     "Description": "",
                     "Type": "twc-custom",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/tmeet",
                         "Url": "https://dicedev.tetherfi.cloud/t-meet/?agentId=${AgentData.agentId}",
@@ -2536,7 +3448,13 @@
                     "Name": "Docker",
                     "Description": "",
                     "Type": "twc-docker",
-                    "Config": { "Enabled": true, "Class": "", "Position": { "X": 1, "Y": 1 }, "Actions": [], "Header": false },
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
                     "Data": {
                         "Path": "/docker",
                         "Unload": false,
@@ -2563,7 +3481,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2585,7 +3507,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2607,7 +3533,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 },
                                 {
                                     "Name": "Test Page 2",
@@ -2629,7 +3559,11 @@
                                         "Header": true,
                                         "Pinned": false
                                     },
-                                    "Data": { "OpenInNew": false, "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html", "AutoRefresh": 0 }
+                                    "Data": {
+                                        "OpenInNew": false,
+                                        "Url": "https://dicedev.tetherfi.cloud/tmac_client/test.html",
+                                        "AutoRefresh": 0
+                                    }
                                 }
                             ]
                         }
@@ -2659,7 +3593,10 @@
                         "Header": true,
                         "Pinned": true
                     },
-                    "Data": { "OpenInNew": false, "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=${AgentData.agentId}" }
+                    "Data": {
+                        "OpenInNew": false,
+                        "Url": "https://tmac.tetherfilabs.com/tcie-web-appv8?id=${AgentData.agentId}"
+                    }
                 },
                 {
                     "Name": "TCIS",
@@ -2722,18 +3659,21 @@
             ]
         },
         "Urls": {
-            "DashboardServerUrls": ["https://dicedev.tetherfi.cloud/SignalRDashboard1", "https://dicedev.tetherfi.cloud/SignalRDashboard2"],
+            "DashboardServerUrls": [
+                "https://dicedev.tetherfi.cloud/SignalRDashboard1",
+                "https://dicedev.tetherfi.cloud/SignalRDashboard2"
+            ],
             "FileServerUrl": {
-                "MediaUploader": "https://dicedev.tetherfi.cloud:13019/upload",
-                "MediaStreamer": "https://dicedev.tetherfi.cloud:130222",
+                "MediaUploader": "https://dicepoc.tetherfi.cloud:13019/upload",
+                "MediaStreamer": "https://dicepoc.tetherfi.cloud:13022",
                 "MediaProxy": "https://dicedev.tetherfi.cloud/ApiFileUploadDownLoad"
             },
-            "TCMClient": "https://dicedev.tetherfi.cloud/TCM_Client/CampaignManager.asmx"
+            "TCMClient": "https://dicedev.tetherfi.cloud/TCMv4/TCM_ClientV4/swagger"
         }
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-teal-red",
+        "Theme": "theme-default-2",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
@@ -2742,7 +3682,11 @@
                 "Small": { "Src": "", "Width": null, "Height": null },
                 "Alt": "Tetherfi"
             },
-            "Customer": { "Large": { "Src": "", "Width": 160, "Height": 88 }, "Small": { "Src": "", "Width": 50, "Height": 50 }, "Alt": "Tetherfi" }
+            "Customer": {
+                "Large": { "Src": "", "Width": 160, "Height": 88 },
+                "Small": { "Src": "", "Width": 50, "Height": 50 },
+                "Alt": "Tetherfi"
+            }
         },
         "RefreshDisabled": false,
         "DevToolsDisabled": false,
@@ -2757,17 +3701,25 @@
             "AppAlertTimeout": 5000,
             "AppAlertOnConnectivityStatus": true
         },
-        "CheckForResolution": true,
+        "CheckForResolution": false,
         "AV": {
             "webRTCConfig": {
-                "iceServers": [{ "urls": "turn:dicedev.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
+                "iceServers": [
+                    { "urls": "turn:dicedev.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }
+                ],
                 "iceTransportPolicy": "all",
                 "sdpSemantics": "plan-b"
             },
             "mediaConstraints": { "type": "", "video": { "width": 640, "height": 480 } },
             "offerOptions": { "offerToReceiveAudio": true, "offerToReceiveVideo": true, "iceRestart": true },
             "answerOptions": { "iceRestart": false },
-            "recordingOptions": { "enabled": false, "codec": "vp9", "recordLocal": false, "audioKbps": 32, "videoKbps": 512 },
+            "recordingOptions": {
+                "enabled": false,
+                "codec": "vp9",
+                "recordLocal": false,
+                "audioKbps": 32,
+                "videoKbps": 512
+            },
             "audioLevelCheck": { "enabled": true, "threshold": 0.3 },
             "connectionBandwidthUpperLimit": 1024,
             "audioTrackBandwidthUpperLimit": 16,
@@ -2779,9 +3731,14 @@
             "sendACK": false
         },
         "SDK": {
-            "proxy": { "urls": ["https://dicedev.tetherfi.cloud//TMACSDKProxy/TmacProxy.asmx"], "type": "soap", "timeout": 60 },
+            "proxy": {
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
+                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
+                "type": "soap",
+                "timeout": 60
+            },
             "signalRProxy": {
-                "enabled": true,
+                "enabled": false,
                 "logging": true,
                 "protocol": "webSockets",
                 "timeout": 10,
@@ -2808,5 +3765,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.6.0"
+    "Version": "5.8.0-beta.1"
 }

@@ -1,0 +1,60 @@
+<tw-wrapper
+    [data]="data"
+    (maximizeEvent)="maximizeEvent.emit($event)"
+    (collapseEvent)="collapseEvent.emit($event)"
+    (floatEvent)="floatEvent.emit($event)"
+    #wrapper
+    *transloco="let locale"
+>
+    <div class="h-100-p twd-overflow-auto">
+        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
+            <!-- <ng-container *ngIf="!customerId">
+                No Data Available
+            </ng-container> -->
+    <ng-container *ngIf="customerId; else noData" >
+                <div class="line-height-30 position-relative twd-p-1"
+                *ngFor="let control of data.Data.ControlFields">
+            <ng-container *ngIf="!editAllowed">
+                
+                <mat-form-field class="form-field custom no-border" fxFlex="100" appearance="full">
+                    <mat-label>{{ control.title }}</mat-label>
+                   <input matInput 
+                        type="text"
+                        [(ngModel)]="formData[control.fieldId]"
+                        disabled="true"
+                        />
+                </mat-form-field>
+            </ng-container>
+            <ng-container *ngIf="editAllowed">
+                
+                <mat-form-field class="form-field custom with-border" fxFlex="100" appearance="outline">
+                    <mat-label>{{ control.title }}</mat-label>
+                <input matInput
+                     [type]="control.type"
+                     [(ngModel)]="formData[control.id]"
+                     [disabled]="control.disabled"
+                     />
+                    </mat-form-field>
+         </ng-container>
+                
+               </div>            
+                <button *ngIf="editAllowed" #submitBtn
+                type="submit"
+                color="primary"
+                class="teal-800 !twd-my-8 !twd-mx-auto !twd-block
+                 !twd-py-1 !twd-px-10 !twd-rounded-full"
+                (click)="updateCustomerDetails()">
+                {{ "Submit" }}
+            </button> 
+        </ng-container>    
+        </div>
+    </div>
+</tw-wrapper>
+<ng-template #noData>
+    <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
+        <img src="assets/images/vectors/no-data-1.svg" class="twd-w-8/12 twd-h-8/12 box-shadow-3d" />
+        <p class="text-center m-0">
+            <ng-container *transloco="let locale">{{ locale('contentComponent.noDataAvailable') }}</ng-container>
+        </p>
+    </div>
+</ng-template>

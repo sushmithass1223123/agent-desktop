@@ -1,15 +1,15 @@
 {
     "name": "agent-desktop",
-    "version": "5.6.0",
+    "version": "5.8.0-beta.1",
     "license": "",
     "scripts": {
         "ng": "nx",
         "commit": "cz",
         "postinstall": "node ./decorate-angular-cli.js && npm run husky-install && ngcc --properties es2015 browser module main",
         "husky-install": "npx husky install",
-        "start": "ng serve --open --ssl",
+        "start": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng serve --open",
         "start:mem": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open",
-        "start:ssl": "ng serve --open --ssl",
+        "start:ssl": "ng serve --open --ssl --port 4200",
         "start:mem:ssl": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng serve --open --ssl",
         "build": "ng build --baseHref=/agent-desktop/",
         "build:prod": "npm run prebuild && ng build --prod --baseHref=/agent-desktop/",
@@ -68,16 +68,13 @@
         "@progress/kendo-licensing": "^1.2.2",
         "@progress/kendo-theme-default": "5.4.1",
         "@tmac/operators": "git+https://gitlab+deploy-token-40:adUz1ascDCfab1qtKLaz@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/operators",
-        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.7.0-beta.7",
+        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.7.0",
         "@tmac/styles": "git+https://gitlab+deploy-token-37:43tSyhD5CpPuLUzed32Y@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/styles",
-        "abort-controller": "3.0.0",
         "angular-calendar": "0.29.0",
         "animate.css": "4.1.1",
         "chart.js": "2.9.4",
         "crypto-js": "4.1.1",
         "date-fns": "2.28.0",
-        "eventsource": "2.0.2",
-        "fetch-cookie": "3.0.1",
         "hammerjs": "2.0.8",
         "leaflet": "1.8.0",
         "lodash": "4.17.21",
@@ -85,13 +82,16 @@
         "ng2-charts": "2.4.0",
         "ngx-color-picker": "12.0.1",
         "ngx-drag-scroll": "13.0.1",
-        "node-fetch": "2.6.1",
         "orderedmap": "^1.1.7",
         "rxjs": "6.5.3",
         "tinymce": "5.10.5",
         "tslib": "2.4.0",
-        "ws": "8.16.0",
-        "zone.js": "0.11.4"
+        "zone.js": "0.11.4",
+        "abort-controller": "3.0.0",
+        "eventsource": "2.0.2",
+        "fetch-cookie": "3.0.1",
+        "node-fetch": "2.6.1",
+        "ws": "8.16.0"
     },
     "devDependencies": {
         "@angular-builders/custom-webpack": "13.1.0",
@@ -150,7 +150,6 @@
     "overrides": {
         "@parcel/watcher": "2.1.0"
     },
-
     "config": {
         "commitizen": {
             "path": "cz-customizable"

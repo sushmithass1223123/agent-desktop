@@ -96,3 +96,22 @@ email-editor {
         color: rgb(255, 255, 255) !important;
     }
 }
+
+.payload-stat {
+    bottom: 5px;
+    right: 5px;
+    align-items: center;
+    justify-content: flex-end;
+
+    mat-icon {
+        color: red;
+        height: 18px;
+        font-size: 18px;
+        margin-top: 3px;
+    }
+
+    p {
+        font-size: 12px;
+        font-weight: 600;
+    }
+}

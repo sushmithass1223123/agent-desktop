@@ -423,10 +423,10 @@
         <p class="text-center m-0 line-height-20 mat-subheading-2 message" [innerHTML]="data.message"></p>
         <div fxLayoutAlign="center center" class="p-12 pb-12">
             <button mat-raised-button color="warn" class="mr-12 border-radius-20" matTooltip="Cancel" (click)="data.cancel()">
-                {{ locale('sharedComponents.customDialog.cancel') }}
+                {{ data.customActionButtons.length ? locale('sharedComponents.customDialog.'+data.customActionButtons[0]) : locale('sharedComponents.customDialog.cancel') }}
             </button>
             <button mat-raised-button color="primary" class="border-radius-20" matTooltip="Confirm" (click)="data.confirm()">
-                {{ locale('sharedComponents.customDialog.confirm') }}
+                {{ data.customActionButtons.length ? locale('sharedComponents.customDialog.'+data.customActionButtons[1]) : locale('sharedComponents.customDialog.confirm') }}
             </button>
         </div>
     </div>
