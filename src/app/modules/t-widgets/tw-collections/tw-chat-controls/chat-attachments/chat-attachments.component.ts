@@ -177,6 +177,8 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
+                const file = input.files[0];
+                const fileMime = file.type.split('/');
                 if(this.attachPreviewMode === 'uploadMedia') {
                     const fileMime = input.files[0].type.split('/');
                     if(!['video', 'image'].includes(fileMime[0])) {
@@ -190,6 +192,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                     this.notifyInvalidFileSelection(fileMime[1]);
                     return;
                 }
+                  // Edit uploaded image if it's an image
+            if (fileMime[0] === 'image') {
+                await this.editUploadedImage(file);
+            } else {
                 const base64 = await this.convertToBase64(input.files[0]);
                 const fileName = input.files[0].name;
                 this.uploadingFiles.push({
@@ -202,11 +208,55 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                 });
 
                 this.attachPreviewMode = 'preview';
-            }
+            }}
         } catch (e) {
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
         }
+    }
+    
+    /**
+     * Edit uploaded image
+     * @param {File} file 
+     */
+    async editUploadedImage(file: File): Promise<void> {
+    const image = new Image();
+    image.src = await this.convertToBase64(file);
+    image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        Object.assign(canvas, { width: image.width, height: image.height });
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        const editedBase64 = canvas.toDataURL(file.type);
+        const size = Math.round((editedBase64.length - `data:${file.type};base64,`.length) * 3 / 4 * 0.5624896334383812);
+
+        this.uploadingFiles.push({
+            file: new File([this.dataURItoBlob(editedBase64)], file.name, { type: file.type }),
+            fileName: file.name,
+            base64: editedBase64,
+            size,
+            type: this.getAttachTypeByFileType(file.type),
+            ext: file.name.split('.').pop()
+        });
+
+        this.attachPreviewMode = 'preview';
+        };
+    }
+   
+    /**
+     * Convert a base64 string to a Blob
+     * @param {string} dataURI 
+     */
+    dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
     }
 
     /**
