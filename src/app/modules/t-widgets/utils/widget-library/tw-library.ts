@@ -19,7 +19,7 @@ import { TwChatPanelComponent } from '@modules/t-widgets/tw-collections/tw-chat-
 import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/tw-compose-messaging/tw-compose-messaging.component';
 import { TwCustomComponent } from '@modules/t-widgets/tw-collections/tw-custom/tw-custom.component';
 import { TwCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-customer-details/tw-customer-details.component';
-import { TwSmmCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-smm-customer-details/tw-smm-customer-details.component';
+import { TwSmmCustomerDetailsComponent } from '@modules/t-widgets/tw-collections/tw-smp-customer-details/tw-smp-customer-details.component';
 import { TwCustomerJourneyComponent } from '@modules/t-widgets/tw-collections/tw-customer-journey/tw-customer-journey.component';
 import { TwCustomerSentimentComponent } from '@modules/t-widgets/tw-collections/tw-customer-sentiment/tw-customer-sentiment.component';
 import { TwDeflectToDigitalComponent } from '@modules/t-widgets/tw-collections/tw-deflect-to-digital/tw-deflect-to-digital.component';
@@ -98,7 +98,7 @@ export class TWLibrary {
         'tw-generic-panel': TwGenericPanelComponent,
         'tw-generic-controls': TwGenericControlsComponent,
         'tw-customer-details': TwCustomerDetailsComponent,
-        'tw-smm-customer-details': TwSmmCustomerDetailsComponent,
+        'tw-smp-customer-details': TwSmmCustomerDetailsComponent,
         'tw-customer-journey': TwCustomerJourneyComponent,
         'tw-workbench-panel': TwWorkbenchPanelComponent,
         'tw-ad-interaction-details': TwAdInteractionDetailsComponent,
