@@ -359,7 +359,7 @@
                                 {
                                     "Name": "SMM View Customer Details",
                                     "Description": "",
-                                    "Type": "tw-smm-customer-details",
+                                    "Type": "tw-smp-customer-details",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -2780,9 +2780,9 @@
                                                 }
                                             },
                                             {
-                                                "Name": "SMM View Customer Details",
+                                                "Name": "SMP View Customer Details",
                                                 "Description": "",
-                                                "Type": "tw-smm-customer-details",
+                                                "Type": "tw-smp-customer-details",
                                                 "Config": {
                                                     "Enabled": true,
                                                     "Hidden": false,

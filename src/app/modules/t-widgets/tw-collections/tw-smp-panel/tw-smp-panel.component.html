@@ -14,7 +14,7 @@
                 (floatEvent)="floating[widget.Type] = $event">
             </tw-smp-controls>
 
-            <tw-smm-customer-details [data]="widget" *ngIf="widget.Type === 'tw-smm-customer-details'" 
+            <tw-smp-customer-details [data]="widget" *ngIf="widget.Type === 'tw-smp-customer-details'" 
             [class]="widget.Type"
                 [ngClass]="{
                 maximized: maximized[widget.Type],
@@ -22,7 +22,7 @@
                 floating: floating[widget.Type]
             }" (maximizeEvent)="maximized[widget.Type] = $event" (collapseEvent)="collapsed[widget.Type] = $event"
                 (floatEvent)="floating[widget.Type] = $event">
-            </tw-smm-customer-details>
+            </tw-smp-customer-details>
         </ng-container>
     </div>
 </tw-wrapper>
