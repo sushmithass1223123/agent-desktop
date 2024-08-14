@@ -68,7 +68,7 @@ import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, Sn
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
-import { map, merge } from 'lodash';
+import { map, merge, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -2417,11 +2417,39 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To handle InteractionDataEvent
      */
-    InteractionDataEvent(evt: InteractionDataEvent): void {
+    async InteractionDataEvent(evt: InteractionDataEvent): Promise<void> {
+        let transferComments = [];
         // check the channel
         if (evt.Channel !== 'TextChat') {
             return;
         }
+
+        // check if any tranfer comments added
+
+        await SDKClient.getDataFromDataServer({
+            query: "Type == \"transfer-comment\" AND SubType == \"textchat\"",
+            instance: ""
+        })  
+        .then((r) => {
+            if (r && r !== null) {
+                r.response.forEach(msg => {
+                    if(this.interaction.SessionId.toString() === msg.Key) {
+                        let m = JSON.parse(msg.Data)
+
+                        this.commentsAdded = true;
+                        transferComments.push({
+                            Message: m.comment,
+                            Time: m.date,
+                            User: msg.InsertedBy
+                        })
+                    }
+                });
+                this.logger.info('Getting transfer comment data');
+            }
+        }).catch(e => {
+            console.log('Error occured during Get data from data server', e);
+        })
+
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
             this.commentsAdded = true;
@@ -2434,6 +2462,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 });
             });
         }
+        this.savedComments = sortBy([...transferComments,...this.savedComments], 'Time');
     }
 
     /**
