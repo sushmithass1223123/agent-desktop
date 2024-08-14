@@ -202,7 +202,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
         }
         if(dynamicWidgets?.length) {
             dynamicWidgets.forEach((WidgetDynamic) => {
-            WidgetDynamic.config.HasNoStaticWidgets = !Boolean(staticWidgets?.length);
+            WidgetDynamic.Config.HasNoStaticWidgets = !Boolean(staticWidgets?.length);
             });
         }
         const aotWidgets = [...this.tempAOTs, ...(widgets.AOT?.filter((w: IWidget) => w.Config.Enabled ?? []) ?? [])];
