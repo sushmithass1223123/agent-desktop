@@ -1086,24 +1086,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
                     isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                 })
-                .then((dt) => {
-                    SDKClient.getProxyVersion()
-                        .then((response) => {
-                            if (dt) { 
-                                console.log("getProxyVersion Saved", response)
-                            }
-                        })
-                        .catch((err) => {
-                            this.loading -= 1;
-                            console.error("getProxyVersion", err);
-                        });  
-                            
-
+                .then((dt) => { 
                         this.loading -= 1;
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
                             this.close(true);
-
                         }
                         // transfer error
                         else {
@@ -1115,8 +1102,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                                 'failure'
                             );
                         }
-
-
                     })
                     .catch(() => {
                         this.loading -= 1;
