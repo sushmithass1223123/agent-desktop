@@ -1115,7 +1115,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         data.attachment = {
                             src: json.msg.content.url,
                             type: json.msg.type,
-                            name: ''
+                            name: json.msg?.content?.name ?? ''
                         };
                         data.message = json.msg?.content?.text ?? '';
                     } else {
