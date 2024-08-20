@@ -7,8 +7,9 @@ tw-email-template-preview {
         word-wrap: break-word; // Ensure long content wraps within the block
     }
     .email-body {
-        margin-top: 25px;
-        margin-left: 28px;
+        margin-top: 30px;
+        margin-left: 32px;
+        margin-right: 20px;
         max-height: 50vh;
         overflow-y: auto; 
         overflow-x: hidden; 
