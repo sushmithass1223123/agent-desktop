@@ -4,16 +4,25 @@ tw-email-template-preview {
         border-bottom: 1px solid gray;
         width: 100px;
         display: inline-block;
+        word-wrap: break-word; // Ensure long content wraps within the block
     }
     .email-body {
+        margin-top: 25px;
+        margin-left: 28px;
         max-height: 50vh;
+        overflow-y: auto; 
+        overflow-x: hidden; 
+        white-space: normal; 
+        word-wrap: break-word; 
+        display: block; 
+        padding: 10px; 
     }
 }
 
 .email-template-dialog__Form {
     .mat-dialog-container {
         padding: 0 !important;
-        background-color: transparent !important;
-        background: transparent !important;
+        max-width: 100%; 
+        overflow: hidden; 
     }
 }
