@@ -1187,6 +1187,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
 
     private saveToDataServer(channel?) {
+        if(!this.comments || this.comments?.trim() === '') {
+            return;
+        }
+
         const input = {
             type: 'transfer-comment',
             subType: channel ? channel : 'textchat',
