@@ -1984,6 +1984,22 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {SMPost[]} posts post list
      */
     async closePosts(posts: SMPost[]): Promise<void> {
+
+        // take user consent before closing the post in case of draft
+        if(this.currentTab === 'draft') {
+            const confirmDialogRef = this._appUiService.showAppConfirmDialog(
+                'generic',
+                this.translocoService.translate('widgets.smpControls.closeDraftConfirmationHeader'),
+                this.translocoService.translate('widgets.smpControls.closeDraftConfirmationBody'),
+                'no:yes'
+            );
+
+            const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).toPromise();
+            if (!dialogResult) {
+                return;
+            } 
+        }
+        
         const loader = this._appUiService.showSnackbar(
             this.translocoService.translate('sharedComponents.socialMediaPosts.closePostsLoading'),
             'loading'
