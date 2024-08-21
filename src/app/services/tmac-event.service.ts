@@ -814,13 +814,15 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         try {
         const obj = JSON.parse(evt.JsonData);
 
-        const dateTime = this.getDateTime(obj.ScheduleTime, 'yyyymmddhhmmtt');
+        const contact = JSON.parse(obj.Contact);
+
+        const dateTime = this.getDateTime(contact.ScheduleTime, 'yyyymmddhhmmtt');
 
         let message = this.translocoService.translate('widgets.campaignNotification.message');
         message = message.replace('#agent', SDKClient.getAgentData().agentName).
         replace('#time', '<strong>' + dateTime + '<strong>').
-        replace('#customerName',obj?.Name).
-        replace('#customerPhoneNumber', obj?.PhoneNumber);
+        replace('#customerName',contact.Name).
+        replace('#customerPhoneNumber', contact.PhoneNumber);
 
 
         this._appUIService.showRemiderTaskModal('meeting',message, this.translocoService.translate('widgets.campaignNotification.title'))
@@ -832,7 +834,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                     "response": response,
                     "agentID": SDKClient.getAgentData().agentId,
                     "extension": SDKClient.getAgentData().deviceId,
-                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], obj.ScheduleTime): ''
+                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], contact.ScheduleTime): ''
                   }
             
                   let url = this.appConfig.Main.Urls.TCMClient;
