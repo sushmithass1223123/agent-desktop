@@ -1116,10 +1116,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         data.attachment = {
                             src: json.msg.content.url,
                             type: json.msg.type,
-                            name: ''
+                            name: json.msg?.content?.name ?? ''
                         };
-                        //  TODO:: when caption for image is implemented, this can be changed
-                        data.message = '';
+                        data.message = json.msg?.content?.text ?? '';
                     } else {
                         // not an attachment from SMM
                         data.message = json.msg;
