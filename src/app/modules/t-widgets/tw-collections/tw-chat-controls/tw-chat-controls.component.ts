@@ -627,7 +627,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Property to disable and enable action.icon
      */
-    isEscalateAudioClicked = false;
+    isEscalateAVClicked = false;
 
     /**
      * Constructor
@@ -3122,9 +3122,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'audio' | 'video'} type Type of escalation
      */
     public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
-        this.isEscalateAudioClicked = true;
+        this.isEscalateAVClicked = true;
         SDKClient.events.on('UpdateParentAgentStatusEvent', () => {
-            this.isEscalateAudioClicked  = false
+            this.isEscalateAVClicked  = false
         });
         // Check for parent agent av constraints
         if (avCallConstraints === undefined) {
