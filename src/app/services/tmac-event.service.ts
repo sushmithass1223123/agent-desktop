@@ -974,6 +974,17 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
      * @param {TextChatTransferNotificationEvent} evt
      */
     private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+        // Defining a unique key for the dialog (e.g., by using the agent's ID)
+        const dialogKey = evt.FromAgentName;
+    
+        // Preventing multiple dialogs from opening for the same key
+        if (this.isDialogOpen.includes(dialogKey)) {
+            return;
+        }
+    
+        // Adding the dialog key to the isDialogOpen array
+        this.isDialogOpen.push(dialogKey);
+    
         // parse the otherData
         const otherData = JSON.parse(evt.Data);
         // get the type
@@ -991,6 +1002,12 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             .afterClosed()
             .subscribe((resp1) => {
                 evt.Response(resp1);
+    
+                // Removing the dialog key from the isDialogOpen array when the dialog is closed
+                const index = this.isDialogOpen.indexOf(dialogKey);
+                if (index > -1) {
+                    this.isDialogOpen.splice(index, 1);
+                }
             });
     };
 
