@@ -1077,6 +1077,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {CallTransferLineDisconnectEvent} evt
      */
     CallTransferLineDisconnectEvent(evt: CallTransferLineDisconnectEvent): void {
+        // check if customer disconnects in during the consult transfer
         if(evt?.IsMainLine && !this.isTransferCompleted) {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.customerDisconnected'), 'warning');
             return;
@@ -1134,6 +1135,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {CallConferenceLineDisconnectEvent} evt
      */
     CallConferenceLineDisconnectEvent(evt: CallConferenceLineDisconnectEvent): void {
+        // check if customer disconnects in during the consult conference
         if(evt?.IsMainLine) {
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.customerDisconnected'), 'warning');
             return;
