@@ -1,6 +1,6 @@
 {
     "name": "agent-desktop",
-    "version": "5.2.1.30-patch.5",
+    "version": "5.7.2",
     "license": "",
     "scripts": {
         "ng": "nx",
@@ -68,7 +68,7 @@
         "@progress/kendo-licensing": "^1.2.2",
         "@progress/kendo-theme-default": "5.4.1",
         "@tmac/operators": "git+https://gitlab+deploy-token-40:adUz1ascDCfab1qtKLaz@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/operators",
-        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk#5.2.6.30",
+        "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.7.0",
         "@tmac/styles": "git+https://gitlab+deploy-token-37:43tSyhD5CpPuLUzed32Y@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/styles",
         "angular-calendar": "0.29.0",
         "animate.css": "4.1.1",
@@ -82,10 +82,16 @@
         "ng2-charts": "2.4.0",
         "ngx-color-picker": "12.0.1",
         "ngx-drag-scroll": "13.0.1",
+        "orderedmap": "^1.1.7",
         "rxjs": "6.5.3",
         "tinymce": "5.10.5",
         "tslib": "2.4.0",
-        "zone.js": "0.11.4"
+        "zone.js": "0.11.4",
+        "abort-controller": "3.0.0",
+        "eventsource": "2.0.2",
+        "fetch-cookie": "3.0.1",
+        "node-fetch": "2.6.1",
+        "ws": "8.16.0"
     },
     "devDependencies": {
         "@angular-builders/custom-webpack": "13.1.0",
@@ -140,6 +146,9 @@
         "typedoc": "0.22.17",
         "typescript": "4.5.5",
         "webpack-bundle-analyzer": "4.4.2"
+    },
+    "overrides": {
+        "@parcel/watcher": "2.1.0"
     },
     "config": {
         "commitizen": {

@@ -30,9 +30,9 @@
             allow="geolocation; microphone; camera;"
         ></iframe>
 
-        <ng-template #noURL>
+        <ng-template *transloco="let locale" #noURL>
             <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center" *ngIf="!url">
-                <span class="mat-display-1 mb-0"> Custom URL not found! </span>
+                <span class="mat-display-1 mb-0"> {{ locale('contentComponent.customURLNotFound') }} </span>
             </div>
         </ng-template>
     </div>

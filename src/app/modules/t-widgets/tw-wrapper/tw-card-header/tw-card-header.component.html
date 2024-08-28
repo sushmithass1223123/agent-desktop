@@ -1,5 +1,6 @@
 <!-- We are using material card header -->
-<mat-card-header class="card-header" [ngClass]="headerColor + ' ' + (widgetState.floating ? 'floating' : '') + ' ' + (widgetState.aot ? 'aot' : '')">
+<mat-card-header *transloco="let locale" class="card-header"
+    [ngClass]="headerColor + ' ' + (widgetState.floating ? 'floating' : '') + ' ' + (widgetState.aot ? 'aot' : '')">
     <!-- We add a material icon from config of default a widget icon -->
     <div mat-card-avatar>
         <mat-icon *ngIf="data.Config.Icon.indexOf('custom') < 0">{{ data.Config.Icon || 'widgets' }}</mat-icon>
@@ -7,67 +8,58 @@
     </div>
 
     <!-- Add titile if provided in config or add widget by default -->
-    <mat-card-title>{{ data.Name || 'Widget' }}</mat-card-title>
+    <!-- <mat-card-title>{{ data.Name || 'Widget' }}</mat-card-title> -->
+    <mat-card-title>{{
+
+        locale('widgets_common.header.title.' + data.Name) !== 'widgets_common.header.title.' + data.Name ? locale('widgets_common.header.title.' + data.Name) : data.Name ? data.Name : 'Widget'
+
+    }}</mat-card-title>
 
     <span class="spacer"></span>
 
     <!-- All the action buttons goes here -->
 
-    <button
-        *ngIf="data.Config.Actions.includes('resize')"
-        [ngClass]="{ 'mat-warn': resizeMode }"
-        mat-icon-button
-        [matTooltip]="resizeMode ? 'Cancel Resize' : 'Resize'"
-        (click)="resizeWidget()"
-    >
+    <button *ngIf="data.Config.Actions.includes('resize')"
+        [ngClass]="{ 'mat-warn': resizeMode, 'hidden': hideResizeButton }" mat-icon-button
+        [matTooltip]="resizeMode ? locale('wrapperComponent.cancelResize') : locale('wrapperComponent.resize')"
+        (click)="!widgetState.maximized? resizeWidget(): ''">
         <mat-icon>aspect_ratio</mat-icon>
     </button>
-<!-- 
+    <!-- 
     <button *ngIf="data.Config.Actions.includes('pin')" mat-icon-button [matTooltip]="data.Config.Pinned ? 'Unpin' : 'Pin'">
         <mat-icon [ngClass]="{ 'rotate-45': data.Config.Pinned }">push_pin</mat-icon>
     </button> -->
 
-    <button *ngIf="data.Config.Actions.includes('refresh')" mat-icon-button matTooltip="Refresh" (click)="refreshWidget()">
+    <button *ngIf="data.Config.Actions.includes('refresh')" mat-icon-button
+        [matTooltip]="locale('wrapperComponent.refresh')" (click)="refreshWidget()">
         <mat-icon>refresh</mat-icon>
     </button>
 
-    <button
-        *ngIf="data.Config.Actions.includes('maximize') && !widgetState.floating && !widgetState.maximized"
-        mat-icon-button
-        matTooltip="Maximize"
-        (click)="maximizeWidget()"
-    >
+    <button *ngIf="data.Config.Actions.includes('maximize') && !widgetState.floating && !widgetState.maximized"
+        mat-icon-button [matTooltip]="locale('wrapperComponent.maximize')" (click)="maximizeWidget()">
         <mat-icon>fullscreen</mat-icon>
     </button>
 
-    <button
-        *ngIf="data.Config.Actions.includes('float') && !widgetState.floating && !widgetState.maximized"
-        mat-icon-button
-        matTooltip="Float"
-        (click)="floatWidget()"
-    >
+    <button *ngIf="data.Config.Actions.includes('float') && !widgetState.floating && !widgetState.maximized"
+        mat-icon-button [matTooltip]="locale('wrapperComponent.float')" (click)="floatWidget()">
         <mat-icon>picture_in_picture</mat-icon>
     </button>
 
-    <button
-        *ngIf="data.Config.Actions.includes('collapse') || widgetState.floating || widgetState.maximized"
+    <button *ngIf="data.Config.Actions.includes('collapse') || widgetState.floating || widgetState.maximized"
         mat-icon-button
-        [matTooltip]="widgetState.collapsed ? 'Expand' : 'Collapse'"
-        (click)="collapseWidget()"
-    >
+        [matTooltip]="widgetState.collapsed ? locale('wrapperComponent.expand') : locale('wrapperComponent.collapse')"
+        (click)="collapseWidget()">
         <mat-icon [ngClass]="{ 'rotate-180': !widgetState.collapsed }">expand_more</mat-icon>
     </button>
 
-    <button
-        *ngIf="(widgetState.floating || widgetState.maximized) && !data.Config.Class.includes('no-restore')"
-        mat-icon-button
-        matTooltip="Restore"
-        (click)="widgetState.floating ? floatWidget() : maximizeWidget()"
-    >
+    <button *ngIf="(widgetState.floating || widgetState.maximized) && !data.Config.Class.includes('no-restore')"
+        mat-icon-button [matTooltip]="locale('wrapperComponent.restore')"
+        (click)="widgetState.floating ? floatWidget() : maximizeWidget()">
         <mat-icon>close_fullscreen</mat-icon>
     </button>
 
-    <button *ngIf="data.Config.Actions.includes('destroy')" mat-icon-button matTooltip="Close" (click)="destroyAOTWidget()">
+    <button *ngIf="data.Config.Actions.includes('destroy')" mat-icon-button
+        [matTooltip]="locale('wrapperComponent.close')" (click)="destroyAOTWidget()">
         <mat-icon>close</mat-icon>
     </button>
 </mat-card-header>

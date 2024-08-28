@@ -3,8 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
-import { COMMON_ERR_MESSAGE } from 'app/constants';
-
+import { TranslocoService } from '@ngneat/transloco';
 type AvailableDevices = {
     /**
      * Availabble mics
@@ -78,7 +77,8 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
     @ViewChild('videoElm')
     videoElm: ElementRef<HTMLMediaElement>;
 
-    constructor(private matDialog: MatDialog) {
+    constructor(private matDialog: MatDialog,
+        private translocoService: TranslocoService) {
         super('TwAvailableMediaDeviceComponent');
     }
 
@@ -215,7 +215,7 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
                 });
             });
         } else {
-            this.setComponentState('availableDevices/error', 'Error occured while starting the video');
+            this.setComponentState('availableDevices/error', this.translocoService.translate('toolbarComponent.videoStartErrorMessage'));
         }
     }
 
@@ -231,18 +231,18 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
         switch (state) {
             case 'availableDevices/error':
                 if (!msg) {
-                    msg = COMMON_ERR_MESSAGE;
+                    msg = this.translocoService.translate('global.commonErrorMessage');
                 }
                 this.mediaDeviceInfo.error = msg;
                 this.mediaDeviceInfo.loading = '';
                 break;
             case 'availableDevices/fetching':
                 this.mediaDeviceInfo.error = '';
-                this.mediaDeviceInfo.loading = 'Loading available devices ..';
+                this.mediaDeviceInfo.loading = this.translocoService.translate('toolbarComponent.loadingAvailableDevices');
                 break;
             case 'availableDevices/retrying':
                 this.mediaDeviceInfo.error = '';
-                this.mediaDeviceInfo.loading = 'Reloading available devices';
+                this.mediaDeviceInfo.loading = this.translocoService.translate('toolbarComponent.reloadingAvailableDevices');
                 break;
             case 'availableDevices/loaded':
                 this.mediaDeviceInfo.error = '';

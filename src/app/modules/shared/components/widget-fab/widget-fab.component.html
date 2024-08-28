@@ -1,4 +1,4 @@
-<div class="fab-container">
+<div class="fab-container" *transloco="let locale">
     <button
         mat-fab
         color="accent"
@@ -6,7 +6,7 @@
         cdkOverlayOrigin
         #widgetList="cdkOverlayOrigin"
         (click)="toggleWidgetList()"
-        matTooltip="AOT Widgets"
+        [matTooltip]="locale('sharedComponents.aotWidgets')"
     >
         <mat-icon [@fabToggler180]="{ value: openWidgetList ? 'active' : 'inactive' }"> {{ openWidgetList ? 'expand_less' : 'menu_open' }} </mat-icon>
     </button>

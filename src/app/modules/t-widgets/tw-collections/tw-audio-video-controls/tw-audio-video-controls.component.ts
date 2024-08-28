@@ -24,6 +24,7 @@ import {
     IResponse,
     SDKClient,
     TEnums,
+    CallConferenceCompletedEvent,
     TextChatDisconnectedEvent,
     TextChatMessageReceivedEvent,
     TextChatRemoteUserConnectedEvent,
@@ -31,13 +32,15 @@ import {
     WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, AV_ERRORS, PERMISSION_ERRORS } from 'app/constants';
-import { SnackbarStateTypes } from 'app/interfaces';
+import { AGENT_FEATURES, AV_ERRORS, AV_FAIL_CODES, PERMISSION_ERRORS } from 'app/constants';
+import { SnackbarStateTypes, InteractionRef } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
-import { delay, filter, takeUntil } from 'rxjs/operators';
+import { delay, filter, take, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 
 /**
  * Audio Video Controls
@@ -197,6 +200,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
          */
         screenshare: boolean;
         /**
+         * Request Screenshare
+         */
+        reqScreenshare: boolean;
+        /**
          * WebRTC test
          */
         webrtcTest: boolean;
@@ -234,7 +241,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * Manual hold click flag
      */
-    manualHold: boolean;
+    manualHold: boolean = false;
 
     /**
      * Flag on call hold
@@ -267,6 +274,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     interactionDetails: IInteractionDetails = {} as IInteractionDetails;
 
     /**
+     * Flag on displaying toasters
+     */
+    displayToasters: boolean;
+
+    /**
      * Audio muted users
      */
     mutedRemoteUsers = {
@@ -274,7 +286,30 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         video: []
     };
 
+    /**
+     * Whether audio mute button is allowed or not
+     */
+    muteAudioHidden: boolean;
+
+    /**
+     * The current interaction
+     */
+    myInteraction: InteractionRef;
+
     confirmDialogRef;
+
+    isAgentAvRequest: boolean = false;
+    isCustomerAcknowledged: boolean = false;
+    agentAvRequestConsented: boolean = false;
+
+    private _unsubscribeAll: Subject<any>;
+
+    manualMuteFlags: { audio: boolean; video: boolean } = { audio: false, video: false };
+
+    // Flag to end the call after screenshare disconnect
+    endCallAfterScreenShareEnd: boolean = false;
+
+    IsScreenShareDisabled: boolean;
 
     /**
      * Constructor
@@ -288,7 +323,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private _tmacEventService: TMACEventService,
         private _agentFeaturesService: AgentFeaturesService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _interactionManagerService: InteractionManagerService
+        private _interactionManagerService: InteractionManagerService,
+        private translocoService: TranslocoService,
+        private sharedService: SharedService
     ) {
         super('TwAudioVideoControlsComponent');
 
@@ -301,6 +338,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         };
 
         this.snapshotRequested = false;
+        this.muteAudioHidden = false;
+        this.displayToasters = true;
+
+        // Set the private defaults
+        this._unsubscribeAll = new Subject();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -319,12 +361,19 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.appConfig = config;
         });
 
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            //find out the current interaction
+            this.myInteraction = interactions.find((i: InteractionRef) => i.interactionId === this.interactionId);
+        });
+
         // set defaults
         this.agentFeatures = {
             audioToVideo: false,
             oneWayVideo: false,
             hold: this.data.Data.HoldInteractionAllowed ?? false,
             screenshare: this.data.Data.ScreenShareAllowed ?? false,
+            reqScreenshare: this.data.Data.ReqScreenShareAllowed ?? false,
             snapshot: this.data.Data.Snapshot?.Allowed ?? false,
             toggleUserView: this.data.Data.ToggleUserViewAllowed ?? false,
             webrtcTest: this.data.Data.WebRTCTest?.Allowed ?? false
@@ -353,6 +402,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.interactionId = this.data.InteractionDetails.InteractionID;
         this.sessionId = this.data.InteractionDetails.SessionID;
         this.callType = this.data.Data.CallType;
+        this.IsScreenShareDisabled = this.data.Data.IsScreenShareDisabled;
 
         // listen to tmac interaction events
         this._tmacEventService
@@ -365,7 +415,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     { event: 'ActionMessageReceivedEvent' },
                     { event: 'TextChatDisconnectedEvent' },
                     { event: 'CallHoldEvent', noRepeat: true },
-                    { event: 'CallHoldReconnectEvent', noRepeat: true }
+                    { event: 'CallHoldReconnectEvent', noRepeat: true },
+                    { event: 'CallConferenceCompletedEvent', noRepeat: true }
                 ],
                 this.interactionId
             )
@@ -384,6 +435,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         if (this.data.Data.Source === 'InstantMessagingComponent' && this.data.Data.Direction === 'out') {
             this.startAVCall();
         }
+
+        // subscribe to interaction manager service
+        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
+            //find out the current interaction
+            this.myInteraction = interactions.find((i: InteractionRef) => i.interactionId === this.interactionId);
+        });
 
         // listen to tmac interaction events
         // SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
@@ -410,6 +467,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.avConn?.close();
         this.avConn?.events.off('OnAVEvent', this.onAVEvent);
 
+        // Close the active dialogs
+        this.confirmDialogRef?.close();
+
         // listen to tmac interaction events
         // SDKClient.events.off('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         // SDKClient.events.off('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
@@ -422,7 +482,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
 
         // remove the repeatable events from the reference
-        this._tmacEventService.removeInteractionEvents(this.interactionId, ['AVControlMessageReceivedEvent', 'ActionMessageReceivedEvent']);
+        this._tmacEventService.removeInteractionEvents(this.interactionId, ['AVControlMessageReceivedEvent', 'ActionMessageReceivedEvent','CallHoldEvent', 'CallHoldReconnectEvent']);
         this._tmacEventService.removeNonInteractionEvents(['AgentAVMessageEvent']);
 
         this.avConn = null;
@@ -441,6 +501,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             }
         });
 
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
+
         // call the wrapper destroy method
         this.destroyWrapper();
     }
@@ -457,6 +521,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         SDKClient.getAgentData().featuresList.forEach((f) => {
             // get the featue
             const feature = f.Feature.toLowerCase();
+
+            //TODO: Req Screenshare is not added
 
             // switch the feature
             switch (feature) {
@@ -475,6 +541,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case AGENT_FEATURES.IsChatScreenshareEnabled:
                     this.agentFeatures.screenshare = f.IsEnabled;
                     break;
+                case AGENT_FEATURES.IsReqScreenshareEnabled:
+                    this.agentFeatures.reqScreenshare = f.IsEnabled;
+                    break;
                 case AGENT_FEATURES.IsToggleChatUserViewEnabled:
                     this.agentFeatures.toggleUserView = f.IsEnabled;
                     break;
@@ -486,8 +555,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * To start AV call
      */
-    private startAVCall(): void {
+    private startAVCall(forceJoin?: boolean): void {
         const widgetData = this.data.Data;
+
+        this.muteAudioHidden = widgetData.MuteAudioHidden;
 
         // create the AV channel connection
         this.createAVConnection();
@@ -497,7 +568,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.userView = 'call';
 
         // start call
-        if (this.interactionDetails.ConferenceType === 'conf') {
+        if (
+            (this.interactionDetails.ConferenceType === 'conf' || forceJoin) &&
+            (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall || this.interactionDetails.Direction === 'in')
+        ) {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
             this.showUI = true;
         } else if (this.interactionDetails.ConferenceType === 'whisper') {
@@ -505,6 +579,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             this.showUI = true;
         } else if (this.interactionDetails.ConferenceType === 'silent') {
             this.avConn.join(this.wrcCallType, { mode: 'monitor' });
+            this.showUI = true;
+        } else if (
+            this.interactionDetails.ConferenceType === 'transfer' &&
+            (this.data.Data.ChatMode !== 'text' || (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall && this.data.Data?.AvCallConstraints?.isAgentOnPhone))
+        ) {
+            this.avConn.join(this.wrcCallType, { mode: 'conference' });
             this.showUI = true;
         } else if (this.interactionDetails.Direction === 'out') {
             this.avConn
@@ -519,7 +599,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.showUI = true;
                 })
                 .catch((error) => {
-                    this._appUIService.showSnackbar('Error in starting the call: ' + error, 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.startCallError') + error, 'failure');
                 });
         }
 
@@ -600,6 +680,23 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             // swtich the av events
             switch (evt.event) {
                 case 'onIncoming':
+                   //Check whether the type and status of myInteraction matches to 'textchat' and 'hold'
+                    if (this.myInteraction?.type === 'textchat' && this.myInteraction?.status === 'hold') {
+                        // reject request
+                        evt.data.response(false);
+                        // close the call widget
+                        this.destroyWidget();
+                        return;
+                    }
+                    // If its an incoming call fron an agent, skip here as we already handle that in
+                    // request av controll message event
+                    const isIncomingCallFromConferenceAgent = this.data.Data?.ConferenceAgentList.length
+                        ? this.data.Data.ConferenceAgentList.some(
+                              (agent: any) =>
+                                  evt.data.owner === `${agent.InteractionId}_${agent.AgentId}_${agent.AgentName}`
+                          )
+                        : false;
+                    if (isIncomingCallFromConferenceAgent) return;
                     // request param
                     const param = evt.data.param.charAt(0).toUpperCase() + evt.data.param.slice(1);
 
@@ -609,18 +706,40 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             evt.data.response(true);
                             // show the UI
                             this.showUI = true;
+                            // notify agent accepted the call
+                            this.notifyCallConfirmation(true);
                         } else {
                             // reject request
                             evt.data.response(false);
                             // close the call widget
                             this.destroyWidget();
+                            // notify agent rejected the call
+                            this.notifyCallConfirmation(false);
                         }
                     };
+                    const dynamicLabels = [
+                        {
+                            key: '#callType',
+                            value: this.translocoService.translate('dynamic_labels.audioVideoControls.callType.' + param)
+                        },
+                        {
+                            key: '#customerName',
+                            value:
+                                evt.data?.owner && evt.data.owner
+                                    ? evt.data.owner.split('_').pop()
+                                    : this.translocoService.translate(
+                                          'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
+                                      )
+                        }
+                    ];
 
                     // config incoming call
                     this.confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
-                        `${param} call requested by ${this.interactionDetails.CustomerName}, Do you want to accept it?`,
+                        this._appDataService.getUpdatedLabel(
+                            this.translocoService.translate('widgets.audioVideoControls.callRequestConfirmMsg'),
+                            dynamicLabels
+                        ),
                         '',
                         null,
                         {
@@ -628,24 +747,34 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     );
                     this.confirmDialogRef.afterClosed().subscribe((resp) => onConfirmDialogClose(resp));
-
+                    //this is used in order to close appconfirmdialog in twchatcontrolcomponent
+                    this.sharedService.triggerAppConfirmDialogClose();
                     break;
                 case 'onTrace':
                     this.logger.info('onAVEvent.onTrace: ' + evt.data);
                     break;
                 case 'onError':
-                    let error = evt.data?.error || 'Error occured in AV connection';
+                    let error = evt.data?.error || this.translocoService.translate('widgets.audioVideoControls.avConnectionError');
                     if (evt.data?.code in AV_ERRORS) {
                         error = AV_ERRORS[evt.data.code];
+                        this.status = `${error}`;
+                    } else {
+                        this.status = `Error : ${error}`;
+if (error === 'Screenshare Was Cancelled') {
+                            this.status = `${error}`;
+                        }
                     }
-                    this.status = `Error : ${error}`;
-                    this._appUIService.showSnackbar(error, 'failure');
+
+                    if (error) {
+                        this._appUIService.showSnackbar(error, 'failure');
+                    }
                     this.logger.error('onAVEvent.onError', evt.data.code + '-' + evt.data.error);
 
-                    if(evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {
+                    if (evt.data?.code === PERMISSION_ERRORS.SCREENSHARE) {
                         return;
                     }
-                    this.endCall(true, 'Something went wrong');
+                    this.logger.info('onAVEvent.onError - Trying to ending call');
+                    this.endCall(true, this.translocoService.translate('global.commonErrorMessage'));
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -710,9 +839,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'onScreenshareEnded':
                     this.status = 'screenshare-ended';
                     this.screenSharing = false;
+                    if(this.endCallAfterScreenShareEnd) this.endCall();
                     break;
                 case 'onScreenshareDisconnected':
-                    this.status = 'ss-disconnected';
+                    this.status = evt.data ? evt.data : 'ss-disconnected';
                     this.remoteScreenSharing = false;
                     this.remoateScreenshareRef = null;
                     // remove the screenshare user
@@ -723,11 +853,25 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     this.connected = false;
                     this.status = 'failed';
                     if (evt.data.code === 'CALL_REJECTED') {
-                        this._appUIService.showSnackbar('User has rejected your request', 'failure');
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'),
+                            'failure'
+                        );
+                    } else if (evt.data.code === AV_FAIL_CODES.REQUEST_TIMED_OUT) {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.remoteCallRequestTimedOut'),
+                            'failure'
+                        );
                     } else if (evt.data.code === 'CALL_NOT_ANSWERED') {
-                        this._appUIService.showSnackbar('Call was not answered by the Customer', 'failure');
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callNotAnsweredByremote'),
+                            'failure'
+                        );
                     } else {
-                        this._appUIService.showSnackbar('Call failed: ' + evt.data.error, 'failure');
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callFailed') + evt.data.error,
+                            'failure'
+                        );
                     }
                     this.confirmDialogRef?.close();
                     // close the widget
@@ -736,7 +880,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'onDisconnected':
                     this.connected = false;
                     this.status = 'disconnected';
-                    this._appUIService.showSnackbar('Call disconnected, unexpected end!', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.callDisconnectedError'), 'failure');
                     // close the widget
                     this.destroyWidget();
                     break;
@@ -764,9 +908,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                 case 'onEnd':
                     this.connected = false;
                     this.status = 'ended';
-                    this._appUIService.showSnackbar('User has ended the call', 'info');
+                    this._appUIService.showSnackbar(this.translocoService.translate(`widgets.audioVideoControls.${this.genericMessageMapper(evt?.data)}`), 'info');
                     // close the widget
                     this.destroyWidget();
+                    this.confirmDialogRef?.close();
                     break;
                 case 'onUserLeft':
                     this.userList = this.userList.filter((u) => u.streamInfo.id !== evt.data?.userId);
@@ -787,17 +932,34 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     // evt.data.remote: IRemoteStreamInfo[]
 
                     const remote: IRemoteStreamInfo[] = evt.data.remote;
-                    remote?.forEach((r) => {
+                    remote?.forEach((r, i) => {
                         if (r.state !== 'changed') return;
 
                         this.userList.forEach((f) => {
                             if (f.stream.id !== r.stream.id) return;
                             f.stream = r.stream;
                             f.streamInfo.type = r.type;
+                            remote.splice(i, 1);
                         });
                     });
 
+                    if(remote?.length) {
+                        remote.forEach((r) => {
+                            if (this.userList.some((ul) => ul.stream.id == r.stream.id) || r?.state === 'deleted') return;
+
+                            let newStreamObj = {
+                                stream: r.stream,
+                                streamInfo: {
+                                    id: '',
+                                    type: r.type,
+                                    user: r.user === '0' ? 'Customer' : r.user
+                                }
+                            };
+                            this.userList.push(newStreamObj);
+                        })
+                    }
                     break;
+
                 default:
                 // console.log(`unhandled:: [${evt.event}]`, evt);
             }
@@ -807,21 +969,44 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     };
 
     /**
-     * To send av status to the server for logging & reporting purpose 
+     * Method to normalize messages which are not defined by application labels
+     * @param message Message from MS/CallSDK/User
+     * @returns A generic application lable key
+     */
+    genericMessageMapper (message: string): string {
+        let messageKey = '';
+        const lcMessage = message.toLowerCase();
+        switch(lcMessage) {
+            case 'expected behaviour : call hangup by user while media was being established':
+            case 'call failed due to internal error': {
+                messageKey = 'callEndedByRemoteDueToInternalError'
+                break;
+            }
+            default: {
+                messageKey = 'callEndedByRemote'
+                break;
+            }
+        }
+
+        return messageKey;
+    }
+
+    /**
+     * To send av status to the server for logging & reporting purpose
      */
 
     sendAVStatusToServer() {
-        try{
+        try {
             const requestArgs = {
-                interactionId : this.interactionId.toString(),
-                type : 'avcallstatus',
+                interactionId: this.interactionId.toString(),
+                type: 'avcallstatus',
                 message: JSON.stringify({
                     param: this.status,
-                    callType: this.callType,
+                    callType: this.callType
                 })
             };
             SDKClient.sendAVControlMessage(requestArgs);
-        } catch(e) {
+        } catch (e) {
             this.logger.error('Error occured on sending AV status to server', e, true);
         }
     }
@@ -871,61 +1056,164 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     AVControlMessageReceivedEvent = (evt: AVControlMessageReceivedEvent) => {
         try {
-        // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
-            return;
-        }
+            // check the interaction
+            if (evt.InteractionID !== this.interactionId) {
+                return;
+            }
 
-        const requestType = JSON.parse(evt.Message).param;
-        switch(evt.Type) {
-            case 'requestav': 
-                            this.interactionDetails.Direction = 'in';
-                            this.callType = requestType;
-                            this.startAVCall();
-                            break;
-            case 'mute':
-            case 'unmute':
-                        this.updateMuteUnmuteUserList(requestType, evt);
-                        break;
+            const requestType = JSON.parse(evt.Message).param;
+            switch (evt.Type) {
+                case 'requestav':
+                    this.handleAvRequestFromAgent(evt);
+                    break;
+                case 'addscreenshare':
+                    this.displayToasters = false;
+                    break;
+                case 'endscreenshare':
+                    this.displayToasters = false;
+                    break;
+                case 'eventav':
+                    if (this.isAgentAvRequest && JSON.parse(evt.Message).event == 'connected' && JSON.parse(evt.Message).owner == 'customer') {
+                        this.isAgentAvRequest = false;
+                        this.isCustomerAcknowledged = true;
+                        if (this.agentAvRequestConsented) {
+                            this.showUI = true;
+                            // we set this to true because, we want the agent 1 to join instead of start av since the mode is not conf in agent 1 scenario when agent 2 calls
+                            this.startAVCall(true);
+                        }
+                    }
+                    break;
+                case 'avtstatus':
+                    if (evt.User == 'customer' && this.isAgentAvRequest && JSON.parse(evt.Message)?.errorCode == 'CALL_REJECTED') {
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callRejectedByRemote'),
+                            'failure'
+                        );
+                        this.destroyWidget();
+                        this.confirmDialogRef?.close();
+                    }
+                    break;
+                case 'mute':
+                case 'unmute':
+                    this.updateMuteUnmuteUserList(requestType, evt);
+                    break;
+            }
 
-        }
-        // check if its a av request
-        if (evt.Type === 'requestav') {
-            this.interactionDetails.Direction = 'in';
-            this.callType = JSON.parse(evt.Message).param;
-            this.startAVCall();
-        }
-
-        // forward the av messages to av channel
-        this.avConn?.onMessage(evt.Message);
-        } catch(e) {
-            this.logger.error('error occured in AVControlMessageReceivedEvent',e,false);
+            // forward the av messages to av channel
+            this.avConn?.onMessage(
+                evt.Type === 'addscreenshare'
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    : evt.Message
+            );
+        } catch (e) {
+            this.logger.error('error occured in AVControlMessageReceivedEvent', e, false);
         }
     };
-    
+
     /**
-     * 
+     * Method to handle agent av call requests when customer is in conference
+     * @param {AVControlMessageReceivedEvent} evt - AV control message object
+     */
+    handleAvRequestFromAgent(evt: AVControlMessageReceivedEvent): void {
+        try {
+            let requestType = JSON.parse(evt.Message).param;
+            requestType = requestType.charAt(0).toUpperCase() + requestType.slice(1);
+
+            if (evt.User == 'customer') {
+                this.isAgentAvRequest = false;
+                this.interactionDetails.Direction = 'in';
+                this.callType = requestType;
+                this.startAVCall();
+            } else {
+                this.isAgentAvRequest = true;
+                const dynamicLabels = [
+                    {
+                        key: '#callType',
+                        value: this.translocoService.translate('dynamic_labels.audioVideoControls.callType.' + requestType)
+                    },
+                    {
+                        key: '#customerName',
+                        value: JSON.parse(evt.Message)?.owner?.split('_')?.pop() ?? 'Agent'
+                    }
+                ];
+
+                this.confirmDialogRef = this._appUIService.showCustomDialog(
+                    'confirm',
+                    this._appDataService.getUpdatedLabel(
+                        this.translocoService.translate('widgets.audioVideoControls.callRequestConfirmMsg'),
+                        dynamicLabels
+                    ),
+                    '',
+                    null,
+                    {
+                        disableClose: true
+                    }
+                );
+                this.confirmDialogRef.afterClosed().subscribe((resp) => {
+                    if (resp) {
+                        this.showUI = true;
+                        this.agentAvRequestConsented = true;
+                        if (this.isCustomerAcknowledged) this.startAVCall();
+                    } else this.destroyWidget();
+                });
+            }
+        } catch (e) {
+            this.logger.error('error occured in handleAvRequestFromAgent', e, false);
+        }
+    }
+
+    /**
+     *
      * @param type - type of mute [i.e 'audio' | 'video']
      * @param data - mute/unmute event data to show relevant notification
      */
     updateMuteUnmuteUserList(type, data) {
         let userName = JSON.parse(data.Message).owner;
         userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
-        switch(type) {
-            case 'audio': if(data.Type === 'mute') {
-                this.mutedRemoteUsers.audio.push(data.User.toLowerCase());
-            } else {
-                this.mutedRemoteUsers.audio.splice(this.mutedRemoteUsers.audio.indexOf(data.User),1);
-            }
-            break;
-            case 'video': if(data.Type === 'mute') {
-                this.mutedRemoteUsers.video.push(data.User.toLowerCase());
-            } else {
-                this.mutedRemoteUsers.video.splice(this.mutedRemoteUsers.video.indexOf(data.User),1);
-            }
-            break;
+        switch (type) {
+            case 'audio':
+                if (data.Type === 'mute') {
+                    this.mutedRemoteUsers.audio.push(data.User.toLowerCase());
+                } else {
+                    this.mutedRemoteUsers.audio.splice(this.mutedRemoteUsers.audio.indexOf(data.User), 1);
+                }
+                break;
+            case 'video':
+                if (data.Type === 'mute') {
+                    this.mutedRemoteUsers.video.push(data.User.toLowerCase());
+                } else {
+                    this.mutedRemoteUsers.video.splice(this.mutedRemoteUsers.video.indexOf(data.User), 1);
+                }
+                break;
         }
-        this._appUIService.showSnackbar(userName + ' ' + data.Type + 'd the ' +type , 'warning');
+
+        const muteDisplayTextTypes = this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.muteDisplayText'))?.split(',');
+
+        const dynamicLabels = [
+            {
+                key: '#userName',
+                value: userName
+            },
+            {
+                key: '#muteType',
+                value: data.Type
+            },
+            {
+                key: '#muteDisplayText',
+                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
+            },
+            {
+                key: '#streamType',
+                value: type
+            }
+        ];
+        if (this.displayToasters) {
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+                'warning'
+            );
+        }
+        this.displayToasters = true;
     }
 
     /**
@@ -1007,31 +1295,32 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             switch (type) {
                 case 'snapshot':
                     {
+if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         let message = '';
                         const msgStatus = msg.status.toLowerCase();
                         let status: SnackbarStateTypes = 'success';
 
                         switch (msgStatus) {
                             case 'ack':
-                                message = 'Snapshot request sent successfully';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotRequestSuccess');
                                 status = 'success';
                                 break;
                             case 'snapshotrequestack':
                             case 'accept':
-                                message = 'Retreiving snapshot...';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotLoading');
                                 status = 'loading';
                                 break;
                             case 'reject':
-                                message = 'Snapshot request is rejected by customer!';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotRequestRejectedByRemote');
                                 status = 'failure';
                                 break;
                             case 'response':
                             case 'success':
-                                message = 'Snapshot received';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotSuccess');
                                 status = 'success';
                                 break;
                             default:
-                                message = 'Unable to take snapshot';
+                                message = this.translocoService.translate('widgets.audioVideoControls.snapshotFailed');
                                 status = 'failure';
                                 break;
                         }
@@ -1076,27 +1365,64 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         }
                     }
                     break;
+                case 'request_screenshare':
+                    {
+                        if (msg.status === 'accepted') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareAccepted'));
+                        } else if (msg.status === 'rejected') {
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareRejected'));
+                        }
+                    }
+                    break;
                 case 'togglecamera':
                 case 'toggleview':
                     {
+                        const dynamicLabels = [
+                            {
+                                key: '#toggleViewType',
+                                value: type.replace('toggle', '')
+                            }
+                        ];
                         switch (msg.status) {
                             case 'ack':
                                 break;
                             case 'accepted':
-                                this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is accepted by customer`);
+                                this._appUIService.showSnackbar(
+                                    this._appDataService.getUpdatedLabel(
+                                        this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestAccepted'),
+                                        dynamicLabels
+                                    )
+                                );
                                 break;
                             case 'rejected':
-                                this._appUIService.showSnackbar(`Toggle ${type.replace('toggle', '')} request is rejected by customer!`, 'failure');
+                                this._appUIService.showSnackbar(
+                                    this._appDataService.getUpdatedLabel(
+                                        this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestRejected'),
+                                        dynamicLabels
+                                    ),
+                                    'failure'
+                                );
                                 break;
                             case 'success':
-                                this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggled successfully`);
+                                this._appUIService.showSnackbar(
+                                    this._appDataService.getUpdatedLabel(
+                                        this.translocoService.translate('widgets.audioVideoControls.toggleViewSuccess'),
+                                        dynamicLabels
+                                    )
+                                );
                                 // set camera selected for 'togglecamera'
                                 if (type === 'togglecamera') this.setCameraSelected(msg.data.deviceId);
                                 // set user view for 'toggleview'
                                 else if (type === 'toggleview') this.userView = msg.data.view;
                                 break;
                             case 'failed':
-                                this._appUIService.showSnackbar(`Customer ${type.replace('toggle', '')} toggle failed!`, 'failure');
+                                this._appUIService.showSnackbar(
+                                    this._appDataService.getUpdatedLabel(
+                                        this.translocoService.translate('widgets.audioVideoControls.toggleViewFailed'),
+                                        dynamicLabels
+                                    ),
+                                    'failure'
+                                );
                                 break;
                         }
                     }
@@ -1120,24 +1446,27 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     CallHoldEvent = (evt: CallHoldEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
+        if (evt.InteractionID !== this.interactionId || !this.connected) {
             return;
         }
 
         this.onCallHoldEvent = true;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
-        if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
-                this.avConn.mute(true, true);
-                this.audioMuted = true;
-                this.videoMuted = true;
-            } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
-                this.avConn.mute(true, false);
-                this.audioMuted = true;
-            } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
-                this.avConn.mute(false, true);
-                this.videoMuted = true;
-            }
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && !this.audioMuted && !this.videoMuted) {
+                    this.avConn.mute(true, true);
+                    this.audioMuted = true;
+                    this.videoMuted = true;
+                } else if (this.muteAVOnHold.agentAudio && !this.audioMuted) {
+                    this.avConn.mute(true, false);
+                    this.audioMuted = true;
+                } else if (this.muteAVOnHold.agentVideo && !this.videoMuted) {
+                    this.avConn.mute(false, true);
+                    this.videoMuted = true;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1161,6 +1490,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'muteVideo';
+            } else {
+                return;
             }
 
             this.requestMuteUnmuteCustomerAV(type, 'mute', actionMessage);
@@ -1178,24 +1509,33 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     CallHoldReconnectEvent = (evt: CallHoldReconnectEvent) => {
         // check the interaction
-        if (evt.InteractionID !== this.interactionId) {
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold || !this.connected) {
             return;
         }
 
         this.onCallHoldEvent = false;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
-        if (!this.manualHold && this.muteAVOnHold.enabled) {
-            if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted) {
-                this.avConn.unMute(true, true);
-                this.audioMuted = false;
-                this.videoMuted = false;
-            } else if (this.muteAVOnHold.agentAudio && this.audioMuted) {
-                this.avConn.unMute(true, false);
-                this.audioMuted = false;
-            } else if (this.muteAVOnHold.agentVideo && this.videoMuted) {
-                this.avConn.unMute(false, true);
-                this.videoMuted = false;
-            }
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                }
+                if (this.hold && !this.muteAVOnHold.agentVideo ) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                }
+                else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
 
             let type = 'AV' as any;
             const actionMessage = {
@@ -1228,10 +1568,63 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // un hold the call
         this.avConn.unHold();
         this.hold = false;
+    };
 
-        if (this.manualHold) {
-            this.manualHold = false;
+    CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
+        // check the interaction
+        if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
+            return;
         }
+
+        this.onCallHoldEvent = false;
+        this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
+
+        if (this.muteAVOnHold.enabled) {
+            setTimeout(() => {
+                if (this.muteAVOnHold.agentAudio && this.muteAVOnHold.agentVideo && this.audioMuted && this.videoMuted && !this.manualMuteFlags.audio && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(true, true);
+                    this.audioMuted = false;
+                    this.videoMuted = false;
+                } else if (this.muteAVOnHold.agentAudio && this.audioMuted && !this.manualMuteFlags.audio) {
+                    this.avConn.unMute(true, false);
+                    this.audioMuted = false;
+                } else if (this.muteAVOnHold.agentVideo && this.videoMuted && !this.manualMuteFlags.video) {
+                    this.avConn.unMute(false, true);
+                    this.videoMuted = false;
+                }
+            }, 1000);
+
+            let type = 'AV' as any;
+            const actionMessage = {
+                source: 'agent',
+                options: {},
+                data: {
+                    interactionId: this.interactionId
+                },
+                status: 'request',
+                type: 'unmuteAudioVideo',
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+            };
+
+            if (this.muteAVOnHold.customerAudio && this.muteAVOnHold.customerVideo) {
+                type = 'AV';
+                actionMessage.type = 'unmuteAudioVideo';
+            } else if (this.muteAVOnHold.customerAudio) {
+                type = 'audio';
+                actionMessage.type = 'unmuteAudio';
+            } else if (this.muteAVOnHold.customerVideo) {
+                type = 'video';
+                actionMessage.type = 'unmuteVideo';
+            }
+
+            this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
+            return;
+        }
+
+        // un hold the call
+        this.avConn.unHold();
+        this.hold = false;
     };
 
     /**
@@ -1307,6 +1700,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.audioMuted = !this.audioMuted;
+        this.manualMuteFlags.audio = (this.audioMuted === true);
     }
 
     /**
@@ -1324,13 +1718,49 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
+        this.manualMuteFlags.video = (this.videoMuted === true);
+    }
+
+    /**
+     * Request To Share Screen
+     * @method requestToShareScreen
+     */
+    public requestToShareScreen(): void {
+        // check if there is an ongoing screenshare already
+        if (this.screenSharing) {
+            // screen share already in progress - send warning popup
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.screenshareAlreadyInProgress'), 'warning');
+        } else {
+            // request customer to initiate screenshare
+            SDKClient.sendActionMessage({
+                interactionId: this.interactionId as any,
+                message: JSON.stringify({
+                    source: 'agent',
+                    options: {},
+                    data: {
+                        interactionId: this.interactionId
+                    },
+                    status: 'request',
+                    type: 'request_screenshare',
+                    eventName: 'ActionMessage',
+                    id: TUtils.Generic.uuid()
+                })
+            })
+                .then((res) => {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.screenshareReqSent'));
+                })
+                .catch((ex) => {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.screenshareReqError'), 'failure');
+                });
+        }
     }
 
     /**
      * Share Screen
      * @method shareScreen
      */
-    public shareScreen(): void {
+    public shareScreen(endCallAfterScreenShareEnd?: boolean): void {
+        this.endCallAfterScreenShareEnd = endCallAfterScreenShareEnd;
         // check if to start or stop
         if (this.screenSharing) {
             // stop screen sharing
@@ -1365,7 +1795,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     const confirmDialogRef = this._appUIService.showCustomDialog(
                         'confirm',
                         `<img src="${base64}" width="640" height="320" />`,
-                        'Confirm Snapshot',
+                        this.translocoService.translate('widgets.audioVideoControls.confirmSnapshotTitle'),
                         null,
                         {
                             disableClose: false
@@ -1373,7 +1803,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     );
                     confirmDialogRef.afterClosed().subscribe((resp) => {
                         if (resp) {
-                            this._appUIService.showSnackbar('Saving ...', 'loading');
+                            this._appUIService.showSnackbar(
+                                this.translocoService.translate('widgets.audioVideoControls.saveSnapshotLoading'),
+                                'loading'
+                            );
                             // send snapshot
                             SDKClient.saveVideoSnap(
                                 {
@@ -1390,7 +1823,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                 .then((result: IResponse) => {
                                     if (result.response && result.response.ImageUrl) {
                                         // snapsot saved sucessfully
-                                        this._appUIService.showSnackbar('Snapshot saved successfully!', 'success');
+                                        this._appUIService.showSnackbar(
+                                            this.translocoService.translate('widgets.audioVideoControls.snapshotSaveSuccess'),
+                                            'success'
+                                        );
 
                                         // create the message to emit
                                         const message = JSON.stringify({
@@ -1419,11 +1855,17 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                                             log: true
                                         });
                                     } else {
-                                        this._appUIService.showSnackbar('Snapshot save failed!', 'failure');
+                                        this._appUIService.showSnackbar(
+                                            this.translocoService.translate('widgets.audioVideoControls.snapshotSaveFailed'),
+                                            'failure'
+                                        );
                                     }
                                 })
                                 .catch(() => {
-                                    this._appUIService.showSnackbar('Snapshot save failed', 'failure');
+                                    this._appUIService.showSnackbar(
+                                        this.translocoService.translate('widgets.audioVideoControls.snapshotSaveFailed'),
+                                        'failure'
+                                    );
                                 });
                         }
                     });
@@ -1431,7 +1873,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
         } else if (this.data.Data.Snapshot?.Source?.toLowerCase() === 'remote') {
             try {
-                const snackRef = this._appUIService.showSnackbar('Requesting customer for snapshot', 'loading');
+                const snackRef = this._appUIService.showSnackbar(
+                    this.translocoService.translate('widgets.audioVideoControls.snapshotRequestLoading'),
+                    'loading'
+                );
 
                 try {
                     await SDKClient.sendActionMessage({
@@ -1485,7 +1930,10 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             });
                         } catch (error) {}
 
-                        this._appUIService.showSnackbar('Snapshot request timed out', 'failure');
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.snapshotRequestTimeout'),
+                            'failure'
+                        );
                         console.error('Snapshot request timed out');
                     });
             } catch (e) {
@@ -1499,12 +1947,42 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @method holdCall
      */
     public holdUnholdCall(): void {
-        this.manualHold = true;
+        const actionMessage = {
+            source: 'customer',
+            options: {},
+            data: {
+                interactionId: this.interactionId
+            },
+            status: 'request',
+            type: this.hold ? 'unmuteAudioVideo' : 'muteAudioVideo',
+            eventName: 'ActionMessage',
+            id: TUtils.Generic.uuid()
+        };
+    
+        // Check if the call is already on hold 
+        if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
+            // Mute the AV connection
+            this.avConn.mute(false, false);
+            this.videoMuted = true;
+            this.audioMuted = true;
+            this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
+        } else {
+            // Unmute the AV connection
+            this.avConn.unMute(true, true);
+            this.videoMuted = false;
+            this.audioMuted = false;
+            this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
+        }
+    
+        this.manualHold = !this.manualHold;
 
-        // check the hold flag
-        if (this.hold) {
+        // check the hold flag and checks if agentaudio is true or false
+        if (this.hold || !this.muteAVOnHold.agentVideo ) {
             // un hold the call
             this.avConn.unHold();
+           this.muteUnmuteVideoCall();
+           this.muteUnmuteAudioCall();
+
             if (this.data.Data.Source === 'TwChatControlsComponent') {
                 // if (typeof this.data.Data.Opener.unHoldInteraction === 'function') {
                 //     this.data.Data.Opener.unHoldInteraction();
@@ -1539,25 +2017,84 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         this.hold = !this.hold;
     }
 
+    async confirmDialogForEndInteraction()
+    {
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).pipe(take(1)).toPromise();
+        if (dialogResult) {
+            this.endCall(true);
+            this.destroyWidget();
+            this.endInteraction();
+        }  
+        else {
+            this.endCall(true);
+            this.destroyWidget();
+        }
+    }
+
+    endInteraction()
+    {    
+        this._tmacEventService.emitSDKEvent({
+        event: {
+            EventName: 'EndInteractionEvent',
+            InteractionID: this.interactionId
+        },
+        isInteractionEvent: true
+        });
+    }
+
+    /**
+     * pre End Call when confirmation box is needed
+     * @method endCallClicked
+     */
+    public async endAVCallClicked()
+    {
+        if(this.data.Data.EndInteractionOnAVEnd && this.data.Data.Source === 'TwChatControlsComponent'){
+            this.confirmDialogForEndInteraction();
+        }
+        else {
+            this.endCall(true);
+            this.destroyWidget();
+        }
+    }
+
+
     /**
      * End Call
      * @method endCall
      */
-    public async endCall(endOnly = false,reason = ''): Promise<boolean> {
-        // if there is only customer then endCall else dropCall
-        if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1) {
+    public async endCall(endOnly = false, reason = '', errorCode?: string): Promise<boolean> {
+        const areParentAgentsOnCall = Object.keys(this._tmacEventService?.avCallConstraints).find(
+            (parentAgentId: string) => {
+                return this._tmacEventService.avCallConstraints[parentAgentId].isAgentOnActiveCall;
+            }
+        )?.length;
+        
+        // if there is only customer then endCall else dropCall or if parent agents are in active call
+        if (this.userList.filter((u) => u.streamInfo.type !== 'screenshare').length > 1 || areParentAgentsOnCall) {
+            this.logger.info('endCall - droping call');
             this.avConn.dropCall(reason);
         } else {
-            this.avConn.endCall(this.wrcCallType, reason);
+            this.logger.info('endCall - ending call');
+            this.avConn.endCall(this.wrcCallType, reason, errorCode);
         }
+
+        this._tmacEventService.emitSDKEvent({
+            event: {
+                EventName: 'UpdateParentAgentStatusEvent',
+                InteractionID: this.interactionId
+            },
+            isInteractionEvent: true
+        });
 
         // of endOnly then return
         if (endOnly) {
             return true;
         }
 
-        // to confirm end call
-        if (this.data.Data.EndInteractionOnAVEnd && this.data.Data.Source === 'TwChatControlsComponent') {
+         // to confirm end call
+         if (this.data.Data.EndInteractionOnAVEnd 
+            && this.data.Data.Source === 'TwChatControlsComponent') {
             // this.data.Data.Opener.confirmEndChat(null);
 
             this._tmacEventService.emitSDKEvent({
@@ -1574,6 +2111,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         return true;
     }
+
 
     /**
      * Opens webrtc stats inside an iframe
@@ -1625,7 +2163,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     public async changeToVideo(btn: MatButton): Promise<void> {
         btn.disabled = true;
         if (!(await this.avConn.upgradeToVideo())) {
-            this._appUIService.showSnackbar('Upgrade to Video failed!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.upgradeToVideoFailed'), 'failure');
         } else {
             this.selfVideo.type = 'video';
             this.agentFeatures.oneWayVideo = false;
@@ -1657,12 +2195,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
 
             if (response.ResultCode === 1) {
-                this._appUIService.showSnackbar('Toggle camera request sent successfully');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleCamRequestSuccess'));
             } else {
-                this._appUIService.showSnackbar('Toggle camera request failed!', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleCamRequestFailed'), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar('Toggle camera request error!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleCamRequestError'), 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.toggleUserCamera', error);
         } finally {
             this._fuseProgressBarService.hide();
@@ -1692,12 +2230,12 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
 
             if (response.ResultCode === 1) {
-                this._appUIService.showSnackbar('Toggle view request sent successfully');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestSuccess'));
             } else {
-                this._appUIService.showSnackbar('Toggle view request failed!', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestFailed'), 'failure');
             }
         } catch (error) {
-            this._appUIService.showSnackbar('Toggle view request error!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.toggleViewRequestError'), 'failure');
             throwADError('Error in TwAudioVideoControlsComponent.toggleUserView', error);
         } finally {
             this._fuseProgressBarService.hide();
@@ -1709,6 +2247,16 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      * @param message
      */
     public async requestMuteUnmuteCustomerAV(source: 'AV' | 'audio' | 'video', type: 'mute' | 'unmute', message: any): Promise<void> {
+        const dynamicLabels = [
+            {
+                key: '#streamType',
+                value: source
+            },
+            {
+                key: '#muteType',
+                value: type
+            }
+        ];
         try {
             this._fuseProgressBarService.show();
 
@@ -1718,18 +2266,54 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
             });
 
             if (response.ResultCode !== 1) {
-                this._appUIService.showSnackbar(`Customer ${source} ${type} request failed!`, 'failure');
+                this._appUIService.showSnackbar(
+                    this._appDataService.getUpdatedLabel(
+                        this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeRequestFailed'),
+                        dynamicLabels
+                    ),
+                    'failure'
+                );
             }
         } catch (error) {
-            this._appUIService.showSnackbar(`Customer ${source} ${type} request error!`, 'failure');
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(
+                    this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeRequestError'),
+                    dynamicLabels
+                ),
+                'failure'
+            );
             throwADError('Error in TwAudioVideoControlsComponent.requestMuteUnmuteCustomerAV', error);
         } finally {
             this._fuseProgressBarService.hide();
         }
     }
 
+    /**
+     * To send action message to notify agent accepted/rejected the AV call
+     */
+    public notifyCallConfirmation(response: boolean) {
+        try{
+            const messageType = response ? 'accepted_call' : 'rejected_call';
+            SDKClient.sendActionMessage({
+            interactionId: this.interactionId as any,
+            message: JSON.stringify({
+                source: 'agent',
+                options: {},
+                data: {
+                    interactionId: this.interactionId
+                },
+                status: 'action',
+                type: messageType,
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+                })
+            })
+        }
+        catch(error){}
+    }
+
     ifMuted(data, type) {
-        return (this.mutedRemoteUsers[type].includes(data.id) || this.mutedRemoteUsers[type].includes(data.user.toLowerCase()));
+        return this.mutedRemoteUsers[type].includes(data.id) || this.mutedRemoteUsers[type].includes(data.user.toLowerCase());
     }
 }
 
@@ -1788,3 +2372,4 @@ interface IInteractionDetails {
 }
 
 // for more info visit - https://angular.io/api/core
+

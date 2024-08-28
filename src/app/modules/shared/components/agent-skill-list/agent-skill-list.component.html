@@ -1,4 +1,4 @@
-<shared-wrapper [icon]="icon" [title]="title" [loading]="loading">
+<shared-wrapper *transloco="let locale" [icon]="icon" [title]="title" [loading]="loading">
     <div mat-dialog-content class="twd-h-full !twd-max-h-full !lg:twd-w-6/12">
         <ng-container *ngIf="customFuse$ | async as customFuse">
             <ng-container *ngIf="switcherList[activeSwitcher] as tabConf">
@@ -19,7 +19,7 @@
                                             matSuffix
                                             mat-icon-button
                                             type="button"
-                                            matTooltip="Edit"
+                                            [matTooltip]="locale('sharedComponents.agentSkillList.edit')"
                                             (click)="clearSelected(); tabConf.freeText.active = true"
                                         >
                                             <mat-icon>edit</mat-icon>
@@ -32,7 +32,7 @@
                                             matSuffix
                                             mat-icon-button
                                             aria-label="Clear"
-                                            matTooltip="Clear"
+                                            [matTooltip]="locale('sharedComponents.agentSkillList.clear')"
                                             (keypress)="numberOnly($event)"
                                             (click)="clearSelected()"
                                         >
@@ -45,13 +45,14 @@
                                             required
                                             [placeholder]="'Enter ' + tabConf.placeholder"
                                             [(ngModel)]="tabConf.freeText.value"
+                                            #skillVdnInput (input)="onSkillVdnInputChange($event.target.value)"
                                         />
                                         <button
                                             mat-button
                                             matSuffix
                                             mat-icon-button
                                             type="button"
-                                            matTooltip="Cancel"
+                                            [matTooltip]="locale('interactionComponent.cancel')"
                                             (click)="clearSelected(); tabConf.freeText.active = false"
                                         >
                                             <mat-icon>cancel</mat-icon>
@@ -68,7 +69,7 @@
                                     <textarea
                                         matInput
                                         [(ngModel)]="comments"
-                                        placeholder="Enter comments here..."
+                                        [placeholder]="locale('sharedComponents.agentSkillList.commentsPlaceholder')"
                                         matTextareaAutosize
                                         matAutosizeMinRows="4"
                                         matAutosizeMaxRows="4"
@@ -91,7 +92,7 @@
                                 <button
                                     *ngIf="tabConf.blind"
                                     mat-raised-button
-                                    matTooltip="Blind"
+                                    [matTooltip]="locale('sharedComponents.agentSkillList.blind')"
                                     class="custom-btn bg-success border-radius-20"
                                     [disabled]="controls.disabled"
                                     (click)="executeAction(false)"
@@ -118,7 +119,11 @@
                                 <div class="twd-flex twd-items-center twd-gap-2" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }">
                                     <div #skillSelectDropdown class="twd-flex-1">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                            <mat-select #skillSelectRef placeholder="Select Skill..." [(ngModel)]="selectedSkill">
+                                            <mat-select
+                                                #skillSelectRef
+                                                [placeholder]="locale('sharedComponents.agentSkillList.skillPlaceholder')"
+                                                [(ngModel)]="selectedSkill"
+                                            >
                                                 <mat-option (click)="clearSkillFilter()">None</mat-option>
                                                 <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="searchAgentsOnSkill()">{{
                                                     item.SkillName
@@ -130,7 +135,7 @@
                                     <!-- Search form field with form control searchKey -->
                                     <div #searchKeyText class="twd-hidden">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                            <input matInput #agentSearchRef [formControl]="searchKey" placeholder="Search" />
+                                            <input matInput #agentSearchRef [formControl]="searchKey" [placeholder]="locale('global.search')" />
                                             <button
                                                 *ngIf="agentSearchRef.value"
                                                 mat-button
@@ -146,13 +151,23 @@
                                     </div>
 
                                     <div>
-                                        <button mat-raised-button mat-icon-button matTooltip="Clear All" (click)="clearAllFilter()">
+                                        <button
+                                            mat-raised-button
+                                            mat-icon-button
+                                            [matTooltip]="locale('sharedComponents.clearAll')"
+                                            (click)="clearAllFilter()"
+                                        >
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </div>
 
                                     <div>
-                                        <button mat-raised-button mat-icon-button matTooltip="Reload Agent List" (click)="reloadAgentList()">
+                                        <button
+                                            mat-raised-button
+                                            mat-icon-button
+                                            [matTooltip]="locale('sharedComponents.agentSkillList.reloadAgents')"
+                                            (click)="reloadAgentList()"
+                                        >
                                             <mat-icon>refresh</mat-icon>
                                         </button>
                                     </div>
@@ -162,7 +177,7 @@
                                         <button
                                             mat-raised-button
                                             mat-icon-button
-                                            matTooltip="Select Skill"
+                                            [matTooltip]="locale('sharedComponents.agentSkillList.selectSkill')"
                                             (click)="
                                                 searchKeyText.classList.replace('twd-flex-1', 'twd-hidden');
                                                 skillSelectDropdown.classList.replace('twd-hidden', 'twd-flex-1');
@@ -180,7 +195,7 @@
                                         <button
                                             mat-raised-button
                                             mat-icon-button
-                                            matTooltip="Search"
+                                            [matTooltip]="locale('global.search')"
                                             (click)="
                                                 skillSelectDropdown.classList.replace('twd-flex-1', 'twd-hidden');
                                                 searchKeyText.classList.replace('twd-hidden', 'twd-flex-1');
@@ -196,7 +211,7 @@
 
                                 <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher === 'Agent List' }">
                                     <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                        <input matInput [formControl]="searchKey" #searchRef placeholder="Search" />
+                                        <input matInput [formControl]="searchKey" #searchRef [placeholder]="locale('global.search')" />
                                         <button
                                             *ngIf="searchRef.value"
                                             mat-button

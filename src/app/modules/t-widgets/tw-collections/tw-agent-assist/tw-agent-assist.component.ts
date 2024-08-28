@@ -12,6 +12,7 @@ import { merge } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AOTWidget, TwAgentAssist } from '@ad/types';
 
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Agent Assist Component
  */
@@ -70,7 +71,9 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
      * @param {TMACEventService} _tmacEventService
      * @param {AppUiService} _appUIService
      */
-    constructor(private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
+    constructor(private _aotWidgetService: AOTWidgetService, private _tmacEventService: TMACEventService,
+         private _appUIService: AppUiService,
+         private translocoService: TranslocoService) {
         super('TwAgentAssistComponent');
     }
 
@@ -286,7 +289,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
 
         // check if url is provided
         if (!url) {
-            this._appUIService.showSnackbar('Assist widget URL not found!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.agentAssist.urlNotFound'), 'failure');
             return;
         }
 
@@ -324,7 +327,7 @@ export class TwAgentAssistComponent extends TWidgetWrapper implements OnInit, On
         if (isMandatory) {
             widget.OnDestroy = () => {
                 // get confiration before close
-                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Confirm Close', 'Are you sure to close?');
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.agentAssist.confirmCloseTitle'), this.translocoService.translate('widgets.agentAssist.confirmCloseMsg'));
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         widget.destroy();

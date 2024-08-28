@@ -9,6 +9,7 @@ import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 import { TMACEventService } from '@services/tmac-event.service';
 
 /**
@@ -48,6 +49,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         private _contentPageService: ContentPageService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
+        private translocoService: TranslocoService,
         private _tmacEventService: TMACEventService
     ) {
         super('TwActiveInteractionsComponent');
@@ -62,29 +64,30 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         this.initWrapper(this.data);
 
         // subscribe to interactions subject
-        this._interactionManagerService.interactions.pipe(takeUntil(this.unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {
-            // setTimeout(() => {
-            // non email interactions
-            this.interactionList = interactions.filter((i) => i.type !== 'email');
-            // filter email interactions
-            this.emailInteractionList = interactions.filter((i) => i.type === 'email');
-            // }, 500);
-        });
+        this._interactionManagerService.interactions
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((interactions: InteractionRef[]) => {
+                // setTimeout(() => {
+                // non email interactions
+                this.interactionList = interactions.filter((i) => i.type !== 'email');
+                // filter email interactions
+                this.emailInteractionList = interactions.filter((i) => i.type === 'email');
+                // }, 500);
+            });
 
         // subscribe to content page subject
         this._contentPageService.mode.pipe(takeUntil(this.unsubscribeAll)).subscribe((mode: string) => {
             this.currentViewMode = mode;
         });
-    
         // subscribe to UI control events
         this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-          try {
-            if (data && data.interactionId)  {
-              this.handleUIControls(data);
+            try {
+                if (data && data.interactionId) {
+                    this.handleUIControls(data);
+                }
+            } catch (e) {
+                console.log('Error occurred on UIControl event received', e);
             }
-          } catch (e) {
-            console.log('Error occurred on UIControl event received', e);
-          }
         });
     }
 
@@ -96,7 +99,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         // call the wrapper destroy method
         this.destroyWrapper();
     }
-
+    
     /**
      * Method to manipulate interaction controls based on the custom events
      * @param data 
@@ -214,7 +217,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                 if (dt.response && dt.response.ResultCode === 0) {
                     // disconnect call success
                 } else {
-                    this._appUIService.showSnackbar('Hold call failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.holdCallFailed'), 'failure');
                 }
             });
         } else {
@@ -225,7 +228,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
                 if (dt.response && dt.response.ResultCode === 0) {
                     // disconnect call success
                 } else {
-                    this._appUIService.showSnackbar('Unhold call failed', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.unHoldCallFailed'), 'failure');
                 }
             });
         }
@@ -246,7 +249,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             if (dt.response && dt.response.ResultCode === 0) {
                 // disconnect call success
             } else {
-                this._appUIService.showSnackbar('Disconnect call failed', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.disconnectCallFailed'), 'failure');
             }
         });
     }

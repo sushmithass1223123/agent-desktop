@@ -1,4 +1,5 @@
-import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, HostBinding, HostListener, Input, OnDestroy, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CallHoldEvent, CallHoldReconnectEvent } from '@tmac/sdk';
@@ -105,12 +106,28 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * Flag to check interaction on hold
      */
     interactionHold: boolean;
+    /**
+     * Host class for style z-index
+     */   
+    @HostBinding('style.z-index') 
+    
+    /**
+     * index to drag
+     */
+     zIndex: number;
 
+    /**
+     * index to drag and stay there
+     */
+    private static zIndexCounter = 1000; // Static counter for z-index
     /**
      * Unsubscribe all subject
      */
     _unsubscribeAll: Subject<any>;
-
+    /**
+     * Initially while dragging floated thing
+     */
+    isDragging = false;
     /**
      * Fuse custom config
      */
@@ -123,7 +140,11 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Constructor
      */
-    constructor(private _tmacEventService: TMACEventService, private _fuseFacadeService: FuseFacadeService) {
+    constructor (
+        private _tmacEventService: TMACEventService,
+        private _fuseFacadeService: FuseFacadeService,
+        private _appUiService: AppUiService
+    ) {
         this._unsubscribeAll = new Subject();
     }
 
@@ -250,6 +271,25 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
      * @param {CallHoldReconnectEvent} evt
      */
     CallHoldReconnectEvent(evt: CallHoldReconnectEvent) {
-        this.interactionHold = false;
+        setTimeout(() => {
+            if(!this._appUiService.isAvInteractionOnHold[evt.InteractionID]?.onHold) {
+                this.interactionHold = false;
+            }
+         }, 50);
+    }
+
+    @HostListener('mousedown', ['$event'])
+    onDragStart(event: MouseEvent): void {
+        this.isDragging = true;
+        this.bringToFront();
+    }
+
+    @HostListener('mouseup', ['$event'])
+    onDragEnd(event: MouseEvent): void {
+        this.isDragging = false;
+    }
+
+    private bringToFront(): void {
+        this.zIndex = ++TwWrapperComponent.zIndexCounter;
     }
 }

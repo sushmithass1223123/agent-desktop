@@ -23,6 +23,7 @@ import { format, parse } from 'date-fns';
 import { groupBy, sortBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
 
 type Mode = 'Interactions' | 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
@@ -151,7 +152,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         private _tmacEventService: TMACEventService,
         private sanitizer: DomSanitizer,
         private _appUIService: AppUiService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private translocoService: TranslocoService
     ) {
         super('TwCustomerJourneyComponent');
     }
@@ -213,6 +215,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             audio: 'wifi_calling_3',
             video: 'duo',
             whatsapp: 'custom-whatsapp',
+            instagram: 'custom-instagram',
             we: 'custom-we',
             line: 'custom-line',
             viber: 'custom-viber',
@@ -242,13 +245,13 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 }
             },
             InteractionText: {
-                title: 'Interaction Text',
+                title: this.translocoService.translate('widgets.customerJourney.interactionText'),
                 searchable: true,
                 truncate: true,
                 tooltip: true
             },
             InteractionDate: {
-                title: 'Received At',
+                title: this.translocoService.translate('widgets.customerJourney.receivedAt'),
                 searchable: true,
                 type: 'date'
             },
@@ -259,14 +262,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             },
             Intent: {},
             AgentName: {
-                title: 'Agent Name',
+                title: this.translocoService.translate('global.agentName'),
                 width: '12%',
                 searchable: true,
                 tooltip: true,
                 truncate: true
             },
             LastServicedAgentName: {
-                title: 'Serviced Agents',
+                title: this.translocoService.translate('widgets.customerJourney.servicedAgents'),
                 width: '12%',
                 searchable: true,
                 tooltip: true,
@@ -279,11 +282,11 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 searchable: true
             },
             PhoneNumber: {
-                title: 'Phone Number',
+                title: this.translocoService.translate('interactionComponent.phoneNumber'),
                 searchable: true
             },
             EmailID: {
-                title: 'Email',
+                title: this.translocoService.translate('channels.email'),
                 searchable: true,
                 truncate: true
             },
@@ -291,7 +294,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 searchable: true
             },
             OverallSentiment: {
-                title: 'Sentiment'
+                title: this.translocoService.translate('interactionComponent.sentiment')
             },
             Actions: {
                 title: '',
@@ -299,28 +302,28 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 type: 'controls',
                 value: [
                     {
-                        title: 'Interactions',
+                        title: this.translocoService.translate('widgets.customerJourney.interactions'),
                         icon: 'forum'
                     },
                     {
-                        title: 'Session History',
+                        title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
                         icon: 'history'
                     },
                     {
-                        title: 'Actions',
+                        title: this.translocoService.translate('interactionComponent.actions'),
                         icon: 'list_alt'
                     },
                     {
-                        title: 'Comments',
+                        title: this.translocoService.translate('widgets.customerJourney.comments'),
                         icon: 'notes'
                     },
                     {
-                        title: 'Transcripts',
+                        title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                         icon: 'chat',
                         visible: (element: any) => (element.Channel || '').toLowerCase().includes('chat')
                     },
                     {
-                        title: 'Email Preview',
+                        title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
                         icon: 'email',
                         visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
                     }
@@ -344,24 +347,24 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     type: 'controls',
                     value: [
                         {
-                            title: 'Session History',
+                            title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
                             icon: 'history'
                         },
                         {
-                            title: 'Actions',
+                            title: this.translocoService.translate('interactionComponent.actions'),
                             icon: 'list_alt'
                         },
                         {
-                            title: 'Comments',
+                            title: this.translocoService.translate('widgets.customerJourney.comments'),
                             icon: 'notes'
                         },
                         {
-                            title: 'Transcripts',
+                            title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                             icon: 'chat',
                             visible: (element: any) => (element.Channel || '').toLowerCase().includes('chat')
                         },
                         {
-                            title: 'Email Preview',
+                            title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
                             icon: 'email',
                             visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
                         }
@@ -581,7 +584,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     async getSessionActions(sessionId: string): Promise<any> {
         let state = new BehaviorSubject<any>({ loading: true, error: false });
         const res = await SDKClient.getInteractionActions(sessionId).catch((e) => {
-            state.next({ loading: false, error: true, msg: 'Unable to fetch session actions' });
+            state.next({ loading: false, error: true, msg: this.translocoService.translate('widgets.customerJourney.getSessionActionFailed') });
             console.error(e);
         });
         if (res) {
@@ -591,7 +594,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
             });
         } else {
-            state.next({ loading: false, error: true, msg: 'Unable to fetch session actions' });
+            state.next({ loading: false, error: true, msg: this.translocoService.translate('widgets.customerJourney.getSessionActionFailed') });
         }
         return state;
     }
@@ -606,7 +609,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
 
         // verify the url
         if (!url) {
-            this._appUIService.showSnackbar('Sentiment Dashboard Url is not configured!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.customerJourney.dashboardURLNotFound'), 'failure');
             return;
         }
 
@@ -722,7 +725,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
 
             if (!res.response) {
-                this._appUIService.showSnackbar('Unable to fetch email', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('widgets.customerJourney.getEmailFailed'), 'failure');
                 onFailure('Error in TwCustomerJourneyComponent.showEmailThread');
                 return;
             }

@@ -1,5 +1,4 @@
 import { AOTWidget, AppRootConfig, WidgetAction } from '@ad/types';
-import { U } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
@@ -13,25 +12,31 @@ import {
     AgentStatusChangeEvent,
     AutoCloseTabEvent,
     CommandResultEvent,
+    EventData,
     IResponse,
     IUIEvent,
     SDKClient,
+    TCMDirectAgentNotifyEvent,
     TCMDirectAgentNotifyTimeoutEvent,
     TextChatTransferNotificationEvent,
     TMACCommandType,
     TMACEventTypes,
-    TmacServerConnectionSuccess
+    TmacServerConnectionSuccess,
+    TUtils
 } from '@tmac/sdk';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage, IWidget, QuizEvent } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
-import { upperFirst } from 'lodash';
+import {  upperFirst } from 'lodash';
 import { concat, merge, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil,take } from 'rxjs/operators';
 import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
+import { SharedService } from './shared.service';
+import { TranslocoService } from '@ngneat/transloco';
+import { AgentFeaturesService } from './agent-features.service';
 
 /**
  *  Componentless Event service
@@ -45,6 +50,10 @@ export class TMACEventService extends SharedWrapper {
      * Unsubscribe all subject
      */
     private _unsubscribeAll: Subject<any>;
+    /**
+     * isDialogOpen
+     */
+    private isDialogOpen: string[] = [];
     /**
      * App config
      */
@@ -111,9 +120,20 @@ export class TMACEventService extends SharedWrapper {
     private _tmacCommandsArray: TMACCommandType[];
 
 
+    private _agentFeatureActionDialog: MatDialogRef<any, any>
 
     /** Events to manipulate AD elements from custom widget */
     _uiControlsEvents: Subject<any> = new Subject();
+    /**
+     * Object to hold av call constraints of the parent agent
+     */
+    avCallConstraints: {
+        [parentAgentId: string]: {
+            isAgentOnActiveCall: boolean,
+            isAgentOnPhone: boolean,
+            chatMode: string
+        }
+    } = {}
 
     /**
      * Constructor
@@ -121,7 +141,13 @@ export class TMACEventService extends SharedWrapper {
      * @param {AppUiService} _appUIService
      * @param {AOTWidgetService} _aotWidgetService
      */
-    constructor(private _appDataService: AppDataService, private _appUIService: AppUiService, private _aotWidgetService: AOTWidgetService) {
+    constructor(private _appDataService: AppDataService, 
+        private translocoService: TranslocoService,
+        private _sharedService: SharedService,
+        private _appUIService: AppUiService, 
+        private _aotWidgetService: AOTWidgetService,
+        private _agentFeaturesService: AgentFeaturesService
+    ) {
         // intialize all the subject
         super('TMACEventService');
         this._unsubscribeAll = new Subject();
@@ -162,7 +188,14 @@ export class TMACEventService extends SharedWrapper {
             this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
         }
         // notify the observers
-        this._interactionEvent$.next([evt]);
+        if(evt.EventName === 'EmailSendingStatusEvent'){
+            evt.IsInteractionConstructEvent = true;
+            this._interactionEvent$.next([evt]);
+
+        }else{
+            this._interactionEvent$.next([evt]);
+        }
+        
         // emit events to launcher
         this.emitEventsToLauncher(evt);
     }
@@ -579,6 +612,13 @@ export class TMACEventService extends SharedWrapper {
                     message: `Negative sentiment has been detected from customer for ${AgentName}`,
                     state: 'info'
                 });
+            } if (type === 'parentagentstatus') {
+                const message = JSON.parse(evt.Message);
+                this.avCallConstraints[evt.FromAgentId] = {
+                    isAgentOnActiveCall: message.isAgentOnActiveCall,
+                    isAgentOnPhone: message.isAgentOnPhone,
+                    chatMode: message.chatMode
+                }
             }
         } catch (error) {
             this.logger.error('Error in AgentNotificaitonEvent', error);
@@ -646,6 +686,106 @@ export class TMACEventService extends SharedWrapper {
 
         this._aotWidgetService.addWidget(widget as AOTWidget);
     };
+   /**
+ * Handles the agent change status confirmation event.
+ * @param evt The event data containing JSON data.
+ */
+private AgentChangeStatusConfirmationEvent = async (evt: any) => {
+    // Parse the JSON data from the event
+    const jsonData = JSON.parse(evt.JsonData);
+    const dynamicLabels = [
+        {
+            key: '#status',
+            value:jsonData.status
+        }
+    ]; 
+    // Check if the JSON data type is a request
+    if (jsonData.type === 'request') {
+        // Show a confirmation dialog to the user
+        // Checking if dialog for this event is already open
+        if (this.isDialogOpen.includes(evt.EventName)) {
+            this.logger.info(`AgentChangeStatusConfirmationEvent: ${evt.EventName} dialog is already opened!`,true);
+            return;
+        }
+
+        // Pushing the event to indicate dialog opening
+        this.isDialogOpen.push(evt.EventName);
+
+        const confirmDialogRef = this._appUIService.showAppConfirmDialog(
+            'generic',
+            this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.alertChangeStatus'),
+                dynamicLabels
+            ),
+            this.translocoService.translate('widgets.activeAgents.agentStatusConfirm'),
+        );
+        
+         
+
+        // Wait for the confirmation dialog to be closed
+        const dialogResult = await confirmDialogRef.afterClosed().pipe(
+            takeUntil(this._unsubscribeAll),
+            take(1)
+        ).toPromise();
+
+        // Removeing the event name from the open dialogs list
+        this.isDialogOpen = this.isDialogOpen.filter(name => name !== evt.EventName);
+        // If the user confirmed the action
+        if (dialogResult) {
+            // Trigger change status method in the shared service with auxiliary data
+            this._sharedService.triggerChangeStatus(jsonData.auxData);
+            const statusChangeLabels = [
+                {
+                    key: '#approvedStatus',
+                    value: jsonData.status // Approvedstatus obtained from JSON data
+                },
+                {   
+                    key: '#newStatus',
+                    value: jsonData.status // New status obtained from JSON data
+                }
+            ];
+            // status change message based on JSON data
+            const statusChangeMessage = this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.agentStatusSuccess'),
+                statusChangeLabels
+            );
+            // Send success message back to the agent screen
+            const agentMessage = this._appDataService.getUpdatedLabel(
+                this.translocoService.translate('widgets.activeAgents.agentStatusApproved'),
+                statusChangeLabels
+            );
+            // Show notification after status change
+            this._appUIService.showSnackbar(statusChangeMessage);
+            
+            // Send success message back to the agent screen
+           
+            SDKClient.sendNotification({
+                agentIds: [jsonData.requestedBy.agentId], 
+                informAllTmac: false,
+                message: agentMessage,
+                supervisorId: '', 
+                teamId: '', 
+                type: 'notify',
+                tmacServer: jsonData.requestedBy.tmacserver
+            });
+            } 
+            else 
+            {
+            // case where the user cancels the status change
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'));
+            // Send cancellation message back to the agent screen
+            SDKClient.sendNotification({
+                agentIds: [jsonData.requestedBy.agentId], 
+                informAllTmac: false,
+                message: this.translocoService.translate('widgets.activeAgents.changeStatuscancelled'),
+                supervisorId: '', 
+                teamId: '', 
+                type: 'notify',
+                tmacServer: jsonData.requestedBy.tmacserver
+        });
+        }
+    }
+}
 
     /**
      * To process TCM_DirectAgentNotifyTimeoutEvent
@@ -665,6 +805,86 @@ export class TMACEventService extends SharedWrapper {
         // close the generic interaction in server
         SDKClient.closeInteraction(evt.InteractionID.toString());
     };
+
+    /**
+     * To process TCM_DirectAgentNotifyEvent
+     * @param {TCMDirectAgentNotifyEvent} evt
+     */
+    private TCMDirectAgentNotifyEvent = (evt: TCMDirectAgentNotifyEvent) => {
+        this.logger.info('Received TCMDirectAgentNotifyEvent ---'+evt, true);
+        try {
+        const obj = JSON.parse(evt.JsonData);
+
+        const dateTime = this.getDateTime(obj.ScheduleTime, 'yyyymmddhhmmtt');
+
+        let message = this.translocoService.translate('widgets.campaignNotification.message');
+        message = message.replace('#agent', SDKClient.getAgentData().agentName).
+        replace('#time', '<strong>' + dateTime + '<strong>').
+        replace('#customerName',obj?.Name).
+        replace('#customerPhoneNumber', obj?.PhoneNumber);
+
+
+        this._appUIService.showRemiderTaskModal('meeting',message, this.translocoService.translate('widgets.campaignNotification.title'))
+        .afterClosed().subscribe(async res => {
+            if(res) {
+                const response = res.split(':')[0];
+                const inputData = {
+                    "fromAddr": obj.FromAddr,
+                    "response": response,
+                    "agentID": SDKClient.getAgentData().agentId,
+                    "extension": SDKClient.getAgentData().deviceId,
+                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], obj.ScheduleTime): ''
+                  }
+            
+                  let url = this.appConfig.Main.Urls.TCMClient;
+                  url = url.endsWith('/') ? url : url + '/';
+                  
+                  const result = await TUtils.HttpClient.sendRequest<IResponse>({
+                    urls: [url + 'OnAgentResponseToDacRequest'],
+                    requestArgs: inputData,
+                    header: {
+                            'Content-Type': 'application/json'
+                    },
+                    responseType: 'json',
+                    method: 'POST',
+                    log: true
+                  });
+
+                  if(result.response && result.response.toString() === '0') {
+                    const msg = this.translocoService.translate('widgets.campaignNotification.success').replace('#type', response);
+                    this._appUIService.showSnackbar(msg,'success');
+                  } else {
+                    const msg = this.translocoService.translate('widgets.campaignNotification.fail').replace('#type', response);
+                    this._appUIService.showSnackbar(msg,'failure');
+                  }
+            }
+        });
+    } catch(e) {
+        this.logger.error('Error in TCMDirectAgentNotifyEvent --', e, true);
+    }
+        
+       
+    }
+
+    private getUpdatedTCMScheduledTime = (snoozeTime,scheduleTime) => {
+        try{
+            const st = snoozeTime.length === 1 ? (0+snoozeTime) : snoozeTime;
+            return scheduleTime.substr(0,10) + st + scheduleTime.substr(12);
+        } catch(e) {
+            this.logger.error('Error in getUpdatedTCMScheduledTime --', e, true);
+        }
+    }
+
+    public getDateTime = (dateTime, fromFormat) => {
+        let updatedDate;
+        switch(fromFormat) {
+            case 'yyyymmddhhmmtt': 
+            updatedDate = dateTime.substr(8,2) + ':' + dateTime.substr(10,2) + ':' + dateTime.substr(12,2) + ' ' + 
+            dateTime.substr(0,4) + '/' + dateTime.substr(4,2) + '/' + dateTime.substr(6,2); 
+            break;
+        }
+        return updatedDate;
+    }
 
     /**
      * To process AgentReminderEvent
@@ -806,6 +1026,43 @@ export class TMACEventService extends SharedWrapper {
         // remove the events for the InteractionID
         this._interactionEventArray = this._interactionEventArray.filter((i) => i.InteractionID !== evt.InteractionID);
     };
+
+    private VoiceCallInitiatingEvent = (evt: EventData) => {
+        try{
+            if(this._agentFeaturesService._serviceObserver.active) {
+                const message = this.translocoService.translate('widgets.activeAgents.actionInProgressAlert')
+                .replace('#agent', SDKClient.getAgentData().agentName)
+                .replace('#type', 'Service Observe');
+    
+                this._agentFeatureActionDialog = this._appUIService.showCustomDialog('alert', message, this.translocoService.translate('widgets.activeAgents.actionInProgressAlertTitle'), 
+                    {
+                    }, 
+                    {
+                        disableClose : true
+                    });
+                    this._agentFeatureActionDialog.afterClosed().subscribe(response => {
+                        this.logger.info('Closing interaction action msg dialog triggered by ---'+ SDKClient.getAgentData().agentId + response, true)
+                    });
+            }
+        } catch(e) {
+            this.logger.error('Error occured during voicecall initiating event', e, true);
+        }
+        
+    }
+
+    resetServiceObserver() {
+        this._agentFeaturesService._serviceObserver.active = false;
+        this._agentFeaturesService._serviceObserver.success = false;
+    }
+
+    private MakeCallOnExistingTabFailed = (evt) => {
+        if(this._agentFeaturesService._serviceObserver.active && this._agentFeaturesService._serviceObserver.success) {
+            return;
+        }
+        this.resetServiceObserver();
+        this._agentFeatureActionDialog.close();
+        this.logger.info('Received MakeCallOnExistingTabFailed event, hence closing tab', true);
+    }
 
     /**
      * Post message received event
@@ -966,8 +1223,16 @@ export class TMACEventService extends SharedWrapper {
                 callback: this.AgentNotificaitonEvent
             },
             {
+                label: 'AgentChangeStatusConfirmationEvent',
+                callback: this.AgentChangeStatusConfirmationEvent  
+            },
+            {
                 label: 'TCMDirectAgentNotifyTimeoutEvent',
                 callback: this.TCMDirectAgentNotifyTimeoutEvent
+            },
+            {
+                label: 'TCMDirectAgentNotifyEvent',
+                callback: this.TCMDirectAgentNotifyEvent
             },
             {
                 label: 'ACWTimerEvent',
@@ -1004,10 +1269,18 @@ export class TMACEventService extends SharedWrapper {
             {
                 label: 'AutoCloseTabEvent',
                 callback: this.AutoCloseTabEvent
+            },
+            {
+                label: 'VoiceCallInitiatingEvent',
+                callback: this.VoiceCallInitiatingEvent
+            },
+            {
+                label: 'MakeCallOnExistingTabFailed',
+                callback: this.MakeCallOnExistingTabFailed
             }
         ]);
 
-        this.addTMACCommandListener()
+        this.addTMACCommandListener();
 
     }
 
@@ -1075,6 +1348,14 @@ export class TMACEventService extends SharedWrapper {
             {
                 label: 'AutoCloseTabEvent',
                 callback: this.AutoCloseTabEvent
+            },
+            {
+                label: 'VoiceCallInitiatingEvent',
+                callback: this.VoiceCallInitiatingEvent
+            },
+            {
+                label: 'MakeCallOnExistingTabFailed',
+                callback: this.MakeCallOnExistingTabFailed
             }
         ]);
 
@@ -1407,6 +1688,40 @@ export class TMACEventService extends SharedWrapper {
     }
 
     /**
+     * To get all subscribed events
+     *
+     * @param {String[]} eventNames Names of the event
+     */
+    getAllSubscribedEvents<T = any>(eventNames: CustomTMACEventTypes[]): Observable<T[]> {
+        // get the event based on interaction Id
+        // create a new temp subject
+        const tempSub = new Subject<any[]>();
+
+        /**
+         * Search for [COMMENT: 01] in this file
+         */
+        setTimeout(() => {
+            // get events from array
+            const events = this._interactionEventArray.filter(
+                (i: IUIEvent) => eventNames.includes(i.EventName)
+            );
+            tempSub.next(events);
+            tempSub.complete();
+        });
+
+        /**
+         * Search for [COMMENT: 02] in this file
+         */
+        // return all interaction events for that is a IsInteractionConstructEvent or IsInteractionDisposeEvent
+        return concat(tempSub, this._interactionEvent$).pipe(
+            map((evts) =>
+                evts?.filter((evt) => evt && eventNames.includes(evt.EventName))
+            ),
+            filter((evts) => evts.length > 0)
+        );
+    }
+
+    /**
      * To register to TMAC events
      */
     addTMACEventListener(
@@ -1537,22 +1852,22 @@ export class TMACEventService extends SharedWrapper {
     onTmacCommand = (data) => {
         try {
             const commandIndex = this._tmacCommandsArray.findIndex(c => (c.methodName === data.methodName) && (c.type === data.type));
-            if (commandIndex > -1) {
+            if(commandIndex > -1) {
                 this._tmacCommandsArray.splice(commandIndex, 1);
             }
             this._tmacCommandsArray.push(data);
-        } catch (e) {
-            console.log('Error occured on tmac command', e);
+        } catch(e) {
+            console.log('Error occured on tmac command',e);
         }
     }
 
     getTmacCommandsArray(type?) {
-        if (type)
+        if(type)
             return this._tmacCommandsArray.filter(c => c.type === type);
         else
-            return this._tmacCommandsArray;
+            return this._tmacCommandsArray; 
     }
-
+    
 }
 
 /**

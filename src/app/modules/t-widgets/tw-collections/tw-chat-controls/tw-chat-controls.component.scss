@@ -164,6 +164,11 @@ tw-chat-controls {
                                         display: inline-block;
                                         vertical-align: middle;
                                     }
+                                    /* Add this to disable the reply icon after end chat is confirmed */
+                                    .disabled {
+                                        pointer-events: none;
+                                        opacity: 0.5; 
+                                    }
 
                                     .attachments {
                                         display: flex;
@@ -375,10 +380,11 @@ tw-chat-controls {
                                         border-radius: 20px;
 
                                         textarea {
-                                            overflow: hidden;
+                                            overflow-x: hidden;
                                             margin: 16px 48px 16px 16px;
                                             width: calc(100% - 64px);
                                             padding: 0;
+                                            min-height: 20px;
                                         }
                                     }
                                 }
@@ -422,4 +428,9 @@ tw-chat-controls {
             }
         }
     }
+}
+
+video {
+    bottom: 0;
+    position: sticky;
 }

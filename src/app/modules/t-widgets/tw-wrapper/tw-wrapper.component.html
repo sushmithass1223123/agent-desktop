@@ -11,8 +11,11 @@
         config: customFuse.config$ | async
     } as customFuse"
 >
+<!-- if AOT widget: DragBoundary is 'body' 
+    else it is taken from configurations -->
     <tw-card
         cdkDrag
+        [cdkDragBoundary]="data.Config?.AOT ? 'body' : data.Config?.DragBoundary ?? '.container'"
         [cdkDragDisabled]="maximized || (!floating && !aot)"
         [cdkDragFreeDragPosition]="dragPosition"
         class="tw-card animate__animated animate__faster {{
@@ -28,7 +31,8 @@
         }"
         [ngStyle]="{
             'width.px': data.Config.Position.W,
-            'height.px': data.Config.Position.H
+            'height.px': data.Config.Position.H,
+            'minHeight': collapsed ? 'unset' : 'inherit'
         }"
     >
         <!-- We are writing a wrapper over material card -->

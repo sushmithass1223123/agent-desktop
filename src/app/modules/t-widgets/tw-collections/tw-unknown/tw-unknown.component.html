@@ -1,5 +1,5 @@
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <span class="mat-headline mb-0"> Unknown widget! </span>
+        <span class="mat-headline mb-0">{{ locale('contentComponent.unknownWidget') }} </span>
     </div>
 </tw-wrapper>

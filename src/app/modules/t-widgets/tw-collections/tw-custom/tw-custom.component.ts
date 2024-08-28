@@ -1,24 +1,27 @@
-import { TwCustom } from '@ad/types';
+import { AOTWidget, TwCustom } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseConfig } from '@fuse/types';
+import { TranslocoService } from '@ngneat/transloco';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
+import { InteractionManagerService } from '@services/interaction-manager.service';
+import { SharedService } from '@services/shared.service';
 import { TMACEventService } from '@services/tmac-event.service';
+import { UIActionEventService } from '@services/ui-action-event.service';
 import { setStringVars } from '@tmac/operators';
-import { SDKClient } from '@tmac/sdk';
+import { SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { EXCLUDED_TMAC_EVENT } from 'app/constants';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
+import { TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { isEqual } from 'lodash';
 import { Subscription } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { AOTWidget } from '@ad/types';
-import { TwWidgetModel } from 'app/models';
-import { InteractionManagerService } from '@services/interaction-manager.service';
+
 
 /**
  * TwCustomComponent
@@ -103,8 +106,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         private _tmacEventService: TMACEventService,
         private _fuseFacadeService: FuseFacadeService,
         private _appUIService: AppUiService,
-        private _uiActionEventService: TMACEventService,
-        private _interactionManagerService: InteractionManagerService
+        private _uiActionEventService: UIActionEventService,
+        private translocoService: TranslocoService,
+        private _interactionManagerService: InteractionManagerService,
+        private sharedService: SharedService
     ) {
         super('TwCustomComponent');
 
@@ -275,13 +280,21 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this.fuseConfigRef = config;
                 this.sendDataToWindow('onThemeChange', config);
             });
+        this._uiActionEventService.onUIActionEvent().pipe(takeUntil(this.unsubscribeAll)).subscribe(data => {
+            this.sendDataToWindow('onUIActionEvent', [data]);
+        });
     }
 
     /**
      * On Destroy
      */
     ngOnDestroy(): void {
+        // Notify service that whiteboard is closed
+        this.sharedService.setWhiteboardState(false);
         // call the wrapper destroy method
+        if (this.data.Data.NotifyTypeOnClose) {
+            this.sendActionOnClose()
+        }
         this.destroyWrapper();
         this.dialogRef?.close();
     }
@@ -359,6 +372,11 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                 this.loaded = true;
             });
         }
+
+        // can add a UI config here whether to send data or not
+        this.sendDataToWindow('onTMACCommand', this._tmacEventService.getTmacCommandsArray());
+
+        this.sendDataToWindow('onUIActionEvent', this._uiActionEventService.getUIEvents());
     };
 
     /**
@@ -381,16 +399,33 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         this._tmacEventService._uiControlsEvents.next(message.data);
     }
 
+    /**
+     * Method to send action message to customer on close of custom widget, based on configured type to notify
+     */
+    sendActionOnClose() {
+        SDKClient.sendActionMessage({
+            interactionId: this.interactionId.toString(),
+            message: JSON.stringify({
+                source: 'agent',
+                options: {},
+                data: {},
+                status: 'request',
+                type: this.data.Data.NotifyTypeOnClose,
+                eventName: 'ActionMessage',
+                id: TUtils.Generic.uuid()
+            })
+        });
+    }
+
     showCustomPopup(data: any) {
         // check if the url to be taken from param
         let url = data.url;
 
         // check if url is provided
         if (!url) {
-            this._appUIService.showSnackbar('URL not found', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.customDialog.urlNotFound'), 'failure');
             return;
         }
-
 
         // get assist widget config
         const title = `${data.title}`;
@@ -414,7 +449,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         if (data.confirmOnClose) {
             widget.OnDestroy = () => {
                 // get confiration before close
-                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', 'Close', 'Do you want to close this window?');
+                const confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.agentAssist.confirmCloseTitle'), this.translocoService.translate('widgets.agentAssist.confirmCloseMsg'));
                 confirmDialogRef.afterClosed().subscribe((resp) => {
                     if (resp) {
                         widget.destroy();

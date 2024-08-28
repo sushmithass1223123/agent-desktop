@@ -47,6 +47,11 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
     templateInfo: EmailTemplate;
 
     /**
+     * preview data for template
+     */
+    previewData: any;
+
+    /**
      * uses template
      */
     use: (template: EmailTemplate) => void;
@@ -64,8 +69,8 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
      * lifecycle hook
      */
     ngOnInit(): void {
-        const data = this.dialogData;
-        const templateInfo: EmailTemplate = data.info;
+        this.previewData = this.dialogData ? this.dialogData : this.data.Data;
+        const templateInfo: EmailTemplate = this.previewData.info;
         if (templateInfo.Type === 'Form') {
             this.safeHtml = this.domSanitizer.bypassSecurityTrustHtml(
                 templateInfo.BodyHTML.replaceAll(
@@ -74,9 +79,9 @@ export class TwEmailTemplatePreviewComponent extends TWidgetWrapper implements O
                 )
             );
         }
-        this.templateInfo = data.info;
-        this.use = data.useTemplate;
-        this.close = data.closeTemplate;
+        this.templateInfo = this.previewData.info;
+        this.use = this.previewData.useTemplate;
+        this.close = this.previewData.closeTemplate;
     }
 
     /**

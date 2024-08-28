@@ -1,6 +1,11 @@
 mat-card-header {
+
     &.floating,
     &.aot {
         cursor: all-scroll;
     }
+}
+
+.mat-icon-button.hidden {
+    display: none;
 }

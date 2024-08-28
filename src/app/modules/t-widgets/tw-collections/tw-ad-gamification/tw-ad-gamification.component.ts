@@ -6,6 +6,7 @@ import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { TwGamification } from '@ad/types';
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Agent dashboard gamification widget
  */
@@ -42,7 +43,8 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
      * Constructor
      * @param {gamificationService} GamificationService
      */
-    constructor(private _http: HttpClient) {
+    constructor(private _http: HttpClient,
+        private translocoService: TranslocoService) {
         super('TwAdGamificationComponent');
     }
 
@@ -93,7 +95,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
      */
     setBadges = (): void => {
         if (!this.data.Data.LeaderBoardUrl || !this.data.Data.AgentProgressUrl) {
-            this.gamificationReqStatus = { loading: false, error: true, msg: 'LeaderBoardUrl / AgentProgressUrl not provided in app config' };
+            this.gamificationReqStatus = { loading: false, error: true, msg: this.translocoService.translate('widgets.gamification.urlsMissing') };
             return;
         }
         const { agentId } = SDKClient.getAgentData();
@@ -120,19 +122,19 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                                   ...currentAgentData,
                                   TotalBadges: [
                                       {
-                                          BadgeName: 'Novice',
+                                          BadgeName: this.translocoService.translate('widgets.gamification.noviceBadge'),
                                           BadgeId: 0,
                                           BadgeUrl: currentAgentData.NoviceBadgeUrl,
                                           BadgePoints: currentAgentData.NoviceBadges
                                       },
                                       {
-                                          BadgeName: 'Influencer',
+                                          BadgeName: this.translocoService.translate('widgets.gamification.influencerBadge'),
                                           BadgeId: 1,
                                           BadgeUrl: currentAgentData.InfluencerBadgeUrl,
                                           BadgePoints: currentAgentData.InfluencerBadges
                                       },
                                       {
-                                          BadgeName: 'Master',
+                                          BadgeName: this.translocoService.translate('widgets.gamification.masterBadge'),
                                           BadgeId: 2,
                                           BadgeUrl: currentAgentData.MasterBadgeUrl,
                                           BadgePoints: currentAgentData.MasterBadges
@@ -144,7 +146,7 @@ export class TwAdGamificationComponent extends TWidgetWrapper implements OnInit,
                 },
                 error: (err) => {
                     console.error(err);
-                    this.gamificationReqStatus = { msg: 'Unable to fetch leaderboard details', error: true, loading: false };
+                    this.gamificationReqStatus = { msg:  this.translocoService.translate('widgets.gamification.unableToGetLeaderboardData'), error: true, loading: false };
                 }
             });
     };

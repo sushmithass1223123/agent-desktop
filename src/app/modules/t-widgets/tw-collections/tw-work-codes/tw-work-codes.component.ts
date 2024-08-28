@@ -12,7 +12,7 @@ import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Work codes Component
  */
@@ -81,6 +81,11 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     interactionId: number;
 
     /**
+     * Check if there are any work codes available
+     */
+    workCodesAvailable : boolean;
+
+    /**
      * Workcode model ref
      */
     @ViewChild('addWorkcodeModalRef')
@@ -89,7 +94,8 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Constructor
      */
-    constructor(private _appUiService: AppUiService, private _tmacEventService: TMACEventService, private matDialog: MatDialog) {
+    constructor(private _appUiService: AppUiService, private _tmacEventService: TMACEventService, private matDialog: MatDialog,
+       private translocoService: TranslocoService) {
         super('TwWorkCodesComponent');
     }
 
@@ -111,9 +117,14 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             Role: null
         };
 
+        /**
+        * Handle Filtering and displaying workcodes based on user input.
+        * Check if any value available in search area and if it's not set `workCodesAvailable` to `true`.
+        */
         this.filteredOptions = this.workCodeCtrl.valueChanges.pipe(
             startWith(''),
             map((wc) => (typeof wc === 'string' ? wc : '')),
+            map((wc) => (this.workCodesAvailable = !wc, wc)),
             map((wc) => (wc ? this._filterOptions(wc) : this.loadWorkCodesReq.data))
         );
 
@@ -170,7 +181,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         } catch (e) {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Unable to get workcodes';
+            this.loadWorkCodesReq.msg = this.translocoService.translate('widgets.workcodes.notFoundError');
         }
     }
 
@@ -239,7 +250,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
         } else {
             this.loadWorkCodesReq.error = true;
             this.loadWorkCodesReq.loading = false;
-            this.loadWorkCodesReq.msg = 'Role not provided / Role Source';
+            this.loadWorkCodesReq.msg = this.translocoService.translate('widgets.workcodes.roleError');
         }
 
         // if subscription is not null then subscribe to it
@@ -254,7 +265,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {MatAutocompleteSelectedEvent} option
      */
     public setWorkCode(option: WorkCode, group: string): void {
-        this._appUiService.showSnackbar('Setting work code', 'loading');
+        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.settingWC'), 'loading');
         SDKClient.setCallWorkCode(
             {
                 code: option.Code,
@@ -275,12 +286,12 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 } else {
                     this.loadWorkCodesReq.data['Workcode List'] = this.loadWorkCodesReq.data['Workcode List'].filter((x) => x.Code !== option.Code);
                 }
-                this._appUiService.showSnackbar('Work code set successfully', 'success');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcSetSuccess'), 'success');
                 this.workCodeInput.nativeElement.value = '';
                 this.workCodeCtrl.setValue('');
             })
             .catch(() => {
-                this._appUiService.showSnackbar('Unable to set workcode', 'failure');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcSetFail'), 'failure');
             });
     }
 
@@ -290,7 +301,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {WorkCode} option
      */
     public removeWorkCode(option: WorkCode): void {
-        this._appUiService.showSnackbar('Removing work code', 'loading');
+        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.removeWC'), 'loading');
 
         SDKClient.removeCallWorkCode(
             {
@@ -310,10 +321,10 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                         this.loadWorkCodesReq.data['Workcode List'].push(option);
                     }
                 }
-                this._appUiService.showSnackbar('Work code removed successfully', 'success');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcRemoveSuccess'), 'success');
             })
             .catch((ex) => {
-                this._appUiService.showSnackbar('Unable to remove workcode', 'failure');
+                this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcRemoveFail'), 'failure');
                 console.error(ex);
             });
     }
@@ -324,11 +335,16 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {String} name
      */
     _filterOptions(name: string): Record<string, WorkCode[]> {
-        return Object.entries(this.loadWorkCodesReq.data).reduce((acc, curr) => {
+        const filteredResults = Object.entries(this.loadWorkCodesReq.data).reduce((acc, curr) => {
             const [key, val] = curr;
             acc[key] = val.filter((x) => x.Name.toLowerCase().includes(name.toLowerCase()));
             return acc;
         }, {});
+
+        // Check if any category has work codes (If so, `workCodesAvailable` will be `true`)
+        this.workCodesAvailable = Object.values<WorkCode[]>(filteredResults).some((arr) => arr.length >= 1);
+
+        return filteredResults;
     }
 
     /**
@@ -345,6 +361,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * To open work code modal
      */
     openAddWorkCodeModal(): void {
+        this.workCodesAvailable = true;
         this.matDialog.open(this.addWorkcodeModalRef, {
             width: '40%',
             minHeight: '400px',

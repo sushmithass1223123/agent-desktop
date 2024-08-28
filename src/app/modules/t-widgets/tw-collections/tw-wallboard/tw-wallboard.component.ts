@@ -8,7 +8,7 @@ import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-
+import { TranslocoService } from '@ngneat/transloco';
 /**
  * Wallboard componet
  * To check the skill etc of agents
@@ -46,7 +46,9 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * @constructor
      */
-    constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService) {
+    constructor(private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService,
+        private _appUIService: AppUiService) {
         super('TwWallboardComponent');
     }
 
@@ -102,11 +104,21 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
      */
     setupAdTable(): void {
         this.table.config = {
-            SkillName: { title: 'Skill Name', width: '40%' },
-            AgentsStaffed: { title: 'Stf', custom: this.customAgentStaffedCountCell },
-            AgentAvailable: { title: 'Avl', custom: this.customSAgentAvailableCountCell },
-            CallsInQueue: { title: 'CIQ', custom: this.customCallsInQueueCountCell },
-            ServiceLevel: { title: 'SL %', custom: this.customServiceLevelCell }
+            SkillName: { 
+                langCode: 'widgets.wallboard.skillName',
+                title: this.translocoService.translate('widgets.wallboard.skillName'), width: '40%' },
+            AgentsStaffed: { 
+                langCode: 'widgets.wallboard.agentsStaffed',
+                title: this.translocoService.translate('widgets.wallboard.agentsStaffed'), custom: this.customAgentStaffedCountCell },
+            AgentAvailable: { 
+                langCode: 'widgets.wallboard.agentAvailable',
+                title: this.translocoService.translate('widgets.wallboard.agentAvailable'), custom: this.customSAgentAvailableCountCell },
+            CallsInQueue: { 
+                langCode: 'widgets.wallboard.callsInQueue',
+                title: this.translocoService.translate('widgets.wallboard.callsInQueue'), custom: this.customCallsInQueueCountCell },
+            ServiceLevel: { 
+                langCode: 'widgets.wallboard.serviceLevel',
+                title: this.translocoService.translate('widgets.wallboard.serviceLevel'), custom: this.customServiceLevelCell }
         };
         this.table.sort = true;
         this.table.footer = 'disabled';
@@ -156,7 +168,7 @@ export class TwWallboardComponent extends TWidgetWrapper implements OnInit, OnDe
                 // check for skill update
                 if (this.table.source.data.length && this.table.source.data.length !== skillsToShow.length) {
                     this._appUIService.showAppSnackbar({
-                        message: 'Agent skills has been updated!',
+                        message: this.translocoService.translate('widgets.wallboard.agentSkillUpdateSuccessMsg'),
                         state: 'success',
                         duration: 10000
                     });

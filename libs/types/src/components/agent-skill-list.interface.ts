@@ -148,7 +148,8 @@ export type AgentSkillDataType =
     | 'conferenceChat'
     | 'transferEmail'
     | 'transferFax'
-    | 'pushChat';
+    | 'pushChat'
+    | 'transferPost';
 
 export type AgentSkillListData = {
     /**
@@ -340,4 +341,12 @@ export type AgentSkillConfig = {
      * Speed Dial Transfer/Conference config
      */
     SpeedDial: SpeedDialTransferConferenceConfig;
+    /**
+     * Flag to enable auto Mute / Unmute main line during conference  
+     */
+    EnableMuteOnInitiation: boolean;
+    /**
+     * Flag to enable conference mixing from media server rather from Call SDK
+     */
+    MediaServerConferenceEnabled: boolean;
 };

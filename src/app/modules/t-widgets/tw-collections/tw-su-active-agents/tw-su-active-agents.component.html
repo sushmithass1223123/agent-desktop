@@ -12,25 +12,25 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="twd-flex twd-flex-col twd-w-full twd-h-full twd-max-h-full">
+        <div *transloco="let locale" class="twd-flex twd-flex-col twd-w-full twd-h-full twd-max-h-full">
             <div class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-1 twd-mb-2">
                 <button mat-icon-button [matMenuTriggerFor]="sortMenu">
                     <mat-icon>sort</mat-icon>
                     <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
-                        <button mat-menu-item (click)="sortAgentList('AgentLoginID')">
-                            <span>Agent ID</span>
+                        <button mat-menu-item (click)="sortAgentList('AgentLoginID', locale('global.agentId'))">
+                            <span>{{ locale('global.agentId') }}</span>
                             <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('AgentName')">
-                            <span>Agent Name</span>
+                        <button mat-menu-item (click)="sortAgentList('AgentName', locale('global.agentName'))">
+                            <span>{{ locale('global.agentName') }}</span>
                             <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus')">
-                            <span>Agent Status</span>
+                        <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))">
+                            <span>{{ locale('widgets.activeAgents.agentStatus') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration')">
-                            <span>Status Duration</span>
+                        <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration', locale('widgets.activeAgents.statusDuration'))">
+                            <span>{{ locale('widgets.activeAgents.statusDuration') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{
                                 sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
                             }}</mat-icon>
@@ -38,7 +38,7 @@
                     </mat-menu>
                 </button>
                 <mat-form-field class="custom form-field twd-w-full" appearance="outline">
-                    <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                    <input class="login-input" matInput [placeholder]="locale('global.search')" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                     <button
                         *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button
@@ -62,15 +62,31 @@
                         </button>
                     </ng-template>
                 </mat-form-field>
-                <button mat-icon-button (click)="refreshList()" matTooltip="Reload Agent Data" [disabled]="reload">
+                <button mat-icon-button (click)="refreshList()" [matTooltip]="locale('widgets.activeAgents.reloadAgentData')" [disabled]="reload">
                     <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
                 </button>
-                <button *ngIf="allowBroadcast" mat-icon-button matTooltip="Send Broadcast To Team" (click)="sendBroadcast()">
+                <button *ngIf="allowBroadcast" mat-icon-button [matTooltip]="locale('widgets.activeAgents.sendBroadcast')" (click)="sendBroadcast()">
                     <mat-icon>campaign</mat-icon>
                 </button>
+                <button *ngIf="groupedBy" [matTooltip]="locale('widgets.activeAgents.removeGroupBy')" mat-icon-button (click)="clearGroup()">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <button mat-icon-button [ngClass]="groupedBy ? 'group-active' : ''" [matTooltip]="locale('widgets.activeAgents.groupAgents')">
+                    <mat-icon [matMenuTriggerFor]="groupMenu">group</mat-icon>
+                    <mat-menu class="custom" #groupMenu="matMenu" xPosition="after">
+                        <button mat-menu-item (click)="groupAgentListBy('TeamID', 'TeamName')">
+                            <span>{{ locale('global.teamName') }}</span>
+                        </button>
+                        <button mat-menu-item (click)="groupAgentListBy('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))">
+                            <span>{{ locale('widgets.activeAgents.agentStatus') }}</span>
+                            <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                        </button>
+                    </mat-menu>
+                </button>
             </div>
-
+            <!-- group by disabled -->
             <div
+                *ngIf="!groupedBy"
                 class="agent-list twd-flex twd-flex-1 twd-flex-col twd-gap-2 twd-px-1 twd-pb-2 twd-overflow-y-auto"
                 [@animateStagger]="{ value: '50' }"
             >
@@ -174,8 +190,10 @@
                         </div>
 
                         <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
-                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" matTooltip="SUPERVISOR"> supervised_user_circle</mat-icon>
-                            <mat-icon *ngIf="item.IsMSAgent" matTooltip="Webphone">phonelink</mat-icon>
+                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" [matTooltip]="locale('widgets.activeAgents.supervisor')">
+                                supervised_user_circle</mat-icon
+                            >
+                            <mat-icon *ngIf="item.IsMSAgent" [matTooltip]="locale('widgets.activeAgents.webphone')">phonelink</mat-icon>
                             <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
                                 {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
                             </mat-icon>
@@ -306,17 +324,278 @@
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     [@animate]="{ value: '*', params: { y: '100%' } }"
                 >
-                    <span class="mat-title m-0"> No agents found!</span>
+                    <span class="mat-title m-0"> {{ locale('widgets.activeAgents.noAgentsFound') }}</span>
                 </div>
             </div>
 
+            <!-- group by enabled -->
+            <div
+                *ngIf="groupedBy"
+                class="agent-list twd-flex twd-flex-1 twd-flex-col twd-gap-2 twd-px-1 twd-pb-2 twd-overflow-y-auto"
+                [@animateStagger]="{ value: '50' }"
+            >
+                <mat-accordion class="twd-flex twd-flex-col twd-gap-2 grouped">
+                    <mat-expansion-panel
+                        *ngFor="let group of groupedAgentList"
+                        class=""
+                        [expanded]="selectedGroup === group.groupName"
+                        hideToggle
+                    >
+                        <mat-expansion-panel-header (click)="selectGroup(group)" class="twd-flex twd-items-center">
+                            <mat-panel-title class="twd-flex twd-items-center twd-gap-2"
+                                ><mat-icon class="group-icon">groups</mat-icon>
+                                <span>{{ group.groupName }}</span>
+                            </mat-panel-title>
+                            <span class="group-size">{{ group.size }}</span>
+                        </mat-expansion-panel-header>
+                        <div
+                            *ngFor="let item of group.list; trackBy: trackByID"
+                            class="twd-w-full p-12 border-radius-20 twd-mb-2 agent-item twd-cursor-pointer mat-elevation-z1"
+                            [ngClass]="
+                                (customFuse.anchor?.content || customFuse.widget?.content) +
+                                ' ' +
+                                (item.AgentLoginID === selectedAgent ? 'border-lg-success' : '')
+                            "
+                        >
+                            <div
+                                class="tw-accordion twd-w-full twd-flex twd-flex-row twd-justify-between twd-items-center"
+                                (click)="selectAgent(item)"
+                                [ngClass]="{ active: item.AgentLoginID === selectedAgent }"
+                            >
+                                <div
+                                    class="twd-flex twd-flex-row twd-justify-start twd-items-center twd-flex-full"
+                                    [ngClass]="{
+                                        'twd-max-w-5/12': item.AgentLoginID !== selectedAgent,
+                                        'twd-max-h-10/12': item.AgentLoginID === selectedAgent
+                                    }"
+                                >
+                                    <div class="position-relative">
+                                        <avatar name="{{ item.AgentName }}" [matTooltip]="item.AgentName"></avatar>
+                                        <span
+                                            class="element-status"
+                                            [ngClass]="
+                                                item.CurrentAgentStatus.includes('Available')
+                                                    ? 'bg-alt-success'
+                                                    : item.CurrentAgentStatus.includes('On Call')
+                                                    ? 'bg-alt-danger'
+                                                    : 'bg-alt-warning'
+                                            "
+                                        >
+                                        </span>
+                                    </div>
+                                    <div class="twd-ml-4 twd-flex twd-flex-col">
+                                        <span class="font-weight-700" *ngIf="item.AgentLoginID !== selectedAgent">
+                                            <span matTooltip="Name">{{ item.FirstName || item.AgentName }}</span>
+                                            /
+                                            <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                        </span>
+                                        <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                            <span matTooltip="Name"> {{ item.AgentName }}</span>
+                                            (<span matTooltip="Lan ID">{{ item.AgentLANID }}</span
+                                            >)
+                                        </div>
+                                        <div class="font-weight-700" *ngIf="item.AgentLoginID === selectedAgent">
+                                            <span matTooltip="Agent ID">{{ item.AgentLoginID }}</span>
+                                            /
+                                            <span matTooltip="Station">{{ item.StationID }}</span>
+                                        </div>
+                                        <span matTooltip="Current Status"
+                                            >{{ item.CurrentAgentStatus }}
+                                            {{ this.agentListOnHold.includes(item.AgentLoginID) ? '(On Hold)' : '' }}</span
+                                        >
+                                        <span
+                                            matTooltip="Status Duration"
+                                            [ngClass]="{
+                                                'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                                'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                                'text-alt-danger': item.CurrentStatusDuration > 120
+                                            }"
+                                            >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                        >
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                                    *ngIf="item.AgentLoginID !== selectedAgent"
+                                >
+                                    <div
+                                        mat-card-avatar
+                                        *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                        class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                        [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                        [matBadge]="channelItem.CurrentCount || ''"
+                                        matBadgePosition="after"
+                                        [ngClass]="{
+                                            'bg-warning': this.agentListOnHold.includes(item.AgentLoginID)
+                                        }"
+                                    >
+                                        <mat-icon>{{
+                                            channelItem.Channel === 'voice'
+                                                ? 'phone'
+                                                : channelItem.Channel === 'textchat'
+                                                ? 'chat'
+                                                : channelItem.Channel.includes('audio')
+                                                ? 'settings_phone'
+                                                : channelItem.Channel.includes('video')
+                                                ? 'duo'
+                                                : channelItem.Channel.includes('sms')
+                                                ? 'textsms'
+                                                : channelItem.Channel.includes('email')
+                                                ? 'email'
+                                                : 'receipt'
+                                        }}</mat-icon>
+                                    </div>
+                                </div>
+
+                                <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
+                                    <mat-icon *ngIf="item.UserProfileForAgent === 'S'" [matTooltip]="locale('widgets.activeAgents.supervisor')">
+                                        supervised_user_circle</mat-icon
+                                    >
+                                    <mat-icon *ngIf="item.IsMSAgent" [matTooltip]="locale('widgets.activeAgents.webphone')">phonelink</mat-icon>
+                                    <mat-icon
+                                        [matTooltip]="
+                                            (item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer
+                                        "
+                                    >
+                                        {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
+                                    </mat-icon>
+                                </div>
+                            </div>
+
+                            <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
+                                <div
+                                    class="feature-actions border-right-primary twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12"
+                                >
+                                    <ng-container *ngFor="let feature of item.AgentFeatures">
+                                        <button
+                                            #agentActionBtn
+                                            mat-icon-button
+                                            mat-raised-button
+                                            *ngIf="featureCheck(feature, 'agent', 'all')"
+                                            (click)="performAgentAction(item, feature)"
+                                            [matTooltip]="featureMap[feature.Feature].Label"
+                                        >
+                                            <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                        </button>
+                                        <button
+                                            #agentActionBtn
+                                            mat-icon-button
+                                            mat-raised-button
+                                            [matMenuTriggerFor]="menu"
+                                            *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
+                                            [matTooltip]="featureMap[feature.Feature].Label"
+                                        >
+                                            <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
+                                        </button>
+
+                                        <mat-menu class="custom aux-menu" #menu="matMenu" xPosition="after">
+                                            <button
+                                                mat-menu-item
+                                                *ngFor="let auxCode of auxCodesList"
+                                                (click)="changeAgentStatus(item, auxCode)"
+                                                disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                            >
+                                                <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
+                                                <mat-icon
+                                                    [ngClass]="
+                                                        auxCode.Code.includes('Available')
+                                                            ? 'text-alt-success'
+                                                            : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                            ? 'text-alt-danger'
+                                                            : 'text-alt-warning'
+                                                    "
+                                                >
+                                                    {{
+                                                        auxCode.Code.toLowerCase() === 'available'
+                                                            ? 'check_circle'
+                                                            : auxCode.Code === 'logout'
+                                                            ? 'settings_power'
+                                                            : 'remove_circle'
+                                                    }}
+                                                </mat-icon>
+                                                <span>{{ auxCode.Name }}</span>
+                                            </button>
+                                        </mat-menu>
+
+                                        <button
+                                            mat-icon-button
+                                            mat-raised-button
+                                            matTooltip="Send Quiz"
+                                            [matMenuTriggerFor]="quizIntentMenu"
+                                            *ngIf="feature.Feature === 'AllowSupervisorToSendQuiz' && feature.IsEnabled"
+                                        >
+                                            <mat-icon>rule</mat-icon>
+                                        </button>
+
+                                        <mat-menu #quizIntentMenu="matMenu" class="custom">
+                                            <button
+                                                mat-menu-item
+                                                class="custom"
+                                                *ngFor="let intent of availableQuizIntents"
+                                                (click)="sendQuizIntent(intent.intent, item)"
+                                            >
+                                                <mat-icon>grading</mat-icon>
+                                                <span>{{ intent.name }}</span>
+                                            </button>
+                                        </mat-menu>
+                                    </ng-container>
+                                    <button
+                                        mat-icon-button
+                                        mat-raised-button
+                                        *ngIf="checkForActiveInteraction(item.ChannelCount)"
+                                        matTooltip="View Interactions"
+                                        (click)="viewInteractions(item)"
+                                    >
+                                        <mat-icon>preview</mat-icon>
+                                    </button>
+                                </div>
+                                <div
+                                    class="channel-list twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-center twd-flex-full twd-max-w-5/12"
+                                >
+                                    <div
+                                        mat-card-avatar
+                                        *ngFor="let channelItem of item.ChannelCount"
+                                        class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
+                                        [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
+                                        [matBadge]="channelItem.CurrentCount || ''"
+                                        matBadgePosition="after"
+                                    >
+                                        <mat-icon>{{
+                                            channelItem.Channel === 'voice'
+                                                ? 'phone'
+                                                : channelItem.Channel === 'textchat'
+                                                ? 'chat'
+                                                : channelItem.Channel.includes('audio')
+                                                ? 'settings_phone'
+                                                : channelItem.Channel.includes('video')
+                                                ? 'duo'
+                                                : channelItem.Channel.includes('sms')
+                                                ? 'textsms'
+                                                : channelItem.Channel.includes('email')
+                                                ? 'email'
+                                                : 'receipt'
+                                        }}</mat-icon>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+
             <div *ngIf="agentList && agentList.length" class="twd-flex twd-justify-between twd-pt-2 twd-px-2">
-                <p *ngIf="filteredAgents.length" class="text-center twd-inset-x-0">
-                    Agent list is sorted by <b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order
+                <p *ngIf="filteredAgents.length && !groupedBy" class="text-center twd-inset-x-0">
+                    {{ locale('widgets.activeAgents.agentSortMsg') }} {{ sortedName }} in {{ sortType }}
+                    <!--<b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order-->
+                </p>
+                <p *ngIf="groupedBy" class="text-center twd-inset-x-0">
+                    {{ locale('widgets.activeAgents.agentGroupMsg') }} {{ groupedBy.groupTitle }}
+                    <!--<b> {{ sortBy }} </b> in <b>{{ sortType }}</b> order-->
                 </p>
 
                 <div class="twd-text-right twd-flex-auto">
-                    <span class="twd-font-bold">Total: </span>
+                    <span class="twd-font-bold"> {{ locale('widgets.activeAgents.total') }} </span>
 
                     <span>{{ (searchTerm ? filteredAgents.length : agentList.length) + ' of ' + agentList.length }}</span>
                 </div>

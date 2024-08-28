@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 
 export interface IWidget<T = any, K = any> {
     /**
+     * Widget Extra Configs
+     */
+    ExtraConfig?: K;
+    /**
      * Name of the Widget
      */
     Name: string;

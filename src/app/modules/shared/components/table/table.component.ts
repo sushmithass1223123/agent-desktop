@@ -18,6 +18,10 @@ type BaseTableConfig = {
      * Width of the column
      */
     width?: string;
+    /**
+     * language code to display field name
+     */
+    langCode?: any | null;
 };
 export interface SelectedPayload {
     /**
@@ -70,6 +74,22 @@ export type TableConfig<T = any> =
            * Type of the cell
            */
           type: 'date';
+          /**
+           * Displayed Value of the record
+           */
+          value?: GenericLabel<T, string | number>;
+          /**
+           * tooltip flag
+           */
+          tooltip?: boolean;
+          truncate?: boolean;
+          searchable?: boolean;
+      })
+    | (BaseTableConfig & {
+          /**
+           * Type of the cell
+           */
+          type: 'date_single';
           /**
            * Displayed Value of the record
            */
@@ -293,6 +313,13 @@ export class TableComponent implements OnInit {
     }
 
     /**
+     * Escape special characters in Regular Expressions
+     */
+    regExpEscape = (s) => {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    };
+
+    /**
      * Custom filter method fot Angular Material Datatable
      */
     filterPredicate = (data: any, filterStr: string): boolean => {
@@ -310,7 +337,9 @@ export class TableComponent implements OnInit {
             if (dateColKey) {
                 return this.compareDates(key, filters[key], data[dateColKey]);
             } else {
-                const re = new RegExp(value as string, 'i');
+                //creating regular expression after escaping special characters in the filter value
+                const escapedValue = this.regExpEscape(value as string);
+                const re = new RegExp(escapedValue, 'i');
                 return data[key]?.match(re);
             }
         });
@@ -367,6 +396,23 @@ export class TableComponent implements OnInit {
     doAdvancedSearch(): void {
         const filters = this.advancedSearchForm;
         this.source.filter = Object.keys(filters).length ? JSON.stringify(filters) : '';
+        this.advanceSearchModalRef?.close();
+    }
+    /**
+     * Does FutureDates enabling and disabling
+     */
+    hasFutureDates(): boolean {
+       const now = new Date();
+       now.setHours(0, 0, 0, 0); // Setting time to midnight for comparison
+       return Object.values(this.advancedSearchForm).some((dateStr) => {
+           const date = new Date(dateStr);
+           return date.getTime() > now.getTime();
+       });
+    }
+    /**
+     * Closes advanced search modal
+     */
+    closeAdvancedSearch(): void {
         this.advanceSearchModalRef?.close();
     }
 

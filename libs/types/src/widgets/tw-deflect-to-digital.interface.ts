@@ -56,6 +56,10 @@ export interface TwDeflectToDigitalData {
      */
     DeflectExpiry: number;
     /**
+     *DepartmentFilters
+     */
+    DepartmentFilters: any;
+    /**
      * Intent of the deflect
      */
     DeflectIntent: string;
@@ -93,4 +97,9 @@ export interface TwDeflectToDigitalData {
      * The value should be taken from AGT_AUX_Codes Table's "Value" column.
      */
     ReservedStatusCode: string;
+
+    /**
+     * To enable/disable content editing for text template 
+     */
+     EditAllowed: boolean;
 }

@@ -1,123 +1,94 @@
-<div class="annotate-overlay">
+<div class="annotate-overlay" *transloco="let locale">
     <div class="annotate-container" (touchend)="setPenInactive()" (mouseup)="isPenActive && setPenInactive()">
         <div class="image-container" #imageContainer>
-            <div class="annotate-controls">
-                <div class="control-flex">
-                    <div (click)="this.activeTool = 'pen'" class="control" [ngClass]="{ 'active-control': activeTool == 'pen' }">
-                        <mat-icon>edit</mat-icon>
-                    </div>
-                    <p>Sketch</p>
-                </div>
-                <div class="control-flex">
-                    <div
-                        (click)="this.showShapeControls = !this.showShapeControls"
-                        class="control"
-                        [ngClass]="{ 'active-control': showShapeControls || activeTool != 'pen' }"
-                    >
-                        <mat-icon>spa</mat-icon>
-                        <div class="shapesizes" *ngIf="showShapeControls">
-                            <div (click)="this.activeTool = 'rect'" class="shape" [ngClass]="{ 'active-shape': activeTool == 'rect' }">
-                                <mat-icon>check_box_outline_blank</mat-icon>
-                            </div>
-                            <div (click)="this.activeTool = 'circle'" class="shape" [ngClass]="{ 'active-shape': activeTool == 'circle' }">
-                                <mat-icon>lens</mat-icon>
-                            </div>
-                        </div>
-                    </div>
-                    <p>Shapes</p>
-                </div>
-                <div class="control-flex">
-                    <div (click)="canvasCtxDataArray.length > 1 && undoCanvas()" class="control">
-                        <mat-icon>undo</mat-icon>
-                    </div>
-                    <p>Undo</p>
-                </div>
-                <div class="control-flex">
-                    <div (click)="clearCanvas()" class="control">
-                        <mat-icon>clear</mat-icon>
-                    </div>
-                    <p>Clear</p>
-                </div>
-                <div class="control-flex">
-                    <div (click)="this.showPenControls = !this.showPenControls" class="control" [ngClass]="{ 'active-control': showPenControls }">
-                        <div class="pensizes" *ngIf="showPenControls">
-                            <div
-                                (click)="setPenStrokeWidth(2)"
-                                style="width: 2px; height: 2px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 2 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(4)"
-                                style="width: 4px; height: 4px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 4 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(7)"
-                                style="width: 7px; height: 7px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 7 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(10)"
-                                style="width: 10px; height: 10px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 10 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(13)"
-                                style="width: 13px; height: 13px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 13 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(16)"
-                                style="width: 16px; height: 16px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 16 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(20)"
-                                style="width: 20px; height: 20px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 20 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(25)"
-                                style="width: 25px; height: 25px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 25 }"
-                            ></div>
-                            <div
-                                (click)="setPenStrokeWidth(30)"
-                                style="width: 30px; height: 30px; border: 1px solid #000; border-radius: 50px"
-                                class="dot"
-                                [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 30 }"
-                            ></div>
-                        </div>
-                        <mat-icon>lens</mat-icon>
-                    </div>
-                    <p>Size</p>
-                </div>
-                <div class="control-flex">
-                    <input [(ngModel)]="annotatePenColor" type="color" />
-                    <p>Color</p>
-                </div>
-            </div>
             <img id="imageToAnnotate-{{ sessionID }}" (load)="setCanvasSize()" src="{{ sourceImage }}" alt="" />
-            <div class="canvas-layout">
-                <canvas
-                    (touchend)="setPenInactive()"
-                    (touchstart)="setPenActive($event)"
-                    (mousedown)="setPenActive($event)"
-                    (touchmove)="freeDraw($event)"
-                    (mousemove)="freeDraw($event)"
-                    id="anotateCanvas-{{ sessionID }}"
-                ></canvas>
+            <div class="canvas-layout" style="background-color:#fff;">
+                <div class="annotate-controls">
+                    <div class="control-flex">
+                        <div (click)="this.activeTool = 'pen'" class="control"
+                            [ngClass]="{ 'active-control': activeTool == 'pen' }">
+                            <mat-icon>edit</mat-icon>
+                        </div>
+                        <p>{{ locale('sharedComponents.annotation.sketch') }}</p>
+                    </div>
+                    <div class="control-flex">
+                        <div (click)="this.showShapeControls = !this.showShapeControls" class="control"
+                            [ngClass]="{ 'active-control': showShapeControls || activeTool != 'pen' }">
+                            <mat-icon>spa</mat-icon>
+                            <div class="shapesizes" *ngIf="showShapeControls">
+                                <div (click)="this.activeTool = 'rect'" class="shape"
+                                    [ngClass]="{ 'active-shape': activeTool == 'rect' }">
+                                    <mat-icon>check_box_outline_blank</mat-icon>
+                                </div>
+                                <div (click)="this.activeTool = 'circle'" class="shape"
+                                    [ngClass]="{ 'active-shape': activeTool == 'circle' }">
+                                    <mat-icon>lens</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                        <p>{{ locale('sharedComponents.annotation.shapes') }}</p>
+                    </div>
+                    <div class="control-flex">
+                        <div (click)="canvasCtxDataArray.length > 1 && undoCanvas()" class="control">
+                            <mat-icon>undo</mat-icon>
+                        </div>
+                        <p>{{ locale('sharedComponents.annotation.undo') }}</p>
+                    </div>
+                    <div class="control-flex">
+                        <div (click)="clearCanvas()" class="control">
+                            <mat-icon>clear</mat-icon>
+                        </div>
+                        <p>{{ locale('sharedComponents.annotation.clear') }}</p>
+                    </div>
+                    <div class="control-flex">
+                        <div (click)="this.showPenControls = !this.showPenControls" class="control"
+                            [ngClass]="{ 'active-control': showPenControls }">
+                            <div class="pensizes" *ngIf="showPenControls">
+                                <div (click)="setPenStrokeWidth(2)"
+                                    style="width: 2px; height: 2px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 2 }"></div>
+                                <div (click)="setPenStrokeWidth(4)"
+                                    style="width: 4px; height: 4px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 4 }"></div>
+                                <div (click)="setPenStrokeWidth(7)"
+                                    style="width: 7px; height: 7px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 7 }"></div>
+                                <div (click)="setPenStrokeWidth(10)"
+                                    style="width: 10px; height: 10px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 10 }"></div>
+                                <div (click)="setPenStrokeWidth(13)"
+                                    style="width: 13px; height: 13px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 13 }"></div>
+                                <div (click)="setPenStrokeWidth(16)"
+                                    style="width: 16px; height: 16px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 16 }"></div>
+                                <div (click)="setPenStrokeWidth(20)"
+                                    style="width: 20px; height: 20px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 20 }"></div>
+                                <div (click)="setPenStrokeWidth(25)"
+                                    style="width: 25px; height: 25px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 25 }"></div>
+                                <div (click)="setPenStrokeWidth(30)"
+                                    style="width: 30px; height: 30px; border: 1px solid #000; border-radius: 50px"
+                                    class="dot" [ngClass]="{ 'active-dot': annotatePenStrokeWidth == 30 }"></div>
+                            </div>
+                            <mat-icon>lens</mat-icon>
+                        </div>
+                        <p>{{ locale('sharedComponents.annotation.size') }}</p>
+                    </div>
+                    <div class="control-flex">
+                        <input [(ngModel)]="annotatePenColor" type="color" />
+                        <p>{{ locale('sharedComponents.annotation.color') }}</p>
+                    </div>
+                </div>
+                <canvas (touchend)="setPenInactive()" (touchstart)="setPenActive($event)"
+                    (mousedown)="setPenActive($event)" (touchmove)="freeDraw($event)" (mousemove)="freeDraw($event)"
+                    id="anotateCanvas-{{ sessionID }}"></canvas>
                 <div class="twd-flex twd-gap-2">
-                    <button mat-raised-button color="warn" (click)="onDoneAnnotate(false)">Cancel</button>
-                    <button mat-raised-button color="primary" (click)="onDoneAnnotate(true)">Save</button>
+                    <button mat-raised-button color="warn" (click)="onDoneAnnotate(false)">{{
+                        locale('sharedComponents.annotation.cancel') }}</button>
+                    <button mat-raised-button color="primary" (click)="onDoneAnnotate(true)">{{
+                        locale('sharedComponents.annotation.save') }}</button>
                 </div>
             </div>
         </div>

@@ -5,6 +5,8 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { sortBy } from 'lodash';
+import { TranslocoService } from '@ngneat/transloco';
+import { TwDeflectToDigital } from '@ad/types';
 
 /**
  * Tw Compose Messaging Component
@@ -17,6 +19,10 @@ import { sortBy } from 'lodash';
     encapsulation: ViewEncapsulation.None
 })
 export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+    /**
+     * filter that is to be applied to department
+     */
+    @Input() departmentFilters: any;
     /**
      * Departments
      */
@@ -67,7 +73,11 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
 
     showTemplates = false;
 
-    constructor(private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService) {
+    @Input()
+    editAllowed;
+
+    constructor(private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService,
+        private translocoService: TranslocoService) {
         super('TextTemplatesComponent');
     }
 
@@ -81,11 +91,15 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         // get the text templates
         SDKClient.getTextTemplateDepartments()
             .then((result) => {
-                this.departments = result.response;
+                this.departments = this.departmentFilters ? result.response.filter((data) => {
+                    return Object.keys(this.departmentFilters).every((key) => {
+                        return this.departmentFilters[key].includes(data[key])
+                    });
+                }) : result.response;
                 // .filter((d) => d.Channel.toLowerCase() === 'sms');
             })
             .catch((err) => {
-                this._appUIService.showSnackbar('Error in fetching SMS templates', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.textTemplates.getSMSTemplatesError'), 'failure');
                 this.logger.error('Error in fetching SMS templates', err, false);
             })
             .finally(() => {
@@ -213,7 +227,6 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
         return true;
     }
 }
-
 interface IWidgetData {
     /**
      * Type of messaging

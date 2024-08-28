@@ -9,12 +9,12 @@
     ></ad-table>
 </tw-wrapper>
 
-<ng-template #agentCommentRef let-record="record">
+<ng-template #agentCommentRef *transloco="let locale" let-record="record">
     <button
         class="border-radius-20"
         mat-button
         color="primary"
-        matTooltip="View Comments"
+        [matTooltip]="locale('widgets.adInteractionDetails.viewComments')"
         *ngIf="record.AgentComment"
         (click)="showNotes(record.AgentComment)"
     >

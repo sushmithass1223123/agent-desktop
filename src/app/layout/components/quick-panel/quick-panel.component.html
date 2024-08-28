@@ -1,7 +1,7 @@
-<div class="custom-scroll-adjust twd-flex twd-flex-1 twd-flex-col">
+<div *transloco="let locale" class="custom-scroll-adjust twd-flex twd-flex-1 twd-flex-col">
     <mat-list class="date" cdkFocusRegionStart>
         <h3 matSubheader cdkFocusInit>
-            <span>Today</span>
+            <span>{{ locale('quickPanel.today') }}</span>
         </h3>
         <div class="secondary-text mb-0 p-16">
             <ng-container *ngIf="date$ | async as date">
@@ -49,7 +49,7 @@
 
     <mat-list>
         <h3 matSubheader>
-            <span>Quick Settings</span>
+            <span>{{ locale('quickPanel.quickSettings') }}</span>
         </h3>
 
         <mat-list-item>
@@ -60,7 +60,7 @@
                 aria-label="Notifications"
                 labelPosition="before"
             >
-                <h3>Browser Notifications</h3>
+                <h3>{{ locale('quickPanel.browserNotifications') }}</h3>
             </mat-slide-toggle>
         </mat-list-item>
 
@@ -72,7 +72,7 @@
                 aria-label="Notifications"
                 labelPosition="before"
             >
-                <h3>Notifications Sound</h3>
+                <h3>{{ locale('quickPanel.notificationSound') }}</h3>
             </mat-slide-toggle>
         </mat-list-item>
     </mat-list>
@@ -87,7 +87,7 @@
 
     <mat-list *ngIf="pinnedAOTs.length">
         <h3 matSubheader>
-            <span>Pinned Widgets</span>
+            <span>{{ locale('quickPanel.pinnedWidgets') }}</span>
         </h3>
         <div class="p-16 pt-0">
             <ng-container *ngFor="let widget of pinnedAOTs">
@@ -166,20 +166,20 @@
     <mat-divider *ngIf="pinnedAOTs.length"></mat-divider>
 </div>
 
-<ng-template #addWidgetDialog>
+<ng-template *transloco="let locale" #addWidgetDialog>
     <shared-wrapper icon="widgets" title="Add Widget" [loading]="false">
         <form (ngSubmit)="addWidgetDialogRef?.close(true)" class="twd-flex twd-flex-col twd-items-center twd-px-4 twd-py-2">
             <mat-form-field class="custom with-bg border-radius-20 twd-w-full" appearance="outline">
-                <mat-select placeholder="Page" name="page" [(ngModel)]="newWidget.page">
+                <mat-select [placeholder]="locale('quickPanel.page')" name="page" [(ngModel)]="newWidget.page">
                     <mat-option>None</mat-option>
                     <mat-option *ngFor="let item of addWidgetPages" [value]="item">{{ item }}</mat-option>
                 </mat-select>
-                <mat-error> Page is required </mat-error>
+                <mat-error> {{ locale('quickPanel.pageRequired') }} </mat-error>
             </mat-form-field>
 
             <mat-form-field floatLabel="never" appearance="standard" class="custom-2 twd-mb-2 border-radius-20 with-bg twd-w-full">
                 <textarea
-                    placeholder="Add widget json..."
+                    [placeholder]="locale('quickPanel.addWidgetConfigPlaceholder')"
                     [(ngModel)]="newWidget.json"
                     matInput
                     name="json"
@@ -190,7 +190,7 @@
             </mat-form-field>
 
             <button mat-raised-button color="primary" class="border-radius-20 twd-w-32" [disabled]="newWidget.page === '' || newWidget.json === ''">
-                Add
+                {{ locale('quickPanel.add') }}
             </button>
         </form>
     </shared-wrapper>

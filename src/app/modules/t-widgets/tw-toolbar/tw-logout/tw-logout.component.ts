@@ -7,7 +7,8 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-
+import { TranslocoService } from '@ngneat/transloco';
+import { AgentFeaturesService } from '@services/agent-features.service';
 /**
  * Logout button component
  */
@@ -37,13 +38,19 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * Logout route param
      */
     agentIdRouteParam: string;
+    /**
+     *Track whether the logout dialog is open
+     */
+    logoutDisableAfterAcceptance: boolean = false;
 
     constructor(
         private _appDataService: AppDataService,
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
-        private _activatedRouter: ActivatedRoute
+        private _activatedRouter: ActivatedRoute,
+        private translocoService: TranslocoService,
+        private agentFeaturesService: AgentFeaturesService
     ) {
         super('TwLogoutComponent');
         this.logoutAux = [];
@@ -138,18 +145,25 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
      * To logout user from TMAC
      */
     logout(): void {
-        //
+        // Check if there are open interactions and disallow logout if not allowed
         if (!this.data.Data.AllowLogoutOnOpenInteractions && SDKClient.getInteractions().length) {
-            this._appUIService.showSnackbar('Please complete the interaction before logging out!', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.openInteractionWarningMsg'), 'failure');
             return;
         }
-
-        // confirm logout
+    
+        // Open the confirmation dialog
+        // Confirm logout
         const confirmDialogRef = this._appUIService.showAppConfirmDialog('logout');
         confirmDialogRef.afterClosed().subscribe((dialogResult) => {
+            // Set logoutDisableAfterAcceptance to true after confirming logout
+            this.logoutDisableAfterAcceptance = true;
+    
+            // Check if user confirmed logout
             if (dialogResult) {
+                //To clear displaystreamtimeout
+                this.agentFeaturesService.clearDisplayStreamTimeout();
                 // logout error
-                this._appUIService.showSnackbar('Please wait, logging out...', 'loading');
+                this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutLoading'), 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 SDKClient.logout(
@@ -163,12 +177,12 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         this._fuseProgressBarService.hide();
                         // check if the logout is success
                         if (dt.response && dt.response.ResultCode === 0) {
-                            this._appUIService.showSnackbar('Logged out successfully');
+                            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutSuccess'));
                             // route back to login page
                             this._appDataService.routeToPath([`login${this.agentIdRouteParam ? '/' + this.agentIdRouteParam : ''}`]);
                         } else {
                             // logout error
-                            this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
                         }
 
                         // emit login event
@@ -183,8 +197,15 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         });
                     })
                     .catch(() => {
-                        this._appUIService.showSnackbar('Logout failed, please try again', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
+                    })
+                    .finally(() => {
+                        // Reset logoutDisableAfterAcceptance flag on catch
+                        this.logoutDisableAfterAcceptance = false;
                     });
+            } else {
+                // Reset logoutDisableAfterAcceptance if user cancels logout
+                this.logoutDisableAfterAcceptance = false;
             }
         });
     }

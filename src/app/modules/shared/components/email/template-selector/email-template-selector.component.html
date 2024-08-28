@@ -1,60 +1,68 @@
-<button
-    mat-raised-button
-    mat-icon-button
-    color="primary"
-    matTooltip="Templates"
-    [disabled]="disabled"
-    [matMenuTriggerFor]="departmentMenu"
-    class="mx-4"
->
-    <!-- <span class="mr-4"> Choose Template </span> -->
-    <mat-icon>description</mat-icon>
-</button>
+<ng-container *transloco="let locale">
+    <button
+        mat-raised-button
+        mat-icon-button
+        color="primary"
+        [matTooltip]="locale('sharedComponents.emailTemplateSelector.templates')"
+        [disabled]="disabled"
+        [matMenuTriggerFor]="departmentMenu"
+        class="mx-4"
+    >
+        <!-- <span class="mr-4"> Choose Template </span> -->
+        <mat-icon>description</mat-icon>
+    </button>
 
-<mat-menu yPosition="above" #departmentMenu="matMenu">
-    <ng-template matMenuContent>
-        <ng-container *ngIf="availableTemplates.departments | keyvalue as departments">
-            <ng-container *ngFor="let dept of departments">
-                <button mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
-                    {{ dept.value.Name }}
-                </button>
-                <mat-menu yPosition="above" #groupMenu="matMenu">
-                    <ng-template matMenuContent>
-                        <ng-container *ngIf="dept.value.groups">
-                            <button
-                                mat-menu-item
-                                [matMenuTriggerFor]="templateMenu"
-                                *ngFor="let group of dept.value.groups | keyvalue"
-                                (menuOpened)="setTemplates(dept.value.ID, group.key)"
-                            >
-                                {{ group.value.Name }}
-                                <mat-menu yPosition="above" #templateMenu="matMenu">
-                                    <ng-template matMenuContent>
-                                        <ng-container *ngIf="group.value.templates">
-                                            <button
-                                                mat-menu-item
-                                                *ngFor="let template of group.value.templates | keyvalue"
-                                                (click)="emitSelectTemplate(template.value)"
-                                            >
-                                                {{ template.value.Name }}
+    <mat-menu yPosition="above" #departmentMenu="matMenu">
+        <ng-template matMenuContent>
+            <ng-container *ngIf="availableTemplates.departments | keyvalue as departments">
+                <ng-container *ngFor="let dept of departments">
+                    <button [matTooltip]="dept.value.Name" mat-menu-item [matMenuTriggerFor]="groupMenu" (menuOpened)="setGroups(dept.key)">
+                        {{ dept.value.Name }}
+                    </button>
+                    <mat-menu yPosition="above" #groupMenu="matMenu">
+                        <ng-template matMenuContent>
+                            <ng-container *ngIf="dept.value.groups">
+                                <button
+                                    mat-menu-item
+                                    [matMenuTriggerFor]="templateMenu"
+                                    *ngFor="let group of dept.value.groups | keyvalue"
+                                    (menuOpened)="setTemplates(dept.value.ID, group.key)"
+                                >
+                                    <div [matTooltip]="group.value.Name">{{ group.value.Name }}</div>
+                                    <mat-menu yPosition="above" #templateMenu="matMenu">
+                                        <ng-template matMenuContent>
+                                            <ng-container *ngIf="group.value.templates">
+                                                <button
+                                                    mat-menu-item
+                                                    *ngFor="let template of group.value.templates | keyvalue"
+                                                    (click)="emitSelectTemplate(template.value)"
+                                                >
+                                                    <div [matTooltip]="template.value.Name">{{ template.value.Name }}</div>
+                                                </button>
+                                            </ng-container>
+                                            <button mat-menu-item disabled *ngIf="!group.value.templates && !loading">
+                                                {{ locale('sharedComponents.emailTemplateSelector.templatesNotFound') }}
                                             </button>
-                                        </ng-container>
-                                        <button mat-menu-item disabled *ngIf="!group.value.templates && !loading">No templates for this group</button>
-                                        <button mat-menu-item disabled *ngIf="!group.value.templates && loading">
-                                            <skeleton></skeleton>
-                                        </button>
-                                    </ng-template>
-                                </mat-menu>
+                                            <button mat-menu-item disabled *ngIf="!group.value.templates && loading">
+                                                <skeleton></skeleton>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                                </button>
+                            </ng-container>
+                            <button mat-menu-item disabled *ngIf="!(dept.value.groups || loading)">
+                                {{ locale('sharedComponents.emailTemplateSelector.groupsNotFound') }}
                             </button>
-                        </ng-container>
-                        <button mat-menu-item disabled *ngIf="!(dept.value.groups || loading)">No groups for this department</button>
-                        <button mat-menu-item disabled *ngIf="!dept.value.groups && loading">
-                            <skeleton></skeleton>
-                        </button>
-                    </ng-template>
-                </mat-menu>
+                            <button mat-menu-item disabled *ngIf="!dept.value.groups && loading">
+                                <skeleton></skeleton>
+                            </button>
+                        </ng-template>
+                    </mat-menu>
+                </ng-container>
+                <button mat-menu-item disabled *ngIf="!departments.length">
+                    {{ locale('sharedComponents.emailTemplateSelector.departmentsNotFound') }}
+                </button>
             </ng-container>
-            <button mat-menu-item disabled *ngIf="!departments.length">No Departments Found</button>
-        </ng-container>
-    </ng-template>
-</mat-menu>
+        </ng-template>
+    </mat-menu>
+</ng-container>

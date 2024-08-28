@@ -3,7 +3,8 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppUiService } from '@services/app-ui.service';
 import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
 import { MediaStreamerResponse } from 'app/interfaces';
-
+import { TranslocoService } from '@ngneat/transloco';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 /**
  * Chat attachment module
  */
@@ -30,6 +31,10 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      * Type of attachment previw
      */
     @Input() attachPreviewMode: string;
+    /**
+     * Type of attachment previw
+     */
+    @Input() attachmentConstraints: string[];
     /**
      * Event emitter to close the attachments
      */
@@ -70,7 +75,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         /**
          * Base64 string of file
          */
-        base64: string;
+        base64: SafeUrl | string;
         /**
          * Size of file
          */
@@ -84,16 +89,20 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
          */
         ext: string;
     }[] = [];
+    /**
+     * flag to hold unsupported video playbacks
+     */
+    isPlaybackNotSupported: boolean = false;
 
-
-    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService) {}
+    constructor(private _appUIService: AppUiService, private _fuseProgressBarService: FuseProgressBarService,
+        private translocoService: TranslocoService, private sanitizer: DomSanitizer) {}
 
     /**
      * On init
      */
     ngOnInit(): void {
         // add accept type for file input
-        this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : '*';
+        this.attachAcceptTypes = this.attachPreviewMode === 'uploadMedia' ? 'image/*,video/mp4,video/3gpp,video/quicktime' : this.attachmentConstraints.length ? this.attachmentConstraints.join(',') : '*';
     }
 
     /**
@@ -168,12 +177,25 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         try {
             const input = evt.target as HTMLInputElement;
             if (input.files && input.files.length) {
+                if(this.attachPreviewMode === 'uploadMedia') {
+                    const fileMime = input.files[0].type.split('/');
+                    if(!['video', 'image'].includes(fileMime[0])) {
+                        this.notifyInvalidFileSelection(fileMime[1]);
+                        return;
+                    }
+                }
+                if (this.attachmentConstraints.length && 
+                    !this.attachmentConstraints.includes(input.files[0].type)) {
+                    const fileMime = input.files[0].type.split('/');
+                    this.notifyInvalidFileSelection(fileMime[1]);
+                    return;
+                }
                 const base64 = await this.convertToBase64(input.files[0]);
                 const fileName = input.files[0].name;
                 this.uploadingFiles.push({
                     file: input.files[0],
                     fileName,
-                    base64,
+                    base64: this.sanitizeUrl(base64),
                     size: input.files[0].size,
                     type: input.files[0].type,
                     ext: fileName.split('.').pop()
@@ -183,8 +205,40 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             }
         } catch (e) {
             console.error(e);
-            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
         }
+    }
+
+    /**
+     * Method to notify agent that the selected file mime is invalid
+     * @param mime Mime type of the file
+     */
+    notifyInvalidFileSelection(mime: string): void {
+        try {
+            const dynamicLabels = [
+                {
+                    key: '#fileType',
+                    value: mime
+                }
+            ];
+            this._appUIService.showSnackbar(
+                this.getUpdatedLabel(
+                    this.translocoService.translate('widgets.chatAttachments.invalidType'),
+                    dynamicLabels
+                ),
+                'warning'
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    getUpdatedLabel(msg, labels = []) {
+        let updatedLabel = msg;
+        labels?.forEach(ele => {
+            updatedLabel = updatedLabel.replace(ele.key, ele.value);
+        });
+        return updatedLabel;
     }
 
     /**
@@ -278,18 +332,18 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
             // check if SMM
             // check if MediaStreamer is configured, then use MediaStreamer for upload
-            if (this.isSMM || this.fileUploadUrl.MediaStreamer) {
+            if (this.isSMM || this.fileUploadUrl.MediaUploader) {
                 // check if the URL is configured
                 // added new file upload url MediaStreamer
                 // keeping "SMM" for backward compatibility
-                if (!this.fileUploadUrl.SMM && !this.fileUploadUrl.MediaStreamer) {
-                    this._appUIService.showSnackbar('File upload failed, URL [MediaStreamer] not found, Please contact the administrator', 'failure');
+                if (!this.fileUploadUrl.SMM && !this.fileUploadUrl.MediaUploader) {
+                    this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.msURLNotFound'), 'failure');
                     this.attachPreviewMode = '';
                     this.uploadingFiles = [];
                     return;
                 }
 
-                const uploadURLs = this.fileUploadUrl.SMM || this.fileUploadUrl.MediaStreamer;
+                const uploadURLs = this.fileUploadUrl.SMM || this.fileUploadUrl.MediaUploader;
 
                 // get the files and upload
                 this.uploadingFiles.forEach(async (file) => {
@@ -322,7 +376,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 interactionId: response.result.interaction_id
                             });
                         } else {
-                            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         }
 
                         // remove the item from list
@@ -330,7 +384,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                         this._fuseProgressBarService.hide();
                     } catch (error) {
-                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
                     }
@@ -363,7 +417,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 size: file.size
                             });
                         } else {
-                            this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         }
 
                         // remove the item from list
@@ -371,7 +425,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
 
                         this._fuseProgressBarService.hide();
                     } catch (error) {
-                        this._appUIService.showSnackbar('Failed to upload file', 'failure');
+                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
                     }
@@ -379,7 +433,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
             } else {
                 // upload to TMAC proxy
                 const filesToUpload: FileSaveData[] = [];
-                this.uploadingFiles.forEach(async (file) => {
+                this.uploadingFiles.forEach(async (file: any) => {
                     // add to the list
                     filesToUpload.push({
                         FileName: file.fileName,
@@ -434,5 +488,25 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
        return this.uploadingFiles.find(item => 
             item.type.includes('image')
         ) ? true : false;
+    }
+
+    /**
+     * Method to handle error from audo/video html elements
+     */
+    onHandlePlaybackError(): void {
+        try {
+            this.isPlaybackNotSupported = true;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    /**
+     * Method to sanitize base64 to safe url
+     * @param base64Url Base 64 Url
+     * @returns Sanitized Safe Url
+     */
+    sanitizeUrl(base64Url: string): SafeUrl {
+        return this.sanitizer.bypassSecurityTrustUrl(base64Url);
     }
 }

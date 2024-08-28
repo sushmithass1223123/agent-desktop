@@ -203,6 +203,10 @@ export interface ChatTranscripts {
         angle: number;
     };
     /**
+     * Attachment
+     */
+    customTemplate?: any;
+    /**
      * Divider message
      */
     dividerMessage?: boolean;
@@ -233,7 +237,7 @@ export interface AppNotification {
     /**
      * Message of app notification
      */
-    message: string;
+    message: string | any;
     /**
      * Time of the app notification
      */
@@ -419,6 +423,21 @@ export interface CustomDialogOtherData {
      * Button's custom msg for cancel button
      */
     noMessage?: string;
+    /**
+     * close icon for the dialog
+     */
+    closeIcon?: boolean;
+
+    /**
+     * to enable confirmation on closing the dialog
+     */
+    confirmClose?: boolean;
+
+    /**
+     * message to be shown on confirmation dialog
+     */
+
+    confirmMessage?: string;
 }
 
 export interface InteractionComment {
@@ -648,4 +667,81 @@ export interface MediaStreamerResponse {
          */
         contentType: string;
     };
+}
+
+export interface MediaStreamerSingleResponse<T> {
+    /**
+     * Success flag
+     */
+    isSuccess: boolean;
+    /**
+     * Result message
+     */
+    message: 'SUCCESS' | 'FAILED';
+    /**
+     * Result object
+     */
+    result?: T;
+}
+
+export interface MediaStreamerMultiResponse<T> {
+    /**
+     * Success flag
+     */
+    isSuccess: boolean;
+    /**
+     * Result message
+     */
+    message: 'SUCCESS' | 'FAILED';
+    /**
+     * Result object
+     */
+    result?: Array<T>;
+}
+
+export interface MediaStreamerMetaResponse {
+    /**
+     * Name of the file
+     */
+    original_name: string;
+    /**
+     * Size of the file
+     */
+    size: number;
+    /**
+     * Generic UUID for the upload
+     */
+    interaction_id: string;
+    /**
+     * Session id of the interaction
+     */
+    conv_id: string;
+    /**
+     * File uploaded stream url
+     */
+    streamURL: string;
+    /**
+     * File uploaded file url
+     */
+    fileUrl: string;
+    /**
+     * File uploaded download url
+     */
+    downloadURL: string;
+    /**
+     * Content type of the file
+     */
+    contentType: string;
+    /**
+     * Archived status of the file
+     */
+    archiveStatus: string | undefined | null;
+    /**
+     * Restore status of the file
+     */
+    restoreStatus: boolean | undefined | null;
+    /**
+     * File file is not able to retrieve
+     */
+    fileError: boolean | undefined | null;
 }

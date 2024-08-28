@@ -4,7 +4,7 @@
 
 <!-- PLEASE NOTE: do not add any other attributes or directive to 'tw-wrapper' selector -->
 
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" *transloco="let locale">
     <!-- your code goes here -->
     <div *ngIf="getCampaignsReq.loading" fxFill fxLayout="row" fxLayoutAlign="center center">
         <mat-spinner></mat-spinner>
@@ -12,13 +12,13 @@
 
     <div *ngIf="getCampaignsReq.error" class="h-100-p" fxLayout="column" fxLayoutAlign="center center">
         <p>{{ getCampaignsReq.msg }}</p>
-        <button mat-raised-button color="primary" (click)="fetchCampaigns()">Retry</button>
+        <button mat-raised-button color="primary" (click)="fetchCampaigns()">{{ locale('global.retry') }}</button>
     </div>
 
     <div *ngIf="!getCampaignsReq.loading && !getCampaignsReq.error" class="w-100-p campaign-list">
         <div class="w-100-p px-4">
             <mat-form-field class="custom form-field w-100-p" appearance="outline">
-                <input class="login-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (input)="filterCampaigns()" />
+                <input class="login-input" matInput [placeholder]="locale('global.search')" [(ngModel)]="searchTerm" (input)="filterCampaigns()" />
                 <button
                     *ngIf="!searchTerm; else clearBtn"
                     mat-icon-button
@@ -63,7 +63,7 @@
 
         <div fxLayout fxLayoutAlign="center center" *ngIf="!getCampaignsReq.filteredData.length">
             <mat-icon class="mr-4"> campaign </mat-icon>
-            <span> No Campaigns Found! </span>
+            <span> {{ locale('widgets.registerCallback.campaignNotFound') }} </span>
         </div>
     </div>
 
@@ -71,7 +71,7 @@
 </tw-wrapper>
 
 <ng-template #addContactForm let-data>
-    <div class="dialog-content-wrapper">
+    <div class="dialog-content-wrapper" *transloco="let locale">
         <mat-toolbar matDialogTitle class="mat-primary m-0">
             <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
                 <span class="title dialog-title">{{ data.campaignName }}</span>
@@ -88,7 +88,7 @@
         <div mat-dialog-content class="p-24 pb-0 m-0 custom-scroll-adjust">
             <form [formGroup]="addContactFormGroup" (ngSubmit)="addNewContact()" fxLayout="row wrap" fxLayoutAlign="space-between center" novalidate>
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput placeholder="Name" formControlName="Name" #nameIp />
+                    <input matInput [placeholder]="locale('generalFormFields.name')" formControlName="Name" #nameIp />
                     <button
                         mat-button
                         color="primary"
@@ -101,11 +101,11 @@
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-icon *ngIf="!nameIp.value" matSuffix class="secondary-text">account_circle</mat-icon>
-                    <mat-error> Name Required </mat-error>
+                    <mat-error> {{ locale('generalFormFields.nameRequired') }} </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
-                    <input matInput placeholder="Phone" formControlName="Phone" #mobileIp />
+                    <input matInput [placeholder]="locale('widgets.registerCallback.phone')" formControlName="Phone" #mobileIp />
                     <button
                         mat-button
                         color="primary"
@@ -118,27 +118,29 @@
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-icon *ngIf="!mobileIp.value" matSuffix class="secondary-text">phone</mat-icon>
-                    <mat-error> Phone Number Required </mat-error>
+                    <mat-error>{{ locale('widgets.registerCallback.phoneRequired') }} </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
                     <input matInput [min]="minDate" [matDatepicker]="datePicker" formControlName="Date" />
                     <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
-                    <mat-error *ngIf="addContactFormGroup.controls.Date.errors?.required"> Date Required </mat-error>
+                    <mat-error *ngIf="addContactFormGroup.controls.Date.errors?.required"
+                        >{{ locale('widgets.registerCallback.dateRequired') }}
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="form-field mb-8" appearance="outline" fxFlex="100">
                     <input matInput type="time" formControlName="Time" />
                     <ng-container *ngIf="addContactFormGroup.controls.Time.errors as fieldErrors">
-                        <mat-error *ngIf="fieldErrors.required"> Time Required </mat-error>
-                        <mat-error *ngIf="fieldErrors.invalid"> Invalid time </mat-error>
+                        <mat-error *ngIf="fieldErrors.required">{{ locale('widgets.registerCallback.timeRequired') }} </mat-error>
+                        <mat-error *ngIf="fieldErrors.invalid">{{ locale('widgets.registerCallback.invalidTime') }} </mat-error>
                     </ng-container>
                 </mat-form-field>
 
                 <div fxFlex="100" fxLayoutAlign="end" class="mb-12">
                     <button mat-raised-button color="primary" [disabled]="addCampaingReq.loading">
-                        <span> Add Contact </span>
+                        <span>{{ locale('widgets.registerCallback.addContact') }} </span>
                         <mat-icon *ngIf="!addCampaingReq.loading">add</mat-icon>
                         <mat-icon class="spin" *ngIf="addCampaingReq.loading">loop</mat-icon>
                     </button>

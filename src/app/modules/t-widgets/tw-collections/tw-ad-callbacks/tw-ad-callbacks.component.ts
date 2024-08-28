@@ -8,6 +8,7 @@ import { ACTIVE_CALL_STATUSES, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } fro
 import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { format, isBefore, isMatch, parse } from 'date-fns';
 import { sortBy } from 'lodash';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Agent Callbacks Widget
@@ -74,7 +75,8 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
     /**
      * Constructor
      */
-    constructor(private _http: HttpClient, private _tmacEventService: TMACEventService) {
+    constructor(private _http: HttpClient, private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService) {
         super('TwAdCallbacksComponent');
     }
 
@@ -117,7 +119,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
             this.getDashboardDataRes = {
                 error: true,
                 loading: false,
-                msg: 'TCMProxyUrl is missing from config'
+                msg: 'widgets.registerCallback.tcmProxyUrlNotFound'
             };
             return;
         }
@@ -132,7 +134,7 @@ export class TwAdCallbacksComponent extends TWidgetWrapper implements OnInit, On
                 this.getDashboardDataRes = {
                     error: true,
                     loading: false,
-                    msg: 'Unable to fetch contact session'
+                    msg: 'widgets.adCallbacks.getContactSessionFailed'
                 };
             }
         });

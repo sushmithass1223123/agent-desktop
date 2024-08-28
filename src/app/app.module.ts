@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -8,17 +8,23 @@ import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { CoreModule } from '@modules/core/core.module';
 import { SharedModule } from '@modules/shared/shared.module';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
-
+import { TranslocoRootModule } from './transloco-root.module';
 /**
  * App module
  */
 @NgModule({
     declarations: [AppComponent],
-    providers: [],
+    providers: [
+       {
+           provide: TRANSLOCO_SCOPE,
+           useValue: ''
+       } 
+    ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
@@ -34,7 +40,8 @@ import { AppRoutingModule } from './app-routing.module';
         // App modules
         CoreModule,
         SharedModule,
-        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+        TranslocoRootModule
     ],
     bootstrap: [AppComponent]
 })

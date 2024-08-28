@@ -45,22 +45,23 @@
                 </div>
 
                 <div *ngIf="messageAction" class="actions">
-                    <div class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
+                    <div *transloco="let locale" class="twd-absolute twd-top-[6px] twd-right-1 twd-flex twd-gap-2">
                         <div>
                             <mat-icon
                                 *ngIf="message?.attachment?.type === 'image'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="rotateImage(message.attachment)"
-                                matTooltip="Rotate"
+                                [matTooltip]="locale('widgets.chatControls.rotate')"
                                 >rotate_90_degrees_ccw</mat-icon
                             >
                         </div>
                         <div>
                             <mat-icon
-                                *ngIf="replyAble && message.status !== 'init' && message.status !== 'failed'"
+                            *ngIf="replyAble && conferenceType !== 'silent' && message.status !== 'init' && message.status !== 'failed'"
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
-                                matTooltip="Reply"
+                                [matTooltip]="locale('interactionComponent.reply')"
+                                [ngClass]="{ 'disabled': status !== 'connected' }"
                                 >reply</mat-icon
                             >
                         </div>
@@ -83,7 +84,39 @@
                     </div>
                 </div>
 
-                <p class="m-0">
+                <p class="m-0" *ngIf="message.customTemplate">
+                    <ng-container *ngIf="message.customTemplate?.interactive?.components?.header?.type === 'image'">
+                        <div class="attachments">
+                            <div class="image">
+                                <img
+                                    title=""
+                                    [ngClass]="{
+                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]': mode === 'reply' || replied,
+                                        '!twd-min-h-[64px]': replied
+                                    }"
+                                    [src]="message.customTemplate?.interactive?.components?.header?.image?.url"
+                                />
+                            </div>
+
+                        </div>
+                    </ng-container>
+                    <br>
+                    <ng-container *ngIf="message.customTemplate?.interactive?.components?.body?.type === 'text'">
+                        <span [innerHTML]="message.customTemplate?.interactive?.components?.body?.text"></span>
+                    </ng-container>
+                    <br>
+                    <ng-container *ngIf="message.customTemplate?.interactive?.components?.buttons?.length > 0">
+                        <ng-container *ngFor="let btn of message.customTemplate?.interactive?.components?.buttons">
+                            <span [innerHTML]="btn?.reply?.title">                         
+                            </span>
+                            <br>
+                        </ng-container>
+                        
+                    </ng-container>
+
+                </p>
+
+                <p class="m-0" *ngIf="!message.customTemplate">
                     <ng-container *ngIf="!message.attachment?.src">
                         <span [innerHTML]="message.message"></span>
                         <span *ngIf="!replied" class="spacer"></span>
@@ -181,8 +214,9 @@
     <tw-wrapper
         [data]="data"
         (maximizeEvent)="onMaximized($event)"
-        (collapseEvent)="collapseEvent.emit($event)"
-        (floatEvent)="floatEvent.emit($event)"
+        (collapseEvent)="onMaximized($event)"
+        (floatEvent)="onMaximized($event)"
+        *transloco="let locale"
     >
         <div class="w-100-p h-100-p chat-controls">
             <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
@@ -198,7 +232,7 @@
                     </div>
                     <div *ngIf="asyncChatRef.isAsync" class="twd-flex twd-items-center">
                         <mat-icon>sync_alt</mat-icon>
-                        <span class="text-bold ml-4">Async Chat</span>
+                        <span class="text-bold ml-4">{{ locale('widgets.chatControls.asyncChat') }}</span>
                     </div>
 
                     <div class="twd-flex twd-items-center">
@@ -214,7 +248,7 @@
                             *ngFor="let item of interactionList"
                             name="{{ item.user }}"
                             [ngClass]="item.status + ' ' + (item.interactionId === interaction.InteractionID ? 'active' : '')"
-                            matTooltip="{{ item.user }}"
+                            [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
                             matTooltipPosition="after"
                             (click)="selectInteraction(item)"
                             matBadge="{{ item.interactionId !== interaction.InteractionID ? item.otherData.unreadCount || '' : '' }}"
@@ -233,7 +267,7 @@
                             mat-mini-fab
                             #answerBtn
                             (click)="answerChat(answerBtn)"
-                            matTooltip="Answer Chat"
+                            [matTooltip]="locale('widgets.chatControls.answerChat')"
                         >
                             <mat-icon>done</mat-icon>
                         </button>
@@ -244,7 +278,7 @@
                             mat-mini-fab
                             color="warn"
                             [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                            matTooltip="Freeze Auto Response"
+                            [matTooltip]="locale('widgets.chatControls.freezeAutoResponse')"
                             (click)="freezeAutoResponse()"
                         >
                             <mat-icon>sync_disabled</mat-icon>
@@ -261,15 +295,16 @@
                             <button
                                 mat-mini-fab
                                 color="default"
-                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading"
+                                [disabled]="(status !== 'connected' && status !== 'hold') || interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper'"
                                 [ngClass]="
                                     ((status === 'connected' || status === 'hold' || status === 'unhold') &&
                                         (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
                                     ' ' +
                                     (status === 'connected' ? 'mat-elevation-z2' : '')
                                 "
+                                [ngStyle]="{ 'opacity' : ((status !== 'connected' && status !== 'hold') || interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper') ? '0.5' : 1 }"
                                 [matTooltip]="interactionOnHold.buttonTooltip"
-                                (click)="holdUnhold()"
+                                (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                             >
                                 <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
                             </button>
@@ -281,7 +316,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Transfer"
+                            [matTooltip]="locale('interactionComponent.transfer')"
                             (click)="openTransferConferenceDialog('transfer')"
                         >
                             <mat-icon>forward</mat-icon>
@@ -293,7 +328,7 @@
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Conference"
+                            [matTooltip]="locale('interactionComponent.conference')"
                             (click)="openTransferConferenceDialog('conference')"
                         >
                             <mat-icon>group</mat-icon>
@@ -302,12 +337,12 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateAudioCall)
                             "
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Escalate to Audio"
+                            [matTooltip]="locale('widgets.chatControls.escalateToAudio')"
                             (click)="escalateToAV('audio')"
                         >
                             <mat-icon>call</mat-icon>
@@ -316,12 +351,12 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateVideoCall)
                             "
                             mat-mini-fab
                             color="default"
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            matTooltip="Escalate to Video"
+                            [matTooltip]="locale('widgets.chatControls.escalateToVideo')"
                             (click)="escalateToAV('video')"
                         >
                             <mat-icon>video_call</mat-icon>
@@ -339,10 +374,10 @@
                             [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
                             [matTooltip]="
                                 conferenceType === 'silent'
-                                    ? 'Convert to Whisper'
+                                    ? locale('widgets.chatControls.convertToWhisper')
                                     : conferenceType === 'whisper'
-                                    ? 'Convert to Conference'
-                                    : 'Takeover'
+                                    ? locale('widgets.chatControls.convertToConference')
+                                    : locale('widgets.chatControls.takeOver')
                             "
                             #changeModeBtn
                             (click)="changeConferenceType(changeModeBtn)"
@@ -353,13 +388,13 @@
                         <div class="fab-container" *ngIf="moreActions.length">
                             <button
                                 mat-icon-button
-                                [disabled]="status !== 'connected'"
+                                [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
                                 [class]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
                                 [ngClass]="{ 'twd-hidden': asyncChatRef.isAsync }"
                                 cdkOverlayOrigin
                                 #actionList="cdkOverlayOrigin"
                                 (click)="openMoreActions = !openMoreActions"
-                                matTooltip="More Actions"
+                                [matTooltip]="locale('toolbarComponent.moreActions')"
                             >
                                 <mat-icon [@fabToggler]="{ value: openMoreActions ? 'active' : 'inactive' }"> add </mat-icon>
                             </button>
@@ -381,9 +416,10 @@
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected'"
-                                    >
-                                        <mat-icon>{{ action.icon }}</mat-icon>
+                                        [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
+                                        (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
+                                        (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall))">
+                                            <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
                                 </div>
                             </ng-template>
@@ -397,7 +433,7 @@
                             color="warn"
                             #endBtn
                             (click)="confirmEndChat()"
-                            matTooltip="End Chat"
+                            [matTooltip]="locale('widgets.chatControls.endChat')"
                         >
                             <mat-icon>close</mat-icon>
                         </button>
@@ -410,7 +446,7 @@
                                 (status === 'connected' ? ' mat-elevation-z2' : '') +
                                 (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
                             "
-                            matTooltip="Interaction Comment"
+                            [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="commentsAdded = false; saveInteractionComments()"
                         >
                             <mat-icon>comment</mat-icon>
@@ -423,9 +459,9 @@
                             color="warn"
                             #closeBtn
                             (click)="confirmCloseInteraction()"
-                            matTooltip="Close Interaction"
+                            [matTooltip]="locale('interactionComponent.closeInteraction')"
                         >
-                            Close
+                            {{ locale('interactionComponent.close') }}
                         </button>
                     </div>
 
@@ -483,16 +519,16 @@
 
                     <!-- CHAT FOOTER -->
                     <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
-                        <!-- CHAT TYPING -->
-                        <div
-                            *ngIf="remoteTyping && remoteTyping.typing"
-                            class="twd-absolute twd--top-5 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
-                        >
-                            {{ remoteTyping.name }} is typing...
-                        </div>
-                        <!-- CHAT TYPING -->
                         <!-- REPLY FORM -->
                         <div class="reply-form">
+                            <!-- CHAT TYPING -->
+                            <div
+                                *ngIf="remoteTyping && remoteTyping.typing"
+                                class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
+                            >
+                                {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
+                            </div>
+                            <!-- CHAT TYPING -->
                             <div (click)="replyingToMessage = null" class="w-100-p p-4">
                                 <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
                                     <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
@@ -539,7 +575,7 @@
                                     type="button"
                                     mat-icon-button
                                     aria-label="Select Emoji"
-                                    matTooltip="Emoji"
+                                    [matTooltip]="locale('widgets.chatControls.emoji')"
                                 >
                                     <mat-icon>sentiment_satisfied_alt</mat-icon>
                                     <ng-template
@@ -569,7 +605,7 @@
                                     mat-icon-button
                                     class="rotate-45"
                                     aria-label="Select Attachment"
-                                    matTooltip="Attach"
+                                    [matTooltip]="locale('widgets.chatControls.attach')"
                                 >
                                     <!-- <button
                                 *ngIf="agentFeatures.attachments"
@@ -601,7 +637,7 @@
                                                 mat-mini-fab
                                                 color="default"
                                                 [matTooltip]="item.label"
-                                                (click)="addAttachment(item.action)"
+                                                (click)="addAttachment(item.action, item.enable)"
                                             >
                                                 <mat-icon>{{ item.icon }}</mat-icon>
                                             </button>
@@ -614,12 +650,13 @@
                                         [disabled]="status !== 'connected'"
                                         matInput
                                         #replyInput
-                                        placeholder="Type your message"
+                                        [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
                                         ngModel
                                         name="message"
-                                        matTextareaAutosize
-                                        matAutosizeMinRows="1"
-                                        matAutosizeMaxRows="5"
+                                        cdkTextareaAutosize
+                                        #autosize="cdkTextareaAutosize"
+                                        cdkAutosizeMinRows="1"
+                                        cdkAutosizeMaxRows="5"
                                         (keyup)="onKeyUp($event)"
                                     ></textarea>
                                 </mat-form-field>
@@ -630,7 +667,7 @@
                                     mat-icon-button
                                     type="submit"
                                     aria-label="Send message"
-                                    matTooltip="Send"
+                                    [matTooltip]="locale('widgets.chatControls.send')"
                                 >
                                     <mat-icon>send</mat-icon>
                                 </button>
@@ -644,6 +681,7 @@
                     <chat-attachments
                         *ngIf="attachPreviewMode"
                         [isSMM]="isSMM"
+                        [attachmentConstraints]="attachmentConstraints"
                         [fileUploadUrl]="fileUploadUrl"
                         [sessionID]="sessionID"
                         [attachPreviewMode]="attachPreviewMode"
@@ -658,7 +696,7 @@
     </tw-wrapper>
 
     <ng-template #previewMediaDialog>
-        <div class="twd-flex twd-justify-between twd-items-center twd-h-16">
+        <div *transloco="let locale" class="twd-flex twd-justify-between twd-items-center twd-h-16">
             <div class="twd-flex twd-flex-col twd-gap-1">
                 <span class="twd-font-bold">{{ previewMediaDialogData?.user }}</span>
                 <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
@@ -670,7 +708,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Zoom In"
+                    [matTooltip]="locale('widgets.chatControls.zoomIn')"
                     (click)="zoomInOut(true)"
                 >
                     <mat-icon>zoom_in</mat-icon>
@@ -681,7 +719,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Zoom Out"
+                    [matTooltip]="locale('widgets.chatControls.zoomOut')"
                     (click)="zoomInOut(false)"
                 >
                     <mat-icon>zoom_out</mat-icon>
@@ -691,7 +729,7 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Rotate"
+                    [matTooltip]="locale('widgets.chatControls.rotate')"
                     (click)="rotateImage(previewMediaDialogData?.attachment)"
                 >
                     <mat-icon>rotate_90_degrees_ccw</mat-icon>
@@ -701,18 +739,25 @@
                     mat-icon-button
                     color="primary"
                     tabindex="-1"
-                    matTooltip="Download"
+                    [matTooltip]="locale('interactionComponent.download')"
                     (click)="downloadAttachment(previewMediaDialogData?.attachment?.src)"
                 >
                     <mat-icon>download</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" mat-dialog-close (click)="previewMediaDialogData = null" tabindex="-1" matTooltip="Close">
+                <button
+                    mat-icon-button
+                    color="warn"
+                    mat-dialog-close
+                    (click)="previewMediaDialogData = null"
+                    tabindex="-1"
+                    [matTooltip]="locale('interactionComponent.close')"
+                >
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
         </div>
 
-        <div mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
+        <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
             <drag-scroll scrollbar-hidden>
                 <div
                     class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"

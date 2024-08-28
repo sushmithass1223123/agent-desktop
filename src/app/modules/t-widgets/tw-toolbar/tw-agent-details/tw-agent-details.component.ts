@@ -7,6 +7,8 @@ import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
+import { SharedService } from '@services/shared.service';
 /**
  * Agent Details component
  */
@@ -56,7 +58,9 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
     constructor(
         private _fuseProgressBarService: FuseProgressBarService,
         private _appUIService: AppUiService,
-        private _tmacEventService: TMACEventService
+        private _tmacEventService: TMACEventService,
+        private translocoService: TranslocoService,
+        private _sharedService:SharedService
     ) {
         super('TwAgentDetailsComponent');
     }
@@ -104,8 +108,13 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                 this.auxCodesList = result.response;
             })
             .catch(() => {
-                this._appUIService.showSnackbar('Error in loading aux codes', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.loadAuxCodesError'), 'failure');
             });
+            // Subscribe to the change status observable provided by the shared service
+            this._sharedService.getChangeStatus().subscribe((auxData: IAUXCodes) => {
+                 // Upon receiving new data, invoke the changeStatus method of changing status in agents side
+                this.changeStatus(auxData)
+            })
     }
 
     /**
@@ -141,7 +150,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      */
     AgentSettingsUpdatedEvent(): void {
         this._appUIService.showAppSnackbar({
-            message: 'Agent setting has been updated!',
+            message: this.translocoService.translate('toolbarComponent.agentSettingUpdated'),
             state: 'success',
             duration: 10000
         });
@@ -160,7 +169,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         this.auxCodesList = evt.AUXCodes;
         // show an alert
         this._appUIService.showAppSnackbar({
-            message: 'Aux Codes reloaded successfully',
+            message: this.translocoService.translate('toolbarComponent.reloadAuxCodesSuccess'),
             state: 'success'
         });
     }
@@ -177,7 +186,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         const type = item.Code.toLocaleLowerCase();
         const code = item.Value.toString();
 
-        this.agentData.agentStatus = 'Please wait...';
+        this.agentData.agentStatus = this.translocoService.translate('toolbarComponent.agentDataLoading');
 
         // change the status
         SDKClient.changeStatus({
@@ -193,12 +202,12 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
                     // [MS: April 20, '21] TODO: Do we need to emit event on change status response?
                     // SDKClient.events.emit(dt.response.EventName, dt.response);
                 } else {
-                    this._appUIService.showSnackbar('Change status failed, please try again!', 'failure');
+                    this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.changeStatusFailed'), 'failure');
                     this.agentData.agentStatus = oldStatus;
                 }
             })
             .catch(() => {
-                this._appUIService.showSnackbar('Change status error, please try again!', 'failure');
+                this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.changeStatusError'), 'failure');
                 this.agentData.agentStatus = oldStatus;
             })
             .finally(() => this._fuseProgressBarService.hide());

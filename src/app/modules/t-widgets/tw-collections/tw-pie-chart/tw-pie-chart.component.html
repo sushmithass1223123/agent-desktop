@@ -9,7 +9,7 @@
             categoryField="category"
         >
             <kendo-chart-area background="transparent"></kendo-chart-area>
-            <kendo-chart-legend [visible]="maximized"></kendo-chart-legend>
+            <kendo-chart-legend [visible]="maximized" [background]="'rgba(255, 255, 255, 0.7)'"></kendo-chart-legend>
             <kendo-chart-series>
                 <kendo-chart-series-item
                     [border]="{
@@ -31,14 +31,17 @@
                             <!-- <div>Value: {{ value }}</div> -->
                         </ng-template>
                     </kendo-chart-series-item-tooltip>
-                    <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" background="none" align="column" [content]="labelContent">
+                    <kendo-chart-series-item-labels *ngIf="data.Data.Label || maximized" align="column" [content]="labelContent">
                     </kendo-chart-series-item-labels>
                 </kendo-chart-series-item>
             </kendo-chart-series>
         </kendo-chart>
-
-        <mat-checkbox *ngIf="!maximized && stats.length" class="twd-absolute twd-bottom-2.5 twd-left-2.5 twd-scale-75" [(ngModel)]="data.Data.Label">
-            Labels
+        <mat-checkbox
+            *ngIf="!maximized && stats.length"
+            class="twd-absolute twd-bottom-2.5 twd-left-2.5 twd-scale-75"
+            [(ngModel)]="data.Data.Label"
+        >
+            <ng-container *transloco="let locale">{{ locale('contentComponent.labels') }}</ng-container>
         </mat-checkbox>
     </div>
 </tw-wrapper>
@@ -46,6 +49,8 @@
 <ng-template #noData>
     <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
         <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
-        <p class="text-center m-0">No data available</p>
+        <p class="text-center m-0">
+            <ng-container *transloco="let locale">{{ locale('contentComponent.noDataAvailable') }}</ng-container>
+        </p>
     </div>
 </ng-template>

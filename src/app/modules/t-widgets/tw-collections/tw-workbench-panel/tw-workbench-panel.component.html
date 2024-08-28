@@ -12,10 +12,10 @@
         } as customFuse"
     >
         <div class="tw-static-panel twd-w-full twd-h-full twd-relative">
-            <mat-tab-group class="twd-absolute twd-h-full twd-w-full twd-top-0 twd-left-0" animationDuration="0ms">
+            <mat-tab-group #workbenchTabGroup class="twd-absolute twd-h-full twd-w-full twd-top-0 twd-left-0" animationDuration="0ms">
                 <mat-tab *ngFor="let channel of channels" [label]="channel.Type" #tab>
                     <ng-template mat-tab-label>
-                        <div
+                        <div *transloco="let locale"
                             class="tab-header"
                             [ngClass]="
                                 tab.isActive
@@ -24,7 +24,7 @@
                             "
                         >
                             <mat-icon>{{ channel.Icon }}</mat-icon>
-                            <span class="ml-4"> {{ channel.Type }} </span>
+                           <span class="ml-4"> {{locale('widgets.workbench.' + channel.Type) !== 'widgets.workbench.' + channel.Type ? locale('widgets.workbench.' + channel.Type) : channel.Type ? channel.Type : 'Widget'}} </span>
                         </div>
                     </ng-template>
                     <ng-container [ngSwitch]="channel.Type | lowercase">
@@ -39,6 +39,12 @@
                             [channelConf]="channel"
                             *ngSwitchCase="'chat'"
                         ></workbench-chat>
+
+                        <workbench-smp
+                            [data]="{ Data: data.Data?.General || {}, Config: data.Config }"
+                            [channelConf]="channel"
+                            *ngSwitchCase="'social media'"
+                        ></workbench-smp>
                     </ng-container>
                 </mat-tab>
             </mat-tab-group>

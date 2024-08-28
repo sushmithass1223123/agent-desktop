@@ -1,119 +1,123 @@
-<div fxFlex fxFill fxLayout="row" fxLayoutAlign=" center" *ngIf="interactionList.length || emailInteractionList.length">
-    <ng-container *ngFor="let item of interactionList; trackBy: trackBy">
-        <div
-            fxLayout="row"
-            class="voice grey-300 border-radius-30 p-4 mx-4"
-            [ngClass]="{
-                'mat-elevation-z1': item.status !== 'disconnected'
-            }"
-            *ngIf="item.type === 'voice'"
-            [ngClass]="{
-                'bg-warning': item.status === 'hold'
-            }"
-        >
-            <div mat-card-avatar class="w-36 h-36" (click)="openInteraction(item)">
-                <mat-icon>phone</mat-icon>
-            </div>
-            <div class="mx-8" fxLayout="row" fxLayoutAlign="center center">{{ item.user }}</div>
-            <div>
-                <button
-                    *ngIf="item.status !== 'hold'"
-                    [disabled]="item.status !== 'connected'"
-                    mat-icon-button
-                    class="w-36 h-36 custom-btn bg-warning"
-                    #holdBtn
-                    matTooltip="Hold"
-                    (click)="holdUnHoldCall('hold', item, holdBtn)"
-                >
-                    <mat-icon>phone_paused</mat-icon>
-                </button>
-                <button
-                    *ngIf="item.status === 'hold'"
-                    [disabled]="item.otherData.tempCallRef"
-                    mat-icon-button
-                    class="w-36 h-36 custom-btn bg-success"
-                    #unHoldBtn
-                    matTooltip="Unhold"
-                    (click)="holdUnHoldCall('unhold', item, unHoldBtn)"
-                >
-                    <mat-icon>phone_in_talk</mat-icon>
-                </button>
-                <button
-                    [disabled]="item.status !== 'connected' && item.status !== 'outgoing'"
-                    mat-icon-button
-                    class="w-36 h-36 ml-4 custom-btn bg-danger"
-                    #disconnectBtn
-                    matTooltip="Disconnect"
-                    (click)="disconnectCall(item, disconnectBtn)"
-                >
-                    <mat-icon>call_end</mat-icon>
-                </button>
-            </div>
-        </div>
-
-        <avatar
-            *ngIf="
-                item.type === 'textchat' &&
-                (item.otherData.customerStream === undefined || item.status === 'hold' || item.otherData.customerStream.streamInfo.type === 'audio')
-            "
-            class="mx-4 border-radius-100"
-            [ngClass]="{
-                'mat-elevation-z1': item.status !== 'disconnected'
-            }"
-            [matIcon]="item.otherData.icon || 'chat'"
-            classes="w-44 h-44 border-radius-100"
-            [matTooltip]="item.user"
-            [circleColor]="item.status === 'disconnected' ? 'bg-danger' : item.status === 'hold' ? 'bg-warning' : 'twd-bg-primary-700'"
-            [matBadge]="item.otherData.unreadCount || ''"
-            matBadgePosition="after"
-            (click)="openInteraction(item)"
-        ></avatar>
-
-        <div
-            *ngIf="item.type === 'textchat' && item.otherData?.customerStream?.streamInfo.type === 'video' && item.status !== 'hold'"
-            class="twd-w-12 twd-h-12 twd-rounded-full twd-border-[3px] twd-border-primary-700 mat-elevation-z2 twd-cursor-pointer"
-            [matTooltip]="item.user"
-            (click)="openInteraction(item)"
-        >
-            <video
-                *ngIf="item.otherData.customerStream.streamInfo.type === 'video'"
-                class="twd-w-full twd-h-full twd-rounded-full twd-object-cover"
-                autoplay
-                playsinline="true"
-                muted="true"
-                [srcObject]="item.otherData.customerStream.stream"
-                [id]="item.otherData.customerStream.stream.id"
-            ></video>
-        </div>
-    </ng-container>
-
-    <div *ngIf="emailInteractionList.length">
-        <avatar
-            class="mx-4 border-radius-100 twd-block"
-            [matMenuTriggerFor]="emailList"
-            matIcon="email"
-            classes="w-44 h-44 border-radius-100"
-            matTooltip="Emails"
-            [matBadge]="emailInteractionList.length || ''"
-            matBadgePosition="after"
-            circleColor="twd-bg-primary-700"
-        >
-        </avatar>
-
-        <mat-menu class="custom" #emailList="matMenu">
+<ng-container *transloco="let locale">
+    <div fxFlex fxFill fxLayout="row" fxLayoutAlign=" center" *ngIf="interactionList.length || emailInteractionList.length">
+        <ng-container *ngFor="let item of interactionList; trackBy: trackBy">
             <div
-                *ngFor="let item of emailInteractionList"
-                class="twd-bg-primary-100 twd-flex twd-items-center twd-text-base twd-font-bold twd-p-2 twd-rounded-full twd-overflow-hidden twd-cursor-pointer w-200 mx-8"
+                fxLayout="row"
+                class="voice grey-300 border-radius-30 p-4 mx-4"
                 [ngClass]="{
-                    'twd-bg-primary-200': item.isActive,
-                    'mt-4': emailInteractionList.length > 1
+                    'mat-elevation-z1': item.status !== 'disconnected'
                 }"
-                [matTooltip]="item.user || 'New Email'"
+                *ngIf="item.type === 'voice'"
+                [ngClass]="{
+                    'bg-warning': item.status === 'hold'
+                }"
+            >
+                <div mat-card-avatar class="w-36 h-36" (click)="openInteraction(item)">
+                    <mat-icon>phone</mat-icon>
+                </div>
+                <div class="mx-8" fxLayout="row" fxLayoutAlign="center center">{{ item.user }}</div>
+                <div>
+                    <button
+                        *ngIf="item.status !== 'hold'"
+                        [disabled]="item.status !== 'connected'"
+                        mat-icon-button
+                        class="w-36 h-36 custom-btn bg-warning"
+                        #holdBtn
+                        [matTooltip]="locale('interactionComponent.hold')"
+                        (click)="holdUnHoldCall('hold', item, holdBtn)"
+                    >
+                        <mat-icon>phone_paused</mat-icon>
+                    </button>
+                    <button
+                        *ngIf="item.status === 'hold'"
+                        [disabled]="item.otherData.tempCallRef"
+                        mat-icon-button
+                        class="w-36 h-36 custom-btn bg-success"
+                        #unHoldBtn
+                        [matTooltip]="locale('interactionComponent.unHold')"
+                        (click)="holdUnHoldCall('unhold', item, unHoldBtn)"
+                    >
+                        <mat-icon>phone_in_talk</mat-icon>
+                    </button>
+                    <button
+                        [disabled]="item.status !== 'connected' && item.status !== 'outgoing'"
+                        mat-icon-button
+                        class="w-36 h-36 ml-4 custom-btn bg-danger"
+                        #disconnectBtn
+                        [matTooltip]="locale('interactionComponent.disconnect')"
+                        (click)="disconnectCall(item, disconnectBtn)"
+                    >
+                        <mat-icon>call_end</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <avatar
+                *ngIf="
+                    item.type === 'textchat' &&
+                    (item.otherData.customerStream === undefined ||
+                        item.status === 'hold' ||
+                        item.otherData.customerStream.streamInfo.type === 'audio')
+                "
+                class="mx-4 border-radius-100"
+                [ngClass]="{
+                    'mat-elevation-z1': item.status !== 'disconnected'
+                }"
+                [matIcon]="item.otherData.icon || 'chat'"
+                classes="w-44 h-44 border-radius-100"
+                [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
+                [circleColor]="item.status === 'disconnected' ? 'bg-danger' : item.status === 'hold' ? 'bg-warning' : 'twd-bg-primary-700'"
+                [matBadge]="item.otherData.unreadCount || ''"
+                matBadgePosition="after"
+                (click)="openInteraction(item)"
+            ></avatar>
+
+            <div
+                *ngIf="item.type === 'textchat' && item.otherData?.customerStream?.streamInfo.type === 'video' && item.status !== 'hold'"
+                class="twd-w-12 twd-h-12 twd-rounded-full twd-border-[3px] twd-border-primary-700 mat-elevation-z2 twd-cursor-pointer"
+                [matTooltip]="item.user"
                 (click)="openInteraction(item)"
             >
-                <mat-icon>email</mat-icon>
-                <span class="twd-truncate twd-ml-2"> {{ item.otherData.Subject || 'New Email' }} </span>
+                <video
+                    *ngIf="item.otherData.customerStream.streamInfo.type === 'video'"
+                    class="twd-w-full twd-h-full twd-rounded-full twd-object-cover"
+                    autoplay
+                    playsinline="true"
+                    muted="true"
+                    [srcObject]="item.otherData.customerStream.stream"
+                    [id]="item.otherData.customerStream.stream.id"
+                ></video>
             </div>
-        </mat-menu>
+        </ng-container>
+
+        <div *ngIf="emailInteractionList.length">
+            <avatar
+                class="mx-4 border-radius-100 twd-block"
+                [matMenuTriggerFor]="emailList"
+                matIcon="email"
+                classes="w-44 h-44 border-radius-100"
+                [matTooltip]="locale('interactionComponent.emails')"
+                [matBadge]="emailInteractionList.length || ''"
+                matBadgePosition="after"
+                circleColor="twd-bg-primary-700"
+            >
+            </avatar>
+
+            <mat-menu class="custom" #emailList="matMenu">
+                <div
+                    *ngFor="let item of emailInteractionList"
+                    class="twd-bg-primary-100 twd-flex twd-items-center twd-text-base twd-font-bold twd-p-2 twd-rounded-full twd-overflow-hidden twd-cursor-pointer w-200 mx-8"
+                    [ngClass]="{
+                        'twd-bg-primary-200': item.isActive,
+                        'mt-4': emailInteractionList.length > 1
+                    }"
+                    [matTooltip]="item.user || 'New Email'"
+                    (click)="openInteraction(item)"
+                >
+                    <mat-icon>email</mat-icon>
+                    <span class="twd-truncate twd-ml-2"> {{ item.otherData.Subject || 'New Email' }} </span>
+                </div>
+            </mat-menu>
+        </div>
     </div>
-</div>
+</ng-container>

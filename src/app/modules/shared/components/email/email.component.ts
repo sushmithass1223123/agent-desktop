@@ -8,10 +8,20 @@ import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
 import { SDKClient, TUtils } from '@tmac/sdk';
-import { EmailComponentInputs, EmailComponentMode, EmailFile, MediaStreamerResponse } from 'app/interfaces';
+import {
+    EmailComponentInputs,
+    EmailComponentMode,
+    EmailFile,
+    MediaStreamerResponse,
+    MediaStreamerSingleResponse,
+    MediaStreamerMultiResponse,
+    MediaStreamerMetaResponse
+} from 'app/interfaces';
 import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { TranslocoService } from '@ngneat/transloco';
+import { UIActionEvent, UIActionEventService } from '@services/ui-action-event.service';
 
 @Component({
     selector: 'email',
@@ -79,11 +89,6 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     state: 'loading' | 'error' | 'loaded' = 'loaded';
 
     /**
-     * Maximum file size default 20mbs
-     */
-    maxFileSize = 20971520;
-
-    /**
      * Suggested users for autocomplete
      */
     suggestedUsers: string[] = [];
@@ -118,10 +123,23 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     fileUploadUrl: any;
 
+    /**
+     * Property to hold attachment data size and email body size
+     */
+    currentAttachmentSize: number = 0;
+    currentBodySize: number = 0;
+    attachmentFileSizeMap: any = {}
+    /**
+     * Flag to show/hide payload size stats
+     */
+    @Input() showPayloadSizeStats: boolean = false;
+
     constructor(
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private translocoService: TranslocoService,
+        private uiActionEventService: UIActionEventService
     ) {}
 
     /**
@@ -170,6 +188,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             </style>
             ${this.email.Body}
             `;
+            this.currentBodySize = new Blob([this.email.Body ? this.email.Body : this._email.Body]).size;
         }
     }
 
@@ -204,7 +223,10 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             .catch((e) => {
                 console.error(e);
                 if (e instanceof ADError) {
-                    this._appUiService.showSnackbar('Unable to fetch frequently used email addresses', 'failure');
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.email.getFrequentlyUsedEmailFailed'),
+                        'failure'
+                    );
                 }
             });
     }
@@ -214,6 +236,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     _setEditForm(): void {
         if (this.email) {
+            this.notifyEmailAction();
             const email = JSON.parse(JSON.stringify(this.email));
             const { Body, CC, Files, Subject: subject, To, From, CreatedTime, mailbox, BCC } = email;
             const bodyBreak = `
@@ -246,7 +269,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'forward':
                     this._email = {
                         BCC: [],
-                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`,
                         To: [],
                         From: mailbox,
                         Subject: `FW: ${subject}`,
@@ -257,7 +280,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 case 'reply':
                     this._email = {
                         BCC: [],
-                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`,
                         To: Array.isArray(From) ? From : [From],
                         From: this.email.mailbox,
                         Subject: (subject || '').startsWith('RE:') ? subject : `RE: ${subject}`,
@@ -269,7 +292,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     const ToList = (Array.isArray(From) ? From : From.split(',')).concat(To);
                     this._email = {
                         BCC,
-                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />'),
+                        Body: `${this.email.prelude || ''} ${bodyBreak} ${Body}`,
                         To: Array.from(new Set(ToList.filter((e) => e && e !== mailbox))),
                         From: mailbox,
                         Subject: (subject || '').startsWith('RE:') ? subject : `RE: ${subject}`,
@@ -278,7 +301,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     };
                     break;
                 case 'draft':
-                    this.email.Body = `${bodyBreak} ${Body}`.replaceAll(/(?:\r\n|\r|\n)/g, '<br />');
+                    this.email.Body = `${bodyBreak} ${Body}`;
                     this._email = email;
                     break;
             }
@@ -287,6 +310,98 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             if (this.mode === 'preview') {
                 this.setEmailBody();
             }
+        }
+    }
+
+    /**
+     * Method to get the tool tip for file attachments
+     */
+    getAttachmentToolTip(file: any): string {
+        if (file.FileError) {
+            return `${file.Name}
+
+            ${this.translocoService.translate('sharedComponents.email.fileUnavailable')}`;
+        }
+        if (!file.ArchiveStatus) {
+            return `${file.Name}
+
+            ${this.translocoService.translate('sharedComponents.email.fileAvailable')}`;
+        } else if (file.ArchiveStatus === 'ARCHIVE_ACCESS') {
+            if (file.RestoreStatus) {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileArchiveRestore')}`;
+            } else {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileArchived')}`;
+            }
+        } else if (file.ArchiveStatus === 'DEEP_ARCHIVE_ACCESS') {
+            if (file.RestoreStatus) {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileDeepArchiveRestore')}`;
+            } else {
+                return `${file.Name}
+
+                ${this.translocoService.translate('sharedComponents.email.fileDeepArchived')}`;
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Retry method for failed files
+     */
+    async getMetaDataForFile(file: any): Promise<void> {
+        try {
+            const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerMultiResponse<MediaStreamerMetaResponse>>({
+                urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${file.FileId}`],
+                method: 'GET',
+                responseType: 'json'
+            });
+
+            if (response.isSuccess && response?.result?.length > 0) {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaSuccess'));
+                file.ArchiveStatus = response.result[0].archiveStatus;
+                file.RestoreStatus = response.result[0].restoreStatus;
+                file.FileError = response.result[0].fileError;
+            } else {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaError'), 'failure');
+            }
+        } catch (error) {
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileMetaError'), 'failure');
+        }
+    }
+
+    /**
+     * Restore method for archived file
+     */
+    async restoreFromArchive(file: any): Promise<void> {
+        try {
+            if (file && file.FileId) {
+                const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerSingleResponse<any>>({
+                    urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
+                    method: 'PUT',
+                    responseType: 'json'
+                });
+                if (response && response.isSuccess) {
+                    //success
+                    file.RestoreStatus = true;
+                    if (file.ArchiveStatus === 'ARCHIVE_ACCESS') {
+                        this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiatedArchive'));
+                    }
+                    if (file.ArchiveStatus === 'DEEP_ARCHIVE_ACCESS') {
+                        this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreInitiatedDeepArchive'));
+                    }
+                } else {
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
+                }
+            } else {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreNotFound'), 'failure');
+            }
+        } catch (error) {
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.fileRestoreFailed'), 'failure');
         }
     }
 
@@ -307,13 +422,18 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
             let resVal: Partial<EmailFile>;
             if (input.files && input.files.length) {
                 const f = input.files[0];
-                const ref = this._appUiService.showSnackbar(`Uploading ${f.name || 'File'}`, 'loading');
-                if (f.size > this.maxFileSize) {
-                    this._appUiService.showSnackbar('File too large', 'failure');
+                const ref = this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileLoading'), 'loading');
+                if (
+                    this.email.MaxPayloadSize < (this.currentAttachmentSize + this.currentBodySize + f.size)
+                ) {
+                    this._appUiService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
+                        'failure'
+                    );
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
-                if (this.fileUploadUrl?.MediaStreamer) {
+                if (this.fileUploadUrl?.MediaUploader) {
                     const formData = new FormData();
                     formData.append('file', f);
                     formData.append('interaction_id', TUtils.Generic.uuid());
@@ -324,7 +444,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
                     // upload the file
                     const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerResponse>({
-                        urls: [this.fileUploadUrl.MediaStreamer],
+                        urls: [this.fileUploadUrl.MediaUploader],
                         method: 'POST',
                         responseType: 'json',
                         formData
@@ -356,21 +476,27 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
                 const ext = resVal.Name.split('.').pop();
 
+                this.currentAttachmentSize+=f.size;
+                
+                const Id = TUtils.Generic.uuid();
+                this.attachmentFileSizeMap[Id] = f.size;
+
                 this._email.Files.push({
-                    Id: TUtils.Generic.uuid(),
+                    Id,
                     SessionID: this.email.SessionID,
                     Direction: 'OUT',
                     Icon: maticonByExtension(ext),
                     Ext: f.type,
                     Name: resVal.Name,
                     Source: resVal.Source,
-                    URL: resVal.URL
+                    URL: resVal.URL,
+                    IsUploaded: true
                 });
                 ref.dismiss();
             }
         } catch (e) {
             console.error(e);
-            this._appUiService.showSnackbar('Failed to upload file', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileFailed'), 'failure');
         }
     }
 
@@ -380,6 +506,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     removeFiles(fileId: string): void {
         this._email.Files = this._email.Files.filter((x) => x.Id !== fileId);
+        this.currentAttachmentSize-=this.attachmentFileSizeMap[fileId];
+        delete this.attachmentFileSizeMap[fileId];
     }
 
     /**
@@ -442,7 +570,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      */
     validateEmailIdAndPush(key: string, emailId: string): boolean {
         if (!validateEmail(emailId)) {
-            this._appUiService.showSnackbar('Please enter a valid email address', 'failure');
+            this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.invalidEmailAddress'), 'failure');
             return false;
         }
 
@@ -473,28 +601,79 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * @param {any} fileUrl
      */
     async openFile(file: any): Promise<void> {
-        this._fuseProgressBarService.show();
-        await fetch(file.URL)
-            .then((response) => response.blob())
-            .then((blob) => {
-                const blobUrl = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.setAttribute('download', file.Name);
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-                setTimeout(() => {
-                    window.URL.revokeObjectURL(blobUrl);
-                }, 60000);
-                link.remove();
-            })
-            .catch((e) => {
-                console.error(e);
-                this._appUiService.showSnackbar(`Download for ${file.Name} failed`, 'failure');
-            })
-            .finally(() => {
-                this._fuseProgressBarService.hide();
-            });
+        if (!file.FileError) {
+            this._fuseProgressBarService.show();
+            await fetch(file.URL)
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.setAttribute('download', file.Name);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode.removeChild(link);
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(blobUrl);
+                    }, 60000);
+                    link.remove();
+                })
+                .catch((e) => {
+                    console.error(e);
+                    this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.downloadFileFailed'), 'failure');
+                })
+                .finally(() => {
+                    this._fuseProgressBarService.hide();
+                });
+        }
+    }
+
+    /**
+     * Method is to notify agent has come to edit mode in Email section
+     */
+    notifyEmailAction() {
+        this.email['type'] = this.mode;
+        const emailActionData: UIActionEvent = {
+            eventName: 'EmailAction',
+            sessionID: this.email.SessionID,
+            data: this.email,
+            eventType: 'onUIActionEvent'
+        };
+
+        this.uiActionEventService.emitUIActionEvent(emailActionData);
+    }
+
+    /**
+     * Method to convert Bytes to MB
+     * @param bytes Bytes
+     * @returns MegaBytes
+     */
+    bytesToMB(bytes: number): string {
+        const MB = bytes / (1024 * 1024);
+        return `${MB.toFixed(1)}mb`;
+    }
+
+    /**
+     * Method to observe for body content change from tiny mce module
+     * @param event modified body
+     */
+    onBodyChange(event: string): void {
+        try {
+           this.currentBodySize = new Blob([event]).size;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    onSendEmail(email): void {
+        try {
+            if((this.currentAttachmentSize + this.currentBodySize) > this.email.MaxPayloadSize) {
+                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.payloadSizeExceeded'), 'failure');
+                return;
+            }
+            this.sendEmail.emit(email)
+        } catch (error) {
+            console.error(error)
+        }
     }
 }

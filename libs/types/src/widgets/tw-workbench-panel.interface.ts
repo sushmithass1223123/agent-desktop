@@ -60,6 +60,14 @@ export type TwEmailWorkbenchConfig = {
      * @default false
      */
     TemplatesByHierarchy: boolean;
+    /**
+     * Max limit of search range in days
+     */
+     MaxSearchRange: number;
+    /**
+     * Max limit of Selection in mail
+     */
+     MaxSelection: number;
 };
 
 /**
@@ -87,6 +95,57 @@ export type TwChatWorkbenchConfig = {
      * Flag to check if the user is allowed to push an item from workbench queue
      */
     PushAllowed?: boolean;
+};
+
+/**
+ * Available tabs of the email workbench
+ */
+export type TwSmpWorkbenchTabs = 'queue' | 'inbox' | 'sent' | 'drafts' | 'posts';
+
+export type TwSmpWorkbenchConfig = {
+    /**
+     * Transfer related settings of the workbench tab
+    */
+    Transfer?: AgentSkillConfig;
+    /**
+     * Tabs to be configured to show on workbench
+     * @type {TwSmpWorkbenchTabs[]} Array of tab items
+     * @default []
+     */
+    Tabs: TwSmpWorkbenchTabs[];
+    /**
+     * Polling interval of the tab.
+     * This property allows the workbench tab to poll
+     * relevant items with specific intervals.
+     * Polling is disabled when this interval is 0.
+     * @default 0 ie disabled
+     * @type {number} in milliseconds
+     */
+    SearchPollingInterval: number;
+    /**
+     * Flag to check whether to ask user before he pulls an item from the workbench
+     * @type {boolean} true | false
+     * @default false
+     */
+    AskPullConfirmation?: boolean;
+    /**
+     * Flag to check if the user is allowed to pull an item from workbench queue
+     */
+    PullAllowed?: boolean;
+    /**
+     * Max limit of search range in days
+     */
+    MaxSearchRange: number;
+    /**
+     * The duration of emails to be fetched initially in hours
+     * @type {Number} Duration on hours
+     * @default 0
+     */
+    SearchDuration: number;
+    /**
+     * Number which holds maximum post image that could be rendered in UI
+     */
+    MaximumAllowedPostImageRendering: number;
 };
 
 /**
