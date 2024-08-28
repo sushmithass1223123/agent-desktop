@@ -230,6 +230,10 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         // call the wrapper init method
         this.initWrapper(this.data);
         console.log("this.data", this.data);
+        if(this.data.InteractionDetails.interactionId) {
+            this.interactionId = this.data.InteractionDetails.interactionId;
+            this.getCustomerDetails();
+        }
         this._tmacEventService
         .getAllSubscribedEvents<IUIEvent>(['IncomingEmailEvent'])
         .pipe(takeUntil(this.unsubscribeAll))
