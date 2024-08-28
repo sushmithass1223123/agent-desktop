@@ -334,6 +334,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     startTimeRef: number;
 
+    /** flag to check the state of transfer */
+    isTransferCompleted = false;
+
     constructor(
         private _fuseFacadeService: FuseFacadeService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -1074,6 +1077,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {CallTransferLineDisconnectEvent} evt
      */
     CallTransferLineDisconnectEvent(evt: CallTransferLineDisconnectEvent): void {
+        if(evt?.IsMainLine && !this.isTransferCompleted) {
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.customerDisconnected'), 'warning');
+            return;
+        }
         this.tempCallRef = null;
 
         // update the interaction status and user
@@ -1127,6 +1134,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {CallConferenceLineDisconnectEvent} evt
      */
     CallConferenceLineDisconnectEvent(evt: CallConferenceLineDisconnectEvent): void {
+        if(evt?.IsMainLine) {
+            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.customerDisconnected'), 'warning');
+            return;
+        }
         // remove the temp call reference
         this.tempCallRef = null;
 
@@ -1981,6 +1992,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         // toggle the button
                         this.toggleButton(false, btn);
                         if (dt.response.ResultCode === 0) {
+                            this.isTransferCompleted = true;
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.transferInteractionSuccess'));
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.transferInteractionFailed'), 'failure');
@@ -2025,7 +2037,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
                         if (dt.response.ResultCode === 0) {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceInteractionSuccess'));
                         } else {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceInteractionFailed'));
+                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.conferenceInteractionFailed'),'failure');
                         }
                     })
                     .catch(() => {
