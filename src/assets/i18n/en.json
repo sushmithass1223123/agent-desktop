@@ -284,7 +284,8 @@
             "sendDTMFFailed": "DTMF send failed",
             "sendDTMFError": "Error in sending DTMF",
             "ivrTransferSuccess": "Transferred to IVR successfully",
-            "ivrTransferError": "Error in transfer to IVR"
+            "ivrTransferError": "Error in transfer to IVR",
+            "customerDisconnected": "Customer has disconnected!"
         },
         "userLocation": {
             "locationNotFound": "Location not found",
