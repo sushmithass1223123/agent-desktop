@@ -119,6 +119,7 @@ export class TMACEventService extends SharedWrapper {
 
     private _tmacCommandsArray: TMACCommandType[];
 
+
     private _agentFeatureActionDialog: MatDialogRef<any, any>
 
     /** Events to manipulate AD elements from custom widget */
@@ -1806,7 +1807,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             if (logEnabled && data.log) {
                 this.logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
