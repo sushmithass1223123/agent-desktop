@@ -973,7 +973,16 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
      *
      * @param {TextChatTransferNotificationEvent} evt
      */
-    private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+        // Checking if a dialog for this event is already open
+        if (this.isDialogOpen.includes(evt.EventName)) {
+        this.logger.info(`TextChatTransferNotificationEvent: ${evt.EventName} dialog is already opened!`, true);
+        return;
+        }
+
+        // Adding the event name to the isDialogOpen array to indicate the dialog is open
+        this.isDialogOpen.push(evt.EventName);
+
         // parse the otherData
         const otherData = JSON.parse(evt.Data);
         // get the type
@@ -990,6 +999,8 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             .showAppConfirmDialog('generic', `Confirm ${mode} ${upperFirst(type)}`, message)
             .afterClosed()
             .subscribe((resp1) => {
+            // Removing the event name from isDialogOpen array when the dialog is closed
+            this.isDialogOpen = this.isDialogOpen.filter(name => name !== evt.EventName);
                 evt.Response(resp1);
             });
     };
