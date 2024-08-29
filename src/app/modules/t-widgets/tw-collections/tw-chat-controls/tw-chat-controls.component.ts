@@ -628,6 +628,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Property to disable and enable request to AV
      */
     isOnAVCall: 'audio' | 'video' | null = null;
+    /**
+     * Flag to decide whether to sanitize agent inputs or not
+     */
+    enableAgentMessageSanitization: boolean = false;
 
     /**
      * Constructor
@@ -712,6 +716,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             '\n': '&#10;',
             '\r': '&#13;'
         };
+        this.enableAgentMessageSanitization = this.data.Data.EnableAgentMessageSanitization ?? false;
 
         this.registerToEvents();
 
@@ -1120,10 +1125,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         data.attachment = {
                             src: json.msg.content.url,
                             type: json.msg.type,
-                            name: ''
+                            name: json.msg?.content?.name ?? ''
                         };
-                        //  TODO:: when caption for image is implemented, this can be changed
-                        data.message = '';
+                        data.message = json.msg?.content?.text ?? '';
                     } else {
                         // not an attachment from SMM
                         data.message = json.msg;
@@ -1386,7 +1390,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private sendMessage(template: any, isAutomated?): void {
         // get the typed message
         let inputMessage = template?.Text || this.replyForm.form.value.message;
-        inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
+        if(!this.isSMM && this.enableAgentMessageSanitization) {
+            inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
+        }
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
         let templateId = template?.ID ?? '';
@@ -1882,8 +1888,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check the response
             if (response && response.ResultCode === 0) {
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+
+                this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
+
                 // remove the interaction reference
                 this._interactionManagerService.removeInteraction(response.InteractionID);
+
             } else {
                 // enable if something goes wrong
                 if (this.closeButton) {
@@ -1969,6 +1979,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
 
         this.status = 'connected';
+        this.interactionOnHold.loading = false;
         // get the customer name
         this.customerName = evt.ScreenName || 'Customer';
         // get the customer CIF

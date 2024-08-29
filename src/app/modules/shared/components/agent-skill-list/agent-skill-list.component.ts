@@ -188,10 +188,6 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     blindLabel: string;
 
-     /**
-     * Property to store previously selected agent 
-     */
-    private previouslySelectedAgent: AgentModel | null = null;
 
     /**
      * Constructor
@@ -284,7 +280,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult:  this._dialogData.OtherData.type === 'transfer' ? false : this._dialogData.Skill.Consult 
+                consult:  this._dialogData.OtherData?.type === 'transfer' ? false : this._dialogData.Skill.Consult 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
@@ -1187,6 +1183,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
 
     private saveToDataServer(channel?) {
+        if(!this.comments || this.comments?.trim() === '') {
+            return;
+        }
+
         const input = {
             type: 'transfer-comment',
             subType: channel ? channel : 'textchat',
@@ -1915,20 +1915,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
-        SDKClient.events.on('TextChatTransferRejectEvent', () => {
-            this.previouslySelectedAgent = null
-        });
-         
-        if (this.selectedRow?.row?.LoginID === this.previouslySelectedAgent?.LoginID) {
-            this._appUIService.showSnackbar(
-                this.translocoService.translate('sharedComponents.agentSkillList.alreadySent'),
-                'failure'
-            );
-            return;
-        }
-                
+              
         // Reseting properties
-        this.previouslySelectedAgent = this.selectedRow?.row;
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
@@ -1972,6 +1960,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
+
     /**
      * Searches agents based on skill
      */
@@ -1997,5 +1986,13 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             });
         }
         this.wrapperComponent.close();
+    }
+
+    /**
+     * method to allow editing of free text for phone num / vdn / skill etc
+     */
+    onFreetextEdit() {
+        this.clearSelected(); 
+        this.switcherList[this.activeSwitcher].freeText.active = true;
     }
 }
