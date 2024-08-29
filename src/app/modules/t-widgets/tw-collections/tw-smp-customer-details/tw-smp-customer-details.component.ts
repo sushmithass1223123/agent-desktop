@@ -46,7 +46,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      */
     apiUrls: string[] = [];
 
-    customerId: string = '19';
+    customerId: string;
     editAllowed: boolean = false;
     formData: TwCustomerInfo;
     test: boolean = false;
@@ -230,9 +230,10 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         // call the wrapper init method
         this.initWrapper(this.data);
         console.log("this.data", this.data);
-        this.interactionId = this.data.InteractionDetails.InteractionID;
-
-        this.getCustomerDetails();
+        if(this.data.InteractionDetails.interactionId) {
+            this.interactionId = this.data.InteractionDetails.interactionId;
+            this.getCustomerDetails();
+        }
         this._tmacEventService
         .getAllSubscribedEvents<IUIEvent>(['IncomingEmailEvent'])
         .pipe(takeUntil(this.unsubscribeAll))
@@ -263,11 +264,17 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         }
     }
     
+    //set customerId & interactionId
     IncomingEmailEvent(evt) {
         if(evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
-        console.log("Event: ", evt);   
-        this.customerId = JSON.parse(evt.JsonData).CustomerId;
-        this.getCustomerDetails(); 
+        console.log("Event: ", evt);  
+        if(JSON.parse(evt.JsonData)?.CustomerId) {
+            this.customerId = JSON.parse(evt.JsonData).CustomerId;
+            this.interactionId = this.data?.InteractionDetails?.interactionId;
+            this.getCustomerDetails(); 
+        } else {
+            return;
+        }
     }
     }
 
@@ -276,11 +283,20 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         if(this.test) {
             updateUrl = "https://webhook.site/17f9233b-b42f-4d75-9c2a-5d8740054d95";
         }
+       let data = {};
+        Object.entries(this.formData).forEach(element => {
+            if( element[1] == '-')
+            {
+                element[1] = '';
+                data[element[0]] = '';
+            } else {
+                data[element[0]] = element[1];
+            }
+        });
         let date = moment().format('yyyy-MM-DDThh:mm:ssZ');
         this.formData.lastChangedOn = date.toString();
         this.formData.lastChangedBy = SDKClient.getAgentData().agentName;
-
-        this.httpClient.post(updateUrl, this.formData)
+        this.httpClient.post(updateUrl, data)
         .subscribe((res: any) => {            
             console.log("Update Status: ", res);
             // {
@@ -319,7 +335,6 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         //   };
        }
        console.log("Getting Data for Customer ID: ", this.customerId)
-          if(!this.customerId) return;
         this.formData = {};
         this.data.Data.ControlFields.forEach(control => {
             this.formData[control.id + '_' + this.interactionId] = '-';  
