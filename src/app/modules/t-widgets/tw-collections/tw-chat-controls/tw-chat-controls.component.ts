@@ -1960,6 +1960,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
 
         this.status = 'connected';
+        this.interactionOnHold.loading = false;
         // get the customer name
         this.customerName = evt.ScreenName || 'Customer';
         // get the customer CIF
