@@ -1746,6 +1746,7 @@
                                                     },
                                                     "ToggleUserViewAllowed": true,
                                                     "MuteVideoOnInitiateCall": true,
+                                                    "EnableAgentMessageSanitization": false,
                                                     "XssSymbolEntityMap": {
                                                         "&": "&amp;",
                                                         "<": "&lt;",
