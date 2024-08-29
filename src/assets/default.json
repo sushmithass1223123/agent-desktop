@@ -1447,6 +1447,7 @@
                                                         "CustomerVideo": false
                                                     },
                                                     "ToggleUserViewAllowed": false,
+                                                    "EnableAgentMessageSanitization": false,
                                                     "XssSymbolEntityMap": {
                                                         "&": "&amp;",
                                                         "<": "&lt;",

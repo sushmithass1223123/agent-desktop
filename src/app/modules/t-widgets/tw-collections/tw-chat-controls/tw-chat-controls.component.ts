@@ -624,6 +624,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     attachmentConstraints: string[] = [];
     xssSymbolEntityMap: XssSymbolEntityMap = {};
+    /**
+     * Flag to decide whether to sanitize agent inputs or not
+     */
+    enableAgentMessageSanitization: boolean = false;
 
     /**
      * Constructor
@@ -708,6 +712,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             '\n': '&#10;',
             '\r': '&#13;'
         };
+        this.enableAgentMessageSanitization = this.data.Data.EnableAgentMessageSanitization ?? false;
 
         this.registerToEvents();
 
@@ -1357,7 +1362,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private sendMessage(template: any, isAutomated?): void {
         // get the typed message
         let inputMessage = template?.Text || this.replyForm.form.value.message;
-        inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
+        if(!this.isSMM && this.enableAgentMessageSanitization) {
+            inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
+        }
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
         let templateId = template?.ID ?? '';
