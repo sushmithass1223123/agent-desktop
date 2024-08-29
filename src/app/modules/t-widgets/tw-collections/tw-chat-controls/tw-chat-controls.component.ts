@@ -625,6 +625,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     attachmentConstraints: string[] = [];
     xssSymbolEntityMap: XssSymbolEntityMap = {};
     /**
+     * Property to disable and enable request to AV
+     */
+    isOnAVCall: 'audio' | 'video' | null = null;
+    /**
      * Flag to decide whether to sanitize agent inputs or not
      */
     enableAgentMessageSanitization: boolean = false;
@@ -1544,6 +1548,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (this.callWidget) {
             return;
         }
+        this.isOnAVCall = param; // Setting to 'audio' or 'video' depending on the call type
+
+        SDKClient.events.on('UpdateParentAgentStatusEvent', () => {
+            this.isOnAVCall = null; // Reseting to null when the call ends
+        });
 
         // freeze auto response if needed
         this.freezeAutoResponse(false);
