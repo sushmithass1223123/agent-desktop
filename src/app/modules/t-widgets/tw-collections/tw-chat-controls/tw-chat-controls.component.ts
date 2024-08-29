@@ -624,10 +624,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     attachmentConstraints: string[] = [];
     xssSymbolEntityMap: XssSymbolEntityMap = {};
-    /**
-     * Property to disable and enable requestAV call
-    */
-    isEscalateAvRequestCall = false;
 
     /**
      * Constructor
