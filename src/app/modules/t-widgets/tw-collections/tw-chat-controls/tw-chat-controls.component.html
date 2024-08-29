@@ -419,8 +419,8 @@
                                         [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
                                         (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
                                         (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall)) || 
-                                        this.agentFeatures.reqAudioCall && (action.icon === 'phone_callback' || action.icon === 'ondemand_video')||
-                                        this.agentFeatures.reqVideoCall && (action.icon === 'phone_callback' || action.icon === 'ondemand_video')">
+                                        (action.icon === 'phone_callback' || action.icon === 'ondemand_video')"
+                                        >
                                             <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
                                 </div>
