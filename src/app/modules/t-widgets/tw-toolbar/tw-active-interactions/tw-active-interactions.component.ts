@@ -99,6 +99,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         // call the wrapper destroy method
         this.destroyWrapper();
     }
+    
     /**
      * Method to manipulate interaction controls based on the custom events
      * @param data 
@@ -111,6 +112,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             }
         }
     }
+
     /**
      * Trackby for mat tree node
      * @param _index

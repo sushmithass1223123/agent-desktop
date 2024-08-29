@@ -284,7 +284,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult:  this._dialogData.OtherData.type === 'transfer' ? false : this._dialogData.Skill.Consult 
+                consult:  this._dialogData.OtherData?.type === 'transfer' ? false : this._dialogData.Skill.Consult 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
@@ -1187,6 +1187,10 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
 
     private saveToDataServer(channel?) {
+        if(!this.comments || this.comments?.trim() === '') {
+            return;
+        }
+
         const input = {
             type: 'transfer-comment',
             subType: channel ? channel : 'textchat',

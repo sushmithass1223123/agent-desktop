@@ -22,6 +22,7 @@ import { isEqual } from 'lodash';
 import { Subscription } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
+
 /**
  * TwCustomComponent
  */
@@ -195,6 +196,10 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                             {
                                 label: 'OnTMACEvent',
                                 callback: evts => this.sendDataToWindow('onTMACEvent', evts)
+                            },
+                            {
+                                label: 'OnConsultDestinationAgentsListEvent',
+                                callback: evts => this.sendDataToWindow('onTMACEvent', evts)
                             }
                         ]);
                         break;
@@ -213,6 +218,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         // allow custom widget to switch interaction tab in agent desktop
                         this._interactionManagerService.updateInteraction(message.data?.interactionId, message.data?.data);
                 }
+
                 this.logger.info('Message received from custom frame -' + message.name + ':' + JSON.stringify(message), true);
             } catch (error) {
                 this.logger.error('Error in TwCustomComponent.postMessage', error, false);
