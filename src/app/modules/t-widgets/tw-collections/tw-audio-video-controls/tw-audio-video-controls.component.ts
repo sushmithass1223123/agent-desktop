@@ -1218,7 +1218,7 @@ if (error === 'Screenshare Was Cancelled') {
         }
         const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
         const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
-        const videocallonly = this.callType === 'video';
+        const videocallonly = this.callType?.toLocaleLowerCase() === 'video';
         const bothMutedLabels = [
             {
                 key: '#userName',
