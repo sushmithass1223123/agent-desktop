@@ -419,7 +419,7 @@
                                         [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
                                         (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
                                         (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall)) || 
-                                        (action.icon === 'phone_callback' || action.icon === 'ondemand_video')"
+                                        isEscalateAvRequestCall && (action.icon === 'phone_callback' || action.icon === 'ondemand_video')"
                                         >
                                             <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
