@@ -3122,9 +3122,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * @param {'audio' | 'video'} type Type of escalation
      */
     public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
-        this.isEscalateAvRequestCall = true
+        this.DisableAvConstraints.RequestAudioCall = true;
+        this.DisableAvConstraints.RequestVideoCall = true;
         SDKClient.events.on('UpdateParentAgentStatusEvent', () => {
-        this.isEscalateAvRequestCall =false
+        this.DisableAvConstraints.RequestAudioCall = false
+        this.DisableAvConstraints.RequestVideoCall = false
         });
         // Check for parent agent av constraints
         if (avCallConstraints === undefined) {

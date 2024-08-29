@@ -416,11 +416,12 @@
                                         [matTooltip]="action.label"
                                         #actionBtn
                                         (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
-                                        (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
-                                        (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall)) || 
-                                        isEscalateAvRequestCall && (action.icon === 'phone_callback' || action.icon === 'ondemand_video')"
-                                        >
+                                        [disabled]="status !== 'connected' || action.type === 'whiteboard' && createIconButtonDisabled || 
+            (action.type === 'reqAudioCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
+            (action.type === 'reqVideoCall' && ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall)) || 
+            (action.icon === 'phone_callback' || action.icon === 'ondemand_video') && 
+            (DisableAvConstraints?.RequestVideoCall || DisableAvConstraints?.RequestAudioCall)"
+>
                                             <mat-icon >{{ action.icon }}</mat-icon>
                                     </button>
                                 </div>
