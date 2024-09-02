@@ -119,6 +119,7 @@ export class TMACEventService extends SharedWrapper {
 
     private _tmacCommandsArray: TMACCommandType[];
 
+
     private _agentFeatureActionDialog: MatDialogRef<any, any>
 
     /** Events to manipulate AD elements from custom widget */
@@ -814,13 +815,15 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
         try {
         const obj = JSON.parse(evt.JsonData);
 
-        const dateTime = this.getDateTime(obj.ScheduleTime, 'yyyymmddhhmmtt');
+        const contact = JSON.parse(obj.Contact);
+
+        const dateTime = this.getDateTime(contact.ScheduleTime, 'yyyymmddhhmmtt');
 
         let message = this.translocoService.translate('widgets.campaignNotification.message');
         message = message.replace('#agent', SDKClient.getAgentData().agentName).
         replace('#time', '<strong>' + dateTime + '<strong>').
-        replace('#customerName',obj?.Name).
-        replace('#customerPhoneNumber', obj?.PhoneNumber);
+        replace('#customerName',contact.Name).
+        replace('#customerPhoneNumber', contact.PhoneNumber);
 
 
         this._appUIService.showRemiderTaskModal('meeting',message, this.translocoService.translate('widgets.campaignNotification.title'))
@@ -832,7 +835,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
                     "response": response,
                     "agentID": SDKClient.getAgentData().agentId,
                     "extension": SDKClient.getAgentData().deviceId,
-                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], obj.ScheduleTime): ''
+                    "scheduletime": res.split(':')[1] ? this.getUpdatedTCMScheduledTime(res.split(':')[1], contact.ScheduleTime): ''
                   }
             
                   let url = this.appConfig.Main.Urls.TCMClient;
@@ -973,7 +976,16 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
      *
      * @param {TextChatTransferNotificationEvent} evt
      */
-    private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEvent) => {
+        // Checking if a dialog for this event is already open
+        if (this.isDialogOpen.includes(evt.EventName)) {
+        this.logger.info(`TextChatTransferNotificationEvent: ${evt.EventName} dialog is already opened!`, true);
+        return;
+        }
+
+        // Adding the event name to the isDialogOpen array to indicate the dialog is open
+        this.isDialogOpen.push(evt.EventName);
+
         // parse the otherData
         const otherData = JSON.parse(evt.Data);
         // get the type
@@ -990,6 +1002,8 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             .showAppConfirmDialog('generic', `Confirm ${mode} ${upperFirst(type)}`, message)
             .afterClosed()
             .subscribe((resp1) => {
+            // Removing the event name from isDialogOpen array when the dialog is closed
+            this.isDialogOpen = this.isDialogOpen.filter(name => name !== evt.EventName);
                 evt.Response(resp1);
             });
     };
@@ -1804,7 +1818,7 @@ private AgentChangeStatusConfirmationEvent = async (evt: any) => {
             if (logEnabled && data.log) {
                 this.logger.info(`${data.event.EventName} - ${JSON.stringify(data.event)}`);
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**

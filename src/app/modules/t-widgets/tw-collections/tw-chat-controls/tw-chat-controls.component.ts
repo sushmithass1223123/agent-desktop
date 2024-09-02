@@ -68,7 +68,7 @@ import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, Sn
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
-import { map, merge } from 'lodash';
+import { map, merge, sortBy } from 'lodash';
 import * as moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -624,6 +624,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     attachmentConstraints: string[] = [];
     xssSymbolEntityMap: XssSymbolEntityMap = {};
+    /**
+     * Property to disable and enable request to AV
+     */
+    isOnAVCall: 'audio' | 'video' | null = null;
+    /**
+     * Flag to decide whether to sanitize agent inputs or not
+     */
+    enableAgentMessageSanitization: boolean = false;
 
     /**
      * Constructor
@@ -708,6 +716,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             '\n': '&#10;',
             '\r': '&#13;'
         };
+        this.enableAgentMessageSanitization = this.data.Data.EnableAgentMessageSanitization ?? false;
 
         this.registerToEvents();
 
@@ -1093,6 +1102,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const data = {
             messageId: evt.EventId,
             type: 'text',
+            systemMessage: false,
             message: evt.Message,
             replyId: '',
             replyJson: null, // TODO:: to implement reply
@@ -1115,10 +1125,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         data.attachment = {
                             src: json.msg.content.url,
                             type: json.msg.type,
-                            name: ''
+                            name: json.msg?.content?.name ?? ''
                         };
-                        //  TODO:: when caption for image is implemented, this can be changed
-                        data.message = '';
+                        data.message = json.msg?.content?.text ?? '';
                     } else {
                         // not an attachment from SMM
                         data.message = json.msg;
@@ -1128,6 +1137,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     // message from livechat
                     data.messageId = json.messageId;
                     data.type = json.type === 'attachment' ? json.attachment.type : json.type;
+                    data.systemMessage = json.systemMessage;
                     data.message = json.message;
                     data.replyId = json.replyId;
                     data.attachment = json.attachment ? json.attachment : null;
@@ -1172,7 +1182,28 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const getTranscript = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
             repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
         }
+        if(data.systemMessage) {
+            if(data.message.includes('Agent')) {        
+                // Incase the agentname is not sent from VIVR
+                // message will be Ex: 'Agent has missed the call'
+                //so we replace Agent with AgentName here
+                //Ex: 'David has missed the call' 
+                //This happens when VIVR has missed the key in configuration
+                data.message = data.message.replace('Agent', 'You');
+                data.message = data.message.replace("has", "have")
+            } else if(data.message.includes(this.user.agentName.split(' ')[0])) {
+                //Ex: 'David has missed the call' 
+                //incase of conference call: if its from the other agent we can show it as it is
+                // For normal call we can replace it with 'You have missed the call'
+                //If agentname is sent from VIVR compare with AD Agent FirstName 
+                //and if both are same replace with 'You'
+                data.message = data.message.replace(this.user.agentName.split(' ')[0], 'You')
+                data.message = data.message.replace("has", "have")
+            }
+        }
 
+        
+        
         // add message to the transcripts
         this.pushToTranscript({
             who: user,
@@ -1180,12 +1211,13 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             position: user === this.customerName ? 'left' : 'right',
             messageId: data.messageId,
             message: data.message,
-            type: data.attachment?.type || 'text',
+            type: data.attachment?.type || data.type,
             time: new Date(),
             attachment: {
                 ...data.attachment,
                 angle: 0
             },
+            dividerMessage: data.systemMessage,
             repliedToMessage: repliedMsg
         });
 
@@ -1358,7 +1390,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private sendMessage(template: any, isAutomated?): void {
         // get the typed message
         let inputMessage = template?.Text || this.replyForm.form.value.message;
-        inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
+        if(!this.isSMM && this.enableAgentMessageSanitization) {
+            inputMessage = this.sanitize.sanitize(1, this.encodedStr(inputMessage));
+        }
         const messageId = `a_${TUtils.Generic.uuid()}`;
         let messageData = inputMessage;
         let templateId = template?.ID ?? '';
@@ -1514,6 +1548,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (this.callWidget) {
             return;
         }
+        this.isOnAVCall = param; // Setting to 'audio' or 'video' depending on the call type
+
+        SDKClient.events.on('UpdateParentAgentStatusEvent', () => {
+            this.isOnAVCall = null; // Reseting to null when the call ends
+        });
 
         // freeze auto response if needed
         this.freezeAutoResponse(false);
@@ -1849,8 +1888,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // check the response
             if (response && response.ResultCode === 0) {
                 this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+
+                this._tmacEventService._uiControlsEvents.next({eventName: 'enableStatusChange'});
+
                 // remove the interaction reference
                 this._interactionManagerService.removeInteraction(response.InteractionID);
+
             } else {
                 // enable if something goes wrong
                 if (this.closeButton) {
@@ -1936,6 +1979,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
 
         this.status = 'connected';
+        this.interactionOnHold.loading = false;
         // get the customer name
         this.customerName = evt.ScreenName || 'Customer';
         // get the customer CIF
@@ -2393,11 +2437,39 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * To handle InteractionDataEvent
      */
-    InteractionDataEvent(evt: InteractionDataEvent): void {
+    async InteractionDataEvent(evt: InteractionDataEvent): Promise<void> {
+        let transferComments = [];
         // check the channel
         if (evt.Channel !== 'TextChat') {
             return;
         }
+
+        // check if any tranfer comments added
+
+        await SDKClient.getDataFromDataServer({
+            query: "Type == \"transfer-comment\" AND SubType == \"textchat\"",
+            instance: ""
+        })  
+        .then((r) => {
+            if (r && r !== null) {
+                r.response.forEach(msg => {
+                    if(this.interaction.SessionId.toString() === msg.Key) {
+                        let m = JSON.parse(msg.Data)
+
+                        this.commentsAdded = true;
+                        transferComments.push({
+                            Message: m.comment,
+                            Time: m.date,
+                            User: msg.InsertedBy
+                        })
+                    }
+                });
+                this.logger.info('Getting transfer comment data');
+            }
+        }).catch(e => {
+            console.log('Error occured during Get data from data server', e);
+        })
+
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
             this.commentsAdded = true;
@@ -2410,6 +2482,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 });
             });
         }
+        this.savedComments = sortBy([...transferComments,...this.savedComments], 'Time');
     }
 
     /**
