@@ -17,7 +17,7 @@ export * from './tw-compose-messaging.interface';
 export * from './tw-create-interaction.interface';
 export * from './tw-custom.interface';
 export * from './tw-customer-details.interface';
-export * from './tw-smm-customer-details.interface';
+export * from './tw-smp-customer-details.interface';
 export * from './tw-customer-journey.interface';
 export * from './tw-customer-sentiment.interface';
 export * from './tw-deflect-to-digital.interface';

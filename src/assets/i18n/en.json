@@ -67,7 +67,8 @@
         "changeStatusError": "Change status error, please try again!",
         "msDisconnectedMsg": "Media Server disconnected !! Please wait...",
         "msReconnectedMsg": "Media Server re-connected successfully",
-        "msStatusWarningMsg": "Something went wrong with Media server !! Please wait..."
+        "msStatusWarningMsg": "Something went wrong with Media server !! Please wait...",
+        "statusChangeDisabled": "Status change is not allowed !!"
     },
     "global": {
         "commonErrorMessage": "Something went wrong",
@@ -243,7 +244,9 @@
             "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
             "postEditedDialogMessage": "Post has been edited!",
             "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed.",
-            "invalidDraftTrigger": "Invalid data for saving reply as draft."
+            "invalidDraftTrigger": "Invalid data for saving reply as draft.",
+            "closeDraftConfirmationHeader": "Close confirmation",
+            "closeDraftConfirmationBody": "Are you sure to permenantly delete the drafted message ?"
         },
         "voiceControls": {
             "reset": "Reset",
@@ -284,7 +287,8 @@
             "sendDTMFFailed": "DTMF send failed",
             "sendDTMFError": "Error in sending DTMF",
             "ivrTransferSuccess": "Transferred to IVR successfully",
-            "ivrTransferError": "Error in transfer to IVR"
+            "ivrTransferError": "Error in transfer to IVR",
+            "customerDisconnected": "Customer has disconnected!"
         },
         "userLocation": {
             "locationNotFound": "Location not found",
@@ -843,6 +847,7 @@
             "transferTextChatToQueueFailed": "Chat #type to queue failed, ",
             "transferTextChatToQueueError": "Chat #type to queue error, please try again",
             "transferChatDefaultError": "Error: No row selected to transfer chat",
+            "alreadySent":"Already sent a request, please wait...",
             "transferEmailSuccess": "Email transferred to #transferTo successfully",
             "transferEmailAgentStateInvalid": "Agent #agentName is not in valid state",
             "transferEmailFailed": "Email transfer failed",
@@ -1134,7 +1139,9 @@
             "cancel": "Cancel",
             "close": "Close",
             "ok": "Ok",
-            "done": "Done"
+            "done": "Done",
+            "yes": "Yes",
+            "no": "No"
         },
         "annotation": {
             "sketch": "Sketch",

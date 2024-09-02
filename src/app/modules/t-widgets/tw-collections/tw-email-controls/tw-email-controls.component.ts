@@ -47,7 +47,7 @@ import {
 import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
 import { format, parse } from 'date-fns';
-import { merge } from 'lodash';
+import { merge, sortBy } from 'lodash';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
@@ -395,6 +395,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
 
         this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
+        this.getTransferComments();
     }
 
     /**
@@ -509,6 +510,36 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     // -----------------------------------------------------------------------------------------------------
 
     /**
+     * Method to check if any comments added during transfer for this interaction
+     */
+    async getTransferComments() {
+
+        await SDKClient.getDataFromDataServer({
+            query: "Type == \"transfer-comment\" AND SubType == \"email\"",
+            instance: ""
+        })  
+        .then((r) => {
+            if (r && r.response && r.response !== null) {
+                r.response.forEach(msg => {
+                    if(this.currentInteraction.InSessionId.toString() === msg.Key) {
+                        let m = JSON.parse(msg.Data)
+
+                        // this.commentsAdded = true;
+                        this.savedComments.push({
+                            Message: m.comment,
+                            Time: m.date,
+                            User: msg.InsertedBy
+                        })
+                    }
+                });
+                this.logger.info('Getting transfer comment data');
+            }
+        }).catch(e => {
+            console.log('Error occured during Get data from data server', e);
+        })
+    }
+
+    /**
      * To handle InteractionDataEvent
      */
     private InteractionDataEvent(evt: InteractionDataEvent): void {
@@ -527,6 +558,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 });
             });
         }
+
+        this.savedComments = sortBy(this.savedComments, 'Time');
     }
 
     /**
@@ -1490,6 +1523,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         //         Columns: skillConfig.Columns
         //     }
         // };
+
+        if(SENT_REASONS.includes(this.currentInteraction.RouteReason)) {
+            this._appUIService.showSnackbar('Trasferring an email which is pulled from `Sent Item` box is not possible !!', 'failure');
+            return;
+        }
 
         const transferConfig = this.data.Data.Transfer ?? {};
         let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Email');
