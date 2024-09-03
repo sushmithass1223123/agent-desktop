@@ -213,6 +213,11 @@ export const AppConfirmDialogConstants: Record<
         message: 'Are you sure to end this interaction?',
         type: 'endInteraction'
     },
+    endCall: {
+        title: 'Confirm End',
+        message: 'Are you sure you want to disconnect the call?',
+        type: 'endCall'
+    },
     closeInteraction: {
         title: 'Confirm Close',
         message: 'Are you sure to close this interaction?',
