@@ -302,7 +302,7 @@ export interface ReminderTaskDialogData {
     type: ReminderTaskDialogTypes;
 }
 
-export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout' | 'generic';
+export type AppConfirmDialogTypes = 'takeoverSession' | 'endInteraction' | 'closeInteraction' | 'logout' | 'generic' | 'endCall';
 
 export interface AppConfirmDialogData {
     /**

@@ -1556,7 +1556,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     confirmDisconnectCall(btn: MatButton): void {
         // config force login
-        this.dialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        this.dialogRef = this._appUIService.showAppConfirmDialog('endCall');
         this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server
