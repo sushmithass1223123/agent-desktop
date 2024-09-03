@@ -1940,6 +1940,11 @@
                                                         " ": "&nbsp;",
                                                         "\n": "&#10;",
                                                         "\r": "&#13;"
+                                                    },
+                                                    "SMM": {
+                                                        "attachments": {
+                                                            "allowedChannels": "line,whatsapp,we,fb,viber,telegram,twitter"
+                                                        } 
                                                     }
                                                 }
                                             },
@@ -2801,10 +2806,10 @@
                                                 },
                                                 "Data": {
                                                                     
-                                                        "SocialMediaAPIs": [
+                                                    "SocialMediaAPIs": [
                                                             "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
                                                             "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
-                                                        ],
+                                                    ],
                                                     "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
                                                     "UpdateMethodName": "UpdateCustomerDetails",
                                                     "EditAllowed": true,
