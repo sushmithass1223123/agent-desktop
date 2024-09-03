@@ -769,7 +769,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             signature: this.widgetData.SignatureAllowed ?? false,
             whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
             cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
-            attachments: this.widgetData.AttachmentAllowed ?? false,
+            attachments: this.canAddAttachment() ?? false,
             emoji: this.widgetData.EmojiAllowed ?? false,
             chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
             conference: this.widgetData.Conference?.Allowed ?? false,
@@ -2980,6 +2980,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     public canReplyToChat(): boolean {
         return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
+    }
+
+    /**
+     * Method to check if attachment feature is enabled in case of SMM chats
+     * @returns true / false 
+     */
+    public canAddAttachment(): boolean {
+        return this.widgetData.AttachmentAllowed && (!this.isSMM || (this.isSMM &&
+             this.widgetData.SMM?.attachments?.allowedChannels?.toLowerCase()?.includes(this.channel?.toLowerCase())));
     }
 
     /** 
