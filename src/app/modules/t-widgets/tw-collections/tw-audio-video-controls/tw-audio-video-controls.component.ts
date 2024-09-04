@@ -1674,6 +1674,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method destroyWidget
      */
     private destroyWidget(): void {
+        this.hold = false;
         if (!this.data.Config.AOT) return;
 
         // close the audio call widget
