@@ -495,7 +495,7 @@
                                             {
                                                 "id": "postalCode",
                                                 "type": "text",
-                                                "title": "Phone",
+                                                "title": "'Post Code",
                                                 "maxValue": 100,
                                                 "disabled": false,
                                                 "placeHolder": "Postal Code",
