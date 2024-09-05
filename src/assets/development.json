@@ -357,190 +357,6 @@
                             ],
                             "Dynamic": [
                                 {
-                                    "Name": "SMM View Customer Details",
-                                    "Description": "",
-                                    "Type": "tw-smp-customer-details",
-                                    "Config": {
-                                        "Enabled": true,
-                                        "Hidden": false,
-                                        "Static": false,
-                                        "Anchor": false,
-                                        "AOT": false,
-                                        "AutoOpen": false,
-                                        "Icon": "person",
-                                        "Class": "",
-                                        "Position": { "X": 4, "Y": 2 },
-                                        "Actions": ["maximize", "float"],
-                                        "ViewState": "restore",
-                                        "Header": true,
-                                        "Pinned": false
-                                    },
-                                    "Data": {
-                                        "SocialMediaAPIs": [
-                                            "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
-                                            "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
-                                        ],
-                                        "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
-                                        "UpdateMethodName": "UpdateCustomerDetails",
-                                        "EditAllowed": true,
-                                        "ControlFields": [
-                                            {
-                                                "id": "customerID",
-                                                "type": "text",
-                                                "title": "Customer Id",
-                                                "maxValue": 100,
-                                                "disabled": true,
-                                                "placeHolder": "Customer ID",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "salutation",
-                                                "type": "text",
-                                                "title": "Salutation",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Salutation",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "firstName",
-                                                "type": "text",
-                                                "title": "First Name",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "First Name",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "lastName",
-                                                "type": "text",
-                                                "title": "Last Name",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Last Name",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "cif",
-                                                "type": "text",
-                                                "title": "CIF",
-                                                "disabled": false,
-                                                "placeHolder": "Customer Identification Number",
-                                                "maxValue": 100,
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "secondaryCIF",
-                                                "type": "text",
-                                                "title": "Secondary Cif",
-                                                "disabled": false,
-                                                "maxValue": 100,
-                                                "placeHolder": "Secondary CIF",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "email",
-                                                "type": "email",
-                                                "title": "Email",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Email",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "phone",
-                                                "type": "tel",
-                                                "title": "Phone",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Phone",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "address",
-                                                "type": "text",
-                                                "title": "Address",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Address",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "city",
-                                                "type": "text",
-                                                "title": "City",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "City",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "state",
-                                                "type": "text",
-                                                "title": "State",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "State",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "country",
-                                                "type": "text",
-                                                "title": "Country",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Country",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "postalCode",
-                                                "type": "text",
-                                                "title": "'Post Code",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Postal Code",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "secondaryPhone",
-                                                "type": "tel",
-                                                "title": "Secondary Phone",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Secondary Phone",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "secondaryEmail",
-                                                "type": "email",
-                                                "title": "Secondary Email",
-                                                "maxValue": 100,
-                                                "disabled": false,
-                                                "placeHolder": "Secondary Email",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "lastChangedBy",
-                                                "type": "text",
-                                                "title": "Last Changed By",
-                                                "maxValue": 100,
-                                                "disabled": true,
-                                                "placeHolder": "Last Changed By",
-                                                "visible": true
-                                            },
-                                            {
-                                                "id": "lastChangedOn",
-                                                "type": "text",
-                                                "title": "Last Changed On",
-                                                "maxValue": 100,
-                                                "disabled": true,
-                                                "placeHolder": "Last Changed On",
-                                                "visible": false
-                                            }
-                                        ]
-                                    }
-                                },
-                                {
                                     "Name": "Bookmarks",
                                     "Description": "",
                                     "Key": "Bookmarks",
@@ -2802,7 +2618,7 @@
                                                 "Data": {
                                                                     
                                                         "SocialMediaAPIs": [
-                                                            "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+                                                            "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
                                                             "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
                                                         ],
                                                     "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
@@ -2874,11 +2690,11 @@
                                                         },
                                                         {
                                                             "id": "phone",
-                                                            "type": "tel",
+                                                            "type": "text",
                                                             "title": "Phone",
-                                                            "maxValue": 100,
+                                                            "maxValue": 10,
                                                             "disabled": false,
-                                                            "placeHolder": "Phone",
+                                                            "placeHolder": "0123456789",
                                                             "visible": true
                                                         },
                                                         {

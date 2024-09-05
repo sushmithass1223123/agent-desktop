@@ -9,6 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { InteractionRef } from 'app/interfaces';
+import { validateEmail, validatePhone } from 'app/utils';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Custommer details widget
@@ -210,10 +212,13 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                                                             "visible": false
                                                         }
                                                     ];
+    receivedData: TwCustomerInfo;
  
     constructor(private _tmacEventService: TMACEventService, private httpClient: HttpClient,
         private _appUIService: AppUiService, 
-        private _interactionManagerService: InteractionManagerService    ) {
+        private _interactionManagerService: InteractionManagerService ,
+        private translocoService: TranslocoService,
+    ) {
         super('TwSmmCustomerDetailsComponent');
     }
 
@@ -250,7 +255,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             interactions
                 .filter((i: InteractionRef) => i.type === 'smp')
                 .map((i) => {
-                    if(this.interactionId === i.interactionId) {
+                    if(i.isActive) {
+                        this.interactionId = i.interactionId;
                         console.log("This.interactionId: ", this.interactionId, i)
                         this.customerId = JSON.parse(i.otherData?.JsonData).CustomerId;
                         this.getCustomerDetails();
@@ -284,7 +290,28 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             updateUrl = "https://webhook.site/17f9233b-b42f-4d75-9c2a-5d8740054d95";
         }
        let data = {};
+       if(this.formData.email && this.formData.email != '-') {
+        if (!validateEmail(this.formData.email)) {
+            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.invalidEmailAddress'), 'failure');
+            return false;
+        }
+       }
+       
+       if(this.formData.phone && this.formData.phone != '-') {
+        if (!validatePhone(this.formData.phone)) {
+            this._appUIService.showSnackbar("Please enter a valid 10 digit phone number", 'failure');
+            return false;
+        }
+       }
+       // used to check if the data is changed
+       //if not then update is not called
+       
+       let changed = false;
         Object.entries(this.formData).forEach(element => {
+            
+            if(this.receivedData[element[0]] != element[1]) {
+                changed = true;
+                }
             if( element[1] == '-')
             {
                 element[1] = '';
@@ -292,9 +319,19 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             } else {
                 data[element[0]] = element[1];
             }
+
         });
+        if(!changed) {
+                    console.log("Nothing Changed");
+                    this._appUIService.showSnackbar("Nothing Changed");
+                    return
+                }
+        
         let date = moment().format('yyyy-MM-DDThh:mm:ssZ');
         this.formData.lastChangedOn = date.toString();
+        data['lastChangedOn'] = date.toString();
+        this.receivedData = this.formData;
+        console.log("LastChangedOn: ", this.data)
         this.formData.lastChangedBy = SDKClient.getAgentData().agentName;
         this.httpClient.post(updateUrl, data)
         .subscribe((res: any) => {            
@@ -356,6 +393,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                         this.formData[element] = '-';
                 });
                  this.formData.lastChangedOn = new Date(this.formData.lastChangedOn).toString();
+                 console.log("LastChangedOn: ", this.formData.lastChangedOn);
+                 this.receivedData =  { ...this.formData };
             }
         });
         return this.formData;
