@@ -302,6 +302,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             this._appUIService.showSnackbar("Please enter a valid 10 digit phone number", 'failure');
             return false;
         }
+    }
 
         if(this.formData.secondaryEmail && this.formData.secondaryEmail != '-') {
             if (!validateEmail(this.formData.secondaryEmail)) {
