@@ -21,7 +21,9 @@
                         [ngClass]="
                             item.status +
                             (item.interactionId === interaction?.InteractionID ? ' active' : '') +
-                            (item.status === 'incoming' ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                            (item.status === 'incoming'
+                                ? ' animate__animated animate__flash animate__infinite animate__slow'
+                                : '')
                         "
                         matTooltip="{{ item.user }}"
                         matTooltipPosition="after"
@@ -40,11 +42,18 @@
                             </div>
                             <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon *ngIf="!callLines.length">construction</mat-icon>
-                                <mat-icon *ngIf="callLines.length" [matMenuTriggerFor]="sessionsMenu" class="twd-cursor-pointer"
+                                <mat-icon
+                                    *ngIf="callLines.length"
+                                    [matMenuTriggerFor]="sessionsMenu"
+                                    class="twd-cursor-pointer"
                                     >construction</mat-icon
                                 >
                                 {{ sessionID + '|' + (interaction?.InteractionID || 'NA') }}
-                                <mat-menu #sessionsMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
+                                <mat-menu
+                                    #sessionsMenu="matMenu"
+                                    [overlapTrigger]="false"
+                                    class="agent-info-menu custom"
+                                >
                                     <div *ngFor="let item of callLines" mat-menu-item class="twd-flex twd-items-center">
                                         <mat-icon>construction</mat-icon>
                                         <span>{{ item }}</span>
@@ -60,7 +69,9 @@
                                     {{ (duration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
                                 </div>
                             </div>
-                            <div *ngIf="isMSCall && mos" class="twd-flex twd-flex-row twd-items-center"><mat-icon>wifi</mat-icon> {{ mos }}</div>
+                            <div *ngIf="isMSCall && mos" class="twd-flex twd-flex-row twd-items-center">
+                                <mat-icon>wifi</mat-icon> {{ mos }}
+                            </div>
                             <div class="twd-flex twd-flex-row twd-items-center">
                                 <mat-icon>directions</mat-icon> <span>{{ direction }}</span>
                             </div>
@@ -73,7 +84,10 @@
                         </div>
 
                         <ng-container *ngIf="voiceControlsService.cannedAudioPlayer as audioPlayer">
-                            <div *ngIf="audioPlayer" class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center">
+                            <div
+                                *ngIf="audioPlayer"
+                                class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center"
+                            >
                                 <button
                                     *ngIf="audioPlayer._adpState === 'paused'"
                                     mat-icon-button
@@ -101,7 +115,9 @@
                                     <mat-icon>stop</mat-icon>
                                 </button>
                                 <marquee direction="left"
-                                    >{{ locale('widgets.voiceControls.currentlyPlaying') }} '{{ audioPlayer.fileName }}'</marquee
+                                    >{{ locale('widgets.voiceControls.currentlyPlaying') }} '{{
+                                        audioPlayer.fileName
+                                    }}'</marquee
                                 >
                             </div>
                         </ng-container>
@@ -112,7 +128,11 @@
                         class="twd-flex twd-flex-row twd-flex-full px-12 border-radius-30 position-relative ivr-history"
                     >
                         <div class="ivr-label">
-                            {{ direction === 'Out' ? locale('widgets.voiceControls.callFlow') : locale('widgets.voiceControls.ivrHistory') }}
+                            {{
+                                direction === 'Out'
+                                    ? locale('widgets.voiceControls.callFlow')
+                                    : locale('widgets.voiceControls.ivrHistory')
+                            }}
                         </div>
                         <!-- <ul class="breadcrumbs">
                             <li>
@@ -128,7 +148,9 @@
                                 <span>{{ last4IVR[3] || 'NA' }}</span>
                             </li>
                         </ul> -->
-                        <div class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-items-center twd-px-1 twd-py-2 twd-w-full">
+                        <div
+                            class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-items-center twd-px-1 twd-py-2 twd-w-full"
+                        >
                             <div
                                 class="timeline-item twd-grid twd-flex-1 twd-px-2"
                                 [ngClass]="timelineItemColors[i % 4]"
@@ -212,7 +234,9 @@
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
                             [disabled]="status !== 'connected'"
-                            [matTooltip]="muted ? locale('widgets.voiceControls.unmute') : locale('widgets.voiceControls.mute')"
+                            [matTooltip]="
+                                muted ? locale('widgets.voiceControls.unmute') : locale('widgets.voiceControls.mute')
+                            "
                             (click)="muteUnMuteCall()"
                             [ngClass]="{ 'mat-warn': muted }"
                         >
@@ -283,7 +307,10 @@
                             color="default"
                             class="mat-elevation-z2"
                             [ngClass]="customFuse.anchor?.body"
-                            [disabled]="status !== 'connected' || (tempCallRef?.isConsult && tempCallRef?.status !== 'connected')"
+                            [disabled]="
+                                status !== 'connected' ||
+                                (tempCallRef?.isConsult && tempCallRef?.status !== 'connected')
+                            "
                             [matTooltip]="locale('widgets.voiceControls.dialpad')"
                             (click)="openDialpad = !openDialpad"
                             cdkOverlayOrigin
@@ -299,20 +326,33 @@
                                 cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                 (overlayOutsideClick)="openDialpad = false"
                             >
-                                <div class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col">
+                                <div
+                                    class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col"
+                                >
                                     <div
                                         class="twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1 border border-radius-20 twd-flex twd-flex-row twd-justify-between twd-items-center"
                                     >
                                         <div>
                                             {{ dialedNumbers }}
                                         </div>
-                                        <button mat-button mat-icon-button color="warn" aria-label="Clear" (click)="dialedNumbers = ''">
+                                        <button
+                                            mat-button
+                                            mat-icon-button
+                                            color="warn"
+                                            aria-label="Clear"
+                                            (click)="dialedNumbers = ''"
+                                        >
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </div>
 
                                     <div class="dialpad twd-flex twd-flex-row twd-flex-wrap twd-justify-center">
-                                        <button *ngFor="let item of dialpadNumbers" mat-icon-button mat-stroked-button (click)="dialpadClick(item)">
+                                        <button
+                                            *ngFor="let item of dialpadNumbers"
+                                            mat-icon-button
+                                            mat-stroked-button
+                                            (click)="dialpadClick(item)"
+                                        >
                                             {{ item.key }}
                                         </button>
                                     </div>
@@ -350,7 +390,10 @@
                             color="default"
                             class="mat-elevation-z2"
                             [ngClass]="
-                                customFuse.anchor?.body + (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
+                                customFuse.anchor?.body +
+                                (commentsAdded
+                                    ? ' animate__animated animate__flash animate__infinite animate__slow'
+                                    : '')
                             "
                             [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="commentsAdded = false; saveInteractionComments()"
@@ -367,7 +410,11 @@
                             (click)="confirmCloseInteraction(closeBtn)"
                             [matTooltip]="locale('interactionComponent.closeInteraction')"
                         >
-                            {{ failedCounter >= 3 ? locale('widgets.voiceControls.forceClose') : locale('interactionComponent.close') }}
+                            {{
+                                failedCounter >= 3
+                                    ? locale('widgets.voiceControls.forceClose')
+                                    : locale('interactionComponent.close')
+                            }}
                         </button>
 
                         <br />
@@ -387,7 +434,7 @@
 
                         <button
                             *ngIf="tempCallRef?.isConsult"
-                            [disabled]="tempCallRef.status !== 'connected'"
+                            [disabled]="tempCallRef.status !== 'connected' || isCustomerDisconnected"
                             mat-raised-button
                             class="border-radius-20"
                             color="primary"
@@ -417,7 +464,13 @@
 
         <!-- For web phone -->
         <div hidden>
-            <audio *ngFor="let item of msAudioStreams" autoplay playsinline="true" [srcObject]="item.stream" id="{{ item.stream.id }}"></audio>
+            <audio
+                *ngFor="let item of msAudioStreams"
+                autoplay
+                playsinline="true"
+                [srcObject]="item.stream"
+                id="{{ item.stream.id }}"
+            ></audio>
         </div>
     </tw-wrapper>
 
@@ -425,7 +478,10 @@
         <shared-wrapper icon="call" title="Make Call" [loading]="false">
             <div *transloco="let locale" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
                 <form (ngSubmit)="makeCallDialogRef?.close(true)" class="twd-flex twd-items-center twd-gap-2">
-                    <mat-form-field class="form-field custom pb-0 with-border twd-pb-0 twd-flex-1 twd-max-w-9/12" appearance="outline">
+                    <mat-form-field
+                        class="form-field custom pb-0 with-border twd-pb-0 twd-flex-1 twd-max-w-9/12"
+                        appearance="outline"
+                    >
                         <input
                             class="login-input"
                             matInput
