@@ -302,10 +302,23 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             this._appUIService.showSnackbar("Please enter a valid 10 digit phone number", 'failure');
             return false;
         }
+
+        if(this.formData.secondaryEmail && this.formData.secondaryEmail != '-') {
+            if (!validateEmail(this.formData.secondaryEmail)) {
+                this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.invalidEmailAddress'), 'failure');
+                return false;
+            }
+           }
+           
+           if(this.formData.secondaryPhone && this.formData.secondaryPhone != '-') {
+            if (!validatePhone(this.formData.secondaryPhone)) {
+                this._appUIService.showSnackbar("Please enter a valid 10 digit phone number", 'failure');
+                return false;
+            }
        }
        // used to check if the data is changed
        //if not then update is not called
-       
+
        let changed = false;
         Object.entries(this.formData).forEach(element => {
             
