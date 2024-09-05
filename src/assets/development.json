@@ -1944,7 +1944,7 @@
                                                     "SMM": {
                                                         "attachments": {
                                                             "allowedChannels": "line,whatsapp,we,fb,viber,telegram,twitter"
-                                                        } 
+                                                        }
                                                     }
                                                 }
                                             },
@@ -2805,10 +2805,9 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                                    
                                                     "SocialMediaAPIs": [
-                                                            "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
-                                                            "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
+                                                        "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+                                                        "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
                                                     ],
                                                     "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
                                                     "UpdateMethodName": "UpdateCustomerDetails",
