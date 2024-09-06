@@ -1835,12 +1835,22 @@ private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEv
     }
 
     /**
+     * To remove interaction events from the array by interaction id
+     *
+     * @param interactionId
+     */
+    removeInteractionEventsById(interactionId: number): void {
+        // remove the events for the InteractionID
+        this._interactionEventArray = this._interactionEventArray.filter((f) => f.InteractionID !== interactionId);
+    }
+
+    /**
      * To remove non interaction events
      * @param eventName
      */
     removeNonInteractionEvents(eventName: CustomTMACEventTypes[]): void {
         // remove the events for the InteractionID
-        this._nonInteractionEventArray = this._interactionEventArray.filter((f) => !eventName.some((s) => s === f.EventName));
+        this._nonInteractionEventArray = this._nonInteractionEventArray.filter((f) => !eventName.some((s) => s === f.EventName));
     }
 
     /**

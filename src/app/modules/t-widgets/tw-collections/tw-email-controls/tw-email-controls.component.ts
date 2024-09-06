@@ -503,6 +503,11 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWrapper();
         this.uiActionEventService.removeUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
         this.sendTimerId && clearTimeout(this.sendTimerId);
+        // Remove interaction events from tmac events array
+        this._tmacEventService.removeInteractionEvents(this.interactionId, [
+            'InteractionDataEvent',
+            'UpdateEmailEvent'
+        ])
     }
 
     // -----------------------------------------------------------------------------------------------------
