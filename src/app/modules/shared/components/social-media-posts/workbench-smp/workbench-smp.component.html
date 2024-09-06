@@ -19,7 +19,7 @@
         <div
             *transloco="let locale"
             #smpWorkbench
-            class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-flex twd-relative"
+            class="smp-workbench twd-w-full twd-h-full twd-py-2 twd-pr-2 twd-flex twd-relative"
             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
         >
             <!-- Tab side bar container -->
@@ -46,10 +46,10 @@
                 </div>
             </div>
 
-            <div class="twd-w-full twd-grid twd-grid-cols-3 twd-gap-2 twd-px-2">
+            <div class="twd-w-full theme-bg wbsmp twd-grid border-radius-20 twd-grid-cols-3 twd-gap-2">
                 <!-- Side body -->
                 <div
-                    class="theme-bg border-radius-20 twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
+                    class="theme-bg wbsmp-left twd-h-full twd-overflow-hidden twd-col-span-3 lg:twd-col-span-1 twd-flex twd-flex-col"
                     [ngClass]="{
                         'twd-justify-center': noTabsAvailable
                     }"
@@ -193,10 +193,9 @@
                                 <!-- Post list -->
                                 <div class="posts-list twd-w-full" *ngIf="segregatedPosts.length">
                                     <div
-                                        class="twd-w-full twd-rounded-3xl ng-tns-c543-38 red-200 dropdowns twd-pb-2 {{
+                                        class="twd-w-full twd-relative twd-rounded-3xl ng-tns-c543-38 dropdowns twd-pb-2 {{
                                             'getObjectKeyString' | ObjectPipe: channel:[]
                                         }}"
-                                        [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
                                         *ngFor="let channel of segregatedPosts"
                                     >
                                         <ng-container
@@ -210,20 +209,20 @@
                                                         [id]="derivedData1.channel"
                                                         (click)="toggleDropdown(derivedData1.channel)"
                                                         role="button"
-                                                        >arrow_drop_down_circle</mat-icon
+                                                        >keyboard_arrow_down</mat-icon
                                                     >
                                                     <img
                                                         class="sc-icon"
                                                         src="assets/images/vectors/{{ derivedData1.channel }}.svg"
                                                         alt="Facebook Icon"
                                                     />
-                                                    <p>{{ derivedData1.channel }}</p>
+                                                    <p style="text-transform: capitalize">{{ derivedData1.channel }}</p>
                                                 </div>
                                                 <p>({{ channel.skillCount }})</p>
                                             </div>
                                             <!-- Level 1 dropdown -->
                                             <div
-                                                class="dropdown-l1 twd-w-full twd-pl-5 {{ derivedData1.channel }}-{{
+                                                class="dropdown-l1 twd-w-full twd-pl-2 {{ derivedData1.channel }}-{{
                                                     ('split'
                                                         | MiscellaneousPipe
                                                             : ('getObjectKeyString' | ObjectPipe: skill:[])
@@ -259,7 +258,7 @@
                                                                             derivedData2.splittedSkill
                                                                     )
                                                                 "
-                                                                >arrow_drop_down_circle</mat-icon
+                                                                >keyboard_arrow_down</mat-icon
                                                             >
                                                             <p>
                                                                 {{ derivedData2.replacedSkill }}
@@ -268,11 +267,11 @@
                                                         <p>({{ skill.itemCount }})</p>
                                                     </div>
                                                     <!-- Level 2 dropdown -->
-                                                    <div class="post-list-flex twd-w-full twd-pl-5">
+                                                    <div class="post-list-flex twd-w-full twd-pl-2">
                                                         <div
                                                             mat-ripple
                                                             (click)="openPost(post)"
-                                                            class="post-list mat-elevation-z1 twd-w-full twd-relative twd-rounded-3xl twd-p-3"
+                                                            class="post-list twd-w-full twd-relative twd-rounded-3xl twd-p-3"
                                                             [ngClass]="
                                                                 ('activeCommentValidator'
                                                                 | SMPPipe
@@ -289,98 +288,108 @@
                                                             "
                                                             *ngFor="let post of 'getObjectValue' | ObjectPipe: skill:[]"
                                                         >
-                                                            <h5 class="font-weight-700 poster">
-                                                                {{
-                                                                    'replace'
-                                                                        | MiscellaneousPipe
-                                                                            : post.PostData.From
-                                                                            : ['@social-media.com', '']
-                                                                }}
-                                                            </h5>
-                                                            <p class="twd-truncate font-weight-500">
-                                                                {{ post.PostData.Subject }}
-                                                            </p>
-
-                                                            <!-- Comment reaction indicator -->
-                                                            <img
-                                                                *ngIf="
-                                                                    chosenPostData &&
-                                                                    notificationAction === 'smrc_a' &&
-                                                                    ('activeCommentValidator'
-                                                                        | SMPPipe
-                                                                            : post
-                                                                            : [
-                                                                                  currentTab,
-                                                                                  selectedPostId,
-                                                                                  selectedPostSessionId,
-                                                                                  selectedPostOutSessionId
-                                                                              ])
-                                                                "
-                                                                class="not-rimg"
-                                                                src="assets/images/vectors/{{
-                                                                    'replaceAll'
-                                                                        | MiscellaneousPipe
-                                                                            : chosenPostData?.SocialMediaData
-                                                                                  ?.Engagement?.reactionType
-                                                                            : [' ', '']
-                                                                }}.svg"
-                                                            />
-
-                                                            <!-- Delete / Edit icon indicator -->
-                                                            <mat-icon
-                                                                *ngIf="
-                                                                    chosenPostData &&
-                                                                    (notificationAction === 'smc_e' ||
-                                                                        notificationAction === 'smco_e' ||
-                                                                        notificationAction === 'smp_e') &&
-                                                                    ('activeCommentValidator'
-                                                                        | SMPPipe
-                                                                            : post
-                                                                            : [
-                                                                                  currentTab,
-                                                                                  selectedPostId,
-                                                                                  selectedPostSessionId,
-                                                                                  selectedPostOutSessionId
-                                                                              ])
-                                                                "
-                                                                [ngStyle]="{ color: '#ffcf74' }"
-                                                                class="del_edit-rimg"
-                                                                >edit</mat-icon
-                                                            >
-                                                            <mat-icon
-                                                                *ngIf="
-                                                                    ((hidePostActions ||
-                                                                        state?.openPostResData?.IsPostDeleted) &&
-                                                                        ('activeCommentValidator'
-                                                                            | SMPPipe
-                                                                                : post
-                                                                                : [
-                                                                                      currentTab,
-                                                                                      selectedPostId,
-                                                                                      selectedPostSessionId,
-                                                                                      selectedPostOutSessionId
-                                                                                  ])) ||
-                                                                    post.PostData?.IsItemDeleted
-                                                                "
-                                                                [ngStyle]="{ color: '#ec5757' }"
-                                                                class="del_edit-rimg"
-                                                                >delete_forever</mat-icon
-                                                            >
-
+                                                            <div class="author-info">
+                                                                <div class="name-bubble">
+                                                                    <p>
+                                                                        {{
+                                                                            'twoLetterString'
+                                                                                | MiscellaneousPipe
+                                                                                    : ('replace'
+                                                                                          | MiscellaneousPipe
+                                                                                              : post.PostData.From
+                                                                                              : [
+                                                                                                    '@social-media.com',
+                                                                                                    ''
+                                                                                                ])
+                                                                        }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
                                                             <div
-                                                                class="date-time-flex twd-absolute twd-pr-3 twd-pt-3"
+                                                                class="main-content"
                                                                 *ngIf="{
                                                                     formatted:
                                                                         ('formatReadableDateWithDotnetDate'
                                                                         | CustomDatePipe: post.AddedTime:[])
                                                                 } as parsedDate"
                                                             >
-                                                                <h5 class="font-weight-700">
-                                                                    {{ parsedDate.formatted.date }}
-                                                                </h5>
-                                                                <p class="font-weight-500">
-                                                                    {{ parsedDate.formatted.time }}
-                                                                </p>
+                                                                <div class="mc-top">
+                                                                    <div class="name-date-flex">
+                                                                        <h4>
+                                                                            {{
+                                                                                'replace'
+                                                                                    | MiscellaneousPipe
+                                                                                        : post.PostData.To
+                                                                                        : ['@social-media.com', '']
+                                                                            }}
+                                                                        </h4>
+                                                                        <div class="date-holder">
+                                                                            <p>{{ parsedDate.formatted.date }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p class="time">{{ parsedDate.formatted.time }}</p>
+                                                                </div>
+                                                                <div class="mc-bottom">
+                                                                    <div class="content-flex">
+                                                                        <img
+                                                                            src="assets/images/avatars/profile.jpg"
+                                                                            alt="profile pic"
+                                                                        />
+                                                                        <p class="text-truncate">
+                                                                            {{
+                                                                                'replace'
+                                                                                    | MiscellaneousPipe
+                                                                                        : post.PostData.From
+                                                                                        : ['@social-media.com', '']
+                                                                            }}
+                                                                        </p>
+                                                                        <mat-icon>fiber_manual_record</mat-icon>
+                                                                        <p class="content text-truncate">
+                                                                            {{ post.PostData.Subject }}
+                                                                        </p>
+                                                                    </div>
+                                                                    <ng-container
+                                                                        *ngIf="{
+                                                                            isEdited:
+                                                                                post.IsPostEdited ||
+                                                                                post.IsCommentEdited,
+                                                                            isDeleted:
+                                                                                post.IsPostDeleted ||
+                                                                                post.IsCommentDeleted
+                                                                        } as itemStatus"
+                                                                    >
+                                                                        <mat-icon
+                                                                            *ngIf="
+                                                                                !itemStatus.isEdited &&
+                                                                                !itemStatus.isDeleted
+                                                                            "
+                                                                            class="comment-icon {{
+                                                                                ('activeCommentValidator'
+                                                                                | SMPPipe
+                                                                                    : post
+                                                                                    : [
+                                                                                          currentTab,
+                                                                                          selectedPostId,
+                                                                                          selectedPostSessionId,
+                                                                                          selectedPostOutSessionId
+                                                                                      ])
+                                                                                    ? 'theme-icon'
+                                                                                    : ''
+                                                                            }}"
+                                                                            >comment</mat-icon
+                                                                        >
+                                                                        <mat-icon
+                                                                            *ngIf="itemStatus.isEdited"
+                                                                            class="comment-icon theme-icon"
+                                                                            >edit</mat-icon
+                                                                        >
+                                                                        <mat-icon
+                                                                            *ngIf="itemStatus.isDeleted"
+                                                                            class="comment-icon red-icon"
+                                                                            >delete</mat-icon
+                                                                        >
+                                                                    </ng-container>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -548,62 +557,120 @@
 
                 <!-- Actual body -->
                 <div
-                    class="wsmp-open border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto twd-p-3"
+                    id="mainContentWbsmp"
+                    class="wsmp-open actual-content theme-bg border-radius-20 twd-flex twd-flex-col twd-absolute twd-overflow-auto twd-h-full twd-w-full twd-left-0 twd-top-0 twd-z-10 lg:twd-relative lg:twd-col-span-2 lg:twd-overflow-hidden lg:twd-h-auto twd-p-3"
                     *ngIf="openPostRes.loading || state.openPostResData as selectedPost"
-                    [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
+                    <!-- Post actions -->
                     <div
-                        class="twd-flex twd-justify-end twd-gap-4 twd-py-3 w-95-p"
-                        *ngIf="
-                            !openPostRes.loading &&
-                            !openPostRes.error &&
-                            selectedPostSessionId &&
-                            currentTab !== 'posts' &&
-                            !(
-                                hidePostActions ||
-                                state?.openPostResData?.IsCommentDeleted ||
-                                state?.openPostResData?.IsPostDeleted
-                            )
-                        "
+                        class="top-actions twd-relative"
+                        *ngIf="!openPostRes.loading && !openPostRes.error && selectedPostSessionId"
                     >
-                        <button
-                            *ngIf="ShowPostDetails"
-                            mat-raised-button
-                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="showPostDetails()"
+                        <div class="ui-actions actions-flex">
+                            <mat-icon role="button" (click)="this.openPostRes.data.next(null)">close</mat-icon>
+                            <mat-icon role="button" (click)="onToggleFullscreen()">{{
+                                isFullscreen ? 'fullscreen_exit' : 'fullscreen'
+                            }}</mat-icon>
+                            <!-- <mat-icon role="button">expand_less</mat-icon>
+                            <mat-icon role="button">expand_more</mat-icon> -->
+                        </div>
+
+                        <div
+                            class="high-context"
+                            *ngIf="{
+                                formatted:
+                                    ('formatReadableDateWithDotnetDate' | CustomDatePipe: selectedPost.AddedTime:[])
+                            } as parsedDate"
                         >
-                            {{ locale('sharedComponents.socialMediaPosts.postDetails') }}
-                        </button>
-                        <button
-                            *ngIf="currentTab !== 'sentitem'"
-                            [disabled]="isPullOnProgress"
-                            mat-raised-button
-                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="closePosts([selectedPost])"
+                            <p>{{ parsedDate.formatted.date }}, {{ parsedDate.formatted.time }}</p>
+                            <mat-icon
+                                *ngIf="selectedPost.IsPostEdited || selectedPost.IsCommentEdited"
+                                class="theme-icon"
+                                >edit</mat-icon
+                            >
+                            <mat-icon
+                                *ngIf="selectedPost.IsPostDeleted || selectedPost.IsCommentDeleted"
+                                class="red-icon"
+                                >delete</mat-icon
+                            >
+                        </div>
+
+                        <div
+                            class="core-actions actions-flex"
+                            *ngIf="
+                                currentTab !== 'posts' &&
+                                !(
+                                    hidePostActions ||
+                                    state?.openPostResData?.IsCommentDeleted ||
+                                    state?.openPostResData?.IsParentCommentDeleted ||
+                                    state?.openPostResData?.IsPostDeleted
+                                )
+                            "
                         >
-                            {{ locale('sharedComponents.socialMediaPosts.close') }}
-                        </button>
-                        <button
-                            *ngIf="currentTab !== 'sentitem'"
-                            [disabled]="isPullOnProgress"
-                            mat-raised-button
-                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="transferPost([selectedPost])"
+                            <div
+                                class="button-info-flex"
+                                *ngIf="currentTab !== 'sentitem'"
+                                [disabled]="isPullOnProgress"
+                                (click)="pullPosts([selectedPost])"
+                            >
+                                <mat-icon role="button">reply</mat-icon>
+                                <p>{{ locale('sharedComponents.socialMediaPosts.pull') }}</p>
+                            </div>
+                            <div
+                                *ngIf="ShowPostDetails"
+                                class="button-info-flex"
+                                role="button"
+                                (click)="showPostDetails()"
+                            >
+                                <mat-icon>info</mat-icon>
+                                <p>{{ locale('sharedComponents.socialMediaPosts.postDetails') }}</p>
+                            </div>
+                            <div
+                                class="button-info-flex"
+                                *ngIf="currentTab !== 'sentitem'"
+                                [disabled]="isPullOnProgress"
+                                role="button"
+                                (click)="closePosts([selectedPost])"
+                            >
+                                <mat-icon>cancel</mat-icon>
+                                <p>{{ locale('sharedComponents.socialMediaPosts.close') }}</p>
+                            </div>
+                            <div
+                                style="margin-left: -4px"
+                                class="button-info-flex"
+                                *ngIf="currentTab !== 'sentitem'"
+                                [disabled]="isPullOnProgress"
+                                role="button"
+                                (click)="transferPost([selectedPost])"
+                            >
+                                <mat-icon>send</mat-icon>
+                                <p>{{ locale('sharedComponents.socialMediaPosts.transfer') }}</p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="twd-flex warn-info"
+                            *ngIf="
+                                !(
+                                    currentTab !== 'posts' &&
+                                    !(
+                                        hidePostActions ||
+                                        state?.openPostResData?.IsCommentDeleted ||
+                                        state?.openPostResData?.IsParentCommentDeleted ||
+                                        state?.openPostResData?.IsPostDeleted
+                                    )
+                                )
+                            "
                         >
-                            {{ locale('sharedComponents.socialMediaPosts.transfer') }}
-                        </button>
-                        <button
-                            *ngIf="currentTab !== 'sentitem'"
-                            [disabled]="isPullOnProgress"
-                            mat-raised-button
-                            class="border-radius-20 twd-text-xs lg:twd-text-sm"
-                            (click)="pullPosts([selectedPost])"
-                        >
-                            {{ locale('sharedComponents.socialMediaPosts.pull') }}
-                        </button>
+                            <mat-icon class="red-icon" matTooltip="Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
+                                >info</mat-icon
+                            >
+                        </div>
                     </div>
+
+                    <!-- Actual post content -->
                     <div
-                        class="wsmp-open__body twd-mx-4 border-radius-20 twd-mb-3 twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
+                        class="wsmp-open__body twd-w-full twd-flex-1 twd-flex twd-flex-col lg:twd-overflow-hidden lg:twd-max-h-full"
                         [ngClass]="{
                             'edit-border':
                                 notificationAction === 'smc_e' ||
@@ -626,7 +693,6 @@
                             [isActiveCommentEdited]="state.openPostResData.IsCommentEdited"
                             [isActiveCommentDeleted]="state.openPostResData.IsCommentDeleted"
                             [isPostDeleted]="state.openPostResData.IsPostDeleted"
-                            [MaximumAllowedPostImageRendering]="MaximumAllowedPostImageRendering"
                             [mode]="'workbench'"
                             [postData]="state.openPostResData"
                             [enhanceCommentContainer]="currentTab === 'posts'"
@@ -687,7 +753,7 @@
                 <!-- Select post placeholder -->
                 <div
                     *ngIf="!state.openPostResData && !openPostRes.loading"
-                    class="wsmp-open theme-bg twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
+                    class="wsmp-open twd-w-full theme-bg twd-h-auto lg:twd-h-full border-radius-20 twd-col-span-2 twd-hidden lg:twd-flex twd-items-center twd-justify-center"
                 >
                     <div class="twd-flex twd-flex-col twd-justify-center">
                         <mat-icon class="s-128 mb-16 select-message-icon hint-text twd-mx-auto"> video_label </mat-icon>

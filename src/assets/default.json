@@ -2075,8 +2075,7 @@
                                                 },
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000,
-                                                    "MaximumAllowedPostImageRendering": 1
+                                                    "AsyncReplySendTimeout": 60000
                                                 }
                                             },
                                             {
@@ -2589,7 +2588,6 @@
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24,
-                                                    "MaximumAllowedPostImageRendering": 1,
                                                     "ShowPostDetails": false
                                                 }
                                             }

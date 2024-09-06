@@ -62,8 +62,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
     };
 
-    @Input() MaximumAllowedPostImageRendering: number = 5;
-
     lineClampCharacterCount: number = 100;
 
     /**
@@ -103,6 +101,8 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     };
     hasNoFurtherComments: boolean = false;
     showPreviousComment: boolean = false;
+    isCommentHistoryLoading: boolean = false;
+    showPreviousCommentData: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -587,12 +587,14 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     async loadCommentHistory() {
         try {
+            this.isCommentHistoryLoading = true;
             const { response } = await SDKClient.loadComments({
                 postId: this.postData.PostId,
                 commentId: '',
                 startIndex: this.indexHolder[0][0],
                 endIndex: this.indexHolder[0][1]
             });
+            this.isCommentHistoryLoading = false;
             if (!response || (Array.isArray(response) && !response?.length)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.noCommentsFoundMessage'),
@@ -614,6 +616,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             }
             this.flattenedCommentHistory = [...this.flattenedCommentHistory];
         } catch (e) {
+            this.isCommentHistoryLoading = false;
             this.logger.error(
                 '[SmpTemplateComponent.loadCommentHistory] - Error occured while loading comment history:',
                 JSON.stringify(e),
@@ -715,7 +718,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 nestLevel = this.flattenedCommentHistory[foundCommentIndex].nestLevel;
                 foundCommentIndex--;
             }
-            this.flattenedCommentHistory = [...this.flattenedCommentHistory]
+            this.flattenedCommentHistory = [...this.flattenedCommentHistory];
         } catch (e) {
             this.logger.error(
                 '[SmpTemplateComponent.validateVisibleComments] - Error occured while validating comment visibility:',
@@ -724,5 +727,30 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             );
             console.error(e);
         }
+    }
+
+    onReadMore(): void {
+        try {
+            document.querySelector('.post-content-text').classList.toggle('clamp');
+        } catch (e) {}
+    }
+
+    openGallery(): void {
+        try {
+            this._appUiService.showCustomDialog(
+                'alert',
+                {
+                    type: 'gallery',
+                    media: this.postData?.PostAttachments.map((attachment) => ({
+                        type: this.getFileType(attachment.MediaUrl, attachment.MediaType),
+                        url: attachment.MediaUrl
+                    })).slice(1, this.postData?.PostAttachments.length)
+                },
+                'Post images',
+                {
+                    messageClasses: 'twd-whitespace-pre-line twd-break-words'
+                }
+            );
+        } catch (e) {}
     }
 }
