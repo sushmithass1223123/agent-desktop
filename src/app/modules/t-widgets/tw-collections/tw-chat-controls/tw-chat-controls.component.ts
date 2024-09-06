@@ -1212,7 +1212,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || data.type,
-            time: new Date(),
+            time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())) : new Date(),
             attachment: {
                 ...data.attachment,
                 angle: 0
