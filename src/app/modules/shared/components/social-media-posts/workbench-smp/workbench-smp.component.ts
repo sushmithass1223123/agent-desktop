@@ -20,6 +20,8 @@ import { SMP_OUTBOX_REASONS } from 'app/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { AgentSkillListDataModel } from 'app/models';
 
+declare var document: any;
+
 export class SMPost {
     Mailbox?: string;
     ConversationID?: string;
@@ -61,6 +63,7 @@ interface PostData {
     RejectReason: string;
     PostId?: string;
     ActiveCommentId?: string;
+    ParentCommentId?: string;
     IsItemDeleted?: boolean;
 }
 
@@ -282,7 +285,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     // UI modifyers
     segregatedPosts: any = [];
 
-    MaximumAllowedPostImageRendering: number = 5;
     ShowPostDetails: boolean = false;
 
     /**
@@ -302,6 +304,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * Object to hold post data
      */
     postBodies: any = {};
+    isFullscreen: boolean = false;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -351,10 +354,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     this.switchTab('sentitem', true);
                 }
             });
-
-            this.MaximumAllowedPostImageRendering = (
-                this.channelConf.Config as TwSmpWorkbenchConfig
-            ).MaximumAllowedPostImageRendering;
 
             this.ShowPostDetails = (this.channelConf.Config as TwSmpWorkbenchConfig).ShowPostDetails;
         } catch (e) {
@@ -662,7 +661,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
                                 rres?.PostData?.ActiveCommentId ===
-                                this.chosenPostData?.SocialMediaData?.Comments?.CommentId
+                                    this.chosenPostData?.SocialMediaData?.Comments?.CommentId ||
+                                rres?.PostData?.ParentCommentId ===
+                                    this.chosenPostData?.SocialMediaData?.Comments?.CommentId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     }
@@ -1082,9 +1083,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         OutSessionId: '',
                         PostId: x?.SocialMediaData?.Posts?.PostId,
                         ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
+                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId,
                         RouteId: '',
                         From: x?.From,
-                        To: '',
+                        To: x?.Mailbox,
                         Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
@@ -1149,7 +1151,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         PostId: x?.SocialMediaData?.Posts?.PostId,
                         RouteId: '',
                         From: x?.SocialMediaData?.Posts?.AccountName,
-                        To: '',
+                        To: x?.Mailbox,
                         Subject: x?.SocialMediaData?.Posts?.PostText?.Text,
                         EmailType: '',
                         Skill: '',
@@ -1208,8 +1210,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
                         RouteId: x?.RouteId ?? '',
-                        From: x?.From,
-                        To: '',
+                        From: x?.SocialMediaData?.ParentComments?.FromName,
+                        To: x?.Mailbox,
                         Subject: x?.Body,
                         EmailType: '',
                         Skill: '',
@@ -1270,8 +1272,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
                         RouteId: x?.RouteId ?? '',
-                        From: x?.From,
-                        To: '',
+                        From: x?.SocialMediaData?.ParentComments?.FromName,
+                        To: x?.From,
                         Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
@@ -1282,7 +1284,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
                         RejectReason: '',
-                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId
+                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
+                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId
                     }
                 };
             });
@@ -1500,6 +1503,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
                             IsCommentEdited: inboxRes.SocialMediaData.Comments?.IsEdited,
                             IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
+                            IsPostEdited: inboxRes.SocialMediaData.Posts?.IsEdited,
                             RouteId: post.PostData.RouteId,
                             PostDetails: {
                                 To: post.PostData.To,
@@ -1564,6 +1568,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         IsCommentDeleted: outboxRes.SocialMediaData.Comments?.IsDeleted,
                         IsCommentEdited: outboxRes.SocialMediaData.Comments?.IsEdited,
                         IsPostDeleted: outboxRes.SocialMediaData.Posts?.IsDeleted,
+                        IsPostEdited: outboxRes.SocialMediaData.Posts?.IsEdited,
                         RouteId: post.PostData.RouteId,
                         PostDetails: {
                             To: post.PostData.To,
@@ -2054,5 +2059,30 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 'failure'
             );
         }
+    }
+
+    onToggleFullscreen(): void {
+        try {
+            const mainWbsmp: any = document.getElementById('mainContentWbsmp');
+
+            if (!this.isFullscreen) {
+                if (mainWbsmp.requestFullscreen) {
+                    mainWbsmp.requestFullscreen();
+                } else if (mainWbsmp.webkitRequestFullscreen) {
+                    mainWbsmp.webkitRequestFullscreen();
+                } else if (mainWbsmp.msRequestFullscreen) {
+                    mainWbsmp.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+            this.isFullscreen = !this.isFullscreen;
+        } catch (e) {}
     }
 }

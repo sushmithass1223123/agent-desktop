@@ -166,11 +166,15 @@
     tw-smp-controls {
         .avatar-box {
             background-color: map-get($background, app-bar) !important;
+            background-color: #fff !important;
         }
         
         .sm-im-content {
             @if ($is-dark==true) {
                 background-color: map-get($background, hover) !important;
+            }
+            @else {
+                background-color: #fff !important;
             }
         }
 
@@ -178,32 +182,8 @@
             @if ($is-dark==true) {
                 background-color: #494949 !important;
             }
-        }
-    }
-
-    smp-template {
-        .comment-box {
-            @if ($is-dark==true) {
-                background-color: map-get($background, card) !important;
-            }
-
             @else {
-                color: rgba(0, 0, 0, 0.87) !important;
-                background-color: #efefef !important;
-            }
-        }
-        .replied .comment-box {
-            background-color: map-get($primary, 700) !important;
-            color: mat-contrast($primary, 700) !important;
-        }
-        .reply-box {
-            @if ($is-dark==true) {
-                background-color: map-get($background, card) !important;
-            }
-
-            @else {
-                color: rgba(0, 0, 0, 0.87) !important;
-                background-color: #efefef !important;
+                background-color: #fff !important;
             }
         }
     }
@@ -363,7 +343,7 @@
             }
         }
 
-        workbench-email, workbench-smp {
+        workbench-email {
             .theme-bg {
                 @if ($is-dark==true) {
                     color: #fafafa;
@@ -425,6 +405,30 @@
                     @if ($is-dark==true) {
                         background-color: #303030;
                     }
+                }
+            }
+        }
+
+        workbench-smp {
+            .theme-bg {
+                @if ($is-dark==true) {
+                    background-color: map-get($background, hover);
+                }
+
+                @else {
+                    color: rgba(0, 0, 0, 0.87);
+                    background-color: #ffffff;
+                }
+            }
+
+            .post-list {
+                @if ($is-dark==true) {
+                    background-color: map-get($background, hover);
+                }
+
+                @else {
+                    color: rgba(0, 0, 0, 0.87);
+                    background-color: #ffffff;
                 }
             }
         }

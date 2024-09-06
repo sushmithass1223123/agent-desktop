@@ -39,7 +39,6 @@
 
             <div
                 class="interaction-main sm-im-content twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
-                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             >
                 <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                     <div class="s-info twd-flex">
@@ -80,7 +79,6 @@
                     <smp-template
                         [isDraftMode]="isDraftMode"
                         [draftData]="postDraftData[interactionId]"
-                        [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
                         [interactionId]="interactionId"
                         [sessionId]="sessionId"
                         (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
@@ -123,11 +121,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog deleted"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_edited.svg" />
                         <h4>{{ locale('widgets.smpControls.commentEditedDialogMessage') }}</h4>
@@ -158,11 +154,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog edited"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_deleted.svg" />
                         <h4>{{ locale('widgets.smpControls.commentDeletedDialogMessage') }}</h4>
@@ -192,11 +186,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog edited"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_deleted.svg" />
                         <h4>{{ locale('widgets.smpControls.postDeletedDialogMessage') }}</h4>
@@ -226,11 +218,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog edited"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_edited.svg" />
                         <h4>{{ locale('widgets.smpControls.postEditedDialogMessage') }}</h4>
@@ -263,7 +253,6 @@
     >
         <div
             class="interaction-main twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
-            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             *transloco="let locale"
         >
             <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
@@ -291,7 +280,6 @@
                 </div>
             </div>
             <smp-template
-                [MaximumAllowedPostImageRendering]="5"
                 [isDraftMode]="isDraftMode"
                 [draftData]="postDraftData[interactionId]"
                 (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
