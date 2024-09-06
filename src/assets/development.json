@@ -131,6 +131,7 @@
                                             "Icon": "call",
                                             "Data": {
                                                 "Agent": {
+                                                    "Comments": false,
                                                     "Source": {
                                                         "Use": "station",
                                                         "Display": "${LastName}, ${FirstName}",
