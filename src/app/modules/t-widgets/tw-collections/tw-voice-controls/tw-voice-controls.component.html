@@ -434,7 +434,7 @@
 
                         <button
                             *ngIf="tempCallRef?.isConsult"
-                            [disabled]="tempCallRef.status !== 'connected' || isCustomerDisconnected"
+                            [disabled]="tempCallRef.status !== 'connected' || tempCallRef.isCustomerDisconnected"
                             mat-raised-button
                             class="border-radius-20"
                             color="primary"
