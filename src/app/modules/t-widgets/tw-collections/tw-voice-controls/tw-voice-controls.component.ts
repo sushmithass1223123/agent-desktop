@@ -535,6 +535,29 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.stopTimer.next(null);
 
         this.resetConnectionTimeout();
+        // Remove interaction events from tmac events array
+        this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, [
+            'IncomingCallUpdateEvent',
+            'OutgoingCallEvent',
+            'CallConnectedEvent',
+            'CallDisconnectedEvent',
+            'CallHoldEvent',
+            'CallHoldReconnectEvent',
+            'CallTransferInitiatedEvent',
+            'CallTransferLineDisconnectEvent',
+            'CallTransferRemoteConnectedEvent',
+            'CallConferenceInitiatedEvent',
+            'CallConferenceCompletedEvent',
+            'CallConferenceLineDisconnectEvent',
+            'CallConferenceRemoteConnectedEvent',
+            'MediaServerEvent',
+            'VoiceCannedResponseEvent',
+            'CallerIntentEvent',
+            'IVRDataEvent',
+            'InteractionDataEvent',
+            'UUIDataEvent',
+            'HoldTimerEvent'
+        ])
     }
 
     // -----------------------------------------------------------------------------------------------------

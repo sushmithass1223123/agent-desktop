@@ -908,7 +908,42 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // this.deRegisterFromEvents();
+        // Remove interaction events from tmac events array
+        this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, [
+            'TextChatRemoteUserConnectedEvent',
+            'TextChatSelfServiceDestinationEvent',
+            'TextChatAgentConnectedEvent',
+            'TextChatTranscriptForTransferEvent',
+            'TextChatMessageSentEvent',
+            'TextChatMessageTemplateSentEvent',
+            'TextChatUserMessageWaitTimerEvent',
+            'TextChatTypingStateChangedEvent',
+            'TextChatMessageReceivedEvent',
+            'UserDeviceInfoEvent',
+            'TextChatAgentMessageReceivedEvent',
+            'AVControlMessageReceivedEvent',
+            'TextChatDisconnectedEvent',
+            'TextChatAgentDisconnectedEvent',
+            'CannedResposeEvent',
+            'TextChatTransferSuccessEvent',
+            'TextChatTransferFailedEvent',
+            'TextChatTransferRejectEvent',
+            'ActionMessageReceivedEvent',
+            'InteractionDataEvent',
+            'CallHoldEvent',
+            'CallHoldReconnectEvent',
+            'HoldTimerEvent',
+            'CCLDataEvent',
+            'AgentNotificaitonEvent',
+            'DisposeCallWidgetEvent',
+            'AVDisconnectedEvent',
+            'HoldInteractionEvent',
+            'UnholdInteractionEvent',
+            'ConfirmEndInteractionEvent',
+            'UpdateParentAgentStatusEvent',
+            'CallConferenceCompletedEvent',
+            "EndInteractionEvent"
+        ])
     }
 
     // -----------------------------------------------------------------------------------------------------

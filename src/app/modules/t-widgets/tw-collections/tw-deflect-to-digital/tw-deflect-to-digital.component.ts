@@ -127,6 +127,9 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        // Remove interaction events from tmac events array
+        const eventName = this.data.Data.Number?.split('.')?.shift() as any;
+        if (eventName) this._tmacEventService.removeInteractionEvents(this.interactionId, [eventName]);
     }
 
     /**
