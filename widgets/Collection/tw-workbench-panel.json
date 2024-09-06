@@ -120,7 +120,6 @@
                     "SearchPollingInterval": 0,
                     "MaxSearchRange": 30,
                     "SearchDuration": 24,
-                    "MaximumAllowedPostImageRendering": 1,
                     "ShowPostDetails": false
                 }
             }
