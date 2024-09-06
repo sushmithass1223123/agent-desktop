@@ -5,6 +5,7 @@ import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent, MailboxSettingsComponent } from '@modules/shared/components';
 import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/tw-compose-messaging/tw-compose-messaging.component';
 import { AgentFeaturesService } from '@services/agent-features.service';
+import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, SDKClient } from '@tmac/sdk';
 import { AGENT_FEATURES } from 'app/constants';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
@@ -48,7 +49,11 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
      */
     openList: boolean;
 
-    constructor(private _matDialog: MatDialog, private _agentFeaturesService: AgentFeaturesService) {
+    constructor(
+        private _matDialog: MatDialog,
+        private _agentFeaturesService: AgentFeaturesService,
+        private _tmacEventService: TMACEventService
+    ) {
         // set the unsubscribeAll defaults
         this._unsubscribeAll = new Subject();
     }
@@ -67,6 +72,10 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
             }
         });
 
+        this._tmacEventService.getUIControlEvents
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(this.handleUIControls.bind(this));
+
         // check agent features
         this.checkAgentFeatures();
     }
@@ -79,6 +88,37 @@ export class TwCreateInteractionComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
         this._matDialog.closeAll();
+    }
+
+    /**
+     * Method to handle UI events
+     * @param data event data
+     */
+    private handleUIControls(data: { eventName: string }): void {
+        try {
+            if (!data || !data?.eventName) return;
+
+            switch (data.eventName) {
+                case 'enableMakeCall':
+                    this.channels.forEach((channel) => {
+                        if (channel.Type === 'voice') channel.Enabled = true;
+                    });
+                    break;
+                case 'disableMakeCall':
+                    this.channels.forEach((channel) => {
+                        if (channel.Type === 'voice') channel.Enabled = false;
+                    });
+                    break;
+                default:
+                    console.log(`[TwCreateInteraction.handleUIControls] - ${data.eventName} is not handled`);
+                    break;
+            }
+        } catch (ex) {
+            console.error(
+                `[TwCreateInteraction.handleUIControls] - Error occured while handling ${data.eventName} event`,
+                ex
+            );
+        }
     }
 
     /**
