@@ -1051,7 +1051,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
         // }
-
+        console.log("ChatMessageReceived");
         // check the user
         const user = (evt as TextChatAgentMessageReceivedEvent).AgentName || this.customerName;
 
@@ -1874,6 +1874,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if (transcript.message && !isStringHtml(transcript.message)) {
                 transcript.message = urlify(transcript.message);
             }
+        }
+        if(!transcript.divider && !transcript.dividerMessage && !transcript.message) {
+            console.info('Message is undefined hence ignoring it', transcript);
+            return;
         }
 
         this.chatTranscripts.push(transcript);
