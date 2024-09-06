@@ -1421,9 +1421,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                 case 'request_screenshare':
                     {
                         if (msg.status === 'accepted') {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareAccepted'));
+                            this._appUIService.showSnackbar(this.translocoService
+                                .translate('widgets.audioVideoControls.requestScreenShareAccepted'));
                         } else if (msg.status === 'rejected') {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareRejected'));
+                            this._appUIService.showSnackbar(this.translocoService
+                                .translate('widgets.audioVideoControls.requestScreenShareRejected'),
+                            'failure');
                         }
                     }
                     break;
