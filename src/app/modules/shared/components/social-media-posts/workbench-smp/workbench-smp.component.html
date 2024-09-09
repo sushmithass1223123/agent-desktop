@@ -196,7 +196,7 @@
                                         class="twd-w-full twd-relative twd-rounded-3xl ng-tns-c543-38 dropdowns twd-pb-2 {{
                                             'getObjectKeyString' | ObjectPipe: channel:[]
                                         }}"
-                                        *ngFor="let channel of segregatedPosts"
+                                        *ngFor="let channel of segregatedPosts; trackBy: trackByChannel"
                                     >
                                         <ng-container
                                             *ngIf="{
@@ -228,7 +228,7 @@
                                                             : ('getObjectKeyString' | ObjectPipe: skill:[])
                                                             : ['@'])[0]
                                                 }}"
-                                                *ngFor="let skill of 'getObjectValue' | ObjectPipe: channel:[]"
+                                                *ngFor="let skill of 'getObjectValue' | ObjectPipe: channel:[]; trackBy: trackBySkill"
                                             >
                                                 <ng-container
                                                     *ngIf="{
@@ -286,7 +286,7 @@
                                                                       | SMPPipe: notificationAction:[hidePostActions])
                                                                     : ' theme-bg'
                                                             "
-                                                            *ngFor="let post of 'getObjectValue' | ObjectPipe: skill:[]"
+                                                            *ngFor="let post of 'getObjectValue' | ObjectPipe: skill:[]; trackBy: trackByItem"
                                                         >
                                                             <div class="author-info">
                                                                 <div class="name-bubble">
