@@ -2085,4 +2085,16 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             this.isFullscreen = !this.isFullscreen;
         } catch (e) {}
     }
+
+    trackByChannel(index: number, item: any): any {
+        return Object.keys(item)[0];;
+    }
+
+    trackBySkill(index: number, item: any): any {
+        return Object.keys(item)[0];;
+    }
+
+    trackByItem(index: number, item: SMPost): any {
+        return item.PostData.SessionId;
+    }
 }
