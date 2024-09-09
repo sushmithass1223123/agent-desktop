@@ -168,11 +168,13 @@
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
+                                        (click)="previewMedia(item)"
                                         [src]="item?.MediaUrl" />
                                     <video
                                         class="comment-attachment"
                                         *ngSwitchCase="'video'"
                                         [src]="item?.MediaUrl"
+                                        (click)="previewMedia(item)"
                                         [autoplay]="false"
                                         controls
                                     ></video>
@@ -313,11 +315,13 @@
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
+                                        (click)="previewMedia(item)"
                                         [src]="item?.MediaUrl" />
                                     <video
                                         class="comment-attachment"
                                         *ngSwitchCase="'video'"
                                         [src]="item?.MediaUrl"
+                                        (click)="previewMedia(item)"
                                         [autoplay]="false"
                                         controls
                                     ></video>
@@ -481,12 +485,14 @@
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
+                                            (click)="previewMedia(item)"
                                             [src]="item?.MediaUrl"
                                         />
                                         <video
                                             class="comment-attachment"
                                             *ngSwitchCase="'video'"
                                             [src]="item?.MediaUrl"
+                                            (click)="previewMedia(item)"
                                             [autoplay]="false"
                                             controls
                                         ></video>
@@ -689,12 +695,14 @@
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
+                                            (click)="previewMedia(item)"
                                             [src]="item?.MediaUrl"
                                         />
                                         <video
                                             class="comment-attachment"
                                             *ngSwitchCase="'video'"
                                             [src]="item?.MediaUrl"
+                                            (click)="previewMedia(item)"
                                             [autoplay]="false"
                                             controls
                                         ></video>
@@ -868,7 +876,7 @@
 <ng-template #previewMediaDialog>
     <div *transloco="let locale" class="twd-flex twd-justify-between twd-items-center twd-h-16">
         <div class="twd-flex twd-flex-col twd-gap-1">
-            <span class="twd-font-bold">{{ postData?.AccountName }}</span>
+            <span class="twd-font-bold">{{ postData?.PostAccountName }}</span>
             <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
         </div>
         <div>
