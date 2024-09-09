@@ -142,7 +142,7 @@
                         <ng-container
                             *ngIf="
                                 !renderParentCommentAttachment &&
-                                postData?.SmParentComments?.CommentAttachments?.length === 1
+                                postData?.SmParentComments?.CommentAttachments?.length
                             "
                         >
                             <div
@@ -157,27 +157,27 @@
                         <ng-container
                             *ngIf="
                                 renderParentCommentAttachment &&
-                                postData?.SmParentComments?.CommentAttachments?.length === 1
-                            "
-                            [ngSwitch]="
-                                'getFileType'
-                                    | SMPPipe
-                                        : postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl
-                                        : [postData?.SmParentComments?.CommentAttachments[0]?.MediaType]
+                                postData?.SmParentComments?.CommentAttachments?.length
                             "
                         >
-                            <img
-                                class="comment-attachment"
-                                *ngSwitchCase="'image'"
-                                [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl"
-                            />
-                            <video
-                                class="comment-attachment"
-                                *ngSwitchCase="'video'"
-                                [src]="postData?.SmParentComments?.CommentAttachments[0]?.MediaUrl"
-                                [autoplay]="false"
-                                controls
-                            ></video>
+                            <div class="comment-attachment-flex">
+                                <ng-container
+                                    *ngFor="let item of postData?.SmParentComments?.CommentAttachments"
+                                    [ngSwitch]="'getFileType' | SMPPipe : item?.MediaUrl : [item?.MediaType]"
+                                >
+                                    <img
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'image'"
+                                        [src]="item?.MediaUrl" />
+                                    <video
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'video'"
+                                        [src]="item?.MediaUrl"
+                                        [autoplay]="false"
+                                        controls
+                                    ></video>
+                                </ng-container>
+                            </div>
                         </ng-container>
 
                         <div class="timing-info">
@@ -289,7 +289,7 @@
                         <ng-container
                             *ngIf="
                                 !renderActiveCommentAttachment &&
-                                postData?.SmActiveComment?.CommentAttachments?.length === 1
+                                postData?.SmActiveComment?.CommentAttachments?.length
                             "
                         >
                             <div
@@ -302,29 +302,27 @@
                             </div>
                         </ng-container>
                         <ng-container
-                            *ngIf="
-                                renderActiveCommentAttachment &&
-                                postData?.SmActiveComment?.CommentAttachments?.length === 1
-                            "
-                            [ngSwitch]="
-                                'getFileType'
-                                    | SMPPipe
-                                        : postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl
-                                        : [postData?.SmActiveComment?.CommentAttachments[0]?.MediaType]
-                            "
+                            *ngIf="renderActiveCommentAttachment &&
+                            postData?.SmActiveComment?.CommentAttachments?.length"
                         >
-                            <img
-                                class="comment-attachment"
-                                *ngSwitchCase="'image'"
-                                [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl"
-                            />
-                            <video
-                                class="comment-attachment"
-                                *ngSwitchCase="'video'"
-                                [src]="postData?.SmActiveComment?.CommentAttachments[0]?.MediaUrl"
-                                [autoplay]="false"
-                                controls
-                            ></video>
+                            <div class="comment-attachment-flex">
+                                <ng-container 
+                                    *ngFor="let item of postData?.SmActiveComment?.CommentAttachments"
+                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl: [item?.MediaType]"
+                                >
+                                    <img
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'image'"
+                                        [src]="item?.MediaUrl" />
+                                    <video
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'video'"
+                                        [src]="item?.MediaUrl"
+                                        [autoplay]="false"
+                                        controls
+                                    ></video>
+                                </ng-container>
+                            </div>
                         </ng-container>
 
                         <!-- Comment bottom section -->
@@ -461,7 +459,7 @@
 
                             <!-- Attachment section -->
                             <ng-container
-                                *ngIf="!renderPrevCommentAttachment && prevComment?.CommentAttachments?.length === 1"
+                                *ngIf="!renderPrevCommentAttachment && prevComment?.CommentAttachments?.length"
                             >
                                 <div
                                     role="button"
@@ -473,26 +471,27 @@
                                 </div>
                             </ng-container>
                             <ng-container
-                                *ngIf="renderPrevCommentAttachment && prevComment?.CommentAttachments?.length === 1"
-                                [ngSwitch]="
-                                    'getFileType'
-                                        | SMPPipe
-                                            : prevComment?.CommentAttachments[0]?.MediaUrl
-                                            : [prevComment?.CommentAttachments[0]?.MediaType]
-                                "
+                                *ngIf="renderPrevCommentAttachment && prevComment?.CommentAttachments?.length"
                             >
-                                <img
-                                    class="comment-attachment"
-                                    *ngSwitchCase="'image'"
-                                    [src]="prevComment?.CommentAttachments[0]?.MediaUrl"
-                                />
-                                <video
-                                    class="comment-attachment"
-                                    *ngSwitchCase="'video'"
-                                    [src]="prevComment?.CommentAttachments[0]?.MediaUrl"
-                                    [autoplay]="false"
-                                    controls
-                                ></video>
+                                <div class="comment-attachment-flex">
+                                    <ng-container 
+                                        *ngFor="let item of prevComment?.CommentAttachments"
+                                        [ngSwitch]="'getFileType' | SMPPipe : item?.MediaUrl : [item?.MediaType]"
+                                    >
+                                        <img
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'image'"
+                                            [src]="item?.MediaUrl"
+                                        />
+                                        <video
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'video'"
+                                            [src]="item?.MediaUrl"
+                                            [autoplay]="false"
+                                            controls
+                                        ></video>
+                                    </ng-container>
+                                </div>
                             </ng-container>
 
                             <!-- Comment bottom section -->
@@ -668,7 +667,7 @@
 
                             <!-- Attachment section -->
                             <ng-container
-                                *ngIf="!commentData.renderMedia && commentData?.CommentAttachments?.length === 1"
+                                *ngIf="!commentData.renderMedia && commentData?.CommentAttachments?.length"
                             >
                                 <div
                                     role="button"
@@ -680,26 +679,27 @@
                                 </div>
                             </ng-container>
                             <ng-container
-                                *ngIf="commentData.renderMedia && commentData?.CommentAttachments?.length === 1"
-                                [ngSwitch]="
-                                    'getFileType'
-                                        | SMPPipe
-                                            : commentData?.CommentAttachments[0]?.MediaUrl
-                                            : [commentData?.CommentAttachments[0]?.MediaType]
-                                "
+                                *ngIf="commentData.renderMedia && commentData?.CommentAttachments?.length"
                             >
-                                <img
-                                    class="comment-attachment"
-                                    *ngSwitchCase="'image'"
-                                    [src]="commentData?.CommentAttachments[0]?.MediaUrl"
-                                />
-                                <video
-                                    class="comment-attachment"
-                                    *ngSwitchCase="'video'"
-                                    [src]="commentData?.CommentAttachments[0]?.MediaUrl"
-                                    [autoplay]="false"
-                                    controls
-                                ></video>
+                                <div class="comment-attachment-flex">
+                                    <ng-container 
+                                        *ngFor="let item of commentData?.CommentAttachments"
+                                        [ngSwitch]="'getFileType' | SMPPipe : item?.MediaUrl : [item?.MediaType]"
+                                    >
+                                        <img
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'image'"
+                                            [src]="item?.MediaUrl"
+                                        />
+                                        <video
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'video'"
+                                            [src]="item?.MediaUrl"
+                                            [autoplay]="false"
+                                            controls
+                                        ></video>
+                                    </ng-container>
+                                </div>
                             </ng-container>
 
                             <!-- Comment bottom section -->

@@ -252,9 +252,16 @@
                         }
                     }
 
-                    .comment-attachment {
-                        max-height: 100px;
-                        border-radius: 10px;
+                    .comment-attachment-flex {
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: flex-start;
+                        gap: 10px;
+                        
+                        .comment-attachment {
+                            max-height: 100px;
+                            border-radius: 10px;
+                        }
                     }
 
                     .timing-info {
