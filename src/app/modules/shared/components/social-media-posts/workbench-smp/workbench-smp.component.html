@@ -659,7 +659,7 @@
                                         state?.openPostResData?.IsParentCommentDeleted ||
                                         state?.openPostResData?.IsPostDeleted
                                     )
-                                )
+                                ) || (currentTab === 'sentitem' && !ShowPostDetails)
                             "
                         >
                             <mat-icon class="red-icon" matTooltip="Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
