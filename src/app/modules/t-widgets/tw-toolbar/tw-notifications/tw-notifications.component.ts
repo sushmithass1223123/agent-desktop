@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { AgentNotificaitonEvent, SDKClient } from '@tmac/sdk';
@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 /**
  * Notfications Component
@@ -40,6 +41,10 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
      */
     notifications: AppNotification[];
     postInteractionList: InteractionRef[] = [];
+    /**
+     * Menu trigger ref
+     */
+    @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
     constructor(
         private _appUIService: AppUiService,
@@ -198,6 +203,7 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                 intData.otherData?.SessionId === postData.message?.SocialMediaData?.Comments?.SessionId ||
                 intData.otherData?.OutSessionID === postData.message?.SocialMediaData?.Comments?.SessionId
         );
+        this.closeMenu();
         if (isActiveInteractionAvailable >= 0) {
             this._smpService.triggerEmittedNotificationData({message: postData.message, action});
             return;
@@ -235,5 +241,12 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
      */
     clearAllNotifications(): void {
         this._appUIService.clearAllNotifications();
+    }
+
+    /**
+     * Method to close mat menu
+     */
+    closeMenu() {
+        this.menuTrigger?.closeMenu();
     }
 }

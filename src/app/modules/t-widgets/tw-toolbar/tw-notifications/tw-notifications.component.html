@@ -3,7 +3,7 @@
         <button mat-icon-button class="notification-btn"
             [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }" [matMenuTriggerFor]="menu"
             aria-label="Notification dropdown" (menuOpened)="menuOpened(true)" (menuClosed)="menuOpened(false)"
-            [matTooltip]="locale('toolbarComponent.notifications')">
+            [matTooltip]="locale('toolbarComponent.notifications')" #menuTrigger="matMenuTrigger">
             <mat-icon class="primary-text" [matBadge]="unreadCount || ''" matBadgePosition="after">{{
                 notifications.length === 0 ? 'notifications' : 'notifications_active'
                 }}</mat-icon>
