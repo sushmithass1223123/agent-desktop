@@ -255,6 +255,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             interactions
                 .filter((i: InteractionRef) => i.type === 'smp')
                 .map((i) => {
+                    //if the event is for the current active interaction get the 
+                    //customer details
                     if(i.isActive) {
                         this.interactionId = i.interactionId;
                         console.log("This.interactionId: ", this.interactionId, i)
@@ -289,6 +291,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         if(this.test) {
             updateUrl = "https://webhook.site/17f9233b-b42f-4d75-9c2a-5d8740054d95";
         }
+
        if(this.formData.email) {
         if (!validateEmail(this.formData.email)) {
             this.formData.email = '';            
@@ -301,18 +304,16 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        
        if(this.formData.phone) {
         if (!validatePhone(this.formData.phone)) {
-            this.formData.phone = '';
-            
+            this.formData.phone = '';            
             // "InvalidPhoneNumber": "Please enter a valid 10 digit phone number",
             this._appUIService.showSnackbar(this.translocoService
                 .translate('sharedComponents.socialMediaPosts.InvalidPhoneNumber'), 'failure');            return false;
         }
-    }
+        }
 
         if(this.formData.secondaryEmail) {
         if (!validateEmail(this.formData.secondaryEmail)) {
-            this.formData.secondaryEmail = '';
-            
+            this.formData.secondaryEmail = '';            
         // "InvalidSecondaryEmail": "Please enter a valid secondary email address",
             this._appUIService.showSnackbar(
                 this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryEmail'), 
@@ -320,20 +321,20 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             return false;
         }
         }
-        // "InvalidSecondaryPhoneNumber": "Please enter a valid 10 digit secondary phone number",
-        
-           
+                   
         if(this.formData.secondaryPhone) {
             if (!validatePhone(this.formData.secondaryPhone)) {
                 this.formData.secondaryPhone = '';
+            // "InvalidSecondaryPhoneNumber": "Please enter a valid 10 digit secondary phone number",
                 this._appUIService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryPhoneNumber'),
                     'failure');
                 return false;
             }
        }
+
        // used to check if the data is changed
-       //if not then update is not called
+       //if not then no need to call the update API is not called
        let changed = false;
         Object.entries(this.formData).forEach(element => {
             if(this.receivedData[element[0]] != element[1]) {
@@ -424,16 +425,11 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                     }
                 });
 
-                // convert time to UTC Format with 'Z'
+                // convert time to current time zone
                 let lastChangedOn = new Date(this.formData.lastChangedOn + 'Z');
 
                 this.formData.lastChangedOn = moment(lastChangedOn)
                 .format('DD-MM-YYYY hh:mm a');
-                console.log("this.formData.lastChangedOn", this.formData.lastChangedOn)
-                console.log("this.formData.normal", lastChangedOn.toDateString() + ' - ' + lastChangedOn.toTimeString());
-                console.log("LastChangedOn new Date().toString(): ", this.formData.lastChangedOn);
-                // console.log("LastChangeOn new Date().toISOString(): ", new Date(res.data.lastChangedOn).toISOString())
-                
                 this.receivedData =  { ...this.formData };
             }
         });
