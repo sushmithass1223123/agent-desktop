@@ -13,7 +13,7 @@ import { validateEmail, validatePhone } from 'app/utils';
 import { TranslocoService } from '@ngneat/transloco';
 
 /**
- * Custommer details widget
+ * Customer details widget
  */
 @Component({
     selector: 'tw-smp-customer-details',
@@ -291,8 +291,10 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         }
        if(this.formData.email) {
         if (!validateEmail(this.formData.email)) {
-            this.formData.email = '';
-            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.invalidEmailAddress'), 'failure');
+            this.formData.email = '';            
+            // "InvalidEmail": "Please enter a valid email address",
+            this._appUIService.showSnackbar(this.translocoService
+                .translate('sharedComponents.socialMediaPosts.InvalidEmail'), 'failure');
             return false;
         }
        }
@@ -300,7 +302,9 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        if(this.formData.phone) {
         if (!validatePhone(this.formData.phone)) {
             this.formData.phone = '';
-            this._appUIService.showSnackbar("Please enter a valid 10 digit phone number", 'failure');
+            
+            // "InvalidPhoneNumber": "Please enter a valid 10 digit phone number",
+            this._appUIService.showSnackbar('sharedComponents.socialMediaPosts.InvalidPhoneNumber', 'failure');
             return false;
         }
     }
@@ -308,15 +312,23 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         if(this.formData.secondaryEmail) {
         if (!validateEmail(this.formData.secondaryEmail)) {
             this.formData.secondaryEmail = '';
-            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.invalidEmailAddress'), 'failure');
+            
+        // "InvalidSecondaryEmail": "Please enter a valid secondary email address",
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryEmail'), 
+                'failure');
             return false;
         }
         }
+        // "InvalidSecondaryPhoneNumber": "Please enter a valid 10 digit secondary phone number",
+        
            
         if(this.formData.secondaryPhone) {
             if (!validatePhone(this.formData.secondaryPhone)) {
                 this.formData.secondaryPhone = '';
-                this._appUIService.showSnackbar("Please enter a valid 10 digit phone number", 'failure');
+                this._appUIService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryPhoneNumber'),
+                    'failure');
                 return false;
             }
        }
@@ -330,8 +342,11 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         });
         if(!changed) {
             console.log("Nothing Changed");
-            this._appUIService.showSnackbar("Nothing Changed");
-            return
+            // "NothingHasChanged": "Nothing to update!",
+            this._appUIService.showSnackbar(this.translocoService
+                .translate('sharedComponents.socialMediaPosts.NothingHasChanged'),
+            'failure');
+            return;
         }
        
         console.log("Updating with data", this.formData)
@@ -352,8 +367,13 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             //     "data": 1
             //   }
             if(res.errCode == 1 && res.errMsg == "Success" && res.data == 1) {
-                this._appUIService.showSnackbar("Updated Successfully Details for: " + 
-                    this.formData["firstName"]);
+
+                this._appUIService.showSnackbar(
+                    this.translocoService
+                    .translate('sharedComponents.socialMediaPosts.UpdatedCustomerDetails'),
+                     'failure');
+          // "UpdatedCustomerDetails": "Updated details Successfully"
+
                 console.log("Updated Successfully Details for: ", this.formData["firstName"]);
                 this.getCustomerDetails();
             }
