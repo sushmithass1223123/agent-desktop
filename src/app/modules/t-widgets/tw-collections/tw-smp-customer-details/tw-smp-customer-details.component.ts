@@ -9,9 +9,11 @@ import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { InteractionRef } from 'app/interfaces';
+import { validateEmail, validatePhone } from 'app/utils';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
- * Custommer details widget
+ * Customer details widget
  */
 @Component({
     selector: 'tw-smp-customer-details',
@@ -210,10 +212,13 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                                                             "visible": false
                                                         }
                                                     ];
+    receivedData: TwCustomerInfo;
  
     constructor(private _tmacEventService: TMACEventService, private httpClient: HttpClient,
         private _appUIService: AppUiService, 
-        private _interactionManagerService: InteractionManagerService    ) {
+        private _interactionManagerService: InteractionManagerService ,
+        private translocoService: TranslocoService,
+    ) {
         super('TwSmmCustomerDetailsComponent');
     }
 
@@ -250,7 +255,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             interactions
                 .filter((i: InteractionRef) => i.type === 'smp')
                 .map((i) => {
-                    if(this.interactionId === i.interactionId) {
+                    if(i.isActive) {
+                        this.interactionId = i.interactionId;
                         console.log("This.interactionId: ", this.interactionId, i)
                         this.customerId = JSON.parse(i.otherData?.JsonData).CustomerId;
                         this.getCustomerDetails();
@@ -283,20 +289,76 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         if(this.test) {
             updateUrl = "https://webhook.site/17f9233b-b42f-4d75-9c2a-5d8740054d95";
         }
-       let data = {};
-        Object.entries(this.formData).forEach(element => {
-            if( element[1] == '-')
-            {
-                element[1] = '';
-                data[element[0]] = '';
-            } else {
-                data[element[0]] = element[1];
+       if(this.formData.email) {
+        if (!validateEmail(this.formData.email)) {
+            this.formData.email = '';            
+            // "InvalidEmail": "Please enter a valid email address",
+            this._appUIService.showSnackbar(this.translocoService
+                .translate('sharedComponents.socialMediaPosts.InvalidEmail'), 'failure');
+            return false;
+        }
+       }
+       
+       if(this.formData.phone) {
+        if (!validatePhone(this.formData.phone)) {
+            this.formData.phone = '';
+            
+            // "InvalidPhoneNumber": "Please enter a valid 10 digit phone number",
+            this._appUIService.showSnackbar(this.translocoService
+                .translate('sharedComponents.socialMediaPosts.InvalidPhoneNumber'), 'failure');            return false;
+        }
+    }
+
+        if(this.formData.secondaryEmail) {
+        if (!validateEmail(this.formData.secondaryEmail)) {
+            this.formData.secondaryEmail = '';
+            
+        // "InvalidSecondaryEmail": "Please enter a valid secondary email address",
+            this._appUIService.showSnackbar(
+                this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryEmail'), 
+                'failure');
+            return false;
+        }
+        }
+        // "InvalidSecondaryPhoneNumber": "Please enter a valid 10 digit secondary phone number",
+        
+           
+        if(this.formData.secondaryPhone) {
+            if (!validatePhone(this.formData.secondaryPhone)) {
+                this.formData.secondaryPhone = '';
+                this._appUIService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryPhoneNumber'),
+                    'failure');
+                return false;
             }
+       }
+       // used to check if the data is changed
+       //if not then update is not called
+       let changed = false;
+        Object.entries(this.formData).forEach(element => {
+            if(this.receivedData[element[0]] != element[1]) {
+                changed = true;
+            }            
         });
-        let date = moment().format('yyyy-MM-DDThh:mm:ssZ');
-        this.formData.lastChangedOn = date.toString();
+        if(!changed) {
+            console.log("Nothing Changed");
+            // "NothingHasChanged": "Nothing to update!",
+            this._appUIService.showSnackbar(this.translocoService
+                .translate('sharedComponents.socialMediaPosts.NothingHasChanged'),
+            'failure');
+            return;
+        }
+       
+        console.log("Updating with data", this.formData)
+        
+        //lastChangedon is updated in backend code to DateTime.UtcNow; so we dont have to send it
+        // let date = moment().format('yyyy-MM-DDThh:mm:ssZ');
+        // this.formData.lastChangedOn = date.toString();
+        // data['lastChangedOn'] = date.toString();
+        delete this.formData.lastChangedOn;
+        this.receivedData = this.formData;
         this.formData.lastChangedBy = SDKClient.getAgentData().agentName;
-        this.httpClient.post(updateUrl, data)
+        this.httpClient.post(updateUrl, this.formData)
         .subscribe((res: any) => {            
             console.log("Update Status: ", res);
             // {
@@ -305,9 +367,14 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             //     "data": 1
             //   }
             if(res.errCode == 1 && res.errMsg == "Success" && res.data == 1) {
-                this._appUIService.showSnackbar("Updated Successfully Details for: " + 
-                    this.formData["firstName"]);
+
+                this._appUIService.showSnackbar(
+                    this.translocoService
+                    .translate('sharedComponents.socialMediaPosts.UpdatedCustomerDetails'));
+          // "UpdatedCustomerDetails": "Updated details Successfully"
+
                 console.log("Updated Successfully Details for: ", this.formData["firstName"]);
+                this.getCustomerDetails();
             }
         });
     }
@@ -337,7 +404,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        console.log("Getting Data for Customer ID: ", this.customerId)
         this.formData = {};
         this.data.Data.ControlFields.forEach(control => {
-            this.formData[control.id + '_' + this.interactionId] = '-';  
+            this.formData[control.id + '_' + this.interactionId] = ' ';  
             this.formData["fieldId"] = this.formData[control.id + '_' + this.interactionId];  
         });
 
@@ -352,10 +419,22 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
              if(res.errCode == 0 && res.errMsg == "Success") {
                  this.formData = res.data;               
                 Object.keys(this.formData).forEach(element => {
-                    if(this.formData[element] == '')
-                        this.formData[element] = '-';
+                    if(!this.formData[element[1]]) {
+                        this.formData[element[1]] = ' ';
+                    }
                 });
-                 this.formData.lastChangedOn = new Date(this.formData.lastChangedOn).toString();
+
+                // convert time to UTC Format with 'Z'
+                let lastChangedOn = new Date(this.formData.lastChangedOn + 'Z');
+
+                this.formData.lastChangedOn = moment(lastChangedOn)
+                .format('DD-MM-YYYY hh:mm a');
+                console.log("this.formData.lastChangedOn", this.formData.lastChangedOn)
+                console.log("this.formData.normal", lastChangedOn.toDateString() + ' - ' + lastChangedOn.toTimeString());
+                console.log("LastChangedOn new Date().toString(): ", this.formData.lastChangedOn);
+                // console.log("LastChangeOn new Date().toISOString(): ", new Date(res.data.lastChangedOn).toISOString())
+                
+                this.receivedData =  { ...this.formData };
             }
         });
         return this.formData;
