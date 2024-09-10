@@ -1875,6 +1875,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 transcript.message = urlify(transcript.message);
             }
         }
+        //This is added to ignore empty messages from showing in UI for PB-6960
         if(!transcript.divider && !transcript.dividerMessage && !transcript.message) {
             console.info('Message is undefined hence ignoring it', transcript);
             return;
