@@ -21,7 +21,7 @@
                 fxFlex="100" appearance="full">
                     <mat-label>{{ control.title }}</mat-label>
                    <input matInput 
-                        type="text" [matToolTip]="formData[control.fieldId]"
+                        type="text"
                         [(ngModel)]="formData[control.fieldId]"
                         disabled="true"
                         />
@@ -33,7 +33,7 @@
                     <mat-label>{{ control.title }}</mat-label>
 
                 <input matInput
-                     [type]="control.type" [matToolTip]="formData[control.fieldId]"
+                     [type]="control.type" 
                      [(ngModel)]="formData[control.id]"
                      [disabled]="control.disabled"
                      />
