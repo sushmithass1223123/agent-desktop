@@ -7,7 +7,8 @@
     *transloco="let locale"
 >
     <div class="h-100-p twd-overflow-auto">
-        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
+        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 
+        border-radius-20">
             <!-- <ng-container *ngIf="!customerId">
                 No Data Available
             </ng-container> -->
@@ -16,10 +17,11 @@
                 *ngFor="let control of data.Data.ControlFields">
             <ng-container *ngIf="!editAllowed">
                 
-                <mat-form-field class="form-field custom no-border" fxFlex="100" appearance="full">
+                <mat-form-field class="form-field custom no-border" 
+                fxFlex="100" appearance="full">
                     <mat-label>{{ control.title }}</mat-label>
                    <input matInput 
-                        type="text"
+                        type="text" [matToolTip]="formData[control.fieldId]"
                         [(ngModel)]="formData[control.fieldId]"
                         disabled="true"
                         />
@@ -31,7 +33,7 @@
                     <mat-label>{{ control.title }}</mat-label>
 
                 <input matInput
-                     [type]="control.type"
+                     [type]="control.type" [matToolTip]="formData[control.fieldId]"
                      [(ngModel)]="formData[control.id]"
                      [disabled]="control.disabled"
                      />
