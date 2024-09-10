@@ -110,7 +110,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     prevAttachments: any[] = [];
     draftOutsessionId = {};
     isDraftMode: boolean = false;
-    maximumAllowedPostImageRendering: number = 5;
     editedCommentData: any = {};
     deletedPostData: any = {};
     deletedCommentData: any = {};
@@ -146,7 +145,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.routeReason = this.data.InteractionDetails.RouteReason;
         this.isDraftMode = this.routeReason === 'AgentDraftPull';
         await this.setPostDetails();
-        this.maximumAllowedPostImageRendering = this.data.Data.MaximumAllowedPostImageRendering;
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;

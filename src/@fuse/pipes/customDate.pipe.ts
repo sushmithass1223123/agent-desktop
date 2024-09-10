@@ -84,15 +84,15 @@ export class CustomDatePipe implements PipeTransform {
                     (currentDateWithoutTime.getMonth() - dateWithoutTime.getMonth());
 
                 if (diffSeconds < 60) {
-                    return `${diffSeconds}s`;
+                    return `${diffSeconds} s`;
                 } else if (diffMinutes < 60) {
-                    return `${diffMinutes}m`;
+                    return `${diffMinutes} min${diffMinutes > 1 ? 's' : ''}`;
                 } else if (diffHours < 24) {
-                    return `${diffHours}h`;
+                    return `${diffHours} hr${diffHours > 1 ? 's' : ''}`;
                 } else if (diffDays < 7) {
-                    return `${diffDays}d`;
+                    return `${diffDays} day${diffDays > 1 ? 's' : ''}`;
                 } else if (diffMonths < 12) {
-                    return `${diffWeeks}w`;
+                    return `${diffWeeks} week${diffWeeks > 1 ? 's' : ''}`;
                 } else {
                     return 'older';
                 }

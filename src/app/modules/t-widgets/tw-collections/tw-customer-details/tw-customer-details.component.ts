@@ -96,6 +96,10 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        // Remove interaction events from tmac events array
+        const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
+        if(eventNames.length && this.interactionId)
+            this._tmacEventService.removeInteractionEvents(this.interactionId, eventNames)
     }
 
     /**

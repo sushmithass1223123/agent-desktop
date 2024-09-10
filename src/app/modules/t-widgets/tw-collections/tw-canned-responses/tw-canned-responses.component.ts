@@ -128,6 +128,11 @@ export class TwCannedResponsesComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+        // Remove interaction events from tmac events array
+        this._tmacEventService.removeInteractionEvents(this.interactionId, [
+            'CallerIntentEvent',
+            'WorkCodeAddedEvent'
+        ])
     }
 
     /**

@@ -43,6 +43,18 @@ tw-smp-controls .mat-card-content {
     }
 }
 
+.yellow-icon {
+    color: #ffd900 !important;
+}
+
+.red-icon {
+    color: #ff0000 !important;
+}
+
+.theme-icon {
+    color: var(--twd-primary-default) !important;
+}
+
 .interaction-popup {
     position: fixed;
     top: 0;
@@ -100,7 +112,7 @@ tw-smp-controls .mat-card-content {
             mat-icon {
                 width: 20px;
                 height: 20px;
-                opacity: 0.35;
+                color: #656d8a;
                 cursor: pointer;
             }
         }
@@ -114,6 +126,7 @@ tw-smp-controls .mat-card-content {
         z-index: 9;
         align-items: center;
         justify-content: center;
+        background-color: rgba(255, 255, 255, 0.8);
         
         .bg-ol {
             width: 100%;
@@ -133,6 +146,8 @@ tw-smp-controls .mat-card-content {
             justify-content: flex-start;
             gap: 20px;
             z-index: 10;
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+            background-color: #fff;
 
             img {
                 height: 220px;
@@ -146,13 +161,6 @@ tw-smp-controls .mat-card-content {
                 text-align: center;
             }
         }
-
-        .edited {
-            border: 2px solid #ffcf74 !important;
-        }
-        .deleted {
-            border: 2px solid #ec5757 !important;
-        }
     }
 
     smp-template {
@@ -165,7 +173,7 @@ tw-smp-controls .mat-card-content {
         .smp-template {
             padding-left: 0px !important;
             padding-right: 0px !important;
-            height: 50vh;
+            // height: 50vh;
             max-height: 100%;
         }
     }

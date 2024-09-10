@@ -27,6 +27,13 @@ export class MiscellaneousPipe implements PipeTransform {
                 if (args[0] !== undefined && args[1] !== undefined) return value.slice(args[0], args[1]);
                 else return value.slice(args[0]);
             }
+            case 'twoLetterString': {
+                const words = value.split(' ');
+                if(words.length > 1) {
+                    var firstLetters = words.map((word) => word.charAt(0)).join('');
+                } else firstLetters = words[0];
+                return firstLetters.substring(0, 2);
+            }
         }
     }
 }

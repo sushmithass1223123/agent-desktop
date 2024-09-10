@@ -201,6 +201,10 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
          * Source of transfer/conference
          */
         source?: string;
+        /**
+         * customer's status
+         */
+        isCustomerDisconnected?: boolean;
     } = null;
     /**
      * Call lines ref
@@ -531,6 +535,29 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         this.stopTimer.next(null);
 
         this.resetConnectionTimeout();
+        // Remove interaction events from tmac events array
+        this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, [
+            'IncomingCallUpdateEvent',
+            'OutgoingCallEvent',
+            'CallConnectedEvent',
+            'CallDisconnectedEvent',
+            'CallHoldEvent',
+            'CallHoldReconnectEvent',
+            'CallTransferInitiatedEvent',
+            'CallTransferLineDisconnectEvent',
+            'CallTransferRemoteConnectedEvent',
+            'CallConferenceInitiatedEvent',
+            'CallConferenceCompletedEvent',
+            'CallConferenceLineDisconnectEvent',
+            'CallConferenceRemoteConnectedEvent',
+            'MediaServerEvent',
+            'VoiceCannedResponseEvent',
+            'CallerIntentEvent',
+            'IVRDataEvent',
+            'InteractionDataEvent',
+            'UUIDataEvent',
+            'HoldTimerEvent'
+        ])
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1079,6 +1106,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     CallTransferLineDisconnectEvent(evt: CallTransferLineDisconnectEvent): void {
         // check if customer disconnects in during the consult transfer
         if(evt?.IsMainLine && !this.isTransferCompleted) {
+            this.tempCallRef.isCustomerDisconnected = true;
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.customerDisconnected'), 'warning');
             return;
         }
@@ -1137,6 +1165,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     CallConferenceLineDisconnectEvent(evt: CallConferenceLineDisconnectEvent): void {
         // check if customer disconnects in during the consult conference
         if(evt?.IsMainLine) {
+            this.tempCallRef.isCustomerDisconnected = true;
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.voiceControls.customerDisconnected'), 'warning');
             return;
         }
@@ -1582,7 +1611,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     confirmDisconnectCall(btn: MatButton): void {
         // config force login
-        this.dialogRef = this._appUIService.showAppConfirmDialog('endInteraction');
+        this.dialogRef = this._appUIService.showAppConfirmDialog('endCall');
         this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 // send end chat to server

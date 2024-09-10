@@ -478,6 +478,18 @@ export type TwChatControlsData = {
      * Flag to decide whether to sanitiza agent inputs or not
      */
     EnableAgentMessageSanitization: boolean;
+
+    /**
+     * to maintain all SMM releated configurations
+     */
+    SMM: {
+        attachments: {
+            /**
+             * list of channels that are allowed to send attachments during the chat
+             */
+            allowedChannels: string;
+        }
+    }
 };
 
 export interface XssSymbolEntityMap {

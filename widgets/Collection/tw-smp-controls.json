@@ -52,7 +52,6 @@
             }
         },
         "MaxFileUploadSize": 20971520,
-        "AsyncReplySendTimeout": 60000,
-        "MaximumAllowedPostImageRendering": 1
+        "AsyncReplySendTimeout": 60000
     }
 }
