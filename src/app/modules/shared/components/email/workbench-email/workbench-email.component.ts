@@ -906,14 +906,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                     .pipe(takeUntil(this.unsubscribeAll));
                 const res: any = await res$.pipe(take(1)).toPromise();
                 if (res.status !== 'SUCCESS') {
-                    if(res?.failedList?.length === 1 && EMAIL_SEND_STATUS[res.failedList[0].responseCode]) {
+                    if(res?.failedList?.items?.length === 1 && EMAIL_SEND_STATUS[res.failedList?.items[0]?.responseCode]) {
                         this.appUiService.showSnackbar(
                             this.translocoService.translate(
                                 `${this.translocoService.translate(
                                     `sharedComponents.email.emailDeleteFailed`
                                 )}${this.translocoService.translate(
                                     `sharedComponents.email.emailDeleteError${
-                                        EMAIL_SEND_STATUS[res.failedList[0].responseCode]
+                                        EMAIL_SEND_STATUS[res.failedList.items[0].responseCode]
                                     }`
                                 )}`
                             ),
@@ -1087,11 +1087,11 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                         this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
                                         'failure'
                                     );
-                                } else if (res.failedList.length === 1 && EMAIL_SEND_STATUS[res.failedList[0].responseCode]) {
+                                } else if (res.failedList.items.length === 1 && EMAIL_SEND_STATUS[res.failedList.items[0]?.responseCode]) {
                                     let errorMsg = `${this.translocoService.translate(
                                         `sharedComponents.email.emailPullFailed`
                                     )}${this.translocoService.translate(
-                                        `sharedComponents.email.emailPullError${EMAIL_SEND_STATUS[res.failedList[0].responseCode]}`
+                                        `sharedComponents.email.emailPullError${EMAIL_SEND_STATUS[res.failedList.items[0].responseCode]}`
                                     )}`;
                                     this._appUIService.showSnackbar(errorMsg, 'failure');
                                 } else {
