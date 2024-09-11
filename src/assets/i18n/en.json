@@ -1113,7 +1113,15 @@
             "closePostsSuccess": "Successfully closed posts!",
             "closePostsFailed": "Error closing posts!",
             "replySendToCustomer": "Reply sent to customer",
-            "replySendToChecker": "Reply sent to checker"
+            "replySendToChecker": "Reply sent to checker",
+            "NothingHasChanged": "Nothing to update!",
+            "email": "Please enter a valid email address",
+            "secondaryEmail": "Please enter a valid secondary email address",
+            "phone": "Please enter a valid 10 digit phone number",
+            "secondaryPhone": "Please enter a valid 10 digit secondary phone number",
+            "UpdatedCustomerDetails": "Updated details Successfully",
+            "GetCustomerDetails": "Getting the customer details",
+            "fieldValidation": " cannot be empty"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
