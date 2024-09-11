@@ -9,7 +9,6 @@ import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { InteractionRef } from 'app/interfaces';
-import { validateEmail, validatePhone } from 'app/utils';
 import { TranslocoService } from '@ngneat/transloco';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
