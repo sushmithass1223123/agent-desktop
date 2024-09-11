@@ -2632,7 +2632,9 @@
                                                             "maxValue": 100,
                                                             "disabled": true,
                                                             "placeHolder": "Customer ID",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "salutation",
@@ -2641,7 +2643,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Salutation",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "firstName",
@@ -2650,7 +2654,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "First Name",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": true,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "lastName",
@@ -2659,7 +2665,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Last Name",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "cif",
@@ -2668,7 +2676,9 @@
                                                             "disabled": false,
                                                             "placeHolder": "Customer Identification Number",
                                                             "maxValue": 100,
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "secondaryCIF",
@@ -2677,7 +2687,9 @@
                                                             "disabled": false,
                                                             "maxValue": 100,
                                                             "placeHolder": "Secondary CIF",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "email",
@@ -2686,7 +2698,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Email",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
                                                         },
                                                         {
                                                             "id": "phone",
@@ -2695,7 +2709,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Phone",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^((\\+91-?)|0)?[0-9]{10}$"
                                                         },
                                                         {
                                                             "id": "address",
@@ -2704,7 +2720,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Address",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "city",
@@ -2713,7 +2731,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "City",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "state",
@@ -2722,7 +2742,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "State",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "country",
@@ -2731,7 +2753,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Country",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "postalCode",
@@ -2740,7 +2764,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Postal Code",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "secondaryPhone",
@@ -2749,7 +2775,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Secondary Phone",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^((\\+91-?)|0)?[0-9]{10}$"
                                                         },
                                                         {
                                                             "id": "secondaryEmail",
@@ -2758,7 +2786,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Secondary Email",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
                                                         },
                                                         {
                                                             "id": "lastChangedBy",
@@ -2767,7 +2797,9 @@
                                                             "maxValue": 100,
                                                             "disabled": true,
                                                             "placeHolder": "Last Changed By",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "lastChangedOn",
@@ -2776,7 +2808,9 @@
                                                             "maxValue": 100,
                                                             "disabled": true,
                                                             "placeHolder": "Last Changed On",
-                                                            "visible": false
+                                                            "visible": false,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         }
                                                     ]
                                                 }

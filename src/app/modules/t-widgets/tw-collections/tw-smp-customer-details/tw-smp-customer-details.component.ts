@@ -11,6 +11,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { InteractionRef } from 'app/interfaces';
 import { validateEmail, validatePhone } from 'app/utils';
 import { TranslocoService } from '@ngneat/transloco';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 /**
  * Customer details widget
@@ -56,163 +57,206 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
       * Current intreaction id
       */
      interactionId: number;
-
+     formChanged = false;
+     receivedData: TwCustomerInfo;
+     customerForm: FormGroup;
+     
+     error = {
+        email: 'Enter a valid email',
+        phone: 'Enter a valid phone',
+        secondaryEmail: 'Enter a valid s email',
+        secondaryPhone: 'Enter a valid s phone',
+      };
+      validation = ' cannot be empty';
+      
      defaultControlFields = [
-                                                        {
-                                                            "id": "customerID",
-                                                            "type": "text",
-                                                            "title": "Customer Id",
-                                                            "maxValue": 100,
-                                                            "disabled": true,
-                                                            "placeHolder": "Customer ID",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "salutation",
-                                                            "type": "text",
-                                                            "title": "Salutation",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Salutation",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "firstName",
-                                                            "type": "text",
-                                                            "title": "First Name",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "First Name",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "lastName",
-                                                            "type": "text",
-                                                            "title": "Last Name",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Last Name",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "cif",
-                                                            "type": "text",
-                                                            "title": "CIF",
-                                                            "disabled": false,
-                                                            "placeHolder": "Customer Identification Number",
-                                                            "maxValue": 100,
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "secondaryCIF",
-                                                            "type": "text",
-                                                            "title": "Secondary Cif",
-                                                            "disabled": false,
-                                                            "maxValue": 100,
-                                                            "placeHolder": "Secondary CIF",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "email",
-                                                            "type": "email",
-                                                            "title": "Email",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Email",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "phone",
-                                                            "type": "tel",
-                                                            "title": "Phone",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Phone",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "address",
-                                                            "type": "text",
-                                                            "title": "Address",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Address",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "city",
-                                                            "type": "text",
-                                                            "title": "City",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "City",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "state",
-                                                            "type": "text",
-                                                            "title": "State",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "State",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "country",
-                                                            "type": "text",
-                                                            "title": "Country",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Country",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "postalCode",
-                                                            "type": "text",
-                                                            "title": "Phone",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Postal Code",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "secondaryPhone",
-                                                            "type": "tel",
-                                                            "title": "Secondary Phone",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Secondary Phone",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "secondaryEmail",
-                                                            "type": "email",
-                                                            "title": "Secondary Email",
-                                                            "maxValue": 100,
-                                                            "disabled": false,
-                                                            "placeHolder": "Secondary Email",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "lastChangedBy",
-                                                            "type": "text",
-                                                            "title": "Last Changed By",
-                                                            "maxValue": 100,
-                                                            "disabled": true,
-                                                            "placeHolder": "Last Changed By",
-                                                            "visible": true
-                                                        },
-                                                        {
-                                                            "id": "lastChangedOn",
-                                                            "type": "text",
-                                                            "title": "Last Changed On",
-                                                            "maxValue": 100,
-                                                            "disabled": true,
-                                                            "placeHolder": "Last Changed On",
-                                                            "visible": false
-                                                        }
-                                                    ];
-    receivedData: TwCustomerInfo;
+        {
+          id: 'customerID',
+          type: 'text',
+          title: 'Customer Id',
+          maxValue: 100,
+          disabled: true,
+          placeHolder: 'Customer ID',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'salutation',
+          type: 'text',
+          title: 'Salutation',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Salutation',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'firstName',
+          type: 'text',
+          title: 'First Name',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'First Name',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'lastName',
+          type: 'text',
+          title: 'Last Name',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Last Name',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'cif',
+          type: 'text',
+          title: 'CIF',
+          disabled: false,
+          placeHolder: 'Customer Identification Number',
+          maxValue: 100,
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'secondaryCIF',
+          type: 'text',
+          title: 'Secondary Cif',
+          disabled: false,
+          maxValue: 100,
+          placeHolder: 'Secondary CIF',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'email',
+          type: 'email',
+          title: 'Email',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Email',
+          visible: true,
+          required: false,
+          validation_regex: '[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}',
+        },
+        {
+          id: 'phone',
+          type: 'tel',
+          title: 'Phone',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Phone',
+          visible: true,
+          required: false,
+          validation_regex: '^((\\+91-?)|0)?[0-9]{10}$',
+        },
+        {
+          id: 'address',
+          type: 'text',
+          title: 'Address',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Address',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'city',
+          type: 'text',
+          title: 'City',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'City',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'state',
+          type: 'text',
+          title: 'State',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'State',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'country',
+          type: 'text',
+          title: 'Country',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Country',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'postalCode',
+          type: 'text',
+          title: 'Postal Code',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Postal Code',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'secondaryPhone',
+          type: 'tel',
+          title: 'Secondary Phone',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Secondary Phone',
+          visible: true,
+          required: false,
+          validation_regex: '^((\\+91-?)|0)?[0-9]{10}$',
+        },
+        {
+          id: 'secondaryEmail',
+          type: 'email',
+          title: 'Secondary Email',
+          maxValue: 100,
+          disabled: false,
+          placeHolder: 'Secondary Email',
+          visible: true,
+          required: false,
+          validation_regex: '[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}',
+        },
+        {
+          id: 'lastChangedBy',
+          type: 'text',
+          title: 'Last Changed By',
+          maxValue: 100,
+          disabled: true,
+          placeHolder: 'Last Changed By',
+          visible: true,
+          required: false,
+          validation_regex: '',
+        },
+        {
+          id: 'lastChangedOn',
+          type: 'text',
+          title: 'Last Changed On',
+          maxValue: 100,
+          disabled: true,
+          placeHolder: 'Last Changed On',
+          visible: false,
+          validation_regex: '',
+        },
+      ];
  
     constructor(private _tmacEventService: TMACEventService, private httpClient: HttpClient,
         private _appUIService: AppUiService, 
@@ -235,8 +279,33 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         // call the wrapper init method
         this.initWrapper(this.data);
         console.log("this.data", this.data);
-        if(this.data.InteractionDetails.interactionId) {
-            this.interactionId = this.data.InteractionDetails.interactionId;
+        
+        this.editAllowed = this.data?.Data?.EditAllowed;      
+        if(this.data?.InteractionDetails?.InteractionID) {
+            this.interactionId = this.data?.InteractionDetails?.InteractionID;
+            let customerFormData = {};
+            this.data.Data.ControlFields.forEach(control => {
+                if(!this.editAllowed) {
+                    customerFormData[control.id] = new FormControl('');
+                } else {
+                  if(control?.validation_regex && control?.required) {
+                    
+                    customerFormData[control.id] = new FormControl('',
+                      [Validators.pattern(control?.validation_regex), Validators.required])
+                  } else if(control?.validation_regex) {
+                        customerFormData[control.id] = new FormControl('',
+                            Validators.pattern(control?.validation_regex))
+                    }
+                    else if(control?.required) {
+                        customerFormData[control.id] = new FormControl('',
+                            Validators.required)  
+                    } else {
+                      customerFormData[control.id] = new FormControl('');
+                    }
+                }
+            });
+            this.customerForm = new FormGroup(customerFormData);
+            console.log("Controls: ", this.customerForm.controls);
             this.getCustomerDetails();
         }
         this._tmacEventService
@@ -260,13 +329,26 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
                     if(i.isActive) {
                         this.interactionId = i.interactionId;
                         console.log("This.interactionId: ", this.interactionId, i)
+                      
                         this.customerId = JSON.parse(i.otherData?.JsonData).CustomerId;
                         this.getCustomerDetails();
                     }
                 });
         });
-        // SDKClient.events.on("IncomingEmailEvent", this.IncomingEmailEvent);
-        this.editAllowed = this.data.Data.EditAllowed;             
+      this.validation = this.translocoService
+                .translate('sharedComponents.socialMediaPosts.fieldValidation');
+      this.error.email = this.translocoService
+                .translate('sharedComponents.socialMediaPosts.email');        
+      this.error.phone = this.translocoService
+                .translate('sharedComponents.socialMediaPosts.phone');    
+      this.error.secondaryEmail = this.translocoService
+                .translate('sharedComponents.socialMediaPosts.secondaryEmail');      
+      this.error.secondaryPhone = this.translocoService
+                .translate('sharedComponents.socialMediaPosts.secondaryPhone');
+        
+    this.customerForm.valueChanges.subscribe((val) => {
+      this.formChanged = true;
+    });
         } catch (error) {
             console.error('Error in TwSmmCustomerDetails', error);
         }
@@ -287,128 +369,49 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
     }
 
     updateCustomerDetails() {
+      if(!this.formChanged) {
+        console.log("Nothing Changed");
+        // "NothingHasChanged": "Nothing to update!",
+        this._appUIService.showSnackbar(this.translocoService
+            .translate('sharedComponents.socialMediaPosts.NothingHasChanged'),
+        'failure');
+        return;
+      }
         let updateUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.UpdateMethodName;
         if(this.test) {
             updateUrl = "https://webhook.site/17f9233b-b42f-4d75-9c2a-5d8740054d95";
-        }
+        } 
+        this.customerForm.controls['lastChangedBy'].setValue(SDKClient.getAgentData().agentName);
 
-       if(this.formData.email) {
-        if (!validateEmail(this.formData.email)) {
-            this.formData.email = '';            
-            // "InvalidEmail": "Please enter a valid email address",
-            this._appUIService.showSnackbar(this.translocoService
-                .translate('sharedComponents.socialMediaPosts.InvalidEmail'), 'failure');
-            return false;
-        }
-       }
+        let data = { ... this.customerForm.value};
+        delete data.lastChangedOn;
        
-       if(this.formData.phone) {
-        if (!validatePhone(this.formData.phone)) {
-            this.formData.phone = '';            
-            // "InvalidPhoneNumber": "Please enter a valid 10 digit phone number",
-            this._appUIService.showSnackbar(this.translocoService
-                .translate('sharedComponents.socialMediaPosts.InvalidPhoneNumber'), 'failure');            return false;
-        }
-        }
-
-        if(this.formData.secondaryEmail) {
-        if (!validateEmail(this.formData.secondaryEmail)) {
-            this.formData.secondaryEmail = '';            
-        // "InvalidSecondaryEmail": "Please enter a valid secondary email address",
-            this._appUIService.showSnackbar(
-                this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryEmail'), 
-                'failure');
-            return false;
-        }
-        }
-                   
-        if(this.formData.secondaryPhone) {
-            if (!validatePhone(this.formData.secondaryPhone)) {
-                this.formData.secondaryPhone = '';
-            // "InvalidSecondaryPhoneNumber": "Please enter a valid 10 digit secondary phone number",
-                this._appUIService.showSnackbar(
-                    this.translocoService.translate('sharedComponents.socialMediaPosts.InvalidSecondaryPhoneNumber'),
-                    'failure');
-                return false;
-            }
-       }
-
-       // used to check if the data is changed
-       //if not then no need to call the update API is not called
-       let changed = false;
-        Object.entries(this.formData).forEach(element => {
-            if(this.receivedData[element[0]] != element[1]) {
-                changed = true;
-            }            
-        });
-        if(!changed) {
-            console.log("Nothing Changed");
-            // "NothingHasChanged": "Nothing to update!",
-            this._appUIService.showSnackbar(this.translocoService
-                .translate('sharedComponents.socialMediaPosts.NothingHasChanged'),
-            'failure');
-            return;
-        }
-       
-        console.log("Updating with data", this.formData)
-        
-        //lastChangedon is updated in backend code to DateTime.UtcNow; so we dont have to send it
-        // let date = moment().format('yyyy-MM-DDThh:mm:ssZ');
-        // this.formData.lastChangedOn = date.toString();
-        // data['lastChangedOn'] = date.toString();
-        delete this.formData.lastChangedOn;
-        this.receivedData = this.formData;
-        this.formData.lastChangedBy = SDKClient.getAgentData().agentName;
-        this.httpClient.post(updateUrl, this.formData)
+        this.httpClient.post(updateUrl, data)
         .subscribe((res: any) => {            
-            console.log("Update Status: ", res);
+            console.log("updateCustomerDetails response: ", res);
             // {
             //     "errCode": 1,
             //     "errMsg": "Success",
             //     "data": 1
             //   }
             if(res.errCode == 1 && res.errMsg == "Success" && res.data == 1) {
-
+                // "UpdatedCustomerDetails": "Updated details Successfully"
                 this._appUIService.showSnackbar(
                     this.translocoService
                     .translate('sharedComponents.socialMediaPosts.UpdatedCustomerDetails'));
-          // "UpdatedCustomerDetails": "Updated details Successfully"
-
-                console.log("Updated Successfully Details for: ", this.formData["firstName"]);
+                console.log("Updated Successfully Details for: ", this.customerForm.value.firstName);
                 this.getCustomerDetails();
             }
         });
     }
 
     getCustomerDetails() {
-        {   
-         // formData = {
-        //     "customerID": "19",
-        //     "salutation": "",
-        //     "firstName": "Hardcoded",
-        //     "lastName": "Hardcoded",
-        //     "cif": "H1001",
-        //     "secondaryCIF": "",
-        //     "email": "",
-        //     "phone": "",
-        //     "address": "",
-        //     "city": "",
-        //     "state": "",
-        //     "country": "",
-        //     "postalCode": "",
-        //     "secondaryPhone": "",
-        //     "secondaryEmail": "",
-        //     "lastChangedBy": "devbox\\select_starsh",
-        //     "lastChangedOn": "2024-01-22T17:11:47"
-        //   };
-       }
        console.log("Getting Data for Customer ID: ", this.customerId)
-        this.formData = {};
-        this.data.Data.ControlFields.forEach(control => {
-            this.formData[control.id + '_' + this.interactionId] = ' ';  
-            this.formData["fieldId"] = this.formData[control.id + '_' + this.interactionId];  
-        });
+       if(!this.customerForm || !this.customerId) {
+        return;
+       }
 
+        this.customerForm?.reset;
         let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
           + this.customerId; 
        if(this.test) {
@@ -416,24 +419,34 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        }
         this.httpClient.post(apiUrl, {})
         .subscribe((res: any) => {
-            console.log("Response", res)
+          const loader = this._appUIService.showSnackbar(
+            this.translocoService.translate('sharedComponents.socialMediaPosts.GetCustomerDetails'),
+            'loading'
+        );
+            console.log("getCustomerDetails Response", res)
              if(res.errCode == 0 && res.errMsg == "Success") {
-                 this.formData = res.data;               
-                Object.keys(this.formData).forEach(element => {
-                    if(!this.formData[element[1]]) {
-                        this.formData[element[1]] = ' ';
-                    }
-                });
+              loader.dismiss();
+                if(!res.data.customerID) {
+                    return;
+                }
 
                 // convert time to current time zone
-                let lastChangedOn = new Date(this.formData.lastChangedOn + 'Z');
-
-                this.formData.lastChangedOn = moment(lastChangedOn)
+                // let lastChangedOn = new Date(this.formData.lastChangedOn + 'Z');
+                res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
                 .format('DD-MM-YYYY hh:mm a');
-                this.receivedData =  { ...this.formData };
+
+                Object.keys(res.data).forEach(element => {  
+                    if(!this.editAllowed && !res.data[element]) {
+                           this.customerForm.controls[element].setValue('-'); 
+                    } else {
+                        this.customerForm.controls[element].setValue(res.data[element]);
+                    }
+
+                });
+                this.formChanged = false;
+                console.log("CustomerForm: ", this.customerForm.value)
             }
         });
-        return this.formData;
     }
 
     ngOnDestroy(): void {
