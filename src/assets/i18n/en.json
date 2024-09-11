@@ -1035,6 +1035,7 @@
             "emailComposeErrorFailedToComposeNewEmail": "Error while composing email",
             "emailPullFailed": "Failed to pull email - reason : ",
             "emailPullErrorFailedToPullFromMakerDraft": "Failed to pull email from maker draft",
+            "emailPullErrorDraftEmailHasBeenPulledByAgent": "Draft email has been pulled by agent",
             "emailPullErrorFailedToPullFromSentItems": "Failed to pull email from sent items",
             "emailPullErrorFailedToPullFromMakerQueue": "Failed to pull email from maker queue",
             "emailPullErrorPullToFromMakerQueueSinceOutlookRoutingEnabled": "Failed to pull email from maker queue since outlook routing enabled",
