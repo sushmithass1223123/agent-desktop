@@ -1561,7 +1561,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         const widgetMode = {
             title: 'AV Controls',
             type: 'tw-audio-video-controls',
-            icon: param === 'audio' ? 'phone' : 'duo'
+            icon: param === 'video' ? 'duo' : param === 'audio' ? 'phone' : 'phone'
+
         };
         // create a call AOT widget
         const widget = new TwWidgetModel(widgetMode.title, widgetMode.type, widgetMode.icon) as AOTWidget<any, any>;
