@@ -443,7 +443,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
 
                 Object.keys(res.data).forEach(element => {  
                     if(!this.editAllowed && !res.data[element]) {
-                           this.customerForm.controls[element].setValue('-'); 
+                           this.customerForm.controls[element].setValue('    BB'); 
                     } else {
                         this.customerForm.controls[element].setValue(res.data[element]);
                     }

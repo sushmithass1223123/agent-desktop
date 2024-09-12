@@ -2622,7 +2622,7 @@
                                                     ],
                                                     "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
                                                     "UpdateMethodName": "UpdateCustomerDetails",
-                                                    "EditAllowed": true,
+                                                    "EditAllowed": false,
                                                     "ControlFields": [
                                                         {
                                                             "id": "customerID",
@@ -2732,7 +2732,7 @@
                                                             "placeHolder": "City",
                                                             "visible": true,
                                                             "required": false,
-                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][\/a-zA-Z.]+)*$"
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "state",
@@ -2743,7 +2743,7 @@
                                                             "placeHolder": "State",
                                                             "visible": true,
                                                             "required": false,
-                                                            "validation_regex": ""
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "country",
@@ -2754,7 +2754,7 @@
                                                             "placeHolder": "Country",
                                                             "visible": true,
                                                             "required": false,
-                                                            "validation_regex": ""
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "postalCode",

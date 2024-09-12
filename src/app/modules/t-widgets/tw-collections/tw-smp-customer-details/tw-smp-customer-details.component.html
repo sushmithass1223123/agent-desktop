@@ -18,10 +18,11 @@
                             <mat-label class="contolLabel">{{ control.title }}</mat-label>
 
                             <ng-container *ngIf="!editAllowed">
-                                <input
+                                <input 
                                     matInput
                                     type="text"
                                     [formControlName]="control.id"
+                                    [placeholder]="control.placeholder"
                                     disabled="true"
                                     readonly="true"
                                 />
