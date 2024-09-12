@@ -32,7 +32,8 @@
                                     [readonly]="control.disabled"
                                     [type]="control.type"
                                     [required]="control.required"
-                                    [formControlName]="control.id"
+                                    [formControlName]="control.id" 
+                                    [maxlength]="control.maxValue" 
                                 />
                             </ng-container>
                             <mat-error
@@ -43,7 +44,7 @@
                                     customerForm.get(control.id).value
                                 "
                             >
-                                {{ error[control.id] }}
+                                {{ error[control.id] ? error[control.id] : "Invalid " + control.title }}
                             </mat-error>
     
                             <mat-error *ngIf="control.required && !customerForm.get(control.id).value">

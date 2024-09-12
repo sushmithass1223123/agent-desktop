@@ -1120,6 +1120,7 @@
             "secondaryEmail": "Please enter a valid secondary email address",
             "phone": "Please enter a valid 10 digit phone number",
             "secondaryPhone": "Please enter a valid 10 digit secondary phone number",
+            "salutation": "Salutation can be at most 5 characters",
             "UpdatedCustomerDetails": "Updated details Successfully",
             "GetCustomerDetails": "Getting the customer details",
             "fieldValidation": " cannot be empty"

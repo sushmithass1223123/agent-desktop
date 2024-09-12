@@ -69,8 +69,9 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      error = {
         email: 'Enter a valid email',
         phone: 'Enter a valid phone',
-        secondaryEmail: 'Enter a valid s email',
-        secondaryPhone: 'Enter a valid s phone',
+        secondaryEmail: 'Enter a valid secondary email',
+        secondaryPhone: 'Enter a valid secondary phone',
+        salutation: "Enter a valid salutation"
       };
       validation = ' cannot be empty';
       
