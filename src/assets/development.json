@@ -2732,7 +2732,7 @@
                                                             "placeHolder": "City",
                                                             "visible": true,
                                                             "required": false,
-                                                            "validation_regex": ""
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][\/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "state",
