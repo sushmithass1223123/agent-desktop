@@ -49,15 +49,21 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
     apiUrls: string[] = [];
 
     customerId: string;
+    /**
+    * editAllowed: to perform customer details update
+    */
     editAllowed: boolean = false;
     formData: TwCustomerInfo;
+    
+    /**
+    * test: test webhook urls are used if set to true
+    */
     test: boolean = false;
      /**
       * Current intreaction id
       */
      interactionId: number;
      formChanged = false;
-     receivedData: TwCustomerInfo;
      customerForm: FormGroup;
      
      error = {
@@ -418,13 +424,13 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        }
         this.httpClient.post(apiUrl, {})
         .subscribe((res: any) => {
-          const loader = this._appUIService.showSnackbar(
-            this.translocoService.translate('sharedComponents.socialMediaPosts.GetCustomerDetails'),
-            'loading'
-        );
+        //   const loader = this._appUIService.showSnackbar(
+        //     this.translocoService.translate('sharedComponents.socialMediaPosts.GetCustomerDetails'),
+        //     'loading'
+        // );
             console.log("getCustomerDetails Response", res)
              if(res.errCode == 0 && res.errMsg == "Success") {
-              loader.dismiss();
+              // loader.dismiss();
                 if(!res.data.customerID) {
                     return;
                 }
