@@ -37,6 +37,16 @@ export type TwControlInfo = {
      * place Holder 
      */
     placeHolder?: string;
+    
+    /**
+     * required 
+     */
+    required?: string;
+    
+    /**
+     * validate 
+     */
+    validation_regex?: string;
 };
 
 export type TwCustomerInfo = {

@@ -2719,99 +2719,13 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Widgets": [
-                                            {
-                                                "Name": "Social Media Posts",
-                                                "Description": "",
-                                                "Type": "tw-smp-controls",
-                                                "Config": {
-                                                    "Enabled": true,
-                                                    "Hidden": false,
-                                                    "Static": false,
-                                                    "Anchor": true,
-                                                    "AOT": false,
-                                                    "AutoOpen": false,
-                                                    "Icon": "chat",
-                                                    "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse", "float"],
-                                                    "ViewState": "restore",
-                                                    "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
-                                                    "Transfer": {
-                                                        "Allowed": true,
-                                                        "Agent": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": {
-                                                                "Use": "agentId",
-                                                                "Display": "agentName",
-                                                                "FreeTextAllowed": false
-                                                            },
-                                                            "AllowedStates": ["Available", "Ready"],
-                                                            "TeamFilter": false,
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
-                                                        },
-                                                        "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": {
-                                                                "Use": "vdn",
-                                                                "Display": "skill",
-                                                                "FreeTextAllowed": true
-                                                            },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": [],
-                                                            "Rules": {
-                                                                "Enabled": true,
-                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
-                                                            }
-                                                        }
-                                                    },
-                                                    "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000
-                                                }
-                                            },
-                                            {
-                                                "Name": "SMP View Customer Details",
-                                                "Description": "",
-                                                "Type": "tw-smp-customer-details",
-                                                "Config": {
-                                                    "Enabled": true,
-                                                    "Hidden": false,
-                                                    "Static": false,
-                                                    "Anchor": false,
-                                                    "AOT": false,
-                                                    "AutoOpen": false,
-                                                    "Icon": "person",
-                                                    "Class": "",
-                                                    "Position": { "X": 4, "Y": 2 },
-                                                    "Actions": ["maximize", "float"],
-                                                    "ViewState": "restore",
-                                                    "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
                                                     "SocialMediaAPIs": [
-                                                        "http://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+                                                        "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
                                                         "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
                                                     ],
                                                     "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
                                                     "UpdateMethodName": "UpdateCustomerDetails",
-                                                    "EditAllowed": true,
+                                                    "EditAllowed": false,
                                                     "ControlFields": [
                                                         {
                                                             "id": "customerID",
@@ -2820,16 +2734,20 @@
                                                             "maxValue": 100,
                                                             "disabled": true,
                                                             "placeHolder": "Customer ID",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "salutation",
                                                             "type": "text",
                                                             "title": "Salutation",
-                                                            "maxValue": 100,
+                                                            "maxValue": 5,
                                                             "disabled": false,
                                                             "placeHolder": "Salutation",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "firstName",
@@ -2838,7 +2756,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "First Name",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": true,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "lastName",
@@ -2847,7 +2767,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Last Name",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "cif",
@@ -2856,7 +2778,9 @@
                                                             "disabled": false,
                                                             "placeHolder": "Customer Identification Number",
                                                             "maxValue": 100,
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "secondaryCIF",
@@ -2865,7 +2789,9 @@
                                                             "disabled": false,
                                                             "maxValue": 100,
                                                             "placeHolder": "Secondary CIF",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "email",
@@ -2874,16 +2800,20 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Email",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
                                                         },
                                                         {
                                                             "id": "phone",
                                                             "type": "tel",
                                                             "title": "Phone",
-                                                            "maxValue": 100,
+                                                            "maxValue": 10,
                                                             "disabled": false,
                                                             "placeHolder": "Phone",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^((\\+91-?)|0)?[0-9]{10}$"
                                                         },
                                                         {
                                                             "id": "address",
@@ -2892,7 +2822,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Address",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "city",
@@ -2901,7 +2833,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "City",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "state",
@@ -2910,7 +2844,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "State",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "country",
@@ -2919,25 +2855,31 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Country",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^[a-zA-Z.-]+(?:[\\s-][/a-zA-Z.]+)*$"
                                                         },
                                                         {
                                                             "id": "postalCode",
                                                             "type": "text",
-                                                            "title": "Phone",
+                                                            "title": "Postal Code",
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Postal Code",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "secondaryPhone",
                                                             "type": "tel",
                                                             "title": "Secondary Phone",
-                                                            "maxValue": 100,
+                                                            "maxValue": 10,
                                                             "disabled": false,
                                                             "placeHolder": "Secondary Phone",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "^((\\+91-?)|0)?[0-9]{10}$"
                                                         },
                                                         {
                                                             "id": "secondaryEmail",
@@ -2946,7 +2888,9 @@
                                                             "maxValue": 100,
                                                             "disabled": false,
                                                             "placeHolder": "Secondary Email",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": "[a-zA-Z0-9.*%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}"
                                                         },
                                                         {
                                                             "id": "lastChangedBy",
@@ -2955,7 +2899,9 @@
                                                             "maxValue": 100,
                                                             "disabled": true,
                                                             "placeHolder": "Last Changed By",
-                                                            "visible": true
+                                                            "visible": true,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         },
                                                         {
                                                             "id": "lastChangedOn",
@@ -2964,13 +2910,12 @@
                                                             "maxValue": 100,
                                                             "disabled": true,
                                                             "placeHolder": "Last Changed On",
-                                                            "visible": false
+                                                            "visible": false,
+                                                            "required": false,
+                                                            "validation_regex": ""
                                                         }
                                                     ]
-                                                }
                                             }
-                                        ]
-                                    }
                                 }
                             ],
                             "Dynamic": [
