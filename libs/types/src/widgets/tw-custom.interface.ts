@@ -31,7 +31,7 @@ import { InteractionWidget } from '..';
  *   }
  * ```
  */
-export interface TwCustom extends InteractionWidget<TwCustomData> {}
+export interface TwCustom extends InteractionWidget<TwCustomData> { }
 
 /**
  * Custom widget's data config

@@ -474,6 +474,10 @@ export type TwChatControlsData = {
      * Symbol entity mapping
      */
     XssSymbolEntityMap: XssSymbolEntityMap;
+    /**
+     * Flag to decide whether to sanitiza agent inputs or not
+     */
+    EnableAgentMessageSanitization: boolean;
 };
 
 export interface XssSymbolEntityMap {

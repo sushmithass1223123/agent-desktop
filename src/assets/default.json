@@ -1447,6 +1447,7 @@
                                                         "CustomerVideo": false
                                                     },
                                                     "ToggleUserViewAllowed": false,
+                                                    "EnableAgentMessageSanitization": false,
                                                     "XssSymbolEntityMap": {
                                                         "&": "&amp;",
                                                         "<": "&lt;",
@@ -2588,7 +2589,8 @@
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24,
-                                                    "MaximumAllowedPostImageRendering": 1
+                                                    "MaximumAllowedPostImageRendering": 1,
+                                                    "ShowPostDetails": false
                                                 }
                                             }
                                         ]
@@ -2900,7 +2902,11 @@
             "sendACK": false
         },
         "SDK": {
-            "proxy": { "urls": ["http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"], "type": "soap", "timeout": 60 },
+            "proxy": {
+                "urls": ["http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"],
+                "type": "soap",
+                "timeout": 60
+            },
             "signalRProxy": {
                 "enabled": true,
                 "logging": true,
@@ -2923,5 +2929,5 @@
             ]
         }
     },
-    "Version": "5.7.0"
+    "Version": "5.8.0"
 }

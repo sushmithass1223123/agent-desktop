@@ -188,6 +188,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     blindLabel: string;
 
+
     /**
      * Constructor
      */
@@ -279,7 +280,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult:  this._dialogData.OtherData.type === 'transfer' ? false : this._dialogData.Skill.Consult 
+                consult:  this._dialogData.OtherData?.type === 'transfer' ? false : this._dialogData.Skill.Consult 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
@@ -1068,6 +1069,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             }
             // blind transfer/confks
             else {
+                this.saveToDataServer();
                 SDKClient.transferTextChat({
                     chatMode: this._dialogData.OtherData.mode,
                     comment: this.comments,
@@ -1080,7 +1082,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                     isAgentOnPhone: this._dialogData.OtherData.isAgentOnPhone,
                     isAgentOnActiveCall: this._dialogData.OtherData.isAgentOnActiveCall
                 })
-                    .then((dt) => {
+                .then((dt) => { 
                         this.loading -= 1;
                         // transfer success
                         if (dt.response.ResultCode >= 0) {
@@ -1175,6 +1177,44 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     /**
+     * Method to save comments entered during tranfer 
+     * @param channel - interaction channel, it is just for the UI reference,
+     *  no impact as we can save any data here 
+     */
+
+    private saveToDataServer(channel?) {
+        if(!this.comments || this.comments?.trim() === '') {
+            return;
+        }
+
+        const input = {
+            type: 'transfer-comment',
+            subType: channel ? channel : 'textchat',
+            key: this._dialogData.OtherData.sessionId,
+            insertedBy: SDKClient.getAgentData().agentName,
+            insertedSource: 'AD',
+            insertInteraction: this.interactionId.toString(),
+            data: JSON.stringify({comment: this.comments, date: new Date()}),
+            instance: '',
+            ttl: ''
+        }
+
+        if(channel === 'email') {
+            input['key'] = this._dialogData.OtherData.emails[0].SessionId;
+            input['insertInteraction'] = this._dialogData.OtherData.emails[0].InteractionID;
+        }
+
+        SDKClient.saveDataToDataServer(input)
+        .then((response) => {
+            console.log("saveDataToDataServer Saved", response);
+        })
+        .catch((err) => {
+            this.loading -= 1;
+            console.error("error during saveDataToDataServer", err);
+        });
+    }
+
+    /**
      * Transfers email
      */
     private transferEmail(): void {
@@ -1186,6 +1226,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
 
         // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
         if (this.selectedRow?.type !== 'Skill List') {
+            this.saveToDataServer('email');
             emails.forEach((email) => {
                 const { RouteId, SessionId } = email;
                 SDKClient.transferEmailToAgent({
@@ -1874,6 +1915,8 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @param consult
      */
     executeAction(consult: boolean): void {
+              
+        // Reseting properties
         this.isConsult = consult;
         const freeTextConf = this.switcherList[this.activeSwitcher].freeText;
         // check if the selected tab is dynamic, then close the dynamicList widget should handle the action
@@ -1917,6 +1960,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
     }
 
+
     /**
      * Searches agents based on skill
      */
@@ -1942,5 +1986,13 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             });
         }
         this.wrapperComponent.close();
+    }
+
+    /**
+     * method to allow editing of free text for phone num / vdn / skill etc
+     */
+    onFreetextEdit() {
+        this.clearSelected(); 
+        this.switcherList[this.activeSwitcher].freeText.active = true;
     }
 }

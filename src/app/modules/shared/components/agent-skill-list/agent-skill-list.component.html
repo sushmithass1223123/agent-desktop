@@ -8,11 +8,25 @@
                     } as controls"
                 >
                     <div class="twd-h-full twd-flex twd-flex-col">
-                        <div class="twd-flex border-radius-20 twd-mb-1 twd-gap-x-2 twd-p-2" [ngClass]="customFuse?.content">
+                        <div
+                            class="twd-flex border-radius-20 twd-mb-1 twd-gap-x-2 twd-p-2"
+                            [ngClass]="customFuse?.content"
+                        >
                             <div class="twd-flex twd-flex-col twd-flex-1">
                                 <div class="twd-flex">
-                                    <mat-form-field *ngIf="!tabConf.freeText.active" fxFlex appearance="outline" class="custom with-bg">
-                                        <input matInput readonly required [placeholder]="tabConf.placeholder" [(ngModel)]="selectedItemDisplayName" />
+                                    <mat-form-field
+                                        *ngIf="!tabConf.freeText.active"
+                                        fxFlex
+                                        appearance="outline"
+                                        class="custom with-bg"
+                                    >
+                                        <input
+                                            matInput
+                                            readonly
+                                            required
+                                            [placeholder]="tabConf.placeholder"
+                                            [(ngModel)]="selectedItemDisplayName"
+                                        />
                                         <button
                                             *ngIf="tabConf.freeText.allowed"
                                             mat-button
@@ -20,7 +34,7 @@
                                             mat-icon-button
                                             type="button"
                                             [matTooltip]="locale('sharedComponents.agentSkillList.edit')"
-                                            (click)="clearSelected(); tabConf.freeText.active = true"
+                                            (click)="onFreetextEdit()"
                                         >
                                             <mat-icon>edit</mat-icon>
                                         </button>
@@ -39,13 +53,19 @@
                                             <mat-icon>close</mat-icon>
                                         </button>
                                     </mat-form-field>
-                                    <mat-form-field *ngIf="tabConf.freeText.active" fxFlex appearance="outline" class="custom with-bg twd-mt-1">
+                                    <mat-form-field
+                                        *ngIf="tabConf.freeText.active"
+                                        fxFlex
+                                        appearance="outline"
+                                        class="custom with-bg twd-mt-1"
+                                    >
                                         <input
                                             matInput
                                             required
                                             [placeholder]="'Enter ' + tabConf.placeholder"
                                             [(ngModel)]="tabConf.freeText.value"
-                                            #skillVdnInput (input)="onSkillVdnInputChange($event.target.value)"
+                                            #skillVdnInput
+                                            (input)="onSkillVdnInputChange($event.target.value)"
                                         />
                                         <button
                                             mat-button
@@ -103,7 +123,10 @@
                             </div>
                         </div>
                         <div class="twd-flex-1 twd-flex twd-flex-col border-radius-20" [ngClass]="customFuse?.content">
-                            <div class="twd-flex twd-text-center twd-gap-3 border-bottom twd-p-2" *ngIf="switcherList | keyvalue as tabList">
+                            <div
+                                class="twd-flex twd-text-center twd-gap-3 border-bottom twd-p-2"
+                                *ngIf="switcherList | keyvalue as tabList"
+                            >
                                 <ng-container *ngIf="tabList.length > 1">
                                     <div
                                         *ngFor="let item of tabList"
@@ -115,19 +138,29 @@
                                     </div>
                                 </ng-container>
                             </div>
-                            <div class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative border-bottom twd-p-2">
-                                <div class="twd-flex twd-items-center twd-gap-2" [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }">
+                            <div
+                                class="twd-flex-1 twd-flex-col twd-overflow-x-hidden twd-overflow-y-auto twd-relative border-bottom twd-p-2"
+                            >
+                                <div
+                                    class="twd-flex twd-items-center twd-gap-2"
+                                    [ngClass]="{ 'twd-hidden': activeSwitcher !== 'Agent List' }"
+                                >
                                     <div #skillSelectDropdown class="twd-flex-1">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
                                             <mat-select
                                                 #skillSelectRef
-                                                [placeholder]="locale('sharedComponents.agentSkillList.skillPlaceholder')"
+                                                [placeholder]="
+                                                    locale('sharedComponents.agentSkillList.skillPlaceholder')
+                                                "
                                                 [(ngModel)]="selectedSkill"
                                             >
                                                 <mat-option (click)="clearSkillFilter()">None</mat-option>
-                                                <mat-option *ngFor="let item of allSkills" [value]="item.SkillID" (click)="searchAgentsOnSkill()">{{
-                                                    item.SkillName
-                                                }}</mat-option>
+                                                <mat-option
+                                                    *ngFor="let item of allSkills"
+                                                    [value]="item.SkillID"
+                                                    (click)="searchAgentsOnSkill()"
+                                                    >{{ item.SkillName }}</mat-option
+                                                >
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
@@ -135,7 +168,12 @@
                                     <!-- Search form field with form control searchKey -->
                                     <div #searchKeyText class="twd-hidden">
                                         <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                            <input matInput #agentSearchRef [formControl]="searchKey" [placeholder]="locale('global.search')" />
+                                            <input
+                                                matInput
+                                                #agentSearchRef
+                                                [formControl]="searchKey"
+                                                [placeholder]="locale('global.search')"
+                                            />
                                             <button
                                                 *ngIf="agentSearchRef.value"
                                                 mat-button
@@ -211,7 +249,12 @@
 
                                 <div class="twd-w-full" [ngClass]="{ 'twd-hidden': activeSwitcher === 'Agent List' }">
                                     <mat-form-field class="form-field custom with-bg w-100-p" appearance="outline">
-                                        <input matInput [formControl]="searchKey" #searchRef [placeholder]="locale('global.search')" />
+                                        <input
+                                            matInput
+                                            [formControl]="searchKey"
+                                            #searchRef
+                                            [placeholder]="locale('global.search')"
+                                        />
                                         <button
                                             *ngIf="searchRef.value"
                                             mat-button

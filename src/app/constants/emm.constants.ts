@@ -66,7 +66,7 @@ export const EMAIL_SEND_STATUS = {
     '-405': 'EmailAssignedToOtherAgent',
     '-301': 'FailedToPullFromMakerQueue',
     '-302': 'FailedToPullFromSentItems',
-    // '-303': 'DraftEmailHasBeenPulledByAgent',
+    '-303': 'DraftEmailHasBeenPulledByAgent',
     '-304': 'FailedToPullFromMakerDraft',
     '-305': 'EmailNotPresentInSourceAgent',
     '-306': 'FailedToTransferEmailToAgent',

@@ -8,13 +8,13 @@
     </div>
 </ng-container>
 <ng-container *ngIf="templateInfo.Type === 'Form'">
-    <tw-wrapper [data]="data">
-        <div *transloco="let locale" class="p-8 twd-overflow-auto email-body">
+
+        <div *transloco="let locale" class="p-8 twd-overflow-auto email-body" style="margin-bottom: 10px;">
             <div [innerHTML]="safeHtml"></div>
             <div class="twd-flex twd-justify-end twd-sticky twd-bottom-0 twd-pt-2">
                 <button mat-raised-button color="primary" (click)="processFormTemplate()">{{ locale('widgets.emailTemplatePreview.use') }}</button>
                 <button mat-button color="accent" (click)="close()">{{ locale('interactionComponent.cancel') }}</button>
             </div>
         </div>
-    </tw-wrapper>
+ 
 </ng-container>

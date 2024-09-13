@@ -37,6 +37,16 @@ export type TwControlInfo = {
      * place Holder 
      */
     placeHolder?: string;
+    
+    /**
+     * required 
+     */
+    required?: string;
+    
+    /**
+     * validate 
+     */
+    validation_regex?: string;
 };
 
 export type TwCustomerInfo = {
@@ -87,7 +97,7 @@ import { InteractionWidget } from '..';
  * {
  *   "Name": "SMM Customer Details",
  *   "Description": "",
- *   "Type": "tw-smm-customer-details",
+ *   "Type": "tw-smp-customer-details",
  *   "Config": {
  *      "Enabled": true,
  *      "Hidden": false,
