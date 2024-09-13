@@ -303,7 +303,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 value: [
                     {
                         title: this.translocoService.translate('widgets.customerJourney.interactions'),
-                        icon: 'forum'
+                        icon: 'forum',
+                        visible: (element: any) =>
+                            !(element.Channel || '').toLowerCase().includes('chat') &&
+                            (element.Channel || '').toLowerCase() !== 'sm'
                     },
                     {
                         title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
@@ -320,7 +323,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     {
                         title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                         icon: 'chat',
-                        visible: (element: any) => (element.Channel || '').toLowerCase().includes('chat')
+                        visible: (element: any) =>
+                            (element.Channel || '').toLowerCase().includes('chat') ||
+                            (element.Channel || '').toLowerCase() === 'sm'
                     },
                     {
                         title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
@@ -361,7 +366,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                         {
                             title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                             icon: 'chat',
-                            visible: (element: any) => (element.Channel || '').toLowerCase().includes('chat')
+                            visible: (element: any) =>
+                                (element.Channel || '').toLowerCase().includes('chat') ||
+                                (element.Channel || '').toLowerCase() === 'sm'
                         },
                         {
                             title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
@@ -459,7 +466,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                 records = records.reduce((acc, curr, idx) => {
                     // check if the current record is of the type 'chat'
                     // if it is of type 'chat', start populating its 'Transcripts'
-                    if (curr.Channel.match(/chat/i)) {
+                    if (curr.Channel.match(/chat/i) || ((curr.Channel || '').toLowerCase() === 'sm')) {
                         if (chatIndex > -1) {
                             acc[chatIndex].Transcripts.unshift(curr);
                         } else {

@@ -1035,6 +1035,7 @@
             "emailComposeErrorFailedToComposeNewEmail": "Error while composing email",
             "emailPullFailed": "Failed to pull email - reason : ",
             "emailPullErrorFailedToPullFromMakerDraft": "Failed to pull email from maker draft",
+            "emailPullErrorDraftEmailHasBeenPulledByAgent": "Draft email has been pulled by agent",
             "emailPullErrorFailedToPullFromSentItems": "Failed to pull email from sent items",
             "emailPullErrorFailedToPullFromMakerQueue": "Failed to pull email from maker queue",
             "emailPullErrorPullToFromMakerQueueSinceOutlookRoutingEnabled": "Failed to pull email from maker queue since outlook routing enabled",
@@ -1113,7 +1114,16 @@
             "closePostsSuccess": "Successfully closed posts!",
             "closePostsFailed": "Error closing posts!",
             "replySendToCustomer": "Reply sent to customer",
-            "replySendToChecker": "Reply sent to checker"
+            "replySendToChecker": "Reply sent to checker",
+            "NothingHasChanged": "Nothing to update!",
+            "email": "Please enter a valid email address",
+            "secondaryEmail": "Please enter a valid secondary email address",
+            "phone": "Please enter a valid 10 digit phone number",
+            "secondaryPhone": "Please enter a valid 10 digit secondary phone number",
+            "salutation": "Salutation can be at most 5 characters",
+            "UpdatedCustomerDetails": "Updated details Successfully",
+            "GetCustomerDetails": "Getting the customer details",
+            "fieldValidation": " cannot be empty"
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
