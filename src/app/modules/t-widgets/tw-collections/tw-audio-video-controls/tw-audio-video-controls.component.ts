@@ -1747,7 +1747,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         const dynamicLabels = {
         key: this.translocoService.translate('widgets.audioVideoControls.muteUnmuteAv', { type: this.audioMuted ? 'mute' : 'unmute', medium: 'audio' })
         };
-        this._appUIService.showSnackbar(dynamicLabels.key,'failure');
+        this._appUIService.showSnackbar(dynamicLabels.key,'warning');
         this.manualMuteFlags.audio = (this.audioMuted === true);
     }
 
@@ -1771,7 +1771,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         const dynamicLabels = {
         key: this.translocoService.translate('widgets.audioVideoControls.muteUnmuteAv', { type: this.videoMuted ? 'mute' : 'unmute', medium: 'video' })
         };
-        this._appUIService.showSnackbar(dynamicLabels.key,'failure');
+        this._appUIService.showSnackbar(dynamicLabels.key,'warning');
         this.manualMuteFlags.video = (this.videoMuted === true);
     }
 
