@@ -122,6 +122,7 @@
         "ReplyAllowed": true,
         "EndInteractionOnAVEnd": true,
         "CloseInteractionOnEnd": false,
+        "EnableAgentMessageSanitization": false,
         "XssSymbolEntityMap": {
             "&": "&amp;",
             "<": "&lt;",

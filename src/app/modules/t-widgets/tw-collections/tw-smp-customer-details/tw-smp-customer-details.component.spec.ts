@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { TwSmmCustomerDetailsComponent } from './tw-smm-customer-details.component';
+import { TwSmmCustomerDetailsComponent } from './tw-smp-customer-details.component';
 
 describe('TwSmmCustomerDetailsComponent', () => {
     let component: TwSmmCustomerDetailsComponent;

@@ -1,0 +1,81 @@
+<tw-wrapper
+    [data]="data"
+    (maximizeEvent)="maximizeEvent.emit($event)"
+    (collapseEvent)="collapseEvent.emit($event)"
+    (floatEvent)="floatEvent.emit($event)"
+    #wrapper
+    *transloco="let locale"
+>
+    <div class="h-100-p twd-overflow-auto">
+        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
+            <ng-container *ngIf="customerId; else noData">
+                <form [formGroup]="customerForm" class="customerForm" (ngSubmit)="updateCustomerDetails()">
+                    <div
+                        class="line-height-30 position-relative twd-p-1"
+                        *ngFor="let control of data.Data.ControlFields"
+                    >
+                        <mat-form-field fxFlex="100" appearance="outline">
+                            <mat-label class="contolLabel">{{ control.title }}</mat-label>
+
+                            <ng-container *ngIf="!editAllowed">
+                                <input 
+                                    matInput
+                                    type="text"
+                                    [formControlName]="control.id"
+                                    [placeholder]="control.placeholder"
+                                    disabled="true"
+                                    readonly="true"
+                                />
+                            </ng-container>
+                            <ng-container *ngIf="editAllowed">
+                                <input
+                                    matInput
+                                    [readonly]="control.disabled"
+                                    [type]="control.type"
+                                    [required]="control.required"
+                                    [formControlName]="control.id" 
+                                    [maxlength]="control.maxValue" 
+                                />
+                            </ng-container>
+                            <mat-error
+                                *ngIf="
+                                    customerForm.get(control.id) != undefined &&
+                                    customerForm.get(control.id).invalid &&
+                                    customerForm.get(control.id).touched &&
+                                    customerForm.get(control.id).value
+                                "
+                            >
+                                {{ error[control.id] ? error[control.id] : "Invalid " + control.title }}
+                            </mat-error>
+    
+                            <mat-error *ngIf="control.required && !customerForm.get(control.id).value">
+                                {{ control.title + validation }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <button
+                        *ngIf="editAllowed"
+                        [disabled]="!(customerForm.valid && customerForm.dirty)"
+                        #submitBtn
+                        [disabled]="!customerForm.valid"
+                        type="submit"
+                        color="primary"
+                        class="teal-800 !twd-my-8 !twd-mx-auto !twd-block !twd-py-1 !twd-px-10 !twd-rounded-full"
+                        (click)="updateCustomerDetails()"
+                    >
+                        {{ locale('global.submit') }}
+                    </button>
+                </form>
+            </ng-container>
+        </div>
+    </div>
+</tw-wrapper>
+<ng-template #noData>
+    <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
+        <img src="assets/images/vectors/no-data-1.svg" class="twd-w-8/12 twd-h-8/12 box-shadow-3d" />
+        <p class="text-center m-0">
+            <ng-container *transloco="let locale">{{ locale('contentComponent.noDataAvailable') }}</ng-container>
+        </p>
+    </div>
+</ng-template>

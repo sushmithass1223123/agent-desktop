@@ -136,33 +136,4 @@ export class SocialMediaPostsService {
             listOfMailboxes: this.globalSmpWorkbenchState$.availableMailboxes.value
         });
     }
-
-    stylizeContent(text: string, clipped?: boolean): string {
-        try {
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            const hashtagRegex = /#(\w+)/g;
-            const mentionRegex = /@(\w+)/g;
-
-            if(!text) return;
-
-            text = text.replace(urlRegex, function (url) {
-                return '<a class="e_link" href="' + url + '" target="_blank">' + url + '</a>';
-            });
-
-            text = text.replace(hashtagRegex, function (match, p1) {
-                return '<span class="hashtag">#' + p1 + '</span>';
-            });
-
-            text = text.replace(mentionRegex, function (match, p1) {
-                return '<span class="mention">@' + p1 + '</span>';
-            });
-
-            if(clipped) text+='...'
-
-            return text;
-        } catch (error) {
-            console.error(error);
-            return text;
-        }
-    }
 }

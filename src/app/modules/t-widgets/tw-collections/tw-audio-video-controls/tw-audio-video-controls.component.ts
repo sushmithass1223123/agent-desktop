@@ -812,6 +812,8 @@ if (error === 'Screenshare Was Cancelled') {
                             }
                         });
                     } else {
+                        // todo: this change to be handled at TMAC SDK side, look for on user left
+                        if(this.interactionDetails.ConferenceType === 'transfer') return;
                         // other agent connected
                     }
                     // add the level
@@ -955,6 +957,9 @@ if (error === 'Screenshare Was Cancelled') {
                                     user: r.user === '0' ? 'Customer' : r.user
                                 }
                             };
+                            // restricted source agent getting added to transferred call
+                            // todo: this change should be handled at TMAC SDK side
+                            if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
                             this.userList.push(newStreamObj);
                         })
                     }
@@ -1167,8 +1172,9 @@ if (error === 'Screenshare Was Cancelled') {
      * @param type - type of mute [i.e 'audio' | 'video']
      * @param data - mute/unmute event data to show relevant notification
      */
-    updateMuteUnmuteUserList(type, data) {
-        let userName = JSON.parse(data.Message).owner;
+    updateMuteUnmuteUserList(type: 'audio' | 'video', data) {
+        const parsedMessage = JSON.parse(data.Message);
+        let userName = parsedMessage.owner;
         userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
         switch (type) {
             case 'audio':
@@ -1208,11 +1214,47 @@ if (error === 'Screenshare Was Cancelled') {
             }
         ];
         if (this.displayToasters) {
+            if (type === 'audio'){
             this._appUIService.showSnackbar(
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
                 'warning'
             );
         }
+        }
+        const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
+        const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
+        const videocallonly = this.callType?.toLocaleLowerCase() === 'video';
+        const bothMutedLabels = [
+            {
+                key: '#userName',
+                value: userName
+            },
+            {
+                key: '#muteType',
+                value: data.Type
+            },
+            {
+                key: '#muteDisplayText',
+                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
+            },
+            {
+                key: '#streamType',
+                value: 'both audio and video'
+            }
+        ];
+    
+        if (isAudioMuted && isVideoMuted && videocallonly) {
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
+              'warning'
+            );
+        } else if (!isAudioMuted && !isVideoMuted && videocallonly) {
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
+               'warning'
+            );
+        }
+    
         this.displayToasters = true;
     }
 

@@ -52,7 +52,9 @@ agent-skill-list {
                 }
             }
         }
-
+        .twd-hidden {
+            display: none !important;
+        }
         .grid-layout {
             margin-top: 6px;
         }
