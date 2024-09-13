@@ -675,6 +675,7 @@
         },
         "audioVideoControls": {
             "takeSnapshot": "Take Snapshot",
+            "muteUnmuteAv": "Your {{medium}} is on {{type}}.",
             "stats": "Stats",
             "unmuteAudio": "Unmute Audio",
             "muteAudio": "Mute Audio",
