@@ -3617,5 +3617,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.8.0-beta.3"
+    "Version": "5.8.0"
 }
