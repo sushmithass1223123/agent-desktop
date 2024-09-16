@@ -1754,12 +1754,6 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         }
         // set the reference varaible
         this.audioMuted = !this.audioMuted;
-
-        // Set dynamic label based on the new state of `audioMuted`
-        const dynamicLabels = {
-        key: this.translocoService.translate('widgets.audioVideoControls.muteUnmuteAv', { type: this.audioMuted ? 'mute' : 'unmute', medium: 'audio' })
-        };
-        this._appUIService.showSnackbar(dynamicLabels.key,'warning');
         this.manualMuteFlags.audio = (this.audioMuted === true);
     }
 
@@ -1778,12 +1772,6 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
-
-        // Set dynamic label based on the new state of `videoMuted`
-        const dynamicLabels = {
-        key: this.translocoService.translate('widgets.audioVideoControls.muteUnmuteAv', { type: this.videoMuted ? 'mute' : 'unmute', medium: 'video' })
-        };
-        this._appUIService.showSnackbar(dynamicLabels.key,'warning');
         this.manualMuteFlags.video = (this.videoMuted === true);
     }
 
