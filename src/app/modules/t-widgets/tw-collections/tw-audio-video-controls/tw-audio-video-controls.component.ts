@@ -1185,10 +1185,12 @@ if (error === 'Screenshare Was Cancelled') {
                 }
                 break;
             case 'video':
+                if (this.callType?.toLocaleLowerCase() === 'video') {
                 if (data.Type === 'mute') {
                     this.mutedRemoteUsers.video.push(data.User.toLowerCase());
                 } else {
                     this.mutedRemoteUsers.video.splice(this.mutedRemoteUsers.video.indexOf(data.User), 1);
+                }
                 }
                 break;
         }
@@ -1220,6 +1222,12 @@ if (error === 'Screenshare Was Cancelled') {
                 'warning'
             );
         }
+            if (type === 'video' && this.callType?.toLocaleLowerCase() === 'video') {
+            this._appUIService.showSnackbar(
+                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+                'warning'
+            );
+            }
         }
         const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
         const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
@@ -1244,15 +1252,19 @@ if (error === 'Screenshare Was Cancelled') {
         ];
     
         if (isAudioMuted && isVideoMuted && videocallonly) {
+            setTimeout(() => {
             this._appUIService.showSnackbar(
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
               'warning'
             );
+            }, 1000);
         } else if (!isAudioMuted && !isVideoMuted && videocallonly) {
+            setTimeout(() => {
             this._appUIService.showSnackbar(
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
-               'warning'
-            );
+        'warning'
+                );
+            }, 1000);
         }
     
         this.displayToasters = true;
@@ -1742,6 +1754,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         }
         // set the reference varaible
         this.audioMuted = !this.audioMuted;
+
+        // Set dynamic label based on the new state of `audioMuted`
+        const dynamicLabels = {
+        key: this.translocoService.translate('widgets.audioVideoControls.muteUnmuteAv', { type: this.audioMuted ? 'mute' : 'unmute', medium: 'audio' })
+        };
+        this._appUIService.showSnackbar(dynamicLabels.key,'warning');
         this.manualMuteFlags.audio = (this.audioMuted === true);
     }
 
@@ -1760,6 +1778,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         }
         // set the reference varaible
         this.videoMuted = !this.videoMuted;
+
+        // Set dynamic label based on the new state of `videoMuted`
+        const dynamicLabels = {
+        key: this.translocoService.translate('widgets.audioVideoControls.muteUnmuteAv', { type: this.videoMuted ? 'mute' : 'unmute', medium: 'video' })
+        };
+        this._appUIService.showSnackbar(dynamicLabels.key,'warning');
         this.manualMuteFlags.video = (this.videoMuted === true);
     }
 
