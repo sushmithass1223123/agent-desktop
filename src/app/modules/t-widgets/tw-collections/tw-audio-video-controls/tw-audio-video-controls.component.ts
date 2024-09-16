@@ -459,6 +459,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     ngOnDestroy(): void {
         // check if the interaction is on hold
+        this.hold = false;
         if (this.hold) {
             this.holdUnholdCall();
         }
