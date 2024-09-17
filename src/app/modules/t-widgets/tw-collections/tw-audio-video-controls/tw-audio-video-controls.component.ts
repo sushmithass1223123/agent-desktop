@@ -443,7 +443,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         });
 
         // listen to tmac interaction events
-        // SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         // SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         // SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         // SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
@@ -1224,14 +1223,14 @@ if (error === 'Screenshare Was Cancelled') {
                 value: type
             }
         ];
-        if (this.displayToasters) {
-            if (type === 'audio'){
-            this._appUIService.showSnackbar(
-                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
-                'warning'
-            );
-        }
-        }
+        // if (this.displayToasters) {
+        //     if (type === 'audio'){
+        //     this._appUIService.showSnackbar(
+        //         this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+        //         'warning'
+        //     );
+        // }
+        // }
         const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
         const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
         const videocallonly = this.callType?.toLocaleLowerCase() === 'video';
@@ -1263,6 +1262,11 @@ if (error === 'Screenshare Was Cancelled') {
             this._appUIService.showSnackbar(
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
                'warning'
+            );
+        } else {
+            this._appUIService.showSnackbar(
+            this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+                'warning'
             );
         }
     
@@ -1490,11 +1494,39 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         }
                     }
                     break;
+                case 'hold':
+                case 'unhold':
+                    // this case is added to handle notifying hold/unhold to another agent when in conference.
+                    const dynamicLabels = [
+                        {
+                            key: '#owner',
+                            value: this.getUserName(evt.User) ?? 'Agent'
+                        },
+                        {
+                            key: '#type',
+                            value: type
+                        }
+                    ];
+                    this._appUIService.showSnackbar(
+                        this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.'+type+'Notification'), dynamicLabels),
+                        'warning'
+                    );
+                break;
             }
         } catch (error) {
             throwADError('Error in TwAudioVideoControlsComponent.ActionMessageReceivedEvent', error);
         }
     };
+
+    /**
+     * This method is used to get Name of the user present in the call by passing the id
+     * @param id = user
+     * @returns name of user
+     */
+    getUserName(id) {
+        return this.userList.find(u => u.streamInfo.id === id)?.streamInfo.user;
+    }
+
 
     /**
      * To handles CallHoldEvent
@@ -2015,21 +2047,24 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             eventName: 'ActionMessage',
             id: TUtils.Generic.uuid()
         };
-    
-        // Check if the call is already on hold 
-        if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
-            // Mute the AV connection
-            this.avConn.mute(false, false);
-            this.videoMuted = true;
-            this.audioMuted = true;
-            this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
-        } else {
-            // Unmute the AV connection
-            this.avConn.unMute(true, true);
-            this.videoMuted = false;
-            this.audioMuted = false;
-            this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
+
+        if(this.muteAVOnHold.enabled) {
+            // Check if the call is already on hold 
+            if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
+                // Mute the AV connection
+                this.avConn.mute(false, false);
+                this.videoMuted = true;
+                this.audioMuted = true;
+                this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
+            } else {
+                // Unmute the AV connection
+                this.avConn.unMute(true, true);
+                this.videoMuted = false;
+                this.audioMuted = false;
+                this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
+            }
         }
+        
     
         this.manualHold = !this.manualHold;
 
