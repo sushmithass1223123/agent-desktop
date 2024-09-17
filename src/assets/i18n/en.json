@@ -729,7 +729,11 @@
             "screenshareReqSent": "Screenshare request sent",
             "screenshareReqError": "Error sending screenshare request",
             "requestScreenShareAccepted": "Customer has accepted request to screen share",
-            "requestScreenShareRejected": "Customer has rejected request to screen share"
+            "requestScreenShareRejected": "Customer has rejected request to screen share",
+            "muteDisplayText":"off,on",
+            "holdNotification": "#owner has kept the call on hold",
+            "unholdNotification": "#owner unholded the call"
+
         },
         "amdocs": {
             "caseId": "Case ID",

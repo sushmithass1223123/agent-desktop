@@ -1924,10 +1924,10 @@
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
-                                                        "AgentAudio": true,
-                                                        "AgentVideo": true,
-                                                        "CustomerAudio": true,
-                                                        "CustomerVideo": true
+                                                        "AgentAudio": false,
+                                                        "AgentVideo": false,
+                                                        "CustomerAudio": false,
+                                                        "CustomerVideo": false
                                                     },
                                                     "ToggleUserViewAllowed": true,
                                                     "MuteVideoOnInitiateCall": true,
