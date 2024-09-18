@@ -1176,13 +1176,12 @@ if (error === 'Screenshare Was Cancelled') {
             this.logger.error('error occured in handleAvRequestFromAgent', e, false);
         }
     }
-
     /**
- * Updates the mute/unmute status of users and displays relevant notifications.
- * @param type - type of mute [i.e 'audio' | 'video']
- * @param data - mute/unmute event data to show relevant notification
- */
-updateMuteUnmuteUserList(type: 'audio' | 'video', data) {
+    * Updates the mute/unmute status of users and displays relevant notifications.
+    * @param type - type of mute [i.e 'audio' | 'video']
+    * @param data - mute/unmute event data to show relevant notification
+    */
+   updateMuteUnmuteUserList(type: 'audio' | 'video', data) {
     const parsedMessage = JSON.parse(data.Message);
     let userName = parsedMessage.owner;
     userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
