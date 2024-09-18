@@ -221,9 +221,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             isActive: i.isActive,
                             interactionId: i.interactionId,
                             sessionId: i.otherData?.SessionId,
-                            channel:
-                                this.smpService.postBodies[this.sessionId]?.SubChannel ??
-                                this.smpService.postBodies[this.outSessionId]?.SubChannel,
+                            outSessionId: i.otherData?.OutSessionID,
                             isPostReplySent: i.isPostReplySent
                         };
                     });
