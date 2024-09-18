@@ -1178,14 +1178,16 @@ if (error === 'Screenshare Was Cancelled') {
     }
 
     /**
-     *
-     * @param type - type of mute [i.e 'audio' | 'video']
-     * @param data - mute/unmute event data to show relevant notification
-     */
-    updateMuteUnmuteUserList(type: 'audio' | 'video', data) {
-        const parsedMessage = JSON.parse(data.Message);
-        let userName = parsedMessage.owner;
-        userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
+ * Updates the mute/unmute status of users and displays relevant notifications.
+ * @param type - type of mute [i.e 'audio' | 'video']
+ * @param data - mute/unmute event data to show relevant notification
+ */
+updateMuteUnmuteUserList(type: 'audio' | 'video', data) {
+    const parsedMessage = JSON.parse(data.Message);
+    let userName = parsedMessage.owner;
+    userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
+
+    // Update muted lists
         switch (type) {
             case 'audio':
                 if (data.Type === 'mute') {
@@ -1252,8 +1254,8 @@ if (error === 'Screenshare Was Cancelled') {
                 value: 'both audio and video'
             }
         ];
-    
-        if (isAudioMuted && isVideoMuted && videocallonly) {
+    setTimeout(() => {
+        if (this.hold && isAudioMuted && isVideoMuted && videocallonly) {
             this._appUIService.showSnackbar(
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
               'warning'
@@ -1263,7 +1265,9 @@ if (error === 'Screenshare Was Cancelled') {
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
                'warning'
             );
-        } else {
+        }
+    }, 1000); 
+     if (type === 'video' || type === 'audio') {
             this._appUIService.showSnackbar(
             this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
                 'warning'
