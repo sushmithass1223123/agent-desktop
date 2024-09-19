@@ -1069,7 +1069,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                                 this.translocoService.translate('sharedComponents.email.emailsAssigned'),
                                                 'failure'
                                             );
-                                        } else {
+                                        } 
+                                        if (res.failedList.items.some((f) => f.responseCode === -338)) {
+                                            this.appUiService.showSnackbar(
+                                              this.translocoService.translate('sharedComponents.email.emailPullErrorFailedToPullFromQueueWhenAgentIsInvalidState'),
+                                              'failure'
+                                            );
+                                          }
+                                      else {
                                             this.appUiService.showSnackbar(
                                                 this.translocoService.translate('sharedComponents.email.someEmailsAssigned'),
                                                 'failure'
@@ -1087,6 +1094,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                         this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
                                         'failure'
                                     );
+
                                 } else if (res.failedList.items.length === 1 && EMAIL_SEND_STATUS[res.failedList.items[0]?.responseCode]) {
                                     let errorMsg = `${this.translocoService.translate(
                                         `sharedComponents.email.emailPullFailed`

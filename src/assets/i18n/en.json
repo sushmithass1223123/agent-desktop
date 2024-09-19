@@ -1003,6 +1003,7 @@
             "emailSendToCustomer": "Email sent to customer",
             "emailSendToChecker": "Email sent to checker",
             "emailIsBeingSent": "Email is being sent. please wait",
+            "emailPullErrorFailedToPullFromQueueWhenAgentIsInvalidState": "Failed to pull email - reason : Agent not in valid state configured for assigning email",
             "emailSendTimeoutMessage": "Email sending has timed out, please verify if the email was sent in sent items",
             "emailSendErrorFail": "General failure",
             "emailSendErrorFailedWithServerBusyException": "Email Service is busy and not able to send for {1}. Please resend later.",

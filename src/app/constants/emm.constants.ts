@@ -100,6 +100,7 @@ export const EMAIL_SEND_STATUS = {
     '-335': 'PullToFromMakerQueueSinceOutlookRoutingEnabled',
     '-336': 'CannotFindRemoteAgentState',
     '-337': 'EmailNotFoundInInbox',
+    '-338': 'FailedToPullFromQueueWhenAgentIsInvalidState',
     '404': 'ServerNotReachable'
 };
 
