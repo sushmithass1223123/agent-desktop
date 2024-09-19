@@ -335,7 +335,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.filteredAgents = this.agentList;
         } else {
             this.filteredAgents = this.agentList.filter((agentItem) => {
-                return agentItem.AgentName.toLowerCase().includes(searchTerm);
+                return agentItem.AgentName.toLowerCase().includes(searchTerm) ||agentItem.AgentLoginID.toLowerCase().includes(searchTerm);
             });
         }
     }
