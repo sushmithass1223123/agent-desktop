@@ -1042,7 +1042,7 @@
             "emailPullErrorDraftEmailHasBeenPulledByAgent": "Draft email has been pulled by agent",
             "emailPullErrorFailedToPullFromSentItems": "Failed to pull email from sent items",
             "emailPullErrorFailedToPullFromMakerQueue": "Failed to pull email from maker queue",
-            "emailPullErrorFailedToPullFromQueueWhenAgentIsInvalidState": "Failed to pull email - reason : Agent not in valid state configured for assigning email",
+            "emailPullErrorFailedToPullFromQueueWhenAgentIsInvalidState": "Agent not in valid state configured for assigning email",
             "emailPullErrorPullToFromMakerQueueSinceOutlookRoutingEnabled": "Failed to pull email from maker queue since outlook routing enabled",
             "emailPullErrorEmailMaxTabCountReached": "Maximum email tab count reached",
             "emailPullErrorEmailNotFoundInQueue": "Email not found in queue",
