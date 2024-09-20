@@ -165,8 +165,23 @@
 
     tw-smp-controls {
         .avatar-box {
-            background-color: map-get($background, app-bar) !important;
-            background-color: #fff !important;
+            @if ($is-dark==true) {
+                background-color: map-get($background, hover) !important;
+            }
+            @else {
+                background-color: #fff !important;
+            }
+        }
+
+        .s-actions {
+            mat-icon {
+                @if ($is-dark==true) {
+                    color: #fff !important;
+                }
+                @else {
+                    color: #303030 !important;
+                }
+            }
         }
         
         .sm-im-content {

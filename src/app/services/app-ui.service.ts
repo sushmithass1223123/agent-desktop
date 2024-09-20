@@ -462,6 +462,8 @@ export class AppUiService extends SharedWrapper {
             } else {
                 if (notification.icon.includes('smrc')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Reaction to ${notification.message?.SocialMediaData?.Engagement?.smmType} on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smm_a')) {
+                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Got mentioned on ${notification.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post'} in ${notification.message?.SocialMediaData?.Posts?.Channel}`
                 } else if (notification.icon.includes('smc_e') || notification.icon.includes('smco_e')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smc_d') || notification.icon.includes('smco_d')) {
