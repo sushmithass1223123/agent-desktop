@@ -1740,10 +1740,10 @@
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
-                                                        "AgentAudio": true,
-                                                        "AgentVideo": true,
-                                                        "CustomerAudio": true,
-                                                        "CustomerVideo": true
+                                                        "AgentAudio": false,
+                                                        "AgentVideo": false,
+                                                        "CustomerAudio": false,
+                                                        "CustomerVideo": false
                                                     },
                                                     "ToggleUserViewAllowed": true,
                                                     "MuteVideoOnInitiateCall": true,
@@ -2535,92 +2535,6 @@
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Widgets": [
-                                            {
-                                                "Name": "Social Media Posts",
-                                                "Description": "",
-                                                "Type": "tw-smp-controls",
-                                                "Config": {
-                                                    "Enabled": true,
-                                                    "Hidden": false,
-                                                    "Static": false,
-                                                    "Anchor": true,
-                                                    "AOT": false,
-                                                    "AutoOpen": false,
-                                                    "Icon": "chat",
-                                                    "Class": "",
-                                                    "Position": { "X": 2, "Y": 1 },
-                                                    "Actions": ["maximize", "collapse", "float"],
-                                                    "ViewState": "restore",
-                                                    "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
-                                                    "Transfer": {
-                                                        "Allowed": true,
-                                                        "Agent": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": {
-                                                                "Use": "agentId",
-                                                                "Display": "agentName",
-                                                                "FreeTextAllowed": false
-                                                            },
-                                                            "AllowedStates": ["Available", "Ready"],
-                                                            "TeamFilter": false,
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
-                                                        },
-                                                        "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
-                                                            "Source": {
-                                                                "Use": "vdn",
-                                                                "Display": "skill",
-                                                                "FreeTextAllowed": true
-                                                            },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": [],
-                                                            "Rules": {
-                                                                "Enabled": true,
-                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
-                                                            }
-                                                        }
-                                                    },
-                                                    "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000
-                                                }
-                                            },
-                                            {
-                                                "Name": "SMP View Customer Details",
-                                                "Description": "",
-                                                "Type": "tw-smp-customer-details",
-                                                "Config": {
-                                                    "Enabled": true,
-                                                    "Hidden": false,
-                                                    "Static": false,
-                                                    "Anchor": false,
-                                                    "AOT": false,
-                                                    "AutoOpen": false,
-                                                    "Icon": "person",
-                                                    "Class": "",
-                                                    "Position": { "X": 4, "Y": 2 },
-                                                    "Actions": ["maximize", "float"],
-                                                    "ViewState": "restore",
-                                                    "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
                                                     "SocialMediaAPIs": [
                                                         "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
                                                         "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
@@ -2817,10 +2731,7 @@
                                                             "validation_regex": ""
                                                         }
                                                     ]
-                                                }
                                             }
-                                        ]
-                                    }
                                 }
                             ],
                             "Dynamic": [
@@ -3528,7 +3439,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default-2",
+        "Theme": "theme-default",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",

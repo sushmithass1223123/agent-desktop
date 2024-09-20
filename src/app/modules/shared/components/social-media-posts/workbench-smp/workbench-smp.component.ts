@@ -305,6 +305,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      */
     postBodies: any = {};
     isFullscreen: boolean = false;
+    currentTheme: string = 'theme-default-2';
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -315,6 +316,12 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         private _matDialog: MatDialog
     ) {
         super('WorkbenchSmpComponent');
+
+        this._fuseFacadeService.getConfig().pipe(
+            takeUntil(this.unsubscribeAll)
+        ).subscribe((themeData) => {
+            this.currentTheme = themeData.colorTheme
+        });
     }
 
     async ngOnInit() {
@@ -1210,7 +1217,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
                         RouteId: x?.RouteId ?? '',
-                        From: x?.SocialMediaData?.ParentComments?.FromName,
+                        From: x?.SocialMediaData?.Comments?.FromName,
                         To: x?.Mailbox,
                         Subject: x?.Body,
                         EmailType: '',

@@ -2,7 +2,6 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
     let selectedTheme = null;
     switch (themeName) {
         case 'theme-default-2': {
-            themeName = 'theme-default';
             selectedTheme = {
                 layout: {
                     navbar: {

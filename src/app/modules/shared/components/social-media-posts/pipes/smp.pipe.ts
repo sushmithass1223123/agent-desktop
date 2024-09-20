@@ -39,11 +39,9 @@ export class SMPPipe implements PipeTransform {
                         return ' theme-bg edit-item twd-border-opacity-100';
                     case 'smc_d':
                     case 'smco_d':
-                        return ' theme-bg delete-item twd-border-opacity-100';
                     case 'smp_d':
-                        return ' theme-bg delete-border twd-border-opacity-100';
+                        return ' theme-bg delete-item twd-border-opacity-100';
                     case 'smrc_a':
-                        return ' theme-bg twd-border-primary-default twd-border-opacity-100';
                     default:
                         return ' active normal twd-border-primary-default twd-border-opacity-100';
                 }

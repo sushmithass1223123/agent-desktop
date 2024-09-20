@@ -237,7 +237,16 @@
                 "attachImage": "Add an image",
                 "attachGif": "Add a GIF",
                 "addEmoji": "Add an emoji",
-                "sendReply": "Send reply"
+                "sendReply": "Send reply",
+                "clearAttachment": "Delete the attachment",
+                "viewPostGallery": "View all post media",
+                "viewOnlyMode": "This is view only mode. Please pull the item to work on it.",
+                "scrollToActiveComment": "Navigate to the action comment",
+                "editedComment": "Comment has been edited",
+                "deletedComment": "Comment has been deleted",
+                "viewPreviousComment": "View old comment (comment before edit)",
+                "deletedPost": "This post has been deleted",
+                "editedPost": "This post has been edited"
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited!",
@@ -729,7 +738,11 @@
             "screenshareReqSent": "Screenshare request sent",
             "screenshareReqError": "Error sending screenshare request",
             "requestScreenShareAccepted": "Customer has accepted request to screen share",
-            "requestScreenShareRejected": "Customer has rejected request to screen share"
+            "requestScreenShareRejected": "Customer has rejected request to screen share",
+            "muteDisplayText":"off,on",
+            "holdNotification": "#owner has kept the call on hold",
+            "unholdNotification": "#owner unholded the call"
+
         },
         "amdocs": {
             "caseId": "Case ID",
@@ -1123,7 +1136,12 @@
             "salutation": "Salutation can be at most 5 characters",
             "UpdatedCustomerDetails": "Updated details Successfully",
             "GetCustomerDetails": "Getting the customer details",
-            "fieldValidation": " cannot be empty"
+            "fieldValidation": " cannot be empty",
+            "closePostUI": "Hide the post from screen",
+            "editedItem": "This item has been edited",
+            "deletedItem": "This item has been deleted",
+            "postFullscreen": "Focus on this item",
+            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",

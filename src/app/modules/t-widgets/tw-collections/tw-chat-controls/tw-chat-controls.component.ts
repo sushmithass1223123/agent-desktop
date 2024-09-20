@@ -1218,23 +1218,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
         }
         if(data.systemMessage) {
-            if(data.message.includes('Agent')) {        
+            if(data.message.includes('Agent has')) {        
                 // Incase the agentname is not sent from VIVR
                 // message will be Ex: 'Agent has missed the call'
                 //so we replace Agent with AgentName here
                 //Ex: 'David has missed the call' 
                 //This happens when VIVR has missed the key in configuration
-                data.message = data.message.replace('Agent', 'You');
-                data.message = data.message.replace("has", "have")
+                data.message = data.message.replace('Agent has', 'You have');
+            } else if(data.message.includes(this.user.agentName.split(' ')[0] + '&#160;has')) {
+                //VIVR: Carol has have disconnected the call
+                //AD: You have disconnected the call
+                data.message = data.message.replace(this.user.agentName.split(' ')[0] + '&#160;has', 'You have')
             } else if(data.message.includes(this.user.agentName.split(' ')[0])) {
-                //Ex: 'David has missed the call' 
-                //incase of conference call: if its from the other agent we can show it as it is
-                // For normal call we can replace it with 'You have missed the call'
-                //If agentname is sent from VIVR compare with AD Agent FirstName 
-                //and if both are same replace with 'You'
+                //VIVR: customer accepts the call from Carol
+                //AD: customer accepts the call from You
                 data.message = data.message.replace(this.user.agentName.split(' ')[0], 'You')
-                data.message = data.message.replace("has", "have")
-            }
+            } 
         }
 
         

@@ -1,4 +1,4 @@
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { filter, first, last, take, takeUntil } from 'rxjs/operators';
 import {
     Component,
     ElementRef,
@@ -49,6 +49,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     @Input() isParentCommentEdited: boolean = false;
     @Input() isParentCommentDeleted: boolean = false;
     @Input() isPostDeleted: boolean = false;
+    @Input() isPostEdited: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
@@ -103,6 +104,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     showPreviousComment: boolean = false;
     isCommentHistoryLoading: boolean = false;
     showPreviousCommentData: boolean = false;
+    currentTheme: string = 'theme-default-2';
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -113,6 +115,12 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         public smpService: SocialMediaPostsService
     ) {
         super('SmpTemplateComponent');
+
+        this._fuseFacadeService.getConfig().pipe(
+            takeUntil(this.unsubscribeAll$)
+        ).subscribe((themeData) => {
+            this.currentTheme = themeData.colorTheme
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -176,7 +184,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             if ((this.enhanceCommentContainer || this.mode === 'interaction-max') && loadCommentHistory)
                 this.loadCommentHistory();
             setTimeout(() => {
-                if (this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container');
+                if (this.mode === 'interaction-min') this.scrollToBottom('comment-content-container');
             }, 500);
         } catch (e) {
             this.logger.error(
@@ -200,8 +208,10 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     scrollToBottom(className: string) {
         try {
-            const element = document.querySelector(`.${className}`);
-            element.scrollTop = element.scrollHeight;
+            setTimeout(() => {
+                const element = document.querySelector(`.${className}`);
+                element.scrollTop = element.scrollHeight;
+            }, 250);
         } catch (e) {
             this.logger.error(
                 '[SmpTemplateComponent.scrollToBottom] - Error occured while auto scrolling to bottom:',
@@ -615,6 +625,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 else this.validateVisibleComments(checkerId);
             }
             this.flattenedCommentHistory = [...this.flattenedCommentHistory];
+            this.scrollToBottom('comment-content-container');
         } catch (e) {
             this.isCommentHistoryLoading = false;
             this.logger.error(
@@ -744,7 +755,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     media: this.postData?.PostAttachments.map((attachment) => ({
                         type: this.getFileType(attachment.MediaUrl, attachment.MediaType),
                         url: attachment.MediaUrl
-                    })).slice(1, this.postData?.PostAttachments.length)
+                    }))
                 },
                 'Post images',
                 {

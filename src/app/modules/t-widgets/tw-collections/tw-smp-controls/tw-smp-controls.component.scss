@@ -18,8 +18,7 @@ tw-smp-controls .mat-card-content {
 
         .avatar-box {
             width: 100%;
-            height: 45px;
-            background: var(--twd-primary-50);
+            min-height: 45px;
             align-items: center;
             justify-content: center;
             border: 2px solid transparent;
@@ -112,7 +111,6 @@ tw-smp-controls .mat-card-content {
             mat-icon {
                 width: 20px;
                 height: 20px;
-                color: #656d8a;
                 cursor: pointer;
             }
         }
