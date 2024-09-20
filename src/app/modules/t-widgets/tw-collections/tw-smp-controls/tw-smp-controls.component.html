@@ -30,9 +30,9 @@
                 >
                     <img
                         class="twd-absolute social-tag"
-                        src="assets/images/vectors/{{ interaction.channel }}.svg"
-                        alt=""
-                    />
+                        src="assets/images/vectors/{{ 
+                        this.smpService.postBodies[interaction.sessionId]?.SubChannel ??
+                        this.smpService.postBodies[interaction.outSessionId]?.SubChannel }}.svg" />
                     <h5 class="font-weight-600">{{ getInitials(interaction.user) }}</h5>
                 </div>
             </div>

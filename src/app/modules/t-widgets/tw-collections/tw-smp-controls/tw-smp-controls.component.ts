@@ -219,9 +219,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             isActive: i.isActive,
                             interactionId: i.interactionId,
                             sessionId: i.otherData?.SessionId,
-                            channel:
-                                this.smpService.postBodies[this.sessionId]?.SubChannel ??
-                                this.smpService.postBodies[this.outSessionId]?.SubChannel,
+                            outSessionId: i.otherData?.OutSessionID,
                             isPostReplySent: i.isPostReplySent
                         };
                     });
@@ -817,6 +815,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             PostAccountName: smData.Posts.AccountName
                                 ? smData.Posts.AccountName
                                 : smData.Posts.AccountId,
+                            PostCreatedTime: smData.Posts?.CreatedDateTime,
+                            PostUpdatedTime: smData.Posts?.UpdatedDateTime,
                             PostId: smData.Posts.PostId,
                             SmActiveComment: smData.Comments,
                             SmParentComments: smData.ParentComments,
@@ -830,6 +830,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             IsCommentEdited: smData.Comments?.IsEdited,
                             IsCommentDeleted: smData.Comments?.IsDeleted,
                             IsPostDeleted: smData.Posts?.IsDeleted,
+                            IsPostEdited: smData.Posts?.IsEdited,
                             RouteId: resData?.RouteId
                         }
                     });
