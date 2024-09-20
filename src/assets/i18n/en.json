@@ -78,6 +78,7 @@
         "retry": "Retry",
         "agentName": "Agent Name",
         "search": "Search",
+        "searchWithAgentNameOrId":"Search with Agent Name or Agent ID",
         "submit": "Submit",
         "agent": "Agent",
         "reload": "Reload",
