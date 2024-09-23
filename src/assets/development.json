@@ -210,7 +210,7 @@
                         "Description": "",
                         "Type": "twn-home",
                         "Config": { "Enabled": true, "Icon": "home" },
-                        "Data": { "Path": "/home", "Active": false }
+                        "Data": { "Path": "/home", "Active": true }
                     },
                     {
                         "Name": "Supervisor",
@@ -259,7 +259,7 @@
                         "Description": "",
                         "Type": "twc-workbench",
                         "Config": { "Enabled": true, "Icon": "library_books" },
-                        "Data": { "Path": "/workbench", "Active": true }
+                        "Data": { "Path": "/workbench", "Active": false }
                     }
                 ],
                 "Bottom": [
@@ -3164,54 +3164,6 @@
                                         },
                                         "Channels": [
                                             {
-                                                "Type": "Social Media",
-                                                "Enabled": true,
-                                                "Icon": "video_label",
-                                                "Config": {
-                                                    "Transfer": {
-                                                        "Allowed": true,
-                                                        "Agent": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": false,
-                                                            "Comments": false,
-                                                            "Source": {
-                                                                "Use": "agentId",
-                                                                "Display": "agentName",
-                                                                "FreeTextAllowed": false
-                                                            },
-                                                            "AllowedStates": [],
-                                                            "TeamFilter": false,
-                                                            "Columns": []
-                                                        },
-                                                        "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": false,
-                                                            "Comments": false,
-                                                            "Source": {
-                                                                "Use": "vdn",
-                                                                "Display": "skill",
-                                                                "FreeTextAllowed": false
-                                                            },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": [],
-                                                            "Rules": {
-                                                                "Enabled": true,
-                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
-                                                            }
-                                                        }
-                                                    },
-                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
-                                                    "SearchPollingInterval": 0,
-                                                    "MaxSearchRange": 30,
-                                                    "SearchDuration": 24,
-                                                    "ShowPostDetails": false
-                                                }
-                                            },
-                                            {
                                                 "Type": "Email",
                                                 "Enabled": true,
                                                 "Icon": "email",
@@ -3273,6 +3225,54 @@
                                                     "AskPullConfirmation": true,
                                                     "PushAllowed": true,
                                                     "SearchPollingInterval": 5000
+                                                }
+                                            },
+                                            {
+                                                "Type": "Social Media",
+                                                "Enabled": true,
+                                                "Icon": "video_label",
+                                                "Config": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
+                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
+                                                    "SearchPollingInterval": 0,
+                                                    "MaxSearchRange": 30,
+                                                    "SearchDuration": 24,
+                                                    "ShowPostDetails": false
                                                 }
                                             }
                                         ]
