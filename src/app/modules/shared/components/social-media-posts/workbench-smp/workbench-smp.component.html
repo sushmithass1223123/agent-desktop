@@ -259,10 +259,12 @@
                                                                     <ng-container *ngIf="{
                                                                             isEdited:
                                                                                 post.IsPostEdited ||
-                                                                                post.IsCommentEdited,
+                                                                                post.IsCommentEdited ||
+                                                                                post.PostData?.IsItemEdited,
                                                                             isDeleted:
                                                                                 post.IsPostDeleted ||
-                                                                                post.IsCommentDeleted
+                                                                                post.IsCommentDeleted ||
+                                                                                post.PostData?.IsItemDeleted
                                                                         } as itemStatus">
                                                                         <mat-icon *ngIf="
                                                                                 !itemStatus.isEdited &&
@@ -281,9 +283,11 @@
                                                                                     : ''
                                                                             }}">comment</mat-icon>
                                                                         <mat-icon
+                                                                            [matTooltip]="locale('sharedComponents.socialMediaPosts.editedItem')"
                                                                             *ngIf="itemStatus.isEdited && !itemStatus.isDeleted"
                                                                             class="comment-icon theme-icon">edit</mat-icon>
                                                                         <mat-icon *ngIf="itemStatus.isDeleted"
+                                                                            [matTooltip]="locale('sharedComponents.socialMediaPosts.deletedItem')"
                                                                             class="comment-icon red-icon">delete</mat-icon>
                                                                     </ng-container>
                                                                 </div>
@@ -520,8 +524,7 @@
                             " [isActiveCommentEdited]="state.openPostResData.IsCommentEdited"
                             [isActiveCommentDeleted]="state.openPostResData.IsCommentDeleted"
                             [isPostDeleted]="state.openPostResData.IsPostDeleted"
-                            [isPostEdited]="state.openPostResData.IsPostEdited"
-                            [mode]="'workbench'"
+                            [isPostEdited]="state.openPostResData.IsPostEdited" [mode]="'workbench'"
                             [postData]="state.openPostResData"
                             [enhanceCommentContainer]="currentTab === 'posts'"></smp-template>
 

@@ -65,6 +65,7 @@ interface PostData {
     ActiveCommentId?: string;
     ParentCommentId?: string;
     IsItemDeleted?: boolean;
+    IsItemEdited?: boolean;
 }
 
 const channelMapper: any = {
@@ -1107,7 +1108,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         IsItemDeleted:
                             x?.SocialMediaData?.Comments?.IsDeleted ||
                             x?.SocialMediaData?.Posts?.IsDeleted ||
-                            x?.SocialMediaData?.ParentComments?.IsDeleted
+                            x?.SocialMediaData?.ParentComments?.IsDeleted,
+                        IsItemEdited:
+                            x?.SocialMediaData?.Comments?.IsEdited ||
+                            x?.SocialMediaData?.Posts?.IsEdited ||
+                            x?.SocialMediaData?.ParentComments?.IsEdited
                     }
                 };
             });
