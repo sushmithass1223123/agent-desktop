@@ -280,7 +280,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult:  this._dialogData.OtherData?.type === 'transfer' ? false : this._dialogData.Skill.Consult 
+                consult:  this.canConsult() 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
@@ -428,6 +428,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         SDKClient.events.on('OutgoingCallFailedEvent', this.onOutgoingCallFailed);
+    }
+
+    /**
+     * Method to check if consult option can be enabled.
+     * @returns true / false
+     */
+    canConsult() {
+        // disable consult option in case of transfer
+        return this._dialogData?.Type?.includes('transfer') ? false : this._dialogData?.Skill?.Consult
     }
 
     onOutgoingCallFailed(evt) {
