@@ -609,6 +609,7 @@ public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
     this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentOnCall'),'info');
     }
     if (!agent.CurrentAgentStatus.toLowerCase().includes('on call')){
+    // Show a snackbar indicating that the status change is in progress
     this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'));
     }
     if (this.data.Data.agentStatusChange){
