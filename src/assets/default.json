@@ -2075,8 +2075,7 @@
                                                 },
                                                 "Data": {
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000,
-                                                    "MaximumAllowedPostImageRendering": 1
+                                                    "AsyncReplySendTimeout": 60000
                                                 }
                                             },
                                             {
@@ -2589,7 +2588,6 @@
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24,
-                                                    "MaximumAllowedPostImageRendering": 1,
                                                     "ShowPostDetails": false
                                                 }
                                             }
@@ -2848,7 +2846,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default-2",
+        "Theme": "theme-default",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
@@ -2929,5 +2927,5 @@
             ]
         }
     },
-    "Version": "5.8.0"
+    "Version": "5.9.0-beta.1"
 }

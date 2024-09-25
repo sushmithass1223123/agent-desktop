@@ -38,7 +38,7 @@
                     </mat-menu>
                 </button>
                 <mat-form-field class="custom form-field twd-w-full" appearance="outline">
-                    <input class="login-input" matInput [placeholder]="locale('global.search')" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                    <input class="login-input" matInput [placeholder]="locale('global.searchWithAgentNameOrId')" [(ngModel)]="searchTerm" (input)="filterAgents()" />
                     <button
                         *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button

@@ -1,0 +1,18 @@
+/*
+Here, manual css classes/element styles overriding can be done. 
+
+Steps to achieve manual css overriding:
+
+1 - Right click on the content in the webpage and click inspect.
+2 - If you are not sure about the element you have selected, activate the element selector in devtools,
+    then try to select the desired html element.
+3 - Now in the styles tab, copy the css selector and override the styles.
+
+For example, if you wanna override the font size of the welcome page login text, you can do like below:
+
+login #login #login-intro .title {
+    font-size: 100px;
+}
+
+NOTE: You cannot override the css property if its already declared as important by AD
+*/

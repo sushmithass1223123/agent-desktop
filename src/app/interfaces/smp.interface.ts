@@ -39,7 +39,7 @@ export interface SmpComponentInputs {
 export interface Engagement {
     Channel: any;
     SmmType: any;
-    SmmId: any;
+    smmId: any;
     ReactionType: any;
 }
 

@@ -3,7 +3,7 @@
         <button mat-icon-button class="notification-btn"
             [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }" [matMenuTriggerFor]="menu"
             aria-label="Notification dropdown" (menuOpened)="menuOpened(true)" (menuClosed)="menuOpened(false)"
-            [matTooltip]="locale('toolbarComponent.notifications')">
+            [matTooltip]="locale('toolbarComponent.notifications')" #menuTrigger="matMenuTrigger">
             <mat-icon class="primary-text" [matBadge]="unreadCount || ''" matBadgePosition="after">{{
                 notifications.length === 0 ? 'notifications' : 'notifications_active'
                 }}</mat-icon>
@@ -89,6 +89,20 @@
                                 <h4>{{item.icon.includes('smp_d') ? item.message?.SocialMediaData?.Posts?.AccountName : item.message?.SocialMediaData?.Comments?.ToName}}</h4>
                                 <p>{{item.icon === 'smp_d' ? 'Post' : 'Comment'}} deleted on
                                     {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                            </div>
+                            <small>{{ item.time | date: 'shortTime' }}</small>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="item.icon.includes('smm_a')">
+                    <div fxLayout fxFlex>
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                            <mat-icon mat-list-icon color="primary">alternate_email</mat-icon>
+                        </div>
+                        <div fxLayout="column" class="message">
+                            <div class="font-weight-600 notcol">
+                                <h4>{{item.message?.SocialMediaData?.Posts?.AccountName}}</h4>
+                                <p>Got mentioned on {{item.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post'}} in {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>

@@ -1,4 +1,4 @@
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { filter, first, last, take, takeUntil } from 'rxjs/operators';
 import {
     Component,
     ElementRef,
@@ -49,6 +49,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     @Input() isParentCommentEdited: boolean = false;
     @Input() isParentCommentDeleted: boolean = false;
     @Input() isPostDeleted: boolean = false;
+    @Input() isPostEdited: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
@@ -61,8 +62,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         widget$: this._fuseFacadeService.widgetBgClasses$,
         config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
     };
-
-    @Input() MaximumAllowedPostImageRendering: number = 5;
 
     lineClampCharacterCount: number = 100;
 
@@ -103,6 +102,9 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     };
     hasNoFurtherComments: boolean = false;
     showPreviousComment: boolean = false;
+    isCommentHistoryLoading: boolean = false;
+    showPreviousCommentData: boolean = false;
+    currentTheme: string = 'theme-default-2';
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -113,6 +115,12 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         public smpService: SocialMediaPostsService
     ) {
         super('SmpTemplateComponent');
+
+        this._fuseFacadeService.getConfig().pipe(
+            takeUntil(this.unsubscribeAll$)
+        ).subscribe((themeData) => {
+            this.currentTheme = themeData.colorTheme
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -176,7 +184,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             if ((this.enhanceCommentContainer || this.mode === 'interaction-max') && loadCommentHistory)
                 this.loadCommentHistory();
             setTimeout(() => {
-                if (this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container');
+                if (this.mode === 'interaction-min') this.scrollToBottom('comment-content-container');
             }, 500);
         } catch (e) {
             this.logger.error(
@@ -200,8 +208,10 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     scrollToBottom(className: string) {
         try {
-            const element = document.querySelector(`.${className}`);
-            element.scrollTop = element.scrollHeight;
+            setTimeout(() => {
+                const element = document.querySelector(`.${className}`);
+                element.scrollTop = element.scrollHeight;
+            }, 250);
         } catch (e) {
             this.logger.error(
                 '[SmpTemplateComponent.scrollToBottom] - Error occured while auto scrolling to bottom:',
@@ -587,12 +597,14 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     async loadCommentHistory() {
         try {
+            this.isCommentHistoryLoading = true;
             const { response } = await SDKClient.loadComments({
                 postId: this.postData.PostId,
                 commentId: '',
                 startIndex: this.indexHolder[0][0],
                 endIndex: this.indexHolder[0][1]
             });
+            this.isCommentHistoryLoading = false;
             if (!response || (Array.isArray(response) && !response?.length)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.noCommentsFoundMessage'),
@@ -613,7 +625,9 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 else this.validateVisibleComments(checkerId);
             }
             this.flattenedCommentHistory = [...this.flattenedCommentHistory];
+            this.scrollToBottom('comment-content-container');
         } catch (e) {
+            this.isCommentHistoryLoading = false;
             this.logger.error(
                 '[SmpTemplateComponent.loadCommentHistory] - Error occured while loading comment history:',
                 JSON.stringify(e),
@@ -715,7 +729,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 nestLevel = this.flattenedCommentHistory[foundCommentIndex].nestLevel;
                 foundCommentIndex--;
             }
-            this.flattenedCommentHistory = [...this.flattenedCommentHistory]
+            this.flattenedCommentHistory = [...this.flattenedCommentHistory];
         } catch (e) {
             this.logger.error(
                 '[SmpTemplateComponent.validateVisibleComments] - Error occured while validating comment visibility:',
@@ -724,5 +738,30 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             );
             console.error(e);
         }
+    }
+
+    onReadMore(): void {
+        try {
+            document.querySelector('.post-content-text').classList.toggle('clamp');
+        } catch (e) {}
+    }
+
+    openGallery(): void {
+        try {
+            this._appUiService.showCustomDialog(
+                'alert',
+                {
+                    type: 'gallery',
+                    media: this.postData?.PostAttachments.map((attachment) => ({
+                        type: this.getFileType(attachment.MediaUrl, attachment.MediaType),
+                        url: attachment.MediaUrl
+                    }))
+                },
+                'Post images',
+                {
+                    messageClasses: 'twd-whitespace-pre-line twd-break-words'
+                }
+            );
+        } catch (e) {}
     }
 }

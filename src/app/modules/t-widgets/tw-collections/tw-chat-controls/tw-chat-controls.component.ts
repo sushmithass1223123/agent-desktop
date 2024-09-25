@@ -769,7 +769,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             signature: this.widgetData.SignatureAllowed ?? false,
             whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
             cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
-            attachments: this.widgetData.AttachmentAllowed ?? false,
+            attachments: this.canAddAttachment() ?? false,
             emoji: this.widgetData.EmojiAllowed ?? false,
             chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
             conference: this.widgetData.Conference?.Allowed ?? false,
@@ -908,7 +908,42 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // this.deRegisterFromEvents();
+        // Remove interaction events from tmac events array
+        this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, [
+            'TextChatRemoteUserConnectedEvent',
+            'TextChatSelfServiceDestinationEvent',
+            'TextChatAgentConnectedEvent',
+            'TextChatTranscriptForTransferEvent',
+            'TextChatMessageSentEvent',
+            'TextChatMessageTemplateSentEvent',
+            'TextChatUserMessageWaitTimerEvent',
+            'TextChatTypingStateChangedEvent',
+            'TextChatMessageReceivedEvent',
+            'UserDeviceInfoEvent',
+            'TextChatAgentMessageReceivedEvent',
+            'AVControlMessageReceivedEvent',
+            'TextChatDisconnectedEvent',
+            'TextChatAgentDisconnectedEvent',
+            'CannedResposeEvent',
+            'TextChatTransferSuccessEvent',
+            'TextChatTransferFailedEvent',
+            'TextChatTransferRejectEvent',
+            'ActionMessageReceivedEvent',
+            'InteractionDataEvent',
+            'CallHoldEvent',
+            'CallHoldReconnectEvent',
+            'HoldTimerEvent',
+            'CCLDataEvent',
+            'AgentNotificaitonEvent',
+            'DisposeCallWidgetEvent',
+            'AVDisconnectedEvent',
+            'HoldInteractionEvent',
+            'UnholdInteractionEvent',
+            'ConfirmEndInteractionEvent',
+            'UpdateParentAgentStatusEvent',
+            'CallConferenceCompletedEvent',
+            "EndInteractionEvent"
+        ])
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1183,23 +1218,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
         }
         if(data.systemMessage) {
-            if(data.message.includes('Agent')) {        
+            if(data.message.includes('Agent has')) {        
                 // Incase the agentname is not sent from VIVR
                 // message will be Ex: 'Agent has missed the call'
                 //so we replace Agent with AgentName here
                 //Ex: 'David has missed the call' 
                 //This happens when VIVR has missed the key in configuration
-                data.message = data.message.replace('Agent', 'You');
-                data.message = data.message.replace("has", "have")
+                data.message = data.message.replace('Agent has', 'You have');
+            } else if(data.message.includes(this.user.agentName.split(' ')[0] + '&#160;has')) {
+                //VIVR: Carol has have disconnected the call
+                //AD: You have disconnected the call
+                data.message = data.message.replace(this.user.agentName.split(' ')[0] + '&#160;has', 'You have')
             } else if(data.message.includes(this.user.agentName.split(' ')[0])) {
-                //Ex: 'David has missed the call' 
-                //incase of conference call: if its from the other agent we can show it as it is
-                // For normal call we can replace it with 'You have missed the call'
-                //If agentname is sent from VIVR compare with AD Agent FirstName 
-                //and if both are same replace with 'You'
+                //VIVR: customer accepts the call from Carol
+                //AD: customer accepts the call from You
                 data.message = data.message.replace(this.user.agentName.split(' ')[0], 'You')
-                data.message = data.message.replace("has", "have")
-            }
+            } 
         }
 
         
@@ -1212,7 +1246,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || data.type,
-            time: new Date(),
+            time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())) : new Date(),
             attachment: {
                 ...data.attachment,
                 angle: 0
@@ -1875,7 +1909,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 transcript.message = urlify(transcript.message);
             }
         }
-
+    //This is added to ignore empty messages from showing in UI for PB-6960
+    if(!transcript.divider && !transcript.dividerMessage && !transcript.message) {
+        console.info('Message is undefined hence ignoring it', transcript);
+        return;
+    }
         this.chatTranscripts.push(transcript);
     }
 
@@ -2980,6 +3018,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     public canReplyToChat(): boolean {
         return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
+    }
+
+    /**
+     * Method to check if attachment feature is enabled in case of SMM chats
+     * @returns true / false 
+     */
+    public canAddAttachment(): boolean {
+        return this.widgetData.AttachmentAllowed && (!this.isSMM || (this.isSMM &&
+             this.widgetData.SMM?.attachments?.allowedChannels?.toLowerCase()?.includes(this.channel?.toLowerCase())));
     }
 
     /** 

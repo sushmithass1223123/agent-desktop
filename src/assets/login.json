@@ -14,7 +14,7 @@
     "Main": {},
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default-2",
+        "Theme": "theme-default",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
@@ -70,7 +70,8 @@
         },
         "SDK": {
             "proxy": {
-                "urls": ["http://dicedev.tetherfi.cloud:55080/TMACSDKProxy/TmacProxy.asmx"],
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
+                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
                 "type": "soap",
                 "timeout": 60
             },
@@ -95,5 +96,5 @@
             ]
         }
     },
-    "Version": "5.8.0"
+    "Version": "5.9.0-beta.1"
 }
