@@ -90,8 +90,7 @@
         "abort-controller": "3.0.0",
         "eventsource": "2.0.2",
         "fetch-cookie": "3.0.1",
-        "node-fetch": "2.6.1",
-        "ws": "8.16.0"
+        "node-fetch": "2.6.1"
     },
     "devDependencies": {
         "@angular-builders/custom-webpack": "13.1.0",
