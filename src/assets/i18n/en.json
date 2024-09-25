@@ -337,6 +337,7 @@
             "sendBroadcast": "Send Broadcast To Team",
             "supervisor": "SUPERVISOR",
             "webphone": "Webphone",
+            "agentOnCall" : "Agent is on call agent status will be changed after the call.",
             "noAgentsFound": "No active agents found!",
             "agentSortMsg": "Agent list is sorted by ",
             "agentGroupMsg": "Agent list is grouped by ",

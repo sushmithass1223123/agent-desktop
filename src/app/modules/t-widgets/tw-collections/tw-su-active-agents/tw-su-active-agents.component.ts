@@ -604,8 +604,13 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
  * @param {IAUXCodes} item 
  */
 public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
-    // Show a snackbar indicating that the status change is in progress
+    // Check if the agent is currently on a call
+    if (agent.CurrentAgentStatus.toLowerCase().includes('on call')) {
+    this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentOnCall'),'info');
+    }
+    if (!agent.CurrentAgentStatus.toLowerCase().includes('on call')){
     this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'));
+    }
     if (this.data.Data.agentStatusChange){
     // Constructing a request packet to change the agent's status
     const reqPacket = {
