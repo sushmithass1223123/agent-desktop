@@ -54,8 +54,13 @@
                         </h5>
                     </div>
                     <div class="s-actions twd-flex">
-                        <!-- <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
-                            role="button" (click)="transferPost()">forward</mat-icon> -->
+                        <mat-icon
+                            style="transform: scaleX(-1);"
+                            [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                            (click)="transferPost()"
+                            role="button"
+                            >reply</mat-icon
+                        >
                         <mat-icon
                             [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
                             (click)="savePostAsDraft(false, true)"
@@ -275,6 +280,13 @@
                     <h5 class="font-weight-700">{{ smpService.postBodies[activeSessionId]?.PostAccountName }}</h5>
                 </div>
                 <div class="s-actions twd-flex">
+                    <mat-icon
+                        style="transform: scaleX(-1);"
+                        [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                        (click)="transferPost()"
+                        role="button"
+                        >reply</mat-icon
+                    >
                     <mat-icon
                         [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
                         (click)="savePostAsDraft(false, true)"

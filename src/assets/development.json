@@ -2551,36 +2551,31 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "Transfer": {
+                                                   "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "AllowedStates": [],
                                                             "TeamFilter": false,
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
