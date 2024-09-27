@@ -2074,6 +2074,42 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
                                                     "MaxFileUploadSize": 20971520,
                                                     "AsyncReplySendTimeout": 60000
                                                 }
@@ -2584,6 +2620,42 @@
                                                 "Enabled": true,
                                                 "Icon": "video_label",
                                                 "Config": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
                                                     "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,

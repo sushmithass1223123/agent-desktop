@@ -132,7 +132,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
         private cdr: ChangeDetectorRef,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _matDialog: MatDialog
     ) {
         super('TwSmpControlsComponent');
     }
@@ -886,5 +887,43 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
     restrictPostActionEvt(data: {interactionId: any, restrict: boolean}) {
         this.restrictPostActions[data.interactionId] = data.restrict;
+    }
+
+        /**
+     * Transfers post
+     */
+    transferPost(): void {
+        this.popupInteraction = false;
+        const transferConfig = this.data.Data.Transfer ?? {};
+        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Post');
+        data = merge({}, data, transferConfig);
+        data = {
+            ...data,
+            InteractionId: this.interactionId,
+            OtherData: {
+                type: 'transfer',
+                emails: [this.smpService.postBodies[this.activeSessionId]].map((p) => ({
+                    ...p,
+                    SessionId: this.activeSessionId
+                })),
+                useMediaMatrixProxyUrl: true
+            }
+        };
+
+        this._matDialog.open(AgentSkillListComponent, {
+            data,
+            panelClass: [
+                'agent-skill-dialog',
+                'twd-w-11/12',
+                'twd-h-10/12',
+                'lg:twd-w-7/12',
+                'lg:twd-h-8/12',
+                'xl:twd-w-6/12',
+                '2xl:twd-w-5/12'
+            ],
+            minWidth: '30%',
+            maxWidth: '100%',
+            disableClose: true
+        });
     }
 }
