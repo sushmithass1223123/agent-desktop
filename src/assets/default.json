@@ -2080,7 +2080,7 @@
                                                             "Allowed": true,
                                                             "Consult": true,
                                                             "Blind": false,
-                                                            "Comments": false,
+                                                            "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",

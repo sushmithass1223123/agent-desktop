@@ -53,6 +53,13 @@
                         </h5>
                     </div>
                     <div class="s-actions twd-flex">
+                        <mat-icon 
+                            [ngClass]="
+                                (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow active-interaction-comment' : '') +
+                                (savedComments.length ? 'active-interaction-comment': '')
+                            " 
+                            [matTooltip]="locale('widgets.smpControls.tooltips.interactionComments')"
+                            (click)="commentsAdded = false; saveInteractionComments()" role="button">comment</mat-icon>
                         <mat-icon
                             style="transform: scaleX(-1);"
                             [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
