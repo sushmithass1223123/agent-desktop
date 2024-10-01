@@ -233,6 +233,7 @@
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
                 "transferInteraction": "Transfer interaction",
+                "interactionComments": "View / add interaction comments",
                 "clearData": "Clear data",
                 "attachVideo": "Add a video",
                 "attachImage": "Add an image",
