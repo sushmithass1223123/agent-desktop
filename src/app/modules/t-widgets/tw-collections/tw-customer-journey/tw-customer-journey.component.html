@@ -273,14 +273,10 @@
                     </preview-email> -->
                 </ng-container>
 
-                <ng-container *ngIf="payload.action === 'SM Post Preview' && selected.state | async as postData">
+                <ng-container *ngIf="payload.action === 'SM Post Comment' && selected.state | async as postData">
                     <smp-template
-                        [isActiveCommentEdited]="postData.data.IsCommentEdited"
-                        [isActiveCommentDeleted]="postData.data.IsCommentDeleted"
-                        [isPostDeleted]="postData.data.IsPostDeleted"
-                        [isPostEdited]="postData.data.IsPostEdited" [mode]="'workbench'"
+                        [mode]="'cj'"
                         [postData]="postData.data"
-                        [enhanceCommentContainer]="false"
                     ></smp-template>
                 </ng-container>
 
