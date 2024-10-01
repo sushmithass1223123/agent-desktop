@@ -2063,6 +2063,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.chatMode = evt.ChatMode as any;
         // Av call constraints from transfer notification event
         let avCallConstraints: any = {};
+
+      // message to show for agent himself whe he is connected - "You have connected to chat"
+        this.pushToTranscript({
+            messageId: TUtils.Generic.uuid(),
+            message: this.translocoService.translate('widgets.chatControls.selfChatConnectedMsg'),
+            dividerMessage: true,
+            //if needed replace '-' with '/'
+            time: moment(new Date())
+        });
+
         
         if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
             avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
@@ -2162,8 +2172,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         value: evt.AgentName
                     }
                 ]
+                //to show ""You have joined the chat" when an agent joins to conference chat
+                this.pushToTranscript({
+                    messageId: TUtils.Generic.uuid(),
+                    message: this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels),
+                    dividerMessage: true,
+                    //if needed replace '-' with '/'
+                    time: moment(new Date())
+                });
+
                 this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels), 'info');
             }
+
+            
         } catch (error) { }
 
         // add the user to list
@@ -2716,6 +2737,39 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             const type = JSON.parse(evt.Message).param;
             // open the call widget
             this.openCallWidget(type, 'in', {});
+        }
+        switch (evt.Type) {
+            // {
+            //     "Type": "mute",
+            //     "User": "50057",
+            //     "Message": "{\"type\":\"mute\",\"param\":\"audio\",\"owner\":\"1000_50057_Carol M\",\"userId\":\"50057\",\"intent\":\"call\",\"sessionid\":\"dev241001133527_2894\"}",
+            //     "EventName": "AVControlMessageReceivedEvent",
+            //     "InteractionID": 1000,
+            //     "IsInteractionConstructEvent": false,
+            //     "IsInteractionDisposeEvent": false,
+            //     "CreatedTime": "2024-10-01T05:43:48.190Z",
+            //     "EventId": "af4b4df2-ea45-41b6-93c6-5c3dec826f8d",
+            //     "RecoveryEvent": false,
+            //     "QueuedEvent": false,
+            //     "ACK": null,
+            //     "Catagory": null
+            // }
+
+            // case 'mute':
+            // case 'unmute':
+            //     const parsedMessage = JSON.parse(evt.Message);
+            //     let userName = parsedMessage.owner;
+            //     userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : evt.User;
+            //     const msg = userName + ' has ' + evt.Type + 'd ' + parsedMessage.param;
+            //      //to show ""You have joined the chat" when an agent joins to conference chat
+            //      this.pushToTranscript({
+            //         messageId: TUtils.Generic.uuid(),
+            //         message: msg,
+            //         dividerMessage: true,
+            //         //if needed replace '-' with '/'
+            //         time: moment(new Date())
+            //     });
+            //     break;
         }
     }
 
