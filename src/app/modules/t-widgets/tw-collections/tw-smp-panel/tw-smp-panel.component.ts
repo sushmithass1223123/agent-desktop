@@ -28,7 +28,8 @@ export class TwSmpPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     maximized = [
         {
             'tw-smp-controls': false,
-            'tw-smp-customer-details': false
+            'tw-smp-customer-details': false,
+            'tw-customer-journey': false
         }
     ];
     /**
@@ -37,7 +38,8 @@ export class TwSmpPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     collapsed = [
         {
             'tw-smp-controls': false,
-            'tw-smp-customer-details': false
+            'tw-smp-customer-details': false,
+            'tw-customer-journey': false
         }
     ];
     /**
@@ -46,7 +48,8 @@ export class TwSmpPanelComponent extends TWidgetWrapper implements OnInit, OnDes
     floating = [
         {
             'tw-smp-controls': false,
-            'tw-smp-customer-details': false
+            'tw-smp-customer-details': false,
+            'tw-customer-journey': false
         }
     ];
 

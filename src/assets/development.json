@@ -294,9 +294,9 @@
                         "Widgets": {
                             "Static": [
                                 {
-                                    "Name": "Wallboard",
+                                    "Name": "Customer Journey",
                                     "Description": "",
-                                    "Type": "tw-wallboard",
+                                    "Type": "tw-customer-journey",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -304,18 +304,26 @@
                                         "Anchor": true,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "dvr",
+                                        "Icon": "storage",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
-                                        "Actions": [],
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "collapse"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Role": "agent",
-                                        "SLEnabled": true,
-                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
+                                        "IframeBaseUrl": "",
+                                        "NoOfRecords": 10,
+                                        "SentimentDashboardUrl": "",
+                                        "Columns": [
+                                            "InteractionDate",
+                                            "Channel",
+                                            "Direction",
+                                            "AgentName",
+                                            "EmailID",
+                                            "Actions"
+                                        ]
                                     }
                                 },
                                 {
@@ -2812,6 +2820,39 @@
                                                             "required": false,
                                                             "validation_regex": ""
                                                         }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "restore",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "AgentName",
+                                                        "EmailID",
+                                                        "Actions"
                                                     ]
                                                 }
                                             }
