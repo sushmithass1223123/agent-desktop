@@ -238,11 +238,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             twitter: 'custom-twitter',
             fb: 'custom-fb',
             telegram: 'custom-telegram',
+            smfb: 'custom-smfb',
+            smtwitter: 'custom-smtwitter',
+            sminstagram: 'custom-sminstagram',
             store: 'store',
             in: 'south',
             out: 'north'
         };
-        const iconKey = ['textchat', 'audiochat', 'videochat', 'services'];
+        const iconKey = ['textchat', 'audiochat', 'videochat', 'services', 'sm'];
         const noOfRecords = this.data.Data.NoOfRecords;
 
         this.table.formatPayload = this.switchMaximizedViewMode;
@@ -255,7 +258,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     const channel = el.Channel?.toLowerCase();
                     const subChannel = el.SubType?.toLowerCase();
                     return {
-                        name: iconMap[iconKey.includes(channel) ? subChannel : channel] || 'feed',
+                        name:
+                            iconMap[
+                                iconKey.includes(channel)
+                                    ? channel === 'sm'
+                                        ? `sm${subChannel}`
+                                        : subChannel
+                                    : channel
+                            ] || 'feed',
                         only: true
                     };
                 }
@@ -326,7 +336,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     },
                     {
                         title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
-                        icon: 'history'
+                        icon: 'history',
+                        visible: (element: any) => (element.Channel || '').toLowerCase() !== 'sm'
                     },
                     {
                         title: this.translocoService.translate('interactionComponent.actions'),
@@ -340,8 +351,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                         title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                         icon: 'chat',
                         visible: (element: any) =>
-                            (element.Channel || '').toLowerCase().includes('chat') ||
-                            (element.Channel || '').toLowerCase() === 'sm'
+                            (element.Channel || '').toLowerCase().includes('chat') &&
+                            (element.Channel || '').toLowerCase() !== 'sm'
                     },
                     {
                         title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
@@ -349,9 +360,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                         visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
                     },
                     {
-                        title: this.translocoService.translate('widgets.customerJourney.socialMediaPostPreview'),
+                        title: this.translocoService.translate('widgets.customerJourney.socialMediaPostComment'),
                         icon: 'video_label',
-                        visible: (element: any) => (element.Channel || '').toLowerCase().includes('sm')
+                        visible: (element: any) => (element.Channel || '').toLowerCase() === 'sm'
                     }
                 ]
             }
@@ -374,7 +385,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     value: [
                         {
                             title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
-                            icon: 'history'
+                            icon: 'history',
+                            visible: (element: any) => (element.Channel || '').toLowerCase() !== 'sm'
                         },
                         {
                             title: this.translocoService.translate('interactionComponent.actions'),
@@ -388,8 +400,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                             icon: 'chat',
                             visible: (element: any) =>
-                                (element.Channel || '').toLowerCase().includes('chat') ||
-                                (element.Channel || '').toLowerCase() === 'sm'
+                                (element.Channel || '').toLowerCase().includes('chat') &&
+                                (element.Channel || '').toLowerCase() !== 'sm'
                         },
                         {
                             title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
@@ -397,9 +409,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
                         },
                         {
-                            title: this.translocoService.translate('widgets.customerJourney.socialMediaPostPreview'),
+                            title: this.translocoService.translate('widgets.customerJourney.socialMediaPostComment'),
                             icon: 'video_label',
-                            visible: (element: any) => (element.Channel || '').toLowerCase().includes('sm')
+                            visible: (element: any) => (element.Channel || '').toLowerCase() === 'sm'
                         }
                     ]
                 }
@@ -988,7 +1000,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             case 'Email Preview': {
                 return { action, record: await this.showEmailThread(record) };
             }
-            case 'SM Post Preview': {
+            case 'SM Post Comment': {
                 return { action, record: await this.showPostThread(record) };
             }
         }

@@ -2619,7 +2619,7 @@
                                                     "Icon": "person",
                                                     "Class": "",
                                                     "Position": { "X": 4, "Y": 2 },
-                                                    "Actions": ["maximize", "float"],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2838,7 +2838,7 @@
                                                     "Class": "",
                                                     "Position": { "X": 2, "Y": 1 },
                                                     "Actions": ["maximize", "collapse"],
-                                                    "ViewState": "restore",
+                                                    "ViewState": "collapse",
                                                     "Header": true,
                                                     "Pinned": false
                                                 },
