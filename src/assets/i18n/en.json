@@ -482,6 +482,7 @@
             "comments": "Comments",
             "transcripts": "Transcripts",
             "emailPreview": "Email Preview",
+            "socialMediaPostPreview": "SM Post Preview",
             "getSessionActionFailed": "Unable to fetch session actions",
             "dashboardURLNotFound": "Sentiment Dashboard Url is not configured!",
             "getEmailFailed": "Unable to fetch email"
