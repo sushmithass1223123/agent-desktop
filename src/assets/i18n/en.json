@@ -874,6 +874,7 @@
             "getAgentCurrentStateError": "Error in getting agent #agentName's current state",
             "agentLoggedOut": "Agent #agentName has logged out",
             "agentStateInvalid": "Agent #agentName is not in valid state",
+            "agentOnCallError":"Agent is already on a call",
             "selectSkillMinStaffLimit": "Unabled to select the skill, Minimum Staffed Agents should be ",
             "selectSkillMaxStaffLimit": "Unabled to select the skill, Maximum Staffed Agents should be ",
             "selectSkillMinAvailableAgentLimit": "Unabled to select the skill, Minimum Available Agents should be ",

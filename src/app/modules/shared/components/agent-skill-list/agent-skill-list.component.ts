@@ -1924,7 +1924,14 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
             this.close(true);
             return;
         }
-
+        // Adding a check for the agent's status before performing the consult transfer
+        if (this.isConsult && this.selectedRow?.type === 'Agent List' && this.selectedRow.row.CurrentAgentStatus.toLowerCase().includes('on call')) {
+            this._appUIService.showSnackbar(
+            this.translocoService.translate('sharedComponents.agentSkillList.agentOnCallError'),
+            'failure'
+        );
+        return;
+         }
         // check the type if not dynamic list selection
         const type = this._dialogData?.Type || '';
         switch (type) {
