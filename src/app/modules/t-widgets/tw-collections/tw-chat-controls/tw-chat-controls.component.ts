@@ -3956,6 +3956,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     unHoldInteraction = async (): Promise<void> => {
         try {
+            if(this.status !== 'hold') return;
             this._fuseProgressBarService.show();
             if (this.interaction.InteractionID) {
                 this.interactionOnHold.loading = true;
