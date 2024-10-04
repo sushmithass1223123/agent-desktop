@@ -7,6 +7,9 @@ module.exports = (config) => {
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
     }));
+    config.externals = {
+        'node-fetch': 'commonjs node-fetch', // If you want to exclude node-fetch
+    };
     config.resolve.fallback = {
         "url": false,
         "http": false,
@@ -19,5 +22,6 @@ module.exports = (config) => {
     //     tailwindConfig,
     //     patchComponentsStyles: true
     // });
+
     return config;
 };
