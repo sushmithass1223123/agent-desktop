@@ -465,6 +465,17 @@
     box-shadow: none !important;
 }
 
+.hashtag, .mention, .e_link, .read-more {
+    font-weight: 800 !important;
+    opacity: 1 !important;
+    color: var(--twd-primary-600) !important;
+    cursor: inherit;
+}
+
+.read-more, .e_link {
+    cursor: pointer;
+}
+
 .smp-template.custom-theme-default {
     .post-content-container {
         background: url('./../../../../../../assets/images/backgrounds/gradientMesh/theme-default.jpg');
