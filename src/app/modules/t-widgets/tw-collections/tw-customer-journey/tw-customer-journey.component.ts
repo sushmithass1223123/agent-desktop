@@ -215,6 +215,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             audio: 'wifi_calling_3',
             video: 'duo',
             whatsapp: 'custom-whatsapp',
+            whatsapp_infomedia: 'custom-whatsapp_infomedia',
+            whatsapp_meta: 'custom-whatsapp_meta',
             instagram: 'custom-instagram',
             we: 'custom-we',
             line: 'custom-line',
