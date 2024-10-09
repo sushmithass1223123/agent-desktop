@@ -614,6 +614,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     setTimeout(() => {
                         window.URL.revokeObjectURL(blobUrl);
                     }, 60000);
+                    link.remove();
                 })
                 .catch((e) => {
                     console.error(e);
