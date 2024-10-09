@@ -539,6 +539,7 @@
             "conferenceWithBotFailed": "Conference with bot failed!",
             "conferenceWithBotError": "Error in conferencing with bot",
             "chatConnectedMsg": "#agentName connected to the chat",
+            "selfChatConnectedMsg": "You have connected to the chat",
             "webrtcRequestAccepted": "Webrtc troubleshoot request is accepted by customer",
             "webrtcRequestReceived": "Webrtc troubleshoot request is received by customer",
             "webrtcRequestRejected": "Webrtc troubleshoot request is rejected by customer",
