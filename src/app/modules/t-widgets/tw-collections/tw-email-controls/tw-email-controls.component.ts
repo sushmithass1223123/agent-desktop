@@ -32,7 +32,7 @@ import {
     UpdateEmailEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, EMAIL_SEND_STATUS, INBOX_REASONS, MAIL_REASONS, OUTBOX_REASONS, SENT_REASONS } from 'app/constants';
+import { DRAFT_REASONS, EMAIL_CURRENTSTATUS_CODES, EMAIL_REASONCODE_VALUES, EMAIL_SEND_STATUS, INBOX_REASONS, MAIL_REASONS, OUTBOX_REASONS, REJECT_REASONS, SENT_REASONS } from 'app/constants';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -652,7 +652,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         const interaction = this.currentInteraction;
         await this.initEmailComponent();
         const fetchFromOutbox =
-            OUTBOX_REASONS.concat(DRAFT_REASONS).concat(SENT_REASONS).includes(interaction.RouteReason) && this.emailInView === 'replied';
+            OUTBOX_REASONS.concat(DRAFT_REASONS).concat(SENT_REASONS).concat(REJECT_REASONS).includes(interaction.RouteReason) && this.emailInView === 'replied';
         this.getInboxMessageReq = { error: false, loading: true };
 
         let inboxRes: EmailInboxModel;
