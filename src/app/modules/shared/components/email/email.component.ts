@@ -610,9 +610,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     const link = document.createElement('a');
                     link.href = blobUrl;
                     link.setAttribute('download', file.Name);
-                    document.body.appendChild(link);
                     link.click();
-                    link.parentNode.removeChild(link);
                     setTimeout(() => {
                         window.URL.revokeObjectURL(blobUrl);
                     }, 60000);
