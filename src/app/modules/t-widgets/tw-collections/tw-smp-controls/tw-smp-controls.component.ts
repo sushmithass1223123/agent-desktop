@@ -894,18 +894,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     transferPost(): void {
         this.popupInteraction = false;
         const transferConfig = this.data.Data.Transfer ?? {};
-        let data: AgentSkillListData = new AgentSkillListDataModel('transferEmail', 'Transfer Post');
+        let data: AgentSkillListData = new AgentSkillListDataModel('transferPost', 'Transfer Post');
         data = merge({}, data, transferConfig);
         data = {
             ...data,
             InteractionId: this.interactionId,
             OtherData: {
                 type: 'transfer',
-                emails: [this.smpService.postBodies[this.activeSessionId]].map((p) => ({
+                posts: [this.smpService.postBodies[this.activeSessionId]].map((p) => ({
                     ...p,
                     SessionId: this.activeSessionId
-                })),
-                useMediaMatrixProxyUrl: true
+                }))
             }
         };
 
