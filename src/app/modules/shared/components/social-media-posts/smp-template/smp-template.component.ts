@@ -231,8 +231,8 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     getFileType(fileName: string, mediaType?: string): string {
         try {
             const fileExtension = fileName.split('.').pop().toLowerCase();
-            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'gif'];
-            const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp'];
+            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'];
+            const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp', 'gif'];
 
             if (videoExtensions.includes(fileExtension)) {
                 return 'video';

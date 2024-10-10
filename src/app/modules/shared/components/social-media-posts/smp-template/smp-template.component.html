@@ -125,7 +125,7 @@
                 role="button"
                 *ngIf="mode !== 'workbench' && enhanceCommentContainer"
             >
-                <mat-icon matTooltip="Focus on active comment" class="theme-icon">priority_high</mat-icon>
+                <mat-icon class="theme-icon">priority_high</mat-icon>
                 <h5 class="twd-p-2 font-weight-600">Active comment</h5>
             </div>
         </div>
@@ -212,8 +212,13 @@
                                         [src]="item?.MediaUrl"
                                         (click)="previewMedia(item)"
                                         [autoplay]="false"
-                                        controls
+                                        [controls]="false"
                                     ></video>
+                                    <mat-icon
+                                        *ngSwitchCase="'video'"
+                                        (click)="previewMedia(item)"
+                                        class="play-button theme-icon"
+                                    >play_circle_filled</mat-icon>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -372,8 +377,13 @@
                                         [src]="item?.MediaUrl"
                                         (click)="previewMedia(item)"
                                         [autoplay]="false"
-                                        controls
+                                        [controls]="false"
                                     ></video>
+                                    <mat-icon
+                                        *ngSwitchCase="'video'"
+                                        (click)="previewMedia(item)"
+                                        class="play-button theme-icon"
+                                    >play_circle_filled</mat-icon>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -546,8 +556,13 @@
                                             [src]="item?.MediaUrl"
                                             (click)="previewMedia(item)"
                                             [autoplay]="false"
-                                            controls
+                                            [controls]="false"
                                         ></video>
+                                        <mat-icon
+                                            *ngSwitchCase="'video'"
+                                            (click)="previewMedia(item)"
+                                            class="play-button theme-icon"
+                                        >play_circle_filled</mat-icon>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -614,7 +629,14 @@
                                 *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
                                 (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
                                 [src]="draftData?.rawAttachmentData"
+                                [controls]="false"
+                                [autoplay]="false"
                             ></video>
+                            <mat-icon
+                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
+                                class="play-button theme-icon"
+                            >play_circle_filled</mat-icon>
                             <div
                                 class="close-icon-holder"
                                 [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
@@ -763,8 +785,13 @@
                                             [src]="item?.MediaUrl"
                                             (click)="previewMedia(item)"
                                             [autoplay]="false"
-                                            controls
+                                            [controls]="false"
                                         ></video>
+                                        <mat-icon
+                                            *ngSwitchCase="'video'"
+                                            (click)="previewMedia(item)"
+                                            class="play-button theme-icon"
+                                        >play_circle_filled</mat-icon>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -858,7 +885,14 @@
                                         previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })
                                     "
                                     [src]="draftData?.rawAttachmentData"
+                                    [controls]="false"
+                                    [autoplay]="false"
                                 ></video>
+                                <mat-icon
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
+                                    class="play-button theme-icon"
+                                >play_circle_filled</mat-icon>
                                 <div
                                     class="close-icon-holder"
                                     [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
