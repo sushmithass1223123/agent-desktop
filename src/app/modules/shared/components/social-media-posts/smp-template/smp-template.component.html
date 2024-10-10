@@ -74,6 +74,18 @@
                         [src]="postMedia.mediaData?.MediaUrl"
                         (click)="previewMedia(postMedia.mediaData)"
                     />
+                    <video
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
+                        [src]="postMedia.mediaData?.MediaUrl"
+                        (click)="previewMedia(postMedia.mediaData)"
+                        [autoplay]="false"
+                        [controls]="false"
+                    ></video>
+                    <mat-icon
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
+                        (click)="previewMedia(postMedia.mediaData)"
+                        class="play-button theme-icon"
+                     >play_circle_filled</mat-icon>
                 </div>
             </ng-container>
         </div>
