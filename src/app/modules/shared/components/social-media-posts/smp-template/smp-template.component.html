@@ -56,10 +56,11 @@
             </div>
             <div class="pcc-middle">
                 <p
-                    (click)="onReadMore()"
                     class="post-content-text clamp"
-                    [innerHTML]="'stylizeContent' | SMPPipe: postData?.PostText?.Text"
+                    [innerHTML]="('stylizeContent' | SMPPipe: postData?.PostText?.Text)"
+                    #postPara
                 ></p>
+            <span class="read-more" #readMore (click)="onReadMore()">Read more</span>
             </div>
             <ng-container *ngIf="postData?.PostAttachments?.length">
                 <div
