@@ -235,10 +235,36 @@
                         align-items: flex-start;
                         justify-content: flex-start;
                         gap: 10px;
+                        position: relative;
+
+                        .play-button {
+                            width: 40px;
+                            height: 40px;
+                            font-size: 40px;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            cursor: pointer;
+                            transition: all 200ms ease;
+                        }
 
                         .comment-attachment {
                             max-height: 100px;
                             border-radius: 10px;
+                            transition: opacity 200ms ease;
+
+                            &:hover {
+                                opacity: 0.8;
+                            }
+                        }
+
+                        &:hover {
+                            .play-button {
+                                width: 45px;
+                                height: 45px;
+                                font-size: 45px;
+                            }
                         }
                     }
 
@@ -350,6 +376,19 @@
                     justify-content: center;
                     min-width: 60px;
                     margin: 10px;
+                    transition: opacity 200ms ease;
+
+                    .play-button {
+                        width: 40px;
+                        height: 40px;
+                        font-size: 40px;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        cursor: pointer;
+                        transition: all 200ms ease;
+                    }
 
                     .close-icon-holder {
                         position: absolute;
@@ -377,6 +416,15 @@
                         height: 100%;
                         width: auto;
                         border-radius: 10px;
+                    }
+
+                    &:hover {
+                        .play-button {
+                            font-size: 45px;
+                            height: 45px;
+                            width: 45px;
+                            opacity: 0.8;
+                        }
                     }
                 }
 
