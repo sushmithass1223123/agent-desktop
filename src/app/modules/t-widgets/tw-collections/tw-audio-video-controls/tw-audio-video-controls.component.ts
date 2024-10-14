@@ -1158,7 +1158,13 @@ if (error === 'Screenshare Was Cancelled') {
                         this.showUI = true;
                         this.agentAvRequestConsented = true;
                         if (this.isCustomerAcknowledged) this.startAVCall();
-                    } else this.destroyWidget();
+                    } else {
+                         // close the call widget
+                         this.destroyWidget();
+                         // notify agent rejected the call
+                         this.notifyCallConfirmation(false);
+                    }
+                    
                 });
             }
         } catch (e) {
