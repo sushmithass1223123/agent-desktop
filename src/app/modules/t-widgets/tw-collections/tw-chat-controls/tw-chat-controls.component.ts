@@ -2020,7 +2020,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.chatMode = evt.ChatMode as any;
         // Av call constraints from transfer notification event
         let avCallConstraints: any = {};
-        
+          // message to show for agent himself whe he is connected - "You have connected to chat"
+          this.pushToTranscript({
+            messageId: TUtils.Generic.uuid(),
+            message: this.translocoService.translate('widgets.chatControls.selfChatConnectedMsg'),
+            dividerMessage: true,
+            //if needed replace '-' with '/'
+            time: moment(new Date())
+        });
+
         if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
             avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
         }
@@ -2119,6 +2127,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         value: evt.AgentName
                     }
                 ]
+                  //to show "You have joined the chat" when an agent joins to conference chat
+                  this.pushToTranscript({
+                    messageId: TUtils.Generic.uuid(),
+                    message: this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels),
+                    dividerMessage: true,
+                    //if needed replace '-' with '/'
+                    time: moment(new Date())
+                });
+
                 this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels), 'info');
             }
         } catch (error) { }
