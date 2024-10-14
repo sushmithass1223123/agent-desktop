@@ -75,8 +75,21 @@
 
         .pcc-bottom {
             width: 100%;
+            position: relative;
 
-            img {
+            .play-button {
+                width: 60px;
+                height: 60px;
+                font-size: 60px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                cursor: pointer;
+                transition: all 200ms ease;
+            }
+
+            img, video {
                 width: 100%;
             }
         }
