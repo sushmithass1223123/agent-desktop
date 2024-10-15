@@ -280,7 +280,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 allowed: this._dialogData.Skill.Allowed,
                 blind: this._dialogData.Skill.Blind,
                 comments: this._dialogData.Skill.Comments,
-                consult:  this._dialogData.OtherData?.type === 'transfer' ? false : this._dialogData.Skill.Consult 
+                consult:  this.canConsult() 
             };
             // this.switcherList['Skill List'] = Object.assign(conf, this._dialogData?.Skill);
 
@@ -428,6 +428,15 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         SDKClient.events.on('OutgoingCallFailedEvent', this.onOutgoingCallFailed);
+    }
+
+    /**
+     * Method to check if consult option can be enabled.
+     * @returns true / false
+     */
+    canConsult() {
+        // disable consult option in case of transfer
+        return this._dialogData?.Type?.includes('transfer') ? false : this._dialogData?.Skill?.Consult
     }
 
     onOutgoingCallFailed(evt) {
@@ -1182,7 +1191,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      *  no impact as we can save any data here 
      */
 
-    private saveToDataServer(channel?) {
+    private saveToDataServer(channel?, item?: any) {
         if(!this.comments || this.comments?.trim() === '') {
             return;
         }
@@ -1202,6 +1211,11 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         if(channel === 'email') {
             input['key'] = this._dialogData.OtherData.emails[0].SessionId;
             input['insertInteraction'] = this._dialogData.OtherData.emails[0].InteractionID;
+        }
+
+        if(channel === 'sm' && item) {
+            input['key'] = item?.SessionId;
+            input['insertInteraction'] = this._dialogData.InteractionId.toString();
         }
 
         SDKClient.saveDataToDataServer(input)
@@ -1360,6 +1374,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
         // SDKClient.transferEmailToAgent used when transfer is either from Agent List or Speed Dial
         if (this.selectedRow?.type !== 'Skill List') {
             posts.forEach((post) => {
+                if(this._dialogData.InteractionId) this.saveToDataServer('sm', post);
                 const { RouteId, SessionId } = post;
                 SDKClient.transferEmailToAgent({
                     routeId: RouteId,

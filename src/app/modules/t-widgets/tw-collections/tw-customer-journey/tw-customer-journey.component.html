@@ -273,6 +273,13 @@
                     </preview-email> -->
                 </ng-container>
 
+                <ng-container *ngIf="payload.action === 'SM Post Comment' && selected.state | async as postData">
+                    <smp-template
+                        [mode]="'cj'"
+                        [postData]="postData.data"
+                    ></smp-template>
+                </ng-container>
+
                 <ng-container *ngIf="payload.action === 'Interactions'">
                     <div class="twd-w-full twd-p-1 border-radius-20 twd-overflow-hidden">
                         <div class="twd-w-full twd-h-full" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">

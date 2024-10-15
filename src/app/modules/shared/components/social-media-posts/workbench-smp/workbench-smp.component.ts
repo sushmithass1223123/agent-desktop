@@ -1,6 +1,6 @@
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
@@ -318,11 +318,24 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     ) {
         super('WorkbenchSmpComponent');
 
-        this._fuseFacadeService.getConfig().pipe(
-            takeUntil(this.unsubscribeAll)
-        ).subscribe((themeData) => {
-            this.currentTheme = themeData.colorTheme
-        });
+        this._fuseFacadeService
+            .getConfig()
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((themeData) => {
+                this.currentTheme = themeData.colorTheme;
+            });
+    }
+
+    @HostListener('document:fullscreenchange', ['$event'])
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:MSFullscreenChange', ['$event'])
+    onFullScreenChange(event: Event) {
+        if (document.fullscreenElement) {
+            this.isFullscreen = true;
+        } else {
+            this.isFullscreen = false;
+        }
     }
 
     async ngOnInit() {
@@ -2001,9 +2014,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {SMPost[]} posts post list
      */
     async closePosts(posts: SMPost[]): Promise<void> {
-
         // take user consent before closing the post in case of draft
-        if(this.currentTab === 'draft') {
+        if (this.currentTab === 'draft') {
             const confirmDialogRef = this._appUiService.showAppConfirmDialog(
                 'generic',
                 this.translocoService.translate('widgets.smpControls.closeDraftConfirmationHeader'),
@@ -2014,9 +2026,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).toPromise();
             if (!dialogResult) {
                 return;
-            } 
+            }
         }
-        
+
         const loader = this._appUiService.showSnackbar(
             this.translocoService.translate('sharedComponents.socialMediaPosts.closePostsLoading'),
             'loading'
@@ -2099,11 +2111,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     }
 
     trackByChannel(index: number, item: any): any {
-        return Object.keys(item)[0];;
+        return Object.keys(item)[0];
     }
 
     trackBySkill(index: number, item: any): any {
-        return Object.keys(item)[0];;
+        return Object.keys(item)[0];
     }
 
     trackByItem(index: number, item: SMPost): any {

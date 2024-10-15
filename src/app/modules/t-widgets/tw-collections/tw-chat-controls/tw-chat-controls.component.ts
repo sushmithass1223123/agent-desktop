@@ -748,6 +748,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
             if (change) {
                 // check agent features
+                // Override agent level features
                 this.checkAgentFeatures();
             }
         });
@@ -763,13 +764,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         });
 
+        // Check the features at application level (it will be overriden if agent features are available from backend)
         this.agentFeatures = {
             audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
             videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
             signature: this.widgetData.SignatureAllowed ?? false,
             whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
             cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
-            attachments: this.canAddAttachment() ?? false,
+            attachments: this.canAddAttachment(this.widgetData.AttachmentAllowed) ?? false,
             emoji: this.widgetData.EmojiAllowed ?? false,
             chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
             conference: this.widgetData.Conference?.Allowed ?? false,
@@ -792,6 +794,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.user = SDKClient.getAgentData() || null;
 
         // check for agent features
+        // Override agent level features
         this.checkAgentFeatures();
 
         // set the status
@@ -908,42 +911,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // Remove interaction events from tmac events array
-        this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, [
-            'TextChatRemoteUserConnectedEvent',
-            'TextChatSelfServiceDestinationEvent',
-            'TextChatAgentConnectedEvent',
-            'TextChatTranscriptForTransferEvent',
-            'TextChatMessageSentEvent',
-            'TextChatMessageTemplateSentEvent',
-            'TextChatUserMessageWaitTimerEvent',
-            'TextChatTypingStateChangedEvent',
-            'TextChatMessageReceivedEvent',
-            'UserDeviceInfoEvent',
-            'TextChatAgentMessageReceivedEvent',
-            'AVControlMessageReceivedEvent',
-            'TextChatDisconnectedEvent',
-            'TextChatAgentDisconnectedEvent',
-            'CannedResposeEvent',
-            'TextChatTransferSuccessEvent',
-            'TextChatTransferFailedEvent',
-            'TextChatTransferRejectEvent',
-            'ActionMessageReceivedEvent',
-            'InteractionDataEvent',
-            'CallHoldEvent',
-            'CallHoldReconnectEvent',
-            'HoldTimerEvent',
-            'CCLDataEvent',
-            'AgentNotificaitonEvent',
-            'DisposeCallWidgetEvent',
-            'AVDisconnectedEvent',
-            'HoldInteractionEvent',
-            'UnholdInteractionEvent',
-            'ConfirmEndInteractionEvent',
-            'UpdateParentAgentStatusEvent',
-            'CallConferenceCompletedEvent',
-            "EndInteractionEvent"
-        ])
+        // this.deRegisterFromEvents();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1022,7 +990,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this.agentFeatures.whiteboard = f.IsEnabled;
                     break;
                 case AGENT_FEATURES.IsChatAttachmentsEnabled:
-                    this.agentFeatures.attachments = f.IsEnabled;
+                    this.agentFeatures.attachments = this.canAddAttachment(f.IsEnabled);
                     break;
                 case AGENT_FEATURES.IsChatEmojiEnabled:
                     this.agentFeatures.emoji = f.IsEnabled;
@@ -3036,8 +3004,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Method to check if attachment feature is enabled in case of SMM chats
      * @returns true / false 
      */
-    public canAddAttachment(): boolean {
-        return this.widgetData.AttachmentAllowed && (!this.isSMM || (this.isSMM &&
+    public canAddAttachment(allowed: boolean): boolean {
+        return allowed && (!this.isSMM || (this.isSMM &&
              this.widgetData.SMM?.attachments?.allowedChannels?.toLowerCase()?.includes(this.channel?.toLowerCase())));
     }
 
@@ -4003,6 +3971,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     unHoldInteraction = async (): Promise<void> => {
         try {
+            if(this.status !== 'hold') return;
             this._fuseProgressBarService.show();
             if (this.interaction.InteractionID) {
                 this.interactionOnHold.loading = true;

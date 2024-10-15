@@ -233,6 +233,7 @@
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
                 "transferInteraction": "Transfer interaction",
+                "interactionComments": "View / add interaction comments",
                 "clearData": "Clear data",
                 "attachVideo": "Add a video",
                 "attachImage": "Add an image",
@@ -483,6 +484,7 @@
             "comments": "Comments",
             "transcripts": "Transcripts",
             "emailPreview": "Email Preview",
+            "socialMediaPostComment": "SM Post Comment",
             "getSessionActionFailed": "Unable to fetch session actions",
             "dashboardURLNotFound": "Sentiment Dashboard Url is not configured!",
             "getEmailFailed": "Unable to fetch email"

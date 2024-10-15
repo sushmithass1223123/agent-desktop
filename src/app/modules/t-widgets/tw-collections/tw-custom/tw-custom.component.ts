@@ -297,8 +297,6 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
         }
         this.destroyWrapper();
         this.dialogRef?.close();
-        // Remove interaction events from tmac events array
-        if (this.interactionId) this._tmacEventService.removeInteractionEventsById(this.interactionId);
     }
 
     /**

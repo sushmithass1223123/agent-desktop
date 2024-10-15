@@ -1,5 +1,6 @@
-import { filter, first, last, take, takeUntil } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 import {
+    AfterViewInit,
     Component,
     ElementRef,
     EventEmitter,
@@ -31,7 +32,7 @@ import { SharedWrapper } from '@modules/t-widgets/utils';
     styleUrls: ['./smp-template.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDestroy, OnChanges {
+export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDestroy, OnChanges, AfterViewInit {
     @Input() postData: SmpComponentInputs;
     @Input() mode: 'workbench' | 'interaction-min' | 'interaction-max';
     @ViewChild('fileInput') fileInput!: ElementRef;
@@ -83,6 +84,10 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     @ViewChild('previewMediaDialog')
     previewMediaDialog: TemplateRef<any>;
+    @ViewChild('postPara')
+    postPara: ElementRef<HTMLParagraphElement>;
+    @ViewChild('readMore')
+    readMore: ElementRef<HTMLSpanElement>;
     /**
      * Preview media dialog ref
      */
@@ -121,6 +126,10 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         ).subscribe((themeData) => {
             this.currentTheme = themeData.colorTheme
         });
+    }
+
+    ngAfterViewInit(): void {
+        this.checkTextOverflow();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -231,8 +240,8 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     getFileType(fileName: string, mediaType?: string): string {
         try {
             const fileExtension = fileName.split('.').pop().toLowerCase();
-            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'gif'];
-            const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp'];
+            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'];
+            const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp', 'gif'];
 
             if (videoExtensions.includes(fileExtension)) {
                 return 'video';
@@ -740,10 +749,16 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         }
     }
 
+    /**
+     * Method to toggle post content read more feature
+     */
     onReadMore(): void {
         try {
             document.querySelector('.post-content-text').classList.toggle('clamp');
-        } catch (e) {}
+            this.readMore.nativeElement.style.display = 'none'
+        } catch (ex) {
+            console.error(ex)
+        }
     }
 
     openGallery(): void {
@@ -763,5 +778,18 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 }
             );
         } catch (e) {}
+    }
+
+    /**
+     * Method to check if the post content actually overflows and enable read more button
+     */
+    checkTextOverflow(): void {
+        try {
+            const isOverflowing = this.postPara.nativeElement.scrollHeight > this.postPara.nativeElement.clientHeight;
+            if (isOverflowing) this.readMore.nativeElement.style.display = 'inline';
+            else this.readMore.nativeElement.style.display = 'none';
+        } catch (ex) {
+            console.error(ex)
+        }
     }
 }
