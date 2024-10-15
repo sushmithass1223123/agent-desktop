@@ -7,7 +7,7 @@
  * Tetherfi Pte. Ltd.
  */
 
-var CallSdkVersion = "1.1.3.30";
+var CallSdkVersion = "1.1.3.31";
 
 var LivechatAVLibrarySettings = {
 	/** 
@@ -2034,7 +2034,7 @@ function WrsPeerConnection(channel, configs, intent, statsifs) {
  * This is a private variable and user should not access it
  */
 var WrsObjectId__ = 1000;
-var WrsBuildTime__ = "Jul 09 2024 11:39:26";
+var WrsBuildTime__ = "Sep 20 2024 16:08:49";
 
 var WrsConst = {
     PcType: {
@@ -3264,6 +3264,22 @@ function WrsNativePeerConnectionWrapper(type, fnTrace, statsifs) {
         }
 
         this_.pc_.ontrack = function (e) {
+            // [PRODQA-2889] Set the live state of receiver and sender
+            const isSenderTrackAlive =
+                e.transceiver?.sender?.track?.readyState === "live" &&
+                e.transceiver?.sender?.track?.enabled;
+            const isReceiverTrackAlive =
+                e.transceiver?.receiver?.track?.readyState === "live" &&
+                e.transceiver?.receiver?.track?.enabled;
+    
+            // [PRODQA-2889] Based on the tracks state on sender and receiver, set the direction manually
+            if (isSenderTrackAlive || isReceiverTrackAlive) {
+                if (isSenderTrackAlive && isReceiverTrackAlive)
+                    e.transceiver.direction = "sendrecv";
+                else if (isSenderTrackAlive) e.transceiver.direction = "sendonly";
+                else if (isReceiverTrackAlive) e.transceiver.direction = "recvonly";
+            }
+
             this_.ontrack(this_, e);
         };
     }
@@ -6901,7 +6917,7 @@ function WrsDtmfGeneratorImpl(enableFeedback, peerConnection, tracefn) {
     }
 }
 
-var CallSdkBuildTime__ = "Jul 09 2024 11:40:46";
+var CallSdkBuildTime__ = "Sep 20 2024 16:38:30";
 
 Object.freeze(LiveChatAvErrorCodes);
 Object.freeze(LiveChatAvCallTypes);
@@ -7726,6 +7742,7 @@ function LiveChatAvInterfaceChannelImpl(comm) {
         if (triggerFail) {
             this_._onFail(LiveChatAvErrorCodes.CALL_CANCELED, this_.callId_, this_.isScreenshareCall_);
         }
+        this_._pushSignallingReport("endav", null, 's');
 
         // close and cleanup
         this_._end(false);
@@ -9504,7 +9521,7 @@ function LiveChatAvInterfaceChannelImpl(comm) {
         // and the reports are not getting flushed at intervals
         // by adding _startStopFlushTimer() here the timer is reset 
         // add the _flushReportQueue() function starts flushing reports 
-        this_._startStopFlushTimer(); 
+        this_._startStopFlushTimer(true); 
         this_._setAvMode(avmode);
 
         this_.uids_ = [ uid ];

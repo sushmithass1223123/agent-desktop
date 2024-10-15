@@ -182,6 +182,14 @@
                     color: #303030 !important;
                 }
             }
+            .active-interaction-comment {
+                @if ($is-dark==true) {
+                    color: #fff !important;
+                }
+                @else {
+                    color: $tw-primary !important;
+                }
+            }
         }
         
         .sm-im-content {

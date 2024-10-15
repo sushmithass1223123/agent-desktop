@@ -39,6 +39,14 @@ export class AppComponent implements OnInit, OnDestroy {
             name: 'whatsapp'
         },
         {
+            label: 'custom-whatsapp_infomedia',
+            name: 'whatsapp_infomedia'
+        },
+        {
+            label: 'custom-whatsapp_meta',
+            name: 'whatsapp_meta'
+        },
+        {
             label: 'custom-instagram',
             name: 'instagram'
         },
@@ -109,6 +117,18 @@ export class AppComponent implements OnInit, OnDestroy {
         {
             label: 'custom-cobrowse',
             name: 'cobrowse'
+        },
+        {
+            label: 'custom-smfb',
+            name: 'smfb'
+        },
+        {
+            label: 'custom-smtwitter',
+            name: 'smtwitter'
+        },
+        {
+            label: 'custom-sminstagram',
+            name: 'sminstagram'
         }
     ];
 

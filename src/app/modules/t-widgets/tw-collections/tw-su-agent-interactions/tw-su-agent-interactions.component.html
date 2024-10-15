@@ -121,6 +121,18 @@
                                 ></mat-icon>
                                 <mat-icon
                                     color="primary"
+                                    *ngSwitchCase="'whatsapp_infomedia'"
+                                    svgIcon="custom-whatsapp_infomedia"
+                                    [matTooltip]="locale('channels.whatsApp')"
+                                ></mat-icon>
+                                <mat-icon
+                                    color="primary"
+                                    *ngSwitchCase="'whatsapp_meta'"
+                                    svgIcon="custom-whatsapp_meta"
+                                    [matTooltip]="locale('channels.whatsApp')"
+                                ></mat-icon>
+                                <mat-icon
+                                    color="primary"
                                     *ngSwitchCase="'instagram'"
                                     svgIcon="custom-instagram"
                                     [matTooltip]="locale('channels.instagram')"

@@ -282,6 +282,16 @@
                                                                                     ? 'theme-icon'
                                                                                     : ''
                                                                             }}">comment</mat-icon>
+                                                                        <img *ngIf="chosenPostData && notificationAction === 'smrc_a' && ('activeCommentValidator'
+                                                                        | SMPPipe
+                                                                            : post
+                                                                            : [
+                                                                                  currentTab,
+                                                                                  selectedPostId,
+                                                                                  selectedPostSessionId,
+                                                                                  selectedPostOutSessionId
+                                                                              ])" class="not-rimg"
+                                                                            src="assets/images/vectors/{{chosenPostData?.SocialMediaData?.Engagement?.reactionType?.replaceAll(' ', '')}}.svg">
                                                                         <mat-icon
                                                                             [matTooltip]="locale('sharedComponents.socialMediaPosts.editedItem')"
                                                                             *ngIf="itemStatus.isEdited && !itemStatus.isDeleted"
@@ -459,6 +469,7 @@
 
                         <div class="core-actions actions-flex" *ngIf="
                                 currentTab !== 'posts' &&
+                                !isFullscreen &&
                                 !(
                                     hidePostActions ||
                                     state?.openPostResData?.IsCommentDeleted ||

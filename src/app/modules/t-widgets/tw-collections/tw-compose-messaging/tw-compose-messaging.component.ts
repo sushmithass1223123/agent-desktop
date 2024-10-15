@@ -146,9 +146,6 @@ export class TwComposeMessagingComponent extends TWidgetWrapper implements OnIni
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // Remove interaction events from tmac events array
-        const eventName = this.widgetData.Number?.split('.')?.shift() as any;
-        if(eventName) this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, [eventName])
     }
 
     /**

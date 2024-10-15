@@ -430,6 +430,14 @@ workbench-smp {
                 height: 10px;
                 min-height: 0px !important;
             }
+
+            .not-rimg {
+                height: 20px;
+                width: auto;
+                position: absolute;
+                bottom: 0;
+                right: 25px;
+            }
         }
     }
 }

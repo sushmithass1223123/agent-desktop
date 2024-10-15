@@ -31,7 +31,7 @@ export class SMPPipe implements PipeTransform {
             }
             case 'getActiveCommentStyle': {
                 const hidePostActions = args[0];
-                if (hidePostActions) return ' theme-bg delete-border twd-border-opacity-100';
+                if (hidePostActions) return ' theme-bg delete-item twd-border-opacity-100';
                 switch (value) {
                     case 'smc_e':
                     case 'smp_e':
