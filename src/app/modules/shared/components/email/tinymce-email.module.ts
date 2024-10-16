@@ -165,7 +165,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     branding: false,
                     base_url: `${this.baseHref}assets/tinymce/`,
                     content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount', 'textcolor'],
+                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
                     //     'advlist autolink lists link image charmap print preview anchor',
                     //     'searchreplace visualblocks code fullscreen',
                     //     'insertdatetime media table paste code wordcount'
