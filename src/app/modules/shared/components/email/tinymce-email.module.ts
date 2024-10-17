@@ -107,7 +107,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.id = TUtils.Generic.uuid().replaceAll('-', '_');
+    this.id = TUtils.Generic.uuid().replace(/-/g, '_');
     }
 
     /**
@@ -148,7 +148,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
         setTimeout(() => {
             tinymce
                 .init({
-                    selector: `textarea#${this.id}`,
+                    selector: `textarea[id="${this.id}"]`,  // Using attribute selector to escape hyphens
                     min_height: 200,
                     relative_urls: false,
                     remove_script_host: false,
@@ -163,7 +163,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     // force_br_newlines: true,
                     // force_p_newlines: false,
                     branding: false,
-                    base_url: `${this.baseHref}assets/tinymce/`,
+                  base_url: `${this.baseHref}assets/tinymce/`,
                     content_css: `${this.baseHref}assets/tinymce/editor.css`,
                     plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
                     //     'advlist autolink lists link image charmap print preview anchor',
@@ -175,7 +175,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                         bold italic backcolor | alignleft aligncenter 
                         alignright alignjustify | bullist numlist outdent indent |  
                         removeformat
-                        `,
+                    `,
                     toolbar_mode: 'sliding',
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
@@ -215,7 +215,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                 });
         });
     }
-}
+}    
 
 /**
  * EmailEditorModule
