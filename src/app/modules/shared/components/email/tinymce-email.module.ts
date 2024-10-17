@@ -149,6 +149,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
             tinymce
                 .init({
                     selector: `textarea[id="${this.id}"]`,  // Using attribute selector to escape hyphens
+                    license_key: 'gpl',
                     min_height: 200,
                     relative_urls: false,
                     remove_script_host: false,
