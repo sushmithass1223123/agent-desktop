@@ -213,6 +213,7 @@
                                     *ngFor="let item of postData?.SmParentComments?.CommentAttachments"
                                     [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                 >
+                                <div class="caf-box">
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
@@ -232,6 +233,7 @@
                                         (click)="previewMedia(item)"
                                         class="play-button theme-icon"
                                     >play_circle_filled</mat-icon>
+                                </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -378,6 +380,7 @@
                                     *ngFor="let item of postData?.SmActiveComment?.CommentAttachments"
                                     [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                 >
+                                <div class="caf-box">
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
@@ -397,6 +400,7 @@
                                         (click)="previewMedia(item)"
                                         class="play-button theme-icon"
                                     >play_circle_filled</mat-icon>
+                                </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -557,6 +561,7 @@
                                         *ngFor="let item of prevComment?.CommentAttachments"
                                         [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                     >
+                                    <div class="caf-box">
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
@@ -576,6 +581,7 @@
                                             (click)="previewMedia(item)"
                                             class="play-button theme-icon"
                                         >play_circle_filled</mat-icon>
+                                    </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -786,6 +792,7 @@
                                         *ngFor="let item of commentData?.CommentAttachments"
                                         [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                     >
+                                    <div class="caf-box">
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
@@ -805,6 +812,7 @@
                                             (click)="previewMedia(item)"
                                             class="play-button theme-icon"
                                         >play_circle_filled</mat-icon>
+                                    </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
