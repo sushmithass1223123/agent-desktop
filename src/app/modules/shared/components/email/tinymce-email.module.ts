@@ -107,7 +107,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      * Lifecycle hook
      */
     ngOnInit(): void {
-    this.id = TUtils.Generic.uuid().replaceAll('-', '_');
+        this.id = TUtils.Generic.uuid().replace(/-/g, '_');
     }
 
     /**
@@ -148,7 +148,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
         setTimeout(() => {
             tinymce
                 .init({
-                    selector: `textarea#${this.id}`,
+                    selector: `textarea[id="${this.id}"]`,
                     min_height: 200,
                     relative_urls: false,
                     remove_script_host: false,
