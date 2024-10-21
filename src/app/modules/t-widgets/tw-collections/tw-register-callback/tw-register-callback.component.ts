@@ -222,13 +222,6 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // Remove interaction events from tmac events array
-        const eventNames: any = uniq(
-            Object.entries(this.dataMap).map((a) => a[1].ValueSource?.split('.')?.shift() ?? [])
-        );
-        if (this.interactionId && eventNames.length) {
-            this._tmacEventService.removeInteractionEvents(this.interactionId, eventNames);
-        }
     }
 
     /**

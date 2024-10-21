@@ -305,10 +305,6 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // Remove interaction events from tmac events array
-        const eventNames: any = uniq(this.customerInfo.map((c) => c.ValueSource?.split('.')?.shift()) ?? []);
-        if (this.interaction && eventNames.length)
-            this._tmacEventService.removeInteractionEvents(this.interaction.InteractionID, eventNames);
     }
 
     /**

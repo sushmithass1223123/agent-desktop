@@ -481,18 +481,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         // SDKClient.events.off('AgentAVMessageEvent', this.AgentAVMessageEvent);
 
         // remove the repeatable events from the reference
-         // Remove interaction events from tmac events array
-        this._tmacEventService.removeInteractionEvents(this.interactionId, [
-            'TextChatRemoteUserConnectedEvent',
-            'DisconnectAVEvent',
-            'AVControlMessageReceivedEvent',
-            'TextChatMessageReceivedEvent',
-            'ActionMessageReceivedEvent',
-            'TextChatDisconnectedEvent',
-            'CallHoldEvent',
-            'CallHoldReconnectEvent',
-            'CallConferenceCompletedEvent'
-        ])
+        this._tmacEventService.removeInteractionEvents(this.interactionId, ['AVControlMessageReceivedEvent', 'ActionMessageReceivedEvent','CallHoldEvent', 'CallHoldReconnectEvent']);
         this._tmacEventService.removeNonInteractionEvents(['AgentAVMessageEvent']);
 
         this.avConn = null;
@@ -1169,7 +1158,13 @@ if (error === 'Screenshare Was Cancelled') {
                         this.showUI = true;
                         this.agentAvRequestConsented = true;
                         if (this.isCustomerAcknowledged) this.startAVCall();
-                    } else this.destroyWidget();
+                    } else {
+                         // close the call widget
+                         this.destroyWidget();
+                         // notify agent rejected the call
+                         this.notifyCallConfirmation(false);
+                    }
+                    
                 });
             }
         } catch (e) {
@@ -1541,6 +1536,11 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             return;
         }
 
+        if(!this.manualHold && !this.hold) {
+            this.avConn.hold();
+            this.hold = true;
+        }
+
         this.onCallHoldEvent = true;
         this._appUIService.setAvInteractionHoldFlag(this.interactionId, this.onCallHoldEvent)
 
@@ -1581,17 +1581,10 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'muteVideo';
-            } else {
-                return;
-            }
+            } else return;
 
             this.requestMuteUnmuteCustomerAV(type, 'mute', actionMessage);
-            return;
         }
-
-        // hold the call
-        this.avConn.hold();
-        this.hold = true;
     };
 
     /**
@@ -1602,6 +1595,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         // check the interaction
         if ((evt.InteractionID !== this.interactionId) || this.manualHold || !this.connected) {
             return;
+        }
+
+        // un hold the call
+        if(!this.manualHold && this.hold) {
+            this.avConn.unHold();
+            this.hold = false;
         }
 
         this.onCallHoldEvent = false;
@@ -1650,21 +1649,22 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'unmuteVideo';
-            }
+            } else return;
 
             this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
-            return;
         }
-
-        // un hold the call
-        this.avConn.unHold();
-        this.hold = false;
     };
 
     CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
         // check the interaction
         if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
             return;
+        }
+
+        // un hold the call
+        if(!this.manualHold && this.hold) {
+            this.avConn.unHold();
+            this.hold = false;
         }
 
         this.onCallHoldEvent = false;
@@ -1707,15 +1707,10 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'unmuteVideo';
-            }
+            } else return;
 
             this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
-            return;
         }
-
-        // un hold the call
-        this.avConn.unHold();
-        this.hold = false;
     };
 
     /**
@@ -1723,7 +1718,6 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method destroyWidget
      */
     private destroyWidget(): void {
-        this.hold = false;
         if (!this.data.Config.AOT) return;
 
         // close the audio call widget
@@ -2039,44 +2033,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method holdCall
      */
     public holdUnholdCall(): void {
-        const actionMessage = {
-            source: 'customer',
-            options: {},
-            data: {
-                interactionId: this.interactionId
-            },
-            status: 'request',
-            type: this.hold ? 'unmuteAudioVideo' : 'muteAudioVideo',
-            eventName: 'ActionMessage',
-            id: TUtils.Generic.uuid()
-        };
-
-        if(this.muteAVOnHold.enabled) {
-            // Check if the call is already on hold 
-            if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
-                // Mute the AV connection
-                this.avConn.mute(false, false);
-                this.videoMuted = true;
-                this.audioMuted = true;
-                this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
-            } else {
-                // Unmute the AV connection
-                this.avConn.unMute(true, true);
-                this.videoMuted = false;
-                this.audioMuted = false;
-                this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
-            }
-        }
-        
-    
         this.manualHold = !this.manualHold;
 
         // check the hold flag and checks if agentaudio is true or false
-        if (this.hold || !this.muteAVOnHold.agentVideo ) {
+        if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-           this.muteUnmuteVideoCall();
-           this.muteUnmuteAudioCall();
 
             if (this.data.Data.Source === 'TwChatControlsComponent') {
                 // if (typeof this.data.Data.Opener.unHoldInteraction === 'function') {

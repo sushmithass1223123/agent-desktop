@@ -138,12 +138,6 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // Remove interaction events from tmac events array
-        if(this.widgetData.Role === 'interaction') {
-            this._tmacEventService.removeInteractionEvents(this.interactionId, [
-                'WorkCodeAddedEvent'
-            ])
-        }
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -201,13 +201,6 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
-        // Remove interaction events from tmac events array
-        if(this.aot && this.data.InteractionDetails) {
-            this._tmacEventService.removeInteractionEvents(this.data.InteractionDetails.InteractionID, [
-                'CallHoldEvent',
-                'CallHoldReconnectEvent'
-            ])
-        }
     }
 
     /**

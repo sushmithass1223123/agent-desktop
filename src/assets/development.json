@@ -210,7 +210,7 @@
                         "Description": "",
                         "Type": "twn-home",
                         "Config": { "Enabled": true, "Icon": "home" },
-                        "Data": { "Path": "/home", "Active": false }
+                        "Data": { "Path": "/home", "Active": true }
                     },
                     {
                         "Name": "Supervisor",
@@ -259,7 +259,7 @@
                         "Description": "",
                         "Type": "twc-workbench",
                         "Config": { "Enabled": true, "Icon": "library_books" },
-                        "Data": { "Path": "/workbench", "Active": true }
+                        "Data": { "Path": "/workbench", "Active": false }
                     }
                 ],
                 "Bottom": [
@@ -294,9 +294,9 @@
                         "Widgets": {
                             "Static": [
                                 {
-                                    "Name": "Wallboard",
+                                    "Name": "Customer Journey",
                                     "Description": "",
-                                    "Type": "tw-wallboard",
+                                    "Type": "tw-customer-journey",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -304,18 +304,26 @@
                                         "Anchor": true,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "dvr",
+                                        "Icon": "storage",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
-                                        "Actions": [],
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "collapse"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Role": "agent",
-                                        "SLEnabled": true,
-                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
+                                        "IframeBaseUrl": "",
+                                        "NoOfRecords": 10,
+                                        "SentimentDashboardUrl": "",
+                                        "Columns": [
+                                            "InteractionDate",
+                                            "Channel",
+                                            "Direction",
+                                            "AgentName",
+                                            "EmailID",
+                                            "Actions"
+                                        ]
                                     }
                                 },
                                 {
@@ -2556,36 +2564,31 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                    "Transfer": {
+                                                   "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": true,
+                                                            "Blind": false,
                                                             "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "AllowedStates": [],
                                                             "TeamFilter": false,
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
@@ -2616,7 +2619,7 @@
                                                     "Icon": "person",
                                                     "Class": "",
                                                     "Position": { "X": 4, "Y": 2 },
-                                                    "Actions": ["maximize", "float"],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2817,6 +2820,39 @@
                                                             "required": false,
                                                             "validation_regex": ""
                                                         }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "collapse",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "AgentName",
+                                                        "EmailID",
+                                                        "Actions"
                                                     ]
                                                 }
                                             }
@@ -3164,54 +3200,6 @@
                                         },
                                         "Channels": [
                                             {
-                                                "Type": "Social Media",
-                                                "Enabled": true,
-                                                "Icon": "video_label",
-                                                "Config": {
-                                                    "Transfer": {
-                                                        "Allowed": true,
-                                                        "Agent": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": false,
-                                                            "Comments": false,
-                                                            "Source": {
-                                                                "Use": "agentId",
-                                                                "Display": "agentName",
-                                                                "FreeTextAllowed": false
-                                                            },
-                                                            "AllowedStates": [],
-                                                            "TeamFilter": false,
-                                                            "Columns": []
-                                                        },
-                                                        "Skill": {
-                                                            "Allowed": true,
-                                                            "Consult": true,
-                                                            "Blind": false,
-                                                            "Comments": false,
-                                                            "Source": {
-                                                                "Use": "vdn",
-                                                                "Display": "skill",
-                                                                "FreeTextAllowed": false
-                                                            },
-                                                            "ChannelPrefix": ["EM"],
-                                                            "Columns": [],
-                                                            "Rules": {
-                                                                "Enabled": true,
-                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
-                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
-                                                            }
-                                                        }
-                                                    },
-                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
-                                                    "SearchPollingInterval": 0,
-                                                    "MaxSearchRange": 30,
-                                                    "SearchDuration": 24,
-                                                    "ShowPostDetails": false
-                                                }
-                                            },
-                                            {
                                                 "Type": "Email",
                                                 "Enabled": true,
                                                 "Icon": "email",
@@ -3273,6 +3261,54 @@
                                                     "AskPullConfirmation": true,
                                                     "PushAllowed": true,
                                                     "SearchPollingInterval": 5000
+                                                }
+                                            },
+                                            {
+                                                "Type": "Social Media",
+                                                "Enabled": true,
+                                                "Icon": "video_label",
+                                                "Config": {
+                                                    "Transfer": {
+                                                        "Allowed": true,
+                                                        "Agent": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "agentId",
+                                                                "Display": "agentName",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "AllowedStates": [],
+                                                            "TeamFilter": false,
+                                                            "Columns": []
+                                                        },
+                                                        "Skill": {
+                                                            "Allowed": true,
+                                                            "Consult": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
+                                                            "Source": {
+                                                                "Use": "vdn",
+                                                                "Display": "skill",
+                                                                "FreeTextAllowed": false
+                                                            },
+                                                            "ChannelPrefix": ["EM"],
+                                                            "Columns": [],
+                                                            "Rules": {
+                                                                "Enabled": true,
+                                                                "STF": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "AVL": { "Enabled": true, "Min": 1, "Max": -1 },
+                                                                "CIQ": { "Enabled": true, "Min": 0, "Max": 0 }
+                                                            }
+                                                        }
+                                                    },
+                                                    "Tabs": ["queue", "inbox", "sentitem", "draft", "posts"],
+                                                    "SearchPollingInterval": 0,
+                                                    "MaxSearchRange": 30,
+                                                    "SearchDuration": 24,
+                                                    "ShowPostDetails": false
                                                 }
                                             }
                                         ]
@@ -3621,5 +3657,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.9.0-beta.1"
+    "Version": "5.9.0-beta.2"
 }

@@ -90,13 +90,6 @@ export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, A
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
-        // Remove interaction events from tmac events array
-        if(this.data.Data.Source !== 'dashboard' && this.data?.InteractionDetails?.InteractionID) {
-            this._tmacEventService.removeInteractionEvents(this.data?.InteractionDetails?.InteractionID, [
-                'TextChatRemoteUserConnectedEvent',
-                'TextChatMessageReceivedEvent'
-            ])
-        }
     }
 
     /**
