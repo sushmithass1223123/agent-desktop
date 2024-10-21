@@ -157,7 +157,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     height: '100%',
                     menubar: false,
                     fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
-                    forced_root_block: '',
+                    forced_root_block: false,
                     font_formats:
                         'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Oswald=oswald; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
                     // force_br_newlines: true,
