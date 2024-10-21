@@ -1516,6 +1516,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                             );
                             await SDKClient.replyBulkEmailsInQueue({
                                 body: reply,
+                                attachmentFileList: email.Files && email.Files.length ? JSON.stringify(email.Files) : '',
                                 routeIdList: routeIds.join(',')
                             });
                             if (uiIds.includes(this.openEmailRes.data?.value?.uiId)) {
