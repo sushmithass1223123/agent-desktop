@@ -1,60 +1,106 @@
-<ng-container *ngIf="{
+<ng-container
+    *ngIf="{
         anchor: (customFuse.anchor$ | async),
         widget: (customFuse.widget$ | async),
         config: (customFuse.config$ | async)
-    } as customFuse">
-    <div class="smp-template theme-bg twd-w-full wd-h-full twd-relative custom-{{currentTheme}}" *transloco="let locale"
-        [ngClass]="{'no-image-post': !postData?.PostAttachments?.length}">
-        <div class="collapsed-images" role="button" (click)="openGallery()"
+    } as customFuse"
+>
+    <div
+        class="smp-template theme-bg twd-w-full wd-h-full twd-relative custom-{{ currentTheme }}"
+        *transloco="let locale"
+        [ngClass]="{ 'no-image-post': !postData?.PostAttachments?.length }"
+    >
+        <div
+            class="collapsed-images"
+            role="button"
+            (click)="openGallery()"
             [matTooltip]="locale('widgets.smpControls.tooltips.viewPostGallery')"
-            *ngIf="postData?.PostAttachments?.length > 1 && mode === 'workbench'">
+            *ngIf="postData?.PostAttachments?.length > 1"
+        >
             <mat-icon>photo_library</mat-icon>
         </div>
-        <div class="post-content-container twd-relative">
+        <div class="post-content-container twd-relative" [ngStyle]="{ marginBottom: mode === 'cj' ? '10px' : '0' }">
             <div class="pcc-top" *ngIf="mode !== 'interaction-min' && mode !== 'interaction-max'">
                 <div class="pcc-content">
                     <img src="assets/images/vectors/{{ postData?.SubChannel }}.svg" alt="Poster profile picture" />
                     <p>
-                        {{ (postData.IsPostEdited || isPostEdited) ? 'Edited' : 'Created' }}
+                        {{ postData.IsPostEdited || isPostEdited ? 'Edited' : 'Created' }}
                         {{
-                        'formatSinceWithDotnetDate'
-                        | CustomDatePipe
-                        : ((postData.IsPostEdited || isPostEdited)
-                        ? postData?.PostUpdatedTime
-                        : postData?.PostCreatedTime)
+                            'formatSinceWithDotnetDate'
+                                | CustomDatePipe
+                                    : (postData.IsPostEdited || isPostEdited
+                                          ? postData?.PostUpdatedTime
+                                          : postData?.PostCreatedTime)
                         }}
                         ago by <span>{{ postData?.PostAccountName }}</span>
                     </p>
-                    <mat-icon *ngIf="postData.IsPostDeleted || isPostDeleted" style="height: 18px;"
-                        class="comment-icon red-icon"
-                        [matTooltip]="locale('widgets.smpControls.tooltips.deletedPost')">delete</mat-icon>
-                    <mat-icon
-                        *ngIf="postData.IsPostEdited || isPostEdited && !(postData.IsPostDeleted || isPostDeleted)"
-                        style="height: 18px;" class="comment-icon theme-icon"
-                        [matTooltip]="locale('widgets.smpControls.tooltips.editedPost')">edit</mat-icon>
+                    <ng-container *ngIf="mode !== 'cj'">
+                        <mat-icon
+                            *ngIf="postData.IsPostDeleted || isPostDeleted"
+                            style="height: 18px"
+                            class="comment-icon red-icon"
+                            [matTooltip]="locale('widgets.smpControls.tooltips.deletedPost')"
+                            >delete</mat-icon
+                        >
+                        <mat-icon
+                            *ngIf="
+                                postData.IsPostEdited || (isPostEdited && !(postData.IsPostDeleted || isPostDeleted))
+                            "
+                            style="height: 18px"
+                            class="comment-icon theme-icon"
+                            [matTooltip]="locale('widgets.smpControls.tooltips.editedPost')"
+                            >edit</mat-icon
+                        >
+                    </ng-container>
                 </div>
             </div>
             <div class="pcc-middle">
-                <p (click)="onReadMore()" class="post-content-text clamp"
-                    [innerHTML]="'stylizeContent' | SMPPipe: postData?.PostText?.Text"></p>
+                <p
+                    class="post-content-text clamp"
+                    [innerHTML]="('stylizeContent' | SMPPipe: postData?.PostText?.Text)"
+                    #postPara
+                ></p>
+            <span class="read-more" #readMore (click)="onReadMore()">Read more</span>
             </div>
             <ng-container *ngIf="postData?.PostAttachments?.length">
-                <div class="pcc-bottom" *ngIf="{
+                <div
+                    class="pcc-bottom"
+                    [ngStyle]="{ 'max-height': mode === 'cj' ? '15vh' : 'auto' }"
+                    *ngIf="{
                         mediaData: postData.PostAttachments[0]
-                    } as postMedia">
-                    <img *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['image']"
-                        [src]="postMedia.mediaData?.MediaUrl" (click)="previewMedia(postMedia.mediaData)" />
+                    } as postMedia"
+                >
+                    <img
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['image']"
+                        [src]="postMedia.mediaData?.MediaUrl"
+                        (click)="previewMedia(postMedia.mediaData)"
+                    />
+                    <video
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
+                        [src]="postMedia.mediaData?.MediaUrl"
+                        (click)="previewMedia(postMedia.mediaData)"
+                        [autoplay]="false"
+                        [controls]="false"
+                    ></video>
+                    <mat-icon
+                        *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
+                        (click)="previewMedia(postMedia.mediaData)"
+                        class="play-button theme-icon"
+                     >play_circle_filled</mat-icon>
                 </div>
             </ng-container>
         </div>
 
-        <div class="toolbar-footer">
+        <div class="toolbar-footer" *ngIf="mode !== 'cj'">
             <div class="reaction-stats">
                 <ng-container *ngIf="'getTotalReactionCount' | SMPPipe: postData?.PostEngagements">
                     <ng-container *ngFor="let eng of postData?.PostEngagements">
-                        <img *ngIf="eng.ReactionCount" src="assets/images/vectors/{{
+                        <img
+                            *ngIf="eng.ReactionCount"
+                            src="assets/images/vectors/{{
                                 'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
-                            }}.svg" />
+                            }}.svg"
+                        />
                     </ng-container>
                     <p>
                         <span>{{ 'getTotalReactionCount' | SMPPipe: postData?.PostEngagements }}</span> people reacted
@@ -70,79 +116,124 @@
                 <p>
                     <span>{{
                         'getCommentCount' | SMPPipe: flattenedCommentHistory:[enhanceCommentContainer, postData]
-                        }}</span>
+                    }}</span>
                     active comments found on this post
                 </p>
             </div>
         </div>
 
-        <div class="header-flex">
+        <div class="header-flex" *ngIf="mode !== 'cj'">
             <div class="twd-flex">
                 <h5 class="twd-p-2 font-weight-600">Comments</h5>
-                <mat-icon *ngIf="mode === 'workbench'"
-                    [matTooltip]="locale('widgets.smpControls.tooltips.viewOnlyMode')">visibility</mat-icon>
+                <mat-icon
+                    *ngIf="mode === 'workbench'"
+                    [matTooltip]="locale('widgets.smpControls.tooltips.viewOnlyMode')"
+                    >visibility</mat-icon
+                >
             </div>
-            <div class="twd-flex" [matTooltip]="locale('widgets.smpControls.tooltips.scrollToActiveComment')"
-                (click)="scrollToActiveComment()" role="button" *ngIf="mode !== 'workbench' && enhanceCommentContainer">
-                <mat-icon matTooltip="Focus on active comment" class="theme-icon">priority_high</mat-icon>
+            <div
+                class="twd-flex"
+                [matTooltip]="locale('widgets.smpControls.tooltips.scrollToActiveComment')"
+                (click)="scrollToActiveComment()"
+                role="button"
+                *ngIf="mode !== 'workbench' && enhanceCommentContainer"
+            >
+                <mat-icon class="theme-icon">priority_high</mat-icon>
                 <h5 class="twd-p-2 font-weight-600">Active comment</h5>
             </div>
         </div>
 
         <div class="comment-content-container" *ngIf="!enhanceCommentContainer">
             <!-- Parent comment -->
-            <div class="comment-container parent-comment">
-                <div class="comment-box theme-bg" [id]="postData?.SmParentComments?.CommentId"
-                    *ngIf="postData?.SmParentComments">
+            <div class="comment-container parent-comment" *ngIf="mode !== 'cj'">
+                <div
+                    class="comment-box theme-bg"
+                    [id]="postData?.SmParentComments?.CommentId"
+                    *ngIf="postData?.SmParentComments"
+                >
                     <div class="comment-info-flex">
                         <div class="author-info">
                             <img src="assets/images/avatars/profile.jpg" />
                             <p>
                                 {{
-                                postData?.SmParentComments?.FromName
-                                ? postData?.SmParentComments?.FromName
-                                : postData?.PostAccountName
+                                    postData?.SmParentComments?.FromName
+                                        ? postData?.SmParentComments?.FromName
+                                        : postData?.PostAccountName
                                 }}
                             </p>
-                            <div class="comment-status" *ngIf="{
+                            <div
+                                class="comment-status"
+                                *ngIf="{
                                     isEdited: postData.IsParentCommentEdited || isParentCommentEdited,
                                     isDeleted: postData.IsParentCommentDeleted || isParentCommentDeleted
-                                } as commentStatus">
-                                <mat-icon class="comment-icon theme-icon"
+                                } as commentStatus"
+                            >
+                                <mat-icon
+                                    class="comment-icon theme-icon"
                                     [matTooltip]="locale('widgets.smpControls.tooltips.editedComment')"
-                                    *ngIf="commentStatus.isEdited && !commentStatus.isDeleted">edit</mat-icon>
-                                <mat-icon class="comment-icon red-icon"
+                                    *ngIf="commentStatus.isEdited && !commentStatus.isDeleted"
+                                    >edit</mat-icon
+                                >
+                                <mat-icon
+                                    class="comment-icon red-icon"
                                     [matTooltip]="locale('widgets.smpControls.tooltips.deletedComment')"
-                                    *ngIf="commentStatus.isDeleted">delete</mat-icon>
+                                    *ngIf="commentStatus.isDeleted"
+                                    >delete</mat-icon
+                                >
                             </div>
                         </div>
                         <div class="comment-content">
-                            <p [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmParentComments?.CommentText?.Text">
-                            </p>
+                            <p
+                                [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmParentComments?.CommentText?.Text"
+                            ></p>
                         </div>
 
                         <!-- Attachment section -->
-                        <ng-container *ngIf="
-                                !renderParentCommentAttachment &&
-                                postData?.SmParentComments?.CommentAttachments?.length
-                            ">
-                            <div role="button" class="comment-attachments-placeholder"
-                                (click)="this.renderParentCommentAttachment = true">
+                        <ng-container
+                            *ngIf="
+                                !renderParentCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length
+                            "
+                        >
+                            <div
+                                role="button"
+                                class="comment-attachments-placeholder"
+                                (click)="this.renderParentCommentAttachment = true"
+                            >
                                 <mat-icon> attach_file</mat-icon>
                                 <p>View attachments</p>
                             </div>
                         </ng-container>
-                        <ng-container *ngIf="
-                                renderParentCommentAttachment &&
-                                postData?.SmParentComments?.CommentAttachments?.length
-                            ">
+                        <ng-container
+                            *ngIf="
+                                renderParentCommentAttachment && postData?.SmParentComments?.CommentAttachments?.length
+                            "
+                        >
                             <div class="comment-attachment-flex">
-                                <ng-container *ngFor="let item of postData?.SmParentComments?.CommentAttachments"
-                                    [ngSwitch]="'getFileType' | SMPPipe : item?.MediaUrl : [item?.MediaType]">
-                                    <img class="comment-attachment" *ngSwitchCase="'image'" (click)="previewMedia(item)"
-                                        [src]="item?.MediaUrl" />
-                                    <video class="comment-attachment" *ngSwitchCase="'video'" [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item)" [autoplay]="false" controls></video>
+                                <ng-container
+                                    *ngFor="let item of postData?.SmParentComments?.CommentAttachments"
+                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                >
+                                <div class="caf-box">
+                                    <img
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'image'"
+                                        (click)="previewMedia(item)"
+                                        [src]="item?.MediaUrl"
+                                    />
+                                    <video
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'video'"
+                                        [src]="item?.MediaUrl"
+                                        (click)="previewMedia(item)"
+                                        [autoplay]="false"
+                                        [controls]="false"
+                                    ></video>
+                                    <mat-icon
+                                        *ngSwitchCase="'video'"
+                                        (click)="previewMedia(item)"
+                                        class="play-button theme-icon"
+                                    >play_circle_filled</mat-icon>
+                                </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -152,33 +243,38 @@
                                 <span *ngIf="postData.IsParentCommentEdited || isParentCommentEdited">
                                     Edited
                                     {{
-                                    'formatSinceWithDotnetDate'
-                                    | CustomDatePipe: postData?.SmParentComments?.UpdatedDateTime
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe: postData?.SmParentComments?.UpdatedDateTime
                                     }}
                                 </span>
                                 <span *ngIf="!(postData.IsParentCommentEdited || isParentCommentEdited)">
                                     {{
-                                    'formatSinceWithDotnetDate'
-                                    | CustomDatePipe: postData?.SmParentComments?.CreatedDateTime
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe: postData?.SmParentComments?.CreatedDateTime
                                     }}
                                 </span>
                                 ago
                             </p>
-                            <ng-container *ngIf="
+                            <ng-container
+                                *ngIf="
                                     'getTotalReactionCount' | SMPPipe: postData?.SmParentComments?.CommentEngagements
-                                ">
+                                "
+                            >
                                 <mat-icon class="dot">fiber_manual_record</mat-icon>
                                 <div class="reaction-stats">
                                     <ng-container *ngFor="let eng of postData?.SmParentComments?.CommentEngagements">
-                                        <img *ngIf="eng.ReactionCount" src="assets/images/vectors/{{
+                                        <img
+                                            *ngIf="eng.ReactionCount"
+                                            src="assets/images/vectors/{{
                                                 'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
-                                            }}.svg" />
+                                            }}.svg"
+                                        />
                                     </ng-container>
                                     <p>
                                         <span>{{
                                             'getTotalReactionCount'
-                                            | SMPPipe: postData?.SmParentComments?.CommentEngagements
-                                            }}</span>
+                                                | SMPPipe: postData?.SmParentComments?.CommentEngagements
+                                        }}</span>
                                         people reacted to this comment
                                     </p>
                                 </div>
@@ -191,71 +287,120 @@
                     </div>
                 </div>
 
-                <img class="not-rimg" *ngIf="
+                <img
+                    class="not-rimg"
+                    *ngIf="
                         engagementFromNotification &&
                         (engagementFromNotification?.smmId === postData?.SmParentComments?.CommentId ||
                             engagementFromNotification?.smmId === postData?.SmParentComments?.PostId)
-                    " src="assets/images/vectors/{{
+                    "
+                    src="assets/images/vectors/{{
                         'replaceAll' | MiscellaneousPipe: engagementFromNotification.reactionType:[' ', '']
-                    }}.svg" />
+                    }}.svg"
+                />
             </div>
 
             <!-- Active comment -->
-            <div class="comment-container active-comment"
-                [ngStyle]="{ paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '25px' : 0 }">
-                <div class="comment-box theme-bg" [id]="postData?.SmActiveComment?.CommentId"
-                    *ngIf="postData?.SmActiveComment">
+            <div
+                class="comment-container active-comment"
+                [ngStyle]="{
+                    paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId && mode !== 'cj' ? '25px' : 0
+                }"
+            >
+                <div
+                    class="comment-box theme-bg"
+                    [id]="postData?.SmActiveComment?.CommentId"
+                    *ngIf="postData?.SmActiveComment"
+                >
                     <div class="comment-info-flex">
                         <div class="author-info">
                             <img src="assets/images/avatars/profile.jpg" />
                             <p>
                                 {{
-                                postData?.SmActiveComment?.FromName
-                                ? postData?.SmActiveComment?.FromName
-                                : postData?.PostAccountName
+                                    postData?.SmActiveComment?.FromName
+                                        ? postData?.SmActiveComment?.FromName
+                                        : postData?.PostAccountName
                                 }}
                             </p>
-                            <div class="comment-status" *ngIf="{
-                                    isEdited:
-                                        ('findPreviousCommentIndex'
-                                            | SMPPipe: previousCommentFromNotification:[postData]) ||
-                                        isActiveCommentEdited ||
-                                        postData.IsCommentEdited,
-                                    isDeleted: postData.IsCommentDeleted || isActiveCommentDeleted
-                                } as commentStatus">
-                                <mat-icon class="comment-icon theme-icon"
-                                    [matTooltip]="locale('widgets.smpControls.tooltips.editedComment')"
-                                    *ngIf="commentStatus.isEdited && !commentStatus.isDeleted">edit</mat-icon>
-                                <mat-icon class="comment-icon red-icon"
-                                    [matTooltip]="locale('widgets.smpControls.tooltips.deletedComment')"
-                                    *ngIf="commentStatus.isDeleted">delete</mat-icon>
-                            </div>
+                            <ng-container *ngIf="mode !== 'cj'">
+                                <div
+                                    class="comment-status"
+                                    *ngIf="{
+                                        isEdited:
+                                            ('findPreviousCommentIndex'
+                                                | SMPPipe: previousCommentFromNotification:[postData]) ||
+                                            isActiveCommentEdited ||
+                                            postData.IsCommentEdited,
+                                        isDeleted: postData.IsCommentDeleted || isActiveCommentDeleted
+                                    } as commentStatus"
+                                >
+                                    <mat-icon
+                                        class="comment-icon theme-icon"
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.editedComment')"
+                                        *ngIf="commentStatus.isEdited && !commentStatus.isDeleted"
+                                        >edit</mat-icon
+                                    >
+                                    <mat-icon
+                                        class="comment-icon red-icon"
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.deletedComment')"
+                                        *ngIf="commentStatus.isDeleted"
+                                        >delete</mat-icon
+                                    >
+                                </div>
+                            </ng-container>
                         </div>
                         <div class="comment-content">
-                            <p [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmActiveComment?.CommentText?.Text">
-                            </p>
+                            <p
+                                [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmActiveComment?.CommentText?.Text"
+                            ></p>
                         </div>
 
                         <!-- Attachment section -->
-                        <ng-container *ngIf="
-                                !renderActiveCommentAttachment &&
-                                postData?.SmActiveComment?.CommentAttachments?.length
-                            ">
-                            <div role="button" class="comment-attachments-placeholder"
-                                (click)="this.renderActiveCommentAttachment = true">
+                        <ng-container
+                            *ngIf="
+                                !renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length
+                            "
+                        >
+                            <div
+                                role="button"
+                                class="comment-attachments-placeholder"
+                                (click)="this.renderActiveCommentAttachment = true"
+                            >
                                 <mat-icon> attach_file</mat-icon>
                                 <p>View attachments</p>
                             </div>
                         </ng-container>
-                        <ng-container *ngIf="renderActiveCommentAttachment &&
-                            postData?.SmActiveComment?.CommentAttachments?.length">
+                        <ng-container
+                            *ngIf="
+                                renderActiveCommentAttachment && postData?.SmActiveComment?.CommentAttachments?.length
+                            "
+                        >
                             <div class="comment-attachment-flex">
-                                <ng-container *ngFor="let item of postData?.SmActiveComment?.CommentAttachments"
-                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl: [item?.MediaType]">
-                                    <img class="comment-attachment" *ngSwitchCase="'image'" (click)="previewMedia(item)"
-                                        [src]="item?.MediaUrl" />
-                                    <video class="comment-attachment" *ngSwitchCase="'video'" [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item)" [autoplay]="false" controls></video>
+                                <ng-container
+                                    *ngFor="let item of postData?.SmActiveComment?.CommentAttachments"
+                                    [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                >
+                                <div class="caf-box">
+                                    <img
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'image'"
+                                        (click)="previewMedia(item)"
+                                        [src]="item?.MediaUrl"
+                                    />
+                                    <video
+                                        class="comment-attachment"
+                                        *ngSwitchCase="'video'"
+                                        [src]="item?.MediaUrl"
+                                        (click)="previewMedia(item)"
+                                        [autoplay]="false"
+                                        [controls]="false"
+                                    ></video>
+                                    <mat-icon
+                                        *ngSwitchCase="'video'"
+                                        (click)="previewMedia(item)"
+                                        class="play-button theme-icon"
+                                    >play_circle_filled</mat-icon>
+                                </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -263,20 +408,22 @@
                         <!-- Comment bottom section -->
                         <div class="timing-info">
                             <!-- Edited timings -->
-                            <ng-container *ngIf="
+                            <ng-container
+                                *ngIf="
                                     ('findPreviousCommentIndex'
                                         | SMPPipe: previousCommentFromNotification:[postData]) &&
                                     !(isActiveCommentEdited || postData.IsCommentEdited)
-                                ">
+                                "
+                            >
                                 Edited
                                 <p>
                                     {{
-                                    'formatSinceWithDotnetDate'
-                                    | CustomDatePipe
-                                    : (
-                                    'findPreviousCommentIndex'
-                                    | SMPPipe: previousCommentFromNotification:[postData]
-                                    )?.UpdatedDateTime
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe
+                                                : (
+                                                      'findPreviousCommentIndex'
+                                                      | SMPPipe: previousCommentFromNotification:[postData]
+                                                  )?.UpdatedDateTime
                                     }}
                                     ago
                                 </p>
@@ -285,13 +432,14 @@
                                 <p>
                                     Edited
                                     {{
-                                    'formatSinceWithDotnetDate'
-                                    | CustomDatePipe: postData.SmActiveComment?.UpdatedDateTime
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe: postData.SmActiveComment?.UpdatedDateTime
                                     }}
                                     ago
                                 </p>
                             </ng-container>
-                            <ng-container *ngIf="
+                            <ng-container
+                                *ngIf="
                                     !(
                                         (('findPreviousCommentIndex'
                                             | SMPPipe: previousCommentFromNotification:[postData]) &&
@@ -299,44 +447,56 @@
                                         isActiveCommentEdited ||
                                         postData.IsCommentEdited
                                     )
-                                ">
+                                "
+                            >
                                 <p>
                                     {{
-                                    'formatSinceWithDotnetDate'
-                                    | CustomDatePipe: postData?.SmActiveComment?.CreatedDateTime
+                                        'formatSinceWithDotnetDate'
+                                            | CustomDatePipe: postData?.SmActiveComment?.CreatedDateTime
                                     }}
                                     ago
                                 </p>
                             </ng-container>
                             <!-- Created timings -->
                             <ng-container
-                                *ngIf="'getTotalReactionCount' | SMPPipe: postData?.SmActiveComment?.CommentEngagements">
+                                *ngIf="
+                                    'getTotalReactionCount'
+                                        | SMPPipe: postData?.SmActiveComment?.CommentEngagements && mode !== 'cj'
+                                "
+                            >
                                 <mat-icon class="dot">fiber_manual_record</mat-icon>
                                 <div class="reaction-stats">
                                     <ng-container *ngFor="let eng of postData?.SmActiveComment?.CommentEngagements">
-                                        <img *ngIf="eng.ReactionCount" src="assets/images/vectors/{{
+                                        <img
+                                            *ngIf="eng.ReactionCount"
+                                            src="assets/images/vectors/{{
                                                 'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
-                                            }}.svg" />
+                                            }}.svg"
+                                        />
                                     </ng-container>
                                     <p>
                                         <span>{{
                                             'getTotalReactionCount'
-                                            | SMPPipe: postData?.SmActiveComment?.CommentEngagements
-                                            }}</span>
+                                                | SMPPipe: postData?.SmActiveComment?.CommentEngagements
+                                        }}</span>
                                         people reacted to this comment
                                     </p>
                                 </div>
                             </ng-container>
 
                             <!-- Previous comment detail -->
-                            <ng-container *ngIf="
+                            <ng-container
+                                *ngIf="
                                     'findPreviousCommentIndex'
                                         | SMPPipe: previousCommentFromNotification:[postData] as prevComment
-                                ">
+                                "
+                            >
                                 <mat-icon class="dot">fiber_manual_record</mat-icon>
-                                <div class="reply-toggler"
-                                    (click)="this.showPreviousCommentData = !this.showPreviousCommentData">
-                                    <p>{{locale('widgets.smpControls.tooltips.viewPreviousComment')}}</p>
+                                <div
+                                    class="reply-toggler"
+                                    (click)="this.showPreviousCommentData = !this.showPreviousCommentData"
+                                >
+                                    <p>{{ locale('widgets.smpControls.tooltips.viewPreviousComment') }}</p>
                                     <mat-icon>keyboard_arrow_down</mat-icon>
                                 </div>
                             </ng-container>
@@ -344,21 +504,28 @@
                     </div>
                 </div>
 
-                <img class="not-rimg" *ngIf="
+                <img
+                    class="not-rimg"
+                    *ngIf="
                         engagementFromNotification &&
                         (engagementFromNotification?.smmId === postData?.SmActiveComment?.CommentId ||
                             engagementFromNotification?.smmId === postData?.SmActiveComment?.PostId)
-                    " src="assets/images/vectors/{{
+                    "
+                    src="assets/images/vectors/{{
                         'replaceAll' | MiscellaneousPipe: engagementFromNotification.reactionType:[' ', '']
-                    }}.svg" />
+                    }}.svg"
+                />
             </div>
 
             <!-- previous comment -->
             <ng-container *ngIf="showPreviousCommentData">
-                <div *ngIf="
+                <div
+                    *ngIf="
                         'findPreviousCommentIndex' | SMPPipe: previousCommentFromNotification:[postData] as prevComment
-                    " class="comment-container previous-comment"
-                    [ngStyle]="{ paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '25px' : 0 }">
+                    "
+                    class="comment-container previous-comment"
+                    [ngStyle]="{ paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '25px' : 0 }"
+                >
                     <div class="comment-box theme-bg">
                         <div class="comment-info-flex">
                             <div class="author-info">
@@ -368,28 +535,53 @@
                                 </p>
                             </div>
                             <div class="comment-content">
-                                <p [innerHTML]="'stylizeContent' | SMPPipe: prevComment?.CommentText?.PreviousComment">
-                                </p>
+                                <p
+                                    [innerHTML]="'stylizeContent' | SMPPipe: prevComment?.CommentText?.PreviousComment"
+                                ></p>
                             </div>
 
                             <!-- Attachment section -->
                             <ng-container
-                                *ngIf="!renderPrevCommentAttachment && prevComment?.CommentAttachments?.length">
-                                <div role="button" class="comment-attachments-placeholder"
-                                    (click)="this.renderPrevCommentAttachment = true">
+                                *ngIf="!renderPrevCommentAttachment && prevComment?.CommentAttachments?.length"
+                            >
+                                <div
+                                    role="button"
+                                    class="comment-attachments-placeholder"
+                                    (click)="this.renderPrevCommentAttachment = true"
+                                >
                                     <mat-icon> attach_file</mat-icon>
                                     <p>View attachments</p>
                                 </div>
                             </ng-container>
                             <ng-container
-                                *ngIf="renderPrevCommentAttachment && prevComment?.CommentAttachments?.length">
+                                *ngIf="renderPrevCommentAttachment && prevComment?.CommentAttachments?.length"
+                            >
                                 <div class="comment-attachment-flex">
-                                    <ng-container *ngFor="let item of prevComment?.CommentAttachments"
-                                        [ngSwitch]="'getFileType' | SMPPipe : item?.MediaUrl : [item?.MediaType]">
-                                        <img class="comment-attachment" *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item)" [src]="item?.MediaUrl" />
-                                        <video class="comment-attachment" *ngSwitchCase="'video'" [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item)" [autoplay]="false" controls></video>
+                                    <ng-container
+                                        *ngFor="let item of prevComment?.CommentAttachments"
+                                        [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                    >
+                                    <div class="caf-box">
+                                        <img
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'image'"
+                                            (click)="previewMedia(item)"
+                                            [src]="item?.MediaUrl"
+                                        />
+                                        <video
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'video'"
+                                            [src]="item?.MediaUrl"
+                                            (click)="previewMedia(item)"
+                                            [autoplay]="false"
+                                            [controls]="false"
+                                        ></video>
+                                        <mat-icon
+                                            *ngSwitchCase="'video'"
+                                            (click)="previewMedia(item)"
+                                            class="play-button theme-icon"
+                                        >play_circle_filled</mat-icon>
+                                    </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -402,18 +594,22 @@
                                 </p>
                                 <!-- Created timings -->
                                 <ng-container
-                                    *ngIf="'getTotalReactionCount' | SMPPipe: prevComment?.CommentEngagements">
+                                    *ngIf="'getTotalReactionCount' | SMPPipe: prevComment?.CommentEngagements"
+                                >
                                     <mat-icon class="dot">fiber_manual_record</mat-icon>
                                     <div class="reaction-stats">
                                         <ng-container *ngFor="let eng of prevComment?.CommentEngagements">
-                                            <img *ngIf="eng.ReactionCount" src="assets/images/vectors/{{
+                                            <img
+                                                *ngIf="eng.ReactionCount"
+                                                src="assets/images/vectors/{{
                                                     'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
-                                                }}.svg" />
+                                                }}.svg"
+                                            />
                                         </ng-container>
                                         <p>
                                             <span>{{
                                                 'getTotalReactionCount' | SMPPipe: prevComment?.CommentEngagements
-                                                }}</span>
+                                            }}</span>
                                             people reacted to this comment
                                         </p>
                                     </div>
@@ -426,46 +622,96 @@
 
             <!-- Reply container -->
             <ng-container *ngIf="mode === 'interaction-min' && draftData">
-                <div class="reply-wrapper" [ngStyle]="{
+                <div
+                    class="reply-wrapper"
+                    [ngStyle]="{
                         paddingLeft: postData?.SmActiveComment?.ParentId !== postData?.PostId ? '30px' : '35px'
-                    }">
+                    }"
+                >
                     <div class="reply-box theme-bg twd-relative">
-                        <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
-                            placeholder="Enter your reply here..." (input)="dataChanged.emit(interactionId)"></textarea>
+                        <textarea
+                            #replyInput
+                            [(ngModel)]="draftData.body"
+                            name="reply"
+                            id="reply"
+                            [rows]="2"
+                            placeholder="Enter your reply here..."
+                            (input)="dataChanged.emit(interactionId)"
+                        ></textarea>
                         <div class="attachment-box" *ngIf="draftData?.rawAttachmentData">
-                            <img *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
+                            <img
+                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
                                 (click)="previewMedia({ MediaType: 'image', MediaUrl: draftData?.rawAttachmentData })"
-                                [src]="draftData?.rawAttachmentData" />
-                            <video *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                [src]="draftData?.rawAttachmentData"
+                            />
+                            <video
+                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
                                 (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
-                                [src]="draftData?.rawAttachmentData"></video>
-                            <div class="close-icon-holder"
-                                [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')" role="button"
-                                (click)="onClearAttachment()">
+                                [src]="draftData?.rawAttachmentData"
+                                [controls]="false"
+                                [autoplay]="false"
+                            ></video>
+                            <mat-icon
+                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
+                                class="play-button theme-icon"
+                            >play_circle_filled</mat-icon>
+                            <div
+                                class="close-icon-holder"
+                                [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
+                                role="button"
+                                (click)="onClearAttachment()"
+                            >
                                 <mat-icon>close</mat-icon>
                             </div>
                         </div>
                         <div class="reply-actions twd-w-full twd-flex">
                             <div class="r-actions twd-flex">
-                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
+                                <mat-icon
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
                                     (click)="this.showEmojiPicker = !this.showEmojiPicker"
-                                    role="button">tag_faces</mat-icon>
-                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
+                                    role="button"
+                                    >tag_faces</mat-icon
+                                >
+                                <mat-icon
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
                                     [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
-                                    (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
+                                    (click)="onAttach('image/gif')"
+                                    role="button"
+                                    >gif</mat-icon
+                                >
+                                <mat-icon
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
                                     [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
-                                    (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
-                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
+                                    (click)="onAttach('image/*')"
+                                    role="button"
+                                    >camera_alt</mat-icon
+                                >
+                                <mat-icon
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
                                     [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
-                                    (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
+                                    (click)="onAttach('video/mp4')"
+                                    role="button"
+                                    >movie</mat-icon
+                                >
                             </div>
-                            <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')" role="button"
-                                (click)="onSendReply()">send</mat-icon>
+                            <mat-icon
+                                [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
+                                role="button"
+                                (click)="onSendReply()"
+                                >send</mat-icon
+                            >
                         </div>
-                        <emoji-mart *ngIf="showEmojiPicker" style="z-index: 2" (emojiClick)="addEmoji($event)"
+                        <emoji-mart
+                            *ngIf="showEmojiPicker"
+                            style="z-index: 2"
+                            (emojiClick)="addEmoji($event)"
                             [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme:['dark']"
-                            [showPreview]="false" isNative="true" navPosition="none" searchPosition="none"></emoji-mart>
+                            [showPreview]="false"
+                            isNative="true"
+                            navPosition="none"
+                            searchPosition="none"
+                        ></emoji-mart>
                     </div>
                 </div>
             </ng-container>
@@ -473,7 +719,9 @@
 
         <div class="comment-content-container" *ngIf="enhanceCommentContainer">
             <ng-container *ngFor="let commentData of flattenedCommentHistory">
-                <div *ngIf="commentData?.isVisible" class="comment-container {{
+                <div
+                    *ngIf="commentData?.isVisible"
+                    class="comment-container {{
                         (engagementFromNotification && engagementFromNotification?.smmId === commentData?.CommentId) ||
                         engagementFromNotification?.smmId === commentData?.PostId ||
                         (mode === 'interaction-max' && commentData?.CommentId === postData?.SmActiveComment?.CommentId)
@@ -481,7 +729,8 @@
                             : commentData.nestLevel === 0
                             ? 'parent-comment'
                             : 'child-comment'
-                    }} {{ commentData?.ReplyComments?.length ? '' : 'no-shadow' }}" [ngStyle]="{
+                    }} {{ commentData?.ReplyComments?.length ? '' : 'no-shadow' }}"
+                    [ngStyle]="{
                         paddingLeft: commentData.nestLevel * 25 + 'px',
                         marginTop:
                             engagementFromNotification &&
@@ -489,7 +738,8 @@
                                 engagementFromNotification?.smmId === commentData.PostId)
                                 ? '10px'
                                 : 0
-                    }">
+                    }"
+                >
                     <div class="comment-box theme-bg" [id]="commentData?.CommentId" *ngIf="commentData?.isVisible">
                         <div class="comment-info-flex">
                             <div class="author-info">
@@ -497,19 +747,28 @@
                                 <p>
                                     {{ commentData?.FromName ? commentData?.FromName : postData?.PostAccountName }}
                                 </p>
-                                <div class="comment-status" *ngIf="{
+                                <div
+                                    class="comment-status"
+                                    *ngIf="{
                                         isEdited: commentData.IsEdited,
                                         isDeleted: commentData.IsDeleted
-                                    } as commentStatus">
+                                    } as commentStatus"
+                                >
                                     <!-- <mat-icon style="opacity: 0" *ngIf="!commentStatus.isEdited && !commentStatus.isDeleted"
                                 >comment</mat-icon
                             > -->
-                                    <mat-icon class="comment-icon theme-icon"
+                                    <mat-icon
+                                        class="comment-icon theme-icon"
                                         [matTooltip]="locale('widgets.smpControls.tooltips.editedComment')"
-                                        *ngIf="commentStatus.isEdited && !commentStatus.isDeleted">edit</mat-icon>
-                                    <mat-icon class="comment-icon red-icon"
+                                        *ngIf="commentStatus.isEdited && !commentStatus.isDeleted"
+                                        >edit</mat-icon
+                                    >
+                                    <mat-icon
+                                        class="comment-icon red-icon"
                                         [matTooltip]="locale('widgets.smpControls.tooltips.deletedComment')"
-                                        *ngIf="commentStatus.isDeleted">delete</mat-icon>
+                                        *ngIf="commentStatus.isDeleted"
+                                        >delete</mat-icon
+                                    >
                                 </div>
                             </div>
                             <div class="comment-content">
@@ -518,20 +777,42 @@
 
                             <!-- Attachment section -->
                             <ng-container *ngIf="!commentData.renderMedia && commentData?.CommentAttachments?.length">
-                                <div role="button" class="comment-attachments-placeholder"
-                                    (click)="commentData.renderMedia = true">
+                                <div
+                                    role="button"
+                                    class="comment-attachments-placeholder"
+                                    (click)="commentData.renderMedia = true"
+                                >
                                     <mat-icon> attach_file</mat-icon>
                                     <p>View attachments</p>
                                 </div>
                             </ng-container>
                             <ng-container *ngIf="commentData.renderMedia && commentData?.CommentAttachments?.length">
                                 <div class="comment-attachment-flex">
-                                    <ng-container *ngFor="let item of commentData?.CommentAttachments"
-                                        [ngSwitch]="'getFileType' | SMPPipe : item?.MediaUrl : [item?.MediaType]">
-                                        <img class="comment-attachment" *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item)" [src]="item?.MediaUrl" />
-                                        <video class="comment-attachment" *ngSwitchCase="'video'" [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item)" [autoplay]="false" controls></video>
+                                    <ng-container
+                                        *ngFor="let item of commentData?.CommentAttachments"
+                                        [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
+                                    >
+                                    <div class="caf-box">
+                                        <img
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'image'"
+                                            (click)="previewMedia(item)"
+                                            [src]="item?.MediaUrl"
+                                        />
+                                        <video
+                                            class="comment-attachment"
+                                            *ngSwitchCase="'video'"
+                                            [src]="item?.MediaUrl"
+                                            (click)="previewMedia(item)"
+                                            [autoplay]="false"
+                                            [controls]="false"
+                                        ></video>
+                                        <mat-icon
+                                            *ngSwitchCase="'video'"
+                                            (click)="previewMedia(item)"
+                                            class="play-button theme-icon"
+                                        >play_circle_filled</mat-icon>
+                                    </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -554,28 +835,34 @@
                                 </ng-container>
                                 <!-- Created timings -->
                                 <ng-container
-                                    *ngIf="'getTotalReactionCount' | SMPPipe: commentData?.CommentEngagements">
+                                    *ngIf="'getTotalReactionCount' | SMPPipe: commentData?.CommentEngagements"
+                                >
                                     <mat-icon class="dot">fiber_manual_record</mat-icon>
                                     <div class="reaction-stats">
                                         <ng-container *ngFor="let eng of commentData?.CommentEngagements">
-                                            <img *ngIf="eng.ReactionCount" src="assets/images/vectors/{{
+                                            <img
+                                                *ngIf="eng.ReactionCount"
+                                                src="assets/images/vectors/{{
                                                     'replaceAll' | MiscellaneousPipe: eng.ReactionType:[' ', '']
-                                                }}.svg" />
+                                                }}.svg"
+                                            />
                                         </ng-container>
                                         <p>
                                             <span>{{
                                                 'getTotalReactionCount' | SMPPipe: commentData?.CommentEngagements
-                                                }}</span>
+                                            }}</span>
                                             people reacted to this comment
                                         </p>
                                     </div>
                                 </ng-container>
 
-                                <ng-container *ngIf="
+                                <ng-container
+                                    *ngIf="
                                         commentData?.ReplyComments?.length &&
                                         commentData?.isVisible &&
                                         !('validateLoadHistory' | SMPPipe: commentData:[flattenedCommentHistory])
-                                    ">
+                                    "
+                                >
                                     <mat-icon class="dot">fiber_manual_record</mat-icon>
                                     <div class="reply-toggler" (click)="onForceLoadHistory(commentData)">
                                         <p>View replies</p>
@@ -587,62 +874,116 @@
                     </div>
                 </div>
                 <!-- Reply container -->
-                <ng-container *ngIf="
+                <ng-container
+                    *ngIf="
                         mode === 'interaction-max' &&
                         draftData &&
                         commentData?.CommentId === postData?.SmActiveComment?.CommentId
-                    ">
+                    "
+                >
                     <div class="reply-wrapper" [ngStyle]="{ paddingLeft: (commentData.nestLevel + 1) * 25 + 'px' }">
                         <div class="reply-box theme-bg twd-relative">
-                            <textarea #replyInput [(ngModel)]="draftData.body" name="reply" id="reply" [rows]="2"
+                            <textarea
+                                #replyInput
+                                [(ngModel)]="draftData.body"
+                                name="reply"
+                                id="reply"
+                                [rows]="2"
                                 placeholder="Enter your reply here..."
-                                (input)="dataChanged.emit(interactionId)"></textarea>
+                                (input)="dataChanged.emit(interactionId)"
+                            ></textarea>
                             <div class="attachment-box" *ngIf="draftData?.rawAttachmentData">
-                                <img *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
+                                <img
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
                                     (click)="
                                         previewMedia({ MediaType: 'image', MediaUrl: draftData?.rawAttachmentData })
-                                    " [src]="draftData?.rawAttachmentData" />
-                                <video *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                    "
+                                    [src]="draftData?.rawAttachmentData"
+                                />
+                                <video
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
                                     (click)="
                                         previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })
-                                    " [src]="draftData?.rawAttachmentData"></video>
-                                <div class="close-icon-holder"
-                                    [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')" role="button"
-                                    (click)="onClearAttachment()">
+                                    "
+                                    [src]="draftData?.rawAttachmentData"
+                                    [controls]="false"
+                                    [autoplay]="false"
+                                ></video>
+                                <mat-icon
+                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
+                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
+                                    class="play-button theme-icon"
+                                >play_circle_filled</mat-icon>
+                                <div
+                                    class="close-icon-holder"
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
+                                    role="button"
+                                    (click)="onClearAttachment()"
+                                >
                                     <mat-icon>close</mat-icon>
                                 </div>
                             </div>
                             <div class="reply-actions twd-w-full twd-flex">
                                 <div class="r-actions twd-flex">
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.addEmoji')"
                                         (click)="this.showEmojiPicker = !this.showEmojiPicker"
-                                        role="button">tag_faces</mat-icon>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
+                                        role="button"
+                                        >tag_faces</mat-icon
+                                    >
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
                                         [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
-                                        (click)="onAttach('image/gif')" role="button">gif</mat-icon>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
+                                        (click)="onAttach('image/gif')"
+                                        role="button"
+                                        >gif</mat-icon
+                                    >
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
                                         [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
-                                        (click)="onAttach('image/*')" role="button">camera_alt</mat-icon>
-                                    <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
+                                        (click)="onAttach('image/*')"
+                                        role="button"
+                                        >camera_alt</mat-icon
+                                    >
+                                    <mat-icon
+                                        [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
                                         [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
-                                        (click)="onAttach('video/mp4')" role="button">movie</mat-icon>
+                                        (click)="onAttach('video/mp4')"
+                                        role="button"
+                                        >movie</mat-icon
+                                    >
                                 </div>
-                                <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')" role="button"
-                                    (click)="onSendReply()">send</mat-icon>
+                                <mat-icon
+                                    [matTooltip]="locale('widgets.smpControls.tooltips.sendReply')"
+                                    role="button"
+                                    (click)="onSendReply()"
+                                    >send</mat-icon
+                                >
                             </div>
-                            <emoji-mart *ngIf="showEmojiPicker" style="z-index: 2" (emojiClick)="addEmoji($event)"
+                            <emoji-mart
+                                *ngIf="showEmojiPicker"
+                                style="z-index: 2"
+                                (emojiClick)="addEmoji($event)"
                                 [darkMode]="'includes' | MiscellaneousPipe: customFuse.config.colorTheme:['dark']"
-                                [showPreview]="false" isNative="true" navPosition="none"
-                                searchPosition="none"></emoji-mart>
+                                [showPreview]="false"
+                                isNative="true"
+                                navPosition="none"
+                                searchPosition="none"
+                            ></emoji-mart>
                         </div>
                     </div>
                 </ng-container>
             </ng-container>
             <!-- Next set of comment loader -->
-            <div class="load-next-flex twd-flex" (click)="onLoadNextHistory()" [ngStyle]="{
+            <div
+                class="load-next-flex twd-flex"
+                (click)="onLoadNextHistory()"
+                [ngStyle]="{
                     opacity: isCommentHistoryLoading ? '0.8' : '1.0',
                     'pointer-events': isCommentHistoryLoading ? 'none' : 'all'
-                }" *ngIf="flattenedCommentHistory?.length && !hasNoFurtherComments">
+                }"
+                *ngIf="flattenedCommentHistory?.length && !hasNoFurtherComments"
+            >
                 <h5 class="twd-p-2 font-weight-600">{{ isCommentHistoryLoading ? 'Loading...' : 'Load more' }}</h5>
                 <img src="assets/images/vectors/loading.svg" *ngIf="isCommentHistoryLoading" />
                 <mat-icon *ngIf="!isCommentHistoryLoading">keyboard_arrow_down</mat-icon>
@@ -658,8 +999,14 @@
             <span class="twd-text-xs">{{ previewMediaDialogData?.timestamp | date: 'dd/MM/yyyy hh:mm:ss a' }}</span>
         </div>
         <div>
-            <button mat-icon-button color="warn" mat-dialog-close (click)="previewMediaDialogData = null" tabindex="-1"
-                [matTooltip]="locale('interactionComponent.close')">
+            <button
+                mat-icon-button
+                color="warn"
+                mat-dialog-close
+                (click)="previewMediaDialogData = null"
+                tabindex="-1"
+                [matTooltip]="locale('interactionComponent.close')"
+            >
                 <mat-icon>close</mat-icon>
             </button>
         </div>
@@ -667,18 +1014,37 @@
 
     <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
         <drag-scroll scrollbar-hidden>
-            <div class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
+            <div
+                class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
                 [style.transform]="'scale(' + previewMediaDialogData?.otherData?.scale + ')'"
-                [ngClass]="{ 'twd-cursor-move': previewMediaDialogData?.otherData?.scale > 1 }">
-                <img *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['image']"
-                    title="Attachment preview" [src]="previewMediaDialogData?.attachment?.src" width="100%"
-                    width="100%" />
+                [ngClass]="{ 'twd-cursor-move': previewMediaDialogData?.otherData?.scale > 1 }"
+            >
+                <img
+                    *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['image']"
+                    title="Attachment preview"
+                    [src]="previewMediaDialogData?.attachment?.src"
+                    width="100%"
+                    width="100%"
+                />
             </div>
-            <video *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['video']" controls
-                autoplay [src]="previewMediaDialogData?.attachment?.src" width="100%" width="100%"></video>
+            <video
+                *ngIf="'includes' | MiscellaneousPipe: previewMediaDialogData?.attachment?.type:['video']"
+                controls
+                autoplay
+                [src]="previewMediaDialogData?.attachment?.src"
+                width="100%"
+                width="100%"
+            ></video>
         </drag-scroll>
     </div>
 </ng-template>
 
-<input type="file" *ngIf="draftData" #fileInput style="display: none" [accept]="draftData?.mimeConstraints"
-    [multiple]="false" (change)="onFileSelected($event)" />
+<input
+    type="file"
+    *ngIf="draftData"
+    #fileInput
+    style="display: none"
+    [accept]="draftData?.mimeConstraints"
+    [multiple]="false"
+    (change)="onFileSelected($event)"
+/>
