@@ -1712,6 +1712,13 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method destroyWidget
      */
     private destroyWidget(): void {
+        this._tmacEventService.emitSDKEvent({
+            event: {
+                EventName: 'UpdateParentAgentStatusEvent',
+                InteractionID: this.interactionId
+            },
+            isInteractionEvent: true
+        });
         if (!this.data.Config.AOT) return;
 
         // close the audio call widget
