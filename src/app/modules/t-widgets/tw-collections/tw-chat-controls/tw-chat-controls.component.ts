@@ -3216,6 +3216,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To dispose call widget
      */
     public disposeCallWidget(): void {
+        this.isOnAVCall = null
         // update the interaction icon
         this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
             otherData: {
