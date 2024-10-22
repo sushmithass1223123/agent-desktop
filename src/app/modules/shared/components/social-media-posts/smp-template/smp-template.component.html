@@ -184,6 +184,8 @@
                         </div>
                         <div class="comment-content">
                             <p
+                                appReadMore
+                                [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
                                 [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmParentComments?.CommentText?.Text"
                             ></p>
                         </div>
@@ -351,6 +353,8 @@
                         </div>
                         <div class="comment-content">
                             <p
+                                appReadMore
+                                [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
                                 [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmActiveComment?.CommentText?.Text"
                             ></p>
                         </div>
@@ -536,6 +540,8 @@
                             </div>
                             <div class="comment-content">
                                 <p
+                                    appReadMore
+                                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
                                     [innerHTML]="'stylizeContent' | SMPPipe: prevComment?.CommentText?.PreviousComment"
                                 ></p>
                             </div>
@@ -772,7 +778,11 @@
                                 </div>
                             </div>
                             <div class="comment-content">
-                                <p [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text"></p>
+                                <p
+                                    appReadMore
+                                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                                    [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text">
+                                </p>
                             </div>
 
                             <!-- Attachment section -->
@@ -1012,10 +1022,12 @@
         </div>
     </div>
 
-    <p *ngIf="previewMediaDialogData?.content" class="twd-mb-1" style="font-size: 16px;"
-        [innerHTML]="('stylizeContent' | SMPPipe: previewMediaDialogData.content)"></p>
-
     <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
+        <div class="preview-content">
+            <p *ngIf="previewMediaDialogData?.content" class="twd-mb-1" style="font-size: 16px;" appReadMore [maxLines]="3"
+                readMoreText="Read More" readLessText="Read Less"
+                [innerHTML]="('stylizeContent' | SMPPipe: previewMediaDialogData.content)"></p>
+        </div>
         <drag-scroll scrollbar-hidden>
             <div
                 class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
