@@ -374,6 +374,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      * @param {any} evt File event
      */
     async onFileSelected(evt: any) {
+        let ref;
         try {
             const input = evt.target as HTMLInputElement;
             let resVal: Partial<PostFile>;
@@ -389,7 +390,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     );
                     return;
                 }
-                const ref = this._appUiService.showSnackbar(
+                ref = this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileLoading'),
                     'loading'
                 );
@@ -495,10 +496,11 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     }
                 ];
                 setTimeout(() => {
-                    ref.dismiss();
+                    ref?.dismiss();
                 }, 3000);
             }
         } catch (e) {
+            ref?.dismiss();
             this.logger.error(
                 '[SmpTemplateComponent.onFileSelected] - Error occured while uploading attachment:',
                 JSON.stringify(e),

@@ -657,6 +657,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
      * @returns
      */
     async saveBookmark(): Promise<void> {
+        let snackbarRef;
         const dynamicLabels = [
             {
                 key: '#type',
@@ -683,7 +684,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             const userId = SDKClient.getAgentData().agentId;
 
-            this._appUIService.showSnackbar(
+            snackbarRef = this._appUIService.showSnackbar(
                 this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkLoading'), dynamicLabels),
                 'loading'
             );
@@ -724,11 +725,12 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
             });
 
             this.formatBookmarkData();
-
+            snackbarRef?.dismiss();
             this._appUIService.showSnackbar(
                 this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.addBookmarkSuccess'), dynamicLabels)
             );
         } catch (error) {
+            snackbarRef?.dismiss();
             this._appUIService.showSnackbar(
                 this.translocoService.translate('widgets.bookmarks.addBookmarkError') + this.addBookmarkData.type,
                 'failure'
@@ -746,6 +748,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
      * @returns
      */
     async updateBookmark(): Promise<void> {
+        let snackbarRef;
         const dynamicLabels = [
             {
                 key: '#type',
@@ -763,7 +766,7 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
 
             const userId = SDKClient.getAgentData().agentId;
 
-            this._appUIService.showSnackbar(
+            snackbarRef = this._appUIService.showSnackbar(
                 this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkLoading'), dynamicLabels),
                 'loading'
             );
@@ -799,11 +802,12 @@ export class TwBookmarksComponent extends TWidgetWrapper implements OnInit, OnDe
             });
 
             this.formatBookmarkData();
-
+            snackbarRef?.dismiss();
             this._appUIService.showSnackbar(
                 this.getUpdatedLabel(this.translocoService.translate('widgets.bookmarks.updateBookmarkSuccess'), dynamicLabels)
             );
         } catch (error) {
+            snackbarRef?.dismiss();
             this._appUIService.showSnackbar(
                 this.translocoService.translate('widgets.bookmarks.updateBookmarkError') + this.addBookmarkData.type,
                 'failure'

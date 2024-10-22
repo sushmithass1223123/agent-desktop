@@ -88,10 +88,11 @@ export class MailboxSettingsComponent implements OnInit {
      * Sends request  to copmpose a new email
      */
     composeEmail(btn: MatButton): void {
-        this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestLoading'), 'loading');
+        const snackbarRef = this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestLoading'), 'loading');
         btn.disabled = true;
         SDKClient.composeNewEmail(this.mailboxes.form.controls.default.value)
             .then((res) => {
+                snackbarRef?.dismiss();
                 if(EMAIL_SEND_STATUS[res.response] && EMAIL_SEND_STATUS[res.response] !== 'Success') {
                     this._appUiService.showSnackbar(
                         this.translocoService.translate(
@@ -111,6 +112,7 @@ export class MailboxSettingsComponent implements OnInit {
                 this.data.close();
             })
             .catch((e) => {
+                snackbarRef?.dismiss();
                 console.error(e);
                 this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.mailBoxSettings.sendNewEmailRequestError'));
             })

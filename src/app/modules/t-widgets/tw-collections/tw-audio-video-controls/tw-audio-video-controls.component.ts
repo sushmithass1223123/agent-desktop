@@ -1259,6 +1259,11 @@ if (error === 'Screenshare Was Cancelled') {
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
                'warning'
             );
+        } else {
+            this._appUIService.showSnackbar(
+            this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+                'warning'
+            );
         }
     }, 1000); 
      if (type === 'video' || type === 'audio') {
@@ -1889,7 +1894,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                     );
                     confirmDialogRef.afterClosed().subscribe((resp) => {
                         if (resp) {
-                            this._appUIService.showSnackbar(
+                            const snackbarRef = this._appUIService.showSnackbar(
                                 this.translocoService.translate('widgets.audioVideoControls.saveSnapshotLoading'),
                                 'loading'
                             );
@@ -1907,6 +1912,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                 { base64 }
                             )
                                 .then((result: IResponse) => {
+                                    snackbarRef?.dismiss();
                                     if (result.response && result.response.ImageUrl) {
                                         // snapsot saved sucessfully
                                         this._appUIService.showSnackbar(
@@ -1948,6 +1954,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                     }
                                 })
                                 .catch(() => {
+                                    snackbarRef?.dismiss();
                                     this._appUIService.showSnackbar(
                                         this.translocoService.translate('widgets.audioVideoControls.snapshotSaveFailed'),
                                         'failure'
@@ -1985,7 +1992,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
                 // if the RemoteRequestTimeout is not configured, then do not wait for ack or request timeout
                 if (!this.data.Data.Snapshot?.RemoteRequestTimeout) {
-                    snackRef.dismiss();
+                    snackRef?.dismiss();
                     return;
                 }
 
@@ -2015,7 +2022,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                 })
                             });
                         } catch (error) {}
-
+                        snackRef?.dismiss();
                         this._appUIService.showSnackbar(
                             this.translocoService.translate('widgets.audioVideoControls.snapshotRequestTimeout'),
                             'failure'

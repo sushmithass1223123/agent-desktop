@@ -265,7 +265,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {MatAutocompleteSelectedEvent} option
      */
     public setWorkCode(option: WorkCode, group: string): void {
-        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.settingWC'), 'loading');
+        const snackbarRef = this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.settingWC'), 'loading');
         SDKClient.setCallWorkCode(
             {
                 code: option.Code,
@@ -274,6 +274,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             null
         )
             .then(() => {
+                snackbarRef?.dismiss();
                 this.selectedWorkCodes.push(option);
                 if (this.widgetData.ByGroup) {
                     if (!group) {
@@ -291,6 +292,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this.workCodeCtrl.setValue('');
             })
             .catch(() => {
+                snackbarRef?.dismiss();
                 this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcSetFail'), 'failure');
             });
     }
@@ -301,7 +303,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
      * @param {WorkCode} option
      */
     public removeWorkCode(option: WorkCode): void {
-        this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.removeWC'), 'loading');
+        const snackbarRef = this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.removeWC'), 'loading');
 
         SDKClient.removeCallWorkCode(
             {
@@ -311,6 +313,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
             null
         )
             .then(() => {
+                snackbarRef?.dismiss();
                 this.selectedWorkCodes = this.selectedWorkCodes.filter((s: any) => s.Code !== option.Code);
                 // check the workcode from event
                 const fromEvent = (option as any)?.EventName === 'WorkCodeAddedEvent';
@@ -324,6 +327,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
                 this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcRemoveSuccess'), 'success');
             })
             .catch((ex) => {
+                snackbarRef?.dismiss();
                 this._appUiService.showSnackbar(this.translocoService.translate('widgets.workcodes.wcRemoveFail'), 'failure');
                 console.error(ex);
             });
