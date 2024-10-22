@@ -3151,30 +3151,30 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To escalate the chat to audio/video
      * @param {'audio' | 'video'} type Type of escalation
      */
-public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
+    public escalateToAV(type: 'audio' | 'video', avCallConstraints?: any): void {
         // Check for parent agent av constraints
-    if (avCallConstraints === undefined) {
+        if (avCallConstraints === undefined) {
             avCallConstraints =
                 this._tmacEventService.avCallConstraints[
-            Object.keys(this._tmacEventService.avCallConstraints).find((parentAgentId: string) => {
-                return this._tmacEventService.avCallConstraints[parentAgentId].isAgentOnActiveCall;
-            })
-        ];
-    }
-    
+                    Object.keys(this._tmacEventService.avCallConstraints).find((parentAgentId: string) => {
+                        return this._tmacEventService.avCallConstraints[parentAgentId].isAgentOnActiveCall;
+                    })
+                ];
+        }
+        
         // open call widget
-    this.isCallWidgetOpened = true;
-    this.openCallWidget(type, 'out', avCallConstraints);
+        this.isCallWidgetOpened = true;
+        this.openCallWidget(type, 'out', avCallConstraints);
 
-    // this._tmacEventService.emitSDKEvent({
-    //     event: {
-    //         EventName: 'EscalateToAVEvent',
-    //         InteractionID: this.interaction.InteractionID,
-    //         CallType: type
-    //     },
-    //     isInteractionEvent: true
-    // });
-}
+        // this._tmacEventService.emitSDKEvent({
+        //     event: {
+        //         EventName: 'EscalateToAVEvent',
+        //         InteractionID: this.interaction.InteractionID,
+        //         CallType: type
+        //     },
+        //     isInteractionEvent: true
+        // });
+    }
 
     /**
      * To preview the media sent by customer or agent
