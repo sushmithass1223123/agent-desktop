@@ -1993,8 +1993,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.attachmentConstraints = this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? [];
         // check social media
         this.isSMM = evt.IsSMM || false;
-
-        this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
+        // validate agent features again as some of the features depeneds on this event data parameters
+        this.checkAgentFeatures()
         // to check socialschannels
         if (this.DisableAvConstraints?.SocialChannels?.includes(this.channel)) {
             this.socialMedia = true;
@@ -2984,8 +2984,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * Method to check if attachment feature is enabled in case of SMM chats
-     * @returns true / false 
+     * Method to validate attachment feature
      */
     public canAddAttachment(allowed: boolean): boolean {
         return allowed && (!this.isSMM || (this.isSMM &&
