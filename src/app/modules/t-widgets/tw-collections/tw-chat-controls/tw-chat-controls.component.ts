@@ -627,7 +627,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Property to disable and enable request to AV
      */
-    isOnAVCall: 'audio' | 'video' | null = null;
+    isOnAVCall: 'audio' | boolean |'video' | null = null 
     /**
      * Flag to decide whether to sanitize agent inputs or not
      */
@@ -2358,6 +2358,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         if(msg.status === 'accepted'){
                             message = this.translocoService.translate('widgets.chatControls.audioCallRequestAccepted');
                         }else if(msg.status === 'rejected'){
+                            this.isOnAVCall = false;
                             this._appUIService.showSnackbar(
                                 this.translocoService.translate('widgets.chatControls.audioCallRequestRejected'),
                                 'failure'
@@ -2373,6 +2374,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         if(msg.status === 'accepted'){
                             message = this.translocoService.translate('widgets.chatControls.videoCallRequestAccepted');
                        }else if(msg.status === 'rejected'){
+                        this.isOnAVCall = false;
                             this._appUIService.showSnackbar(
                                 this.translocoService.translate('widgets.chatControls.videoCallRequestRejected'),
                                 'failure'
