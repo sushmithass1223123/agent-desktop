@@ -410,16 +410,16 @@
                             >
                                 <div class="mt-12 twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="moreActions.length">
                                     <button
-                                    mat-mini-fab
-                                    color="default"
-                                    *ngFor="let action of moreActions"
-                                    [matTooltip]="action.label"
-                                    #actionBtn
-                                    (click)="executeAction(action, actionBtn)"
-                                    [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
+                                mat-mini-fab
+                                color="default"
+                                *ngFor="let action of moreActions"
+                                [matTooltip]="action.label"
+                                #actionBtn
+                                (click)="executeAction(action, actionBtn)"
+                                [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
                                                (isCallWidgetOpened && (isOnAVCall && action.type === 'reqAudioCall' || (customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
                                                (isCallWidgetOpened && (isOnAVCall && action.type === 'reqVideoCall' || (customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall))">
-                                        <mat-icon >{{ action.icon }}</mat-icon>
+                                    <mat-icon >{{ action.icon }}</mat-icon>
                                 </button>                                                                                                                      
                                 </div>
                             </ng-template>
