@@ -163,7 +163,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                 //To clear displaystreamtimeout
                 this.agentFeaturesService.clearDisplayStreamTimeout();
                 // logout error
-                this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutLoading'), 'loading');
+                const snackbarRef = this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutLoading'), 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 SDKClient.logout(
@@ -173,6 +173,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                     null
                 )
                     .then((dt: IResponse) => {
+                        snackbarRef?.dismiss();
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
                         // check if the logout is success
@@ -197,6 +198,7 @@ export class TwLogoutComponent extends TWidgetWrapper implements OnInit, OnDestr
                         });
                     })
                     .catch(() => {
+                        snackbarRef?.dismiss();
                         this._appUIService.showSnackbar(this.translocoService.translate('toolbarComponent.logoutFailed'), 'failure');
                     })
                     .finally(() => {

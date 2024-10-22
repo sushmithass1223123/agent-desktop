@@ -16,3 +16,4 @@ export * from './table/table.component';
 export * from './text-templates/text-templates.component';
 export * from './widget-fab/widget-fab.component';
 export * from './annotation/annotation.component';
+export * from './t-snackbar/t-snackbar.component';

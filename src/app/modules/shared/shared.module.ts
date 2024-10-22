@@ -23,7 +23,9 @@ import {
     TableComponent,
     TextTemplatesComponent,
     WidgetFabComponent,
-    AnnotationComponent
+    AnnotationComponent,
+    TSnackbarComponent,
+    TSnackbarContainer
 } from './components';
 import { EmailModule } from './components/email/email.module';
 import { TWChartDirective } from './directives';
@@ -71,7 +73,9 @@ const sharedComponents = [
     TableComponent,
     TextTemplatesComponent,
     CustomDatePipe,
-    AnnotationComponent
+    AnnotationComponent,
+    TSnackbarComponent,
+    TSnackbarContainer
 ];
 
 /**

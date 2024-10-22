@@ -576,7 +576,7 @@ export class TMACEventService extends SharedWrapper {
                 // route to supervisor page and select the agent if confirmed
                 confrimationDialogRef.afterClosed().subscribe((resp1) => {
                     if (resp1) {
-                        this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
+                        const snackbarRef = this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
                         // send request to server
                         SDKClient.transferTextChat({
                             agentId: AgentId,
@@ -592,6 +592,7 @@ export class TMACEventService extends SharedWrapper {
                             toTmacServer: SDKClient.getAgentData().tmacServer
                         })
                             .then((resp2: IResponse) => {
+                                snackbarRef?.dismiss();
                                 // check the response
                                 if (resp2.response && resp2.response.ResultCode >= 0) {
                                     this._appUIService.showSnackbar(`Chat silent barge-in successful`, 'success');
@@ -600,6 +601,7 @@ export class TMACEventService extends SharedWrapper {
                                 }
                             })
                             .catch(() => {
+                                snackbarRef?.dismiss();
                                 this._appUIService.showSnackbar('Error in chat silent barge-in', 'failure');
                             });
                     }

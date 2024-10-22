@@ -132,7 +132,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
      * @param {InteractionDataModel} item Interaction data
      */
     private performChatBargeIn(type: 'silent' | 'whisper' | 'conf', item: InteractionDataModel): void {
-        this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.connectingMsg'), 'loading');
+        const snackbarRef = this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.connectingMsg'), 'loading');
         // send request to server
         SDKClient.transferTextChat({
             agentId: this.configData.AgentLoginID,
@@ -148,6 +148,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
             toTmacServer: this.agentData.tmacServer
         })
             .then((resp: IResponse) => {
+                snackbarRef?.dismiss();
                 // check the response
                 if (resp.response && resp.response.ResultCode >= 0) {
                     this._appUIService.showSnackbar(`Chat ${type === 'conf' ? 'conference' : type} barge-in successful`, 'success');
@@ -158,6 +159,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 }
             })
             .catch(() => {
+                snackbarRef?.dismiss();
                 this._appUIService.showSnackbar('Error in chat barge-in', 'failure');
             });
     }

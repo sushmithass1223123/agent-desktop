@@ -3269,7 +3269,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         value: confirmType
                     }
                 ];
-                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.changeModeLoading'), dynamicLabels), 'loading');
+                const snackbarRef = this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.changeModeLoading'), dynamicLabels), 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 // disable the button
@@ -3285,6 +3285,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }))
                 })
                     .then((resp) => {
+                        snackbarRef?.dismiss();
                         btn.disabled = false;
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
@@ -3299,6 +3300,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.incomingChatTitle'), dynamicLabels));
                     })
                     .catch(() => {
+                        snackbarRef?.dismiss();
                         // enable if something goes wrong
                         btn.disabled = false;
                         this._fuseProgressBarService.hide();
@@ -3766,8 +3768,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardURLNotFound'), 'failure');
             return;
         }
+        let snackRef;
         try {
-            const snackRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoading'), 'loading');
+            snackRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoading'), 'loading');
 
             // [Chirag July,31 22'] send whiteboard url to customer
             let customerWhiteboardUrl = new URL(this.widgetData.Whiteboard.CustomerUrl ?? this.widgetData.Whiteboard?.Url);
@@ -3789,7 +3792,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
 
             
-
+            snackRef?.dismiss();
             if (res.response?.ResultMessage === 'Success') {
                  // Wait for the customer to accept the request
                 // No need to open the whiteboard here
@@ -3798,6 +3801,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 throw new Error('Error occurred while requesting to open whiteboard');
             }
         } catch (e) {
+            snackRef?.dismiss();
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         }
@@ -3835,7 +3839,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
-
+            snackRef?.dismiss();
             // [Chirag July,31 22'] send whiteboard url to customer
             let agentUrl = new URL(this.widgetData.Cobrowse.AgentUrl);
             agentUrl.searchParams.set('sessionid', this.sessionID);
@@ -3857,10 +3861,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 throw new Error('Error occured while opening whiteboard');
             }
         } catch (e) {
+            snackRef?.dismiss();
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         } finally {
-            snackRef.dismiss();
+            snackRef?.dismiss();
         }
     }
 

@@ -25,6 +25,7 @@ import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
+import { TSnackbarService } from '../modules/shared/components/t-snackbar/t-snackbar.service';
 
 type UiChanActions = 'hold/select-chat';
 
@@ -97,7 +98,7 @@ export class AppUiService extends SharedWrapper {
      */
     private onlineStatus: BehaviorSubject<boolean>;
 
-
+    
     /**
      * Constructor
      * @param {MatSnackBar} _matSnackBar
@@ -108,7 +109,8 @@ export class AppUiService extends SharedWrapper {
         private _matSnackBar: MatSnackBar,
         private _matDialog: MatDialog,
         private _appDataService: AppDataService,
-        private domSanitizer: DomSanitizer
+        private domSanitizer: DomSanitizer,
+        private _tSnackbarService: TSnackbarService
     ) {
         super('AppUiService');
         this.init();
@@ -151,8 +153,10 @@ export class AppUiService extends SharedWrapper {
         hPos: MatSnackBarHorizontalPosition = 'center',
         duration: number = this._appConfig?.AppConfigs?.Notifications?.AppAlertTimeout || 5000,
         onClick?: () => void
-    ): MatSnackBarRef<SnackbarComponent> {
+    ){
         if (message) {
+
+            // configuration for icons
             const icons = {
                 info: 'info',
                 success: 'done',
@@ -160,16 +164,34 @@ export class AppUiService extends SharedWrapper {
                 failure: 'error',
                 loading: 'loop'
             };
+
+            // data needed to show snackbar
+            const input = {
+                icon: icons[state],
+                loading: state === 'loading',
+                state,
+                message,
+                onClick,
+                duration: duration
+            };
+
+            // configuration to enable/disable custom snackbar
+            const customSnackbarConfig = {
+                enable: true,
+                enableSingle: false
+            };
+
+            // using custom snackbar
+            if(customSnackbarConfig.enable){ 
+                return this._tSnackbarService.loadSnackbar(input, customSnackbarConfig);
+            }
+
+
+            // using angular material snackbar    
             const durationField = state === 'loading' ? {} : { duration };
             this._matSnackBar.dismiss();
             return this._matSnackBar.openFromComponent(SnackbarComponent, {
-                data: {
-                    icon: icons[state],
-                    loading: state === 'loading',
-                    state,
-                    message,
-                    onClick
-                },
+                data: input,
                 verticalPosition: vPos,
                 horizontalPosition: hPos,
                 ...durationField
