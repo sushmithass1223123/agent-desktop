@@ -73,18 +73,18 @@
                     <img
                         *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['image']"
                         [src]="postMedia.mediaData?.MediaUrl"
-                        (click)="previewMedia(postMedia.mediaData)"
+                        (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                     />
                     <video
                         *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
                         [src]="postMedia.mediaData?.MediaUrl"
-                        (click)="previewMedia(postMedia.mediaData)"
+                        (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                         [autoplay]="false"
                         [controls]="false"
                     ></video>
                     <mat-icon
                         *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
-                        (click)="previewMedia(postMedia.mediaData)"
+                        (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                         class="play-button theme-icon"
                      >play_circle_filled</mat-icon>
                 </div>
@@ -217,20 +217,20 @@
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
                                         [src]="item?.MediaUrl"
                                     />
                                     <video
                                         class="comment-attachment"
                                         *ngSwitchCase="'video'"
                                         [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
                                         [autoplay]="false"
                                         [controls]="false"
                                     ></video>
                                     <mat-icon
                                         *ngSwitchCase="'video'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
                                         class="play-button theme-icon"
                                     >play_circle_filled</mat-icon>
                                 </div>
@@ -384,20 +384,20 @@
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
                                         [src]="item?.MediaUrl"
                                     />
                                     <video
                                         class="comment-attachment"
                                         *ngSwitchCase="'video'"
                                         [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
                                         [autoplay]="false"
                                         [controls]="false"
                                     ></video>
                                     <mat-icon
                                         *ngSwitchCase="'video'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
                                         class="play-button theme-icon"
                                     >play_circle_filled</mat-icon>
                                 </div>
@@ -565,20 +565,20 @@
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
                                             [src]="item?.MediaUrl"
                                         />
                                         <video
                                             class="comment-attachment"
                                             *ngSwitchCase="'video'"
                                             [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
                                             [autoplay]="false"
                                             [controls]="false"
                                         ></video>
                                         <mat-icon
                                             *ngSwitchCase="'video'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
                                             class="play-button theme-icon"
                                         >play_circle_filled</mat-icon>
                                     </div>
@@ -796,20 +796,20 @@
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
                                             [src]="item?.MediaUrl"
                                         />
                                         <video
                                             class="comment-attachment"
                                             *ngSwitchCase="'video'"
                                             [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
                                             [autoplay]="false"
                                             [controls]="false"
                                         ></video>
                                         <mat-icon
                                             *ngSwitchCase="'video'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
                                             class="play-button theme-icon"
                                         >play_circle_filled</mat-icon>
                                     </div>
@@ -1011,6 +1011,9 @@
             </button>
         </div>
     </div>
+
+    <p *ngIf="previewMediaDialogData?.content" class="twd-mb-1" style="font-size: 16px;"
+        [innerHTML]="('stylizeContent' | SMPPipe: previewMediaDialogData.content)"></p>
 
     <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
         <drag-scroll scrollbar-hidden>

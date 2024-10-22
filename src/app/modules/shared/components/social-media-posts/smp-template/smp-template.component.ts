@@ -292,7 +292,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      * Method to preview the media in the post
      * @param {PostAttachment} previewData Post attachment data
      */
-    public previewMedia(previewData: PostAttachment): void {
+    public previewMedia(previewData: PostAttachment, content?: string): void {
         try {
             let otherData = null;
             if (previewData.MediaType.includes('image')) {
@@ -309,6 +309,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     type: previewData.MediaType,
                     src: previewData.MediaUrl
                 },
+                content,
                 otherData
             };
 
