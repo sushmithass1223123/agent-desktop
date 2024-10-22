@@ -3196,7 +3196,7 @@
                                     },
                                     "Data": {
                                         "General": {
-                                            "WorkbenchUrl": "http://dicedev.tetherfi.cloud:55005/api/workbench"
+                                            "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench"
                                         },
                                         "Channels": [
                                             {

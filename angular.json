@@ -46,6 +46,11 @@
                             },
                             {
                                 "glob": "**/*",
+                                "input": "./node_modules/tinymce/models",
+                                "output": "assets/tinymce/models/"
+                            },
+                            {
+                                "glob": "**/*",
                                 "input": "./node_modules/tinymce/themes",
                                 "output": "assets/tinymce/themes/"
                             },
