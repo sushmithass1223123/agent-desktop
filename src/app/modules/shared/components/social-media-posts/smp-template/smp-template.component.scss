@@ -253,6 +253,7 @@
                         justify-content: flex-start;
                         gap: 10px;
                         position: relative;
+<<<<<<< HEAD
 
                         .play-button {
                             width: 40px;
@@ -281,6 +282,40 @@
                                 width: 45px;
                                 height: 45px;
                                 font-size: 45px;
+=======
+
+                        .caf-box {
+                            position: relative;
+                            
+                            .comment-attachment {
+                                max-height: 100px;
+                                border-radius: 10px;
+                                transition: opacity 200ms ease;
+    
+                                &:hover {
+                                    opacity: 0.8;
+                                }
+                            }
+    
+                            &:hover {
+                                .play-button {
+                                    width: 45px;
+                                    height: 45px;
+                                    font-size: 45px;
+                                }
+                            }
+                            
+                            .play-button {
+                                width: 40px;
+                                height: 40px;
+                                font-size: 40px;
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                cursor: pointer;
+                                transition: all 200ms ease;
+>>>>>>> 52ebed7429b4d8a8b28c31dcad0cf740d6b875c2
                             }
                         }
                     }
@@ -2003,4 +2038,12 @@
     .theme-icon {
         color: #fff !important;
     }
+}
+
+.preview-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 5px;
 }

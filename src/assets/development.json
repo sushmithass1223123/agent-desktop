@@ -3657,5 +3657,9 @@
             "events": { "sendAck": true }
         }
     },
+<<<<<<< HEAD
     "Version": "5.9.0-beta.2"
+=======
+    "Version": "5.9.0-beta.3"
+>>>>>>> 52ebed7429b4d8a8b28c31dcad0cf740d6b875c2
 }

@@ -11,8 +11,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { SMPPipe } from './pipes/smp.pipe';
 import { FusePipesModule } from '@fuse/pipes/pipes.module';
+import { ReadMoreDirective } from './directives/read-more.directive';
 
-const shared = [WorkbenchSmpComponent, SmpTemplateComponent, SMPPipe];
+const shared = [WorkbenchSmpComponent, SmpTemplateComponent, SMPPipe, ReadMoreDirective];
 
 @NgModule({
     declarations: shared,

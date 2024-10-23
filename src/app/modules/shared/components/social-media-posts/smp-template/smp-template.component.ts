@@ -301,7 +301,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      * Method to preview the media in the post
      * @param {PostAttachment} previewData Post attachment data
      */
-    public previewMedia(previewData: PostAttachment): void {
+    public previewMedia(previewData: PostAttachment, content?: string): void {
         try {
             let otherData = null;
             if (previewData.MediaType.includes('image')) {
@@ -318,6 +318,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     type: previewData.MediaType,
                     src: previewData.MediaUrl
                 },
+                content,
                 otherData
             };
 
@@ -751,6 +752,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         }
     }
 
+<<<<<<< HEAD
     /**
      * Method to toggle post content read more feature
      */
@@ -763,6 +765,8 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         }
     }
 
+=======
+>>>>>>> 52ebed7429b4d8a8b28c31dcad0cf740d6b875c2
     openGallery(): void {
         try {
             this._appUiService.showCustomDialog(

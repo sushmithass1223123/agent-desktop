@@ -56,11 +56,11 @@
             </div>
             <div class="pcc-middle">
                 <p
-                    class="post-content-text clamp"
+                    appReadMore
+                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                    class="post-content-text"
                     [innerHTML]="('stylizeContent' | SMPPipe: postData?.PostText?.Text)"
-                    #postPara
                 ></p>
-            <span class="read-more" #readMore (click)="onReadMore()">Read more</span>
             </div>
             <ng-container *ngIf="postData?.PostAttachments?.length">
                 <div
@@ -73,18 +73,18 @@
                     <img
                         *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['image']"
                         [src]="postMedia.mediaData?.MediaUrl"
-                        (click)="previewMedia(postMedia.mediaData)"
+                        (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                     />
                     <video
                         *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
                         [src]="postMedia.mediaData?.MediaUrl"
-                        (click)="previewMedia(postMedia.mediaData)"
+                        (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                         [autoplay]="false"
                         [controls]="false"
                     ></video>
                     <mat-icon
                         *ngIf="'includes' | MiscellaneousPipe: postMedia.mediaData.MediaType:['video']"
-                        (click)="previewMedia(postMedia.mediaData)"
+                        (click)="previewMedia(postMedia.mediaData, postData?.PostText?.Text)"
                         class="play-button theme-icon"
                      >play_circle_filled</mat-icon>
                 </div>
@@ -184,6 +184,8 @@
                         </div>
                         <div class="comment-content">
                             <p
+                                appReadMore
+                                [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
                                 [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmParentComments?.CommentText?.Text"
                             ></p>
                         </div>
@@ -213,25 +215,27 @@
                                     *ngFor="let item of postData?.SmParentComments?.CommentAttachments"
                                     [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                 >
+                                <div class="caf-box">
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
                                         [src]="item?.MediaUrl"
                                     />
                                     <video
                                         class="comment-attachment"
                                         *ngSwitchCase="'video'"
                                         [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
                                         [autoplay]="false"
                                         [controls]="false"
                                     ></video>
                                     <mat-icon
                                         *ngSwitchCase="'video'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmParentComments?.CommentText?.Text)"
                                         class="play-button theme-icon"
                                     >play_circle_filled</mat-icon>
+                                </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -349,6 +353,8 @@
                         </div>
                         <div class="comment-content">
                             <p
+                                appReadMore
+                                [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
                                 [innerHTML]="'stylizeContent' | SMPPipe: postData?.SmActiveComment?.CommentText?.Text"
                             ></p>
                         </div>
@@ -378,25 +384,27 @@
                                     *ngFor="let item of postData?.SmActiveComment?.CommentAttachments"
                                     [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                 >
+                                <div class="caf-box">
                                     <img
                                         class="comment-attachment"
                                         *ngSwitchCase="'image'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
                                         [src]="item?.MediaUrl"
                                     />
                                     <video
                                         class="comment-attachment"
                                         *ngSwitchCase="'video'"
                                         [src]="item?.MediaUrl"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
                                         [autoplay]="false"
                                         [controls]="false"
                                     ></video>
                                     <mat-icon
                                         *ngSwitchCase="'video'"
-                                        (click)="previewMedia(item)"
+                                        (click)="previewMedia(item, postData?.SmActiveComment?.CommentText?.Text)"
                                         class="play-button theme-icon"
                                     >play_circle_filled</mat-icon>
+                                </div>
                                 </ng-container>
                             </div>
                         </ng-container>
@@ -532,6 +540,8 @@
                             </div>
                             <div class="comment-content">
                                 <p
+                                    appReadMore
+                                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
                                     [innerHTML]="'stylizeContent' | SMPPipe: prevComment?.CommentText?.PreviousComment"
                                 ></p>
                             </div>
@@ -557,25 +567,27 @@
                                         *ngFor="let item of prevComment?.CommentAttachments"
                                         [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                     >
+                                    <div class="caf-box">
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
                                             [src]="item?.MediaUrl"
                                         />
                                         <video
                                             class="comment-attachment"
                                             *ngSwitchCase="'video'"
                                             [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
                                             [autoplay]="false"
                                             [controls]="false"
                                         ></video>
                                         <mat-icon
                                             *ngSwitchCase="'video'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, prevComment?.CommentText?.PreviousComment)"
                                             class="play-button theme-icon"
                                         >play_circle_filled</mat-icon>
+                                    </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -766,7 +778,11 @@
                                 </div>
                             </div>
                             <div class="comment-content">
-                                <p [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text"></p>
+                                <p
+                                    appReadMore
+                                    [maxLines]="3" readMoreText="Read More" readLessText="Read Less"
+                                    [innerHTML]="'stylizeContent' | SMPPipe: commentData?.CommentText?.Text">
+                                </p>
                             </div>
 
                             <!-- Attachment section -->
@@ -786,25 +802,27 @@
                                         *ngFor="let item of commentData?.CommentAttachments"
                                         [ngSwitch]="'getFileType' | SMPPipe: item?.MediaUrl:[item?.MediaType]"
                                     >
+                                    <div class="caf-box">
                                         <img
                                             class="comment-attachment"
                                             *ngSwitchCase="'image'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
                                             [src]="item?.MediaUrl"
                                         />
                                         <video
                                             class="comment-attachment"
                                             *ngSwitchCase="'video'"
                                             [src]="item?.MediaUrl"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
                                             [autoplay]="false"
                                             [controls]="false"
                                         ></video>
                                         <mat-icon
                                             *ngSwitchCase="'video'"
-                                            (click)="previewMedia(item)"
+                                            (click)="previewMedia(item, commentData?.CommentText?.Text)"
                                             class="play-button theme-icon"
                                         >play_circle_filled</mat-icon>
+                                    </div>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -1005,6 +1023,11 @@
     </div>
 
     <div *transloco="let locale" mat-dialog-content fxLayout="column" fxLayoutAlign=" none">
+        <div class="preview-content">
+            <p *ngIf="previewMediaDialogData?.content" class="twd-mb-1" style="font-size: 16px;" appReadMore [maxLines]="3"
+                readMoreText="Read More" readLessText="Read Less"
+                [innerHTML]="('stylizeContent' | SMPPipe: previewMediaDialogData.content)"></p>
+        </div>
         <drag-scroll scrollbar-hidden>
             <div
                 class="preview-container twd-w-full twd-h-full twd-origin-top-left twd-overflow-hidden"
