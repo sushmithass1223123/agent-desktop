@@ -1230,6 +1230,8 @@ if (error === 'Screenshare Was Cancelled') {
         const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
         const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
         const videocallonly = this.callType?.toLocaleLowerCase() === 'video';
+        const hasUnmutedAnotherStream = (type === 'audio' && !isAudioMuted && isVideoMuted) || 
+                                        (type === 'video' && !isVideoMuted && !isAudioMuted);
         const bothMutedLabels = [
             {
                 key: '#userName',
@@ -1254,7 +1256,7 @@ if (error === 'Screenshare Was Cancelled') {
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
               'warning'
             );
-        } else if (!isAudioMuted && !isVideoMuted && videocallonly) {
+        } else if (hasUnmutedAnotherStream && !isAudioMuted && !isVideoMuted && videocallonly) {
             this._appUIService.showSnackbar(
                 this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
                'warning'
