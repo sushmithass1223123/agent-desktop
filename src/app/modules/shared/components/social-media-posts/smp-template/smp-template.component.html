@@ -464,8 +464,8 @@
                             <!-- Created timings -->
                             <ng-container
                                 *ngIf="
-                                    'getTotalReactionCount'
-                                        | SMPPipe: postData?.SmActiveComment?.CommentEngagements && mode !== 'cj'
+                                    ('getTotalReactionCount'
+                                        | SMPPipe: postData?.SmActiveComment?.CommentEngagements) && mode !== 'cj'
                                 "
                             >
                                 <mat-icon class="dot">fiber_manual_record</mat-icon>
