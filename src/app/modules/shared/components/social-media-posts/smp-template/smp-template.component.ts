@@ -301,7 +301,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      * Method to preview the media in the post
      * @param {PostAttachment} previewData Post attachment data
      */
-    public previewMedia(previewData: PostAttachment): void {
+    public previewMedia(previewData: PostAttachment, content?: string): void {
         try {
             let otherData = null;
             if (previewData.MediaType.includes('image')) {
@@ -318,6 +318,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     type: previewData.MediaType,
                     src: previewData.MediaUrl
                 },
+                content,
                 otherData
             };
 
@@ -748,18 +749,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 true
             );
             console.error(e);
-        }
-    }
-
-    /**
-     * Method to toggle post content read more feature
-     */
-    onReadMore(): void {
-        try {
-            document.querySelector('.post-content-text').classList.toggle('clamp');
-            this.readMore.nativeElement.style.display = 'none'
-        } catch (ex) {
-            console.error(ex)
         }
     }
 

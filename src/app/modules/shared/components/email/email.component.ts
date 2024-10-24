@@ -424,7 +424,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 const f = input.files[0];
                 const ref = this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileLoading'), 'loading');
                 if (
-                    this.email.MaxPayloadSize < (this.currentAttachmentSize + this.currentBodySize + f.size)
+                    this.email?.MaxPayloadSize &&
+                    this.email.MaxPayloadSize < this.currentAttachmentSize + this.currentBodySize + f.size
                 ) {
                     this._appUiService.showSnackbar(
                         this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
@@ -432,13 +433,16 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     );
                     return;
                 }
+
+                // We do this because for quick reply, there will be no session id assiciated
+                const uuid = TUtils.Generic.uuid();
                 const Base64 = await this.convertToBase64(f);
                 if (this.fileUploadUrl?.MediaUploader) {
                     const formData = new FormData();
                     formData.append('file', f);
                     formData.append('interaction_id', TUtils.Generic.uuid());
                     formData.append('organization_id', 'prod');
-                    formData.append('conv_id', this.email.SessionID);
+                    formData.append('conv_id', this.email?.SessionID ?? uuid);
                     formData.append('uploaded_by', SDKClient.getAgentData().agentId);
                     formData.append('other', '');
 
@@ -481,9 +485,12 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 const Id = TUtils.Generic.uuid();
                 this.attachmentFileSizeMap[Id] = f.size;
 
+                // We do this for quick reply as no Files is associated
+                if(!this._email?.Files) this._email.Files = []
+
                 this._email.Files.push({
                     Id,
-                    SessionID: this.email.SessionID,
+                    SessionID: this.email?.SessionID ?? uuid,
                     Direction: 'OUT',
                     Icon: maticonByExtension(ext),
                     Ext: f.type,
@@ -665,8 +672,14 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
     onSendEmail(email): void {
         try {
-            if((this.currentAttachmentSize + this.currentBodySize) > this.email.MaxPayloadSize) {
-                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.payloadSizeExceeded'), 'failure');
+            if (
+                this.email?.MaxPayloadSize &&
+                this.currentAttachmentSize + this.currentBodySize > this.email.MaxPayloadSize
+            ) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.payloadSizeExceeded'),
+                    'failure'
+                );
                 return;
             }
             this.sendEmail.emit(email)

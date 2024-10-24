@@ -764,32 +764,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         });
 
-        // Check the features at application level (it will be overriden if agent features are available from backend)
-        this.agentFeatures = {
-            audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
-            videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
-            signature: this.widgetData.SignatureAllowed ?? false,
-            whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
-            cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
-            attachments: this.canAddAttachment(this.widgetData.AttachmentAllowed) ?? false,
-            emoji: this.widgetData.EmojiAllowed ?? false,
-            chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
-            conference: this.widgetData.Conference?.Allowed ?? false,
-            transfer: this.widgetData.Transfer?.Allowed ?? false,
-            chatTemplate: this.widgetData.ChatTemplate?.Allowed ?? false,
-            reply: this.widgetData.ReplyAllowed ?? true,
-            comment: this.widgetData.InteractionCommentAllowed ?? false,
-            hold: this.widgetData.HoldInteractionAllowed ?? false,
-            snapshot: this.widgetData.Snapshot?.Allowed ?? false,
-            voicenote: this.widgetData.VoiceNoteAllowed ?? false,
-            screenshare: this.widgetData.ScreenShareAllowed ?? false,
-            webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
-            mediaDownload: false,
-            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false,
-            reqAudioCall: this.widgetData.RequestAudioCallAllowed ?? false,
-            reqVideoCall: this.widgetData.RequestVideoCallAllowed ?? false
-        };
-
         // set the user info
         this.user = SDKClient.getAgentData() || null;
 
@@ -967,10 +941,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * To check agent features for One Way Video
+     * To check agent features
      */
     private checkAgentFeatures(): void {
-        // check the agent features to enable/disable
+        // Check the features at application level (it will be overriden if agent features are available from backend)
+        this.agentFeatures = {
+            audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
+            videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
+            signature: this.widgetData.SignatureAllowed ?? false,
+            whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
+            cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
+            attachments: this.canAddAttachment(this.widgetData.AttachmentAllowed) ?? false,
+            emoji: this.widgetData.EmojiAllowed ?? false,
+            chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
+            conference: this.widgetData.Conference?.Allowed ?? false,
+            transfer: this.widgetData.Transfer?.Allowed ?? false,
+            chatTemplate: this.widgetData.ChatTemplate?.Allowed ?? false,
+            reply: this.widgetData.ReplyAllowed ?? true,
+            comment: this.widgetData.InteractionCommentAllowed ?? false,
+            hold: this.widgetData.HoldInteractionAllowed ?? false,
+            snapshot: this.widgetData.Snapshot?.Allowed ?? false,
+            voicenote: this.widgetData.VoiceNoteAllowed ?? false,
+            screenshare: this.widgetData.ScreenShareAllowed ?? false,
+            webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
+            mediaDownload: false,
+            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false,
+            reqAudioCall: this.widgetData.RequestAudioCallAllowed ?? false,
+            reqVideoCall: this.widgetData.RequestVideoCallAllowed ?? false
+        };
+        // check the agent features to enable/disable from OCM
         SDKClient.getAgentData().featuresList.forEach((f) => {
             // get the featue
             const feature = f.Feature.toLowerCase();
@@ -1993,8 +1992,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.attachmentConstraints = this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? [];
         // check social media
         this.isSMM = evt.IsSMM || false;
-
-        this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
+        // validate agent features again as some of the features depeneds on this event data parameters
+        this.checkAgentFeatures()
         // to check socialschannels
         if (this.DisableAvConstraints?.SocialChannels?.includes(this.channel)) {
             this.socialMedia = true;
@@ -3001,8 +3000,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * Method to check if attachment feature is enabled in case of SMM chats
-     * @returns true / false 
+     * Method to validate attachment feature
      */
     public canAddAttachment(allowed: boolean): boolean {
         return allowed && (!this.isSMM || (this.isSMM &&
@@ -3233,6 +3231,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To dispose call widget
      */
     public disposeCallWidget(): void {
+        this.isOnAVCall = null
         // update the interaction icon
         this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
             otherData: {
