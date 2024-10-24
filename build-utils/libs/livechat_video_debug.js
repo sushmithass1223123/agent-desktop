@@ -7,7 +7,7 @@
  * Tetherfi Pte. Ltd.
  */
 
-var CallSdkVersion = "1.1.3.31";
+var CallSdkVersion = "2.0.0";
 
 var LivechatAVLibrarySettings = {
 	/** 
@@ -6917,7 +6917,7 @@ function WrsDtmfGeneratorImpl(enableFeedback, peerConnection, tracefn) {
     }
 }
 
-var CallSdkBuildTime__ = "Sep 20 2024 16:38:30";
+var CallSdkBuildTime__ = "Oct 14 2024 15:46:29";
 
 Object.freeze(LiveChatAvErrorCodes);
 Object.freeze(LiveChatAvCallTypes);
@@ -10857,6 +10857,10 @@ function LiveChatAvInterfaceChannelImpl(comm) {
         this_.remoteStreams_ = {};
         this_.remoteStreamsInfo_ = {};
         this_.locaStreams_ = {};
+
+        // on next normal av call screenshareconnected event was getting triggered 
+        // so clearing screenshareStream_ 
+         this_.screenshareStream_ = {};
 
         if (this_.pc_ != null) {
             this_.pc_.close();
