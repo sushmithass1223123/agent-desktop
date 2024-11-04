@@ -1227,51 +1227,11 @@ if (error === 'Screenshare Was Cancelled') {
         //     );
         // }
         // }
-        const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
-        const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
-        const videocallonly = this.callType?.toLocaleLowerCase() === 'video';
-        const hasUnmutedAnotherStream = (type === 'audio' && !isAudioMuted && isVideoMuted) || 
-                                        (type === 'video' && !isVideoMuted && !isAudioMuted);
-        const bothMutedLabels = [
-            {
-                key: '#userName',
-                value: userName
-            },
-            {
-                key: '#muteType',
-                value: data.Type
-            },
-            {
-                key: '#muteDisplayText',
-                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
-            },
-            {
-                key: '#streamType',
-                value: 'both audio and video'
-            }
-        ];
-    setTimeout(() => {
-        if (this.hold && isAudioMuted && isVideoMuted && videocallonly) {
-            this._appUIService.showSnackbar(
-                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
-              'warning'
-            );
-        } else if (hasUnmutedAnotherStream && !isAudioMuted && !isVideoMuted && videocallonly) {
-            this._appUIService.showSnackbar(
-                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
-               'warning'
-            );
-        } else {
+if ( this.callType?.toLocaleLowerCase() === 'video' && type === 'video'  ||type === 'audio') {
             this._appUIService.showSnackbar(
             this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
                 'warning'
-            );
-        }
-    }, 1000); 
-     if (type === 'video' || type === 'audio') {
-            this._appUIService.showSnackbar(
-            this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
-                'warning'
+                
             );
         }
     
