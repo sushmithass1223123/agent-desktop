@@ -1230,8 +1230,10 @@ if (error === 'Screenshare Was Cancelled') {
 if ( this.callType?.toLocaleLowerCase() === 'video' && type === 'video'  ||type === 'audio') {
             this._appUIService.showSnackbar(
             this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
-                'warning'
-                
+            'warning',
+            'top',
+            'center',
+            2000               
             );
         }
     
