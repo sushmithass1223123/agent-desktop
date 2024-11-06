@@ -714,6 +714,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             this.destroyWidget();
                             // notify agent rejected the call
                             this.notifyCallConfirmation(false);
+                            // Show a toaster notification to the agent
+                            this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callRejectedByAgent'),
+                            'info'
+                        );
                         }
                     };
                     const dynamicLabels = [
