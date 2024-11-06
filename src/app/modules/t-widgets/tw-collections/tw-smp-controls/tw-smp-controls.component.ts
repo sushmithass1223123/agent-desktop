@@ -248,6 +248,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             });
 
         SDKClient.events.on('AgentNotificaitonEvent', this.AgentNotificaitonEvent);
+        this.getTransferComments();
     }
 
     ngOnDestroy(): void {
@@ -285,37 +286,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * To handle InteractionDataEvent
      */
-    async InteractionDataEvent(evt: InteractionDataEvent): Promise<void> {
-        let transferComments = [];
+    InteractionDataEvent(evt: InteractionDataEvent): Promise<void> {
         // check the channel
         if (evt.Channel.toLowerCase() !== 'sm') {
             return;
         }
-
-        await SDKClient.getDataFromDataServer({
-            query: 'Type == "transfer-comment" AND SubType == "sm"',
-            instance: ''
-        })
-            .then((r) => {
-                if (r && r !== null) {
-                    r.response.forEach((msg) => {
-                        if (this.activeSessionId.toString() === msg.Key) {
-                            let m = JSON.parse(msg.Data);
-
-                            this.commentsAdded = true;
-                            transferComments.push({
-                                Message: m.comment,
-                                Time: m.date,
-                                User: msg.InsertedBy
-                            });
-                        }
-                    });
-                    this.logger.info('Getting transfer comment data');
-                }
-            })
-            .catch((e) => {
-                console.log('Error occured during Get data from data server', e);
-            });
 
         // check if interaction comments available
         if (evt.InteractionComments && evt.InteractionComments.length > 0) {
@@ -329,8 +304,38 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 });
             });
         }
-        this.savedComments = sortBy([...transferComments, ...this.savedComments], 'Time');
+        this.savedComments = sortBy(this.savedComments, 'Time');
         console.log('Saved comments:', this.savedComments);
+    }
+
+    /**
+     * Method to check if any comments added during transfer for this interaction
+     */
+    async getTransferComments() {
+        await SDKClient.getDataFromDataServer({
+            query: 'Type == "transfer-comment" AND SubType == "sm"',
+            instance: ''
+        })
+            .then((r) => {
+                if (r && r !== null) {
+                    r.response.forEach((msg) => {
+                        if (this.activeSessionId.toString() === msg.Key) {
+                            let m = JSON.parse(msg.Data);
+
+                            this.commentsAdded = true;
+                            this.savedComments.push({
+                                Message: m.comment,
+                                Time: m.date,
+                                User: msg.InsertedBy
+                            });
+                        }
+                    });
+                    this.logger.info('Getting transfer comment data');
+                }
+            })
+            .catch((e) => {
+                console.log('Error occured during Get data from data server', e);
+            });
     }
 
     /**
