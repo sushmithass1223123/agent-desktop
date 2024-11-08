@@ -1092,6 +1092,17 @@
             "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!"
         },
         "socialMediaPosts": {
+            "asyncCommentReplySendSuccess": "Comment reply sent to customer",
+            "asyncCommentReplySendFail": "Error sending comment reply to customer - reason :",
+            "commentReplySendErrorFailed": "Failed to send comment reply",
+            "commentReplySendErrorAccountNotFound": "Account not found",
+            "commentReplySendErrorNoAccountExists": "Account does not exist",
+            "commentReplySendErrorMailboxNotEnabled": "Mailbox not enabled",
+            "commentReplySendErrorSendNotEnabledForMailbox": "Send disabled for the mailbox",
+            "commentReplySendErrorGenericExceptionOnSend": "Generic exception on send",
+            "commentReplySendErrorMediaMatrixLoading": "Media matrix loading...",
+            "commentReplySendErrorSendExceptionWhileUsingIWFlow": "Exception while using IW flow",
+            "commentReplySendErrorUnknown": "Unknown exception occured!",
             "queueLabel": "Queue",
             "inboxLabel": "Inbox",
             "sentItemLabel": "Sent",

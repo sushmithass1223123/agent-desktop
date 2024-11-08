@@ -14,7 +14,7 @@ import { IWidget } from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
 import { formatJsonData } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Subscription, timer } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';

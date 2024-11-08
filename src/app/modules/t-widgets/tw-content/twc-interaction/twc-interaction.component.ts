@@ -23,13 +23,12 @@ import { InteractionRef, InteractionWidgets, IWidget } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { InteractionManagerService } from 'app/services/interaction-manager.service';
 import { throwADError } from 'app/utils';
-import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { SharedService } from '@services/shared.service';
-import { EMAIL_SEND_STATUS } from 'app/constants';
+import { EMAIL_SEND_STATUS, SMP_SEND_STATUS } from 'app/constants';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 
 /**
@@ -260,7 +259,7 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
             interactionId: evt.InteractionID,
             type: this.type,
             status: status,
-            isActive: this.interactions.length === 1 ?? forceActive,
+            isActive: this.interactions.length === 1,
             user: user || 'Customer',
             path: this.data.Data.Path,
             otherData: otherData,
@@ -339,43 +338,86 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      */
     EmailSendingStatusEvent(evt: EmailSendingStatusEvent): void {
         this._fuseProgressBarService.hide();
-        let emailMeta = JSON.parse(evt.JsonData);
+        let JsonData = JSON.parse(evt.JsonData);
         this._interactionManagerService.updateInteraction(evt.InteractionID, {
             isEmailSent: true,
             isReplySent: true
         });
-        if (EMAIL_SEND_STATUS[emailMeta?.StatusCode] === 'Success') {
+        if (JsonData?.OutboundData?.SocialMediaData) {
+            if (SMP_SEND_STATUS[JsonData?.StatusCode] === 'Success')
+                this._appUIService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.asyncCommentReplySendSuccess')
+                );
+            else {
+                let errorMsg = SMP_SEND_STATUS[JsonData?.StatusCode]
+                    ? SMP_SEND_STATUS[JsonData?.StatusCode]
+                    : 'Unknown';
+                let errReason = `${this.translocoService.translate(
+                        `sharedComponents.socialMediaPosts.commentReplySendError${errorMsg}`
+                    )}`;
+                this._appUIService.showSnackbar(
+                    `${this.translocoService.translate(`sharedComponents.socialMediaPosts.asyncCommentReplySendFail`)}${errReason}`,
+                    'failure'
+                );
+            }
+        } else {
+            if (EMAIL_SEND_STATUS[JsonData?.StatusCode] === 'Success')
+                this._appUIService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess')
+                );
+            else {
+                let errReason = '';
+                let errorMsg = EMAIL_SEND_STATUS[JsonData?.StatusCode]
+                    ? EMAIL_SEND_STATUS[JsonData?.StatusCode]
+                    : 'Unknown';
+
+                if (errorMsg === 'FailedWithServerBusyException') {
+                    try {
+                        let outData = JsonData.OutboundData;
+                        errReason = `${this.translocoService.translate(
+                            `sharedComponents.email.emailSendError${errorMsg}`
+                        )}`;
+                        errReason = errReason.replaceAll('{1}', outData.Mailbox);
+                    } catch (err) {
+                        errorMsg = 'Unknown';
+                        errReason = `${this.translocoService.translate(
+                            `sharedComponents.email.emailSendError${errorMsg}`
+                        )}`;
+                    }
+                } else {
+                    errReason = `${this.translocoService.translate(
+                        `sharedComponents.email.emailSendError${errorMsg}`
+                    )}`;
+                }
+                this._appUIService.showSnackbar(
+                    `${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail`)}${errReason}`,
+                    'failure'
+                );
+            }
+        }
+
+        if (
+            EMAIL_SEND_STATUS[JsonData?.StatusCode] === 'Success' ||
+            SMP_SEND_STATUS[JsonData?.StatusCode] === 'Success'
+        ) {
             this._sharedService.triggerEmailFailure(evt.InteractionID);
-            this._appUIService.showSnackbar(this.translocoService.translate('sharedComponents.email.asyncEmailSendSuccess'));
             SDKClient.closeInteraction(evt.InteractionID.toString(), null)
                 .then((dt: IResponse) => {
                     // check the response
                     if (dt.response && dt.response.ResultCode === 0) {
-                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionSuccess'));
+                        this._appUIService.showSnackbar(
+                            this.translocoService.translate('interactionComponent.closeInteractionSuccess')
+                        );
                         // remove the interaction reference
                         this._interactionManagerService.removeInteraction(dt.response.InteractionID);
                     }
                 })
                 .catch(() => {
-                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.closeInteractionFailed'), 'failure');
+                    this._appUIService.showSnackbar(
+                        this.translocoService.translate('interactionComponent.closeInteractionFailed'),
+                        'failure'
+                    );
                 });
-        } else {
-            let errReason = '';
-            let errorMsg = EMAIL_SEND_STATUS[emailMeta?.StatusCode] ? EMAIL_SEND_STATUS[emailMeta?.StatusCode] : 'Unknown';
-
-            if (errorMsg === 'FailedWithServerBusyException') {
-                try {
-                    let outData = emailMeta.OutboundData;
-                    errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
-                    errReason = errReason.replaceAll('{1}', outData.Mailbox);
-                } catch (err) {
-                    errorMsg = 'Unknown';
-                    errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
-                }
-            } else {
-                errReason = `${this.translocoService.translate(`sharedComponents.email.emailSendError${errorMsg}`)}`;
-            }
-            this._appUIService.showSnackbar(`${this.translocoService.translate(`sharedComponents.email.asyncEmailSendFail`)}${errReason}`, 'failure');
         }
     }
 
