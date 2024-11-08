@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AppUiService } from '@services/app-ui.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ResData } from 'app/interfaces';
-import * as moment from 'moment';
+import moment from 'moment';
 import { TranslocoService } from '@ngneat/transloco';
 
 /**
