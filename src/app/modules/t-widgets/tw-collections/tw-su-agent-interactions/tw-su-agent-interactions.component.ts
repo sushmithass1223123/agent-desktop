@@ -318,21 +318,26 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
     /**
      * method to perform action on email interactions
      */
-    performActionOnEmailInteraction(type: 'view', item: InteractionDataModel) {
+    async performActionOnEmailInteraction(type: 'view', item: InteractionDataModel) {
         try {
             switch(type) {
                 case 'view': 
+                    
+
+                    
+
 
                     this._appUIService.previewComponentOnDialog('',
-                    'Monitor Email',
+                        this._translocoService.translate('interactionComponent.viewEmailDetailsTitle'),
                     'email',
                     {
+                        interactionId: item.InteractionID,
                         sessionId: item.InteractionData.SessionId
                     },
                     {
                         minWidth: '80%',
                         maxWidth: '80%',
-                        minHeight: '50%',
+                        minHeight: '80%',
                         disableClose: true
                     }).afterClosed().subscribe(res => {
                         console.log(res);
@@ -340,10 +345,16 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 
                     break;
             }
+
+            
         } catch(e) {
             this.logger.error('Error occured in monitoring email by supervisor',e);
         }
     }
+
+    
+
+
 }
 
 // for more info visit - https://angular.io/api/core

@@ -1,27 +1,37 @@
 <ng-container *transloco="let locale">
-    <section *ngIf="dialogData">
-        <h2 mat-dialog-title fxFlayout fxLayoutAlign="space-between center" class="mat-primary twd-text-primary-600">
+    <section *ngIf="dialogData" fxFlex fxLayout="column">
+        <h2
+            mat-dialog-title
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            class="mat-primary twd-text-primary-600"
+        >
             <span>{{ dialogData?.title ? dialogData?.title : 'Preview Component' }}</span>
-            <mat-icon mat-dialog-close class="twd-pointer-events-auto">close</mat-icon>
+            <div class="twd-gap-1">
+                <span fxFlex *ngIf="enableReload" fxLayout="row reverse">
+                    <mat-spinner *ngIf="loading" class="twd-flex" [diameter]="20"></mat-spinner>
+
+                    <mat-icon
+                        *ngIf="!loading"
+                        class="twd-flex twd-cursor-pointer"
+                        [matTooltip]="locale('sharedComponents.email.reloadEmailPreview')"
+                        (click)="loadComponent()"
+                        >refresh</mat-icon
+                    >
+                </span>
+
+                <mat-icon mat-dialog-close class="twd-cursor-pointer">close</mat-icon>
+            </div>
         </h2>
-        <div *ngIf="loading" class="twd-p-6 twd-space-x-3">
-            <mat-spinner [diameter]="40"></mat-spinner> <span>Please</span>
+        <div *ngIf="loading" fxFill class="twd-h-full twd-w-full twd-space-x-3 loading-layout" fxFlex fxLayout="row">
+            <div class="twd-m-auto" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
+                <mat-spinner [diameter]="30"></mat-spinner>
+                <span>{{ locale('interactionComponent.connectingMsg') }}</span>
+            </div>
         </div>
-        <mat-dialog-content>
+        <mat-dialog-content *ngIf="!loading">
             <ng-container [ngSwitch]="component">
                 <div *ngSwitchCase="'email'" fxLayout="column" fxLayoutGap="5px">
-                    <div fxLayout="row-reverse">
-                        <button
-                            (click)="loadComponent()"
-                            fxLayout
-                            fxLayoutAlign="space-between start"
-                            fxLayoutGap="7px"
-                        >
-                            <mat-icon class="h2">refresh</mat-icon>
-                            <span>Please click here to view changes </span>
-                        </button>
-                    </div>
-
                     <email class="twd-h-full" mode="preview" [email]="data">
                         <div
                             *ngIf="data as emailInfo"

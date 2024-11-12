@@ -267,6 +267,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     showPayloadSizeStats: boolean = false;
 
+    savedDataOnDataServer: boolean = false;
+
     constructor(
         private _interactionManagerService: InteractionManagerService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -396,6 +398,12 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
         this.getTransferComments();
+
+        if(this.currentInteraction?.OutSessionId) {
+            // save outsessionid details on data server for supervisor to view on going email response using the same
+            this.saveToDataServer('outSessionId', this.currentInteraction.OutSessionId);
+        }
+    
     }
 
     /**
@@ -1241,6 +1249,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         const callback = () => {
+            if(!this.savedDataOnDataServer && this.currentInteraction?.CurrOutSessionId) this.saveToDataServer('outSessionId', this.currentInteraction.CurrOutSessionId);
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
             const email = this.emailRef?.getEmail();
             // @TODO Files not sent as draft arg
@@ -1669,4 +1678,32 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
         });
     }
+
+    /**
+     * method to save data on data server
+     */
+    saveToDataServer(subType, data) {
+        
+        const input = {
+            type: 'email-response',
+            subType: subType,
+            key: this.interactionId.toString(),
+            insertedBy: SDKClient.getAgentData().agentName,
+            insertedSource: 'AD',
+            insertInteraction: this.interactionId.toString(),
+            data: JSON.stringify(data),
+            instance: '',
+            ttl: ''
+        }
+
+        SDKClient.saveDataToDataServer(input)
+        .then((response) => {
+            this.savedDataOnDataServer = true;
+            console.log("saveDataToDataServer Saved", response);
+        })
+        .catch((err) => {
+            console.error("error during saveDataToDataServer", err);
+        });
+    }
+
 }

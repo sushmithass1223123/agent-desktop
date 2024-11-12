@@ -35,6 +35,11 @@ export class PreviewDialogComponent implements OnInit {
      */
     actions = [];
 
+    /**
+     * flag to enable/disable reload of component
+     */
+    enableReload:boolean = false;
+
     constructor(@Inject(MAT_DIALOG_DATA)
         private dialogData: PreviewDialogDataTypes & CallbackActions,
         private _appUIService: AppUiService,
@@ -56,37 +61,66 @@ export class PreviewDialogComponent implements OnInit {
             this.title = this.dialogData.title ?? 'Preview Component';
             this.actions = this.dialogData.actions ?? [];
             switch(this.component) {
-                case 'email': 
-                const snackbarRef = this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.connectingMsg'), 'loading');
-                // send request to server
-                if(this.dialogData.previewData?.sessionId) {
-                    this.loading = true;
-                    SDKClient.getOutboxEmail(this.dialogData.previewData?.sessionId)
-                    .then((resp: IResponse) => {
-                        this.loading = false;
-                        snackbarRef?.dismiss();
-                        // check the response
-                        // this._appUIService.showSnackbar('success', 'success');
-                        console.log('Performed action on EMAIL by supervisor', resp);
-                        this.data = resp.response;
-                    })
-                    .catch((e) => {
-                        snackbarRef?.dismiss();
-                        this.loading = false;
-                        this.data = {
-                            error: true
-                        };
-                        this._appUIService.showSnackbar('Error in chat barge-in', 'failure');
-                        console.log('e',e);
-                    });
-                } else {
-                    console.log('Session ID not present to view email details by supervisor');
-                }
-                
+                case 'email': this.previewEmailComponent()
                     break;
             }
         }
     }
+
+    async previewEmailComponent() {
+        this.enableReload = true;
+        const snackbarRef = this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.connectingMsg'), 'loading');
+        if(this.dialogData.previewData?.sessionId) {
+            this.loading = true;
+            let sessionId;
+            await SDKClient.getDataFromDataServer({
+                query: "Type == \"email-response\" AND SubType == \"outSessionId\"",
+                instance: ""
+            })  
+            .then((r) => {
+                if (r && r.response) {
+                    if(r.response && r.response[0]) {
+                        const sessionData = r.response.find(d => this.dialogData.previewData?.interactionId?.toString() === d.InsertInteraction);
+                        sessionId = JSON.parse(sessionData?.Data);    
+                    }
+                    
+                }
+            }).catch(e => {
+                console.log('Error occured during Get data from data server', e);
+            })
+            let method;
+            if(sessionId) {
+                method = 'getOutboxEmail';
+            } else {
+                method = 'getInboxEmail';
+                sessionId = this.dialogData.previewData?.sessionId;
+            }
+            
+            SDKClient[method](sessionId)
+            .then((resp: IResponse) => {
+                this.loading = false;
+                snackbarRef?.dismiss();
+                // check the response
+                // this._appUIService.showSnackbar('success', 'success');
+                console.log('Performed action on EMAIL by supervisor', resp);
+                this.data = resp.response;
+            })
+            .catch((e) => {
+                snackbarRef?.dismiss();
+                this.loading = false;
+                this.data = {
+                    error: true
+                };
+                this._appUIService.showSnackbar('Error in getting outbox email data', 'failure');
+                console.log('e',e);
+            });
+
+        } else {
+            console.log('Session ID not present to view email details by supervisor');
+        }
+    }
+
+    
 
     performAction(action) {
         this.dialogData.done(action?.callback);
