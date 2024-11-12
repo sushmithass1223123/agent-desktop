@@ -1,4 +1,4 @@
-<section class="notification-container">
+<section class="notification-container" *ngIf="data">
     <div [@inOutAnimation]="'in'" (click)="onClick()" class="snackbar twd-items-center">
         <div [innerHTML]="data.message"></div>
         <mat-icon

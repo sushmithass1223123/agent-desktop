@@ -84,11 +84,15 @@ export class TSnackbarComponent implements OnInit {
 
 /**
  * Snackbar component
+ * TODO: style property can be made dynamic when the snackbar position is made configurable
  */
 @Component({
   selector: 't-snackbar-container',
   template: '<ng-template #viewContainerRef></ng-template>',
-  host: {'class': 'twd-flex twd-flex-col twd-absolute twd-top-3 twd-left-1/3 twd-z-50 twd-gap-1.5'},
+  host: {
+    'class': 'twd-flex twd-flex-col twd-absolute twd-top-3 left twd-z-50 twd-gap-1.5', 
+    'style': 'left:50%; transform: translateX(-50%);'
+  }
 })
 export class TSnackbarContainer {
   @ViewChild("viewContainerRef", { read: ViewContainerRef })
