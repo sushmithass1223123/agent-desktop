@@ -130,7 +130,8 @@
         "unHoldCallFailed": "Unhold call failed",
         "makeCallSuccess": "Make call to #callerID successful",
         "makeCallFailed": "Make call failed, ",
-        "makeCallError": "Make call error, please try again"
+        "makeCallError": "Make call error, please try again",
+        "viewEmailDetailsTitle": "Monitor Email"
     },
     "channels": {
         "voice": "Voice",
@@ -1089,7 +1090,8 @@
             "emailSendErrorSendEmailTimeoutError": "Timed out",
             "emailSendErrorS3UrlNotFoundInDatabase": "Aws s3 url not found in database",
             "emailSendErrorGenericExceptionAttachmentDownload": "Exception while downloading attachment",
-            "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!"
+            "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!",
+            "reloadEmailPreview": "Reload to view latest changes"
         },
         "socialMediaPosts": {
             "asyncCommentReplySendSuccess": "Comment reply sent to customer",

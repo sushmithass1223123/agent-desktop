@@ -686,13 +686,6 @@
                                     "Data": {
                                         "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index",
                                         "agentStatusChange": true,
-                                        "InteractionConstraints": {
-                                            "ValidateFor": ["textchat"],
-                                            "AllowSupervisorToBargeIn": true,
-                                            "AllowSupervisorToChatSilentMonitor": true,
-                                            "AllowSupervisorToChatWhisper": true,
-                                            "AllowSupervisorToChatConference": true
-                                        },
                                         "facCodes": [
                                             { "feature": "barge-in", "code": "*79" },
                                             { "feature": "silent", "code": "*78" }

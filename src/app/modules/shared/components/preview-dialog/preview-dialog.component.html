@@ -1,0 +1,95 @@
+<ng-container *transloco="let locale">
+    <section *ngIf="dialogData" fxFlex fxLayout="column">
+        <h2
+            mat-dialog-title
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            class="mat-primary twd-text-primary-600"
+        >
+            <span>{{ dialogData?.title ? dialogData?.title : 'Preview Component' }}</span>
+            <div class="twd-gap-1">
+                <span fxFlex *ngIf="enableReload" fxLayout="row reverse">
+                    <mat-spinner *ngIf="loading" class="twd-flex" [diameter]="20"></mat-spinner>
+
+                    <mat-icon
+                        *ngIf="!loading"
+                        class="twd-flex twd-cursor-pointer"
+                        [matTooltip]="locale('sharedComponents.email.reloadEmailPreview')"
+                        (click)="loadComponent()"
+                        >refresh</mat-icon
+                    >
+                </span>
+
+                <mat-icon mat-dialog-close class="twd-cursor-pointer">close</mat-icon>
+            </div>
+        </h2>
+        <div *ngIf="loading" fxFill class="twd-h-full twd-w-full twd-space-x-3 loading-layout" fxFlex fxLayout="row">
+            <div class="twd-m-auto" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
+                <mat-spinner [diameter]="30"></mat-spinner>
+                <span>{{ locale('interactionComponent.connectingMsg') }}</span>
+            </div>
+        </div>
+        <mat-dialog-content *ngIf="!loading">
+            <ng-container [ngSwitch]="component">
+                <div *ngSwitchCase="'email'" fxLayout="column" fxLayoutGap="5px">
+                    <email class="twd-h-full" mode="preview" [email]="data">
+                        <div
+                            *ngIf="data as emailInfo"
+                            id="emailInfo"
+                            class="twd-flex twd-justify-between twd-overflow-hidden twd-transition-all"
+                        >
+                            <div fxFlex="80" *transloco="let locale" class="twd-flex">
+                                <div class="twd-flex-1">
+                                    <p class="text-bold my-4">
+                                        {{ locale('widgets.customerJourney.to') }}: {{ emailInfo.ToList || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('widgets.customerJourney.from') }}: {{ emailInfo.From || 'NA' }}
+                                    </p>
+                                    <p class="text-bold my-4" *ngIf="emailInfo.CCList">
+                                        {{ locale('widgets.customerJourney.cc') }}: {{ emailInfo.CCList }}
+                                    </p>
+                                    <p *ngIf="emailInfo.Intent" [matTooltip]="locale('widgets.customerJourney.intent')">
+                                        <span class="text-bold">
+                                            {{ locale('widgets.customerJourney.intent') }}:
+                                            {{ emailInfo.Intent || 'NA' }}</span
+                                        >
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('widgets.customerJourney.repliedStatus') }}:
+                                        {{ emailInfo.RepliedStatus === '1' ? 'Replied' : 'Not Replied' }}
+                                    </p>
+                                    <ng-container *ngIf="emailInfo.AddedTime">
+                                        <p class="my-4">{{ emailInfo.AddedTime | date: 'longDate' }}</p>
+                                        <p class="my-4">{{ emailInfo.AddedTime | date: 'shortTime' }}</p>
+                                    </ng-container>
+                                </div>
+
+                                <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
+                                    <p class="my-4 text-bold">
+                                        {{ locale('interactionComponent.status') }}:
+                                        {{ emailInfo.CurrentStatus || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('interactionComponent.priority') }}: {{ emailInfo.Priority || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('global.agent') }}: {{ emailInfo.AgentName || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('widgets.customerJourney.closedStatus') }}:
+                                        {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </email>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="data?.error"> </ng-container>
+        </mat-dialog-content>
+        <mat-dialog-actions *ngFor="let a of actions">
+            <button mat-button *ngFor="let a of actions" (click)="performAction(a)">{{ a.label }}</button>
+        </mat-dialog-actions>
+    </section>
+</ng-container>
