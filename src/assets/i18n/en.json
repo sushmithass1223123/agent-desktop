@@ -709,6 +709,7 @@
             "callRequestConfirmMsg": "#callType call requested by #customerName, Do you want to accept it?",
             "avConnectionError": "Error occured in AV connection",
             "callRejectedByRemote": "User has rejected your request",
+            "callRejectedByAgent":"You have rejected the call from customer",
             "callNotAnsweredByremote": "Call was not answered by the Customer",
             "remoteCallRequestTimedOut": "Call request timed out",
             "callFailed": "Call failed: ",
