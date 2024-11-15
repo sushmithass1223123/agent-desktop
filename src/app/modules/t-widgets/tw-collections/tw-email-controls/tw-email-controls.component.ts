@@ -1246,6 +1246,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         const callback = () => {
+            if(!this.savedDataOnDataServer && this.currentInteraction?.CurrOutSessionId) this.saveToDataServer('outSessionId', this.currentInteraction.CurrOutSessionId);
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
             const email = this.emailRef?.getEmail();
             // @TODO Files not sent as draft arg

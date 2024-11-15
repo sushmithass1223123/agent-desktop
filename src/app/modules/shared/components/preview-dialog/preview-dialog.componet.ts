@@ -36,7 +36,6 @@ export class PreviewDialogComponent implements OnInit {
     actions = [];
 
 
-
     constructor(@Inject(MAT_DIALOG_DATA)
         private dialogData: PreviewDialogDataTypes & CallbackActions,
         private _appUIService: AppUiService,
