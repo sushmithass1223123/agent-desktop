@@ -20,6 +20,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import {
     EmailInboxModel,
     EmailOutboxModel,
+    IAddEvent,
     IAgentData,
     IGetMailboxConfiguration,
     IncomingEmailEvent,
@@ -399,10 +400,6 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
         this.getTransferComments();
 
-        if(this.currentInteraction?.OutSessionId) {
-            // save outsessionid details on data server for supervisor to view on going email response using the same
-            this.saveToDataServer('outSessionId', this.currentInteraction.OutSessionId);
-        }
     
     }
 
@@ -1264,7 +1261,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             let { isModified, changes } = this.compareArrays(this.prevFiles, Files);
             this.prevFiles = [...Files];
-            SDKClient.saveEmailDraft({
+            const emailData = {
                 bccList: BCC || '',
                 body: (Body || '').toString(),
                 ccList: CC || '',
@@ -1276,7 +1273,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 typeOfResponse: '',
                 attachmentList: changes,
                 isAttachmentModified: isModified
-            })
+            };
+            SDKClient.saveEmailDraft(emailData)
                 .then((x) => {
                     if (x.response) {
                         this.currentInteraction.CurrOutSessionId = x.response;
@@ -1293,6 +1291,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 .catch((err) => {
                     console.error(err);
                 });
+            this.sendDraftingDataToSupervisor({...emailData,...email});
         };
         const poll = () => {
             if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
@@ -1704,6 +1703,32 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         .catch((err) => {
             console.error("error during saveDataToDataServer", err);
         });
+    }
+
+    /**
+     * sending realtime drafting email data in an event to supervisor.
+     */
+    sendDraftingDataToSupervisor(emailData) {
+        const details = {...emailData,
+            InteractionId: this.interactionId,
+            Intent: this.currentInteraction.Intent,
+            Priority: this.emailBodies[emailData.inboxSessionId]?.Priority,
+            CurrentStatus: this.emailBodies[emailData.inboxSessionId]?.CurrentStatus,
+            AgentName: SDKClient.getAgentData().agentName,
+            RepliedStatus:this.emailBodies[emailData.inboxSessionId]?.RepliedStatus
+        }
+        let data: IAddEvent = {
+            agentId: this.user.supervisorId,
+            eventString: JSON.stringify({
+                EventName: "GenericEvent",
+                SubEventName: "DraftEmailUpdatesEvent",
+                JsonData: JSON.stringify(details),
+            }),
+            isPriority: true,
+            toTmacServer:this.user.tmacServer
+        };
+        
+        SDKClient.addEventToAgentSession(data);
     }
 
 }

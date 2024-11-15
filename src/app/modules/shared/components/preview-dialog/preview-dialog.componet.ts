@@ -35,17 +35,12 @@ export class PreviewDialogComponent implements OnInit {
      */
     actions = [];
 
-    /**
-     * flag to enable/disable reload of component
-     */
-    enableReload:boolean = false;
 
     constructor(@Inject(MAT_DIALOG_DATA)
         private dialogData: PreviewDialogDataTypes & CallbackActions,
         private _appUIService: AppUiService,
         private _translocoService: TranslocoService
     ) {
-        // super('PreviewDialogComponent')
     }
 
     /**
@@ -55,6 +50,9 @@ export class PreviewDialogComponent implements OnInit {
         this.loadComponent();
     }
 
+    /**
+     * method to load components based on the component value send in dialog data
+     */
     loadComponent() {
         if(this.dialogData) {
             this.component = this.dialogData.component ?? 'other';
@@ -67,46 +65,25 @@ export class PreviewDialogComponent implements OnInit {
         }
     }
 
-    async previewEmailComponent() {
-        this.enableReload = true;
-        const snackbarRef = this._appUIService.showSnackbar(this._translocoService.translate('interactionComponent.connectingMsg'), 'loading');
-        if(this.dialogData.previewData?.sessionId) {
-            this.loading = true;
-            let sessionId;
-            await SDKClient.getDataFromDataServer({
-                query: "Type == \"email-response\" AND SubType == \"outSessionId\"",
-                instance: ""
-            })  
-            .then((r) => {
-                if (r && r.response) {
-                    if(r.response && r.response[0]) {
-                        const sessionData = r.response.find(d => this.dialogData.previewData?.interactionId?.toString() === d.InsertInteraction);
-                        sessionId = JSON.parse(sessionData?.Data);    
-                    }
-                    
-                }
-            }).catch(e => {
-                console.log('Error occured during Get data from data server', e);
-            })
-            let method;
-            if(sessionId) {
-                method = 'getOutboxEmail';
-            } else {
-                method = 'getInboxEmail';
-                sessionId = this.dialogData.previewData?.sessionId;
-            }
-            
-            SDKClient[method](sessionId)
+   
+    /**
+     * 
+     * method to view Email details being composed / viewed by Agent
+     */
+    previewEmailComponent() {
+        // do not call the method again if already got the data from inbox / draft
+        if(!this.loading) return;
+
+        // call inbox email to get the email currently agent is viewing
+        SDKClient.getInboxEmail(this.dialogData.previewData?.SessionId)
             .then((resp: IResponse) => {
-                this.loading = false;
-                snackbarRef?.dismiss();
-                // check the response
-                // this._appUIService.showSnackbar('success', 'success');
-                console.log('Performed action on EMAIL by supervisor', resp);
-                this.data = resp.response;
+                if(resp.response !== null) {
+                    this.loading = false;
+                    this.data = resp.response;
+                    this.data['isDraft'] = false;
+                }
             })
             .catch((e) => {
-                snackbarRef?.dismiss();
                 this.loading = false;
                 this.data = {
                     error: true
@@ -114,14 +91,26 @@ export class PreviewDialogComponent implements OnInit {
                 this._appUIService.showSnackbar('Error in getting outbox email data', 'failure');
                 console.log('e',e);
             });
-
-        } else {
-            console.log('Session ID not present to view email details by supervisor');
-        }
+        
+        // register to a generic event `DraftEmailUpdatesEvent` which gives the drafting mail details
+        SDKClient.events.on('DraftEmailUpdatesEvent', (evt) => {
+        const val = JSON.parse(evt.JsonData);
+        this.data = {...val,...{
+            ToList: val.toList,
+            CCList: val.ccList,
+            InboxSessionId: val.inboxSessionId,
+            OutboxSessionId: val.outboxSessionId
+        }};
+        this.loading = false;
+        this.data['isDraft'] = true;
+        });
     }
 
     
-
+    /**
+     * 
+     * method to perform actions
+     */
     performAction(action) {
         this.dialogData.done(action?.callback);
     }
