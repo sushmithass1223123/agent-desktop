@@ -1189,6 +1189,10 @@
             "color": "Color",
             "cancel": "Cancel",
             "save": "Save"
+        },
+        "previewDialog": {
+            "agentReadingEmail": "Agent is viewing this email...",
+            "agentWorkingOnEmail": "#agent is working on this email..."
         }
     },
     "widgetPreview": {

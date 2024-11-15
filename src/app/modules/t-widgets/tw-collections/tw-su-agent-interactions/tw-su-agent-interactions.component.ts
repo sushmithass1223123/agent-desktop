@@ -332,7 +332,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                     'email',
                     {
                         interactionId: item.InteractionID,
-                        sessionId: item.InteractionData.SessionId
+                        ...item.InteractionData
                     },
                     {
                         minWidth: '80%',
