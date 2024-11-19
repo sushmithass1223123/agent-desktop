@@ -17,3 +17,4 @@ export * from './text-templates/text-templates.component';
 export * from './widget-fab/widget-fab.component';
 export * from './annotation/annotation.component';
 export * from './t-snackbar/t-snackbar.component';
+export * from './preview-dialog/preview-dialog.componet';

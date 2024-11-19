@@ -130,7 +130,8 @@
         "unHoldCallFailed": "Unhold call failed",
         "makeCallSuccess": "Make call to #callerID successful",
         "makeCallFailed": "Make call failed, ",
-        "makeCallError": "Make call error, please try again"
+        "makeCallError": "Make call error, please try again",
+        "viewEmailDetailsTitle": "Monitor Email"
     },
     "channels": {
         "voice": "Voice",
@@ -708,6 +709,7 @@
             "callRequestConfirmMsg": "#callType call requested by #customerName, Do you want to accept it?",
             "avConnectionError": "Error occured in AV connection",
             "callRejectedByRemote": "User has rejected your request",
+            "callRejectedByAgent":"You have rejected the call from customer",
             "callNotAnsweredByremote": "Call was not answered by the Customer",
             "remoteCallRequestTimedOut": "Call request timed out",
             "callFailed": "Call failed: ",
@@ -1089,9 +1091,21 @@
             "emailSendErrorSendEmailTimeoutError": "Timed out",
             "emailSendErrorS3UrlNotFoundInDatabase": "Aws s3 url not found in database",
             "emailSendErrorGenericExceptionAttachmentDownload": "Exception while downloading attachment",
-            "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!"
+            "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!",
+            "reloadEmailPreview": "Reload to view latest changes"
         },
         "socialMediaPosts": {
+            "asyncCommentReplySendSuccess": "Comment reply sent to customer",
+            "asyncCommentReplySendFail": "Error sending comment reply to customer - reason :",
+            "commentReplySendErrorFailed": "Failed to send comment reply",
+            "commentReplySendErrorAccountNotFound": "Account not found",
+            "commentReplySendErrorNoAccountExists": "Account does not exist",
+            "commentReplySendErrorMailboxNotEnabled": "Mailbox not enabled",
+            "commentReplySendErrorSendNotEnabledForMailbox": "Send disabled for the mailbox",
+            "commentReplySendErrorGenericExceptionOnSend": "Generic exception on send",
+            "commentReplySendErrorMediaMatrixLoading": "Media matrix loading...",
+            "commentReplySendErrorSendExceptionWhileUsingIWFlow": "Exception while using IW flow",
+            "commentReplySendErrorUnknown": "Unknown exception occured!",
             "queueLabel": "Queue",
             "inboxLabel": "Inbox",
             "sentItemLabel": "Sent",
@@ -1187,6 +1201,10 @@
             "color": "Color",
             "cancel": "Cancel",
             "save": "Save"
+        },
+        "previewDialog": {
+            "agentReadingEmail": "Agent is viewing this email...",
+            "agentWorkingOnEmail": "#agent is working on this email..."
         }
     },
     "widgetPreview": {

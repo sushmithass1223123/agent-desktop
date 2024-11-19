@@ -12,7 +12,7 @@ import { AppUiService } from 'app/services/app-ui.service';
 import { throwADError } from 'app/utils';
 import { extractJsonVal } from '@tmac/operators';
 import { uniq } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { TwRegisterCallback } from '@ad/types';
 import { TranslocoService } from '@ngneat/transloco';

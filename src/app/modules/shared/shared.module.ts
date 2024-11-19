@@ -25,7 +25,8 @@ import {
     WidgetFabComponent,
     AnnotationComponent,
     TSnackbarComponent,
-    TSnackbarContainer
+    TSnackbarContainer,
+    PreviewDialogComponent
 } from './components';
 import { EmailModule } from './components/email/email.module';
 import { TWChartDirective } from './directives';
@@ -75,7 +76,8 @@ const sharedComponents = [
     CustomDatePipe,
     AnnotationComponent,
     TSnackbarComponent,
-    TSnackbarContainer
+    TSnackbarContainer,
+    PreviewDialogComponent
 ];
 
 /**

@@ -10,7 +10,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { AgentReminder, AgentReminderEvent, SDKClient, UpdateAgentReminderEvent } from '@tmac/sdk';
 import { CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { addMinutes, format, isBefore, isSameDay, isSameMonth } from 'date-fns';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Subject } from 'rxjs';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
 import { CalendarEventModel } from './calendar.model';

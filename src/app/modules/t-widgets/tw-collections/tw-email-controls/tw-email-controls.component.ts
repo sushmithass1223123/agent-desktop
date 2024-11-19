@@ -20,6 +20,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import {
     EmailInboxModel,
     EmailOutboxModel,
+    IAddEvent,
     IAgentData,
     IGetMailboxConfiguration,
     IncomingEmailEvent,
@@ -267,6 +268,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     showPayloadSizeStats: boolean = false;
 
+    savedDataOnDataServer: boolean = false;
+
     constructor(
         private _interactionManagerService: InteractionManagerService,
         private _fuseProgressBarService: FuseProgressBarService,
@@ -396,6 +399,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
 
         this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
         this.getTransferComments();
+
+    
     }
 
     /**
@@ -1241,6 +1246,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
         const callback = () => {
+            if(!this.savedDataOnDataServer && this.currentInteraction?.CurrOutSessionId) this.saveToDataServer('outSessionId', this.currentInteraction.CurrOutSessionId);
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
             const email = this.emailRef?.getEmail();
             // @TODO Files not sent as draft arg
@@ -1255,7 +1261,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
             let { isModified, changes } = this.compareArrays(this.prevFiles, Files);
             this.prevFiles = [...Files];
-            SDKClient.saveEmailDraft({
+            const emailData = {
                 bccList: BCC || '',
                 body: (Body || '').toString(),
                 ccList: CC || '',
@@ -1267,7 +1273,8 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 typeOfResponse: '',
                 attachmentList: changes,
                 isAttachmentModified: isModified
-            })
+            };
+            SDKClient.saveEmailDraft(emailData)
                 .then((x) => {
                     if (x.response) {
                         this.currentInteraction.CurrOutSessionId = x.response;
@@ -1284,6 +1291,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                 .catch((err) => {
                     console.error(err);
                 });
+            this.sendDraftingDataToSupervisor({...emailData,...email});
         };
         const poll = () => {
             if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
@@ -1669,4 +1677,58 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
             }
         });
     }
+
+    /**
+     * method to save data on data server
+     */
+    saveToDataServer(subType, data) {
+        
+        const input = {
+            type: 'email-response',
+            subType: subType,
+            key: this.interactionId.toString(),
+            insertedBy: SDKClient.getAgentData().agentName,
+            insertedSource: 'AD',
+            insertInteraction: this.interactionId.toString(),
+            data: JSON.stringify(data),
+            instance: '',
+            ttl: ''
+        }
+
+        SDKClient.saveDataToDataServer(input)
+        .then((response) => {
+            this.savedDataOnDataServer = true;
+            console.log("saveDataToDataServer Saved", response);
+        })
+        .catch((err) => {
+            console.error("error during saveDataToDataServer", err);
+        });
+    }
+
+    /**
+     * sending realtime drafting email data in an event to supervisor.
+     */
+    sendDraftingDataToSupervisor(emailData) {
+        const details = {...emailData,
+            InteractionId: this.interactionId,
+            Intent: this.currentInteraction.Intent,
+            Priority: this.emailBodies[emailData.inboxSessionId]?.Priority,
+            CurrentStatus: this.emailBodies[emailData.inboxSessionId]?.CurrentStatus,
+            AgentName: SDKClient.getAgentData().agentName,
+            RepliedStatus:this.emailBodies[emailData.inboxSessionId]?.RepliedStatus
+        }
+        let data: IAddEvent = {
+            agentId: this.user.supervisorId,
+            eventString: JSON.stringify({
+                EventName: "GenericEvent",
+                SubEventName: "DraftEmailUpdatesEvent",
+                JsonData: JSON.stringify(details),
+            }),
+            isPriority: true,
+            toTmacServer:this.user.tmacServer
+        };
+        
+        SDKClient.addEventToAgentSession(data);
+    }
+
 }

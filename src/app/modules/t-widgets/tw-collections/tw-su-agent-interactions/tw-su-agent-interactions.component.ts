@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -10,9 +10,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TwSuAgentInteractions } from '@ad/types';
 import { TranslocoService } from '@ngneat/transloco';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AgentFeaturesService } from '@services/agent-features.service';
 
 /**
@@ -74,7 +72,7 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
         loaded: false
     };
 
-
+    
     /**
      * Constructor
      */
@@ -311,10 +309,52 @@ export class TwSuAgentInteractionsComponent extends TWidgetWrapper implements On
                 this.performVoiceBargeIn('silent', item);
                 break;
             case AGENT_FEATURES.AllowSupervisorToViewEmailDetails:
+                this.performActionOnEmailInteraction('view', item);
                 break;
             default:
         }
     }
+
+    /**
+     * method to perform action on email interactions
+     */
+    async performActionOnEmailInteraction(type: 'view', item: InteractionDataModel) {
+        try {
+            switch(type) {
+                case 'view': 
+                    
+
+                    
+
+
+                    this._appUIService.previewComponentOnDialog('',
+                        this._translocoService.translate('interactionComponent.viewEmailDetailsTitle'),
+                    'email',
+                    {
+                        interactionId: item.InteractionID,
+                        ...item.InteractionData
+                    },
+                    {
+                        minWidth: '80%',
+                        maxWidth: '80%',
+                        minHeight: '80%',
+                        disableClose: true
+                    }).afterClosed().subscribe(res => {
+                        console.log(res);
+                    });
+                
+                    break;
+            }
+
+            
+        } catch(e) {
+            this.logger.error('Error occured in monitoring email by supervisor',e);
+        }
+    }
+
+    
+
+
 }
 
 // for more info visit - https://angular.io/api/core

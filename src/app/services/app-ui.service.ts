@@ -26,6 +26,8 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
 import { TSnackbarService } from '../modules/shared/components/t-snackbar/t-snackbar.service';
+import { PreviewActionType, PreviewComponentTypes } from '@modules/shared/components/preview-dialog/preview.dialog';
+import { PreviewDialogComponent } from '@modules/shared/components/preview-dialog/preview-dialog.componet';
 
 type UiChanActions = 'hold/select-chat';
 
@@ -746,5 +748,30 @@ export class AppUiService extends SharedWrapper {
     // Expose Observable for online/offline status
     getOnlineStatus(): Observable<boolean> {
         return this.onlineStatus.asObservable();
+    }
+
+    public previewComponentOnDialog(
+        message?: any,
+        title?: string,
+        component?: PreviewComponentTypes,
+        previewData?: any,
+        matConfig?: Partial<MatDialogConfig>,
+        actions?: PreviewActionType[]
+    ): MatDialogRef<PreviewDialogComponent> {
+        const dialogRef = this._matDialog.open(PreviewDialogComponent, {
+            data: {
+                component,
+                title,
+                message,
+                previewData,
+                actions,
+                done: (data?: any) => dialogRef.close(data || true),
+                cancel: () => dialogRef.close(false)
+            },
+            minWidth: '350px',
+            autoFocus: false,
+            ...(matConfig || {})
+        });
+        return dialogRef;
     }
 }
