@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, HostBinding, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseConfig } from '@fuse/types';
@@ -37,7 +37,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     /**
      * Form group
      */
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     /**
      * Bar closed host binding
@@ -77,7 +77,7 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
      */
     constructor(
         @Inject(DOCUMENT) private document: any,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private _fuseFacadeService: FuseFacadeService,
         private _fuseSidebarService: FuseSidebarService,
         private _renderer: Renderer2,
@@ -104,52 +104,52 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Build the config form
         // noinspection TypeScriptValidateTypes
         this.form = this._formBuilder.group({
-            colorTheme: new FormControl(),
-            webFont: new FormControl(),
-            flatTheme: new FormControl(),
-            customScrollbars: new FormControl(),
+            colorTheme: new UntypedFormControl(),
+            webFont: new UntypedFormControl(),
+            flatTheme: new UntypedFormControl(),
+            customScrollbars: new UntypedFormControl(),
             layout: this._formBuilder.group({
-                style: new FormControl(),
-                width: new FormControl(),
+                style: new UntypedFormControl(),
+                width: new UntypedFormControl(),
                 navbar: this._formBuilder.group({
-                    customBackgroundColor: new FormControl(),
-                    background: new FormControl(),
-                    folded: new FormControl(),
-                    hidden: new FormControl(),
-                    position: new FormControl(),
-                    variant: new FormControl()
+                    customBackgroundColor: new UntypedFormControl(),
+                    background: new UntypedFormControl(),
+                    folded: new UntypedFormControl(),
+                    hidden: new UntypedFormControl(),
+                    position: new UntypedFormControl(),
+                    variant: new UntypedFormControl()
                 }),
                 toolbar: this._formBuilder.group({
-                    background: new FormControl(),
-                    customBackgroundColor: new FormControl(),
-                    hidden: new FormControl(),
-                    position: new FormControl()
+                    background: new UntypedFormControl(),
+                    customBackgroundColor: new UntypedFormControl(),
+                    hidden: new UntypedFormControl(),
+                    position: new UntypedFormControl()
                 }),
                 content: this._formBuilder.group({
-                    background: new FormControl(),
-                    customBackgroundColor: new FormControl()
+                    background: new UntypedFormControl(),
+                    customBackgroundColor: new UntypedFormControl()
                 }),
                 anchorWidget: this._formBuilder.group({
-                    customBackgroundColor: new FormControl(),
-                    bodyBackground: new FormControl(),
-                    headerBackground: new FormControl(),
-                    contentBackground: new FormControl()
+                    customBackgroundColor: new UntypedFormControl(),
+                    bodyBackground: new UntypedFormControl(),
+                    headerBackground: new UntypedFormControl(),
+                    contentBackground: new UntypedFormControl()
                 }),
                 widget: this._formBuilder.group({
-                    customBackgroundColor: new FormControl(),
-                    bodyBackground: new FormControl(),
-                    headerBackground: new FormControl(),
-                    contentBackground: new FormControl()
+                    customBackgroundColor: new UntypedFormControl(),
+                    bodyBackground: new UntypedFormControl(),
+                    headerBackground: new UntypedFormControl(),
+                    contentBackground: new UntypedFormControl()
                 }),
                 footer: this._formBuilder.group({
-                    background: new FormControl(),
-                    customBackgroundColor: new FormControl(),
-                    hidden: new FormControl(),
-                    position: new FormControl()
+                    background: new UntypedFormControl(),
+                    customBackgroundColor: new UntypedFormControl(),
+                    hidden: new UntypedFormControl(),
+                    position: new UntypedFormControl()
                 }),
                 sidepanel: this._formBuilder.group({
-                    hidden: new FormControl(),
-                    position: new FormControl()
+                    hidden: new UntypedFormControl(),
+                    position: new UntypedFormControl()
                 })
             })
         });

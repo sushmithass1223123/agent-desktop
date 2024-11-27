@@ -10,7 +10,7 @@ import moment from 'moment';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { InteractionRef } from 'app/interfaces';
 import { TranslocoService } from '@jsverse/transloco';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
 /**
  * Customer details widget
@@ -64,7 +64,7 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
       */
      interactionId: number;
      formChanged = false;
-     customerForm: FormGroup;
+     customerForm: UntypedFormGroup;
      
      error = {
         email: 'Enter a valid email',
@@ -292,25 +292,25 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             let customerFormData = {};
             this.data.Data.ControlFields.forEach(control => {
                 if(!this.editAllowed) {
-                    customerFormData[control.id] = new FormControl('');
+                    customerFormData[control.id] = new UntypedFormControl('');
                 } else {
                   if(control?.validation_regex && control?.required) {
                     
-                    customerFormData[control.id] = new FormControl('',
+                    customerFormData[control.id] = new UntypedFormControl('',
                       [Validators.pattern(control?.validation_regex), Validators.required])
                   } else if(control?.validation_regex) {
-                        customerFormData[control.id] = new FormControl('',
+                        customerFormData[control.id] = new UntypedFormControl('',
                             Validators.pattern(control?.validation_regex))
                     }
                     else if(control?.required) {
-                        customerFormData[control.id] = new FormControl('',
+                        customerFormData[control.id] = new UntypedFormControl('',
                             Validators.required)  
                     } else {
-                      customerFormData[control.id] = new FormControl('');
+                      customerFormData[control.id] = new UntypedFormControl('');
                     }
                 }
             });
-            this.customerForm = new FormGroup(customerFormData);
+            this.customerForm = new UntypedFormGroup(customerFormData);
             console.log("Controls: ", this.customerForm.controls);
             this.getCustomerDetails();
         }

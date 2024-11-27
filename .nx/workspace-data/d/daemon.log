@@ -1,0 +1,11 @@
+[NX Daemon Server] - 2024-11-27T12:26:13.579Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-27T12:26:13.630Z - [WATCHER]: Subscribed to changes within: E:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-27T12:26:13.641Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-27T12:26:13.644Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-11-27T12:26:13.652Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-27T12:26:13.657Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-11-27T12:26:13.665Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-11-27T12:26:13.676Z - Handled FORCE_SHUTDOWN. Handling time: 1. Response time: 19.
+[NX Daemon Server] - 2024-11-27T12:26:13.677Z - [WATCHER]: Stopping the watcher for E:\agent-desktop (sources)
+[NX Daemon Server] - 2024-11-27T12:26:13.678Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-27T12:26:13.705Z - [WATCHER]: Stopping the watcher for E:\agent-desktop (outputs)

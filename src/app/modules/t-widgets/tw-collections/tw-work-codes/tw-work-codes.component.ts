@@ -1,7 +1,7 @@
 import { TwWorkCodes, TwWorkCodesData } from '@ad/types';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
@@ -73,7 +73,7 @@ export class TwWorkCodesComponent extends TWidgetWrapper implements OnInit, OnDe
     /**
      * Work Code Form Control
      */
-    workCodeCtrl = new FormControl();
+    workCodeCtrl = new UntypedFormControl();
 
     /**
      * Interaction ID

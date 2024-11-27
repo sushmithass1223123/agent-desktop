@@ -2,7 +2,7 @@ import { AgentSkillListData } from '@ad/types';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { AgentSkillListComponent } from '@modules/shared/components';
@@ -73,7 +73,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Advanced Search form control
      */
-    advancedSearchForm: FormGroup;
+    advancedSearchForm: UntypedFormGroup;
 
     /**
      * To store the fuse config for theme
@@ -100,7 +100,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Global search form control
      */
-    globalSearchControl = new FormControl('');
+    globalSearchControl = new UntypedFormControl('');
 
     /**
      * Selected skill's unique key
@@ -131,13 +131,13 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
         const today = new Date();
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
-        this.advancedSearchForm = new FormGroup({
-            skills: new FormControl(''),
-            agent: new FormControl(''),
-            fromDate: new FormControl(yesterday),
-            fromTime: new FormControl(`00:00`),
-            toDate: new FormControl(today),
-            toTime: new FormControl(`${'23'}:${'59'}`)
+        this.advancedSearchForm = new UntypedFormGroup({
+            skills: new UntypedFormControl(''),
+            agent: new UntypedFormControl(''),
+            fromDate: new UntypedFormControl(yesterday),
+            fromTime: new UntypedFormControl(`00:00`),
+            toDate: new UntypedFormControl(today),
+            toTime: new UntypedFormControl(`${'23'}:${'59'}`)
         });
     }
 

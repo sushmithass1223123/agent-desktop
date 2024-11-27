@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -90,11 +90,11 @@ export class TwRegisterCallbackComponent extends TWidgetWrapper implements OnIni
     /**
      * Add contact form group
      */
-    addContactFormGroup = new FormGroup({
-        Name: new FormControl('', [Validators.required]),
-        Phone: new FormControl('', [Validators.required]),
-        Date: new FormControl(new Date(), [Validators.required]),
-        Time: new FormControl('12:00', [
+    addContactFormGroup = new UntypedFormGroup({
+        Name: new UntypedFormControl('', [Validators.required]),
+        Phone: new UntypedFormControl('', [Validators.required]),
+        Date: new UntypedFormControl(new Date(), [Validators.required]),
+        Time: new UntypedFormControl('12:00', [
             Validators.required,
             (control) => {
                 if (this.addContactFormGroup && control.value) {

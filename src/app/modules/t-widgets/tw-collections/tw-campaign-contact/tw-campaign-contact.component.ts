@@ -1,6 +1,6 @@
 import { AppRootConfig, TwCampaignContact, TwCampaignContactData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
@@ -101,7 +101,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
     /**
      * Submit form
      */
-    submitForm: FormGroup;
+    submitForm: UntypedFormGroup;
 
     /**
      * Flag to check whether call is made to customer
@@ -117,7 +117,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
         private _tmacEventService: TMACEventService,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private translocoService: TranslocoService
     ) {
         super('TwCampaignContactComponent');
