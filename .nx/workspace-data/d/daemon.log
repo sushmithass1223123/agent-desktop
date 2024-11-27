@@ -1,0 +1,26 @@
+[NX Daemon Server] - 2024-11-27T05:35:00.025Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-27T05:35:00.044Z - [WATCHER]: Subscribed to changes within: e:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-27T05:35:00.055Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-27T05:35:00.056Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-11-27T05:35:00.059Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-27T05:35:00.061Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-27T05:35:00.836Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-27T05:35:00.843Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-27T05:35:00.843Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-27T05:35:00.849Z - Time taken for 'loadNxPlugins' 770.9376ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-27T05:35:00.873Z - Time taken for 'build-project-configs' 5.670599999999922ms
+[NX Daemon Server] - 2024-11-27T05:35:00.879Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-27T05:35:00.880Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-27T05:35:00.880Z - Time taken for 'total for creating and serializing project graph' 819.2725ms
+[NX Daemon Server] - 2024-11-27T05:35:00.881Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-27T05:35:00.881Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 819. Response time: 1.
+[NX Daemon Server] - 2024-11-27T05:35:00.886Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-27T05:35:00.887Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-27T05:35:00.887Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 3. Response time: 1.
+[NX Daemon Server] - 2024-11-27T05:35:00.895Z - Closed a connection. Number of open connections: 0
