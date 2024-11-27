@@ -7,7 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { IAUXCodes, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 /**
  * Logout button component

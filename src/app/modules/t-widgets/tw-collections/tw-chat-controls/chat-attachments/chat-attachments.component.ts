@@ -3,7 +3,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppUiService } from '@services/app-ui.service';
 import { FileSaveData, SDKClient, TUtils } from '@tmac/sdk';
 import { MediaStreamerResponse } from 'app/interfaces';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 /**
  * Chat attachment module

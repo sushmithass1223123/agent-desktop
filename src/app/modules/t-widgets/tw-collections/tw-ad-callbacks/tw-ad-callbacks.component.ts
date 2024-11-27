@@ -8,7 +8,7 @@ import { ACTIVE_CALL_STATUSES, FAILED_CALL_STATUSES, PENDING_CALL_STATUSES } fro
 import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { format, isBefore, isMatch, parse } from 'date-fns';
 import { sortBy } from 'lodash';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Agent Callbacks Widget

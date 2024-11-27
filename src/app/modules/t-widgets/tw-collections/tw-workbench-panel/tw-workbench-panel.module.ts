@@ -4,7 +4,7 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { TwWrapperModule } from '@modules/t-widgets/tw-wrapper/tw-wrapper.module';
 import { TwWorkbenchPanelComponent } from './tw-workbench-panel.component';
 import { WorkbenchChatComponent } from './workbench-chat/workbench-chat.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../../transloco-root.module';
 
 /**

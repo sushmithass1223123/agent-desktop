@@ -17,7 +17,7 @@ import { groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 import { Subscription, timer } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 type ApiCalls = 'search' | 'pull' | 'push';
 type CallStates = 'loading' | 'error' | 'initial' | 'completed';
 

@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 type AvailableDevices = {
     /**
      * Availabble mics

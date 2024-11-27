@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
 import { QuickPanelComponent } from 'app/layout/components/quick-panel/quick-panel.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 
 /**

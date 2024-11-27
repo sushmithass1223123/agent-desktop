@@ -11,7 +11,7 @@ import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Observable, Subject, timer } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * QuickPanelComponent

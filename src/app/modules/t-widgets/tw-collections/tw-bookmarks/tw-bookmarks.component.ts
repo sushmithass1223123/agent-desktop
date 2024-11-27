@@ -11,7 +11,7 @@ import { IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { BookmarkItem } from 'app/interfaces';
 import { orderBy } from 'lodash';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 const regexEscapeCharacters = {
     "\\": "\\\\",

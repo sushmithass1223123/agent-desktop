@@ -72,7 +72,7 @@ import { map, merge, sortBy } from 'lodash';
 import moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { DomSanitizer } from '@angular/platform-browser';
 

@@ -7,7 +7,7 @@ import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { SharedService } from '@services/shared.service';
 /**
  * Agent Details component

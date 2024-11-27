@@ -26,7 +26,7 @@ import { throwADError } from 'app/utils';
 import { cloneDeep } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
 import { AppUiService } from '@services/app-ui.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { SharedService } from '@services/shared.service';
 import { EMAIL_SEND_STATUS, SMP_SEND_STATUS } from 'app/constants';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';

@@ -23,7 +23,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 import { TableComponent } from '../table/table.component';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { SharedService } from '@services/shared.service';
 import { EMAIL_SEND_STATUS } from 'app/constants';

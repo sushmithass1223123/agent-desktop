@@ -10,7 +10,7 @@ import { TwcNotFoundComponent } from './twc-not-found/twc-not-found.component';
 import { TwcSupervisorComponent } from './twc-supervisor/twc-supervisor.component';
 import { TwcUnknownComponent } from './twc-unknown/twc-unknown.component';
 import { TwcWorkbenchComponent } from './twc-workbench/twc-workbench.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 /**
  * Tw Content Module

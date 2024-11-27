@@ -10,7 +10,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AGENT_FEATURES_MAP } from 'app/constants';
 import { CustomSDKEvent, IWidget } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 
 /**

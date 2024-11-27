@@ -12,7 +12,7 @@ import { CustomSDKEvent, ResData } from 'app/interfaces';
 import { groupBy, orderBy, uniqBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, startWith, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 /**
  * Work codes Component
  */

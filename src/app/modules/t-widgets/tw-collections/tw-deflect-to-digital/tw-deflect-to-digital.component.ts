@@ -7,7 +7,7 @@ import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AGENT_FEATURES } from 'app/constants';
 import { FormControl } from '@angular/forms';

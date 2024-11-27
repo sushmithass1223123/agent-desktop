@@ -6,7 +6,7 @@ import { IWidget } from 'app/interfaces';
 import { map } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Card header component
