@@ -8,7 +8,7 @@ import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { CoreModule } from '@modules/core/core.module';
 import { SharedModule } from '@modules/shared/shared.module';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';

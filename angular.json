@@ -224,8 +224,7 @@
                         }
                     }
                 }
-            },
-            "tags": []
+            }
         },
         "types": {
             "root": "libs/types",
@@ -257,8 +256,8 @@
                         "passWithNoTests": true
                     }
                 }
-            },
-            "tags": []
+            }
+          
         }
     }
 }

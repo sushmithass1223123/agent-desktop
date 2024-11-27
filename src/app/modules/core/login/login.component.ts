@@ -20,7 +20,7 @@ import { merge, set } from 'lodash';
 import moment from 'moment';
 import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 declare const navigator: Navigator | any;
 /**

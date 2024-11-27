@@ -11,7 +11,7 @@ import { intervalToDuration } from 'date-fns';
 import { formatDuration } from 'app/utils/';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 type Dataset = { category: string; value: number };
 
 /**

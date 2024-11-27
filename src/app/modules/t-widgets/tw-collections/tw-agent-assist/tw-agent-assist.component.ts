@@ -12,7 +12,7 @@ import { merge } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AOTWidget, TwAgentAssist } from '@ad/types';
 
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 /**
  * Agent Assist Component
  */

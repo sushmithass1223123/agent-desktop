@@ -12,7 +12,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { InteractionRef } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Generic Controls Components

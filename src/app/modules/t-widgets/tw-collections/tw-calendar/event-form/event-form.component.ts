@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CustomCalendarEvent } from '../calendar.interface';
 import { CalendarEventModel } from '../calendar.model';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Calendar Event Form Dialog Component

@@ -6,7 +6,7 @@ import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { fuseAnimations } from '@fuse/animations';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';

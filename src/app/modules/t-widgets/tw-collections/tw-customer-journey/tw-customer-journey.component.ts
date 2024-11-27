@@ -24,7 +24,7 @@ import { format, parse } from 'date-fns';
 import { groupBy, sortBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
 
 type Mode = 'Interactions' | 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;

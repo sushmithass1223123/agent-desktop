@@ -9,7 +9,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Agent Interactions details Table widget

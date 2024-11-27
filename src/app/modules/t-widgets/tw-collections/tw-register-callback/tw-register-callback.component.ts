@@ -15,7 +15,7 @@ import { uniq } from 'lodash';
 import moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { TwRegisterCallback } from '@ad/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Register Callback Widget component

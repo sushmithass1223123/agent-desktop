@@ -9,7 +9,7 @@ import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { TMACEventService } from '@services/tmac-event.service';
 
 /**

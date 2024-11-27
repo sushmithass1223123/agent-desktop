@@ -3,7 +3,7 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { TwCardHeaderComponent } from './tw-card-header/tw-card-header.component';
 import { TwCardComponent } from './tw-card/tw-card.component';
 import { TwWrapperComponent } from './tw-wrapper.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 
 /**

@@ -10,7 +10,7 @@ import { orderBy, sortBy } from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { TwPieChart } from '@ad/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Colors for chart
