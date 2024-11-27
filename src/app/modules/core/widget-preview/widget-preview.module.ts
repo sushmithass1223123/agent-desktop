@@ -5,7 +5,7 @@ import { TwContentModule } from '@modules/t-widgets/tw-content/tw-content.module
 import { TwTemplateModule } from '@modules/t-widgets/tw-template/tw-template.module';
 import { WidgetPreviewComponent } from './widget-preview.component';
 
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 /**
  * Widget preview module

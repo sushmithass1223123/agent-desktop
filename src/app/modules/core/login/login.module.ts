@@ -7,7 +7,7 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import { SharedModule } from '@modules/shared/shared.module';
 import { MsTeamsOAuthSettings } from 'app/constants';
 import { LoginComponent } from './login.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 let msalInstance: IPublicClientApplication | undefined;
 

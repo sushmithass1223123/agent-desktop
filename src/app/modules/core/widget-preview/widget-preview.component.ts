@@ -4,7 +4,7 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { IResponseData, TUtils } from '@tmac/sdk';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Widget Preview

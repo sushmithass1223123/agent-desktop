@@ -19,7 +19,7 @@ import { PostAttachment, SDKClient, TUtils } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MediaStreamerResponse, PostFile, SmComment, SmpComponentInputs } from 'app/interfaces';
 import { AppUiService } from '@services/app-ui.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { Subject } from 'rxjs';
 import { AppDataService } from '@services/app-data.service';
 import { maticonByExtension, throwADError } from 'app/utils';

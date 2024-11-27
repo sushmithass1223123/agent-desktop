@@ -11,9 +11,7 @@
     "tasksRunnerOptions": {
         "default": {
             "runner": "@nrwl/workspace/tasks-runners/default",
-            "options": {
-                "cacheableOperations": ["lint", "test", "e2e"]
-            }
+            "options": {}
         }
     },
     "targetDependencies": {
@@ -27,5 +25,16 @@
     "defaultProject": "agent-desktop",
     "affected": {
         "defaultBase": "master"
+    },
+    "targetDefaults": {
+        "lint": {
+            "cache": true
+        },
+        "test": {
+            "cache": true
+        },
+        "e2e": {
+            "cache": true
+        }
     }
 }

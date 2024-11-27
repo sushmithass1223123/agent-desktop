@@ -6,7 +6,7 @@ import { ResData } from 'app/interfaces';
 import { interval, Subscription } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { TwGamification } from '@ad/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 /**
  * Agent dashboard gamification widget
  */

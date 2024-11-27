@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { SDKClient } from '@tmac/sdk';
 import { EmailService } from '../email.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { EMAIL_SEND_STATUS } from 'app/constants';
 @Component({
     selector: 'app-mailbox-settings',

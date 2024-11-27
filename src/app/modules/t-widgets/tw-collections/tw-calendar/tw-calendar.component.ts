@@ -15,7 +15,7 @@ import { Subject } from 'rxjs';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
 import { CalendarEventModel } from './calendar.model';
 import { CalendarEventFormDialogComponent } from './event-form/event-form.component';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Calendar component

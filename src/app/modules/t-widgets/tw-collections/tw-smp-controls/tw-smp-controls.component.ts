@@ -21,7 +21,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';

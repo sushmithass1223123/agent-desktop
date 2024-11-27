@@ -32,7 +32,7 @@ import { EmailModule } from './components/email/email.module';
 import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
 import { CustomDatePipe } from './pipes';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../transloco-root.module';
 
 Chart.defaults.global.responsive = true;

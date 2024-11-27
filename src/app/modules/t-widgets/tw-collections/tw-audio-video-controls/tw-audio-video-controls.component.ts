@@ -39,7 +39,7 @@ import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, take, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { SharedService } from '@services/shared.service';
 
 /**

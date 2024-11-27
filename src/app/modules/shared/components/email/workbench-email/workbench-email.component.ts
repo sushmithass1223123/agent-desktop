@@ -31,7 +31,7 @@ import { groupBy, isEqual, merge, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { EmailService, initEmailSearchState } from '../email.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Type of the mail node

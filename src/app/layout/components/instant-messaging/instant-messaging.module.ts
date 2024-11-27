@@ -12,7 +12,7 @@ import { FuseSharedModule } from '@fuse/shared.module';
 import { InstantMessagingComponent } from './instant-messaging.component';
 import { InstantMessagingService } from './instant-messaging.service';
 import { SharedModule } from '@modules/shared/shared.module';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 
 

@@ -51,7 +51,7 @@ import { format, parse } from 'date-fns';
 import { merge, sortBy } from 'lodash';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { UIActionEventService } from '@services/ui-action-event.service';
 import { AppDataService } from '@services/app-data.service';
 import { SharedService } from '@services/shared.service';

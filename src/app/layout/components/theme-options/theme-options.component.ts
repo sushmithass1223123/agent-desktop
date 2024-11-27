@@ -8,7 +8,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { getFuseConfigByTheme } from 'app/utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { AppRootConfig } from '@ad/types';
 
