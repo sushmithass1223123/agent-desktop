@@ -20,7 +20,6 @@
   },
   "nxJsonPlugins": [],
   "fileMap": {
-    "projectFileMap": {},
     "nonProjectFiles": [
       {
         "file": ".browserslistrc",
@@ -500,7 +499,7 @@
       },
       {
         "file": "package.json",
-        "hash": "13556616128157902425"
+        "hash": "13793535444793852996"
       },
       {
         "file": "scripts/pre-build.js",
@@ -4022,6 +4021,7 @@
         "file": "widgets/widgets.md",
         "hash": "7743661849594598915"
       }
-    ]
+    ],
+    "projectFileMap": {}
   }
 }

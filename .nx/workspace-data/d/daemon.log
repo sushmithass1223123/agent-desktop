@@ -9,3 +9,220 @@
 [NX Daemon Server] - 2024-11-27T12:26:13.677Z - [WATCHER]: Stopping the watcher for E:\agent-desktop (sources)
 [NX Daemon Server] - 2024-11-27T12:26:13.678Z - Closed a connection. Number of open connections: 0
 [NX Daemon Server] - 2024-11-27T12:26:13.705Z - [WATCHER]: Stopping the watcher for E:\agent-desktop (outputs)
+[NX Daemon Server] - 2024-11-28T03:18:39.833Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-28T03:18:39.855Z - [WATCHER]: Subscribed to changes within: e:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-28T03:18:39.891Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T03:18:39.893Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-11-28T03:18:39.895Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T03:18:39.898Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T03:18:40.799Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-28T03:18:40.799Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T03:18:40.799Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T03:18:40.809Z - Time taken for 'loadNxPlugins' 895.7126000000003ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-28T03:18:40.861Z - Time taken for 'build-project-configs' 7.4944000000000415ms
+[NX Daemon Server] - 2024-11-28T03:18:40.869Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-28T03:18:40.870Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T03:18:40.870Z - Time taken for 'total for creating and serializing project graph' 971.8107ms
+[NX Daemon Server] - 2024-11-28T03:18:40.871Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T03:18:40.871Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 972. Response time: 1.
+[NX Daemon Server] - 2024-11-28T03:18:40.876Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T03:18:40.876Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T03:18:40.877Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 3. Response time: 1.
+[NX Daemon Server] - 2024-11-28T03:18:40.888Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T06:18:42.298Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (sources)
+[NX Daemon Server] - 2024-11-28T06:18:42.299Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (outputs)
+[NX Daemon Server] - 2024-11-28T06:18:42.304Z - Server stopped because: "10800000ms of inactivity"
+[NX Daemon Server] - 2024-11-28T08:35:03.670Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-28T08:35:03.691Z - [WATCHER]: Subscribed to changes within: e:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-28T08:35:03.707Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:35:03.712Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:35:03.712Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:35:03.717Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T08:35:05.034Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-28T08:35:05.034Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T08:35:05.034Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T08:35:05.046Z - Time taken for 'loadNxPlugins' 1310.0884ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-28T08:35:05.085Z - Time taken for 'build-project-configs' 10.095600000000104ms
+[NX Daemon Server] - 2024-11-28T08:35:05.092Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-28T08:35:05.093Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T08:35:05.094Z - Time taken for 'total for creating and serializing project graph' 1376.8121999999998ms
+[NX Daemon Server] - 2024-11-28T08:35:05.094Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T08:35:05.094Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1377. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:35:05.101Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:35:05.102Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:35:05.102Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 4. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:35:05.113Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:42:55.075Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:42:55.110Z - [WATCHER]: package.json was modified
+[NX Daemon Server] - 2024-11-28T08:42:55.510Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-28T08:42:55.510Z - [REQUEST]: package.json
+[NX Daemon Server] - 2024-11-28T08:42:55.510Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T08:42:55.585Z - Time taken for 'hash changed files from watcher' 211.00740000000224ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-28T08:42:55.608Z - Time taken for 'build-project-configs' 8.340099999972153ms
+[NX Daemon Server] - 2024-11-28T08:42:55.622Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-28T08:42:55.623Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX Daemon Server] - 2024-11-28T08:42:55.623Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX Daemon Server] - 2024-11-28T08:42:55.623Z - Time taken for 'total execution time for createProjectGraph()' 13.125399999960791ms
+[NX Daemon Server] - 2024-11-28T08:42:56.501Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:42:56.502Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:42:56.503Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:42:56.507Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T08:42:56.508Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T08:42:56.509Z - Time taken for 'total for creating and serializing project graph' 1.0843999999924563ms
+[NX Daemon Server] - 2024-11-28T08:42:56.510Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T08:42:56.510Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1. Response time: 2.
+[NX Daemon Server] - 2024-11-28T08:42:56.518Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:42:56.520Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:42:56.520Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 6. Response time: 2.
+[NX Daemon Server] - 2024-11-28T08:42:56.524Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:43:02.164Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:43:02.967Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:49:49.092Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:49:49.093Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (sources)
+[NX Daemon Server] - 2024-11-28T08:49:49.094Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (outputs)
+[NX Daemon Server] - 2024-11-28T08:49:49.095Z - Server stopped because: "LOCK_FILES_CHANGED"
+[NX Daemon Server] - 2024-11-28T08:49:50.814Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-28T08:49:50.821Z - [WATCHER]: Subscribed to changes within: e:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-28T08:49:50.856Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:49:50.862Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:49:50.864Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:49:50.868Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T08:49:51.545Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:49:51.949Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-28T08:49:51.949Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T08:49:51.949Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T08:49:51.963Z - Time taken for 'loadNxPlugins' 1072.5838ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-28T08:49:52.055Z - Time taken for 'build-project-configs' 12.669399999999996ms
+[NX Daemon Server] - 2024-11-28T08:49:52.066Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-28T08:49:52.067Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T08:49:52.068Z - Time taken for 'total for creating and serializing project graph' 1198.9942ms
+[NX Daemon Server] - 2024-11-28T08:49:52.068Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T08:49:52.068Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1199. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:49:52.086Z - [REQUEST]: Responding to the client with an error. Daemon outdated LOCK_FILES_CHANGED
+Error: LOCK_FILES_CHANGED
+    at handleMessage (e:\agent-desktop\node_modules\nx\src\daemon\server\server.js:92:88)
+    at e:\agent-desktop\node_modules\nx\src\daemon\server\server.js:72:15
+    at Socket.<anonymous> (e:\agent-desktop\node_modules\nx\src\utils\consume-messages-from-socket.js:13:17)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+[NX Daemon Server] - 2024-11-28T08:49:52.088Z - Done responding to the client null
+[NX Daemon Server] - 2024-11-28T08:49:52.093Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:49:52.094Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:49:52.094Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 5. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:49:53.457Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T08:49:53.459Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T08:49:53.459Z - Time taken for 'total for creating and serializing project graph' 1.6325999999999112ms
+[NX Daemon Server] - 2024-11-28T08:49:53.460Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T08:49:53.460Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 2. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:49:53.471Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:49:53.472Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:49:53.472Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 7. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:49:53.478Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:52:55.075Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:52:55.079Z - [WATCHER]: package.json was modified
+[NX Daemon Server] - 2024-11-28T08:52:55.200Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-28T08:52:55.200Z - [REQUEST]: package.json
+[NX Daemon Server] - 2024-11-28T08:52:55.200Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T08:52:55.225Z - Time taken for 'hash changed files from watcher' 7.7043999999878ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-28T08:52:55.263Z - Time taken for 'build-project-configs' 7.543199999985518ms
+[NX Daemon Server] - 2024-11-28T08:52:55.271Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-28T08:52:55.272Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX Daemon Server] - 2024-11-28T08:52:55.273Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX Daemon Server] - 2024-11-28T08:52:55.273Z - Time taken for 'total execution time for createProjectGraph()' 18.745900000008987ms
+[NX Daemon Server] - 2024-11-28T08:52:56.148Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:52:56.149Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:52:56.149Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T08:52:56.153Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T08:52:56.154Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T08:52:56.154Z - Time taken for 'total for creating and serializing project graph' 0.6698000000033062ms
+[NX Daemon Server] - 2024-11-28T08:52:56.154Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T08:52:56.155Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 1. Response time: 1.
+[NX Daemon Server] - 2024-11-28T08:52:56.162Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:52:56.164Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T08:52:56.164Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 4. Response time: 2.
+[NX Daemon Server] - 2024-11-28T08:52:56.169Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T08:52:58.374Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T08:58:00.154Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (sources)
+[NX Daemon Server] - 2024-11-28T08:58:00.155Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (outputs)
+[NX Daemon Server] - 2024-11-28T08:58:00.163Z - Server stopped because: "LOCK_FILES_CHANGED"
+[NX Daemon Server] - 2024-11-28T09:03:40.435Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-28T09:03:40.482Z - [WATCHER]: Subscribed to changes within: e:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-28T09:03:40.502Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T09:03:40.504Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-11-28T09:03:40.511Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T09:03:40.515Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-11-28T09:03:40.518Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-11-28T09:03:40.519Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 4.
+[NX Daemon Server] - 2024-11-28T09:03:40.519Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T09:03:40.520Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (sources)
+[NX Daemon Server] - 2024-11-28T09:03:40.521Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (outputs)
+[NX Daemon Server] - 2024-11-28T09:04:17.253Z - Started listening on: \\.\pipe\nx\C:\Users\HP\AppData\Local\Temp\0f6b52edcc71c3e295ee\d.sock
+[NX Daemon Server] - 2024-11-28T09:04:17.261Z - [WATCHER]: Subscribed to changes within: e:\agent-desktop (native)
+[NX Daemon Server] - 2024-11-28T09:04:17.309Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T09:04:17.311Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-11-28T09:04:17.314Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T09:04:17.320Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-11-28T09:04:18.213Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-11-28T09:04:18.213Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T09:04:18.213Z - [REQUEST]: 
+[NX Daemon Server] - 2024-11-28T09:04:18.223Z - Time taken for 'loadNxPlugins' 885.1232ms
+
+ NX   Using `implicitDependencies` for global implicit dependencies configuration is no longer supported.
+
+Use "namedInputs" instead. You can run "nx repair" to automatically migrate your configuration.
+For more information about the usage of "namedInputs" see https://nx.dev/deprecated/global-implicit-dependencies#global-implicit-dependencies
+
+[NX Daemon Server] - 2024-11-28T09:04:18.263Z - Time taken for 'build-project-configs' 9.531100000000151ms
+[NX Daemon Server] - 2024-11-28T09:04:18.278Z - [SYNC]: collect registered sync generators
+[NX Daemon Server] - 2024-11-28T09:04:18.280Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-11-28T09:04:18.280Z - Time taken for 'total for creating and serializing project graph' 959.3996999999999ms
+[NX Daemon Server] - 2024-11-28T09:04:18.281Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-11-28T09:04:18.281Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 960. Response time: 2.
+[NX Daemon Server] - 2024-11-28T09:04:18.294Z - [REQUEST]: Responding to the client. handleContextFileData
+[NX Daemon Server] - 2024-11-28T09:04:18.295Z - Done responding to the client handleContextFileData
+[NX Daemon Server] - 2024-11-28T09:04:18.295Z - Handled GET_CONTEXT_FILE_DATA. Handling time: 7. Response time: 1.
+[NX Daemon Server] - 2024-11-28T09:04:18.312Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T09:05:23.036Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-11-28T09:14:24.498Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T09:14:24.499Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T09:14:24.501Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-11-28T09:14:24.522Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-11-28T09:14:24.522Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-11-28T09:14:24.522Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 0.
+[NX Daemon Server] - 2024-11-28T09:14:24.523Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (sources)
+[NX Daemon Server] - 2024-11-28T09:14:24.523Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-11-28T09:14:24.524Z - [WATCHER]: Stopping the watcher for e:\agent-desktop (outputs)
+[NX Daemon Server] - 2024-11-28T09:14:24.531Z - Server stopped because: "Request to shutdown"
