@@ -2665,6 +2665,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 user: this.customerName
             });
+
+            // update the customer name in this.chatTranscripts and ui
+            this.chatTranscripts.filter((c) => c.isAgent === false).map((item, index) => {
+                item.who = this.customerName;
+            });
+
         }
     }
 
