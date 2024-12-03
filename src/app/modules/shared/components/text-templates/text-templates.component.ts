@@ -5,7 +5,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { sortBy } from 'lodash';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { TwDeflectToDigital } from '@ad/types';
 
 /**

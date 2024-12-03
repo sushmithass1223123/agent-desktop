@@ -57,7 +57,7 @@ import { TwWallboardComponent } from './tw-wallboard/tw-wallboard.component';
 import { TwWorkCodesComponent } from './tw-work-codes/tw-work-codes.component';
 import { TwWorkbenchPanelModule } from './tw-workbench-panel/tw-workbench-panel.module';
 
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 /**
  * Collections components

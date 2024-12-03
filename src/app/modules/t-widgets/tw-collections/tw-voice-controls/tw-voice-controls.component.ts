@@ -50,7 +50,7 @@ import { Subject, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControlsService } from './tw-voice-controls.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Voice Controls Component

@@ -15,7 +15,7 @@ import { AUX_STATUSES } from 'app/constants';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * MainComponent

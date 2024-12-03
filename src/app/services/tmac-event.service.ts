@@ -35,7 +35,7 @@ import { AOTWidgetService } from './aot-widget.service';
 import { AppDataService } from './app-data.service';
 import { AppUiService } from './app-ui.service';
 import { SharedService } from './shared.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AgentFeaturesService } from './agent-features.service';
 
 /**

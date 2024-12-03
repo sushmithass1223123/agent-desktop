@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TwToolbarModule } from '@modules/t-widgets/tw-toolbar/tw-toolbar.module';
 import { ToolbarComponent } from 'app/layout/components/toolbar/toolbar.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 @NgModule({
     declarations: [ToolbarComponent],

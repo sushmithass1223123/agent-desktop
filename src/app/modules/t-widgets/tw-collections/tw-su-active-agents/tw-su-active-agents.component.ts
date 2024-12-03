@@ -27,7 +27,7 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil,take} from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { from } from 'rxjs';
 import { groupBy, mergeMap, toArray } from 'rxjs/operators';
 import { SharedService } from '@services/shared.service';

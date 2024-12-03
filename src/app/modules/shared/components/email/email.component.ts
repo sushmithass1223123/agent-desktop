@@ -20,7 +20,7 @@ import {
 import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { UIActionEvent, UIActionEventService } from '@services/ui-action-event.service';
 
 @Component({

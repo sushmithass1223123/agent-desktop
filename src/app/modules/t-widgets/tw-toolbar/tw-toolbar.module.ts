@@ -12,7 +12,7 @@ import { TwInstantMessagingComponent } from './tw-instant-messaging/tw-instant-m
 import { TwLogoutComponent } from './tw-logout/tw-logout.component';
 import { TwNotificationsComponent } from './tw-notifications/tw-notifications.component';
 import { TwToolbarMenuComponent } from './tw-toolbar-menu/tw-toolbar-menu.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 /**
  * Toolbar compoents

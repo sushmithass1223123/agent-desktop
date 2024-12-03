@@ -8,22 +8,20 @@ import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { CoreModule } from '@modules/core/core.module';
 import { SharedModule } from '@modules/shared/shared.module';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { AppComponent } from 'app/app.component';
 import { fuseConfig } from 'app/constants';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { TranslocoRootModule } from './transloco-root.module';
-/**
- * App module
- */
+
 @NgModule({
     declarations: [AppComponent],
     providers: [
-       {
-           provide: TRANSLOCO_SCOPE,
-           useValue: ''
-       } 
+        {
+            provide: TRANSLOCO_SCOPE,
+            useValue: '',
+        },
     ],
     imports: [
         BrowserModule,
@@ -41,8 +39,8 @@ import { TranslocoRootModule } from './transloco-root.module';
         CoreModule,
         SharedModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-        TranslocoRootModule
+        TranslocoRootModule,
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -10,7 +10,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { FuseConfig } from '@fuse/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { setStringVars } from '@tmac/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseFacadeService } from '@services/fuse-facade.service';

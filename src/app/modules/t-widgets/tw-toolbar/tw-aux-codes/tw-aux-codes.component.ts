@@ -1,7 +1,7 @@
 import { TwAuxCode } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, SDKClient } from '@tmac/sdk';

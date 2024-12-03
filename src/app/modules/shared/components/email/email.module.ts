@@ -11,7 +11,7 @@ import { EmailTemplateSelectorComponent } from './template-selector/email-templa
 import { EmailEditorModule } from './tinymce-email.module';
 import { WorkbenchEmailComponent } from './workbench-email/workbench-email.component';
 
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../../transloco-root.module';
 const shared = [EmailComponent, EmailTemplateSelectorComponent, SkeletonComponent, MailboxSettingsComponent, WorkbenchEmailComponent];
 

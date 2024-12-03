@@ -8,7 +8,7 @@ import { IResponse, IUIEvent, SDKClient } from '@tmac/sdk';
 import { getValueFromEvent } from 'app/utils';
 import { sortBy } from 'lodash';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 
 /**

@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core';
 import { TranslocoRootModule } from 'app/transloco-root.module';
 import { MaterialModule } from '@modules/shared/material.module';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { SMPPipe } from './pipes/smp.pipe';

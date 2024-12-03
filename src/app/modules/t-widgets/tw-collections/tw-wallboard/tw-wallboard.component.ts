@@ -8,7 +8,7 @@ import { DashboardColorCodeModel, SDKClient, WallboardRefreshEvent } from '@tmac
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomTMACEventTypes } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 /**
  * Wallboard componet
  * To check the skill etc of agents
