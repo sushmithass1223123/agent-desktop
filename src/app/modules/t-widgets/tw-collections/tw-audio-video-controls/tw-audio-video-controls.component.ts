@@ -812,7 +812,7 @@ if (error === 'Screenshare Was Cancelled') {
                         });
                     } else {
                         // todo: this change to be handled at TMAC SDK side, look for on user left
-                        if(this.interactionDetails.ConferenceType === 'transfer') return;
+                        // if(this.interactionDetails.ConferenceType === 'transfer') return;
                         // other agent connected
                     }
                     // add the level
