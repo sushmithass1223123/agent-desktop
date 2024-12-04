@@ -481,7 +481,9 @@ export class AppUiService extends SharedWrapper {
         // check whether to show an alert
         if (notification.showAlert) {
             let message = '';
-            if (!notification.icon.includes('sm')) {
+            if(notification.icon.includes('external_av_widget_creds')) {
+                message = `External AV Widget Credentials Saved!`
+            } else if (!notification.icon.includes('sm')) {
                 message = notification.message;
             } else {
                 if (notification.icon.includes('smrc')) {

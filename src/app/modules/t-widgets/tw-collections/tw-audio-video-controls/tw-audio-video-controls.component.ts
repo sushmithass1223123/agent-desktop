@@ -568,7 +568,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // start call
         if (
-            (this.interactionDetails.ConferenceType === 'conf' || forceJoin) &&
+            (this.interactionDetails.ConferenceType.includes('conf') || forceJoin) &&
             (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall || this.interactionDetails.Direction === 'in')
         ) {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
@@ -1111,7 +1111,7 @@ if (error === 'Screenshare Was Cancelled') {
             // forward the av messages to av channel
             this.avConn?.onMessage(
                 evt.Type === 'addscreenshare'
-                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType.includes('conf') })
                     : evt.Message
             );
         } catch (e) {

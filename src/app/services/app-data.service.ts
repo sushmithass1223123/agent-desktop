@@ -49,7 +49,7 @@ export class AppDataService extends SharedWrapper {
 
    appLabelError;
 
-
+   private externalAVWidgetOTP: string | number;
 
     constructor(
         @Inject(DOCUMENT) private document: any,
@@ -63,6 +63,46 @@ export class AppDataService extends SharedWrapper {
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object()) as BehaviorSubject<AppRootConfig>;
         this._appVersion = packageInfo.version;
+    }
+
+    set setExternalAVWidgetOTP(otp: string | number) {
+        this.externalAVWidgetOTP = otp;
+    }
+
+    get getExternalAVWidgetOTP(): string | number {
+        return this.externalAVWidgetOTP;
+    }
+
+    /**
+     * Method to get specific widget data
+     * @param obj Full configuration
+     * @param targetType Target widget type
+     * @returns Requested widget data
+     */
+    public findWidgetDataByType(obj: any, targetType: any): any {
+        try {
+            if (!obj) return null;
+
+            if (Array.isArray(obj)) {
+                for (const item of obj) {
+                    const result = this.findWidgetDataByType(item, targetType);
+                    if (result) return result;
+                }
+            } else if (typeof obj === 'object') {
+                if (obj.Type === targetType) {
+                    return obj.Data;
+                }
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const result = this.findWidgetDataByType(obj[key], targetType);
+                        if (result) return result;
+                    }
+                }
+            }
+            return null;
+        } catch (ex) {
+            console.error(ex);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
