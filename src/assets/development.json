@@ -1600,6 +1600,10 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "ExternalAVWidget": {
+                                                        "Enabled": true,
+                                                        "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
+                                                    },
                                                     "IsPhoneAudio": false,
                                                     "Transfer": {
                                                         "Allowed": true,
@@ -1742,9 +1746,9 @@
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
                                                         "AgentAudio": true,
-                                                        "AgentVideo":  true,
-                                                        "CustomerAudio":  true,
-                                                        "CustomerVideo":  true
+                                                        "AgentVideo": true,
+                                                        "CustomerAudio": true,
+                                                        "CustomerVideo": true
                                                     },
                                                     "ToggleUserViewAllowed": true,
                                                     "MuteVideoOnInitiateCall": true,
@@ -2557,7 +2561,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                   "Transfer": {
+                                                    "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,

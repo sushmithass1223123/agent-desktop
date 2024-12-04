@@ -1,4 +1,4 @@
-import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
+import { AgentSkillListData, AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -504,6 +504,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Video call request
          */
         reqVideoCall: boolean;
+        /**
+        * Config to load AV related functionalities in the new external widget
+        */
+        externalAvWidget: boolean;
     };
     /**
      * Connected event ref
@@ -946,6 +950,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private checkAgentFeatures(): void {
         // Check the features at application level (it will be overriden if agent features are available from backend)
         this.agentFeatures = {
+            externalAvWidget:
+                this.widgetData?.ExternalAVWidget?.Enabled && Boolean(this._appDataService.getExternalAVWidgetOTP),
             audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
             videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
             signature: this.widgetData.SignatureAllowed ?? false,
@@ -1029,6 +1035,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     break;
                 case AGENT_FEATURES.IsToggleChatUserViewEnabled:
                     this.agentFeatures.toggleUserView = f.IsEnabled;
+                    break;
+                case AGENT_FEATURES.IsExternalAVWidgetEnabled:
+                    this.agentFeatures.externalAvWidget =
+                        f.IsEnabled && Boolean(this._appDataService.getExternalAVWidgetOTP);
                     break;
                 default:
             }
@@ -2028,7 +2038,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // to not open video dialog when interaction is over
-        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone) || (this.conferenceType === 'conf' && avCallConstraints?.isAgentOnActiveCall)) {
+        if (
+            (!this.agentFeatures.externalAvWidget &&
+                !evt.RecoveryEvent &&
+                this.mediaChannels.includes(this.chatMode)) ||
+            (this.conferenceType === 'transfer' &&
+                avCallConstraints?.isAgentOnActiveCall &&
+                avCallConstraints?.isAgentOnPhone) ||
+            ((this.conferenceType.includes('conf')) &&
+                avCallConstraints?.isAgentOnActiveCall)
+        ) {
             this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
@@ -2114,7 +2133,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // assign the tmac server
             tmacServer = extraParam.serverName;
             // show an alert on connect
-            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
+            if (extraParam.conferenceType.includes('conf') || extraParam.conferenceType === 'whisper') {
                 const dynamicLabels = [
                     {
                         key: "#agentName",
@@ -2790,7 +2809,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // show an alert for non silent agent
-        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
+        if (evt.ConferenceType === '' || evt.ConferenceType.includes('conf') || evt.ConferenceType === 'whisper') {
             const dynamicLabels = [
                 {
                     key: '#agentName',
