@@ -2551,7 +2551,7 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
-                                                   "Transfer": {
+                                                    "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
                                                             "Allowed": true,
@@ -3612,5 +3612,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.8.3"
+    "Version": "5.8.4"
 }
