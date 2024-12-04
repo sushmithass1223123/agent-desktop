@@ -817,7 +817,7 @@ if (error === 'Screenshare Was Cancelled') {
                         });
                     } else {
                         // todo: this change to be handled at TMAC SDK side, look for on user left
-                        if(this.interactionDetails.ConferenceType === 'transfer') return;
+                        // if(this.interactionDetails.ConferenceType === 'transfer') return;
                         // other agent connected
                     }
                     // add the level
@@ -963,7 +963,7 @@ if (error === 'Screenshare Was Cancelled') {
                             };
                             // restricted source agent getting added to transferred call
                             // todo: this change should be handled at TMAC SDK side
-                            if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
+                            // if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
                             this.userList.push(newStreamObj);
                         })
                     }
