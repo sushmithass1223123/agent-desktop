@@ -42,7 +42,13 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
     @Input() engagementFromNotification: any;
-    @Input() draftData: any;
+    @Input() draftData = {
+        attachments: [],
+        rawAttachmentData: [],
+        attachmentMimes: [],
+        mimeConstraints: '',
+        body: ''
+    };
     @Input() previousCommentFromNotification: SmComment[];
     @Input() enhanceCommentContainer: boolean = false;
     @Input() isActiveCommentEdited: boolean = false;
@@ -178,11 +184,13 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 ) {
                     this.draftData.attachments = this.postData.Files;
                     if (this.postData.Files.length) {
-                        this.draftData.rawAttachmentData = this.postData.Files[0].URL;
-                        this.draftData.mimeConstraints = this.getFileType(
-                            this.draftData.rawAttachmentData,
-                            this.draftData.attachments[0].Ext
-                        );
+                        this.draftData.rawAttachmentData = this.postData.Files.map((furl) => furl.URL);
+                        this.draftData.attachmentMimes = this.draftData.rawAttachmentData.map((ratd, i) => {
+                            return this.getFileType(
+                                ratd,
+                                this.draftData.attachments[i].Ext
+                            );
+                        })
                     }
                 }
                 if (this.postData.SmParentComments) {
@@ -403,7 +411,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
-                this.draftData.rawAttachmentData = Base64;
                 if (this.fileUploadUrl?.MediaUploader) {
                     const formData = new FormData();
                     formData.append('file', f);
@@ -483,19 +490,19 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
 
                 this.dataChanged.emit(this.interactionId);
 
-                this.draftData.attachments = [
-                    {
-                        Id: TUtils.Generic.uuid(),
-                        SessionID: this.sessionId,
-                        Direction: 'OUT',
-                        Icon: maticonByExtension(ext),
-                        Ext: f.type,
-                        Name: resVal.Name,
-                        Source: resVal.Source,
-                        URL: resVal.URL,
-                        IsUploaded: true
-                    }
-                ];
+                this.draftData.attachments.push({
+                    Id: TUtils.Generic.uuid(),
+                    SessionID: this.sessionId,
+                    Direction: 'OUT',
+                    Icon: maticonByExtension(ext),
+                    Ext: f.type,
+                    Name: resVal.Name,
+                    Source: resVal.Source,
+                    URL: resVal.URL,
+                    IsUploaded: true
+                });
+                this.draftData.rawAttachmentData.push(Base64);
+                this.draftData.attachmentMimes.push(f.type);
                 setTimeout(() => {
                     ref?.dismiss();
                 }, 3000);
@@ -552,7 +559,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     /**
      * Method to clear attachments
      */
-    async onClearAttachment() {
+    async onClearAttachment(index: number) {
         try {
             const confirmDialogRef = this._appUiService.showAppConfirmDialog(
                 'generic',
@@ -567,8 +574,9 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 .toPromise();
             if (dialogResult) {
                 this.draftData.mimeConstraints = '';
-                this.draftData.rawAttachmentData = '';
-                this.draftData.attachments = [];
+                this.draftData.rawAttachmentData.splice(index, 1);
+                this.draftData.attachmentMimes.splice(index, 1);
+                this.draftData.attachments.splice(index, 1);
                 this.dataChanged.emit(this.interactionId);
             }
         } catch (e) {
