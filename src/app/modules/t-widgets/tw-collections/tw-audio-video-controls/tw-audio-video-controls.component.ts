@@ -603,11 +603,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
 
         this.muteAVOnHold = {
-            enabled:
-                widgetData.MuteAVOnHold?.AgentAudio ||
-                widgetData.MuteAVOnHold?.AgentVideo ||
-                widgetData.MuteAVOnHold?.CustomerAudio ||
-                widgetData.MuteAVOnHold?.CustomerVideo,
+            enabled: widgetData.MuteAVOnHold?.enabled,
             agentAudio: widgetData.MuteAVOnHold?.AgentAudio,
             agentVideo: widgetData.MuteAVOnHold?.AgentVideo,
             customerAudio: widgetData.MuteAVOnHold?.CustomerAudio,

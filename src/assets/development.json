@@ -1745,6 +1745,7 @@
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
+                                                        "enabled": true,
                                                         "AgentAudio": true,
                                                         "AgentVideo": true,
                                                         "CustomerAudio": true,
