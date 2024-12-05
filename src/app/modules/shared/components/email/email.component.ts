@@ -7,7 +7,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
-import { SDKClient, TUtils } from '@tmac/sdk';
+import { IAgentData, SDKClient, TUtils } from '@tmac/sdk';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -380,8 +380,13 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     async restoreFromArchive(file: any): Promise<void> {
         try {
             if (file && file.FileId) {
+                const agent: IAgentData = SDKClient.getAgentData();
                 const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerSingleResponse<any>>({
                     urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
+                    requestArgs: {
+                        agentId: agent.agentId,
+                        tmacServer: agent.tmacServer
+                    },
                     method: 'PUT',
                     responseType: 'json'
                 });
