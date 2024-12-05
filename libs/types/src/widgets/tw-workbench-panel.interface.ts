@@ -145,10 +145,6 @@ export type TwSmpWorkbenchConfig = {
     /**
      * Flag to enable/disable post details button
      */
-    MaximumAllowedPostImageRendering: number;
-    /**
-     * Flag to enable/disable post details button
-     */
     ShowPostDetails: boolean;
 };
 

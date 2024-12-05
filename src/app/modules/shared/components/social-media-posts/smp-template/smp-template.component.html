@@ -670,18 +670,36 @@
                                 >
                                 <mat-icon
                                     [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
+                                    [ngStyle]="{
+                                        pointerEvents:
+                                            postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                ? 'none'
+                                                : 'all'
+                                    }"
                                     (click)="onAttach('image/gif')"
                                     role="button"
                                     >gif</mat-icon
                                 >
                                 <mat-icon
                                     [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
+                                    [ngStyle]="{
+                                        pointerEvents:
+                                            postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                ? 'none'
+                                                : 'all'
+                                    }"
                                     (click)="onAttach('image/*')"
                                     role="button"
                                     >camera_alt</mat-icon
                                 >
                                 <mat-icon
                                     [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
+                                    [ngStyle]="{
+                                        pointerEvents:
+                                            postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                ? 'none'
+                                                : 'all'
+                                    }"
                                     (click)="onAttach('video/mp4')"
                                     role="button"
                                     >movie</mat-icon
@@ -914,18 +932,36 @@
                                     >
                                     <mat-icon
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
+                                        [ngStyle]="{
+                                            pointerEvents:
+                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                    ? 'none'
+                                                    : 'all'
+                                        }"
                                         (click)="onAttach('image/gif')"
                                         role="button"
                                         >gif</mat-icon
                                     >
                                     <mat-icon
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
+                                        [ngStyle]="{
+                                            pointerEvents:
+                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                    ? 'none'
+                                                    : 'all'
+                                        }"
                                         (click)="onAttach('image/*')"
                                         role="button"
                                         >camera_alt</mat-icon
                                     >
                                     <mat-icon
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
+                                        [ngStyle]="{
+                                            pointerEvents:
+                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                    ? 'none'
+                                                    : 'all'
+                                        }"
                                         (click)="onAttach('video/mp4')"
                                         role="button"
                                         >movie</mat-icon
