@@ -632,6 +632,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to decide whether to sanitize agent inputs or not
      */
     enableAgentMessageSanitization: boolean = false;
+    remoteTypingUserList: any = {};
+    remoteTypingTimer: any;
 
     /**
      * Constructor
@@ -2312,35 +2314,70 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
-    /**
+         /**
      * To process TextChatTypingStateChangedEvent
      *
      * @param evt TextChatTypingStateChangedEvent evt
      */
-    TextChatTypingStateChangedEvent(evt: TextChatTypingStateChangedEvent): void {
-        let user = 'User';
-        const status = evt.Status; // 0=start, 1=stop
-
-        if (evt.User === '0') {
-            // customer typing
-            user = this.customerName;
-        } else {
-            // other agent typing
-            const confAgent = this.conferenceAgentList.filter((c) => c.AgentId === evt.User)[0];
-            user = confAgent?.AgentName ?? 'User';
+         TextChatTypingStateChangedEvent(evt: TextChatTypingStateChangedEvent): void {
+            let user = 'User';
+            const status = evt.Status; // 0=start, 1=stop
+    
+            if (evt.User === '0') {
+                // customer typing
+                user = this.customerName;
+            } else {
+                // other agent typing
+                const confAgent = this.conferenceAgentList.filter((c) => c.AgentId === evt.User)[0];
+                user = confAgent?.AgentName ?? 'User';
+            }
+    
+            // in a conference scenario  check if any user stopped typing
+            // then verify if the same user is currently typing then only indicate as stop typing
+            // if (status === 1 && this.remoteTyping?.name !== user) {
+            //     return;
+            // }
+    
+      
+            // this.remoteTyping = {
+            //     name: user,
+            //     typing: status === 0
+            // };
+          
+            const START = 0, STOP = 1;
+    
+            //if typing started we set a timer for 5sec and auto stop
+            if(status == START) {
+            // if its there clear existing timer, create new timer
+            if(this.remoteTypingUserList && Object.keys(this.remoteTypingUserList).includes(user)) {
+                clearTimeout(this.remoteTypingUserList[user]);   
+            }
+            this.remoteTypingTimer = setTimeout(() => {
+                this.remoteTypingUserList[user] = 0;
+                clearTimeout(this.remoteTypingTimer[user]);  
+                this.remoteTyping = {
+                    name: user,
+                    typing: false
+                };       
+            }, 5000);
+            this.remoteTypingUserList[user] = this.remoteTypingTimer;              
+            this.remoteTyping = {
+                name: user,
+                typing: true
+            };             
+            } else if(status == STOP) {
+                if (Object.keys(this.remoteTypingUserList).includes(user)) {
+                    clearTimeout(this.remoteTypingTimer[user]);    
+                    this.remoteTypingUserList[user] = 0;
+                    this.remoteTyping = {
+                        name: user,
+                        typing: false
+                    };   
+                }
+            }
+    
         }
-
-        // in a conference scenario  check if any user stopped typing
-        // then verify if the same user is currently typing then only indicate as stop typing
-        if (status === 1 && this.remoteTyping?.name !== user) {
-            return;
-        }
-
-        this.remoteTyping = {
-            name: user,
-            typing: status === 0
-        };
-    }
+    
 
     /**
      * To process TextChatMessageReceivedEvent
