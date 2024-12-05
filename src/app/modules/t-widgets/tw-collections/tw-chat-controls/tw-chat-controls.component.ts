@@ -1054,6 +1054,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
+    onRemoteMessageDeleted(id: string): void {
+        try {
+            this.chatTranscripts = this.chatTranscripts?.filter((transcript) => transcript.messageId != id) ?? [];
+        } catch (ex) {
+            console.error(ex);
+            this.logger.error(
+                `[TwChatControls.onRemoteMessageDeleted] - Error occured while deleting a message from chat transcripts`,
+                ex
+            );
+        }
+    }
+
     /**
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
@@ -1071,6 +1083,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.IsAppMessage) {
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
+                case 'message_delete':
+                    {
+                        const dynamicLabels = [
+                            {
+                                key: '#customerName',
+                                value: this.customerName
+                            }
+                        ];
+                        const message = this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.customerMessageDeleteNotification'), dynamicLabels);
+                        this.onRemoteMessageDeleted(msg?.messageId ?? '')
+                        this._appUIService.showSnackbar(message, 'info');
+                    }
+                    break;
                 case 'clientreloaded':
                     // Check if the status is 'hold'
                     if (this.status === 'hold') {

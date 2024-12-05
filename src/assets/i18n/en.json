@@ -511,6 +511,7 @@
             "playbackNotSupportedMessage": "Playback no supported for the selected file!"
         },
         "chatControls": {
+            "customerMessageDeleteNotification": "#customerName has deleted a message!",
             "rotate": "Rotate",
             "answerChat": "Answer Chat",
             "freezeAutoResponse": "Freeze Auto Response",
