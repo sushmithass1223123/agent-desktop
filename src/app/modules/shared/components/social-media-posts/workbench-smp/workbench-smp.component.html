@@ -526,7 +526,7 @@
                         }">
                         <smp-template
                             *ngIf="!(openPostRes.loading || openPostRes.error) && state.openPostResData !== null"
-                            [isDraftMode]="currentTab === 'draft'" [engagementFromNotification]="
+                            [engagementFromNotification]="
                                 notificationAction === 'smrc_a' ? chosenPostData?.SocialMediaData?.Engagement : ''
                             " [previousCommentFromNotification]="
                                 notificationAction === 'smc_e' || notificationAction === 'smco_e'

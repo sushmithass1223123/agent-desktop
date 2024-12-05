@@ -2115,7 +2115,12 @@
                                                         }
                                                     },
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000
+                                                    "AsyncReplySendTimeout": 60000,
+                                                    "Attachments": {
+                                                        "MaximumAllowedCount": {
+                                                            "twitter": 3
+                                                        }
+                                                    }
                                                 }
                                             },
                                             {

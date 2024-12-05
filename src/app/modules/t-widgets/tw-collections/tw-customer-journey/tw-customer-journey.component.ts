@@ -840,14 +840,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             const setPostBody = async (resData: any, sid: any) => {
                 let modifiedAttachmentData: any[] = [];
                 if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                    modifiedAttachmentData = [
-                        {
+                    modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                        return {
                             IsCloud: true,
-                            Url: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                            Url: attdat?.MediaUrl,
                             IsUploaded: true,
-                            Ext: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
-                        }
-                    ];
+                            Ext: attdat?.MediaType
+                        };
+                    });
                 }
                 let tempAttachments = await this.requestAttachmentData(
                     modifiedAttachmentData.length ? modifiedAttachmentData : resData.Attachments
