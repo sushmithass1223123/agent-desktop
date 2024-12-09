@@ -337,7 +337,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateAudioCall)
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateAudioCall) || agentFeatures.externalAvWidget
                             "
                             mat-mini-fab
                             color="default"
@@ -351,7 +351,7 @@
                         <button
                             *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
                             [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateVideoCall)
+                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateVideoCall) || agentFeatures.externalAvWidget
                             "
                             mat-mini-fab
                             color="default"
@@ -366,7 +366,10 @@
                             *ngIf="
                                 !asyncChatRef.isAsync &&
                                 supervisorInit &&
-                                (conferenceType === 'silent' || conferenceType === 'whisper' || conferenceType === 'conf')
+                                (conferenceType === 'silent' ||
+                                    conferenceType === 'whisper' ||
+                                    conferenceType === 'conf' ||
+                                    conferenceType === 'conference')
                             "
                             [disabled]="status !== 'connected' || botConnected"
                             mat-mini-fab

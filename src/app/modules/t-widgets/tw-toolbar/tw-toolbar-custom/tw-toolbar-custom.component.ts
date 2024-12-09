@@ -272,7 +272,7 @@ export class TwToolbarCustomComponent extends TWidgetWrapper implements OnInit, 
                         source: 'tmac',
                         userObject
                     },
-                    '*'
+                    new URL(iframe['src']).origin
                 );
             }
         } catch (error) {

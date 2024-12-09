@@ -644,31 +644,20 @@
                             placeholder="Enter your reply here..."
                             (input)="dataChanged.emit(interactionId)"
                         ></textarea>
-                        <div class="attachment-box" *ngIf="draftData?.rawAttachmentData">
-                            <img
-                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
-                                (click)="previewMedia({ MediaType: 'image', MediaUrl: draftData?.rawAttachmentData })"
-                                [src]="draftData?.rawAttachmentData"
-                            />
-                            <video
-                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
-                                (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
-                                [src]="draftData?.rawAttachmentData"
-                                [controls]="false"
-                                [autoplay]="false"
-                            ></video>
-                            <mat-icon
-                                *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
-                                (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
-                                class="play-button theme-icon"
-                            >play_circle_filled</mat-icon>
-                            <div
-                                class="close-icon-holder"
-                                [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
-                                role="button"
-                                (click)="onClearAttachment()"
-                            >
-                                <mat-icon>close</mat-icon>
+                        <div class="attachment-box-flex">
+                            <div class="attachment-box" *ngFor="let rawAttachmentData of draftData.rawAttachmentData; let i = index;">
+                                <img *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['image']"
+                                    (click)="previewMedia({ MediaType: 'image', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData" />
+                                <video *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
+                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData"
+                                    [controls]="false" [autoplay]="false"></video>
+                                <mat-icon *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
+                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })"
+                                    class="play-button theme-icon">play_circle_filled</mat-icon>
+                                <div class="close-icon-holder" [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
+                                    role="button" (click)="onClearAttachment(i)">
+                                    <mat-icon>close</mat-icon>
+                                </div>
                             </div>
                         </div>
                         <div class="reply-actions twd-w-full twd-flex">
@@ -681,21 +670,36 @@
                                 >
                                 <mat-icon
                                     [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
-                                    [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                    [ngStyle]="{
+                                        pointerEvents:
+                                            postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                ? 'none'
+                                                : 'all'
+                                    }"
                                     (click)="onAttach('image/gif')"
                                     role="button"
                                     >gif</mat-icon
                                 >
                                 <mat-icon
                                     [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
-                                    [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                    [ngStyle]="{
+                                        pointerEvents:
+                                            postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                ? 'none'
+                                                : 'all'
+                                    }"
                                     (click)="onAttach('image/*')"
                                     role="button"
                                     >camera_alt</mat-icon
                                 >
                                 <mat-icon
                                     [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
-                                    [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                    [ngStyle]="{
+                                        pointerEvents:
+                                            postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                ? 'none'
+                                                : 'all'
+                                    }"
                                     (click)="onAttach('video/mp4')"
                                     role="button"
                                     >movie</mat-icon
@@ -902,35 +906,20 @@
                                 placeholder="Enter your reply here..."
                                 (input)="dataChanged.emit(interactionId)"
                             ></textarea>
-                            <div class="attachment-box" *ngIf="draftData?.rawAttachmentData">
-                                <img
-                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['image']"
-                                    (click)="
-                                        previewMedia({ MediaType: 'image', MediaUrl: draftData?.rawAttachmentData })
-                                    "
-                                    [src]="draftData?.rawAttachmentData"
-                                />
-                                <video
-                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
-                                    (click)="
-                                        previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })
-                                    "
-                                    [src]="draftData?.rawAttachmentData"
-                                    [controls]="false"
-                                    [autoplay]="false"
-                                ></video>
-                                <mat-icon
-                                    *ngIf="'includes' | MiscellaneousPipe: draftData?.mimeConstraints:['video']"
-                                    (click)="previewMedia({ MediaType: 'video', MediaUrl: draftData?.rawAttachmentData })"
-                                    class="play-button theme-icon"
-                                >play_circle_filled</mat-icon>
-                                <div
-                                    class="close-icon-holder"
-                                    [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
-                                    role="button"
-                                    (click)="onClearAttachment()"
-                                >
-                                    <mat-icon>close</mat-icon>
+                            <div class="attachment-box-flex">
+                                <div class="attachment-box" *ngFor="let rawAttachmentData of draftData.rawAttachmentData; let i = index;">
+                                    <img *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['image']"
+                                        (click)="previewMedia({ MediaType: 'image', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData" />
+                                    <video *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
+                                        (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })" [src]="rawAttachmentData"
+                                        [controls]="false" [autoplay]="false"></video>
+                                    <mat-icon *ngIf="'includes' | MiscellaneousPipe: draftData?.attachmentMimes[i]:['video']"
+                                        (click)="previewMedia({ MediaType: 'video', MediaUrl: rawAttachmentData })"
+                                        class="play-button theme-icon">play_circle_filled</mat-icon>
+                                    <div class="close-icon-holder" [matTooltip]="locale('widgets.smpControls.tooltips.clearAttachment')"
+                                        role="button" (click)="onClearAttachment(i)">
+                                        <mat-icon>close</mat-icon>
+                                    </div>
                                 </div>
                             </div>
                             <div class="reply-actions twd-w-full twd-flex">
@@ -943,21 +932,36 @@
                                     >
                                     <mat-icon
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachGif')"
-                                        [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                        [ngStyle]="{
+                                            pointerEvents:
+                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                    ? 'none'
+                                                    : 'all'
+                                        }"
                                         (click)="onAttach('image/gif')"
                                         role="button"
                                         >gif</mat-icon
                                     >
                                     <mat-icon
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachImage')"
-                                        [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                        [ngStyle]="{
+                                            pointerEvents:
+                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                    ? 'none'
+                                                    : 'all'
+                                        }"
                                         (click)="onAttach('image/*')"
                                         role="button"
                                         >camera_alt</mat-icon
                                     >
                                     <mat-icon
                                         [matTooltip]="locale('widgets.smpControls.tooltips.attachVideo')"
-                                        [ngStyle]="{ pointerEvents: draftData?.attachments?.length ? 'none' : 'all' }"
+                                        [ngStyle]="{
+                                            pointerEvents:
+                                                postData?.SubChannel?.toLowerCase() != 'x' && draftData?.attachments?.length
+                                                    ? 'none'
+                                                    : 'all'
+                                        }"
                                         (click)="onAttach('video/mp4')"
                                         role="button"
                                         >movie</mat-icon
@@ -1060,6 +1064,6 @@
     #fileInput
     style="display: none"
     [accept]="draftData?.mimeConstraints"
-    [multiple]="false"
+    [multiple]="postData?.SubChannel?.toLowerCase() == 'x'"
     (change)="onFileSelected($event)"
 />

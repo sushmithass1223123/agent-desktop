@@ -1,5 +1,5 @@
-<ng-container *transloco="let locale">
-    <ng-container *ngIf="data?.message?.type !== 'gallery'">
+<ng-container *transloco="let locale" [ngSwitch]="data?.message?.type">
+    <ng-container *ngSwitchDefault>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <h1 matDialogTitle class="mb-8">
                 {{
@@ -67,7 +67,58 @@
             </button>
         </div>
     </ng-container>
-    <ng-container *ngIf="data?.message.type === 'gallery'">
+    <ng-container *ngSwitchCase="'html'">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <h1 matDialogTitle class="mb-8">
+                {{
+                    data.title ||
+                        (data.type === 'alert'
+                            ? locale('sharedComponents.customDialog.alert')
+                            : locale('sharedComponents.customDialog.confirm'))
+                }}
+            </h1>
+            <button
+                *ngIf="data.closeIcon"
+                mat-icon-button
+                color="accent"
+                (click)="data.confirmClose ? confirmClose() : data.cancel()"
+            >
+                <mat-icon class="twd-text-lg"> close </mat-icon>
+            </button>
+        </div>
+
+        <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
+            <div
+                class="html-div"
+                [ngClass]="data.messageClasses || ''"
+                [innerHTML]="data.message.message"
+            ></div>
+        </div>
+
+        <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
+            <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
+                {{ data.noMessage ? data.noMessage : locale('sharedComponents.customDialog.cancel') }}
+            </button>
+            <button
+                mat-raised-button
+                [disabled]="data.type === 'prompt' && promptData.trim() === ''"
+                color="primary"
+                (click)="data.done(data.type === 'prompt' ? promptData : true)"
+                tabindex="-1"
+            >
+                {{
+                    data.yesMessage
+                        ? data.yesMessage
+                        : data.type === 'prompt' || data.type === 'alert'
+                        ? locale('sharedComponents.customDialog.ok')
+                        : data.type === 'confirm'
+                        ? locale('sharedComponents.customDialog.confirm')
+                        : locale('sharedComponents.customDialog.done')
+                }}
+            </button>
+        </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="'gallery'">
         <h1 matDialogTitle class="mb-8">
             {{
                 data.title ||

@@ -151,7 +151,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                     source: 'tmac',
                     userObject: null
                 },
-                '*'
+                new URL(iframe['src']).origin
             );
         }
     }

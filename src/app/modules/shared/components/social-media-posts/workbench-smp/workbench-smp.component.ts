@@ -1554,14 +1554,14 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 }
                 let modifiedAttachmentData: any[] = [];
                 if (outboxRes?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                    modifiedAttachmentData = [
-                        {
+                    modifiedAttachmentData = outboxRes.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                        return {
                             IsCloud: true,
-                            Url: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                            Url: attdat?.MediaUrl,
                             IsUploaded: true,
-                            Ext: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
-                        }
-                    ];
+                            Ext: attdat?.MediaType
+                        };
+                    });
                 }
 
                 let tempAttachments = await this.requestAttachmentData(

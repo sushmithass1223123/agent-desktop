@@ -568,7 +568,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // start call
         if (
-            (this.interactionDetails.ConferenceType === 'conf' || forceJoin) &&
+            (this.interactionDetails.ConferenceType.includes('conf') || forceJoin) &&
             (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall || this.interactionDetails.Direction === 'in')
         ) {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
@@ -603,11 +603,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
 
         this.muteAVOnHold = {
-            enabled:
-                widgetData.MuteAVOnHold?.AgentAudio ||
-                widgetData.MuteAVOnHold?.AgentVideo ||
-                widgetData.MuteAVOnHold?.CustomerAudio ||
-                widgetData.MuteAVOnHold?.CustomerVideo,
+            enabled: widgetData.MuteAVOnHold?.enabled,
             agentAudio: widgetData.MuteAVOnHold?.AgentAudio,
             agentVideo: widgetData.MuteAVOnHold?.AgentVideo,
             customerAudio: widgetData.MuteAVOnHold?.CustomerAudio,
@@ -817,7 +813,7 @@ if (error === 'Screenshare Was Cancelled') {
                         });
                     } else {
                         // todo: this change to be handled at TMAC SDK side, look for on user left
-                        if(this.interactionDetails.ConferenceType === 'transfer') return;
+                        // if(this.interactionDetails.ConferenceType === 'transfer') return;
                         // other agent connected
                     }
                     // add the level
@@ -963,7 +959,7 @@ if (error === 'Screenshare Was Cancelled') {
                             };
                             // restricted source agent getting added to transferred call
                             // todo: this change should be handled at TMAC SDK side
-                            if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
+                            // if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
                             this.userList.push(newStreamObj);
                         })
                     }
@@ -1111,7 +1107,7 @@ if (error === 'Screenshare Was Cancelled') {
             // forward the av messages to av channel
             this.avConn?.onMessage(
                 evt.Type === 'addscreenshare'
-                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType.includes('conf') })
                     : evt.Message
             );
         } catch (e) {

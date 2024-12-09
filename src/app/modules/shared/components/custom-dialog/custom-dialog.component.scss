@@ -15,6 +15,21 @@ custom-dialog {
         }
     }
 
+    .html-div {
+        h1 {
+            font-size: 40px;
+            font-weight: 1000;
+        }
+        a, p {
+            font-size: 16px;
+            font-weight: 400;
+        }
+        h5 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+    }
+
     .gallery {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
