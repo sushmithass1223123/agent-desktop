@@ -389,62 +389,68 @@
                     }
                 }
 
-                .attachment-box {
-                    height: 100px;
-                    position: relative;
+                .attachment-box-flex {
                     display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    min-width: 60px;
-                    margin: 10px;
-                    transition: opacity 200ms ease;
-
-                    .play-button {
-                        width: 40px;
-                        height: 40px;
-                        font-size: 40px;
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        cursor: pointer;
-                        transition: all 200ms ease;
-                    }
-
-                    .close-icon-holder {
-                        position: absolute;
-                        top: 6px;
-                        right: 3px;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    gap: 5px;
+                    .attachment-box {
+                        height: 100px;
+                        position: relative;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        background-color: rgba($color: #fff, $alpha: 0.8);
-                        border-radius: 50%;
-                        cursor: pointer;
-
-                        mat-icon {
-                            min-height: 0 !important;
-                            min-width: 0 !important;
-                            font-size: 16px;
-                            font-size: 16px;
-                            width: 16px;
-                            height: 16px;
-                        }
-                    }
-
-                    img,
-                    video {
-                        height: 100%;
-                        width: auto;
-                        border-radius: 10px;
-                    }
-
-                    &:hover {
+                        min-width: 60px;
+                        margin: 10px;
+                        transition: opacity 200ms ease;
+    
                         .play-button {
-                            font-size: 45px;
-                            height: 45px;
-                            width: 45px;
-                            opacity: 0.8;
+                            width: 40px;
+                            height: 40px;
+                            font-size: 40px;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            cursor: pointer;
+                            transition: all 200ms ease;
+                        }
+    
+                        .close-icon-holder {
+                            position: absolute;
+                            top: 6px;
+                            right: 3px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background-color: rgba($color: #fff, $alpha: 0.8);
+                            border-radius: 50%;
+                            cursor: pointer;
+    
+                            mat-icon {
+                                min-height: 0 !important;
+                                min-width: 0 !important;
+                                font-size: 16px;
+                                font-size: 16px;
+                                width: 16px;
+                                height: 16px;
+                            }
+                        }
+    
+                        img,
+                        video {
+                            height: 100%;
+                            width: auto;
+                            border-radius: 10px;
+                        }
+    
+                        &:hover {
+                            .play-button {
+                                font-size: 45px;
+                                height: 45px;
+                                width: 45px;
+                                opacity: 0.8;
+                            }
                         }
                     }
                 }
@@ -494,6 +500,11 @@
             z-index: 1;
         }
     }
+}
+
+.disabled-option {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 .smp-template.no-image-post {
@@ -606,7 +617,7 @@
             .reply-box {
                 border: 2px solid #ebecf0;
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #303338;
@@ -762,7 +773,7 @@
             .reply-box {
                 border: 2px solid #ebecf0;
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #303338;
@@ -919,7 +930,7 @@
             .reply-box {
                 border: 2px solid #ebecf0;
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #303338;
@@ -1076,7 +1087,7 @@
             .reply-box {
                 border: 2px solid #ebf0ee;
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #303835;
@@ -1233,7 +1244,7 @@
             .reply-box {
                 border: 2px solid #ebf0f0;
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #303838;
@@ -1390,7 +1401,7 @@
             .reply-box {
                 border: 2px solid #ebebf0;
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #313038;
@@ -1561,7 +1572,7 @@
                     }
                 }
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #dfdfdf;
@@ -1736,7 +1747,7 @@
                     }
                 }
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #dfdfdf;
@@ -1913,7 +1924,7 @@
                     }
                 }
 
-                .attachment-box {
+                .attachment-box-flex .attachment-box {
                     .close-icon-holder {
                         mat-icon {
                             color: #dfdfdf;

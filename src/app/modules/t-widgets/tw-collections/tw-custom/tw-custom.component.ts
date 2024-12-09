@@ -331,7 +331,7 @@ export class TwCustomComponent extends TWidgetWrapper implements OnInit, OnDestr
                         source: 'tmac',
                         userObject
                     },
-                    '*'
+                    new URL(iframe['src']).origin
                 );
             }
         } catch (error) {

@@ -24,7 +24,21 @@
         <div class="notification-list p-8 pb-16 custom-scroll-adjust" (click)="$event.stopPropagation()">
             <div fxLayout fxLayoutAlign="space-between none" *ngFor="let item of notifications"
                 class="item animate__animated animate__fadeIn animate__faster">
-                <ng-container *ngIf="!item.icon.includes('sm')">
+                <ng-container *ngIf="item.icon.includes('external_av_widget_creds')">
+                    <div fxLayout fxFlex>
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                            <mat-icon mat-list-icon color="primary">phone_in_talk</mat-icon>
+                        </div>
+                        <div fxLayout="column" class="message">
+                            <div class="font-weight-600">
+                                External AV Widget - OTP: {{ item.message.otp }}, Link:
+                                <a href="{{item.message.url}}" target="_blank">{{ item.message.url }}</a>
+                            </div>
+                            <small>{{ item.time | date: 'shortTime' }}</small>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!item.icon.includes('sm') && !item.icon.includes('external_av_widget_creds')">
                     <div fxLayout fxFlex>
                         <div fxLayout fxLayoutAlign="center center" class="mr-12">
                             <mat-icon mat-list-icon color="primary">{{ item.icon || 'announcement' }}</mat-icon>

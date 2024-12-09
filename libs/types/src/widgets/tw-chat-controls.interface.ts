@@ -208,6 +208,10 @@ export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData,
  */
 export type TwChatControlsData = {
     /**
+     * Config to load AV related functionalities in the new external widget
+     */
+    ExternalAVWidget: ExternalAVWidget;
+    /**
      * Config to differentiate if the call is on hard phone
      */
     IsPhoneAudio?: boolean;
@@ -491,6 +495,11 @@ export type TwChatControlsData = {
         }
     }
 };
+
+export interface ExternalAVWidget {
+    Enabled: boolean,
+    Url: string
+}
 
 export interface XssSymbolEntityMap {
     [key: string]: string;

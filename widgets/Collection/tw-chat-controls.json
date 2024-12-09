@@ -21,6 +21,10 @@
         "Pinned": false
     },
     "Data": {
+        "ExternalAVWidget": {
+            "Enabled": true,
+            "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
+        },
         "IsPhoneAudio": true,
         "Transfer": {
             "Allowed": true,

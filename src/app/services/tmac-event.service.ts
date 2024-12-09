@@ -614,7 +614,7 @@ export class TMACEventService extends SharedWrapper {
                     message: `Negative sentiment has been detected from customer for ${AgentName}`,
                     state: 'info'
                 });
-            } if (type === 'parentagentstatus') {
+            } else if (type === 'parentagentstatus') {
                 const message = JSON.parse(evt.Message);
                 this.avCallConstraints[evt.FromAgentId] = {
                     isAgentOnActiveCall: message.isAgentOnActiveCall,

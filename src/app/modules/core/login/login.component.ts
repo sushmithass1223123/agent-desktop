@@ -21,6 +21,7 @@ import moment from 'moment';
 import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { AGENT_FEATURES } from 'app/constants';
 
 declare const navigator: Navigator | any;
 /**
@@ -983,6 +984,16 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                             }
                             this.logger.debug('Using developement/login config only!', false);
                         }
+
+                        if (response.OtherData?.ItemFour) {
+                            this._appDataService.setExternalAVWidgetOTP = response.OtherData.ItemFour as string;
+                            this.externalAVWidgetConfirmation(
+                                response.OtherData.ItemFour,
+                                response.Data.AgentID,
+                                JSON.parse(response.OtherData.ItemTwo),
+                                response.Data.StationID,
+                            );
+                        }
                         // get the agent ID
                         const agentId = response.Data.AgentID;
 
@@ -1075,6 +1086,59 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
         } catch (error) {
             this.videoElement?.nativeElement.play();
             this.logger.error('Error in login', error);
+        }
+    }
+
+    /**
+     * External AV widget credentials notifier
+     */
+    externalAVWidgetConfirmation(otp: string, agentId: string, configData: any, stationId?: string): void {
+        try {
+            // Flat to decide whether to show the notificatino or not
+            let skipShowingNotification: boolean = false;
+            // Get the chat controls widget data
+            const chatControlWidgetData = this._appDataService.findWidgetDataByType(configData, 'tw-chat-controls');
+            // Check if its disabled at application level
+            skipShowingNotification = !chatControlWidgetData?.ExternalAVWidget?.Enabled;
+            // Check if its disabled at OCM agent feature level
+            SDKClient.getAgentData().featuresList.forEach((f) => {
+                const feature = f.Feature.toLowerCase();
+                if(AGENT_FEATURES.IsExternalAVWidgetEnabled === feature) skipShowingNotification = !f.IsEnabled; 
+            });
+            // If its disabled, dont show the notifier
+            if(skipShowingNotification || !chatControlWidgetData?.ExternalAVWidget?.Url) return;
+
+            const url = chatControlWidgetData.ExternalAVWidget.Url.replace('$agentId', agentId).replace(
+                '$stationId',
+                stationId
+            );
+            const html = `
+            <h1>OTP: ${otp}</h1>
+            <a href="${url}" target="_blank">${url}</a>
+            <h5>Copy or click the above link to use custom AV widget</h5>
+            <p>You will have to provide the OTP while logging in to custom AV widget. Please note it down and this credentials will be in the notification section of Agent Desktop so that you can refer it later.<p>
+            `;
+            const confirmDialogRef = this._appUIService.showCustomDialog(
+                'alert',
+                {
+                    type: 'html',
+                    message: html
+                },
+                'External AV Widget Credentials',
+                {
+                    messageClasses: 'twd-whitespace-pre-line twd-break-words'
+                }
+            );
+            confirmDialogRef.afterClosed().subscribe((dialogResult: boolean | undefined) => {
+                this._appUIService.addNotification({
+                    icon: 'external_av_widget_creds',
+                    message: { url, otp },
+                    status: 'new',
+                    showAlert: true
+                });
+            });
+        } catch (ex) {
+            console.error(ex);
         }
     }
 

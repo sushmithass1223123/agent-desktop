@@ -223,7 +223,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.postDraftData[i.interactionId] = {
                                 body: '',
                                 mimeConstraints: '',
-                                rawAttachmentData: '',
+                                rawAttachmentData: [],
+                                attachmentMimes: [],
                                 attachments: [],
                                 isReplyDrafted: false
                             };
@@ -824,8 +825,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.postDraftData[this.interactionId] = {
                 body: '',
                 mimeConstraints: '',
-                rawAttachmentData: '',
+                rawAttachmentData: [],
                 attachments: [],
+                attachmentMimes: [],
                 isReplyDrafted: false
             };
         } catch (error) {
@@ -929,14 +931,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 const setPostBody = async (resData: any, sid: any) => {
                     let modifiedAttachmentData: any[] = [];
                     if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                        modifiedAttachmentData = [
-                            {
+                        modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                            return {
                                 IsCloud: true,
-                                Url: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                                Url: attdat?.MediaUrl,
                                 IsUploaded: true,
-                                Ext: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
-                            }
-                        ];
+                                Ext: attdat?.MediaType
+                            };
+                        });
                     }
                     let tempAttachments = await this.requestAttachmentData(
                         (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : resData.Attachments

@@ -1,4 +1,4 @@
-import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
+import { AgentSkillListData, AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -504,6 +504,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Video call request
          */
         reqVideoCall: boolean;
+        /**
+        * Config to load AV related functionalities in the new external widget
+        */
+        externalAvWidget: boolean;
     };
     /**
      * Connected event ref
@@ -946,6 +950,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     private checkAgentFeatures(): void {
         // Check the features at application level (it will be overriden if agent features are available from backend)
         this.agentFeatures = {
+            externalAvWidget:
+                this.widgetData?.ExternalAVWidget?.Enabled && Boolean(this._appDataService.getExternalAVWidgetOTP),
             audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
             videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
             signature: this.widgetData.SignatureAllowed ?? false,
@@ -1030,6 +1036,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case AGENT_FEATURES.IsToggleChatUserViewEnabled:
                     this.agentFeatures.toggleUserView = f.IsEnabled;
                     break;
+                case AGENT_FEATURES.IsExternalAVWidgetEnabled:
+                    this.agentFeatures.externalAvWidget =
+                        f.IsEnabled && Boolean(this._appDataService.getExternalAVWidgetOTP);
+                    break;
                 default:
             }
         });
@@ -1041,6 +1051,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
           return true;
         } catch (error) {
           return false;
+        }
+    }
+
+    onRemoteMessageDeleted(id: string): void {
+        try {
+            this.chatTranscripts = this.chatTranscripts?.filter((transcript) => transcript.messageId != id) ?? [];
+        } catch (ex) {
+            console.error(ex);
+            this.logger.error(
+                `[TwChatControls.onRemoteMessageDeleted] - Error occured while deleting a message from chat transcripts`,
+                ex
+            );
         }
     }
 
@@ -1061,6 +1083,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.IsAppMessage) {
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
+                case 'message_delete':
+                    {
+                        const dynamicLabels = [
+                            {
+                                key: '#customerName',
+                                value: this.customerName
+                            }
+                        ];
+                        const message = this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.customerMessageDeleteNotification'), dynamicLabels);
+                        this.onRemoteMessageDeleted(msg?.messageId ?? '')
+                        this._appUIService.showSnackbar(message, 'info');
+                    }
+                    break;
                 case 'clientreloaded':
                     // Check if the status is 'hold'
                     if (this.status === 'hold') {
@@ -2028,7 +2063,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // to not open video dialog when interaction is over
-        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone) || (this.conferenceType === 'conf' && avCallConstraints?.isAgentOnActiveCall)) {
+        if (
+            (!this.agentFeatures.externalAvWidget &&
+                !evt.RecoveryEvent &&
+                this.mediaChannels.includes(this.chatMode)) ||
+            (this.conferenceType === 'transfer' &&
+                avCallConstraints?.isAgentOnActiveCall &&
+                avCallConstraints?.isAgentOnPhone) ||
+            ((this.conferenceType.includes('conf')) &&
+                avCallConstraints?.isAgentOnActiveCall)
+        ) {
             this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
@@ -2114,7 +2158,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // assign the tmac server
             tmacServer = extraParam.serverName;
             // show an alert on connect
-            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
+            if (extraParam.conferenceType.includes('conf') || extraParam.conferenceType === 'whisper') {
                 const dynamicLabels = [
                     {
                         key: "#agentName",
@@ -2665,6 +2709,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 user: this.customerName
             });
+
+            // update the customer name in this.chatTranscripts and ui
+            this.chatTranscripts.filter((c) => c.isAgent === false).map((item, index) => {
+                item.who = this.customerName;
+            });
+
         }
     }
 
@@ -2784,7 +2834,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // show an alert for non silent agent
-        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
+        if (evt.ConferenceType === '' || evt.ConferenceType.includes('conf') || evt.ConferenceType === 'whisper') {
             const dynamicLabels = [
                 {
                     key: '#agentName',
