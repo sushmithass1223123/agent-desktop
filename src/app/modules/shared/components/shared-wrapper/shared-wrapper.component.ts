@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { Subject } from 'rxjs';
 

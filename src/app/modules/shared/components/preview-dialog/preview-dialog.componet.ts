@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import {PreviewDialogDataTypes, PreviewComponentTypes, CallbackActions} from './preview.dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { TranslocoService } from '@ngneat/transloco';

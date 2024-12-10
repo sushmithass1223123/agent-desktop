@@ -1,7 +1,7 @@
 import { TwGenericControls } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppUiService } from '@services/app-ui.service';

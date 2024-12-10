@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { ContentPageService } from '@services/content-page.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 
 /**
  * Notfications Component

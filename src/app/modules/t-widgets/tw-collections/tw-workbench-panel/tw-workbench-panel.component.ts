@@ -1,6 +1,6 @@
 import { TwWorkbenchPanel } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatTabGroup } from '@angular/material/tabs';
+import { MatLegacyTabGroup as MatTabGroup } from '@angular/material/legacy-tabs';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';

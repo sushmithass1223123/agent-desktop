@@ -1,6 +1,6 @@
 import { AOTWidget, TwAudioVideoControls } from '@ad/types';
 import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AgentFeaturesService } from '@services/agent-features.service';

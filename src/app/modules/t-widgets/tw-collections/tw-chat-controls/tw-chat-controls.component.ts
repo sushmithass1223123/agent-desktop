@@ -13,8 +13,8 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent } from '@modules/shared/components';

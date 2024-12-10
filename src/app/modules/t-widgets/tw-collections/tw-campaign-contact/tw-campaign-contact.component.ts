@@ -1,9 +1,9 @@
 import { AppRootConfig, TwCampaignContact, TwCampaignContactData } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';

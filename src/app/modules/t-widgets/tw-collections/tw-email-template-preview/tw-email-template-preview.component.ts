@@ -1,6 +1,6 @@
 import { TwEmailTemplatePreview } from '@ad/types';
 import { Component, Inject, Input, OnInit, Optional, ViewEncapsulation } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { EmailTemplate } from '@tmac/sdk';

@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CallerIntentEvent, IResponse, OnNLPDataEvent, SDKClient, TUtils, WorkCodeAddedEvent } from '@tmac/sdk';

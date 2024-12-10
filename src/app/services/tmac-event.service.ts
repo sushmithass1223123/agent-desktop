@@ -1,6 +1,6 @@
 import { AOTWidget, AppRootConfig, WidgetAction } from '@ad/types';
 import { Injectable } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ReminderTaskDialogComponent } from '@modules/shared/components';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import {

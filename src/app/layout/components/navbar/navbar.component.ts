@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
-import { MatListOption } from '@angular/material/list';
+import { MatLegacyListOption as MatListOption } from '@angular/material/legacy-list';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';

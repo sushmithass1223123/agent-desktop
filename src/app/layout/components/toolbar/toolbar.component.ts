@@ -9,7 +9,7 @@ import { AppDataService } from 'app/services/app-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { TranslocoService } from '@ngneat/transloco';
 
 /**
