@@ -16,14 +16,6 @@
             }
         }
     },
-    "targetDependencies": {
-        "build": [
-            {
-                "target": "build",
-                "projects": "dependencies"
-            }
-        ]
-    },
     "defaultProject": "agent-desktop",
     "affected": {
         "defaultBase": "master"
