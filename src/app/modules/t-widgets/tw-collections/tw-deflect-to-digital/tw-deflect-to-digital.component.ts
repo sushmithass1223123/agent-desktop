@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AGENT_FEATURES } from 'app/constants';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 @Component({
     selector: 'tw-deflect-to-digital',
     templateUrl: './tw-deflect-to-digital.component.html',
@@ -41,12 +41,12 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     /**
      * selected send type
      */
-    sendType:FormControl = new FormControl();
+    sendType:UntypedFormControl = new UntypedFormControl();
 
     /**
      * customer email id to send a notification 
      */
-    emailId:FormControl = new FormControl();
+    emailId:UntypedFormControl = new UntypedFormControl();
 
 
     /**

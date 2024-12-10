@@ -10,7 +10,7 @@ import {
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
@@ -88,14 +88,14 @@ type AvailableTabs = 'inbox' | 'sentitem' | 'queue' | 'draft';
  * Global search form controls
  * Global search is the direct search key input present at the top of the emails list
  */
-type GlobalSearchFormData = { form: FormControl; data: Partial<Record<AvailableTabs, string>> };
+type GlobalSearchFormData = { form: UntypedFormControl; data: Partial<Record<AvailableTabs, string>> };
 /**
  * Advanced Search form data
  * Advanced search fields are displayed when the dropdown is opened in a tab
  * Under the hood, both global search and normal search / polling use this search only
  */
 type AdvanceSearchFormData = {
-    form: FormGroup;
+    form: UntypedFormGroup;
     data: Partial<Record<AvailableTabs, { data: any; changed: boolean }>>;
     show: boolean;
     sub$: any;
@@ -202,7 +202,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
      * Global search form control and cached data for each category
      */
     globalSearch: GlobalSearchFormData = {
-        form: new FormControl(''),
+        form: new UntypedFormControl(''),
         data: {}
     };
 

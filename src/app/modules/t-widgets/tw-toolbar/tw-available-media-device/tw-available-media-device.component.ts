@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
@@ -65,10 +65,10 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
     /**
      * Media select formGroup
      */
-    mediaSelectFormGroup = new FormGroup({
-        Mic: new FormControl(''),
-        Speaker: new FormControl(''),
-        Video: new FormControl('')
+    mediaSelectFormGroup = new UntypedFormGroup({
+        Mic: new UntypedFormControl(''),
+        Speaker: new UntypedFormControl(''),
+        Video: new UntypedFormControl('')
     });
 
     /**
@@ -86,10 +86,10 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
      * Lifecycle hook
      */
     async ngOnInit(): Promise<void> {
-        this.mediaSelectFormGroup = new FormGroup({
-            Mic: new FormControl(''),
-            Speaker: new FormControl(''),
-            Video: new FormControl('')
+        this.mediaSelectFormGroup = new UntypedFormGroup({
+            Mic: new UntypedFormControl(''),
+            Speaker: new UntypedFormControl(''),
+            Video: new UntypedFormControl('')
         });
 
         const { Speaker, Mic, Video } = await this.selectDevice();

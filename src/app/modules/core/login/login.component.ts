@@ -1,6 +1,6 @@
 import { AppRootConfig, LogoConfig, MultiWindowMode, Password } from '@ad/types';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
@@ -58,7 +58,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     /**
      * Login form
      */
-    loginForm: FormGroup;
+    loginForm: UntypedFormGroup;
     /**
      * Brand logo
      */
@@ -252,7 +252,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private _appDataService: AppDataService,
         private _appUIService: AppUiService,
         private _titleService: Title,

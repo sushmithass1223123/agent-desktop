@@ -1,6 +1,6 @@
 import { AOTWidget, Widget } from '@ad/types';
 import { Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { DashboardService } from '@services/dashboard.service';
@@ -66,7 +66,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         /**
          * Form control for date
          */
-        formControl: FormControl;
+        formControl: UntypedFormControl;
         /**
          * Dashboard data duration span
          */
@@ -128,7 +128,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
 
         this.dashboardDataFromDate = {
             calculatedSpan: 100,
-            formControl: new FormControl(initialDate)
+            formControl: new UntypedFormControl(initialDate)
         };
 
         this.dashboardDataFromDate.formControl.valueChanges.subscribe((date: Date) => {

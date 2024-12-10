@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatColors } from '@fuse/mat-colors';
 import { AppUiService } from '@services/app-ui.service';
@@ -36,7 +36,7 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
     /**
      * Event form
      */
-    eventForm: FormGroup;
+    eventForm: UntypedFormGroup;
     /**
      * Dialog title
      */
@@ -65,7 +65,7 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
     constructor(
         public matDialogRef: MatDialogRef<CalendarEventFormDialogComponent>,
         @Inject(MAT_DIALOG_DATA) private _data: any,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private _appUIService: AppUiService,
         private translocoService: TranslocoService
     ) {
@@ -162,33 +162,33 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
      * Create the event form
      * @returns {FormGroup}
      */
-    createEventForm(): FormGroup {
+    createEventForm(): UntypedFormGroup {
         // change the type case
         this.event.type = this.event.type.toLowerCase();
 
-        const formGroup = new FormGroup({
-            title: new FormControl(this.event.title),
-            type: new FormControl({ value: this.event.type, disabled: this.action === 'edit' }),
-            taskType: new FormControl({ value: this.event.type === 'executetask' ? this.event.data.Action : '', disabled: this.action === 'edit' }),
-            taskData: new FormControl(
+        const formGroup = new UntypedFormGroup({
+            title: new UntypedFormControl(this.event.title),
+            type: new UntypedFormControl({ value: this.event.type, disabled: this.action === 'edit' }),
+            taskType: new UntypedFormControl({ value: this.event.type === 'executetask' ? this.event.data.Action : '', disabled: this.action === 'edit' }),
+            taskData: new UntypedFormControl(
                 this.event.type === 'executetask'
                     ? this.event.data.Action === 'changestate'
                         ? this.event.data.Data.split(',')[1]
                         : this.event.data.Data
                     : ''
             ),
-            start: new FormControl(this.event.start),
-            startTime: new FormControl(format(this.event.start, 'HH:mm'), [(control) => this.validateTime(control)]),
-            end: new FormControl(this.event.start),
-            endTime: new FormControl(format(this.event.start, 'HH:mm')),
-            allDay: new FormControl(this.event.allDay),
+            start: new UntypedFormControl(this.event.start),
+            startTime: new UntypedFormControl(format(this.event.start, 'HH:mm'), [(control) => this.validateTime(control)]),
+            end: new UntypedFormControl(this.event.start),
+            endTime: new UntypedFormControl(format(this.event.start, 'HH:mm')),
+            allDay: new UntypedFormControl(this.event.allDay),
             color: this._formBuilder.group({
-                primary: new FormControl({ value: this.event.color.primary, disabled: this.event.type === '' || this.event.type === 'text' }),
-                secondary: new FormControl({ value: this.event.color.secondary, disabled: this.event.type === '' || this.event.type === 'text' })
+                primary: new UntypedFormControl({ value: this.event.color.primary, disabled: this.event.type === '' || this.event.type === 'text' }),
+                secondary: new UntypedFormControl({ value: this.event.color.secondary, disabled: this.event.type === '' || this.event.type === 'text' })
             }),
             meta: this._formBuilder.group({
-                location: new FormControl({ value: this.event.meta.location, disabled: this.event.type === '' || this.event.type === 'text' }),
-                notes: new FormControl({ value: this.event.meta.notes, disabled: this.event.type === '' || this.event.type === 'text' })
+                location: new UntypedFormControl({ value: this.event.meta.location, disabled: this.event.type === '' || this.event.type === 'text' }),
+                notes: new UntypedFormControl({ value: this.event.meta.notes, disabled: this.event.type === '' || this.event.type === 'text' })
             })
         });
 
@@ -202,7 +202,7 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
     /**
      * Custom validation function to prevent white spaces in title field
      */
-    noWhitespaceValidator(control: FormControl) {
+    noWhitespaceValidator(control: UntypedFormControl) {
         const isWhitespace = (control.value || '').trim().length === 0;
         return !isWhitespace ? null : { 'whitespace': true };
     }

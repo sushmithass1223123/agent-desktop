@@ -1,6 +1,6 @@
 import { TwCalendar } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { AppConfirmDialogComponent } from '@modules/shared/components';
@@ -418,7 +418,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 return;
             }
             const actionType: string = response[0];
-            const formData: FormGroup = response[1];
+            const formData: UntypedFormGroup = response[1];
             const formValue = formData.getRawValue();
 
             const reminderDateTime: any = new Date(formValue.start);
@@ -548,7 +548,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                     data: this.data.Data
                 }
             });
-            this.dialogRef.afterClosed().subscribe(async (resp: FormGroup) => {
+            this.dialogRef.afterClosed().subscribe(async (resp: UntypedFormGroup) => {
                 if (!resp) {
                     return;
                 }

@@ -1,6 +1,6 @@
 import { AgentSkillListData, AgentSkillListSource } from '@ad/types';
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
@@ -161,7 +161,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * Search Key for agent / skill list
      */
-    searchKey = new FormControl('');
+    searchKey = new UntypedFormControl('');
 
     /**
      * Wrapper component Ref
@@ -176,7 +176,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * Operating hours filter
      */
-    operationHoursCtrl = new FormControl('operating');
+    operationHoursCtrl = new UntypedFormControl('operating');
 
     /**
      * Inline worker

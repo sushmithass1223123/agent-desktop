@@ -1,0 +1,11 @@
+[NX Daemon Server] - 2024-12-10T10:12:36.712Z - Started listening on: /var/folders/82/cnt3x1jd6_zclv046vybvl5m0000gn/T/d24b49005cf49fbd1028/d.sock
+[NX Daemon Server] - 2024-12-10T10:12:36.716Z - [WATCHER]: Subscribed to changes within: /Users/apple/Products/AD-Angular-upgrade/agent-desktop (native)
+[NX Daemon Server] - 2024-12-10T10:12:36.717Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-12-10T10:12:36.718Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-12-10T10:12:36.719Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-12-10T10:12:36.720Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-12-10T10:12:36.720Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 1.
+[NX Daemon Server] - 2024-12-10T10:12:36.720Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-12-10T10:12:36.721Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-12-10T10:12:36.721Z - [WATCHER]: Stopping the watcher for /Users/apple/Products/AD-Angular-upgrade/agent-desktop (sources)
+[NX Daemon Server] - 2024-12-10T10:12:36.721Z - [WATCHER]: Stopping the watcher for /Users/apple/Products/AD-Angular-upgrade/agent-desktop (outputs)

@@ -1,6 +1,6 @@
 import { COMMA, ENTER, SEMICOLON } from '@angular/cdk/keycodes';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
@@ -65,10 +65,10 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * Controls for email recipients
      */
-    _addressFG = new FormGroup({
-        To: new FormControl(''),
-        CC: new FormControl(''),
-        BCC: new FormControl('')
+    _addressFG = new UntypedFormGroup({
+        To: new UntypedFormControl(''),
+        CC: new UntypedFormControl(''),
+        BCC: new UntypedFormControl('')
     });
 
     /**

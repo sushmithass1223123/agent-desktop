@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { SDKClient } from '@tmac/sdk';
 
 const today = new Date();
@@ -32,29 +32,29 @@ export const initEmailSearchState = {
     listOfMailboxes: []
 };
 
-const searchParams = new FormGroup({
-    fromDate: new FormControl(initEmailSearchState.fromDate),
-    fromTime: new FormControl(initEmailSearchState.fromTime),
-    toDate: new FormControl(initEmailSearchState.toDate),
-    toTime: new FormControl(initEmailSearchState.toTime),
-    email: new FormControl(initEmailSearchState.email),
-    subject: new FormControl(initEmailSearchState.subject),
-    content: new FormControl(initEmailSearchState.content),
-    skills: new FormControl(initEmailSearchState.skills),
+const searchParams = new UntypedFormGroup({
+    fromDate: new UntypedFormControl(initEmailSearchState.fromDate),
+    fromTime: new UntypedFormControl(initEmailSearchState.fromTime),
+    toDate: new UntypedFormControl(initEmailSearchState.toDate),
+    toTime: new UntypedFormControl(initEmailSearchState.toTime),
+    email: new UntypedFormControl(initEmailSearchState.email),
+    subject: new UntypedFormControl(initEmailSearchState.subject),
+    content: new UntypedFormControl(initEmailSearchState.content),
+    skills: new UntypedFormControl(initEmailSearchState.skills),
 
-    agent: new FormControl(initEmailSearchState.agent),
+    agent: new UntypedFormControl(initEmailSearchState.agent),
 
-    inSessionId: new FormControl(initEmailSearchState.inSessionId),
+    inSessionId: new UntypedFormControl(initEmailSearchState.inSessionId),
 
-    deviceid: new FormControl(initEmailSearchState.deviceid),
-    hasAttachments: new FormControl(initEmailSearchState.hasAttachments),
-    assignedTo: new FormControl(initEmailSearchState.assignedTo),
+    deviceid: new UntypedFormControl(initEmailSearchState.deviceid),
+    hasAttachments: new UntypedFormControl(initEmailSearchState.hasAttachments),
+    assignedTo: new UntypedFormControl(initEmailSearchState.assignedTo),
 
-    replied: new FormControl(initEmailSearchState.replied),
-    closed: new FormControl(initEmailSearchState.closed),
-    assigned: new FormControl(initEmailSearchState.assigned),
+    replied: new UntypedFormControl(initEmailSearchState.replied),
+    closed: new UntypedFormControl(initEmailSearchState.closed),
+    assigned: new UntypedFormControl(initEmailSearchState.assigned),
 
-    listOfMailboxes: new FormControl([])
+    listOfMailboxes: new UntypedFormControl([])
 });
 
 /**
@@ -70,9 +70,9 @@ export class EmailService {
     private readonly _internal$ = {
         email: {
             searchParams,
-            globalSearchKey: new FormControl(''),
-            defaultEmail: new FormControl(''),
-            availableMailboxes: new FormControl([])
+            globalSearchKey: new UntypedFormControl(''),
+            defaultEmail: new UntypedFormControl(''),
+            availableMailboxes: new UntypedFormControl([])
         }
     };
 

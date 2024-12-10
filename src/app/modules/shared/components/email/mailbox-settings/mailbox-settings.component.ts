@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
@@ -19,9 +19,9 @@ export class MailboxSettingsComponent implements OnInit {
     mailboxes = {
         available: [],
         loaded: false,
-        form: new FormGroup({
-            selected: new FormControl(this._emailService.globalEmailWorkbenchState$.searchParams.controls.listOfMailboxes.value),
-            default: new FormControl(this._emailService.globalEmailWorkbenchState$.defaultEmail.value, [Validators.required])
+        form: new UntypedFormGroup({
+            selected: new UntypedFormControl(this._emailService.globalEmailWorkbenchState$.searchParams.controls.listOfMailboxes.value),
+            default: new UntypedFormControl(this._emailService.globalEmailWorkbenchState$.defaultEmail.value, [Validators.required])
         })
     };
 

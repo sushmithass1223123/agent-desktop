@@ -1,4 +1,4 @@
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -27,24 +27,24 @@ export const initSmpostsSearchState = {
     listOfMailboxes: []
 };
 
-const searchParams = new FormGroup({
-    fromDate: new FormControl(initSmpostsSearchState.fromDate),
-    fromTime: new FormControl(initSmpostsSearchState.fromTime),
-    toDate: new FormControl(initSmpostsSearchState.toDate),
-    toTime: new FormControl(initSmpostsSearchState.toTime),
-    email: new FormControl(initSmpostsSearchState.email),
-    subject: new FormControl(initSmpostsSearchState.subject),
-    content: new FormControl(initSmpostsSearchState.content),
-    skills: new FormControl(initSmpostsSearchState.skills),
-    agent: new FormControl(initSmpostsSearchState.agent),
-    inSessionId: new FormControl(initSmpostsSearchState.inSessionId),
-    deviceid: new FormControl(initSmpostsSearchState.deviceid),
-    hasAttachments: new FormControl(initSmpostsSearchState.hasAttachments),
-    assignedTo: new FormControl(initSmpostsSearchState.assignedTo),
-    replied: new FormControl(initSmpostsSearchState.replied),
-    closed: new FormControl(initSmpostsSearchState.closed),
-    assigned: new FormControl(initSmpostsSearchState.assigned),
-    listOfMailboxes: new FormControl([])
+const searchParams = new UntypedFormGroup({
+    fromDate: new UntypedFormControl(initSmpostsSearchState.fromDate),
+    fromTime: new UntypedFormControl(initSmpostsSearchState.fromTime),
+    toDate: new UntypedFormControl(initSmpostsSearchState.toDate),
+    toTime: new UntypedFormControl(initSmpostsSearchState.toTime),
+    email: new UntypedFormControl(initSmpostsSearchState.email),
+    subject: new UntypedFormControl(initSmpostsSearchState.subject),
+    content: new UntypedFormControl(initSmpostsSearchState.content),
+    skills: new UntypedFormControl(initSmpostsSearchState.skills),
+    agent: new UntypedFormControl(initSmpostsSearchState.agent),
+    inSessionId: new UntypedFormControl(initSmpostsSearchState.inSessionId),
+    deviceid: new UntypedFormControl(initSmpostsSearchState.deviceid),
+    hasAttachments: new UntypedFormControl(initSmpostsSearchState.hasAttachments),
+    assignedTo: new UntypedFormControl(initSmpostsSearchState.assignedTo),
+    replied: new UntypedFormControl(initSmpostsSearchState.replied),
+    closed: new UntypedFormControl(initSmpostsSearchState.closed),
+    assigned: new UntypedFormControl(initSmpostsSearchState.assigned),
+    listOfMailboxes: new UntypedFormControl([])
 });
 
 @Injectable({
@@ -57,9 +57,9 @@ export class SocialMediaPostsService {
     private readonly _internal$ = {
         email: {
             searchParams,
-            globalSearchKey: new FormControl(''),
-            defaultEmail: new FormControl(''),
-            availableMailboxes: new FormControl([])
+            globalSearchKey: new UntypedFormControl(''),
+            defaultEmail: new UntypedFormControl(''),
+            availableMailboxes: new UntypedFormControl([])
         }
     };
     /**
