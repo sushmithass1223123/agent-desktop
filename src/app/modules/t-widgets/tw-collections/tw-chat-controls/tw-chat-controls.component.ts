@@ -75,6 +75,9 @@ import { TranslocoService } from '@ngneat/transloco';
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
 
+declare var processTMACChatMessage: any;
+declare var processTMACChatMessageUrl: any;
+
 /**
  * Chat control component
  */
@@ -890,7 +893,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To proccess both TextChatMessageReceivedEvent and TextChatAgentMessageReceivedEvent
      * @param evt TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent data
      */
-    private chatMessageReceived(evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent): void {
+    private async chatMessageReceived(evt: TextChatMessageReceivedEvent | TextChatAgentMessageReceivedEvent) {
         // check the interaction
         // if (evt.InteractionID !== this.interaction.InteractionID) {
         //     return;
@@ -1003,6 +1006,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (data.replyId) {
             const getTranscript = this.chatTranscripts.find((transcript) => transcript.messageId === data.replyId);
             repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
+        }
+
+        if (typeof processTMACChatMessage === 'function') {
+            data.message = processTMACChatMessage(data.message);
+        }
+
+        if (data?.attachment?.src && typeof processTMACChatMessageUrl === 'function') {
+            data.attachment.src = await processTMACChatMessageUrl(this.channel, data.attachment.type ,data.attachment.src);
         }
 
         // add message to the transcripts
