@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RemiderTaskDialogConstants } from 'app/constants';
 import { ReminderTaskDialogData, ReminderTaskDialogTypes } from 'app/interfaces';
 

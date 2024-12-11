@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatLegacyButton as MatButton } from '@angular/material/button';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { SDKClient } from '@tmac/sdk';
 import { EmailService } from '../email.service';

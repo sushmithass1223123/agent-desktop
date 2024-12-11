@@ -1,7 +1,7 @@
 import { AppRootConfig } from '@ad/types';
 import { Injectable } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarHorizontalPosition as MatSnackBarHorizontalPosition, MatLegacySnackBarRef as MatSnackBarRef, MatLegacySnackBarVerticalPosition as MatSnackBarVerticalPosition } from '@angular/material/legacy-snack-bar';
+import { MatDialog, MatLegacyDialogConfig as MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AlertDialogComponent } from '@modules/shared/components/alert-dialog/alert-dialog.component';
 import { AppConfirmDialogComponent } from '@modules/shared/components/app-confirm-dialog/app-confirm-dialog.component';

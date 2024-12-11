@@ -1,6 +1,6 @@
 import { AgentSkillListData, TwCreateInteraction } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { appAnimations } from '@modules/shared/animations/app.animation';
 import { AgentSkillListComponent, MailboxSettingsComponent } from '@modules/shared/components';
 import { TwComposeMessagingComponent } from '@modules/t-widgets/tw-collections/tw-compose-messaging/tw-compose-messaging.component';

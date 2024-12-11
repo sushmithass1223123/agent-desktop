@@ -1,8 +1,8 @@
 import { COMMA, ENTER, SEMICOLON } from '@angular/cdk/keycodes';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete';
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';

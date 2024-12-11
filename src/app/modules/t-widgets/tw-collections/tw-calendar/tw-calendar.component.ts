@@ -1,7 +1,7 @@
 import { TwCalendar } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { AppConfirmDialogComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';

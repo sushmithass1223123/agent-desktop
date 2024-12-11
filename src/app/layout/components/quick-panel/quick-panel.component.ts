@@ -1,6 +1,6 @@
 import { AOTWidget, AppRootConfig } from '@ad/types';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { appAnimations } from '@modules/shared/animations/app.animation';

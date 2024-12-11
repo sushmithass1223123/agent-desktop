@@ -1,4 +1,4 @@
-import { MatLegacySnackBarHorizontalPosition as MatSnackBarHorizontalPosition, MatLegacySnackBarVerticalPosition as MatSnackBarVerticalPosition } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Moment } from 'moment';
 import { Color, SingleOrMultiDataSet } from 'ng2-charts';

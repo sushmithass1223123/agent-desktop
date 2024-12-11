@@ -1,6 +1,6 @@
 import { TwWallboard, TwWallboardData } from '@ad/types';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { TableComponent } from '@modules/shared/components';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';

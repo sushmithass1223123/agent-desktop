@@ -1,7 +1,7 @@
 import { AgentSkillListData, AgentSkillListSource } from '@ad/types';
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';

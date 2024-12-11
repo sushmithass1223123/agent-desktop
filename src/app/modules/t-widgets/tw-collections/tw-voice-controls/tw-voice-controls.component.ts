@@ -1,7 +1,7 @@
 import { AgentSkillListData, IVRTransferMenu, TwVoiceControls, TwVoiceControlsData } from '@ad/types';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacyButton as MatButton } from '@angular/material/button';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { AOTWidgetService } from '@services/aot-widget.service';

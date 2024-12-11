@@ -17,7 +17,7 @@ import { maticonByExtension, throwADError } from 'app/utils';
 import { GetInboxItemResult, SDKClient, TUtils } from '@tmac/sdk';
 import { AppDataService } from '@services/app-data.service';
 import { SMP_OUTBOX_REASONS } from 'app/constants';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { AgentSkillListDataModel } from 'app/models';
 
 declare var document: any;

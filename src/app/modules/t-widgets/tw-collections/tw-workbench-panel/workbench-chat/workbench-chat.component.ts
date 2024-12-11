@@ -3,7 +3,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';

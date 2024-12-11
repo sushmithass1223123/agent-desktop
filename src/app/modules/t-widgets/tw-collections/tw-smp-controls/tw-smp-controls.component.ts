@@ -17,7 +17,7 @@ import {
     Output,
     ViewEncapsulation
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';

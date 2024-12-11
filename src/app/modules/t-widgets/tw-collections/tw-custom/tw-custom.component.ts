@@ -1,6 +1,6 @@
 import { AOTWidget, TwCustom } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseConfig } from '@fuse/types';
 import { TranslocoService } from '@ngneat/transloco';

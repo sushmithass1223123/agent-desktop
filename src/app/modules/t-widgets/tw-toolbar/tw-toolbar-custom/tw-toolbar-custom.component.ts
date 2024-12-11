@@ -5,7 +5,7 @@ import { SDKClient, AgentStatusChangeEvent } from '@tmac/sdk';
 import { Subject } from 'rxjs';
 import { intervalToDuration } from 'date-fns';
 import { TMACEventService } from '@services/tmac-event.service';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';

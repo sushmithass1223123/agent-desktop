@@ -2,7 +2,7 @@ import { TwBookmarks } from '@ad/types';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
 import { appAnimations } from '@modules/shared/animations/app.animation';
