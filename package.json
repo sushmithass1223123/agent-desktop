@@ -41,7 +41,7 @@
     "@angular/platform-browser-dynamic": "17.3.12",
     "@angular/router": "17.3.12",
     "@angular/service-worker": "17.3.12",
-    "@asymmetrik/ngx-leaflet": "16.0.1",
+    "@asymmetrik/ngx-leaflet": "17.0.0",
     "@azure/msal-angular": "2.3.0",
     "@azure/msal-browser": "2.24.0",
     "@ctrl/ngx-emoji-mart": "6.2.0",
@@ -142,7 +142,7 @@
     "ts-jest": "29.2.5",
     "ts-node": "10.8.0",
     "typedoc": "0.23.28",
-    "typescript": "5.2.2",
+    "typescript": "5.4.5",
     "webpack-bundle-analyzer": "4.4.2"
   },
   "overrides": {
