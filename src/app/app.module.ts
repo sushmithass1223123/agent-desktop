@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,32 +17,24 @@ import { TranslocoRootModule } from './transloco-root.module';
 /**
  * App module
  */
-@NgModule({
-    declarations: [AppComponent],
-    providers: [
-       {
-           provide: TRANSLOCO_SCOPE,
-           useValue: ''
-       } 
-    ],
-    imports: [
-        BrowserModule,
+@NgModule({ declarations: [AppComponent],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         BrowserAnimationsModule,
-        HttpClientModule,
         AppRoutingModule,
-
         // Fuse modules
         FuseModule.forRoot(fuseConfig),
         FuseProgressBarModule,
         FuseSharedModule,
         FuseSidebarModule,
-
         // App modules
         CoreModule,
         SharedModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-        TranslocoRootModule
-    ],
-    bootstrap: [AppComponent]
-})
+        TranslocoRootModule], providers: [
+        {
+            provide: TRANSLOCO_SCOPE,
+            useValue: ''
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {}
