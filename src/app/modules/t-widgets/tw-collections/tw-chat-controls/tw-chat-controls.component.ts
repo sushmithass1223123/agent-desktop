@@ -1611,7 +1611,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // this.isMobileDevice = this.customerDevice;
         widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints, ConferenceAgentList: this.conferenceAgentList };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
