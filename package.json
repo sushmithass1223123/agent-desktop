@@ -83,7 +83,7 @@
     "moment": "2.29.4",
     "ng2-charts": "2.4.0",
     "ngx-color-picker": "12.0.1",
-    "ngx-drag-scroll": "16.0.0",
+    "ngx-drag-scroll": "17.0.1",
     "node-fetch": "2.6.1",
     "orderedmap": "^1.1.7",
     "rxjs": "6.5.3",
