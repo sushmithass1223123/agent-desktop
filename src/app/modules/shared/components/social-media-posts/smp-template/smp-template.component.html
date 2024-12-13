@@ -996,7 +996,7 @@
                     opacity: isCommentHistoryLoading ? '0.8' : '1.0',
                     'pointer-events': isCommentHistoryLoading ? 'none' : 'all'
                 }"
-                *ngIf="flattenedCommentHistory?.length && !hasNoFurtherComments"
+                *ngIf="!hasNoFurtherComments"
             >
                 <h5 class="twd-p-2 font-weight-600">{{ isCommentHistoryLoading ? 'Loading...' : 'Load more' }}</h5>
                 <img src="assets/images/vectors/loading.svg" *ngIf="isCommentHistoryLoading" />
