@@ -1,3 +1,9 @@
+<div
+    class="drop-zone"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+><p>Drag and Drop</p> 
 <input
     #attachFileRef
     type="file"

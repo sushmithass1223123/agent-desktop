@@ -150,7 +150,48 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         }
         return type;
     }
+    // Handle drag over event (when a file is dragged over the placeholder)
+    onDragOver(event: DragEvent): void {
+    event.preventDefault(); 
+    event.stopPropagation();
+    }
+    // Handle drag leave event (when a file is dragged away from the placeholder)
+    onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();  
+    }
+    // Handle drop event (when a file is dropped onto the placeholder)
+    onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
 
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+        this.handleFiles(files);
+       }
+    }
+    // Handle the files that were dropped
+    private handleFiles(files: FileList): void {
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        this.uploadFile(file);
+       }
+    }
+    // Upload the file after converting it to base64 format
+    private async uploadFile(file: File): Promise<void> {
+    const base64 = await this.convertToBase64(file);
+    const fileName = file.name;
+    this.uploadingFiles.push({
+        file,
+        fileName,
+        base64: this.sanitizeUrl(base64),
+        size: file.size,
+        type: file.type,
+        ext: fileName.split('.').pop()
+    });
+
+    this.attachPreviewMode = 'preview';
+    }
     /**
      * To start camera
      */
