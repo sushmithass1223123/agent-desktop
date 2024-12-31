@@ -3763,6 +3763,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To close attachment panel
      */
     closeAttachments(): void {
+        this.dragDropView = false;
         this.attachPreviewMode = '';
          // Exit PiP mode if it's active
          if (document.pictureInPictureElement) {
