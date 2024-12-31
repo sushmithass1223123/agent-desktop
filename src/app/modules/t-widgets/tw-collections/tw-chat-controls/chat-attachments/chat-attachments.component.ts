@@ -175,7 +175,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
     this.uploadingFiles.push({
         file,
         fileName,
-        base64: this.sanitizeUrl(base64),
+        base64: base64, 
         size: file.size,
         type: file.type,
         ext: fileName.split('.').pop()
@@ -252,8 +252,9 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
      * @param {File} file 
      */
     async editUploadedImage(file: File): Promise<void> {
+    const base64 = await this.convertToBase64(file);
     const image = new Image();
-    image.src = await this.convertToBase64(file);
+    image.src = base64;  
     image.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
