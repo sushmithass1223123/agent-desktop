@@ -74,7 +74,7 @@ import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -636,12 +636,47 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to decide whether to sanitize agent inputs or not
      */
     enableAgentMessageSanitization: boolean = false;
+   /**
+     * Files currently uploadeng
+     */
+   uploadingFiles: {
+    /**
+     * Uploading file
+     */
+    file: File;
+    /**
+     * Name of file
+     */
+    fileName: string;
+    /**
+     * Base64 string of file
+     */
+    base64: SafeUrl | string;
+    /**
+     * Size of file
+     */
+    size: number;
+    /**
+     * File type extension
+     */
+    type: string;
+    /**
+     * File extension
+     */
+    ext: string;
+}[] = [];
+    /**
+     * Flag to enable or disable drag and drop portion
+     */
+    dragDropView: boolean =  false;
+   
 
     /**
      * Constructor
      */
     constructor(
         private _interactionManagerService: InteractionManagerService,
+        private sanitizer: DomSanitizer,
         private _tmacEventService: TMACEventService,
         private _matDialog: MatDialog,
         private _appDataService: AppDataService,
@@ -677,6 +712,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Init
      */
     ngOnInit(): void {
+           // Add event listeners for drag events on the window
+           window.addEventListener('dragover', this.onDragOver.bind(this));
+           window.addEventListener('dragleave', this.onDragLeave.bind(this));
+           window.addEventListener('drop', this.onDrop.bind(this));
         {
             // Subscribe to whiteboardOpen$ observable
             this.sharedService.whiteboardOpen$.subscribe((whiteboardOpen) => {
@@ -887,6 +926,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Destroy
      */
     ngOnDestroy(): void {
+         // Remove event listeners
+         window.removeEventListener('dragover', this.onDragOver.bind(this));
+         window.removeEventListener('dragleave', this.onDragLeave.bind(this));
+         window.removeEventListener('drop', this.onDrop.bind(this));
         // call the wrapper destroy method
         this.destroyWrapper();
         // this.deRegisterFromEvents();
@@ -1297,7 +1340,62 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._appUIService.showDesktopAlert(this.translocoService.translate('widgets.chatControls.newMessageTitle'),
             this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.newMessageInfo'), dynamicLabels), true, 'message');
     }
+   // Handle drag over event (when a file is dragged over the placeholder)
+   onDragOver(event: DragEvent): void {
+   this.dragDropView = true
+   event.preventDefault(); 
+   event.stopPropagation();
+   }
+   // Handle drag leave event (when a file is dragged away from the placeholder)
+   onDragLeave(event: DragEvent): void {
+   event.preventDefault();
+   event.stopPropagation();  
+    }
+    // Handle drop event (when a file is dropped onto the placeholder)
+    onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
 
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+        this.handleFiles(files);
+       }
+    }
+    // Handle the files that were dropped
+    private handleFiles(files: FileList): void {
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        this.uploadFile(file);
+       }
+    }
+    // Upload the file after converting it to base64 format
+    private async uploadFile(file: File): Promise<void> {
+    const base64 = await this.convertToBase64(file);
+    const fileName = file.name;
+    this.uploadingFiles.push({
+        file,
+        fileName,
+        base64: this.sanitizeUrl(base64),
+        size: file.size,
+        type: file.type,
+        ext: fileName.split('.').pop()
+    });
+
+    this.attachPreviewMode = 'preview';
+    }
+    
+    /**
+     * Convert file to base64
+     * @param {File} file
+     */
+    async convertToBase64(file: File): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
     /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
      *
@@ -1418,7 +1516,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (error) { }
         return false;
     }
-
+ /**
+     * Method to sanitize base64 to safe url
+     * @param base64Url Base 64 Url
+     * @returns Sanitized Safe Url
+     */
+    sanitizeUrl(base64Url: string): SafeUrl {
+        return this.sanitizer.bypassSecurityTrustUrl(base64Url);
+    }
     /**
      * To send reply to customer message
      * @param template Message template
@@ -3669,6 +3774,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To send attachments
      */
     sendAttachments(item: any): void {
+        this.dragDropView = false;
         // clear the mode
         this.attachPreviewMode = '';
 
