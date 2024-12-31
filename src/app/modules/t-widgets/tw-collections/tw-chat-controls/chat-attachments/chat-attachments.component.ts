@@ -150,16 +150,7 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
         }
         return type;
     }
-    // Handle drag over event (when a file is dragged over the placeholder)
-    onDragOver(event: DragEvent): void {
-    event.preventDefault(); 
-    event.stopPropagation();
-    }
-    // Handle drag leave event (when a file is dragged away from the placeholder)
-    onDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();  
-    }
+
     // Handle drop event (when a file is dropped onto the placeholder)
     onDrop(event: DragEvent): void {
     event.preventDefault();
