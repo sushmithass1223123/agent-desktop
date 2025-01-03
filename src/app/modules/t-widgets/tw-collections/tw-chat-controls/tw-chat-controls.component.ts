@@ -2670,7 +2670,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             },
             {
                 key: '#customerName',
-                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.customerName)
+                value: this.customerName
             },
             {
                 key: '#sessionID',
