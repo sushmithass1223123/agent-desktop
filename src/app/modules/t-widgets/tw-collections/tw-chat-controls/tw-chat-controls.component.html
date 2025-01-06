@@ -686,7 +686,7 @@
 
                     <!-- CHAT ATTACHMENTS -->
                     <chat-attachments
-                        *ngIf="attachPreviewMode"
+                        *ngIf="dragDropView || attachPreviewMode"                        
                         [isSMM]="isSMM"
                         [attachmentConstraints]="attachmentConstraints"
                         [fileUploadUrl]="fileUploadUrl"
