@@ -175,6 +175,16 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         try {
             this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
             this.postData = JSON.parse(JSON.stringify(this.postData));
+            if (this.postData?.SubChannel == 'x') {
+                if (this.postData.SmActiveComment?.CommentText?.Text) {
+                    this.postData.SmActiveComment.CommentText.Text =
+                        this.postData.SmActiveComment.CommentText.Text.replace(/^@\S+\s*/, '');
+                }
+                if (this.postData.SmParentComments?.CommentText?.Text) {
+                    this.postData.SmParentComments.CommentText.Text =
+                        this.postData.SmParentComments.CommentText.Text.replace(/^@\S+\s*/, '');
+                }
+            }
             if (this.isDraftMode && this.draftData) {
                 if (!this.draftData.body) this.draftData.body = this.postData.SmActiveComment.CommentText.Text;
                 if (
@@ -668,6 +678,12 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 let modCommentData = { ...commentData, nestLevel: nestLevel + 1, renderMedia: false };
                 if (nestLevel === -1) modCommentData.isVisible = true;
                 else modCommentData.isVisible = false;
+                if (this.postData?.SubChannel == 'x') {
+                    if (modCommentData?.CommentText?.Text) {
+                        modCommentData.CommentText.Text =
+                            modCommentData.CommentText.Text.replace(/^@\S+\s*/, '');
+                    }
+                }
                 const isCommentAlreadyAvailable = this.flattenedCommentHistory.findIndex((ocd) => {
                     return modCommentData.CommentId === ocd.CommentId;
                 });
