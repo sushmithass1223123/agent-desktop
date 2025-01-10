@@ -259,11 +259,11 @@
                                                                     <ng-container *ngIf="{
                                                                             isEdited:
                                                                                 post.IsPostEdited ||
-                                                                                post.IsCommentEdited ||
+                                                                                (post.IsCommentEdited && currentTab !== 'posts') ||
                                                                                 post.PostData?.IsItemEdited,
                                                                             isDeleted:
                                                                                 post.IsPostDeleted ||
-                                                                                post.IsCommentDeleted ||
+                                                                                (post.IsCommentDeleted && currentTab !== 'posts') ||
                                                                                 post.PostData?.IsItemDeleted
                                                                         } as itemStatus">
                                                                         <mat-icon *ngIf="
@@ -458,13 +458,30 @@
                             } as parsedDate">
                             <p>{{ parsedDate.formatted.date }}, {{ parsedDate.formatted.time }}</p>
                             <mat-icon
-                                *ngIf="(selectedPost.IsPostEdited || selectedPost.IsCommentEdited || selectedPost.IsParentCommentEdited) && !(selectedPost.IsPostDeleted || selectedPost.IsCommentDeleted || selectedPost.IsParentCommentDeleted)"
+                                *ngIf="
+                                    (selectedPost.IsPostEdited ||
+                                        ((selectedPost.IsCommentEdited ||
+                                            selectedPost.IsParentCommentEdited) && currentTab !== 'posts')) &&
+                                    !(
+                                        selectedPost.IsPostDeleted ||
+                                        selectedPost.IsCommentDeleted ||
+                                        selectedPost.IsParentCommentDeleted
+                                    )
+                                "
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.editedItem')"
-                                class="theme-icon">edit</mat-icon>
+                                class="theme-icon"
+                                >edit</mat-icon
+                            >
                             <mat-icon
-                                *ngIf="selectedPost.IsPostDeleted || selectedPost.IsCommentDeleted || selectedPost.IsParentCommentDeleted"
+                                *ngIf="
+                                    selectedPost.IsPostDeleted ||
+                                    ((selectedPost.IsCommentDeleted ||
+                                        selectedPost.IsParentCommentDeleted) && currentTab !== 'posts')
+                                "
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.deletedItem')"
-                                class="red-icon">delete</mat-icon>
+                                class="red-icon"
+                                >delete</mat-icon
+                            >
                         </div>
 
                         <div class="core-actions actions-flex" *ngIf="

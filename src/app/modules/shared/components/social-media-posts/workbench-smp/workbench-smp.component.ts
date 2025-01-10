@@ -1186,7 +1186,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteReason: '',
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
-                        RejectReason: ''
+                        RejectReason: '',
+                        IsItemEdited: x?.SocialMediaData?.Posts?.IsEdited,
+                        IsItemDeleted: x?.SocialMediaData?.Posts?.IsDeleted
                     }
                 };
             });
