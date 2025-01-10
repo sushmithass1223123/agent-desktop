@@ -509,7 +509,7 @@
                                 <mat-icon>cancel</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.close') }}</p>
                             </div>
-                            <div style="margin-left: -4px" class="button-info-flex" *ngIf="currentTab !== 'sentitem'"
+                            <div style="margin-left: -4px" class="button-info-flex" *ngIf="currentTab == 'queue'"
                                 [disabled]="isPullOnProgress" role="button" (click)="transferPost([selectedPost])">
                                 <mat-icon>send</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.transfer') }}</p>
