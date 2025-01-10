@@ -27,6 +27,17 @@ export class MiscellaneousPipe implements PipeTransform {
                 if (args[0] !== undefined && args[1] !== undefined) return value.slice(args[0], args[1]);
                 else return value.slice(args[0]);
             }
+            case 'includesInArrayOfObjects': {
+                if (args[0]?.length && args[1]?.length && value?.length) {
+                    return args[0].some((obj: any) => {
+                        return args[1].some((key: any) => {
+                            return value.some((val: any) => {
+                                return obj[key].toString().toLowerCase() === val.toString().toLowerCase();
+                            });
+                        });
+                    });
+                } else return false;
+            }
             case 'twoLetterString': {
                 const words = value.split(' ');
                 if(words.length > 1) {

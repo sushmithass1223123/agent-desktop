@@ -170,7 +170,12 @@
                                 *ngIf="
                                     user.streamInfo.type === 'video' &&
                                     agentFeatures.snapshot &&
-                                    user.streamInfo.user === interactionDetails.CustomerName
+                                    !(
+                                        'includesInArrayOfObjects'
+                                        | MiscellaneousPipe
+                                            : [user.streamInfo.user, user.streamInfo.id]
+                                            : [conferenceAgentList, ['AgentId', 'AgentName']]
+                                    )
                                 "
                                 mat-flat-button
                                 mat-icon-button
