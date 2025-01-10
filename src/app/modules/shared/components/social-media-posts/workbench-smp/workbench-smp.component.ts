@@ -678,13 +678,20 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             this.chosenPostData?.SocialMediaData?.Posts?.PostId
                         );
                         if (filteredPost.length) this.openPost(filteredPost[0], true);
-                    } else {
+                    } else if (this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
                                 rres?.PostData?.ActiveCommentId ===
                                     this.chosenPostData?.SocialMediaData?.Comments?.CommentId ||
                                 rres?.PostData?.ParentCommentId ===
                                     this.chosenPostData?.SocialMediaData?.Comments?.CommentId
+                        );
+                        if (filteredPost) this.openPost(filteredPost, true);
+                    } else {
+                        const filteredPost = this.rawResponse.find(
+                            (rres) =>
+                                rres?.PostData?.ActiveCommentId ===
+                                this.chosenPostData?.SocialMediaData?.Comments?.CommentId
                         );
                         if (filteredPost) this.openPost(filteredPost, true);
                     }
