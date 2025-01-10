@@ -456,7 +456,8 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 fileName: file.fileName,
                                 src: response.result.downloadURL,
                                 size: response.result.size,
-                                interactionId: response.result.interaction_id
+                                interactionId: response.result.interaction_id,
+                                uploader: 'MediaStreamer'
                             });
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
@@ -497,7 +498,8 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                                 type,
                                 fileName: file.fileName,
                                 src: response.url,
-                                size: file.size
+                                size: file.size,
+                                uploader: 'MediaProxy'
                             });
                         } else {
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatAttachments.uploadFileFailed'), 'failure');
@@ -540,7 +542,8 @@ export class ChatAttachmentsComponent implements OnInit, AfterViewInit, OnDestro
                         type: item.Type ? item.Type : 'file',
                         fileName: item.FileName,
                         src: item.Url,
-                        size: file.size
+                        size: file.size,
+                        uploader: 'TmacProxy'
                     });
                 });
 

@@ -1414,14 +1414,37 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if ((evt.RecoveryEvent && !evt.IsAppMessage) || evt.EventName === 'TextChatMessageTemplateSentEvent') {
                 const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
                 const message = formattedMessage ? formattedMessage.message : evt.Message;
-                const attachment = formattedMessage && formattedMessage.attachment ? formattedMessage.attachment : null;
+                // For recovery events, attachment message format will be slightly different
+                const attachment =
+                    formattedMessage && formattedMessage.attachment
+                        ? formattedMessage.attachment
+                        : formattedMessage?._type === 'attachment'
+                        ? {
+                              type: formattedMessage._attachmentType,
+                              src: formattedMessage?._attachmentId,
+                              uploader: formattedMessage?._uploader
+                          }
+                        : null;
                 const type = attachment ? attachment.type : 'text';
 
                 // if media proxy then remove the source
-                if (attachment && !attachment.src && this.fileUploadUrl.MediaProxy) {
+                if (
+                    attachment &&
+                    !attachment.src &&
+                    this.fileUploadUrl.MediaProxy &&
+                    attachment?.uploader != 'MediaStreamer'
+                ) {
                     // get the file upload url
                     const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
                     attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
+                } else if (
+                    attachment &&
+                    attachment?.src &&
+                    this.fileUploadUrl?.MediaStreamer &&
+                    attachment?.uploader == 'MediaStreamer'
+                ) {
+                    const fileServerUrl: string = this.fileUploadUrl.MediaStreamer;
+                    attachment.src = `${fileServerUrl}/stream/media/${attachment.src}`
                 }
 
                 // check for replied message
@@ -1591,7 +1614,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 _attachmentType: attachment.type,
                 _attachmentId: attachment.interactionId,
                 _attachmentPreviewId: '',
-                _attachmentSize: attachment.size
+                _attachmentSize: attachment.size,
+                _uploader: attachment.uploader
             });
             // do not send template id for SMM
             templateId = '';
@@ -1751,7 +1775,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // this.isMobileDevice = this.customerDevice;
         widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints, ConferenceAgentList: this.conferenceAgentList };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -3785,7 +3809,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             src: item.src,
             type: item.type,
             contentType: item.contentType,
-            size: item.size
+            size: item.size,
+            uploader: item.uploader
         };
         // check if interaction id is provided, this will for SMM upload
         if (item.interactionId) {
