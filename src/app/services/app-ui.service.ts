@@ -494,6 +494,8 @@ export class AppUiService extends SharedWrapper {
                     message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Got mentioned on ${notification.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post'} in ${notification.message?.SocialMediaData?.Posts?.Channel}`
                 } else if (notification.icon.includes('smc_e') || notification.icon.includes('smco_e')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smpc_e')) {
+                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Parent comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smc_d') || notification.icon.includes('smco_d')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smp_d')) {
