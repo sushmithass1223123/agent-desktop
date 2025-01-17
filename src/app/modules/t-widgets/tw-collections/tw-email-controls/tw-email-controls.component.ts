@@ -51,7 +51,7 @@ import { format, parse } from 'date-fns';
 import { merge, sortBy } from 'lodash';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { UIActionEventService } from '@services/ui-action-event.service';
 import { AppDataService } from '@services/app-data.service';
 import { SharedService } from '@services/shared.service';
@@ -136,10 +136,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
 
     /**
      * Maximise event
@@ -285,6 +282,10 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         private _sharedService: SharedService
     ) {
         super('TwEmailControlsComponent');
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     // @ Lifecycle hooks

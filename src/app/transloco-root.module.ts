@@ -5,9 +5,17 @@ import {
   TranslocoLoader,
   TRANSLOCO_CONFIG,
   translocoConfig,
-  TranslocoModule
-} from '@ngneat/transloco';
-import { Injectable, NgModule } from '@angular/core';
+  TranslocoModule,
+  TRANSLOCO_TRANSPILER,
+  TRANSLOCO_MISSING_HANDLER,
+  TRANSLOCO_INTERCEPTOR,
+  DefaultInterceptor,
+  TRANSLOCO_FALLBACK_STRATEGY,
+  DefaultFallbackStrategy,
+  DefaultTranspiler,
+  provideTransloco
+} from '@jsverse/transloco';
+import { Injectable, isDevMode, NgModule } from '@angular/core';
 import { environment } from '../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -23,7 +31,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
     try{
       if(labelError) {
         this.errorHandler(labelError);
-        return;
+        return labelError;
       }
       return this.http.get<Translation>(`assets/i18n/${lang}.json`).pipe(catchError(this.errorHandler));
     }  catch(e) {
@@ -39,6 +47,18 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   }
 }
 
+export const labelConfig = {
+  providers:[
+      provideTransloco({
+        config: {
+          availableLangs: ['en', 'es'],
+          defaultLang: 'en',
+          reRenderOnLangChange: true
+        },
+        loader: TranslocoHttpLoader,
+      }),
+    ]
+};
 
 
 export function initConfig() {
@@ -62,6 +82,7 @@ export function initConfig() {
 }
 
 @NgModule({
+  imports: [TranslocoModule],
   exports: [ TranslocoModule ],
   providers: [
     {
@@ -71,7 +92,23 @@ export function initConfig() {
         prodMode: environment.production,
       }})
     },
-    { provide: TRANSLOCO_LOADER, useClass: TranslocoHttpLoader }
+    { provide: TRANSLOCO_LOADER, useClass: TranslocoHttpLoader },
+    {
+      provide: TRANSLOCO_TRANSPILER,
+      useClass: DefaultTranspiler // Or provide a default transpiler if necessary
+    },
+    {
+      provide: TRANSLOCO_MISSING_HANDLER,
+      useValue: {handle: (params) => params.key} // Provide your handler here
+    },
+    {
+      provide: TRANSLOCO_INTERCEPTOR,
+      useClass: DefaultInterceptor, // If you have a custom interceptor
+    },
+    {
+      provide: TRANSLOCO_FALLBACK_STRATEGY,
+      useClass: DefaultFallbackStrategy, // Or a custom fallback strategy
+    }
   ]
 })
 export class TranslocoRootModule {}

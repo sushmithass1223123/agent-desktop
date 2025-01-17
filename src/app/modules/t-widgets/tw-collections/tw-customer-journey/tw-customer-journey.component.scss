@@ -1,5 +1,5 @@
 tw-customer-journey {
-    .mat-card-content {
+    .mat-mdc-card-content {
         background: inherit !important;
         padding: 0 !important;
     }
@@ -98,7 +98,7 @@ tw-customer-journey {
                     // width: 46px;
                     // height: 46px;
 
-                    &:not(.mat-warn) {
+                    &:not(.mat-mdc-warn) {
                         background: #bdbdbd;
                     }
                 }
@@ -364,7 +364,7 @@ tw-customer-journey {
     }
 }
 
-.customer-journey-advanced-form .mat-dialog-container {
+.customer-journey-advanced-form .mat-mdc-dialog-container {
     padding: 0px;
     border-radius: 20px !important;
     form {

@@ -75,10 +75,7 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$,
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
     /**
      * Max date for dashboard data
      */
@@ -104,6 +101,11 @@ export class TwcHomeComponent extends TWContentWrapper implements OnInit, OnDest
         private _aotWidgetService: AOTWidgetService
     ) {
         super('TwcHomeComponent', hostElement, contentPageService);
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$(),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**

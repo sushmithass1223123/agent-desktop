@@ -1,6 +1,8 @@
 // -----------------------------------------------------------------------------------------------------
 // @ Theming
 // -----------------------------------------------------------------------------------------------------
+
+@use '@angular/material' as mat;
 @mixin material-theme($theme) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
@@ -289,7 +291,7 @@ mat-icon.status {
     flex-direction: row;
     padding: 0 8px;
     border-radius: 4px;
-    @include mat-elevation(1);
+    @include mat.elevation(1);
 
     .pagination-item {
         display: flex;

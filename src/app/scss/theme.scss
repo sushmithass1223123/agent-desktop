@@ -5,21 +5,21 @@
 @import 'themes/common.theme';
 
 // Layout components theming
-@import 'src/app/layout/components/instant-messaging/instant-messaging.theme';
-@import 'src/app/layout/components/toolbar/toolbar.theme';
-@import 'src/app/layout/components/theme-options/theme-options.theme';
+@import 'app/layout/components/instant-messaging/instant-messaging.theme';
+@import 'app/layout/components/toolbar/toolbar.theme';
+@import 'app/layout/components/theme-options/theme-options.theme';
 
 // Core components theming
-@import 'src/app/modules/core/login/login.theme';
+@import 'app/modules/core/login/login.theme';
 
 // Shared componenents theming
-@import 'src/app/modules/shared/shared.theme';
+@import 'app/modules/shared/shared.theme';
 
 // Module components theming
-@import 'src/app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
-@import 'src/app/modules/t-widgets/tw-content/tw-content.theme';
-@import 'src/app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
-@import 'src/app/modules/t-widgets/tw-collections/tw-collections.theme';
+@import 'app/modules/t-widgets/tw-toolbar/tw-toolbar.theme';
+@import 'app/modules/t-widgets/tw-content/tw-content.theme';
+@import 'app/modules/t-widgets/tw-wrapper/tw-wrapper.theme';
+@import 'app/modules/t-widgets/tw-collections/tw-collections.theme';
 
 @import 'themes/tailwind.theme';
 

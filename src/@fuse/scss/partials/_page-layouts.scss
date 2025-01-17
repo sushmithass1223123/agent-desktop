@@ -1,6 +1,8 @@
 // -----------------------------------------------------------------------------------------------------
 // @ Theming
 // -----------------------------------------------------------------------------------------------------
+
+@use '@angular/material' as mat;
 @mixin page-layouts-theme($theme) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
@@ -123,7 +125,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     flex-direction: column;
                     flex: 1 0 auto;
                     overflow: hidden;
-                    @include mat-elevation(1);
+                    @include mat.elevation(1);
 
                     > .toolbar {
                         display: flex;
@@ -155,20 +157,20 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                         > .content {
                             display: flex;
 
-                            > .mat-tab-group {
+                            > .mat-mdc-tab-group {
                                 overflow: hidden;
                                 width: 100%;
 
-                                .mat-tab-header {
-                                    .mat-tab-label {
+                                .mat-mdc-tab-header {
+                                    .mat-mdc-tab-label {
                                         height: 64px;
                                     }
                                 }
 
-                                .mat-tab-body {
+                                .mat-mdc-tab-body {
                                     overflow: hidden;
 
-                                    .mat-tab-body-content {
+                                    .mat-mdc-tab-body-content {
                                         overflow: hidden;
 
                                         .tab-content {
@@ -207,9 +209,9 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     > .center {
                         > .content-card {
                             > .content {
-                                > .mat-tab-group {
-                                    .mat-tab-body {
-                                        .mat-tab-body-content {
+                                > .mat-mdc-tab-group {
+                                    .mat-mdc-tab-body {
+                                        .mat-mdc-tab-body-content {
                                             .tab-content {
                                                 overflow: auto;
                                                 -webkit-overflow-scrolling: touch;
@@ -239,7 +241,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                 max-width: 240px;
                 height: auto;
                 overflow: hidden;
-                @include mat-elevation(7);
+                @include mat.elevation(7);
 
                 &.locked-open {
                     background: none;
@@ -298,7 +300,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     flex-direction: column;
                     flex: 1 1 auto;
                     overflow: hidden;
-                    @include mat-elevation(1);
+                    @include mat.elevation(1);
 
                     > .toolbar {
                         display: flex;
@@ -341,19 +343,19 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                         > .content {
                             display: flex;
 
-                            > .mat-tab-group {
+                            > .mat-mdc-tab-group {
                                 overflow: hidden;
 
-                                .mat-tab-header {
-                                    .mat-tab-label {
+                                .mat-mdc-tab-header {
+                                    .mat-mdc-tab-label {
                                         height: 64px;
                                     }
                                 }
 
-                                .mat-tab-body {
+                                .mat-mdc-tab-body {
                                     overflow: hidden;
 
-                                    .mat-tab-body-content {
+                                    .mat-mdc-tab-body-content {
                                         overflow: hidden;
 
                                         .tab-content {
@@ -399,9 +401,9 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                     > .center {
                         > .content-card {
                             > .content {
-                                > .mat-tab-group {
-                                    .mat-tab-body {
-                                        .mat-tab-body-content {
+                                > .mat-mdc-tab-group {
+                                    .mat-mdc-tab-body {
+                                        .mat-mdc-tab-body-content {
                                             .tab-content {
                                                 overflow: auto;
                                                 -webkit-overflow-scrolling: touch;
@@ -464,7 +466,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                 min-width: 240px;
                 max-width: 240px;
                 overflow: hidden;
-                @include mat-elevation(7);
+                @include mat.elevation(7);
 
                 &.locked-open {
                     background: none;
@@ -501,7 +503,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
                 z-index: 3;
                 min-width: 0;
                 width: 100%;
-                @include mat-elevation(1);
+                @include mat.elevation(1);
 
                 > .header {
                     height: $header-height;
@@ -561,7 +563,7 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
 
                         > .content {
                             border-radius: 8px;
-                            @include mat-elevation(1);
+                            @include mat.elevation(1);
                         }
                     }
                 }
@@ -603,8 +605,8 @@ $carded-header-height-without-toolbar: $carded-header-height - $carded-toolbar-h
             }
 
             > .content {
-                > .mat-tab-group {
-                    .mat-tab-labels {
+                > .mat-mdc-tab-group {
+                    .mat-mdc-tab-labels {
                         padding: 0 24px;
                     }
                 }

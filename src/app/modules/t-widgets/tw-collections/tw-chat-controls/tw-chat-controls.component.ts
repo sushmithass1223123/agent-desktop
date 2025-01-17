@@ -72,9 +72,9 @@ import { map, merge, sortBy } from 'lodash';
 import moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const holdState = { onHold: true, buttonTooltip: 'Unhold', icon: 'play_arrow', loading: false };
 const unHoldState = { onHold: false, buttonTooltip: 'Hold', icon: 'pause', loading: false };
@@ -94,14 +94,16 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To hold all the data related to this widget from the config
      */
     // @Input() data: IWidget<TextChatIncomingEvent, IWidgetData>;
-    @Input() data: TwChatControls<TextChatIncomingEvent>;
+    @Input()
+    data!: TwChatControls<TextChatIncomingEvent>;
 
     // Child observer for text area auto increase size
-    @ViewChild('autosize') autosize: CdkTextareaAutosize;
+    @ViewChild('autosize')
+    autosize!: CdkTextareaAutosize;
     /**
      * Widget data ref
      */
-    widgetData: TwChatControlsData & InteractionWidgetBaseData;
+    widgetData!: TwChatControlsData & InteractionWidgetBaseData;
     /**
      * Media Channels
      */
@@ -113,11 +115,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$,
-        config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
-    };
+    customFuse: any;
+
     /**
      * To emit maximize event on widget maximize
      */
@@ -133,7 +132,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Widget maximized flag
      */
-    maximized: boolean;
+    maximized: boolean = false;
     /**
      * Total interaction list
      */
@@ -141,7 +140,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Interaction Ref
      */
-    interaction: TextChatIncomingEvent;
+    interaction!: TextChatIncomingEvent;
     /**
      * Agent ref
      */
@@ -157,7 +156,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Interaction start time
      */
-    startTime: Date;
+    startTime!: Date;
     /**
      * Interaction duration
      */
@@ -219,15 +218,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Customer Id
      */
-    cif: string;
+    cif: string | undefined;
     /**
      * AV call widget ref
      */
-    callWidget: AOTWidget;
+    callWidget: AOTWidget | undefined;
     /**
      * Flag to disable AV escalate buttons
      */
-    disableAV: boolean;
+    disableAV: boolean = false;
     /**
      * File upload URL
      */
@@ -235,35 +234,35 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Interaction channel
      */
-    channel: string;
+    channel: string | undefined;
     /**
      * Social media manager flag
      */
-    isSMM: boolean;
+    isSMM: boolean = false;
     /**
      * Flag to show auto freeze button
      */
-    showAutoFreeze: boolean;
+    showAutoFreeze: boolean = false;
     /**
      * Interaction bargeIn by supervisor flag
      */
-    supervisorInit: boolean;
+    supervisorInit: boolean = false;
     /**
      * Confirmation mat dialog ref
      */
-    confirmDialogRef: MatDialogRef<any, any>;
+    confirmDialogRef: MatDialogRef<any, any> | undefined;
     /**
      * Bot connected to chat flag
      */
-    botConnected: boolean;
+    botConnected: boolean = false;
     /**
      * Chatmode
      */
-    chatMode: 'audio' | 'video';
+    chatMode: 'audio' | 'video' | undefined;
     /**
      * Line ID
      */
-    lineId: string;
+    lineId: string | undefined;
     /**
      * Flag to show emoji overlay
      */
@@ -275,7 +274,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * whiteBoard Widget ID
      */
-    whiteBoardWidgetId: string;
+    whiteBoardWidgetId: string | undefined;
     /**
      * Attachment actions
      */
@@ -323,7 +322,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Transfer/conference dialog ref
      */
-    transferConfDialogRef: MatDialogRef<any, any>;
+    transferConfDialogRef: MatDialogRef<any, any> | undefined;
     /**
      * Self service destinations
      */
@@ -332,15 +331,17 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Messages div ref
      */
     @ViewChild('messages')
-    messagesRef: ElementRef<HTMLDivElement>;
+    messagesRef!: ElementRef<HTMLDivElement>;
     /**
      * Reply input children ref
      */
-    @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
+    @ViewChild('replyInput')
+    replyInputField!: ElementRef<HTMLTextAreaElement>;
     /**
      * Reply form ref
      */
-    @ViewChild('replyForm') replyForm: NgForm;
+    @ViewChild('replyForm')
+    replyForm!: NgForm;
     /**
      * Saved interaction comments
      */
@@ -348,7 +349,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Flag to blink comments button when added from server
      */
-    commentsAdded: boolean;
+    commentsAdded: boolean = false;
     /**
      * Conversation Api Urls
      */
@@ -378,11 +379,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * User typing flag
      */
-    userTyping: boolean;
+    userTyping: boolean = false;
     /**
      * Remote typing ref
      */
-    remoteTyping: {
+    remoteTyping!: {
         /**
          * Name of user typing (conf agent/customer)
          */
@@ -399,15 +400,15 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Message id of the message the user is responding to
      */
-    replyingToMessage: ChatTranscripts | null;
+    replyingToMessage!: ChatTranscripts | null;
     /**
      * To open more actions
      */
-    openMoreActions: boolean;
+    openMoreActions: boolean = false;
     /**
      * More action buttons
      */
-    moreActions = [];
+    moreActions: any[] = [];
     /**
      * Flag to check if the interaction is on hold
      */
@@ -415,7 +416,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Agent action features
      */
-    agentFeatures: {
+    agentFeatures!: {
         /**
          * Audio escalate
          */
@@ -512,11 +513,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Connected event ref
      */
-    remoteUserConnectedEvent: TextChatRemoteUserConnectedEvent;
+    remoteUserConnectedEvent!: TextChatRemoteUserConnectedEvent;
     /**
      * Async chat flag
      */
-    asyncChatRef: {
+    asyncChatRef!: {
         /**
          * Is async chat flag
          */
@@ -546,12 +547,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Preview media dialog
      */
     @ViewChild('previewMediaDialog')
-    previewMediaDialog: TemplateRef<any>;
+    previewMediaDialog!: TemplateRef<any>;
 
     /**
      * Preview media dialog ref
      */
-    previewMediaDialogRef: MatDialogRef<any>;
+    previewMediaDialogRef!: MatDialogRef<any>;
 
     /**
      * Preview media dialog data
@@ -563,17 +564,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     isForceHold: boolean = false;
 
-    @ViewChild('endBtn') endButton: MatButton;
+    @ViewChild('endBtn')
+    endButton!: MatButton;
 
-    @ViewChild('closeBtn') closeButton: MatButton;
+    @ViewChild('closeBtn')
+    closeButton!: MatButton;
      /**
          * Deviceinfocheck
          */
-    customerDevice: boolean;
+    customerDevice: boolean = false;
     /**
          * socialMediaAVdisable
          */
-    socialMedia: boolean;
+    socialMedia!: boolean;
     /**
      * Method to disable AV escalations when customer connects through mobile device
      */
@@ -622,7 +625,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * Is audio through hard phone
      */
-    isPhoneAudio: boolean = false;
+    isPhoneAudio: boolean | undefined = false;
     /**
      * Object to hold attachment mime constraints
      */
@@ -636,47 +639,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * Flag to decide whether to sanitize agent inputs or not
      */
     enableAgentMessageSanitization: boolean = false;
-   /**
-     * Files currently uploadeng
-     */
-   uploadingFiles: {
-    /**
-     * Uploading file
-     */
-    file: File;
-    /**
-     * Name of file
-     */
-    fileName: string;
-    /**
-     * Base64 string of file
-     */
-    base64: SafeUrl | string;
-    /**
-     * Size of file
-     */
-    size: number;
-    /**
-     * File type extension
-     */
-    type: string;
-    /**
-     * File extension
-     */
-    ext: string;
-}[] = [];
-    /**
-     * Flag to enable or disable drag and drop portion
-     */
-    dragDropView: boolean =  false;
-   
 
     /**
      * Constructor
      */
     constructor(
         private _interactionManagerService: InteractionManagerService,
-        private sanitizer: DomSanitizer,
         private _tmacEventService: TMACEventService,
         private _matDialog: MatDialog,
         private _appDataService: AppDataService,
@@ -701,6 +669,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             Url: '',
             Limit: 0
         };
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$(),
+            config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
+        };
     }
     // Define a boolean flag to track if the whiteboard is open
     private isWhiteboardOpen: boolean = false;
@@ -712,10 +686,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Init
      */
     ngOnInit(): void {
-           // Add event listeners for drag events on the window
-           window.addEventListener('dragover', this.onDragOver.bind(this));
-           window.addEventListener('dragleave', this.onDragLeave.bind(this));
-           window.addEventListener('drop', this.onDrop.bind(this));
         {
             // Subscribe to whiteboardOpen$ observable
             this.sharedService.whiteboardOpen$.subscribe((whiteboardOpen) => {
@@ -797,9 +767,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         });
 
         //observe ui control events from custom widgets
-        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data: any) => {
             try {
-                if (data && data.interactionID?.toString() === this.interaction.InteractionID.toString()) {
+                if (data && data.interactionID?.toString() === this.interaction?.InteractionID.toString()) {
                     this.handleUIControls(data);
                 }
             } catch (e) {
@@ -906,7 +876,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 }
                 // if no active we need to select that particular interaction
                 if (!inPage) {
-                    const interaction = this.interactionList.filter((i) => i.interactionId === this.interaction.InteractionID)[0];
+                    const interaction = this.interactionList?.filter((i) => i.interactionId === this.interaction?.InteractionID)[0];
                     if (interaction && !interaction?.isActive) {
                         this.selectInteraction(interaction, true);
                     }
@@ -926,10 +896,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * On Destroy
      */
     ngOnDestroy(): void {
-         // Remove event listeners
-         window.removeEventListener('dragover', this.onDragOver.bind(this));
-         window.removeEventListener('dragleave', this.onDragLeave.bind(this));
-         window.removeEventListener('drop', this.onDrop.bind(this));
         // call the wrapper destroy method
         this.destroyWrapper();
         // this.deRegisterFromEvents();
@@ -984,7 +950,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 this.interaction.InteractionID
             )
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt: any) => (this as any)[evt.EventName](evt)));
     }
 
     /**
@@ -1340,62 +1306,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._appUIService.showDesktopAlert(this.translocoService.translate('widgets.chatControls.newMessageTitle'),
             this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.newMessageInfo'), dynamicLabels), true, 'message');
     }
-   // Handle drag over event (when a file is dragged over the placeholder)
-   onDragOver(event: DragEvent): void {
-   this.dragDropView = true
-   event.preventDefault(); 
-   event.stopPropagation();
-   }
-   // Handle drag leave event (when a file is dragged away from the placeholder)
-   onDragLeave(event: DragEvent): void {
-   event.preventDefault();
-   event.stopPropagation();  
-    }
-    // Handle drop event (when a file is dropped onto the placeholder)
-    onDrop(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
 
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-        this.handleFiles(files);
-       }
-    }
-    // Handle the files that were dropped
-    private handleFiles(files: FileList): void {
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        this.uploadFile(file);
-       }
-    }
-    // Upload the file after converting it to base64 format
-    private async uploadFile(file: File): Promise<void> {
-    const base64 = await this.convertToBase64(file);
-    const fileName = file.name;
-    this.uploadingFiles.push({
-        file,
-        fileName,
-        base64: this.sanitizeUrl(base64),
-        size: file.size,
-        type: file.type,
-        ext: fileName.split('.').pop()
-    });
-
-    this.attachPreviewMode = 'preview';
-    }
-    
-    /**
-     * Convert file to base64
-     * @param {File} file
-     */
-    async convertToBase64(file: File): Promise<any> {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-    }
     /**
      * To process both TextChatMessageSentEvent and TextChatMessageTemplateSentEvent
      *
@@ -1414,37 +1325,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             if ((evt.RecoveryEvent && !evt.IsAppMessage) || evt.EventName === 'TextChatMessageTemplateSentEvent') {
                 const messageId = formattedMessage ? formattedMessage.messageId : evt.EventId;
                 const message = formattedMessage ? formattedMessage.message : evt.Message;
-                // For recovery events, attachment message format will be slightly different
-                const attachment =
-                    formattedMessage && formattedMessage.attachment
-                        ? formattedMessage.attachment
-                        : formattedMessage?._type === 'attachment'
-                        ? {
-                              type: formattedMessage._attachmentType,
-                              src: formattedMessage?._attachmentId,
-                              uploader: formattedMessage?._uploader
-                          }
-                        : null;
+                const attachment = formattedMessage && formattedMessage.attachment ? formattedMessage.attachment : null;
                 const type = attachment ? attachment.type : 'text';
 
                 // if media proxy then remove the source
-                if (
-                    attachment &&
-                    !attachment.src &&
-                    this.fileUploadUrl.MediaProxy &&
-                    attachment?.uploader != 'MediaStreamer'
-                ) {
+                if (attachment && !attachment.src && this.fileUploadUrl.MediaProxy) {
                     // get the file upload url
                     const fileServerUrl: string = this.fileUploadUrl?.MediaProxy;
                     attachment.src = `${fileServerUrl}/${this.sessionID}/${attachment.name}`;
-                } else if (
-                    attachment &&
-                    attachment?.src &&
-                    this.fileUploadUrl?.MediaStreamer &&
-                    attachment?.uploader == 'MediaStreamer'
-                ) {
-                    const fileServerUrl: string = this.fileUploadUrl.MediaStreamer;
-                    attachment.src = `${fileServerUrl}/stream/media/${attachment.src}`
                 }
 
                 // check for replied message
@@ -1539,14 +1427,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         } catch (error) { }
         return false;
     }
- /**
-     * Method to sanitize base64 to safe url
-     * @param base64Url Base 64 Url
-     * @returns Sanitized Safe Url
-     */
-    sanitizeUrl(base64Url: string): SafeUrl {
-        return this.sanitizer.bypassSecurityTrustUrl(base64Url);
-    }
+
     /**
      * To send reply to customer message
      * @param template Message template
@@ -1614,8 +1495,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 _attachmentType: attachment.type,
                 _attachmentId: attachment.interactionId,
                 _attachmentPreviewId: '',
-                _attachmentSize: attachment.size,
-                _uploader: attachment.uploader
+                _attachmentSize: attachment.size
             });
             // do not send template id for SMM
             templateId = '';
@@ -1656,6 +1536,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             return escapedStr;
         } catch (error) {
             console.error(error);
+            return '';
         }
     }
 
@@ -1775,7 +1656,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // this.isMobileDevice = this.customerDevice;
         widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints, ConferenceAgentList: this.conferenceAgentList };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -2799,7 +2680,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             },
             {
                 key: '#customerName',
-                value: this.customerName
+                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.customerName)
             },
             {
                 key: '#sessionID',
@@ -3787,7 +3668,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To close attachment panel
      */
     closeAttachments(): void {
-        this.dragDropView = false;
         this.attachPreviewMode = '';
          // Exit PiP mode if it's active
          if (document.pictureInPictureElement) {
@@ -3799,7 +3679,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To send attachments
      */
     sendAttachments(item: any): void {
-        this.dragDropView = false;
         // clear the mode
         this.attachPreviewMode = '';
 
@@ -3809,8 +3688,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             src: item.src,
             type: item.type,
             contentType: item.contentType,
-            size: item.size,
-            uploader: item.uploader
+            size: item.size
         };
         // check if interaction id is provided, this will for SMM upload
         if (item.interactionId) {
@@ -4002,7 +3880,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         try {
 
             // [Chirag July,31 22'] send whiteboard url to customer
-            let customerUrl = new URL(this.widgetData.Cobrowse.CustomerUrls[0].Url);
+            let customerUrl = new URL(this.widgetData.Cobrowse.CustomerUrls[0]['Url']);
             customerUrl.searchParams.set('sessionid', this.sessionID);
             customerUrl.searchParams.set('cobrowse', "true");
 
@@ -4249,7 +4127,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
     }
 
-    getUpdatedLabel(msg, labels = []) {
+    getUpdatedLabel(msg, labels:any[] = []) {
         let updatedLabel = msg;
         labels?.forEach(ele => {
             updatedLabel = updatedLabel.replace(ele.key, ele.value);

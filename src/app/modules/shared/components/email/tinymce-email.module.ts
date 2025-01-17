@@ -115,8 +115,8 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      * @param {SimpleChanges} changes
      */
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.body && this._editor && !this._editorContentChanged && changes.body.currentValue !== this._editor.getContent()) {
-            this._editor.setContent(changes.body.currentValue);
+        if (changes['body'] && this._editor && !this._editorContentChanged && changes['body'].currentValue !== this._editor.getContent()) {
+            this._editor.setContent(changes['body'].currentValue);
         }
         if (this._editorContentChanged) {
             this._editorContentChanged = false;

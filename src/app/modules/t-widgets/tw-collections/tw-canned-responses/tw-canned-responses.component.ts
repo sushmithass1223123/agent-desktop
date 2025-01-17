@@ -9,7 +9,7 @@ import { sortBy, uniqBy } from 'lodash';
 import { merge, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TwCannedResponses } from '@ad/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import moment from 'moment';
 /**
  * TW canned Responses

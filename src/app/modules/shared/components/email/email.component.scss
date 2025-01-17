@@ -1,4 +1,4 @@
-.mat-chip.mat-standard-chip {
+.mat-mdc-chip.mat-mdc-standard-chip {
     @apply twd-text-xs;
     @apply twd-cursor-pointer;
     @apply twd-max-w-[300px];
@@ -12,11 +12,11 @@
         @apply twd-m-0.5;
     }
 }
-.attachments-summary .mat-chip {
+.attachments-summary .mat-mdc-chip {
     max-width: 40%;
 }
 
-::ng-deep .mat-chip-list-wrapper {
+::ng-deep .mat-mdc-chip-list-wrapper {
     width: 100%;
     padding: 0px;
 }
@@ -33,15 +33,15 @@ input {
 .select-box {
     border-radius: 20px;
     background-color: rgb(0 0 0 / 0.1);
-    .mat-form-field-wrapper {
+    .mat-mdc-text-field-wrapper {
         padding-bottom: 0 !important;
     }
 }
-mat-form-field.custom .mat-form-field-wrapper .mat-form-field-infix {
+mat-form-field.custom .mat-mdc-text-field-wrapper .mat-mdc-form-field-infix {
     padding-top: 5px !important;
     padding-bottom: 5px !important;
 }
-.mat-form-field-appearance-outline .mat-form-field-infix {
+.mat-mdc-form-field-appearance-outline .mat-mdc-form-field-infix {
     padding: 5px;
 }
 

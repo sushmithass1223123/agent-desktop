@@ -29,9 +29,7 @@ import {
     TextChatMessageReceivedEvent,
     TextChatRemoteUserConnectedEvent,
     TUtils,
-    WrcCallTypes,
-    TextChatAgentConnectedEvent,
-    TextChatAgentDisconnectedEvent
+    WrcCallTypes
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS, AV_FAIL_CODES, PERMISSION_ERRORS } from 'app/constants';
@@ -41,7 +39,7 @@ import { throwADError } from 'app/utils';
 import { map } from 'lodash';
 import { from, merge, Subject, timer } from 'rxjs';
 import { delay, filter, take, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { SharedService } from '@services/shared.service';
 
 /**
@@ -63,10 +61,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
     /**
      * App Config
      */
@@ -312,15 +307,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     endCallAfterScreenShareEnd: boolean = false;
 
     IsScreenShareDisabled: boolean;
-    // Property to hold conference agents list
-    conferenceAgentList: {
-        AgentId: string;
-        AgentName: string;
-        ConferenceType: string;
-        TmacServer: string;
-        IsBotAgent: boolean;
-        InteractionId: any;
-    }[] = [];
 
     /**
      * Constructor
@@ -339,6 +325,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         private sharedService: SharedService
     ) {
         super('TwAudioVideoControlsComponent');
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
 
         this.muteAVOnHold = {
             enabled: false,
@@ -425,8 +416,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     { event: 'TextChatMessageReceivedEvent' },
                     { event: 'ActionMessageReceivedEvent' },
                     { event: 'TextChatDisconnectedEvent' },
-                    { event: 'TextChatAgentConnectedEvent' },
-                    { event: 'TextChatAgentDisconnectedEvent' },
                     { event: 'CallHoldEvent', noRepeat: true },
                     { event: 'CallHoldReconnectEvent', noRepeat: true },
                     { event: 'CallConferenceCompletedEvent', noRepeat: true }
@@ -698,7 +687,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     }
                     // If its an incoming call fron an agent, skip here as we already handle that in
                     // request av controll message event
-                    const isIncomingCallFromConferenceAgent = this.conferenceAgentList.length
+                    const isIncomingCallFromConferenceAgent = this.data.Data?.ConferenceAgentList.length
                         ? this.data.Data.ConferenceAgentList.some(
                               (agent: any) =>
                                   evt.data.owner === `${agent.InteractionId}_${agent.AgentId}_${agent.AgentName}`
@@ -1066,28 +1055,6 @@ if (error === 'Screenshare Was Cancelled') {
             this.startAVCall();
         }
     };
-
-    TextChatAgentConnectedEvent(evt: TextChatAgentConnectedEvent): void {
-        let tmacServer = '';
-        try {
-            const agentInfo = JSON.parse(evt.AgentInfoJson);
-            const extraParam = JSON.parse(agentInfo.extraparam);
-            tmacServer = extraParam.serverName;
-        } catch (error) { }
-
-        this.conferenceAgentList.push({
-            AgentId: evt.AgentId,
-            AgentName: evt.AgentName,
-            ConferenceType: evt.ConferenceType,
-            IsBotAgent: evt.IsBotAgent,
-            TmacServer: tmacServer,
-            InteractionId: JSON.parse(evt.AgentInfoJson)?.extraparam?.interactionId
-        });
-    }
-
-    TextChatAgentDisconnectedEvent(evt: TextChatAgentDisconnectedEvent): void {
-        this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
-    }
 
     /**
      * AVControlMessageReceivedEvent Handler

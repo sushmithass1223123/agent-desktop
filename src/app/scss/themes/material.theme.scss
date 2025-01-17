@@ -1,19 +1,19 @@
+@use '@angular/material' as mat;
 @mixin matarial-theme($theme) {
     $background: map-get($theme, background);
-    $foreground: map-get($theme, foreground);
-    $accent: map-get($theme, accent);
+    $foreground: mat.get-theme-color($theme, foreground);
     $is-dark: map-get($theme, is-dark);
 
     mat-selection-list {
-        .mat-list-single-selected-option,
-        .mat-list-single-selected-option:hover,
-        .mat-list-single-selected-option:focus {
+        .mat-mdc-list-single-selected-option,
+        .mat-mdc-list-single-selected-option:hover,
+        .mat-mdc-list-single-selected-option:focus {
             animation: apply 1s;
 
             @if ($is-dark) {
-                background: mat-color($accent, 700) !important;
+                background: mat.get-theme-color($theme, accent, 700) !important;
             } @else {
-                background: mat-color($accent, 700) !important;
+                background: mat.get-theme-color($theme, accent, 700)!important;
             }
 
             @keyframes apply {
@@ -22,16 +22,16 @@
                 }
                 to {
                     @if ($is-dark) {
-                        background: mat-color($accent, 700) !important;
+                        background: mat.get-theme-color($theme, accent, 700) !important;
                     } @else {
-                        background: mat-color($accent, 700) !important;
+                        background: mat.get-theme-color($theme, accent, 700) !important;
                     }
                 }
             }
         }
     }
 
-    .mat-table {
+    .mat-mdc-table {
         tr {
             td {
                 @if ($is-dark) {
@@ -74,7 +74,7 @@
     mat-form-field {
         &.prompt,
         &.with-bg {
-            .mat-form-field-wrapper .mat-form-field-outline,
+            .mat-mdc-text-field-wrapper .mat-mdc-form-field-outline,
             textarea {
                 @if ($is-dark) {
                     background-color: map-get($background, hover);
@@ -85,13 +85,42 @@
         }
     }
 
-    .mat-paginator {
+    .mat-mdc-paginator {
         @if ($is-dark) {
             color: #eaeaea;
             background-color: #303030;
         } @else {
             color: #303030;
             background-color: #eaeaea;
+        }
+    }
+
+
+
+    /** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
+
+    mat-selection-list {
+        mat-list-option[tabindex="0"] {
+            animation: apply 1s;
+
+            @if ($is-dark) {
+                background: mat.get-theme-color($theme, accent, 700) !important;
+            } @else {
+                background: mat.get-theme-color($theme, accent, 700)!important;
+            }
+
+            @keyframes apply {
+                from {
+                    background-color: rgba(0, 0, 0, 0.12);
+                }
+                to {
+                    @if ($is-dark) {
+                        background: mat.get-theme-color($theme, accent, 700) !important;
+                    } @else {
+                        background: mat.get-theme-color($theme, accent, 700) !important;
+                    }
+                }
+            }
         }
     }
 }

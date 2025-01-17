@@ -225,12 +225,12 @@ workbench-smp {
         }
     }
 
-    .mat-form-field.custom .mat-form-field-wrapper {
+    .mat-mdc-form-field.custom .mat-mdc-text-field-wrapper {
         padding: 0 !important;
         margin: 0;
     }
 
-    .mat-form-field-infinix {
+    .mat-mdc-form-field-infinix {
         padding: 2px 0px !important;
     }
 
@@ -292,7 +292,7 @@ workbench-smp {
         transform: translate(-50%, -50%);
     }
 
-    .mat-form-field-suffix {
+    .mat-mdc-form-field-suffix {
         top: -0.25em !important;
     }
 

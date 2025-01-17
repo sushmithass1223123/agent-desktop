@@ -98,7 +98,7 @@ export const formatJsonData = <T = Record<Generic, any>>(data: Record<Generic, a
  */
 export const processCustomerDetails = (customerInfo: CustomerInfo[]): { exec: (evt: IUIEvent) => void } => {
     // check if customer info map is available in this event
-    const relevantInfo: Record<string, CustomerInfo[]> = customerInfo.reduce((acc, curr) => {
+    const relevantInfo: Record<string, CustomerInfo[]> = customerInfo.reduce((acc: any, curr) => {
         const evetName = curr.ValueSource.split('.')[0];
         if (acc[evetName]) {
             acc[evetName].push(curr);
@@ -188,23 +188,27 @@ export const throwADError = (msg: string, error: any) => {
 
 export const formatDuration = (duration: Duration) => {
     let formatted = '';
-    if (duration.hours < 10) {
-        formatted = `0${duration.hours}:`;
-    } else {
-        formatted = `${duration.hours}:`;
-    }
-
-    if (duration.minutes < 10) {
-        formatted = `${formatted}0${duration.minutes}:`;
-    } else {
-        formatted = `${formatted}${duration.minutes}:`;
-    }
-
-    if (duration.seconds < 10) {
-        formatted = `${formatted}0${duration.seconds}`;
-    } else {
-        formatted = `${formatted}${duration.seconds}`;
-    }
+    
+    if(duration.hours)
+        if (duration.hours < 10) {
+            formatted = `0${duration.hours}:`;
+        } else {
+            formatted = `${duration.hours}:`;
+        }
+    
+    if(duration.minutes)
+        if (duration.minutes < 10) {
+            formatted = `${formatted}0${duration.minutes}:`;
+        } else {
+            formatted = `${formatted}${duration.minutes}:`;
+        }
+    
+    if (duration.seconds)
+        if (duration.seconds < 10) {
+            formatted = `${formatted}0${duration.seconds}`;
+        } else {
+            formatted = `${formatted}${duration.seconds}`;
+        }
 
     return formatted;
 };

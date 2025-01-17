@@ -250,7 +250,7 @@ export class TableComponent implements OnInit {
     /**
      * Fuse custom config
      */
-    fuseBg$ = this._fuseFacadeService.widgetBgClasses$;
+    fuseBg$: any;
 
     /**
      * Selected row config
@@ -298,7 +298,9 @@ export class TableComponent implements OnInit {
     @ViewChild('tableContainer')
     tableContainerRef: ElementRef<HTMLDivElement>;
 
-    constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {}
+    constructor(private _matDialog: MatDialog, private _fuseFacadeService: FuseFacadeService) {
+        this.fuseBg$ = this._fuseFacadeService.widgetBgClasses$();
+    }
 
     /**
      * Lifecycle hook OnInit
@@ -360,6 +362,7 @@ export class TableComponent implements OnInit {
                 return end;
             }
         }
+        return '';
     }
 
     /**

@@ -47,7 +47,7 @@ export class AppDataService extends SharedWrapper {
     */
    appLabelSubject = new Subject();
 
-   appLabelError;
+   appLabelError: any;
 
    private externalAVWidgetOTP: string | number;
 
@@ -63,6 +63,7 @@ export class AppDataService extends SharedWrapper {
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object()) as BehaviorSubject<AppRootConfig>;
         this._appVersion = packageInfo.version;
+        this.externalAVWidgetOTP = '';
     }
 
     set setExternalAVWidgetOTP(otp: string | number) {

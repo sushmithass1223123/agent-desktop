@@ -55,12 +55,12 @@
             overflow: visible !important;
         }
 
-        .mat-drawer-container,
-        .mat-sidenav-container {
+        .mat-mdc-drawer-container,
+        .mat-mdc-sidenav-container {
             background-color: white !important;
 
-            .mat-drawer-content,
-            .mat-sidenav-content {
+            .mat-mdc-drawer-content,
+            .mat-mdc-sidenav-content {
                 overflow: initial !important;
                 height: auto !important;
             }

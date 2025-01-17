@@ -9,7 +9,7 @@ import { AVChannel, IResponse, SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils';
 import { InteractionRef } from 'app/interfaces';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { TMACEventService } from '@services/tmac-event.service';
 
 /**
@@ -42,7 +42,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
      * Need more description
      * Current view mode
      */
-    currentViewMode: string;
+    currentViewMode: string = '';
 
     constructor(
         private _interactionManagerService: InteractionManagerService,
@@ -80,7 +80,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
             this.currentViewMode = mode;
         });
         // subscribe to UI control events
-        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data: any) => {
             try {
                 if (data && data.interactionId) {
                     this.handleUIControls(data);
@@ -187,7 +187,7 @@ export class TwActiveInteractionsComponent extends TWidgetWrapper implements OnI
         if (item.otherData.isMSCall) {
             const connections: AVChannel[] = item.otherData.avConns;
             const callLines: string[] = item.otherData.callLines;
-            callLines.forEach((sessionId) => {
+            callLines.forEach((sessionId: any) => {
                 // get the connection variable
                 const connection: AVChannel = connections[sessionId];
                 // check if the connection is there and interaction is not on hold

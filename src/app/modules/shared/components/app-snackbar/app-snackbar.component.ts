@@ -4,7 +4,7 @@ import { MatSnackBar, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 @Component({
     selector: 'app-snackbar',
     templateUrl: './app-snackbar.component.html',
-    styleUrls: ['./app-snackbar.component.scss'],
+    styleUrls: ['./app-snackbar.component.scss'], 
     encapsulation: ViewEncapsulation.None
 })
 export class AppSnackbarComponent implements OnInit {

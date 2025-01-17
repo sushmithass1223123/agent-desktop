@@ -1,7 +1,8 @@
+@use '@angular/material' as mat;
 @mixin tw-collections-theme($theme) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
-    $primary: map-get($theme, primary);
+    $primary: mat.get-theme-color($theme, primary);
     $accent: map-get($theme, accent);
     $is-dark: map-get($theme, is-dark);
     $mat-warn: map-get($theme, warn);
@@ -60,11 +61,11 @@
             .message-row {
                 .bubble {
                     &.left {
-                        background-color: map-get($primary, 700);
+                        background-color: mat-color($primary, 700);
                         color: mat-contrast($primary, 700);
 
                         .replied {
-                            background-color: map-get($primary, 800);
+                            background-color: mat-color($primary, 800);
                             color: mat-contrast($primary, 800);
                         }
                     }
@@ -102,9 +103,9 @@
                     background-color: map-get($background, app-bar);
                     border-color: map-get($foreground, divider);
 
-                    .mat-form-field-wrapper {
-                        .mat-form-field-flex {
-                            .mat-form-field-infix {
+                    .mat-mdc-text-field-wrapper {
+                        .mat-mdc-form-field-flex {
+                            .mat-mdc-form-field-infix {
                                 @if ($is-dark==true) {
                                     background-color: map-get($background, divider);
                                 }
@@ -136,8 +137,8 @@
                 }
 
                 @else {
-                    background-color: map-get($primary, 800);
-                    color: map-get($primary, default-contrast);
+                    background-color: mat-color($primary, 800);
+                    color: mat-color($primary, default-contrast);
                 }
             }
 
@@ -213,8 +214,8 @@
 
     tw-su-active-agents {
         mat-form-field {
-            .mat-form-field-wrapper {
-                .mat-form-field-outline {
+            .mat-mdc-text-field-wrapper {
+                .mat-mdc-form-field-outline {
                     @if ($is-dark) {
                         background-color: map-get($background, hover);
                     }
@@ -263,21 +264,21 @@
 
             .grouped {
                 .group-icon {
-                    color: map-get($primary, text);
+                    color: mat-color($primary, text);
                 }
 
                 .group-size {
-                    background: map-get($primary, 100);
+                    background: mat-color($primary, 100);
                 }
 
                 .agent-item {
-                    border: 1px solid map-get($primary, 300);
+                    border: 1px solid mat-color($primary, 300);
                 }
             }
         }
 
         .channel-list {
-            .mat-card-avatar {
+            .mat-mdc-card-avatar {
                 @if ($is-dark) {
                     background-color: map-get($background, hover);
                 }
@@ -327,7 +328,7 @@
                         }
 
                         @else {
-                            background-color: map-get($primary, 700);
+                            background-color: mat-color($primary, 700);
                             color: mat-contrast($primary, 700);
                         }
                     }
@@ -339,7 +340,7 @@
 
                         @else {
                             color: rgba(0, 0, 0, 0.87);
-                            background-color: #f4f4f4;
+                            background-color: #e0e0e0;
                         }
                     }
                 }
@@ -348,7 +349,7 @@
     }
 
     tw-workbench-panel {
-        .mat-tab-label {
+        .mat-mdc-tab-label {
             @if ($is-dark==true) {
                 color: #fafafa;
                 background-color: map-get($background, hover);
@@ -739,7 +740,7 @@
     }
 
     tw-bookmarks {
-        .mat-tree-node {
+        .mat-mdc-tree-node {
             &:hover {
                 background-color: map-get($background, hover);
             }

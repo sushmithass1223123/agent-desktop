@@ -5,7 +5,7 @@ import { SharedModule } from '@modules/shared/shared.module';
 import { WidgetPreviewModule } from '@modules/core/widget-preview/widget-preview.module';
 
 @NgModule({
-    declarations: [],
+  declarations: [],
     imports: [LoginModule, MainModule, SharedModule, WidgetPreviewModule]
 })
 export class CoreModule {}

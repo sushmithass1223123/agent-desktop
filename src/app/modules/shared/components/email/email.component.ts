@@ -20,7 +20,7 @@ import {
 import { ADError, maticonByExtension, throwADError, validateEmail } from 'app/utils';
 import { merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { UIActionEvent, UIActionEventService } from '@services/ui-action-event.service';
 
 @Component({
@@ -156,7 +156,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
      * Lifecycle hook
      */
     ngOnChanges(changes: SimpleChanges): void {
-        if ((changes.mode && changes.mode.currentValue) || (changes.email && changes.email.currentValue && this.mode === 'preview')) {
+        if ((changes['mode'] && changes['mode'].currentValue) || (changes['email'] && changes['email'].currentValue && this.mode === 'preview')) {
             this._setEditForm();
             // this.setEmailBody();
         }
@@ -202,7 +202,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     throwADError('Error in email.component.addUserSuggestions', 'Unexpected response from server');
                 }
                 this.suggestedUsers = res.response;
-                merge(this._addressFG.controls.To.valueChanges, this._addressFG.controls.CC.valueChanges, this._addressFG.controls.BCC.valueChanges)
+                merge(this._addressFG.controls['To'].valueChanges, this._addressFG.controls['CC'].valueChanges, this._addressFG.controls['BCC'].valueChanges)
                     .pipe(
                         takeUntil(this.unsubscribeAll$),
                         debounceTime(200),

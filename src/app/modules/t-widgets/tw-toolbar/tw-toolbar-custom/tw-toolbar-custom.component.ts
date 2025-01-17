@@ -10,7 +10,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { FuseConfig } from '@fuse/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { setStringVars } from '@tmac/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FuseFacadeService } from '@services/fuse-facade.service';
@@ -42,7 +42,7 @@ export class TwToolbarCustomComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Fuse custom config
      */
-    customFuse$ = this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme', webFont: 'webFont' });
+    customFuse$: any;
 
     url: string;
     /**
@@ -84,6 +84,8 @@ export class TwToolbarCustomComponent extends TWidgetWrapper implements OnInit, 
 
     ) {
         super('TwToolbarCustomComponent');
+
+        this.customFuse$ = this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme', webFont: 'webFont' })
     }
     /**
         * Mat dialog ref

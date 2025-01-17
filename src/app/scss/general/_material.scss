@@ -1,10 +1,10 @@
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 // mat icon
-.mat-icon-button,
-.mat-custom-btn,
-.mat-mini-fab {
-    .mat-button-wrapper {
+.mat-mdc-icon-button,
+.mat-mdc-custom-btn,
+.mat-mdc-mini-fab {
+    .mat-mdc-button-wrapper {
         width: 100%;
         height: 100%;
         justify-content: center;
@@ -14,10 +14,10 @@
 }
 
 .custom-btn,
-.mat-custom-btn {
+.mat-mdc-custom-btn {
     height: 36px;
 
-    &.mat-button-disabled {
+    &.mat-mdc-button-disabled {
         background-color: rgba(0, 0, 0, 0.12) !important;
         color: rgba(0, 0, 0, 0.26) !important;
         cursor: default;
@@ -100,7 +100,7 @@
 // mat icon
 
 // mat table
-.mat-table {
+.mat-mdc-table {
     width: 100%;
     background: inherit !important;
     padding: 10px;
@@ -108,16 +108,16 @@
     border-collapse: separate;
     border-spacing: 0px 5px !important;
 
-    .mat-sort-header-container,
-    .mat-sort-header-content {
+    .mat-mdc-sort-header-container,
+    .mat-mdc-sort-header-content {
         justify-content: center;
     }
 
-    tr.mat-header-row {
+    tr.mat-mdc-header-row {
         height: 30px;
     }
 
-    th.mat-header:not(:last-child)::after {
+    th.mat-mdc-header:not(:last-child)::after {
         content: '';
         position: absolute;
         width: 1px;
@@ -127,17 +127,17 @@
         background-color: #cccccc;
     }
 
-    th.mat-header,
-    td.mat-cell {
+    th.mat-mdc-header,
+    td.mat-mdc-cell {
         position: relative;
         text-align: center;
         border: none;
     }
 
-    th.mat-header {
+    th.mat-mdc-header {
         color: currentColor !important;
 
-        &.mat-header-cell {
+        &.mat-mdc-header-cell {
             border-color: transparent !important;
             align-items: center;
             justify-content: flex-end;
@@ -153,17 +153,17 @@
             }
         }
 
-        .mat-sort-header-arrow {
+        .mat-mdc-sort-header-arrow {
             margin: 0 6px 0px 3px;
         }
     }
 
-    tr.mat-row {
+    tr.mat-mdc-row {
         & {
             height: 3rem !important;
         }
 
-        td.mat-cell {
+        td.mat-mdc-cell {
             border: none;
 
             &:first-child {
@@ -205,7 +205,7 @@
             font-size: 14px;
             font-weight: 700;
 
-            .mat-sort-header-arrow {
+            .mat-mdc-sort-header-arrow {
                 margin: 0 6px 0px 6px;
             }
 
@@ -258,12 +258,12 @@
 mat-paginator {
     border-radius: 2rem;
 
-    .mat-paginator-container {
+    .mat-mdc-paginator-container {
         min-height: 40px;
     }
 }
 
-.mat-paginator {
+.mat-mdc-paginator {
     background: transparent !important;
 }
 
@@ -278,51 +278,51 @@ mat-form-field {
     }
 
     &.custom {
-        .mat-form-field-wrapper {
+        .mat-mdc-text-field-wrapper {
             padding-bottom: 1rem !important;
 
-            .mat-form-field-subscript-wrapper {
+            .mat-mdc-form-field-subscript-wrapper {
                 top: calc(100% - 1.4rem);
             }
 
-            .mat-form-field-infix {
-                padding: 1em 0.5rem !important;
+            .mat-mdc-form-field-infix {
+                // padding: 1em 0.5rem !important;
                 border-top: 0.5em solid transparent;
             }
 
-            .mat-form-field-suffix {
+            .mat-mdc-form-field-suffix {
                 top: 0.5rem !important;
             }
 
-            .mat-form-field-outline {
+            .mat-mdc-form-field-outline {
                 border-radius: 2rem;
                 top: 0.75rem !important;
             }
 
-            .mat-form-field-outline-start {
+            .mat-mdc-form-field-outline-start {
                 border-radius: 2rem 0 0 2rem !important;
                 min-width: 2rem !important;
                 border-color: transparent;
             }
 
-            .mat-form-field-outline-end {
+            .mat-mdc-form-field-outline-end {
                 border-radius: 0 2rem 2rem 0 !important;
                 border-color: transparent;
             }
         }
 
         &.search {
-            .mat-form-field-wrapper {
+            .mat-mdc-text-field-wrapper {
                 margin: 0;
                 padding-bottom: 0 !important;
 
-                .mat-form-field-infix {
+                .mat-mdc-form-field-infix {
                     border: none;
-                    padding: 0.5em 0.5rem !important;
+                    // padding: 0.5em 0.5rem !important;
                 }
 
-                .mat-form-field-outline-start,
-                .mat-form-field-outline-end {
+                .mat-mdc-form-field-outline-start,
+                .mat-mdc-form-field-outline-end {
                     border-color: inherit;
                 }
             }
@@ -330,13 +330,13 @@ mat-form-field {
     }
 
     &.custom-2 {
-        .mat-form-field-wrapper {
+        .mat-mdc-text-field-wrapper {
             padding-bottom: 0.5em;
 
-            .mat-form-field-flex {
+            .mat-mdc-form-field-flex {
                 padding: 0 !important;
 
-                .mat-form-field-infix {
+                .mat-mdc-form-field-infix {
                     border-top: 0.3em solid transparent;
                     padding: 0 !important;
 
@@ -348,26 +348,26 @@ mat-form-field {
                 }
             }
 
-            .mat-form-field-underline {
+            .mat-mdc-form-field-underline {
                 display: none !important;
             }
         }
     }
 
     &.with-border {
-        .mat-form-field-wrapper {
-            .mat-form-field-outline-start {
+        .mat-mdc-text-field-wrapper {
+            .mat-mdc-form-field-outline-start {
                 border-color: currentColor;
             }
 
-            .mat-form-field-outline-end {
+            .mat-mdc-form-field-outline-end {
                 border-color: currentColor;
             }
         }
     }
 
     &.pb-0 {
-        .mat-form-field-wrapper {
+        .mat-mdc-text-field-wrapper {
             padding-bottom: 0 !important;
         }
     }
@@ -383,15 +383,15 @@ mat-form-field {
 // mat form field
 
 // mat-select-panel
-.mat-select-panel {
-    border-radius: 20px !important;
+.mat-mdc-select-panel {
+    // border-radius: 20px !important;
 }
 
 // mat-select-panel
 
 // mat chip
 mat-chip {
-    &.mat-chip {
+    &.mat-mdc-chip {
         border-radius: 10px;
         padding: 10px;
     }
@@ -412,27 +412,27 @@ mat-dialog-container {
 // mat dialog
 
 // Email attachment tooltip to break words
-.mat-tooltip {
+.mat-mdc-tooltip {
     font-size: 1.4rem !important;
     white-space: pre-line;
     word-break: break-all; 
 }
 
-.mat-badge-content {
+.mat-mdc-badge-content {
     background: $tw-warning !important;
     color: $tw-dark !important;
 }
 
-.mat-ripple {
+.mat-mdc-ripple {
     cursor: pointer;
 }
 
-.mat-menu-panel {
+.mat-mdc-menu-panel {
     &.custom {
         border-radius: 2rem !important;
         max-height: 350px;
 
-        button:not(.mat-icon-button) {
+        button:not(.mat-mdc-icon-button) {
             height: 3.2rem;
             line-height: 2rem;
 
@@ -456,12 +456,12 @@ mat-dialog-container {
 }
 
 
-.mat-card-header-text {
+.mat-mdc-card-header-text {
     width: 100%;
 }
 
 // Email template mat menu text overflow changes
-.mat-menu-content div button div {
+.mat-mdc-menu-content div button div {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;

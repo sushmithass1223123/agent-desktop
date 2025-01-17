@@ -259,11 +259,11 @@
                                                                     <ng-container *ngIf="{
                                                                             isEdited:
                                                                                 post.IsPostEdited ||
-                                                                                (post.IsCommentEdited && currentTab !== 'posts') ||
+                                                                                post.IsCommentEdited ||
                                                                                 post.PostData?.IsItemEdited,
                                                                             isDeleted:
                                                                                 post.IsPostDeleted ||
-                                                                                (post.IsCommentDeleted && currentTab !== 'posts') ||
+                                                                                post.IsCommentDeleted ||
                                                                                 post.PostData?.IsItemDeleted
                                                                         } as itemStatus">
                                                                         <mat-icon *ngIf="
@@ -458,30 +458,13 @@
                             } as parsedDate">
                             <p>{{ parsedDate.formatted.date }}, {{ parsedDate.formatted.time }}</p>
                             <mat-icon
-                                *ngIf="
-                                    (selectedPost.IsPostEdited ||
-                                        ((selectedPost.IsCommentEdited ||
-                                            selectedPost.IsParentCommentEdited) && currentTab !== 'posts')) &&
-                                    !(
-                                        selectedPost.IsPostDeleted ||
-                                        selectedPost.IsCommentDeleted ||
-                                        selectedPost.IsParentCommentDeleted
-                                    )
-                                "
+                                *ngIf="(selectedPost.IsPostEdited || selectedPost.IsCommentEdited || selectedPost.IsParentCommentEdited) && !(selectedPost.IsPostDeleted || selectedPost.IsCommentDeleted || selectedPost.IsParentCommentDeleted)"
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.editedItem')"
-                                class="theme-icon"
-                                >edit</mat-icon
-                            >
+                                class="theme-icon">edit</mat-icon>
                             <mat-icon
-                                *ngIf="
-                                    selectedPost.IsPostDeleted ||
-                                    ((selectedPost.IsCommentDeleted ||
-                                        selectedPost.IsParentCommentDeleted) && currentTab !== 'posts')
-                                "
+                                *ngIf="selectedPost.IsPostDeleted || selectedPost.IsCommentDeleted || selectedPost.IsParentCommentDeleted"
                                 [matTooltip]="locale('sharedComponents.socialMediaPosts.deletedItem')"
-                                class="red-icon"
-                                >delete</mat-icon
-                            >
+                                class="red-icon">delete</mat-icon>
                         </div>
 
                         <div class="core-actions actions-flex" *ngIf="
@@ -509,7 +492,7 @@
                                 <mat-icon>cancel</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.close') }}</p>
                             </div>
-                            <div style="margin-left: -4px" class="button-info-flex" *ngIf="currentTab == 'queue'"
+                            <div style="margin-left: -4px" class="button-info-flex" *ngIf="currentTab !== 'sentitem'"
                                 [disabled]="isPullOnProgress" role="button" (click)="transferPost([selectedPost])">
                                 <mat-icon>send</mat-icon>
                                 <p>{{ locale('sharedComponents.socialMediaPosts.transfer') }}</p>

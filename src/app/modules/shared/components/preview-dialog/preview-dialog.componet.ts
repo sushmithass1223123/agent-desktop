@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {PreviewDialogDataTypes, PreviewComponentTypes, CallbackActions} from './preview.dialog';
 import { AppUiService } from '@services/app-ui.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { IResponse, SDKClient } from '@tmac/sdk';
 @Component({
     selector: 'preview-dialog',
@@ -13,7 +13,7 @@ export class PreviewDialogComponent implements OnInit {
     /**
      * Component to be loaded based on the condition
      */
-    component: PreviewComponentTypes;
+    component!: PreviewComponentTypes;
 
     /**
      * Data related to component 
@@ -33,11 +33,11 @@ export class PreviewDialogComponent implements OnInit {
     /**
      * actions to perform
      */
-    actions = [];
+    actions: any[] = [];
 
 
     constructor(@Inject(MAT_DIALOG_DATA)
-        private dialogData: PreviewDialogDataTypes & CallbackActions,
+        public dialogData: PreviewDialogDataTypes & CallbackActions,
         private _appUIService: AppUiService,
         private _translocoService: TranslocoService
     ) {
@@ -111,7 +111,7 @@ export class PreviewDialogComponent implements OnInit {
      * 
      * method to perform actions
      */
-    performAction(action) {
+    performAction(action:any) {
         this.dialogData.done(action?.callback);
     }
 

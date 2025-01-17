@@ -7,7 +7,7 @@
 <tw-wrapper [data]="data">
     <!-- your code goes here -->
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="center center">
-        <canvas baseChart [datasets]="customerSentimentChart.datasets" [options]="customerSentimentChart.options" chartType="line"></canvas>
+        <canvas #chartCanvas chartType="line"></canvas>
     </div>
     <!-- your code goes here -->
 </tw-wrapper>

@@ -1,39 +1,41 @@
 {
-    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-    "cli": {
-        "analytics": false
-    },
-    "version": 1,
-    "newProjectRoot": "projects",
-    "projects": {
-        "agent-desktop": {
-            "projectType": "application",
-            "schematics": {
-                "@schematics/angular:component": {
-                    "style": "scss"
-                }
-            },
-            "root": "",
-            "sourceRoot": "src",
-            "prefix": "app",
-            "architect": {
-                "build": {
-                    "builder": "@angular-builders/custom-webpack:browser",
-                    "options": {
-                        "outputPath": "dist/agent-desktop",
-                        "index": "src/index.html",
-                        "main": "src/main.ts",
-                        "polyfills": "src/polyfills.ts",
-                        "tsConfig": "tsconfig.app.json",
-                        "assets": [
-                            "src/favicon.ico",
-                            "src/assets",
-                            "src/manifest.webmanifest",
-                            {
-                                "glob": "**/*",
-                                "input": "./node_modules/leaflet/dist/images",
-                                "output": "assets/images/leaflet/"
-                            },
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "agent-desktop": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "options": {
+            "outputPath": "dist/agent-desktop",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": [
+              "src/polyfills.ts",
+              "zone.js",
+              "@angular/localize/init"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/assets",
+              "src/manifest.webmanifest",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/leaflet/dist/images",
+                "output": "assets/images/leaflet/"
+              },
+              
                             {
                                 "glob": "**/*",
                                 "input": "build-utils/",
@@ -43,39 +45,38 @@
                                 "glob": "**/*",
                                 "input": "./node_modules/tinymce/icons",
                                 "output": "assets/tinymce/icons/"
-                            },
-                            {
-                                "glob": "**/*",
-                                "input": "./node_modules/tinymce/models",
-                                "output": "assets/tinymce/models/"
-                            },
-                            {
-                                "glob": "**/*",
-                                "input": "./node_modules/tinymce/themes",
-                                "output": "assets/tinymce/themes/"
-                            },
-                            {
-                                "glob": "**/*",
-                                "input": "./node_modules/tinymce/skins",
-                                "output": "assets/tinymce/skins/"
-                            },
-                            {
-                                "glob": "**/*",
-                                "input": "./node_modules/tinymce/plugins",
-                                "output": "assets/tinymce/plugins/"
-                            }
-                        ],
-                        "styles": [
-                            {
-                                "input": "node_modules/@progress/kendo-theme-default/dist/all.css"
-                            },
-                            "src/styles.scss",
-                            "./node_modules/animate.css/animate.min.css",
-                            "./node_modules/leaflet/dist/leaflet.css",
-                            "./node_modules/@ctrl/ngx-emoji-mart/picker.css"
-                        ],
-                        "scripts": [],
-                        "allowedCommonJsDependencies": [
+                            },{
+                              "glob": "**/*",
+                              "input": "./node_modules/tinymce/models",
+                              "output": "assets/tinymce/models/"
+                          },
+                          {
+                              "glob": "**/*",
+                              "input": "./node_modules/tinymce/themes",
+                              "output": "assets/tinymce/themes/"
+                          },{
+                            "glob": "**/*",
+                            "input": "./node_modules/tinymce/skins",
+                            "output": "assets/tinymce/skins/"
+                        },
+                        {
+                            "glob": "**/*",
+                            "input": "./node_modules/tinymce/plugins",
+                            "output": "assets/tinymce/plugins/"
+                        },
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["./src","./node_modules"]
+            },
+            "scripts": [],
+            "allowedCommonJsDependencies": [
                             "crypto-js",
                             "lodash",
                             "@swimlane/dragula",
@@ -90,175 +91,117 @@
                             "@mattlewis92/dom-autoscroller",
                             "chartjs-plugin-piechart-outlabels",
                             "@tmac/operators",
-                            "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser"
-                        ],
-                        "customWebpackConfig": {
-                            "path": "webpack.config.js"
-                        }
-                    },
-                    "configurations": {
-                        "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": {
-                                "scripts": true,
-                                "fonts": {
-                                    "inline": true
-                                },
-                                "styles": {
-                                    "minify": true,
-                                    "inlineCritical": false
-                                }
-                            },
-                            "outputHashing": "all",
-                            "sourceMap": true,
-                            "namedChunks": false,
-                            "aot": true,
-                            "extractLicenses": true,
-                            "vendorChunk": true,
-                            "buildOptimizer": true,
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "6mb",
-                                    "maximumError": "11mb"
-                                },
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
-                            "serviceWorker": true,
-                            "ngswConfigPath": "ngsw-config.json"
-                        },
-                        "development": {
-                            "buildOptimizer": false,
-                            "optimization": false,
-                            "vendorChunk": true,
-                            "extractLicenses": false,
-                            "sourceMap": true,
-                            "namedChunks": true,
-                            "outputHashing": "none"
-                        },
-                        "ec": {
-                            "budgets": [
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
-                            "sourceMap": true,
-                            "extractCss": true
-                        },
-                        "hmr": {
-                            "budgets": [
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.hmr.ts"
-                                }
-                            ]
-                        }
-                    }
+                            "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser",
+                            "@tmac/sdk",
+                            "moment",
+                            "leaflet",
+                            "hammerjs",
+                            "tinymce"
+                        ]
+                        
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                  {
+                      "replace": "src/environments/environment.ts",
+                      "with": "src/environments/environment.prod.ts"
+                  }
+              ],
+              "optimization": {
+                  "scripts": true,
+                  "fonts": {
+                      "inline": true
+                  },
+                  "styles": {
+                      "minify": true,
+                      "inlineCritical": false
+                  }
+              },
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "10MB",
+                  "maximumError": "11MB"
                 },
-                "serve": {
-                    "builder": "@angular-builders/custom-webpack:dev-server",
-                    "options": {
-                        "browserTarget": "agent-desktop:build:development",
-                        "proxyConfig": "src/proxy.conf.json"
-                    },
-                    "configurations": {
-                        "production": {
-                            "browserTarget": "agent-desktop:build:production"
-                        },
-                        "hmr": {
-                            "hmr": true,
-                            "browserTarget": "agent-desktop:build:hmr"
-                        },
-                        "ec": {
-                            "browserTarget": "agent-desktop:build:ec"
-                        }
-                    }
-                },
-                "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
-                    "options": {
-                        "browserTarget": "agent-desktop:build"
-                    }
-                },
-                "test": {
-                    "builder": "ngx-build-plus:karma",
-                    "options": {
-                        "main": "src/test.ts",
-                        "polyfills": "src/polyfills.ts",
-                        "tsConfig": "tsconfig.spec.json",
-                        "karmaConfig": "karma.conf.js",
-                        "assets": ["src/favicon.ico", "src/assets", "src/manifest.webmanifest"],
-                        "styles": [
-                            {
-                                "input": "node_modules/@progress/kendo-theme-default/dist/all.css"
-                            },
-                            "src/styles.scss"
-                        ],
-                        "scripts": []
-                    }
-                },
-                "e2e": {
-                    "builder": "@angular-devkit/build-angular:protractor",
-                    "options": {
-                        "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "agent-desktop:serve"
-                    },
-                    "configurations": {
-                        "production": {
-                            "devServerTarget": "agent-desktop:serve:production"
-                        }
-                    }
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "1MB"
                 }
+              ],
+              "outputHashing": "all",
+              "sourceMap": true,
+              "buildOptimizer": true
             },
-            "tags": []
+            "development": {
+              "optimization": true,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
         },
-        "types": {
-            "root": "libs/types",
-            "sourceRoot": "libs/types/src",
-            "projectType": "library",
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/workspace:tsc",
-                    "outputs": ["{options.outputPath}"],
-                    "options": {
-                        "outputPath": "dist/libs/types",
-                        "main": "libs/types/src/index.ts",
-                        "tsConfig": "libs/types/tsconfig.lib.json",
-                        "assets": ["libs/types/*.md"]
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["libs/types/**/*.ts"]
-                    },
-                    "outputs": ["{options.outputFile}"]
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/libs/types"],
-                    "options": {
-                        "jestConfig": "libs/types/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "agent-desktop:build:production"
             },
-            "tags": []
-        }
+            "development": {
+              "buildTarget": "agent-desktop:build:development",
+              "proxyConfig": "src/proxy.conf.json"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "src/proxy.conf.json"
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "agent-desktop:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing",
+              "src/polyfills.ts",
+              "@angular/localize/init"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "e2e": {
+            "builder": "@angular-devkit/build-angular:protractor",
+            "options": {
+                "protractorConfig": "e2e/protractor.conf.js",
+                "devServerTarget": "agent-desktop:serve"
+            },
+            "configurations": {
+                "production": {
+                    "devServerTarget": "agent-desktop:serve:production"
+                }
+            }
+         }
+      }
     }
+  },
+  "cli": {
+    "analytics": false
+  }
 }

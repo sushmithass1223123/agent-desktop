@@ -7,7 +7,7 @@ import { ResData } from 'app/interfaces';
 import { sortBy } from 'lodash';
 import { map, takeUntil } from 'rxjs/operators';
 import { TwSuGamification } from '@ad/types';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Supervisor Gamification Component

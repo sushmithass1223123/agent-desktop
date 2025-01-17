@@ -1,5 +1,5 @@
 import { AOTWidget, IAuxCodeConfig, TwSuActiveAgents } from '@ad/types';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, InjectionToken, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { AgentFeaturesService } from '@services/agent-features.service';
@@ -27,11 +27,11 @@ import { InstantMessagingService } from 'app/layout/components/instant-messaging
 import { TwWidgetModel } from 'app/models';
 import { map, orderBy, random } from 'lodash';
 import { filter, takeUntil,take} from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { from } from 'rxjs';
 import { groupBy, mergeMap, toArray } from 'rxjs/operators';
 import { SharedService } from '@services/shared.service';
-
+export const IMS_Injection_Token =  new InjectionToken<InstantMessagingService>('InstantMessagingService');
 /**
  * Active agents component widget
  */
@@ -40,7 +40,7 @@ import { SharedService } from '@services/shared.service';
     templateUrl: './tw-su-active-agents.component.html',
     styleUrls: ['./tw-su-active-agents.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations
+    animations: fuseAnimations,
 })
 export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit, OnDestroy {
     /**
@@ -55,10 +55,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
     /**
      * Use info
      */
@@ -150,6 +147,11 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
         private _sharedService: SharedService
     ) {
         super('TwSuActiveAgentsComponent');
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
 
         this.agentList = [];
         this.filteredAgents = [];

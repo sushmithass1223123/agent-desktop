@@ -135,10 +135,12 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
                         {
                             return data;
                         }
+                        return '';
                     }
                 )?.[0]?.colorCode;
                 return colorCode; 
             }
+            return '';
         } catch(e) {
             this.logger.error('Error occured on displaying customer info bg color', e, false);
             return colorCode; 

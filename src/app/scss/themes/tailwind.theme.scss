@@ -1,4 +1,4 @@
-@import '~@tmac/styles/scss/tailwind.scss';
+@import '@tmac/styles/scss/tailwind.scss';
 
 input[type='text'].twd-input,
 input[type='password'].twd-input,
@@ -105,6 +105,6 @@ button:focus {
     }
 }
 
-.mat-chip.twd-cursor-pointer {
+.mat-mdc-chip.twd-cursor-pointer {
     cursor: pointer !important;
 }

@@ -1,4 +1,5 @@
-@import 'src/app/scss/shared';
+@use '@angular/material' as mat;
+@import 'app/scss/shared';
 
 @mixin common-theme($theme) {
     $background: map-get($theme, background);
@@ -67,7 +68,7 @@
 
             &.connected {
                 .avatar-content {
-                    border: 2px solid mat-color($mat-green, 700);
+                    border: 2px solid map-get($mat-green, 700);
                 }
             }
 
@@ -92,7 +93,7 @@
     }
 
     .create-interaction-buttons {
-        .mat-button-disabled {
+        .mat-mdc-button-disabled {
             @if ($is-dark == true) {
                 background-color: #424242 !important;
             } @else {

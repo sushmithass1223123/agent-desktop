@@ -3,7 +3,7 @@ tw-chat-controls {
         flex: 0;
     }
 
-    .mat-card-content {
+    .mat-mdc-card-content {
         background: inherit !important;
         box-shadow: none !important;
         padding: 0px 3px 3px 3px !important;
@@ -46,7 +46,7 @@ tw-chat-controls {
                     button {
                         margin: 6px 6px 6px 0;
 
-                        &:not(.mat-primary, .mat-accent, .mat-warn) {
+                        &:not(.mat-mdc-primary, .mat-mdc-accent, .mat-mdc-warn) {
                             background: #bdbdbd;
                         }
                     }
@@ -107,7 +107,7 @@ tw-chat-controls {
                                     position: absolute;
                                     width: 156px;
                                     max-width: 90%;
-                                    z-index: 3;
+                                    z-index: 2;
                                     height: 40px;
                                     overflow: hidden;
                                     right: -160px;
@@ -215,7 +215,6 @@ tw-chat-controls {
                                                     line-height: 48px;
                                                     width: 48px;
                                                     height: 48px;
-                                                    color: #000;
                                                 }
                                             }
                                         }
@@ -369,13 +368,13 @@ tw-chat-controls {
 
                         .message-text {
                             border-radius: 20px;
-                            .mat-form-field-wrapper {
+                            .mat-mdc-text-field-wrapper {
                                 padding: 0 !important;
 
-                                .mat-form-field-flex {
+                                .mat-mdc-form-field-flex {
                                     padding: 0;
 
-                                    .mat-form-field-infix {
+                                    .mat-mdc-form-field-infix {
                                         padding: 0px !important;
                                         border: none;
                                         border-radius: 20px;
@@ -390,7 +389,7 @@ tw-chat-controls {
                                     }
                                 }
 
-                                .mat-form-field-underline {
+                                .mat-mdc-form-field-underline {
                                     display: none !important;
                                 }
                             }
@@ -412,10 +411,10 @@ tw-chat-controls {
 }
 
 .preview-media-dialog {
-    .mat-dialog-container {
+    .mat-mdc-dialog-container {
         padding-top: 0;
 
-        .mat-dialog-content {
+        .mat-mdc-dialog-content {
             max-height: 80vh;
 
             .preview-container {

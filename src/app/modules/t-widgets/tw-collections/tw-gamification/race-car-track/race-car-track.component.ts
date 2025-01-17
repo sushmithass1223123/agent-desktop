@@ -75,8 +75,8 @@ export class RaceCarTrackComponent implements OnInit, AfterViewInit, OnChanges {
      */
     ngOnChanges(changes: SimpleChanges): void {
         if (
-            !isEqual(changes.leaders?.currentValue, changes.leaders?.previousValue) ||
-            changes.highest?.currentValue !== changes.highest?.previousValue
+            !isEqual(changes['leaders']?.currentValue, changes['leaders']?.previousValue) ||
+            changes['highest']?.currentValue !== changes['highest']?.previousValue
         ) {
             this.leaders?.forEach((l, i) => {
                 const percent = (l.TotalPoints * 100) / this.highest;

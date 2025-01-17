@@ -35,10 +35,7 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
     /**
      * Voice bot transcripts list
      */
@@ -67,6 +64,11 @@ export class TwVoiceBotTranscriptsComponent extends TWidgetWrapper implements On
         private _appUIService: AppUiService
     ) {
         super('TwVoiceBotTranscriptsComponent');
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------

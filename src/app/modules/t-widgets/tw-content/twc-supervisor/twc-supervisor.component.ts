@@ -75,10 +75,7 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$,
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
     /**
      * Max date for dashboard data
      */
@@ -104,6 +101,11 @@ export class TwcSupervisorComponent extends TWContentWrapper implements OnInit, 
         private _aotWidgetService: AOTWidgetService
     ) {
         super('TwcSupervisorComponent', hostElement, _contentPageService);
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$(),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**

@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton as MatButton } from '@angular/material/button';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { Subject } from 'rxjs';
-
+import { FuseBgConf } from 'app/interfaces/app-utils.interface';
 /**
  * Shared wrapper component
  */
@@ -38,9 +38,11 @@ export class SharedWrapperComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom background colors
      */
-    customFuse$ = this._fuseFacadeService.anchorOrWidgetBgClasses$;
+    customFuse$: FuseBgConf | unknown;
 
-    constructor(private _fuseFacadeService: FuseFacadeService) {}
+    constructor(private _fuseFacadeService: FuseFacadeService) {
+        this.customFuse$  = this._fuseFacadeService.anchorOrWidgetBgClasses$()
+    }
 
     /**
      * OnInit

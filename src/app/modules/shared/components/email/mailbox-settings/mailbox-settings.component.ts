@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppUiService } from '@services/app-ui.service';
 import { SDKClient } from '@tmac/sdk';
 import { EmailService } from '../email.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { EMAIL_SEND_STATUS } from 'app/constants';
 @Component({
     selector: 'app-mailbox-settings',
@@ -16,14 +16,7 @@ export class MailboxSettingsComponent implements OnInit {
     /**
      * mailboxes formgroup , and available mailbox list
      */
-    mailboxes = {
-        available: [],
-        loaded: false,
-        form: new FormGroup({
-            selected: new FormControl(this._emailService.globalEmailWorkbenchState$.searchParams.controls.listOfMailboxes.value),
-            default: new FormControl(this._emailService.globalEmailWorkbenchState$.defaultEmail.value, [Validators.required])
-        })
-    };
+    mailboxes: any;
 
     constructor(
         private _emailService: EmailService,
@@ -36,7 +29,16 @@ export class MailboxSettingsComponent implements OnInit {
         },
         private _appUiService: AppUiService,
         private translocoService: TranslocoService
-    ) {}
+    ) {
+        this.mailboxes = {
+            available: [],
+            loaded: false,
+            form: new FormGroup({
+                selected: new FormControl(this._emailService.globalEmailWorkbenchState$.searchParams.controls['listOfMailboxes'].value),
+                default: new FormControl(this._emailService.globalEmailWorkbenchState$.defaultEmail.value, [Validators.required])
+            })
+        };
+    }
 
     /**
      * Lifecycle hook
@@ -55,7 +57,7 @@ export class MailboxSettingsComponent implements OnInit {
             const availableMailboxes = emailWorkbenchstate.availableMailboxes.value;
             this.mailboxes.available = availableMailboxes;
             this.mailboxes.form.setValue({
-                selected: emailWorkbenchstate.searchParams.controls.listOfMailboxes.value,
+                selected: emailWorkbenchstate.searchParams.controls['listOfMailboxes'].value,
                 default: emailWorkbenchstate.defaultEmail.value
             });
 
@@ -63,7 +65,7 @@ export class MailboxSettingsComponent implements OnInit {
                 if (res.default) {
                     emailWorkbenchstate.defaultEmail.setValue(res.default);
                 }
-                emailWorkbenchstate.searchParams.controls.listOfMailboxes.setValue(res?.selected || '');
+                emailWorkbenchstate.searchParams.controls['listOfMailboxes'].setValue(res?.selected || '');
             });
         } catch (e) {
             console.error(e);

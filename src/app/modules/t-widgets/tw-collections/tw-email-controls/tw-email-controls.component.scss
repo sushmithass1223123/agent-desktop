@@ -53,20 +53,20 @@
 }
 
 .reject-reason-dialog {
-    .mat-dialog-container {
+    .mat-mdc-dialog-container {
         padding: 0;
         border-radius: 20px;
     }
 }
 
 tw-email-controls {
-    .mat-card-content {
+    .mat-mdc-card-content {
         background: inherit !important;
         box-shadow: none !important;
         padding: 0px 3px 3px 3px !important;
     }
 
-    .mat-raised-button {
+    .mat-mdc-raised-button {
         @apply twd-min-w-max;
     }
 
@@ -74,7 +74,7 @@ tw-email-controls {
         button {
             // max-width: 150px;
 
-            .mat-button-wrapper {
+            .mat-mdc-button-wrapper {
                 display: block;
                 white-space: nowrap;
                 overflow: hidden;
@@ -100,7 +100,7 @@ tw-email-controls {
     button {
         height: 36px;
 
-        .mat-button-wrapper {
+        .mat-mdc-button-wrapper {
             justify-content: center;
             align-items: center;
             display: flex;
@@ -109,7 +109,7 @@ tw-email-controls {
 }
 
 .attachment-overlay {
-    .mat-menu-content {
+    .mat-mdc-menu-content {
         padding: 0px;
 
         .attachment-menu {

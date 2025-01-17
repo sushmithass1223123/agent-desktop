@@ -1,6 +1,9 @@
 // -----------------------------------------------------------------------------------------------------
 // @ Theming
 // -----------------------------------------------------------------------------------------------------
+
+@use '@angular/material' as mat;
+
 @mixin typography-theme($theme) {
     $background: map-get($theme, background);
     $accent: map-get($theme, accent);
@@ -103,7 +106,7 @@ h6,
 a {
     text-decoration: none;
 
-    &:not(.mat-button):not(.mat-raised-button):not(.mat-flat-button):not(.mat-stroked-button):not(.mat-icon-button):not(.mat-fab):not(.mat-mini-fab) {
+    &:not(.mat-mdc-button):not(.mat-mdc-raised-button):not(.mat-mdc-flat-button):not(.mat-mdc-stroked-button):not(.mat-mdc-icon-button):not(.mat-mdc-fab):not(.mat-mdc-mini-fab) {
         &:hover,
         &:active {
             text-decoration: underline;
@@ -332,7 +335,7 @@ strong {
     .entry {
         margin-bottom: 24px;
         padding: 24px 32px;
-        @include mat-elevation(2);
+        @include mat.elevation(2);
 
         > .title {
             display: flex;

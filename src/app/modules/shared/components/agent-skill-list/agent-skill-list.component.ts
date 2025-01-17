@@ -23,7 +23,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SharedWrapperComponent } from '../shared-wrapper/shared-wrapper.component';
 import { TableComponent } from '../table/table.component';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { SharedService } from '@services/shared.service';
 import { EMAIL_SEND_STATUS } from 'app/constants';
@@ -156,7 +156,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * Fuse custom background colors
      */
-    customFuse$ = this.fuseFacadeService.anchorOrWidgetBgClasses$;
+    customFuse$: any;
 
     /**
      * Search Key for agent / skill list
@@ -203,6 +203,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
     ) {
         this.selectedItem = '';
         this.comments = '';
+        this.customFuse$ = this.fuseFacadeService.anchorOrWidgetBgClasses$();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1583,6 +1584,7 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
                 }
             }
         }
+        return false;
     };
 
     /**
@@ -1592,19 +1594,16 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @returns
      */
     filterAgentList = (row: AgentModel, filters: any): boolean => {
-        if (filters.searchKey && !filters.skill) {
+        if (filters.searchKey && !filters.Skill) {
             const searchRe = new RegExp(filters.searchKey, 'i');
             return !!JSON.stringify(row).match(searchRe);
-        } else if (!filters.searchKey && filters.skill) {
-            const skillRe = new RegExp(filters.skill, 'i');
-            return !!(row?.AgentVoiceSkillsAsString ? row.AgentVoiceSkillsAsString : '').match(skillRe);
+        } else if (!filters.searchKey && filters.Skill) {
+            const skillRe = new RegExp(filters.Skill, 'i');
+            return !!row.AgentVoiceSkillsAsString.match(skillRe);
         } else {
             const searchRe = new RegExp(filters.searchKey, 'i');
-            const skillRe = new RegExp(filters.skill, 'i');
-            return !!(
-                JSON.stringify(row).match(searchRe) &&
-                (row?.AgentVoiceSkillsAsString ? row.AgentVoiceSkillsAsString : '').match(skillRe)
-            );
+            const skillRe = new RegExp(filters.Skill, 'i');
+            return !!(JSON.stringify(row).match(searchRe) && row.AgentVoiceSkillsAsString.match(skillRe));
         }
     };
 

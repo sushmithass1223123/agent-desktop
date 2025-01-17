@@ -200,6 +200,7 @@ export class AppUiService extends SharedWrapper {
             });
         } else {
             console.error('Empty message passed for notification');
+            return;
         }
     }
 
@@ -464,7 +465,7 @@ export class AppUiService extends SharedWrapper {
 
         // if id is given, it can be a update
         if (notification.id) {
-            notifications = map(notifications, (item) => {
+            notifications = map(notifications, (item:any) => {
                 if (item.id === notification.id) {
                     return { ...item, ...notification };
                 }

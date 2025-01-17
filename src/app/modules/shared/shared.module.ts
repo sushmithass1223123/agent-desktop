@@ -5,9 +5,8 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { ChartsModule } from '@progress/kendo-angular-charts';
-import * as Chart from 'chart.js';
+import {Chart} from 'chart.js';
 import 'hammerjs';
-import { ChartsModule as ng2Charts } from 'ng2-charts';
 import {
     AgentSkillListComponent,
     AlertDialogComponent,
@@ -29,46 +28,40 @@ import {
     PreviewDialogComponent
 } from './components';
 import { EmailModule } from './components/email/email.module';
-import { TWChartDirective } from './directives';
+// import { TWChartDirective } from './directives';
 import { MaterialModule } from './material.module';
 import { CustomDatePipe } from './pipes';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../transloco-root.module';
-
-Chart.defaults.global.responsive = true;
-Chart.defaults.global.legend.position = 'right';
-Chart.defaults.global.legend.labels.fontSize = 20;
-Chart.defaults.global.maintainAspectRatio = false;
-Chart.defaults.global.animation = {
-    duration: 0
-};
-Chart.defaults.global.responsiveAnimationDuration = 0;
-Chart.defaults.global.hover.animationDuration = 0;
-Chart.defaults.global.plugins = {
-    outlabels: { display: false, backgroundColor: null, font: { size: 15 }, color: 'black' }
-};
+// Chart.defaults.responsive = true;
+// Chart.defaults.plugins.legend.position = 'right';
+// Chart.defaults.font.size = 20;
+// Chart.defaults.maintainAspectRatio = false;
+// Chart.defaults.animation = {
+//     duration: 0
+// };
+// Chart.defaults.animation.duration = 0;
+// // Chart.defaults.global.hover.animationDuration = 0;
+// Chart.defaults.plugins.legend.display = false;
+// Chart.defaults.plugins.legend.labels.font = { size: 15 };
+// Chart.defaults.plugins.legend.labels.color = 'black';
 
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, ng2Charts, PickerModule, EmailModule, ChartsModule, SocialMediaPostsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, PickerModule, EmailModule, ChartsModule, SocialMediaPostsModule];
 
 /**
  * Shared components
  */
 const sharedComponents = [
-    ResourceNotFoundComponent,
     CustomDialogComponent,
-    AvatarComponent,
-    TWChartDirective,
+    ResourceNotFoundComponent,
+    //TWChartDirective,
     SnackbarComponent,
     WidgetFabComponent,
-    AlertDialogComponent,
     ReminderTaskDialogComponent,
-    AppConfirmDialogComponent,
-    AppSnackbarComponent,
     NoDataAvailableComponent,
-    TWChartDirective,
     AgentSkillListComponent,
     SharedWrapperComponent,
     TableComponent,
@@ -77,7 +70,11 @@ const sharedComponents = [
     AnnotationComponent,
     TSnackbarComponent,
     TSnackbarContainer,
-    PreviewDialogComponent
+    PreviewDialogComponent,
+    AlertDialogComponent,
+    AppConfirmDialogComponent,
+    AppSnackbarComponent,
+    AvatarComponent
 ];
 
 /**
@@ -85,11 +82,12 @@ const sharedComponents = [
  */
 @NgModule({
     declarations: sharedComponents,
-    imports: [CommonModule, ...sharedModules,TranslocoRootModule],
+    imports: [...sharedModules,TranslocoRootModule, CommonModule],
+    exports: [...sharedModules, ...sharedComponents],
     providers: [{
         provide: TRANSLOCO_SCOPE,
         useValue: 'default'
-    }],
-    exports: [...sharedModules, ...sharedComponents]
+    }]
+    
 })
-export class SharedModule {}
+export class SharedModule { }

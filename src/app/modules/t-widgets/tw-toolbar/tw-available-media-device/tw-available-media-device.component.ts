@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TWidgetWrapper } from '@modules/t-widgets/utils/widget-wrapper/tw-wrapper';
 import { IWrsUtils, TUtils } from '@tmac/sdk';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 type AvailableDevices = {
     /**
      * Availabble mics
@@ -94,9 +94,9 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
 
         const { Speaker, Mic, Video } = await this.selectDevice();
 
-        this.mediaSelectFormGroup.controls.Mic.valueChanges.subscribe((res) => Mic(res));
-        this.mediaSelectFormGroup.controls.Speaker.valueChanges.subscribe((res) => Speaker(res));
-        this.mediaSelectFormGroup.controls.Video.valueChanges.subscribe((res) => Video(res));
+        this.mediaSelectFormGroup.controls['Mic'].valueChanges.subscribe((res) => Mic(res));
+        this.mediaSelectFormGroup.controls['Speaker'].valueChanges.subscribe((res) => Speaker(res));
+        this.mediaSelectFormGroup.controls['Video'].valueChanges.subscribe((res) => Video(res));
     }
 
     /**
@@ -175,7 +175,7 @@ export class TwAvailableMediaDeviceComponent extends TWidgetWrapper implements O
             if (this.stream) {
                 this.stream.getTracks().forEach((track) => track.stop());
             }
-            constraints.audio = { deviceId: this.mediaSelectFormGroup.value.Audio };
+            constraints.audio = { deviceId: this.mediaSelectFormGroup.value.Mic };
             constraints.video = { deviceId: this.mediaSelectFormGroup.value.Video };
             this.startVideo(constraints);
         };

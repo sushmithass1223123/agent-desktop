@@ -58,7 +58,7 @@ export class FuseSidebarService {
         if (!this._registry[key]) {
             console.warn(`The sidebar with the key '${key}' doesn't exist in the registry.`);
 
-            return;
+            return null;
         }
 
         // Return the sidebar

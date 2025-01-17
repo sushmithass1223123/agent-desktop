@@ -49,6 +49,7 @@ export class FuseUtils {
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -72,6 +73,7 @@ export class FuseUtils {
                 }
             }
         }
+        return false;
     }
 
     /**

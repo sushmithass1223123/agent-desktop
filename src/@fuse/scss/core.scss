@@ -4,14 +4,22 @@
 // ngx-datatable
 // @import '~@swimlane/ngx-datatable/themes/material';
 
+@use '@angular/material/core/core' as mat-core;
+
+@import '@angular/material/core/core-theme';
+
+// Breakpoint mixins
+@import 'partials/breakpoints';
 // Fuse
 @import 'fuse';
 
 // Theme
 @import 'theme';
 
+
 // Include core Angular Material styles
-@include mat-core();
+@include mat-core.core();
+
 
 // Partials
 @import 'partials/normalize';

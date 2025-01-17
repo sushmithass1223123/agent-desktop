@@ -17,7 +17,8 @@ import { groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 import { Subscription, timer } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
+import { MatSnackBarRef } from '@angular/material/snack-bar';
 type ApiCalls = 'search' | 'pull' | 'push';
 type CallStates = 'loading' | 'error' | 'initial' | 'completed';
 
@@ -83,10 +84,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse:any;
 
     /**
      * Api Call states
@@ -139,6 +137,11 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
             toDate: new FormControl(today),
             toTime: new FormControl(`${'23'}:${'59'}`)
         });
+
+        this.customFuse  = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**
@@ -343,7 +346,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                     items: [{ itemid }]
                 })
                 .subscribe((res: any) => {
-                    snackbarRef?.dismiss();
+                    if(snackbarRef instanceof MatSnackBarRef)snackbarRef?.dismiss();
                     if (res && res.status !== 'FAILED') {
                         this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pullChatSuccess'), 'success');
                         return;
@@ -441,7 +444,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                             items: [{ itemid }]
                         })
                         .subscribe((res: any) => {
-                            snackbarRef?.dismiss();
+                            if(snackbarRef instanceof MatSnackBarRef)snackbarRef?.dismiss();
                             if (res && res.status !== 'FAILED') {
                                 this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatSuccess'), 'success');
                                 return;

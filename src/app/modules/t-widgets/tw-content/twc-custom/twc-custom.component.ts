@@ -23,7 +23,7 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
     /**
      * Fuse custom config
      */
-    customFuse$ = this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' });
+    customFuse$: any;
     /**
      * Frame loaded flag
      */
@@ -67,6 +67,8 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         private _fuseFacadeService: FuseFacadeService
     ) {
         super('TwcCustomComponent', hostElement, contentPageService);
+
+        this.customFuse$ = this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' });
 
         this.excludedEvents = [
             'WallboardRefreshEvent',

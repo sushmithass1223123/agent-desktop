@@ -15,7 +15,7 @@
 
     tw-sample {
         &.tw-bg-header {
-            .mat-card {
+            .mat-mdc-card {
                 color: map-get($foreground, text);
 
                 // If it's a light theme, use a darker background
@@ -41,8 +41,8 @@
         }
 
         &.tw-bg-body {
-            .mat-card {
-                .mat-card-content {
+            .mat-mdc-card {
+                .mat-mdc-card-content {
                     color: map-get($foreground, text);
 
                     // If it's a light theme, use a darker background

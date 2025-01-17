@@ -15,7 +15,7 @@ import { AUX_STATUSES } from 'app/constants';
 import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * MainComponent
@@ -33,7 +33,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
     /**
      * Fuse custom config
      */
-    customFuse$ = this._fuseFacadeService.getConfig({ layoutStyle: 'layout.style' });
+    customFuse$: any;
     /**
      * App config
      */
@@ -131,6 +131,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
             this.appLabelsError = data;
             this._appDataService.setErrorInAppLabels(data);
         });
+
+        this.customFuse$ = this._fuseFacadeService.getConfig({ layoutStyle: 'layout.style' });
         // set the private defaults
         this._unsubscribeAll = new Subject();
 
@@ -211,8 +213,8 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
                 takeUntil(this._unsubscribeAll),
                 // delay(2000),
                 // continue only if userId present
-                filter((params) => params.state),
-                map((params) => params.state.toLowerCase())
+                filter((params) => params['state']),
+                map((params) => params['state'].toLowerCase())
             )
             .subscribe(async (state) => {
                 try {
@@ -232,7 +234,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
         // get the route history
         const route = history.state?.routeFrom;
         // for production build if the main url is opened directly route to login page
-        if (!this.queryParams.msTeams && environment.production && (!route || route !== 'login') && (!opener || opener === window)) {
+        if (!this.queryParams['msTeams'] && environment.production && (!route || route !== 'login') && (!opener || opener === window)) {
             // we will route to login page
             this.routeToLogin();
             return;

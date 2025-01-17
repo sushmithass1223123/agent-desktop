@@ -8,7 +8,7 @@ import { FuseFacadeService } from '@services/fuse-facade.service';
 import { getFuseConfigByTheme } from 'app/utils';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { AvailableLangs, TranslocoService } from '@jsverse/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { AppRootConfig } from '@ad/types';
 
@@ -63,9 +63,8 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any>;
 
     languageSelectionEnabled = false;
-    languages = this.translocoService.getAvailableLangs();
-    selectedLanguage = this.translocoService.getActiveLang();
-
+    languages: AvailableLangs;
+    selectedLanguage:string;
     /**
      * Constructor
      *
@@ -91,6 +90,10 @@ export class AppThemeOptionsComponent implements OnInit, OnDestroy {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
         this.loadConfig();
+
+        this.languages =  this.translocoService.getAvailableLangs();
+        this.selectedLanguage  = this.translocoService.getActiveLang();
+
     }
 
     // -----------------------------------------------------------------------------------------------------

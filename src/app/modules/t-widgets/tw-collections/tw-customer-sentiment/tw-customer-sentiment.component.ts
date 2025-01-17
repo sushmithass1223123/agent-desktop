@@ -1,11 +1,11 @@
 import { TwCustomerSentiment } from '@ad/types';
-import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TMACEventService } from '@services/tmac-event.service';
 import { GenericEvent } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CHART_COLORS, CUSTOMER_SENTIMENT_PLOT_RECORDS } from 'app/constants';
 import { TwChartConfig } from 'app/interfaces';
-import * as Chart from 'chart.js';
+import { Chart, ChartConfiguration, ChartType, Plugin } from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
 
 /**
@@ -50,23 +50,6 @@ const sentimentDataPoints = {
     Positive: 93
 };
 
-Chart.pluginService.register({
-    afterUpdate: (chart) => {
-        if (chart.config.options['setFeedbackEmoji']) {
-            const dataset: any = chart.config.data.datasets[0];
-            (Object.values(dataset._meta)[0] as any).data.forEach((d: any, i: any) => {
-                const val = dataset.data[i].y;
-                if (val === sentimentDataPoints.Negative) {
-                    d._model.pointStyle = negative;
-                } else if (val === sentimentDataPoints.Neutral) {
-                    d._model.pointStyle = neutral;
-                } else {
-                    d._model.pointStyle = positive;
-                }
-            });
-        }
-    }
-});
 
 /**
  * Customer sentiment chart component
@@ -100,30 +83,43 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
             }
         ],
         options: {
-            showLines: false,
-            legend: { display: false },
-            tooltips: {
-                callbacks: {
-                    label: (tooltipItem) => {
-                        const value = tooltipItem.value;
-                        // tslint:disable-next-line: radix
-                        const sentimentIndex = Object.values(sentimentDataPoints).indexOf(parseInt(value));
-                        return Object.keys(sentimentDataPoints)[sentimentIndex];
+            datasets: {
+                line: {
+                    showLine: false,
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (tooltipItem) => {
+                            const value:any = tooltipItem.raw;
+                            // tslint:disable-next-line: radix
+                            const sentimentIndex = Object.values(sentimentDataPoints).indexOf(parseInt(value));
+                            return Object.keys(sentimentDataPoints)[sentimentIndex];
+                        }
                     }
                 }
             },
+            
+            
             scales: {
-                xAxes: [{ type: 'time', time: { unitStepSize: 5 }, distribution: 'series' }],
-                yAxes: [
-                    {
+                x:
+                {
+                    type: 'time' ,
+                    // time:  { unitStepSize: 5 },
+                    // distribution: 'series'
+                } ,
+                y: 
+                {
                         ticks: {
                             display: false,
                             stepSize: 50,
-                            suggestedMax: 100,
-                            suggestedMin: 0
+                            //suggestedMax: 100,
+                            //suggestedMin: 0
                         }
-                    }
-                ]
+                }
+                
             },
             setFeedbackEmoji: true
         }
@@ -138,6 +134,9 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
      * current nlp data
      */
     nlpCurrentData: any = null;
+
+    @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+    chart!: Chart;
 
     /**
      * Constructor
@@ -170,6 +169,10 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 .pipe(takeUntil(this.unsubscribeAll))
                 .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
         }
+
+        this.chart.options.onClick = (event) => {
+            console.log('Chart clicked', event);
+        };
     }
 
     /**
@@ -178,7 +181,68 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
     ngOnDestroy(): void {
         // call the wrapper destroy method
         this.destroyWrapper();
+
+        if (this.chart) {
+            this.chart.destroy();
+        }
     }
+
+    ngAfterViewInit(): void {
+        const customPlugin: Plugin = {
+            id: 'customPlugin',
+            beforeDraw(chart) {
+              console.log('Before drawing the chart');
+            },
+            afterDraw(chart) {
+              console.log('After drawing the chart');
+            },
+            afterUpdate: (chart) => {
+                if (chart.config.options['setFeedbackEmoji']) {
+                    const dataset: any = chart.config.data.datasets[0];
+                    (Object.values(dataset._meta)[0] as any).data.forEach((d: any, i: any) => {
+                        const val = dataset.data[i].y;
+                        if (val === sentimentDataPoints.Negative) {
+                            d._model.pointStyle = negative;
+                        } else if (val === sentimentDataPoints.Neutral) {
+                            d._model.pointStyle = neutral;
+                        } else {
+                            d._model.pointStyle = positive;
+                        }
+                    });
+                }
+            }
+          };
+      
+        Chart.register(customPlugin); // Register globally
+        this.initializeChart();
+    }
+
+    initializeChart(): void {
+        const chartConfig: ChartConfiguration = {
+          type: 'line' as ChartType,
+          data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+              {
+                label: 'Sales',
+                data: [65, 59, 80, 81, 56, 55, 40],
+                borderColor: '#42A5F5',
+                backgroundColor: 'rgba(66, 165, 245, 0.2)',
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'top' },
+              tooltip: { enabled: true },
+            }
+          }
+        };
+    
+        this.chart = new Chart(this.chartCanvas.nativeElement, chartConfig);
+    }
+    
 
     // -----------------------------------------------------------------------------------------------------
     // @  Private Methods
@@ -213,6 +277,11 @@ export class TwCustomerSentimentComponent extends TWidgetWrapper implements OnIn
                 y: parsedJson.sentimentResult
             } as any);
         }
+    }
+
+    updateChartData(newData: number[]): void { // apply on OnNLPDataEvent
+        this.chart.data.datasets[0].data = newData;
+        this.chart.update();
     }
 
     // -----------------------------------------------------------------------------------------------------

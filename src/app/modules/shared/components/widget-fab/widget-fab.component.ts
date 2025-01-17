@@ -51,7 +51,7 @@ export class WidgetFabComponent implements OnInit, OnChanges {
      * @param {SimpleChanges} changes
      */
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.aotFABDrag?.currentValue === true) {
+        if (changes['aotFABDrag']?.currentValue === true) {
             this._fabDragRef = true;
         }
     }

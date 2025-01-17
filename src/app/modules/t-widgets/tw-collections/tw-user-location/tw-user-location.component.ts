@@ -5,14 +5,14 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { TextChatRemoteUserConnectedEvent, TextChatMessageReceivedEvent } from '@tmac/sdk';
 import * as L from 'leaflet';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 /**
  * User location widget
  */
 @Component({
     selector: 'tw-user-location',
     templateUrl: './tw-user-location.component.html',
-    styleUrls: ['./tw-user-location.component.scss']
+    styleUrls: ['./tw-user-location.component.scss']   
 })
 export class TwUserLocationComponent extends TWidgetWrapper implements OnInit, AfterViewInit, OnDestroy {
     /**

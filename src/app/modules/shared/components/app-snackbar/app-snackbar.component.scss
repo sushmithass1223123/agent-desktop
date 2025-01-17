@@ -1,4 +1,4 @@
-@import 'src/app/scss/shared';
+@import 'app/scss/shared';
 
 snack-bar-container {
     .cursor {
@@ -10,7 +10,7 @@ snack-bar-container {
             height: 100%;
         }
     }
-    &.mat-snack-bar-container {
+    &.mat-mdc-snack-bar-container {
         &.app-snackbar {
             color: #323232;
             background: #ffffff;

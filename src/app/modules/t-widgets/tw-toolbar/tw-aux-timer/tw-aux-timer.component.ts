@@ -67,7 +67,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Triggers restart of timer with new time
      */
-    restartTimer$ = new Subject();
+    restartTimer$ = new Subject<string>();
 
     constructor() {
         super('TwAuxTimerComponent');
@@ -82,7 +82,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
         this.initWrapper(this.data);
 
         this.initTimer();
-        this.restartTimer$.next(Date.now());
+        this.restartTimer$.next(Date.now().toString());
 
         // listen to agent status change
         SDKClient.events.on('AgentStatusChangeEvent', this.AgentStatusChangeEvent);
@@ -110,7 +110,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
             // check if the current aux status is equal to the previous status
             if (this.lastStatus && !evt.Status.includes(this.lastStatus)){
                 // this.restartTimer$.next(evt.CreatedTime);
-                this.restartTimer$.next(Date.now());
+                this.restartTimer$.next(Date.now().toString());
             }
         }
         // update last status
@@ -124,7 +124,7 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
     private initTimer(): void {
         const convertToDoubleDigit = (unit: number) => {
             const unitStr = unit.toString();
-            if (unitStr.length === 1) {
+            if (unitStr?.length === 1) {
                 return `0${unitStr}`.split('');
             }
             return unitStr.split('');
@@ -136,12 +136,13 @@ export class TwAuxTimerComponent extends TWidgetWrapper implements OnInit, OnDes
                 .pipe(takeUntil(this.unsubscribeAll), takeUntil(this.restartTimer$))
                 .subscribe(() => {
                     const diff = intervalToDuration({
-                        start: new Date(startTime),
+                        start: new Date(Number(startTime)),
                         end: Date.now()
                     });
-                    [this.hours1, this.hours2] = convertToDoubleDigit(diff.hours);
-                    [this.minutes1, this.minutes2] = convertToDoubleDigit(diff.minutes);
-                    [this.seconds1, this.seconds2] = convertToDoubleDigit(diff.seconds);
+
+                    [this.hours1, this.hours2] = convertToDoubleDigit(diff.hours ? diff.hours : 0 as number);
+                    [this.minutes1, this.minutes2] = convertToDoubleDigit(diff.minutes ? diff.minutes : 0 as number);
+                    [this.seconds1, this.seconds2] = convertToDoubleDigit(diff.seconds ? diff.seconds: 0 as number);
                 });
         });
     }

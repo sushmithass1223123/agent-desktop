@@ -7,7 +7,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { EmailTemplate, SDKClient } from '@tmac/sdk';
 import { TwWidgetModel } from 'app/models';
 import { EmailService } from '../email.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
     selector: 'email-template-selector',

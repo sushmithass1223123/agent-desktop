@@ -1,4 +1,4 @@
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 tw-agent-details {
     .agent-details {
@@ -92,8 +92,8 @@ tw-agent-details {
 }
 
 .agent-info-menu {
-    &.mat-menu-panel {
-        .mat-menu-item {
+    &.mat-mdc-menu-panel {
+        .mat-mdc-menu-item {
             .mat-icon {
                 margin-right: 8px;
             }

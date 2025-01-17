@@ -29,7 +29,7 @@ export class CustomDialogComponent implements OnInit, OnDestroy {
     /**
      * dialog reference for confirmation dialog
      */
-    confirmDialogRef: MatDialogRef<any, any>
+    confirmDialogRef!: MatDialogRef<any, any>;
 
     /**
      * Constructor

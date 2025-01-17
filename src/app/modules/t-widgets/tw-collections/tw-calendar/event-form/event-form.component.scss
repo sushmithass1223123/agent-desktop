@@ -1,4 +1,4 @@
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 .event-form-dialog {
     @include media-breakpoint('xs') {
@@ -9,7 +9,7 @@
         width: 480px;
     }
 
-    .mat-dialog-container {
+    .mat-mdc-dialog-container {
         padding: 0;
     }
 
@@ -25,9 +25,9 @@
     }
 
     .date-time-picker {
-        &.mat-form-field {
-            .mat-form-field-wrapper {
-                .mat-form-field-flex {
+        &.mat-mdc-form-field {
+            .mat-mdc-text-field-wrapper {
+                .mat-mdc-form-field-flex {
                     height: 63px;
                 }
             }

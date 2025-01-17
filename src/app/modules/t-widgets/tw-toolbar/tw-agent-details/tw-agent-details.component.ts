@@ -7,7 +7,7 @@ import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { SharedService } from '@services/shared.service';
 /**
  * Agent Details component
@@ -22,25 +22,26 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
     /**
      * App confif widget data
      */
-    @Input() data: IWidget<any, IWidgetData>;
+    @Input()
+    data!: IWidget<any, IWidgetData>;
 
     /**
      * Agent Data
      */
-    agentData: IAgentData;
+    agentData!: IAgentData;
 
     /**
      * Menu opened flag
      */
-    opened: boolean;
+    opened: boolean = false;
     /**
      * Aux codes opened flag
      */
-    auxOpened: boolean;
+    auxOpened: boolean = false;
     /**
      * Aux codes config
      */
-    auxCodeConfig: IAuxCodeConfig;
+    auxCodeConfig!: IAuxCodeConfig;
     /**
      * AUX code list with default data
      */
@@ -89,7 +90,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         this.agentData = SDKClient.getAgentData();
 
         //observe ui control events from custom widgets
-        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data:any) => {
             this.handleUIControls(data);
         });
 
@@ -99,7 +100,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
         this._tmacEventService
             .getNonInteractionEvents(['AgentStatusChangeEvent', 'AUXCodeUpdateEvent', 'AgentSettingsUpdatedEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
-            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+            .subscribe((evts) => evts.forEach((evt: any) => (this as any)[evt.EventName](evt)));
 
         // get agent aux codes
         SDKClient.loadAUXCodes(this.auxCodeConfig.ByTeam, null)
@@ -235,7 +236,7 @@ export class TwAgentDetailsComponent extends TWidgetWrapper implements OnInit, O
      * 
      * @param data: details passed from custom widgets to manipulate UI
      */
-    handleUIControls(data) {
+    handleUIControls(data:any) {
         if (data.eventName === 'disableStatusChange') {
             this.disableStatusChange = true;
         }
@@ -277,4 +278,4 @@ interface IAuxCodeConfig {
      * To show default Logout status
      */
     DefaultLogout: boolean;
-}
+  }

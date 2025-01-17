@@ -20,7 +20,7 @@ import { merge, set } from 'lodash';
 import moment from 'moment';
 import { interval, Observable, Subject } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { AvailableLangs, TranslocoService } from '@jsverse/transloco';
 import { AGENT_FEATURES } from 'app/constants';
 
 declare const navigator: Navigator | any;
@@ -248,7 +248,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
     appLabelsError: any;
 
     languageSelectionEnabled = false;
-    languages = this.translocoService.getAvailableLangs();
+
+    languages: AvailableLangs;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -286,6 +287,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 }
             }
         };
+
+        this.languages = this.translocoService.getAvailableLangs();
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -359,12 +362,12 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     // Get the query params with jd_ stripped for json data
                     Object.entries(params).reduce((acc, curr) => {
                         if (curr[0].includes('jd_')) {
-                            if (!acc.jsonData) {
-                                acc.jsonData = {};
+                            if (!acc['jsonData']) {
+                                acc['jsonData'] = {};
                             }
                             const key = curr[0].replace('jd_', '');
-                            const customJsonData = set(acc.jsonData, key, curr[1]);
-                            acc.jsonData = { ...(acc.jsonData || {}), ...customJsonData };
+                            const customJsonData = set(acc['jsonData'], key, curr[1]);
+                            acc['jsonData'] = { ...(acc['jsonData'] || {}), ...customJsonData };
                         } else {
                             acc[curr[0]] = curr[1];
                         }
@@ -375,7 +378,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
             .subscribe(async (params) => {
                 try {
                     let patchVal = {};
-                    let username = params.u || params.dblb;
+                    let username = params['u'] || params['dblb'];
 
                     // if there is not user in param then return
                     if (!username) {
@@ -440,62 +443,62 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     patchVal = { ...patchVal, lanId: username };
 
                     // check for station
-                    if (params.s) {
-                        patchVal = { ...patchVal, station: params.s };
+                    if (params['s']) {
+                        patchVal = { ...patchVal, station: params['s'] };
                     }
 
                     // check for password
-                    if (params.p || params.ap || params.sp) {
+                    if (params['p'] || params['ap'] || params['sp']) {
                         let decrypted = '';
-                        if (params.p) {
+                        if (params['p']) {
                             this.password.Agent = true;
                             this.password.Station = true;
                             // decrypt the password or use original
-                            decrypted = AES.decrypt(decodeURIComponent(params.p), k, cg).toString(Utf8) || params.p;
+                            decrypted = AES.decrypt(decodeURIComponent(params['p']), k, cg).toString(Utf8) || params['p'];
                             patchVal = { ...patchVal, agentPassword: decrypted, stationPassword: decrypted };
                         } else {
-                            if (params.ap) {
+                            if (params['ap']) {
                                 this.password.Agent = true;
                                 // decrypt the agent password or use original
-                                decrypted = AES.decrypt(decodeURIComponent(params.ap), k, cg).toString(Utf8) || params.ap;
+                                decrypted = AES.decrypt(decodeURIComponent(params['ap']), k, cg).toString(Utf8) || params['ap'];
                                 patchVal = { ...patchVal, agentPassword: decrypted };
                             }
 
-                            if (params.sp) {
+                            if (params['sp']) {
                                 this.password.Station = true;
                                 // decrypt the station password or use original
-                                decrypted = AES.decrypt(decodeURIComponent(params.sp), k, cg).toString(Utf8) || params.sp;
+                                decrypted = AES.decrypt(decodeURIComponent(params['sp']), k, cg).toString(Utf8) || params['sp'];
                                 patchVal = { ...patchVal, stationPassword: decrypted };
                             }
                         }
                     }
 
                     // check for pbx login
-                    if (params.pbx && (params.pbx === '1' || params.pbx === 'true')) {
+                    if (params['pbx'] && (params['pbx'] === '1' || params['pbx'] === 'true')) {
                         this.pbxChecked = true;
-                        if (typeof params.jsonData === 'object') {
-                            params.jsonData.pbxLogin = true;
+                        if (typeof params['jsonData'] === 'object') {
+                            params['jsonData'].pbxLogin = true;
                         } else {
-                            params.jsonData = {
+                            params['jsonData'] = {
                                 pbxLogin: true
                             };
                         }
                     } else {
-                        this.pbxChecked = params?.jsonData?.pbxLogin === 'true';
+                        this.pbxChecked = params?.['jsonData']?.pbxLogin === 'true';
                     }
 
                     // check for ms login
-                    if (params.ms && (params.ms === '1' || params.ms === 'true')) {
+                    if (params['ms'] && (params['ms'] === '1' || params['ms'] === 'true')) {
                         this.msChecked = true;
-                        if (typeof params.jsonData === 'object') {
-                            params.jsonData.msLogin = true;
+                        if (typeof params['jsonData'] === 'object') {
+                            params['jsonData'].msLogin = true;
                         } else {
-                            params.jsonData = {
+                            params['jsonData'] = {
                                 msLogin: true
                             };
                         }
                     } else {
-                        this.msChecked = params?.jsonData?.msLogin === 'true';
+                        this.msChecked = params?.['jsonData']?.msLogin === 'true';
                     }
 
                     // check if ms/pbx enabled, then enable station field
@@ -505,7 +508,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     // add the params to query data
                     this.queryData = params;
                     // check if al (auto login) false or 0, then do not auto login
-                    if (params.al !== undefined && (params.al === 'false' || params.al === '0')) {
+                    if (params['al'] !== undefined && (params['al'] === 'false' || params['al'] === '0')) {
                         return;
                     }
                     this.fuseSplashService.show();
@@ -651,19 +654,19 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         // Set validators for form
         if (this.domainListEnabled) {
-            this.loginForm.controls.domain.setValidators(Validators.required);
+            this.loginForm.controls['domain'].setValidators(Validators.required);
         }
 
         if (this.stationEnabled) {
-            this.loginForm.controls.station.setValidators(Validators.required);
+            this.loginForm.controls['station'].setValidators(Validators.required);
         }
 
         if (this.password.Agent) {
-            this.loginForm.controls.agentPassword.setValidators(Validators.required);
+            this.loginForm.controls['agentPassword'].setValidators(Validators.required);
         }
 
         if (this.password.Station) {
-            this.loginForm.controls.stationPassword.setValidators(Validators.required);
+            this.loginForm.controls['stationPassword'].setValidators(Validators.required);
         }
 
         this.isConfigLoaded = true;
@@ -851,14 +854,14 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
 
         // set form validation
         if (this.stationEnabled) {
-            this.loginForm.controls.station.setValidators(Validators.required);
+            this.loginForm.controls['station'].setValidators(Validators.required);
             setTimeout(() => {
                 this.stationField.nativeElement.focus();
             });
         } else {
-            this.loginForm.controls.station.clearValidators();
+            this.loginForm.controls['station'].clearValidators();
         }
-        this.loginForm.controls.station.updateValueAndValidity();
+        this.loginForm.controls['station'].updateValueAndValidity();
     }
 
     /**
@@ -904,7 +907,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                 stationPassword,
                 customAuthData
             },
-            this.queryData?.jsonData || {}
+            this.queryData?.['jsonData'] || {}
         );
 
         if (!customAuthData?.otp) {
@@ -954,8 +957,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                         if (customAuthType === 'otp') {
                             this.showOtp = true;
                             this.fuseSplashService.hide();
-                            this.loginForm.controls.otp.setValidators(Validators.required);
-                            this.loginForm.controls.otp.updateValueAndValidity();
+                            this.loginForm.controls['otp'].setValidators(Validators.required);
+                            this.loginForm.controls['otp'].updateValueAndValidity();
                             return;
                         }
                     } else if (response.ResultCode === 3) {
@@ -1003,7 +1006,7 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                             const windowLocation = window.location.href.split('/');
                             const domainIndex = windowLocation.indexOf(domain);
                             const instanceName = domainIndex ? windowLocation[domainIndex + 1] : '';
-                            const windowQueries = this.queryData?.state ? `?state=${this.queryData.state}` : '';
+                            const windowQueries = this.queryData?.['state'] ? `?state=${this.queryData['state']}` : '';
                             // open new window
                             const wdw = window.open(
                                 `${instanceName}/main/${agentId}${windowQueries}`,
@@ -1017,9 +1020,9 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                             // reload login page
                             // location.reload();
                         } else {
-                            const queryParams = this.queryData?.state
+                            const queryParams = this.queryData?.['state']
                                 ? {
-                                      state: this.queryData.state
+                                      state: this.queryData['state']
                                   }
                                 : {};
                             // we will route to main page
@@ -1045,8 +1048,8 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                     if (this.promptAgentIdOnInvalidLanId) {
                         this.errorMessage = this.translocoService.translate('loginComponent.lanIdInvalid');
                         this.agentIdEnabled = true;
-                        this.loginForm.controls.agentId.setValidators(Validators.required);
-                        this.loginForm.controls.agentId.updateValueAndValidity();
+                        this.loginForm.controls['agentId'].setValidators(Validators.required);
+                        this.loginForm.controls['agentId'].updateValueAndValidity();
                         setTimeout(() => {
                             this.agentIdField.nativeElement.focus();
                         });

@@ -19,7 +19,7 @@ import { PostAttachment, SDKClient, TUtils } from '@tmac/sdk';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MediaStreamerResponse, PostFile, SmComment, SmpComponentInputs } from 'app/interfaces';
 import { AppUiService } from '@services/app-ui.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { Subject } from 'rxjs';
 import { AppDataService } from '@services/app-data.service';
 import { maticonByExtension, throwADError } from 'app/utils';
@@ -64,11 +64,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => true)),
-        widget$: this._fuseFacadeService.widgetBgClasses$,
-        config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
-    };
+    customFuse:any; 
 
     lineClampCharacterCount: number = 100;
 
@@ -132,6 +128,12 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         ).subscribe((themeData) => {
             this.currentTheme = themeData.colorTheme
         });
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => true)),
+            widget$: this._fuseFacadeService.widgetBgClasses$(),
+            config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
+        };
     }
 
     ngAfterViewInit(): void {
@@ -175,16 +177,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         try {
             this.activeSessionId = this.postData.IsOutbound ? this.outSessionId : this.sessionId;
             this.postData = JSON.parse(JSON.stringify(this.postData));
-            if (this.postData?.SubChannel == 'x') {
-                if (this.postData.SmActiveComment?.CommentText?.Text) {
-                    this.postData.SmActiveComment.CommentText.Text =
-                        this.postData.SmActiveComment.CommentText.Text.replace(/^@\S+\s*/, '');
-                }
-                if (this.postData.SmParentComments?.CommentText?.Text) {
-                    this.postData.SmParentComments.CommentText.Text =
-                        this.postData.SmParentComments.CommentText.Text.replace(/^@\S+\s*/, '');
-                }
-            }
             if (this.isDraftMode && this.draftData) {
                 if (!this.draftData.body) this.draftData.body = this.postData.SmActiveComment.CommentText.Text;
                 if (
@@ -277,6 +269,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 true
             );
             console.error(e);
+            return '';
         }
     }
 
@@ -312,6 +305,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             return new Date();
         } catch (error) {
             console.error(error);
+            return null;
         }
     }
 
@@ -678,12 +672,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 let modCommentData = { ...commentData, nestLevel: nestLevel + 1, renderMedia: false };
                 if (nestLevel === -1) modCommentData.isVisible = true;
                 else modCommentData.isVisible = false;
-                if (this.postData?.SubChannel == 'x') {
-                    if (modCommentData?.CommentText?.Text) {
-                        modCommentData.CommentText.Text =
-                            modCommentData.CommentText.Text.replace(/^@\S+\s*/, '');
-                    }
-                }
                 const isCommentAlreadyAvailable = this.flattenedCommentHistory.findIndex((ocd) => {
                     return modCommentData.CommentId === ocd.CommentId;
                 });

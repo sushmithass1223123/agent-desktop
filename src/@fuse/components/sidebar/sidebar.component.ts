@@ -13,7 +13,7 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
-import { MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from 'ngx-flexible-layout';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -304,7 +304,7 @@ export class FuseSidebarComponent implements OnInit, OnDestroy {
         this._fuseMatchMediaService.onMediaChange.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
             // Get the active status
             const isActive = this._mediaObserver.isActive(this.lockedOpen);
-
+            
             // If the both status are the same, don't act
             if (this._wasActive === isActive) {
                 return;

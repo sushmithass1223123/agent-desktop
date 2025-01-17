@@ -1,4 +1,4 @@
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 toolbar {
     position: relative;
@@ -9,7 +9,7 @@ toolbar {
     &.navbar-left {
         border-top-left-radius: 3rem;
 
-        .mat-toolbar {
+        .mat-mdc-toolbar {
             border-top-left-radius: inherit;
             @include media-breakpoint('xs') {
                 border-radius: 0px;
@@ -23,7 +23,7 @@ toolbar {
     &.navbar-right {
         border-top-right-radius: 3rem;
 
-        .mat-toolbar {
+        .mat-mdc-toolbar {
             border-top-right-radius: inherit;
             @include media-breakpoint('xs') {
                 border-radius: 0px;
@@ -38,7 +38,7 @@ toolbar {
         z-index: 2;
     }
 
-    .mat-toolbar {
+    .mat-mdc-toolbar {
         position: relative;
         background: inherit !important;
         color: inherit !important;

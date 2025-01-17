@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, Input, ViewChild } from '@angular/core';
 import { TWidget, TWLibrary } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
@@ -32,7 +32,7 @@ export class TwTemplateComponent implements AfterContentInit {
      */
     @ViewChild(TwTemplateDirective, { static: true }) widgetTemplate: TwTemplateDirective;
 
-    constructor(private _componentFactoryResolver: ComponentFactoryResolver) {}
+    constructor() {}
 
     /**
      * Lifecycle Hook
@@ -70,13 +70,14 @@ export class TwTemplateComponent implements AfterContentInit {
         }
 
         // create the component factory
-        const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
+        // commenting this line since ComponentFactoryResolver no more required for angular 14+ version
+        // const componentFactory = this._componentFactoryResolver.resolveComponentFactory(widget.component);
 
         // get the view container reference from widget host
         const viewContainerRef = this.widgetTemplate.viewContainerRef;
 
         // add the component to the view
-        const componentRef = viewContainerRef.createComponent(componentFactory);
+        const componentRef = viewContainerRef.createComponent(widget.component);
 
         // prepare widget data, use TwWidgetModel to make sure that newly added config is added
         // with default value inorder to stop app from breaking

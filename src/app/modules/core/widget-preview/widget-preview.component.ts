@@ -4,7 +4,7 @@ import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { AppDataService } from '@services/app-data.service';
 import { IResponseData, TUtils } from '@tmac/sdk';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Widget Preview
@@ -67,9 +67,9 @@ export class WidgetPreviewComponent extends SharedWrapper implements OnInit {
             this._activatedRouter.queryParams.subscribe((params) => {
                 console.log('WidgetPreviewComponent.queryParams', params);
                 // get the template name from the config
-                if (params && params.templateName) {
+                if (params && params['templateName']) {
                     // get the template
-                    this.getTemplateJson(params.templateName);
+                    this.getTemplateJson(params['templateName']);
                 } else {
                     this.routeToNotFound(this.translocoService.translate('widgetPreview.templateNameNotFound'));
                 }

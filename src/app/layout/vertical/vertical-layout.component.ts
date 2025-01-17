@@ -20,34 +20,7 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom config
      */
-    customFuse$ = this._fuseFacadeService.getConfig({ layout: 'layout' }).pipe(
-        map((config: any) => {
-            const layout = cloneDeep(config.layout);
-            const { navbar, toolbar, content, footer, sidepanel } = layout;
-
-            navbar.background = layout.navbar.customBackgroundColor ? layout.navbar.background : '';
-            navbar.hidden = layout.navbar.hidden;
-            navbar.folded = layout.navbar.folded;
-            navbar.position = layout.navbar.position;
-
-            const toolbarBg = layout.toolbar.customBackgroundColor ? ` ${layout.toolbar.background}` : '';
-            toolbar.hidden = layout.toolbar.hidden;
-            toolbar.position = layout.toolbar.position;
-            toolbar.class = `navbar-${navbar.position} ${toolbar.position}` + toolbarBg;
-
-            const contentBg = layout.content.customBackgroundColor ? ` ${layout.content.background}` : '';
-            content.class = `navbar-${navbar.position}` + contentBg;
-
-            const footerBg = layout.footer.customBackgroundColor ? ` ${layout.footer.background}` : '';
-            footer.hidden = layout.footer.hidden;
-            footer.position = layout.footer.position;
-            footer.class = footer.position + footerBg;
-
-            sidepanel.position = layout.sidepanel.position;
-
-            return { navbar, toolbar, content, footer, sidepanel };
-        })
-    );
+    customFuse$: any;
 
     /**
      * Navigation
@@ -71,6 +44,35 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+
+        this.customFuse$ = this._fuseFacadeService.getConfig({ layout: 'layout' }).pipe(
+            map((config: any) => {
+                const layout = cloneDeep(config.layout);
+                const { navbar, toolbar, content, footer, sidepanel } = layout;
+    
+                navbar.background = layout.navbar.customBackgroundColor ? layout.navbar.background : '';
+                navbar.hidden = layout.navbar.hidden;
+                navbar.folded = layout.navbar.folded;
+                navbar.position = layout.navbar.position;
+    
+                const toolbarBg = layout.toolbar.customBackgroundColor ? ` ${layout.toolbar.background}` : '';
+                toolbar.hidden = layout.toolbar.hidden;
+                toolbar.position = layout.toolbar.position;
+                toolbar.class = `navbar-${navbar.position} ${toolbar.position}` + toolbarBg;
+    
+                const contentBg = layout.content.customBackgroundColor ? ` ${layout.content.background}` : '';
+                content.class = `navbar-${navbar.position}` + contentBg;
+    
+                const footerBg = layout.footer.customBackgroundColor ? ` ${layout.footer.background}` : '';
+                footer.hidden = layout.footer.hidden;
+                footer.position = layout.footer.position;
+                footer.class = footer.position + footerBg;
+    
+                sidepanel.position = layout.sidepanel.position;
+    
+                return { navbar, toolbar, content, footer, sidepanel };
+            })
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------

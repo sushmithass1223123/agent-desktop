@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 fuse-sidebar {
     width: 72px;
@@ -25,7 +25,7 @@ fuse-sidebar {
 
         &.right-navbar {
             .toggle-sidebar-opened {
-                mat-icon {
+                mat-mdc-icon {
                     transform: rotate(180deg);
                 }
             }
@@ -66,7 +66,7 @@ fuse-sidebar {
                 justify-content: space-between;
                 align-items: center;
 
-                .mat-list-item {
+                .mat-mdc-list-item {
                     color: currentColor !important;
                 }
 
@@ -81,41 +81,37 @@ fuse-sidebar {
                     margin-top: 1rem;
                     margin-bottom: 1rem;
 
-                    .mat-list-option {
+                    .mat-mdc-list-option  {
                         margin-bottom: 0.25rem;
                         border-top-right-radius: 2rem;
                         border-bottom-left-radius: 2rem;
                     }
 
-                    .mat-ripple:not(:empty) {
+                    .mat-mdc-ripple:not(:empty) {
                         border-top-right-radius: 2rem;
                         border-bottom-left-radius: 2rem;
                     }
 
-                    .mat-list-option:hover {
+                    .mat-mdc-list-option:hover {
                         border-top-right-radius: 2rem;
                         border-bottom-left-radius: 2rem;
                         background: rgba(0, 0, 0, 0.12);
                     }
 
-                    .mat-list-item,
-                    .mat-list-option {
+                    .mat-mdc-list-item,
+                    .mat-mdc-list-option  {
                         width: 90% !important;
                         height: 40px !important;
                         margin-top: 4px !important;
                         margin-bottom: 4px !important;
                     }
 
-                    .mat-list-single-selected-option,
-                    .mat-list-single-selected-option:hover,
-                    .mat-list-single-selected-option:focus {
-                        border-top-right-radius: 2rem;
-                        border-bottom-left-radius: 2rem;
-                        box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+                    .mat-mdc-list-text {
+                        padding: 0 !important;
                     }
 
-                    .mat-list-text {
-                        padding: 0 !important;
+                    .mdc-list-item__end {
+                        display: none;
                     }
                 }
 
@@ -123,7 +119,7 @@ fuse-sidebar {
                     width: 70px !important;
                     height: 44px !important;
 
-                    .mat-ripple:not(:empty) {
+                    .mat-mdc-ripple:not(:empty) {
                         border-top-right-radius: 2rem;
                         border-bottom-left-radius: 2rem;
                     }
@@ -134,7 +130,7 @@ fuse-sidebar {
                         background: rgba(0, 0, 0, 0.12);
                     }
 
-                    // .mat-icon {
+                    // .mat-mdc-icon {
                     //     animation: rotating 3s linear infinite;
                     // }
                 }
@@ -164,7 +160,7 @@ fuse-sidebar {
             align-items: center;
             margin: 0.5rem;
 
-            .mat-list-item {
+            .mat-mdc-list-item  {
                 color: currentColor !important;
             }
 
@@ -184,37 +180,32 @@ fuse-sidebar {
                     margin-right: 4rem;
                 }
 
-                .mat-list-option {
+                .mat-mdc-list-option  {
                     margin-right: 0.25rem;
                 }
 
-                .mat-ripple:not(:empty) {
+                .mat-mdc-ripple:not(:empty) {
                     border-top-right-radius: 2rem;
                     border-bottom-left-radius: 2rem;
                 }
 
-                .mat-list-option:hover {
+                .mat-mdc-list-option:hover {
                     border-top-right-radius: 2rem;
                     border-bottom-left-radius: 2rem;
                     background: rgba(0, 0, 0, 0.12);
                 }
 
-                .mat-list-item {
+                .mat-mdc-list-item  {
                     width: 70px !important;
                     height: 44px !important;
                     margin-right: 12px !important;
                 }
-                .mat-list-single-selected-option,
-                .mat-list-single-selected-option:hover,
-                .mat-list-single-selected-option:focus {
-                    border-top-right-radius: 2rem;
-                    border-bottom-left-radius: 2rem;
-                    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
-                }
 
-                .mat-list-text {
+                .mat-mdc-list-text {
                     padding: 0 !important;
                 }
+
+                
             }
 
             .brand-logo {
@@ -227,3 +218,19 @@ fuse-sidebar {
         }
     }
 }
+
+/** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
+
+.top-navbar, fuse-sidebar {
+    .navbar-content {
+        mat-list-option[tabindex="0"] {
+            border-top-right-radius: 2rem;
+            border-bottom-left-radius: 2rem;
+            box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+        }
+    }
+}
+
+
+
+

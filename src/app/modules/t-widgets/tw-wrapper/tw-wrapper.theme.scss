@@ -6,7 +6,7 @@
 
     tw-wrapper {
         tw-card {
-            .mat-card {
+            .mat-mdc-card {
                 color: map-get($foreground, text);
 
                 // If it's a light theme, use a darker background
@@ -29,7 +29,7 @@
                     }
                 }
 
-                .mat-card-content {
+                .mat-mdc-card-content {
                     color: map-get($foreground, text);
 
                     // If it's a light theme, use a darker background
@@ -41,6 +41,17 @@
                     }
                 }
             }
+        }
+    }
+
+    /** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
+    tw-wrapper .tw-card .mat-mdc-card
+    {
+        .card-header {
+            padding: 0px 1em 0px 0px;
+        }
+        .mat-mdc-card-avatar {
+            margin-bottom: 0px;
         }
     }
 }

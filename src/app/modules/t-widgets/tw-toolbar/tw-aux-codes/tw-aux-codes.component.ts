@@ -1,7 +1,7 @@
 import { TwAuxCode } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppUiService } from '@services/app-ui.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { AgentStatusChangeEvent, IAgentData, IAUXCodes, SDKClient } from '@tmac/sdk';
@@ -21,7 +21,8 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
     /**
      * Widget data
      */
-    @Input() data: TwAuxCode;
+    @Input()
+    data!: TwAuxCode;
     /**
      * AUX code menu opened falg
      */
@@ -91,7 +92,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
         });
 
         //observe ui control events from custom widgets
-        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+        this._tmacEventService.getUIControlEvents.pipe(takeUntil(this.unsubscribeAll)).subscribe((data:any) => {
                 this.handleUIControls(data);
         });
 
@@ -172,7 +173,7 @@ export class TwAuxCodesComponent extends TWidgetWrapper implements OnInit, OnDes
      * 
      * @param data: details passed from custom widgets to manipulate UI
      */
-    handleUIControls(data) {
+    handleUIControls(data:any) {
         if (data.eventName === 'disableStatusChange') {
             this.disableStatusChange = true;
         }

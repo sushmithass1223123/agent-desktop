@@ -28,17 +28,17 @@
 
             <mat-form-field
                 fxFlex
-                floatLabel="never"
-                appearance="standard"
+                floatLabel="auto"
+                appearance="outline"
                 class="custom-2 mb-8 border-radius-20 border-sm-info"
                 *ngIf="data.type === 'prompt'"
             >
                 <textarea
                     [(ngModel)]="promptData"
                     matInput
-                    matTextareaAutosize
-                    [matAutosizeMinRows]="data.minRows || 2"
-                    [matAutosizeMaxRows]="(data.minRows || 5) + 3"
+                    cdkTextareaAutosize
+                    [cdkAutosizeMinRows]="data.minRows || 2"
+                    [cdkAutosizeMaxRows]="(data.minRows || 5) + 3"
                     [placeholder]="locale('sharedComponents.customDialog.promptPlaceholder')"
                 ></textarea>
             </mat-form-field>
@@ -83,7 +83,7 @@
                 color="accent"
                 (click)="data.confirmClose ? confirmClose() : data.cancel()"
             >
-                <mat-icon class="twd-text-lg"> close </mat-icon>
+                <mat-icon> class="twd-text-lg"> close </mat-icon>
             </button>
         </div>
 

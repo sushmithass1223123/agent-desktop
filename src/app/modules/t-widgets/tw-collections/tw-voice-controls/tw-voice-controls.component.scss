@@ -1,11 +1,11 @@
-@import 'src/app/scss/shared';
+@import 'app/scss/shared';
 
 tw-voice-controls {
     .collapsed {
         flex: 0;
     }
 
-    .mat-card-content {
+    .mat-mdc-card-content {
         background: inherit !important;
         box-shadow: none !important;
         padding: 0px 3px 3px 3px !important;
@@ -102,7 +102,7 @@ tw-voice-controls {
             }
 
             .call-controls {
-                button:not(.mat-button-disabled, .mat-warn, .mat-primary, .mat-accent) {
+                button:not(.mat-mdc-button-disabled, .mat-mdc-warn, .mat-mdc-primary, .mat-mdc-accent) {
                     background: $tw-light;
                     color: $tw-dark;
                 }
@@ -110,15 +110,15 @@ tw-voice-controls {
                 button {
                     margin: 8px 4px 0px;
 
-                    &.success:not(.mat-button-disabled) {
+                    &.success:not(.mat-mdc-button-disabled) {
                         background: $tw-success;
                     }
 
-                    &.danger:not(.mat-button-disabled) {
+                    &.danger:not(.mat-mdc-button-disabled) {
                         background: $tw-danger;
                     }
 
-                    &.warning:not(.mat-button-disabled) {
+                    &.warning:not(.mat-mdc-button-disabled) {
                         background: $tw-warning;
                     }
                 }
@@ -131,7 +131,7 @@ tw-voice-controls {
     max-width: 225px;
 
     .dialpad {
-        .mat-icon-button {
+        .mat-mdc-icon-button {
             margin: 6px 8px;
             width: 48px;
             height: 48px;

@@ -12,7 +12,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { InteractionRef } from 'app/interfaces';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Generic Controls Components
@@ -60,10 +60,7 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
 
     @ViewChild('closeBtn') closeButton: MatButton;
 
@@ -77,6 +74,11 @@ export class TwGenericControlsComponent extends TWidgetWrapper implements OnInit
         private translocoService: TranslocoService
     ) {
         super('TwGenericControlsComponent');
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**

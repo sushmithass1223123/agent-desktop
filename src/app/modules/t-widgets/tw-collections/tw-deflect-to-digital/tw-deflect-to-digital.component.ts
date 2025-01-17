@@ -7,7 +7,7 @@ import { SDKClient } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { ADError, getValueFromEvent, throwADError } from 'app/utils';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AGENT_FEATURES } from 'app/constants';
 import { FormControl } from '@angular/forms';
@@ -55,12 +55,31 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
     @ViewChild(TextTemplatesComponent)
     textTemplatesRef: TextTemplatesComponent;
     IsDeflectToDigitalEditTextMessageEnabled: boolean = false;
+
+    sendTypeList: {
+        name: string;
+        value: string;
+    }[];
     /**
      * Constructor
      */
     constructor(private _tmacEventService: TMACEventService, private _appUIService: AppUiService,
         private translocoService: TranslocoService, private _agentFeaturesService: AgentFeaturesService) {
         super('TwDeflectToDigitalComponent');
+
+        /**
+     * Types of sending notification
+     */
+    this.sendTypeList = [
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeSMS'),
+            value: "sms"
+        },
+        {
+            name: this.translocoService.translate('widgets.deflectToDigital.typeEmail'),
+            value: "email"
+        }
+    ];
     }
 
     /**
@@ -76,7 +95,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
             return;
         }
         // setting default value for type is SMS
-        this.sendType.setValue(this.SendTypeList[0].value);
+        this.sendType.setValue(this.sendTypeList[0].value);
 
         const eventName = this.data.Data.Number?.split('.')?.shift() as any;
         this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
@@ -224,19 +243,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
         } catch (error) {}
     }
 
-    /**
-     * Types of sending notification
-     */
-    SendTypeList = [
-        {
-            name: this.translocoService.translate('widgets.deflectToDigital.typeSMS'),
-            value: "sms"
-        },
-        {
-            name: this.translocoService.translate('widgets.deflectToDigital.typeEmail'),
-            value: "email"
-        }
-    ];
+    
     
 }
 interface WidgetData {

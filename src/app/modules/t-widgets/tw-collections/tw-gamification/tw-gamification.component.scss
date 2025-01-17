@@ -18,14 +18,14 @@ tw-gamification {
     }
 
     .green-slider {
-        .mat-slider-track-fill,
-        .mat-slider-thumb {
+        .mat-mdc-slider-track-fill,
+        .mat-mdc-slider-thumb {
             background-color: $tw-alt-success !important;
         }
     }
     .red-slider {
-        .mat-slider-track-fill,
-        .mat-slider-thumb {
+        .mat-mdc-slider-track-fill,
+        .mat-mdc-slider-thumb {
             background-color: $tw-alt-danger !important;
         }
     }
@@ -54,16 +54,16 @@ tw-gamification {
         background-color: gold;
     }
 
-    .mat-slider-horizontal {
+    .mat-mdc-slider-horizontal {
         height: auto !important;
         pointer-events: none;
-        .mat-slider-wrapper {
+        .mat-mdc-slider-wrapper {
             top: unset;
             left: unset;
             right: unset;
             position: relative !important;
         }
-        // .mat-slider-track-wrapper {
+        // .mat-mdc-slider-track-wrapper {
         //     transform: scaleY(3);
         // }
     }

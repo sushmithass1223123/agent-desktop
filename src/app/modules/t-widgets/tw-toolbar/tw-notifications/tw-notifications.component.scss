@@ -36,22 +36,22 @@ tw-notifications {
         line-height: 2rem;
     }
 
-    .mat-menu-content {
+    .mat-mdc-menu-content {
         padding: 0 !important;
         height: 100%;
     }
 
-    .mat-list {
+    .mat-mdc-list {
         height: calc(100% - 64px);
 
-        .mat-subheader {
+        .mat-mdc-subheader {
             height: 32px;
         }
 
-        .mat-list-item {
+        .mat-mdc-list-item , .mat-mdc-list-item {
             height: 64px;
 
-            .mat-line {
+            .mat-mdc-line {
                 white-space: normal;
             }
         }

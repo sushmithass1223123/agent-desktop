@@ -2,15 +2,15 @@ text-templates {
     // ::ng-deep {
     mat-form-field {
         &.custom {
-            .mat-form-field-wrapper,
-            .mat-form-field-flex,
-            .mat-form-field-infix {
+            .mat-mdc-text-field-wrapper,
+            .mat-mdc-form-field-flex,
+            .mat-mdc-form-field-infix {
                 height: 100%;
             }
-            .mat-form-field-infix {
+            .mat-mdc-form-field-infix {
                 padding: 5px !important;
             }
-            .mat-form-field-flex {
+            .mat-mdc-form-field-flex {
                 padding: 0px !important;
             }
 
@@ -31,30 +31,30 @@ text-templates {
         }
 
         &.select-box {
-            border-radius: 20px;
+            // border-radius: 20px;
             background-color: rgb(0 0 0 / 0.1);
-            padding: 0px 7px;
+            // padding: 0px 7px;
             ::ng-deep {
-                .mat-form-field-wrapper {
-                    .mat-form-field-flex {
+                .mat-mdc-text-field-wrapper {
+                    .mat-mdc-form-field-flex {
                         padding: 0px 15px;
 
-                        .mat-form-field-infix {
+                        .mat-mdc-form-field-infix {
                             padding: 0px !important;
                             border: none;
                             margin-top: 12px;
 
-                            .mat-form-field-label-wrapper {
+                            .mat-mdc-form-field-label-wrapper {
                                 top: 0px !important;
 
-                                .mat-form-field-label {
+                                .mat-mdc-form-field-label {
                                     top: 0 !important;
                                 }
                             }
                         }
                     }
                 }
-                .mat-form-field-underline {
+                .mat-mdc-form-field-underline {
                     display: none;
                 }
             }

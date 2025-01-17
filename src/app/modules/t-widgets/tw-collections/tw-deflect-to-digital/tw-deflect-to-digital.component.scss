@@ -2,7 +2,7 @@ tw-deflect-to-digital {
     mat-form-field.custom {
         // max-height: 44px;
         &.custom-matfield {
-            .mat-form-field-wrapper {
+            .mat-mdc-text-field-wrapper {
                 padding-bottom: 0 !important;
                 margin: 0;
             }
@@ -10,15 +10,15 @@ tw-deflect-to-digital {
 
         &.custom-textarea {
             // ::ng-deep {
-            .mat-form-field-wrapper,
-            .mat-form-field-flex,
-            .mat-form-field-infix {
+            .mat-mdc-text-field-wrapper,
+            .mat-mdc-form-field-flex,
+            .mat-mdc-form-field-infix {
                 height: 100%;
             }
-            .mat-form-field-infix {
+            .mat-mdc-form-field-infix {
                 padding: 5px !important;
             }
-            .mat-form-field-flex {
+            .mat-mdc-form-field-flex {
                 padding: 0px !important;
             }
             textarea {
@@ -33,7 +33,7 @@ tw-deflect-to-digital {
     text-templates {
         mat-form-field.select-box {
             max-height: 44px;
-            .mat-form-field-wrapper .mat-form-field-infix {
+            .mat-mdc-text-field-wrapper .mat-mdc-form-field-infix {
                 padding: 0px !important;
                 margin-top: 8px;
             }

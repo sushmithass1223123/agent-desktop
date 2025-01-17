@@ -1,5 +1,5 @@
 tw-voice-bot-transcripts {
-    .mat-card-content {
+    .mat-mdc-card-content {
         background: inherit !important;
         box-shadow: none !important;
         padding: 0px 3px 3px 3px !important;
@@ -31,7 +31,7 @@ tw-voice-bot-transcripts {
                         // width: 46px;
                         // height: 46px;
 
-                        &:not(.mat-warn) {
+                        &:not(.mat-mdc-warn) {
                             background: #bdbdbd;
                         }
                     }

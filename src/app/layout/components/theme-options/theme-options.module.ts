@@ -3,7 +3,7 @@ import { FuseMaterialColorPickerModule } from '@fuse/components/material-color-p
 import { FuseSidebarModule } from '@fuse/components/sidebar/sidebar.module';
 import { SharedModule } from '@modules/shared/shared.module';
 import { AppThemeOptionsComponent } from './theme-options.component';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../transloco-root.module';
 
 @NgModule({

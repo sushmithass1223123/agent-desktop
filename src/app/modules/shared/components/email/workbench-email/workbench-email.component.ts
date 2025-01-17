@@ -31,7 +31,7 @@ import { groupBy, isEqual, merge, sortBy, uniqBy } from 'lodash';
 import { BehaviorSubject, forkJoin, Observable, Subscription, timer } from 'rxjs';
 import { filter, map, take, takeUntil, timeout } from 'rxjs/operators';
 import { EmailService, initEmailSearchState } from '../email.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Type of the mail node
@@ -168,10 +168,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse : any;
 
     /**
      * Email Search Stateful request
@@ -209,13 +206,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Advanced search form controls and cached search fields for each category
      */
-    advancedSearch: AdvanceSearchFormData = {
-        form: this._emailService.globalEmailWorkbenchState$.searchParams,
-        data: {},
-        show: false,
-        sub$: null,
-        snackbarRef: null
-    };
+    advancedSearch: AdvanceSearchFormData;
 
     /**
      * Tree Controls
@@ -292,12 +283,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     /**
      * Available tabs ref
      */
-    availableTabs = [
-        { label: this.translocoService.translate('sharedComponents.email.queueLabel'), enabled: true, icon: 'queue', key: 'queue' },
-        { label: this.translocoService.translate('sharedComponents.email.inboxLabel'), enabled: true, icon: 'mail', key: 'inbox' },
-        { label: this.translocoService.translate('sharedComponents.email.sentLabel'), enabled: true, icon: 'mark_email_read', key: 'sentitem' },
-        { label: this.translocoService.translate('sharedComponents.email.draftsLabel'), enabled: true, icon: 'drafts', key: 'draft' }
-    ];
+    availableTabs: any[];
 
     /**
      * Flag enabled when no tabs are visible
@@ -357,6 +343,26 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
         private _appDataService: AppDataService
     ) {
         super('WorkbenchEmailComponent');
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
+
+        this.advancedSearch = {
+            form: this._emailService.globalEmailWorkbenchState$.searchParams,
+            data: {},
+            show: false,
+            sub$: null,
+            snackbarRef: null
+        };
+
+        this.availableTabs = [
+            { label: this.translocoService.translate('sharedComponents.email.queueLabel'), enabled: true, icon: 'queue', key: 'queue' },
+            { label: this.translocoService.translate('sharedComponents.email.inboxLabel'), enabled: true, icon: 'mail', key: 'inbox' },
+            { label: this.translocoService.translate('sharedComponents.email.sentLabel'), enabled: true, icon: 'mark_email_read', key: 'sentitem' },
+            { label: this.translocoService.translate('sharedComponents.email.draftsLabel'), enabled: true, icon: 'drafts', key: 'draft' }
+        ];
     }
 
     // -----------------------------------------------------------------------------------------------------

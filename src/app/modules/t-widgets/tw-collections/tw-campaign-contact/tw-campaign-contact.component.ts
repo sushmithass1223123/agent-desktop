@@ -13,7 +13,7 @@ import { CustomerInfo } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
 import { take, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 /**
  * Campaign Contact Component
  */
@@ -144,7 +144,7 @@ export class TwCampaignContactComponent extends TWidgetWrapper implements OnInit
 
         // Set validators for form
         if (this.widgetData.ReasonEnabled) {
-            this.submitForm.controls.reason.setValidators(Validators.required);
+            this.submitForm.controls['reason'].setValidators(Validators.required);
         }
 
         // get interaction id

@@ -50,7 +50,7 @@ import { Subject, timer } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControlsService } from './tw-voice-controls.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Voice Controls Component
@@ -85,10 +85,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
     /**
      * To store av api configs
      */
@@ -355,6 +352,11 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         private translocoService: TranslocoService
     ) {
         super('TwVoiceControlsComponent');
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -566,7 +568,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
 
             if (!connection) {
                 this.logger.warn(`Unable to create AVChannel for MS call: ${sessionId}`);
-                return;
+                return null;
             }
 
             // check if the direction is out and check if this is a consult transfer/conference call

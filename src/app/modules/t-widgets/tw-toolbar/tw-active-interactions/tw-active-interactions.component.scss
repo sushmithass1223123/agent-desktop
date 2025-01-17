@@ -1,8 +1,8 @@
-@import 'src/app/scss/shared';
+@import 'app/scss/shared';
 
 tw-active-interactions {
     .voice {
-        .mat-card-avatar {
+        .mat-mdc-card-avatar {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -10,7 +10,7 @@ tw-active-interactions {
             cursor: pointer;
         }
 
-        .mat-icon-button {
+        .mat-mdc-icon-button {
             .mat-icon {
                 width: 20px;
                 height: 20px;
@@ -22,7 +22,7 @@ tw-active-interactions {
     avatar {
         cursor: pointer;
 
-        .mat-badge-content {
+        .mat-mdc-badge-content {
             background: $tw-warning !important;
             color: $tw-dark !important;
         }

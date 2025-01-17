@@ -131,11 +131,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$,
-        config$: this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' })
-    };
+     customFuse: any;
 
     /**
      * Constructor
@@ -146,6 +142,12 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         private _appUiService: AppUiService
     ) {
         this._unsubscribeAll = new Subject();
+
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$(),
+            config$: this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' })
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------

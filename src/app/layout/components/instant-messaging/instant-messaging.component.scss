@@ -1,5 +1,5 @@
 @use "@angular/material" as mat;
-@import "src/@fuse/scss/fuse";
+@import "@fuse/scss/fuse";
 
 instant-messaging {
     display: flex;
@@ -11,7 +11,7 @@ instant-messaging {
     z-index: 99;
     overflow: hidden;
 
-    .mat-progress-bar {
+    .mat-mdc-progress-bar {
         position: absolute;
         top: 0;
         left: 0;
@@ -106,7 +106,7 @@ instant-messaging {
             }
 
             &.offline {
-                .mat-list-item-content {
+                .mat-mdc-list-item-content , .mdc-list-item__content {
                     img {
                         filter: grayscale(100%);
                         opacity: 0.7;
@@ -198,7 +198,7 @@ instant-messaging {
                     justify-content: center;
                     padding: 12px;
                     max-width: 100%;
-                    @include mat-elevation(1);
+                    @include mat.elevation(1);
 
                     .message {
                         white-space: pre-wrap;
@@ -349,13 +349,13 @@ instant-messaging {
                     padding: 16px 8px;
                     border-top: 1px solid;
 
-                    .mat-form-field-wrapper {
+                    .mat-mdc-text-field-wrapper {
                         padding: 0;
 
-                        .mat-form-field-flex {
+                        .mat-mdc-form-field-flex {
                             padding: 0;
 
-                            .mat-form-field-infix {
+                            .mat-mdc-form-field-infix {
                                 padding: 0;
                                 border: none;
                                 border-radius: 20px;
@@ -370,17 +370,17 @@ instant-messaging {
                             }
                         }
 
-                        .mat-form-field-underline {
+                        .mat-mdc-form-field-underline {
                             display: none !important;
                         }
                     }
                 }
             }
 
-            mat-form-field:not(.mat-form-field-disabled) {
-                .mat-form-field-wrapper {
-                    .mat-form-field-flex {
-                        .mat-form-field-infix {
+            mat-form-field:not(.mat-mdc-form-field-disabled) {
+                .mat-mdc-text-field-wrapper {
+                    .mat-mdc-form-field-flex {
+                        .mat-mdc-form-field-infix {
                             @include mat.elevation(2);
                         }
                     }

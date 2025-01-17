@@ -1,4 +1,4 @@
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 @keyframes rotating {
     from {
@@ -79,6 +79,6 @@ app-theme-options {
     }
 }
 
-.fuse-material-color-picker-menu .mat-menu-content {
+.fuse-material-color-picker-menu .mat-mdc-menu-content {
     padding: 0 !important;
 }

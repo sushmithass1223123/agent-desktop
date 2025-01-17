@@ -21,7 +21,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-bar.service';
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
@@ -69,11 +69,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$,
-        config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
-    };
+    customFuse: any;
     /**
      * Flag to show popup UI
      */
@@ -150,6 +146,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         private _tmacEventService: TMACEventService
     ) {
         super('TwSmpControlsComponent');
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$(),
+            config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
+        };
     }
 
     async ngOnInit() {

@@ -1,5 +1,5 @@
 @use '@angular/material'as mat;
-@import 'src/@fuse/scss/fuse';
+@import '@fuse/scss/fuse';
 
 login {
     width: 100%;
@@ -160,32 +160,34 @@ login {
 
                     mat-form-field {
                         width: 100%;
-
+                        position: relative;
+                        line-height: 18px;
                         // @include media-breakpoint('xs') {
                         //     width: 80%;
                         // }
 
-                        .mat-form-field-wrapper {
+                        .mat-mdc-text-field-wrapper {
 
-                            .mat-select-arrow,
-                            .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
-                            .mat-select-placeholder,
-                            .mat-select-value {
+                            .mat-mdc-select-arrow,
+                            .mat-mdc-form-field.mat-mdc.mat-mdc .mat-mdc-select-arrow,
+                            .mat-mdc-select-placeholder,
+                            .mat-mdc-select-value {
                                 // color: #732b90 !important;
                                 @apply twd-text-primary-700;
                             }
 
-                            .mat-form-field-label {
+                            .mat-mdc-form-field-label {
                                 // color: #732b90 !important;
                                 @apply twd-text-primary-700;
                             }
 
-                            .mat-form-field-outline {
+                            .mat-mdc-form-field-outline, .mdc-notched-outline {
                                 // color: #f9f1ff !important;
                                 // background: #f9f1ff !important;
 
                                 @apply twd-text-primary-100;
                                 @apply twd-bg-primary-100;
+                                z-index: 0;
                             }
                         }
 
@@ -217,7 +219,7 @@ login {
                     }
 
                     mat-slide-toggle {
-                        .mat-slide-toggle-content {
+                        .mat-mdc-toggle-content {
                             flex: 1;
                             color: #732b90 !important;
                         }
@@ -277,6 +279,29 @@ login {
         float: right;
         padding: 5px 10px 0px 0px;
         width: 10em;
+    }
+
+    /** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
+    .mat-mdc-button>.mat-icon {
+        font-size: 24px;
+    }
+    
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: #fff;
+    }
+
+    .mat-mdc-icon-button {
+        height: 40px !important;
+        width: 40px !important;
+        min-width: 40px;
+        margin-top: 10px;
+        margin-right: 10px;
+        padding: 10px !important;
+    }
+
+    .mat-mdc-slide-toggle .mdc-switch:enabled+.mdc-label {
+        margin-top: 12px;
+        margin-left: 10px;
     }
 }
 

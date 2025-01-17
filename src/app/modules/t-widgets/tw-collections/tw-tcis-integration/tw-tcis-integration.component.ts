@@ -109,7 +109,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
         try {
             if (!channel) {
                 this.logger.warn(`matchChannel: channel is not provided for action event ${evt.EventName}, ignore process!`);
-                return;
+                return false;
             }
             // get the construct event of this action event
             const event = this._tmacEventService.getInteractionEventsArray(evt.InteractionID).filter((e) => e.IsInteractionConstructEvent)?.[0];
@@ -184,6 +184,7 @@ export class TwTcisIntegrationComponent extends TWidgetWrapper implements OnInit
                 .slice(1);
         } catch (error) {
             this.logger.error('Error in reduceParams', error);
+            return '';
         }
     }
 

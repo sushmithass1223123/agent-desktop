@@ -39,14 +39,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     /**
      * Fuse custom config
      */
-    customFuse$ = this._fuseFacadeService.getConfig({ layoutNavbar: 'layout.navbar' }).pipe(
-        map((conf: any) => {
-            if (!conf.layoutNavbar.customBackgroundColor) {
-                return { background: '' };
-            }
-            return { background: conf.layoutNavbar.background };
-        })
-    );
+    customFuse$ :any;
 
     /**
      * Widgets on top section of widgets
@@ -101,6 +94,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ) {
         // Set the private defaults
         this._unsubscribeAll = new Subject();
+
+        this.customFuse$ = this._fuseFacadeService.getConfig({ layoutNavbar: 'layout.navbar' }).pipe(
+            map((conf: any) => {
+                if (!conf.layoutNavbar.customBackgroundColor) {
+                    return { background: '' };
+                }
+                return { background: conf.layoutNavbar.background };
+            })
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------

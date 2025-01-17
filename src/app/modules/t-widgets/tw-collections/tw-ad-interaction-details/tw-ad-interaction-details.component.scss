@@ -1,5 +1,5 @@
 tw-ad-interaction-details {
-    .mat-table {
+    .mat-mdc-table {
         mat-header-row {
             min-height: 30px;
         }
@@ -23,7 +23,7 @@ tw-ad-interaction-details {
     }
 }
 
-.interaction-details-advanced-form .mat-dialog-container {
+.interaction-details-advanced-form .mat-mdc-dialog-container {
     padding: 0px;
     border-radius: 20px !important;
     form {

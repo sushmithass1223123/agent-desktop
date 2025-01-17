@@ -19,17 +19,31 @@
                     <mat-menu class="custom" #sortMenu="matMenu" xPosition="after">
                         <button mat-menu-item (click)="sortAgentList('AgentLoginID', locale('global.agentId'))">
                             <span>{{ locale('global.agentId') }}</span>
-                            <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            <mat-icon *ngIf="sortBy === 'AgentLoginID'">{{
+                                sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                            }}</mat-icon>
                         </button>
                         <button mat-menu-item (click)="sortAgentList('AgentName', locale('global.agentName'))">
                             <span>{{ locale('global.agentName') }}</span>
-                            <mat-icon *ngIf="sortBy === 'AgentName'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            <mat-icon *ngIf="sortBy === 'AgentName'">{{
+                                sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                            }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))">
+                        <button
+                            mat-menu-item
+                            (click)="sortAgentList('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))"
+                        >
                             <span>{{ locale('widgets.activeAgents.agentStatus') }}</span>
-                            <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{
+                                sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                            }}</mat-icon>
                         </button>
-                        <button mat-menu-item (click)="sortAgentList('CurrentStatusDuration', locale('widgets.activeAgents.statusDuration'))">
+                        <button
+                            mat-menu-item
+                            (click)="
+                                sortAgentList('CurrentStatusDuration', locale('widgets.activeAgents.statusDuration'))
+                            "
+                        >
                             <span>{{ locale('widgets.activeAgents.statusDuration') }}</span>
                             <mat-icon *ngIf="sortBy === 'CurrentStatusDuration'">{{
                                 sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
@@ -38,7 +52,13 @@
                     </mat-menu>
                 </button>
                 <mat-form-field class="custom form-field twd-w-full" appearance="outline">
-                    <input class="login-input" matInput [placeholder]="locale('global.searchWithAgentNameOrId')" [(ngModel)]="searchTerm" (input)="filterAgents()" />
+                    <input
+                        class="login-input"
+                        matInput
+                        [placeholder]="locale('global.searchWithAgentNameOrId')"
+                        [(ngModel)]="searchTerm"
+                        (input)="filterAgents()"
+                    />
                     <button
                         *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button
@@ -62,24 +82,48 @@
                         </button>
                     </ng-template>
                 </mat-form-field>
-                <button mat-icon-button (click)="refreshList()" [matTooltip]="locale('widgets.activeAgents.reloadAgentData')" [disabled]="reload">
+                <button
+                    mat-icon-button
+                    (click)="refreshList()"
+                    [matTooltip]="locale('widgets.activeAgents.reloadAgentData')"
+                    [disabled]="reload"
+                >
                     <mat-icon [ngClass]="{ 'spin-o': reload }">refresh</mat-icon>
                 </button>
-                <button *ngIf="allowBroadcast" mat-icon-button [matTooltip]="locale('widgets.activeAgents.sendBroadcast')" (click)="sendBroadcast()">
+                <button
+                    *ngIf="allowBroadcast"
+                    mat-icon-button
+                    [matTooltip]="locale('widgets.activeAgents.sendBroadcast')"
+                    (click)="sendBroadcast()"
+                >
                     <mat-icon>campaign</mat-icon>
                 </button>
-                <button *ngIf="groupedBy" [matTooltip]="locale('widgets.activeAgents.removeGroupBy')" mat-icon-button (click)="clearGroup()">
+                <button
+                    *ngIf="groupedBy"
+                    [matTooltip]="locale('widgets.activeAgents.removeGroupBy')"
+                    mat-icon-button
+                    (click)="clearGroup()"
+                >
                     <mat-icon>close</mat-icon>
                 </button>
-                <button mat-icon-button [ngClass]="groupedBy ? 'group-active' : ''" [matTooltip]="locale('widgets.activeAgents.groupAgents')">
+                <button
+                    mat-icon-button
+                    [ngClass]="groupedBy ? 'group-active' : ''"
+                    [matTooltip]="locale('widgets.activeAgents.groupAgents')"
+                >
                     <mat-icon [matMenuTriggerFor]="groupMenu">group</mat-icon>
                     <mat-menu class="custom" #groupMenu="matMenu" xPosition="after">
                         <button mat-menu-item (click)="groupAgentListBy('TeamID', 'TeamName')">
                             <span>{{ locale('global.teamName') }}</span>
                         </button>
-                        <button mat-menu-item (click)="groupAgentListBy('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))">
+                        <button
+                            mat-menu-item
+                            (click)="groupAgentListBy('CurrentAgentStatus', locale('widgets.activeAgents.agentStatus'))"
+                        >
                             <span>{{ locale('widgets.activeAgents.agentStatus') }}</span>
-                            <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{ sortType === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            <mat-icon *ngIf="sortBy === 'CurrentAgentStatus'">{{
+                                sortType === 'asc' ? 'arrow_upward' : 'arrow_downward'
+                            }}</mat-icon>
                         </button>
                     </mat-menu>
                 </button>
@@ -142,16 +186,21 @@
                                     <span matTooltip="Station">{{ item.StationID }}</span>
                                 </div>
                                 <span matTooltip="Current Status"
-                                    >{{ item.CurrentAgentStatus }} {{ this.agentListOnHold.includes(item.AgentLoginID) ? '(On Hold)' : '' }}</span
+                                    >{{ item.CurrentAgentStatus }}
+                                    {{ this.agentListOnHold.includes(item.AgentLoginID) ? '(On Hold)' : '' }}</span
                                 >
                                 <span
                                     matTooltip="Status Duration"
                                     [ngClass]="{
-                                        'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
-                                        'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                        'text-alt-success':
+                                            item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                        'text-alt-warning':
+                                            item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
                                         'text-alt-danger': item.CurrentStatusDuration > 120
                                     }"
-                                    >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                    >{{
+                                        (item.CurrentStatusDuration * 1000 | date : 'HH:mm:ss' : 'UTC') || '00:00:00'
+                                    }}</span
                                 >
                             </div>
                         </div>
@@ -162,7 +211,7 @@
                         >
                             <div
                                 mat-card-avatar
-                                *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                *ngFor="let channelItem of item.ChannelCount | slice : 0 : 3"
                                 class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
                                 [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
                                 [matBadge]="channelItem.CurrentCount || ''"
@@ -189,18 +238,34 @@
                             </div>
                         </div>
 
-                        <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
-                            <mat-icon *ngIf="item.UserProfileForAgent === 'S'" [matTooltip]="locale('widgets.activeAgents.supervisor')">
+                        <div
+                            class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12"
+                        >
+                            <mat-icon
+                                *ngIf="item.UserProfileForAgent === 'S'"
+                                [matTooltip]="locale('widgets.activeAgents.supervisor')"
+                            >
                                 supervised_user_circle</mat-icon
                             >
-                            <mat-icon *ngIf="item.IsMSAgent" [matTooltip]="locale('widgets.activeAgents.webphone')">phonelink</mat-icon>
-                            <mat-icon [matTooltip]="(item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer">
+                            <mat-icon *ngIf="item.IsMSAgent" [matTooltip]="locale('widgets.activeAgents.webphone')"
+                                >phonelink</mat-icon
+                            >
+                            <mat-icon
+                                [matTooltip]="
+                                    (item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') +
+                                    '/' +
+                                    item.TmacServer
+                                "
+                            >
                                 {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
                             </mat-icon>
                         </div>
                     </div>
 
-                    <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
+                    <div
+                        class="tw-accordion-menu border-radius-20 twd-flex"
+                        *ngIf="item.AgentLoginID === selectedAgent"
+                    >
                         <div
                             class="feature-actions border-right-primary twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12"
                         >
@@ -231,14 +296,17 @@
                                         mat-menu-item
                                         *ngFor="let auxCode of auxCodesList"
                                         (click)="changeAgentStatus(item, auxCode)"
-                                        disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                        disabled="{{
+                                            auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata'
+                                        }}"
                                     >
                                         <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
                                         <mat-icon
                                             [ngClass]="
                                                 auxCode.Code.includes('Available')
                                                     ? 'text-alt-success'
-                                                    : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                    : auxCode.Code.includes('Logout') ||
+                                                      auxCode.Code.includes('On Call')
                                                     ? 'text-alt-danger'
                                                     : 'text-alt-warning'
                                             "
@@ -401,16 +469,24 @@
                                         </div>
                                         <span matTooltip="Current Status"
                                             >{{ item.CurrentAgentStatus }}
-                                            {{ this.agentListOnHold.includes(item.AgentLoginID) ? '(On Hold)' : '' }}</span
+                                            {{
+                                                this.agentListOnHold.includes(item.AgentLoginID) ? '(On Hold)' : ''
+                                            }}</span
                                         >
                                         <span
                                             matTooltip="Status Duration"
                                             [ngClass]="{
-                                                'text-alt-success': item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
-                                                'text-alt-warning': item.CurrentStatusDuration > 60 && item.CurrentStatusDuration <= 120,
+                                                'text-alt-success':
+                                                    item.CurrentStatusDuration >= 0 && item.CurrentStatusDuration <= 60,
+                                                'text-alt-warning':
+                                                    item.CurrentStatusDuration > 60 &&
+                                                    item.CurrentStatusDuration <= 120,
                                                 'text-alt-danger': item.CurrentStatusDuration > 120
                                             }"
-                                            >{{ (item.CurrentStatusDuration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</span
+                                            >{{
+                                                (item.CurrentStatusDuration * 1000 | date : 'HH:mm:ss' : 'UTC') ||
+                                                    '00:00:00'
+                                            }}</span
                                         >
                                     </div>
                                 </div>
@@ -421,7 +497,7 @@
                                 >
                                     <div
                                         mat-card-avatar
-                                        *ngFor="let channelItem of item.ChannelCount | slice: 0:3"
+                                        *ngFor="let channelItem of item.ChannelCount | slice : 0 : 3"
                                         class="twd-cursor-default twd-flex twd-justify-center twd-items-center"
                                         [matTooltip]="channelItem.Channel.toUpperCase() + '/' + channelItem.Count"
                                         [matBadge]="channelItem.CurrentCount || ''"
@@ -448,22 +524,40 @@
                                     </div>
                                 </div>
 
-                                <div class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12">
-                                    <mat-icon *ngIf="item.UserProfileForAgent === 'S'" [matTooltip]="locale('widgets.activeAgents.supervisor')">
+                                <div
+                                    class="indicators twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12"
+                                >
+                                    <mat-icon
+                                        *ngIf="item.UserProfileForAgent === 'S'"
+                                        [matTooltip]="locale('widgets.activeAgents.supervisor')"
+                                    >
                                         supervised_user_circle</mat-icon
                                     >
-                                    <mat-icon *ngIf="item.IsMSAgent" [matTooltip]="locale('widgets.activeAgents.webphone')">phonelink</mat-icon>
+                                    <mat-icon
+                                        *ngIf="item.IsMSAgent"
+                                        [matTooltip]="locale('widgets.activeAgents.webphone')"
+                                        >phonelink</mat-icon
+                                    >
                                     <mat-icon
                                         [matTooltip]="
-                                            (item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') + '/' + item.TmacServer
+                                            (item.ConnectionType.toLowerCase() === 'websockets' ? 'SOCKET' : 'HTTP') +
+                                            '/' +
+                                            item.TmacServer
                                         "
                                     >
-                                        {{ item.ConnectionType.toLowerCase() === 'websockets' ? 'wifi_tethering' : 'wifi' }}
+                                        {{
+                                            item.ConnectionType.toLowerCase() === 'websockets'
+                                                ? 'wifi_tethering'
+                                                : 'wifi'
+                                        }}
                                     </mat-icon>
                                 </div>
                             </div>
 
-                            <div class="tw-accordion-menu border-radius-20 twd-flex" *ngIf="item.AgentLoginID === selectedAgent">
+                            <div
+                                class="tw-accordion-menu border-radius-20 twd-flex"
+                                *ngIf="item.AgentLoginID === selectedAgent"
+                            >
                                 <div
                                     class="feature-actions border-right-primary twd-px-2 twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-items-start twd-flex-full twd-max-w-6/12"
                                 >
@@ -483,7 +577,9 @@
                                             mat-icon-button
                                             mat-raised-button
                                             [matMenuTriggerFor]="menu"
-                                            *ngIf="feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled"
+                                            *ngIf="
+                                                feature.Feature === 'AllowSupervisorToChangeStatus' && feature.IsEnabled
+                                            "
                                             [matTooltip]="featureMap[feature.Feature].Label"
                                         >
                                             <mat-icon>{{ featureMap[feature.Feature].Icon }}</mat-icon>
@@ -494,14 +590,18 @@
                                                 mat-menu-item
                                                 *ngFor="let auxCode of auxCodesList"
                                                 (click)="changeAgentStatus(item, auxCode)"
-                                                disabled="{{ auxCode.Name === item.CurrentAgentStatus || auxCode.Code === 'nodata' }}"
+                                                disabled="{{
+                                                    auxCode.Name === item.CurrentAgentStatus ||
+                                                        auxCode.Code === 'nodata'
+                                                }}"
                                             >
                                                 <!-- class="{{ auxCode.Code.toLowerCase() }}" -->
                                                 <mat-icon
                                                     [ngClass]="
                                                         auxCode.Code.includes('Available')
                                                             ? 'text-alt-success'
-                                                            : auxCode.Code.includes('Logout') || auxCode.Code.includes('On Call')
+                                                            : auxCode.Code.includes('Logout') ||
+                                                              auxCode.Code.includes('On Call')
                                                             ? 'text-alt-danger'
                                                             : 'text-alt-warning'
                                                     "
@@ -597,7 +697,9 @@
                 <div class="twd-text-right twd-flex-auto">
                     <span class="twd-font-bold"> {{ locale('widgets.activeAgents.total') }} </span>
 
-                    <span>{{ (searchTerm ? filteredAgents.length : agentList.length) + ' of ' + agentList.length }}</span>
+                    <span>{{
+                        (searchTerm ? filteredAgents.length : agentList.length) + ' of ' + agentList.length
+                    }}</span>
                 </div>
             </div>
         </div>

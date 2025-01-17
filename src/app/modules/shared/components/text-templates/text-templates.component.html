@@ -4,7 +4,7 @@
             anchor: (customFuse.anchor$ | async),
             widget: (customFuse.widget$ | async)
         } as customFuse"
-        class="twd-w-full twd-h-full twd-flex twd-flex-col"
+        class="twd-w-full twd-h-full twd-flex twd-gap-y-2 twd-flex-col"
     >
         <div class="twd-w-full twd-flex twd-gap-x-1 twd-gap-y-2">
             <mat-form-field class="custom select-box twd-w-6/12" appearance="outline">
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <div class="twd-flex twd-h-full twd-w-full">
+            <div class="twd-flex twd-h-full twd-gap-y-2 twd-w-full">
                 <div *ngIf="templates.length" class="twd-grid twd-place-content-center">
                     <mat-icon
                         class="twd-cursor-pointer"
@@ -77,7 +77,10 @@
                     >
                 </div>
 
-                <mat-form-field class="twd-h-full twd-w-full custom pb-0 twd-relative border-radius-20 with-border" appearance="outline">
+                <mat-form-field
+                    class="twd-h-full twd-w-full custom pb-0 twd-relative border-radius-20 with-border"
+                    appearance="outline"
+                >
                     <textarea
                         class="twd-resize-none twd-flex-1 twd-p-3"
                         matInput
@@ -87,7 +90,7 @@
                         [readonly]="!editAllowed"
                     ></textarea>
                 </mat-form-field>
-                <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-3 twd-right-3">
+                <div *ngIf="!showTemplates" class="twd-absolute twd--bottom-4 twd-right-3">
                     <button
                         mat-raised-button
                         color="primary"

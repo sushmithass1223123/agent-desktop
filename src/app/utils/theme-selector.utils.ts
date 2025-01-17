@@ -1,5 +1,5 @@
 export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
-    let selectedTheme = null;
+    let selectedTheme: ThemeType;
     switch (themeName) {
         case 'theme-default-2': {
             selectedTheme = {
@@ -326,3 +326,8 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
     // return the selected theme
     return selectedTheme;
 };
+
+interface ThemeType { // FuseConfig Pick <colorTheme, layout> todo
+    colorTheme?: string;
+    layout: any;
+}

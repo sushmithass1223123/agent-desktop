@@ -9,7 +9,7 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Agent Interactions details Table widget
@@ -51,10 +51,7 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
 
     /**
      * Table component ref
@@ -74,6 +71,10 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         private _fuseFacadeService: FuseFacadeService
     ) {
         super('TwAdInteractionDetailsComponent');
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**

@@ -25,13 +25,13 @@ ad-table {
         flex: 100%;
     }
 
-    .mat-column-CustomRow,
-    .mat-column-ExpandedDetails {
+    .mat-mdc-column-CustomRow,
+    .mat-mdc-column-ExpandedDetails {
         padding: 0 !important;
     }
 }
 
-.ad-table-advancedsearch-form .mat-dialog-container {
+.ad-table-advancedsearch-form .mat-mdc-dialog-container {
     padding: 0px;
     border-radius: 20px !important;
 

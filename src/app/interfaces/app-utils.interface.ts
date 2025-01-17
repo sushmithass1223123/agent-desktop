@@ -1,7 +1,6 @@
 import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataset, ChartOptions, Color } from 'chart.js';
 import { Moment } from 'moment';
-import { Color, SingleOrMultiDataSet } from 'ng2-charts';
 
 export interface TWChartPieceLabel {
     /**
@@ -100,11 +99,11 @@ export interface TwChartConfig {
     /**
      * Data for chart
      */
-    data?: SingleOrMultiDataSet[];
+    data?: any[];
     /**
      * Multiple Datasets for chart
      */
-    datasets?: ChartDataSets[];
+    datasets?: ChartDataset[];
     /**
      * Labels for chart
      */

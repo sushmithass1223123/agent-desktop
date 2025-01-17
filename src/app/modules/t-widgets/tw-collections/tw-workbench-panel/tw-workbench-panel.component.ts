@@ -1,6 +1,6 @@
 import { TwWorkbenchPanel } from '@ad/types';
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatTabGroup } from '@angular/material/tabs';
+import {MatTabGroup } from '@angular/material/tabs';
 import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
@@ -28,10 +28,7 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any;
 
     /**
      * Channel tabs
@@ -43,6 +40,10 @@ export class TwWorkbenchPanelComponent extends TWidgetWrapper implements OnInit,
      */
     constructor(private _fuseFacadeService: FuseFacadeService, private _smpService: SocialMediaPostsService) {
         super('TwWorkbenchPanelComponent');
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**

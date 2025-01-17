@@ -10,7 +10,7 @@ html {
 
 // Fix: "Inconsistent button heights due to inconsistent line heights"
 button {
-    .mat-button-wrapper {
+    .mat-mdc-button-wrapper {
         line-height: normal;
     }
 }
@@ -24,50 +24,50 @@ button {
 }
 
 // Fix: "Icon button ripple radius is not correct on Edge & Safari"
-.mat-icon-button {
-    .mat-button-ripple {
+.mat-mdc-icon-button {
+    .mat-mdc-button-ripple {
         border-radius: 50%;
     }
 }
 
 // Fix: "Smooth scrolling for iOS"
-.mat-dialog-container {
+.mat-mdc-dialog-container {
     -webkit-overflow-scrolling: touch;
 }
 
 // Fix: "Inconsistent font sizes across elements"
-.mat-checkbox {
+.mat-mdc-checkbox {
     font-size: 16px;
 }
 
-.mat-radio-button {
+.mat-mdc-radio-button {
     font-size: 16px;
 }
 
 // Fix: "Input underlines has wrong color opacity value"
-.mat-form-field-underline {
+.mat-mdc-form-field-underline {
     background-color: rgba(0, 0, 0, 0.12);
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
     // Fix: "Table-cell and inline-table in mat-select"
-    &.mat-form-field-type-mat-select {
-        .mat-form-field-infix {
+    &.mat-mdc-form-field-type-mat-select {
+        .mat-mdc-form-field-infix {
             display: inline-flex;
             width: auto;
 
-            .mat-select-trigger {
+            .mat-mdc-select-trigger {
                 display: inline-flex;
                 align-items: center;
                 width: 100%;
 
-                .mat-select-value {
+                .mat-mdc-select-value {
                     display: flex;
                     max-width: none;
                     margin-right: 8px;
                 }
 
-                .mat-select-arrow-wrapper {
+                .mat-mdc-select-arrow-wrapper {
                     display: inline-flex;
                 }
             }
@@ -102,6 +102,6 @@ mat-chip {
 }
 
 // Fix: Mat-card-image requires a bigger width than 100%
-.mat-card-image {
+.mat-mdc-card-image {
     max-width: none !important;
 }

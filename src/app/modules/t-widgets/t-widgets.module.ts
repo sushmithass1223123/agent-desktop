@@ -7,7 +7,7 @@ import { TwContentModule } from './tw-content/tw-content.module';
 import { TwTemplateModule } from './tw-template/tw-template.module';
 import { TwToolbarModule } from './tw-toolbar/tw-toolbar.module';
 // Import HttpClientModule from @angular/common/http in AppModule
-import {HttpClientModule} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {UIActionEventService} from '@services/ui-action-event.service';
 /**
  * Widgts module list
@@ -17,10 +17,6 @@ const widgetModules = [TwToolbarModule, TwContentModule, TwTemplateModule, TwCol
 /**
  * Widgets Module
  */
-@NgModule({
-    declarations: [],
-    providers: [TMACEventService, DashboardService, UIActionEventService],
-    imports: [SharedModule, ...widgetModules, HttpClientModule],
-    exports: [...widgetModules]
-})
+@NgModule({ declarations: [],
+    exports: [...widgetModules], imports: [SharedModule, ...widgetModules], providers: [TMACEventService, DashboardService, UIActionEventService, provideHttpClient(withInterceptorsFromDi())] })
 export class TWidgetsModule {}

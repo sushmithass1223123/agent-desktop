@@ -1,6 +1,10 @@
 // -----------------------------------------------------------------------------------------------------
 // @ Custom color maps for Fuse
 // -----------------------------------------------------------------------------------------------------
+
+@use '@angular/material' as mat;
+
+@include mat.core();
 $fuse-white: (
     500: white,
     contrast: (
@@ -160,62 +164,51 @@ $custom_palettes: (
 
 @include fuse-color-classes($custom_palettes);
 
+
 // -----------------------------------------------------------------------------------------------------
 // @ Typography
 // -----------------------------------------------------------------------------------------------------
 
-// // Angular Material typography
-// $typography: mat-typography-config(
-//     $font-family: 'Montserrat, Muli, Helvetica Neue, Arial, sans-serif',
-//     $title: mat-typography-level(20px, 32px, 600),
-//     $body-2: mat-typography-level(14px, 24px, 600),
-//     $button: mat-typography-level(14px, 14px, 600),
-//     $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-// );
-
-// // Setup the typography
-// @include angular-material-typography($typography);
 
 // Angular Material typography
-$typography: mat-typography-config(
+$typography: mat.m2-define-legacy-typography-config(
     $font-family: 'Muli',
-    $title: mat-typography-level(20px, 32px, 600),
-    $body-2: mat-typography-level(14px, 24px, 600),
-    $button: mat-typography-level(14px, 14px, 600),
-    $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    $title: mat.m2-define-typography-level(20px, 32px, 600),
+    $body-2: mat.m2-define-typography-level(14px, 24px, 600),
+    $button: mat.m2-define-typography-level(14px, 14px, 600),
+    $input: mat.m2-define-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 );
 
-// Setup the typography
-@include angular-material-typography($typography);
+@include mat.all-component-typographies($typography);
 
 body.wf-montserrat {
     // Angular Material typography
-    $typography: mat-typography-config(
+    $typography: mat.m2-define-legacy-typography-config(
         $font-family: 'Montserrat',
-        $title: mat-typography-level(20px, 32px, 600),
-        $body-2: mat-typography-level(14px, 24px, 600),
-        $button: mat-typography-level(14px, 14px, 600),
-        $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+        $title: mat.m2-define-typography-level(20px, 32px, 600),
+        $body-2: mat.m2-define-typography-level(14px, 24px, 600),
+        $button: mat.m2-define-typography-level(14px, 14px, 600),
+        $input: mat.m2-define-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     );
 
     // Setup the typography
-    @include angular-material-typography($typography);
+    @include mat.all-component-typographies($typography);
 }
 
 body.wf-source-sans-pro {
     // Angular Material typography
-    $typography: mat-typography-config(
+    $typography: mat.m2-define-legacy-typography-config(
         $font-family: 'Source Sans Pro',
-        $title: mat-typography-level(20px, 32px, 600),
-        $caption: mat-typography-level(14px, 24px, 600),
-        $body-1: mat-typography-level(16px, 24px, 500),
-        $body-2: mat-typography-level(18px, 24px, 600),
-        $button: mat-typography-level(14px, 14px, 600),
-        $input: mat-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+        $title: mat.m2-define-typography-level(20px, 32px, 600),
+        $caption: mat.m2-define-typography-level(14px, 24px, 600),
+        $body-1: mat.m2-define-typography-level(16px, 24px, 500),
+        $body-2: mat.m2-define-typography-level(18px, 24px, 600),
+        $button: mat.m2-define-typography-level(14px, 14px, 600),
+        $input: mat.m2-define-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     );
 
     // Setup the typography
-    @include angular-material-typography($typography);
+    @include mat.all-component-typographies($typography);
 }
 
 // -----------------------------------------------------------------------------------------------------
@@ -223,12 +216,22 @@ body.wf-source-sans-pro {
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$default-primary-palette: mat-palette($tetherfi-primary);
-$default-accent-palette: mat-palette($tetherfi-secondary);
-$default-warn-palette: mat-palette($mat-red);
+$default-primary-palette: mat.m2-define-palette($tetherfi-primary);
+$default-accent-palette: mat.m2-define-palette($tetherfi-secondary);
+$default-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$theme: mat-light-theme($default-primary-palette, $default-accent-palette, $default-warn-palette);
+$theme: mat.m2-define-light-theme((
+    color: (
+        primary: $default-primary-palette, 
+        accent: $default-accent-palette, 
+        warn: $default-warn-palette
+    )    
+));
+
+// @include mat.all-component-themes($theme);
+
+
 
 // Add ".theme-default/theme-default-2" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
@@ -236,7 +239,7 @@ body.theme-default,
 body.theme-default-3,
 body.theme-default-2 {
     // Create an Angular Material theme from the $theme map
-    @include angular-material-theme($theme);
+    @include mat.all-component-themes($theme);
 
     // Apply the theme to the Fuse Core
     @include fuse-core-theme($theme);
@@ -257,18 +260,27 @@ body.theme-default-2 {
 }
 
 // Define the primary, accent and warn palettes
-$teal-red-primary-palette: mat-palette($mat-teal);
-$teal-red-accent-palette: mat-palette($mat-red);
-$teal-red-warn-palette: mat-palette($mat-red);
+$teal-red-primary-palette: mat.m2-define-palette($mat-teal);
+$teal-red-accent-palette: mat.m2-define-palette($mat-red);
+$teal-red-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$theme: mat-light-theme($teal-red-primary-palette, $teal-red-accent-palette, $teal-red-warn-palette);
+
+$theme-teal-red: mat.m2-define-light-theme((
+    color: (
+        primary: $teal-red-primary-palette, 
+        accent: $teal-red-accent-palette, 
+        warn: $teal-red-warn-palette
+    )    
+));
+
+// @include mat.all-component-themes($theme);
 
 // Add ".theme-teal-red" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-teal-red {
     // Create an Angular Material theme from the $theme map
-    @include angular-material-theme($theme);
+    @include mat.all-component-themes($theme-teal-red);
 
     // Apply the theme to the Fuse Core
     @include fuse-core-theme($theme);
@@ -288,24 +300,30 @@ body.theme-teal-red {
 }
 
 // Define the primary, accent and warn palettes
-$cyan-orange-primary-palette: mat-palette($mat-cyan);
-$cyan-orange-accent-palette: mat-palette($mat-orange, 400);
-$cyan-orange-warn-palette: mat-palette($mat-red);
+$cyan-orange-primary-palette: mat.m2-define-palette($mat-cyan);
+$cyan-orange-accent-palette: mat.m2-define-palette($mat-orange, 400);
+$cyan-orange-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$theme: mat-light-theme($cyan-orange-primary-palette, $cyan-orange-accent-palette, $cyan-orange-warn-palette);
+$theme-cyan-orange: mat.m2-define-light-theme((
+    color: (
+        primary: $cyan-orange-primary-palette,
+        accent: $cyan-orange-accent-palette,
+        warn: $cyan-orange-warn-palette
+    )
+));
 
 // Add ".theme-cyan-orange" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-cyan-orange {
     // Create an Angular Material theme from the $theme map
-    @include angular-material-theme($theme);
+    @include mat.all-component-themes($theme-cyan-orange);
 
     // Apply the theme to the Fuse Core
-    @include fuse-core-theme($theme);
+    @include fuse-core-theme($theme-cyan-orange);
 
     // Apply the theme to the user components
-    @include app-core-theme($theme);
+    @include app-core-theme($theme-cyan-orange);
 
     // Generate Fuse color classes for primary, accent and warn colors
     $palettes: (
@@ -319,24 +337,30 @@ body.theme-cyan-orange {
 }
 
 // Define the primary, accent and warn palettes
-$indigo-deeporange-primary-palette: mat-palette($mat-indigo);
-$indigo-deeporange-accent-palette: mat-palette($mat-deep-orange, 400);
-$indigo-deeporange-warn-palette: mat-palette($mat-red);
+$indigo-deeporange-primary-palette: mat.m2-define-palette($mat-indigo);
+$indigo-deeporange-accent-palette: mat.m2-define-palette($mat-deep-orange, 400);
+$indigo-deeporange-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$theme: mat-light-theme($indigo-deeporange-primary-palette, $indigo-deeporange-accent-palette, $indigo-deeporange-warn-palette);
+$theme-indigo-deeporange: mat.m2-define-light-theme((
+    color: (
+        primary: $indigo-deeporange-primary-palette, 
+        accent: $indigo-deeporange-accent-palette, 
+        warn: $indigo-deeporange-warn-palette
+    )
+));
 
 // Add ".theme-indigo-deeporange" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-indigo-deeporange {
     // Create an Angular Material theme from the $theme map
-    @include angular-material-theme($theme);
+    @include mat.all-component-themes($theme-indigo-deeporange);
 
     // Apply the theme to the Fuse Core
-    @include fuse-core-theme($theme);
+    @include fuse-core-theme($theme-indigo-deeporange);
 
     // Apply the theme to the user components
-    @include app-core-theme($theme);
+    @include app-core-theme($theme-indigo-deeporange);
 
     // Generate Fuse color classes for primary, accent and warn colors
     $palettes: (
@@ -354,18 +378,24 @@ body.theme-indigo-deeporange {
 // -----------------------------------------------------------------------------------------------------
 
 // Define the primary, accent and warn palettes
-$dark-theme-primary-palette: mat-palette($tetherfi-primary);
-$dark-theme-accent-palette: mat-palette($tetherfi-grey);
-$dark-theme-warn-palette: mat-palette($mat-red);
+$dark-theme-primary-palette: mat.m2-define-palette($tetherfi-primary);
+$dark-theme-accent-palette: mat.m2-define-palette($tetherfi-grey);
+$dark-theme-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$dark-theme: mat-dark-theme($dark-theme-primary-palette, $dark-theme-accent-palette, $dark-theme-warn-palette);
+$dark-theme: mat.m2-define-dark-theme((
+    color: (
+        primary: $dark-theme-primary-palette, 
+        accent: $dark-theme-accent-palette, 
+        warn: $dark-theme-warn-palette
+    )
+));
 
 // Add "theme-default-dark" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-default-dark {
     // Generate the Angular Material theme
-    @include angular-material-theme($dark-theme);
+    @include mat.all-component-themes($dark-theme);
 
     // Apply the theme to the Fuse Core
     @include fuse-core-theme($dark-theme);
@@ -385,18 +415,24 @@ body.theme-default-dark {
 }
 
 // Define the primary, accent and warn palettes
-$blue-grey-dark-primary-palette: mat-palette($mat-blue-grey);
-$blue-grey-dark-accent-palette: mat-palette($mat-grey);
-$blue-grey-dark-warn-palette: mat-palette($mat-red);
+$blue-grey-dark-primary-palette: mat.m2-define-palette($mat-blue-grey);
+$blue-grey-dark-accent-palette: mat.m2-define-palette($mat-grey);
+$blue-grey-dark-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$blue-grey-dark: mat-dark-theme($blue-grey-dark-primary-palette, $blue-grey-dark-accent-palette, $blue-grey-dark-warn-palette);
+$blue-grey-dark: mat.m2-define-dark-theme((
+    color:(
+        primary: $blue-grey-dark-primary-palette, 
+        accent: $blue-grey-dark-accent-palette, 
+        warn: $blue-grey-dark-warn-palette
+    )
+));
 
 // Add "theme-blue-grey-dark" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-blue-grey-dark {
     // Generate the Angular Material theme
-    @include angular-material-theme($blue-grey-dark);
+    @include mat.all-component-themes($blue-grey-dark);
 
     // Apply the theme to the Fuse Core
     @include fuse-core-theme($blue-grey-dark);
@@ -416,18 +452,24 @@ body.theme-blue-grey-dark {
 }
 
 // Define the primary, accent and warn palettes
-$pink-grey-dark-primary-palette: mat-palette($mat-pink);
-$pink-grey-dark-accent-palette: mat-palette($mat-grey);
-$pink-grey-dark-warn-palette: mat-palette($mat-red);
+$pink-grey-dark-primary-palette: mat.m2-define-palette($mat-pink);
+$pink-grey-dark-accent-palette: mat.m2-define-palette($mat-grey);
+$pink-grey-dark-warn-palette: mat.m2-define-palette($mat-red);
 
 // Create the Material theme object
-$pink-grey-dark: mat-dark-theme($pink-grey-dark-primary-palette, $pink-grey-dark-accent-palette, $pink-grey-dark-warn-palette);
+$pink-grey-dark: mat.m2-define-dark-theme((
+    color: (
+        primary:$pink-grey-dark-primary-palette, 
+        accent:$pink-grey-dark-accent-palette, 
+        warn:$pink-grey-dark-warn-palette
+    )
+));
 
 // Add "theme-pink-grey-dark" class to the body to activate this theme.
 // Class name must start with "theme-" !!!
 body.theme-pink-grey-dark {
     // Generate the Angular Material theme
-    @include angular-material-theme($pink-grey-dark);
+    @include mat.all-component-themes($pink-grey-dark);
 
     // Apply the theme to the Fuse Core
     @include fuse-core-theme($pink-grey-dark);

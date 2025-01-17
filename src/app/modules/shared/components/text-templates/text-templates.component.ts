@@ -5,7 +5,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { IResponse, SDKClient } from '@tmac/sdk';
 import { sortBy } from 'lodash';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { TwDeflectToDigital } from '@ad/types';
 
 /**
@@ -66,10 +66,7 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$,
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse :any;
 
     showTemplates = false;
 
@@ -79,6 +76,10 @@ export class TextTemplatesComponent extends TWidgetWrapper implements OnInit, On
     constructor(private _appUIService: AppUiService, private _fuseFacadeService: FuseFacadeService,
         private translocoService: TranslocoService) {
         super('TextTemplatesComponent');
+        this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$(),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
     }
 
     /**

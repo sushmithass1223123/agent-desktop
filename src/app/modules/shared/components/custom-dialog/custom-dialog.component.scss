@@ -1,13 +1,13 @@
 custom-dialog {
-    .mat-dialog-title {
+    .mat-mdc-dialog-title {
         margin-bottom: -16px;
     }
 
-    .mat-dialog-content {
+    .mat-mdc-dialog-content {
         max-height: 80vh;
     }
 
-    .mat-dialog-actions {
+    .mat-mdc-dialog-actions {
         margin-bottom: -20px;
 
         button {

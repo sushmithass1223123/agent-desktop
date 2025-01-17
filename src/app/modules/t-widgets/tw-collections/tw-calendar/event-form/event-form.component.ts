@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CustomCalendarEvent } from '../calendar.interface';
 import { CalendarEventModel } from '../calendar.model';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 
 /**
  * Calendar Event Form Dialog Component
@@ -96,7 +96,7 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.eventForm = this.createEventForm();
         // set the initial validators
-        this.setValidators(this.eventForm.controls.type.value);
+        this.setValidators(this.eventForm.controls['type'].value);
     }
 
     /**
@@ -192,8 +192,8 @@ export class CalendarEventFormDialogComponent implements OnInit, OnDestroy {
             })
         });
 
-        formGroup.controls.start.valueChanges.subscribe(() => {
-            formGroup.controls.startTime.updateValueAndValidity();
+        formGroup.controls['start'].valueChanges.subscribe(() => {
+            formGroup.controls['startTime'].updateValueAndValidity();
         });
 
         return formGroup;

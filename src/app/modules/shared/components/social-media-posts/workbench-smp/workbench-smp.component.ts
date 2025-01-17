@@ -6,7 +6,7 @@ import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { filter, takeUntil } from 'rxjs/operators';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { fuseAnimations } from '@fuse/animations';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -135,10 +135,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Fuse custom config
      */
-    customFuse = {
-        anchor$: this._fuseFacadeService.anchorBgClasses$.pipe(filter(() => this.data?.Config?.Anchor)),
-        widget$: this._fuseFacadeService.widgetBgClasses$
-    };
+    customFuse: any; 
     /**
      * Global search form control and cached data for each category
      */
@@ -149,13 +146,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * Advanced search form controls and cached search fields for each category
      */
-    advancedSearch: AdvanceSearchFormData = {
-        form: this._smpService.globalSmpWorkbenchState$.searchParams,
-        data: {},
-        show: false,
-        sub$: null,
-        snackbarRef: null
-    };
+    advancedSearch: AdvanceSearchFormData;
     /**
      * Flag to disable advanced search fields
      */
@@ -190,38 +181,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     /**
      * List of all available tabs
      */
-    availableTabs = [
-        {
-            label: this.translocoService.translate('sharedComponents.socialMediaPosts.queueLabel'),
-            enabled: true,
-            icon: 'queue',
-            key: 'queue'
-        },
-        {
-            label: this.translocoService.translate('sharedComponents.socialMediaPosts.inboxLabel'),
-            enabled: true,
-            icon: 'inbox',
-            key: 'inbox'
-        },
-        {
-            label: this.translocoService.translate('sharedComponents.socialMediaPosts.sentItemLabel'),
-            enabled: true,
-            icon: 'send',
-            key: 'sentitem'
-        },
-        {
-            label: this.translocoService.translate('sharedComponents.socialMediaPosts.draftsLabel'),
-            enabled: true,
-            icon: 'file_copy',
-            key: 'draft'
-        },
-        {
-            label: this.translocoService.translate('sharedComponents.socialMediaPosts.postsLabel'),
-            enabled: true,
-            icon: 'video_label',
-            key: 'posts'
-        }
-    ];
+    availableTabs: any;
     /**
      * Flag to hold boolean value of tabs availability
      */
@@ -317,6 +277,52 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         private _matDialog: MatDialog
     ) {
         super('WorkbenchSmpComponent');
+
+        this.advancedSearch =  {
+            form: this._smpService.globalSmpWorkbenchState$.searchParams,
+            data: {},
+            show: false,
+            sub$: null,
+            snackbarRef: null
+        };
+        
+       this.customFuse = {
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            widget$: this._fuseFacadeService.widgetBgClasses$()
+        };
+
+        this.availableTabs = [
+            {
+                label: this.translocoService.translate('sharedComponents.socialMediaPosts.queueLabel'),
+                enabled: true,
+                icon: 'queue',
+                key: 'queue'
+            },
+            {
+                label: this.translocoService.translate('sharedComponents.socialMediaPosts.inboxLabel'),
+                enabled: true,
+                icon: 'inbox',
+                key: 'inbox'
+            },
+            {
+                label: this.translocoService.translate('sharedComponents.socialMediaPosts.sentItemLabel'),
+                enabled: true,
+                icon: 'send',
+                key: 'sentitem'
+            },
+            {
+                label: this.translocoService.translate('sharedComponents.socialMediaPosts.draftsLabel'),
+                enabled: true,
+                icon: 'file_copy',
+                key: 'draft'
+            },
+            {
+                label: this.translocoService.translate('sharedComponents.socialMediaPosts.postsLabel'),
+                enabled: true,
+                icon: 'video_label',
+                key: 'posts'
+            }
+        ];
 
         this._fuseFacadeService
             .getConfig()
@@ -1186,9 +1192,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         RouteReason: '',
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
-                        RejectReason: '',
-                        IsItemEdited: x?.SocialMediaData?.Posts?.IsEdited,
-                        IsItemDeleted: x?.SocialMediaData?.Posts?.IsDeleted
+                        RejectReason: ''
                     }
                 };
             });

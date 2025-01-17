@@ -80,15 +80,15 @@ export class AvatarComponent implements OnInit, OnChanges {
      */
     ngOnChanges(changes: SimpleChanges): void {
         // return for first change
-        if (changes.name?.firstChange) {
+        if (changes['name']?.firstChange) {
             return;
         }
 
         // check if any change for photoUrl
-        if (changes.photoUrl && changes.photoUrl.currentValue) {
-            this.photoUrl = changes.photoUrl.currentValue;
+        if (changes['photoUrl'] && changes['photoUrl'].currentValue) {
+            this.photoUrl = changes['photoUrl'].currentValue;
             this.showInitials = false;
-        } else if (changes.name && !this.photoUrl) {
+        } else if (changes['name'] && !this.photoUrl) {
             this.initials = this.getInitial(this.name);
             this.showInitials = true;
         }

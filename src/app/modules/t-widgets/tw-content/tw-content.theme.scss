@@ -8,7 +8,7 @@
     twc-custom,
     twc-not-found {
         &.twc-card {
-            .mat-card {
+            .mat-mdc-card {
                 // If it's a light theme, use a darker background
                 // color other than the default #F5F5F5
                 @if ($is-dark) {

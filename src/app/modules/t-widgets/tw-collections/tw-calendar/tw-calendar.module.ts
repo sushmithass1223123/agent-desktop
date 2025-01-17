@@ -7,7 +7,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { TwCalendarComponent } from './tw-calendar.component';
 import { CalendarEventFormDialogComponent } from './event-form/event-form.component';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
+import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from '../../../../transloco-root.module';
 /**
  * Tw Calendar Module
