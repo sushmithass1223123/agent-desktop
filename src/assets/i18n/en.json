@@ -927,6 +927,8 @@
             "snooze": "Snooze"
         },
         "email": {
+            "noClipboardEmail": "No valid email ID(s) found from the clipboard!",
+            "emailAlreadyIncluded": "One or more email ID(s) already included!",
             "getFrequentlyUsedEmailFailed": "Unable to fetch frequently used email addresses",
             "uploadFileLoading": "Uploading File",
             "uploadFileSizeWarning": "Attachment size exceeds maximum payload limit for this mailbox!",
