@@ -15,7 +15,7 @@ RUN npm install --force
 
 # Copy the rest of the application code and build it
 COPY . .
-RUN npm run build --prod
+RUN npm run build:prod
 
 # Stage 2: Serve the Angular app using Nginx
 FROM nginx:1.24-alpine
