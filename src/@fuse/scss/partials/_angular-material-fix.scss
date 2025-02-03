@@ -24,11 +24,11 @@ button {
 }
 
 // Fix: "Icon button ripple radius is not correct on Edge & Safari"
-.mat-mdc-icon-button {
-    .mat-mdc-button-ripple {
-        border-radius: 50%;
-    }
-}
+// .mat-mdc-icon-button {
+//     .mat-mdc-button-ripple {
+//          border-radius: 50%;
+//     }
+// }
 
 // Fix: "Smooth scrolling for iOS"
 .mat-mdc-dialog-container {

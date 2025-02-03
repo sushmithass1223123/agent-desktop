@@ -7,7 +7,7 @@
     login {
         #login {
             @if ($is-dark == false) {
-                @apply twd-bg-primary-700;
+                @apply twd-bg-white;
             }
 
             #login-intro {
