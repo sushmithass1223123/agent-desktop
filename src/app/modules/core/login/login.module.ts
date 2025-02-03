@@ -9,6 +9,7 @@ import { MsTeamsOAuthSettings } from 'app/constants';
 import { LoginComponent } from './login.component';
 import { TRANSLOCO_SCOPE } from '@jsverse/transloco';
 import { TranslocoRootModule } from 'app/transloco-root.module';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 let msalInstance: IPublicClientApplication | undefined;
 
 /**
@@ -46,7 +47,8 @@ function MSALInstanceFactory(): IPublicClientApplication {
         {
             provide: TRANSLOCO_SCOPE,
             useValue: 'default'
-        }
+        },
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }
     ],
     imports: [FuseProgressBarModule, FuseSharedModule, FuseSidebarModule, CommonModule, SharedModule, MsalModule,TranslocoRootModule]
 })

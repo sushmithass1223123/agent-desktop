@@ -92,7 +92,6 @@
                             "chartjs-plugin-piechart-outlabels",
                             "@tmac/operators",
                             "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser",
-                            "@tmac/sdk",
                             "moment",
                             "leaflet",
                             "hammerjs",
@@ -131,12 +130,18 @@
               ],
               "outputHashing": "all",
               "sourceMap": true,
-              "buildOptimizer": true
+              "buildOptimizer": true,
+              "vendorChunk": true,
+              "aot": true,
+              "serviceWorker": true
             },
             "development": {
+              "buildOptimizer": false,
               "optimization": true,
+              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "outputHashing": "none"
             }
           },
           "defaultConfiguration": "production"

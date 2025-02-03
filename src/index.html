@@ -1,66 +1,70 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <title>AgentDesktop</title>
-  <base href="/">
+    <head>
+        <title>AgentDesktop</title>
+        <base href="/" />
 
-  <meta charset="utf-8" />
-  <meta name="description" content="Tetherfi Multimedia Agent Client" />
-  <meta name="keywords" content="TMAC,Agent Desktop" />
-  <meta name="author" content="Withinpixels" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- icon on the browser tab | icons & font styles -->
-  <link rel="icon" id="appFavicon" type="image/x-icon" href="" onerror="favicon.ico" />
-  <link href="assets/icons/material-icons/all/style.css" rel="stylesheet" />
-  <link href="assets/fonts/montserrat/styles.css" rel="stylesheet" />
-  <link href="assets/fonts/muli/styles.css" rel="stylesheet" />
-  <link href="assets/fonts/source_sans_pro/styles.css" rel="stylesheet" />
+        <meta charset="utf-8" />
+        <meta name="description" content="Tetherfi Multimedia Agent Client" />
+        <meta name="keywords" content="TMAC,Agent Desktop" />
+        <meta name="author" content="Withinpixels" />
 
-  <!-- To load window based custom configuraions -->
-  <script src="assets/custom-configuration.js"></script>
+        <!-- icon on the browser tab | icons & font styles -->
+        <link rel="icon" id="appFavicon" type="image/x-icon" href="" onerror="favicon.ico" />
+        <link href="assets/icons/material-icons/all/style.css" rel="stylesheet" />
+        <link href="assets/fonts/montserrat/styles.css" rel="stylesheet" />
+        <link href="assets/fonts/muli/styles.css" rel="stylesheet" />
+        <link href="assets/fonts/adlam_display/styles.css" rel="stylesheet" />
+        <link href="assets/fonts/inter/styles.css" rel="stylesheet" />
+        <link href="assets/fonts/source_sans_pro/styles.css" rel="stylesheet" />
 
-  <!-- inital loading screen styles -->
-  <link href="assets/fuse/splash-screen.css" rel="stylesheet"/>
+        <!-- To load window based custom configuraions -->
+        <script src="assets/custom-configuration.js"></script>
 
-  <!-- meta data of the application, helps in PWA -->
-  <link rel="manifest" href="manifest.webmanifest" />
+        <!-- inital loading screen styles -->
+        <link href="assets/fuse/splash-screen.css" rel="stylesheet" />
 
-  <!-- setting browser theme color to tetherfi color -->
-  <meta name="theme-color" content="#732b90" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body class="mat-typography">
-  <!-- FUSE Splash Screen -->
-  <fuse-splash-screen id="fuse-splash-screen">
-    <div class="center">
-        <div class="logo">
-            <img width="128" src="assets/images/logos/tetherfi-logo.png" />
-        </div>
+        <!-- meta data of the application, helps in PWA -->
+        <link rel="manifest" href="manifest.webmanifest" />
 
-        <!-- Material Design Spinner -->
-        <div class="spinner-wrapper">
-            <div class="spinner">
-                <div class="inner">
-                    <div class="gap"></div>
-                    <div class="left">
-                        <div class="half-circle"></div>
-                    </div>
-                    <div class="right">
-                        <div class="half-circle"></div>
+        <!-- setting browser theme color to tetherfi color -->
+        <meta name="theme-color" content="#732b90" />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    </head>
+    <body class="mat-typography">
+        <!-- FUSE Splash Screen -->
+        <fuse-splash-screen id="fuse-splash-screen">
+            <div class="center">
+                <div class="logo">
+                    <img width="128" src="assets/images/logos/tetherfi-logo.png" />
+                </div>
+
+                <!-- Material Design Spinner -->
+                <div class="spinner-wrapper">
+                    <div class="spinner">
+                        <div class="inner">
+                            <div class="gap"></div>
+                            <div class="left">
+                                <div class="half-circle"></div>
+                            </div>
+                            <div class="right">
+                                <div class="half-circle"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <!-- / Material Design Spinner -->
             </div>
-        </div>
-        <!-- / Material Design Spinner -->
-    </div>
-  </fuse-splash-screen>
-  <!-- / FUSE Splash Screen -->
+        </fuse-splash-screen>
+        <!-- / FUSE Splash Screen -->
 
-  <!-- application starts here  -->
-  <app></app>
+        <!-- application starts here  -->
+        <app></app>
 
-  <!-- custom styles imported at the end of the file to override default styles -->
-  <link rel="stylesheet" href="assets/utilities/customStyles.css" />
-</body>
+        <!-- custom styles imported at the end of the file to override default styles -->
+        <link rel="stylesheet" href="assets/utilities/customStyles.css" />
+    </body>
 </html>

@@ -1,0 +1,7 @@
+/* cyrillic-ext */
+@font-face {
+    font-family: 'AdLamDisplay';
+    font-style: normal;
+    font-weight: normal;
+    src: url(fonts/ADLaMDisplay-Regular.ttf) format('truetype');
+}

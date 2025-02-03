@@ -1,335 +1,402 @@
-<div id="login" class="inner-scroll" fxLayout="row" *transloco="let locale" fxLayoutAlign="start">
-    <div id="login-intro" fxFlex fxHide fxShow.gt-xs class="animate__animated animate__fadeIn">
-        <div class="title" [@animate]="{ value: '*', params: { delay: '500ms', y: '-25px' } }">
-            {{ locale('loginComponent.welcome') }}
+<!-- 6.0.0 Enhanced layout -->
+<section id="login" *transloco="let locale" fxFlex class="twd-flex twd-justify-stretch">
+    <!-- intro section -->
+    <div fxFlex.gt-md="65" fxFlex.gt-sm="50" fxHide fxShow.gt-sm class="welcome-layout">
+        <div class="twd-flex twd-flex-col twd-gap-8" style="width: 70%; margin: 0 auto; margin-top: 4em">
+            <div class="login-title" [innerHTML]="locale('loginComponent.welcome')"></div>
+            <div class="login-caption" [innerHTML]="locale('loginComponent.welcomeCaption')"></div>
         </div>
     </div>
 
-    <div id="login-form-wrapper" class="custom-scroll-adjust position-relative">
-        <div *ngIf="languageSelectionEnabled">
-            <mat-form-field class="lang-selection">
-                <mat-label>Language</mat-label>
-                <mat-select (selectionChange)="changeLanguage($event.value)">
-                    <mat-option *ngFor="let lang of languages" [value]="lang">
-                        {{ lang }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="overlay" *ngIf="loading">
-            <mat-spinner></mat-spinner>
-        </div>
+    <!-- login section -->
+    <div
+        class="twd-bg-primary-100 twd-p-3 twd-m-4 twd-gap-3 login-section"
+        fxFlex="100"
+        fxFlex.gt-md="35"
+        fxFlex.gt-sm="50"
+        fxFlex.gt-xs="100"
+        fxLayout="column"
+    >
+        <div fxFlex fxFlex="85" class="twd-content-center twd-text-center">
+            <!-- select language option -->
+            <mat-select (selectionChange)="changeLanguage($event.value)" class="select-language" placeholder="Language">
+                <mat-option *ngFor="let lang of languages" [value]="lang">
+                    {{ lang }}
+                </mat-option>
+            </mat-select>
 
-        <div class="overlay" *ngIf="connectionError.errored">
-            <mat-card class="p-28 border-radius-30">
-                <mat-card-header>
-                    <mat-card-title fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon color="warn" class="mr-4">error</mat-icon> {{ locale('loginComponent.connectivityError') }}
-                    </mat-card-title>
-                    <mat-card-subtitle class="mt-8" *ngIf="connectionError.retrying; else countdownRef">
-                        {{ locale('loginComponent.retrying') }}
+            <!-- login form / error layout -->
+            @if (connectionError.errored || configError.errored) {
+                <!-- error layout -->
+                <!-- error due to connection issue -->
+                <ng-template #countdownRef>
+                    <mat-card-subtitle
+                        class="twd-mt-2 twd-block"
+                        *ngIf="connectionError.countdown | async as countdown"
+                    >
+                        {{
+                            locale('loginComponent.retryingIn') +
+                                ' ' +
+                                (connectionError.pollingInterval - countdown) +
+                                ' ' +
+                                locale('loginComponent.seconds')
+                        }}
                     </mat-card-subtitle>
-                    <ng-template #countdownRef>
-                        <mat-card-subtitle class="mt-8" *ngIf="connectionError.countdown | async as countdown">
-                            {{
-                                locale('loginComponent.retryingIn') +
-                                    ' ' +
-                                    (connectionError.pollingInterval - countdown) +
-                                    ' ' +
-                                    locale('loginComponent.seconds')
-                            }}
-                        </mat-card-subtitle>
-                    </ng-template>
+                </ng-template>
+                @if (connectionError.errored) {
+                    <mat-card class="error-layout">
+                        <mat-card-header class="twd-flex twd-flex-col twd-gap-2 twd-text-left">
+                            <mat-card-title fxLayout="row" class="twd-w-full twd-gap-2" fxLayoutAlign="start center">
+                                <mat-icon color="warn">error</mat-icon>
+                                <span class="twd-font-extrabold">{{ locale('loginComponent.connectivityError') }}</span>
+                            </mat-card-title>
+                            @if (connectionError.retrying) {
+                                <mat-card-subtitle class="twd-mt-2">
+                                    {{ locale('loginComponent.retrying') }}
+                                </mat-card-subtitle>
+                            } @else {
+                                <ng-container [ngTemplateOutlet]="countdownRef"></ng-container>
+                            }
+                        </mat-card-header>
+                        <mat-card-content>
+                            <p [innerHTML]="locale('loginComponent.connectivityErrorInfo')"></p>
+                        </mat-card-content>
+                        <mat-card-footer class="twd-px-4 twd-pb-4">
+                            <button
+                                mat-button
+                                class="twd-w-full action-button"
+                                (click)="getTMACVersion(true)"
+                                [disabled]="connectionError.retrying"
+                            >
+                                {{ locale('loginComponent.retryNow') }}
+                            </button>
+                        </mat-card-footer>
+                    </mat-card>
+                }
+
+                <!-- error due to configuration file issue -->
+                @if (configError.errored) {
+                    <mat-card class="error-layout">
+                        <mat-card-header>
+                            <mat-card-title fxLayout="row" class="twd-w-full twd-gap-2" fxLayoutAlign="start center">
+                                <mat-icon color="warn">error</mat-icon>
+                                <span class="twd-font-extrabold">{{ locale('loginComponent.configError') }}</span>
+                            </mat-card-title>
+                            @if (configError.retrying) {
+                                <mat-card-subtitle class="twd-mt-2">
+                                    {{ locale('loginComponent.retrying') }}
+                                </mat-card-subtitle>
+                            } @else {
+                                <ng-container [ngTemplateOutlet]="countdownRef"></ng-container>
+                            }
+                        </mat-card-header>
+                        <mat-card-content>
+                            <p
+                                [innerHTML]="
+                                    configError.section === 'main'
+                                        ? locale('loginComponent.mainConfigErrorInfo')
+                                        : locale('loginComponent.configErrorInfo')
+                                "
+                            ></p>
+                        </mat-card-content>
+                        <mat-card-footer class="twd-px-4 twd-pb-4">
+                            <button
+                                mat-button
+                                (click)="retryLoadConfig()"
+                                class="twd-w-full action-button"
+                                [disabled]="configError.retrying"
+                            >
+                                {{ locale('loginComponent.retryNow') }}
+                            </button>
+                        </mat-card-footer>
+                    </mat-card>
+                }
+            } @else {
+                @if (faceAuthEnabled && selfVideo) {
+                    <div class="self-view animate__animated animate__zoomIn animate__faster">
+                        <video #video autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
+                        <span class="face-shape"></span>
+                    </div>
+                }
+
+                <!-- login form -->
+                <mat-card class="login-form-layout">
+                    <mat-card-header>
+                        <mat-card-title>
+                            {{ locale('loginComponent.loginFormHeader') }}
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        @if (ssoType) {
+                            <div>
+                                <button
+                                    [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
+                                    mat-raised-button
+                                    color="primary"
+                                    class="!twd-my-8 !twd-mx-auto !twd-block !twd-py-1 !twd-px-10 !twd-rounded-full"
+                                    aria-label="SIGN IN"
+                                    (click)="ssoLogin()"
+                                    [disabled]="loading"
+                                >
+                                    {{ locale('loginComponent.signIn') }}
+                                </button>
+                            </div>
+                        } @else {
+                            <form name="loginForm" [formGroup]="loginForm" novalidate class="login-form-body">
+                                <div>
+                                    @if (showOtp) {
+                                        <mat-form-field appearance="outline">
+                                            <input
+                                                class="login-input"
+                                                matInput
+                                                required
+                                                placeholder="OTP"
+                                                formControlName="otp"
+                                                #otp
+                                            />
+                                            <mat-error> {{ locale('loginComponent.otpRequired') }} </mat-error>
+                                        </mat-form-field>
+                                    }
+
+                                    @if (!showOtp) {
+                                        @if (domainListEnabled) {
+                                            <mat-form-field appearance="outline">
+                                                <mat-select placeholder="Domain List" formControlName="domain">
+                                                    <mat-option>{{
+                                                        locale('loginComponent.domainNameNone')
+                                                    }}</mat-option>
+                                                    <mat-option *ngFor="let item of domainList" [value]="item">{{
+                                                        item
+                                                    }}</mat-option>
+                                                </mat-select>
+                                                <mat-error>
+                                                    {{ locale('loginComponent.domainNameRequired') }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                        }
+
+                                        <mat-form-field appearance="outline">
+                                            <input
+                                                class="login-input"
+                                                matInput
+                                                required
+                                                [placeholder]="locale('global.lanId')"
+                                                formControlName="lanId"
+                                                #lanId
+                                            />
+                                            <button
+                                                type="button"
+                                                color="primary"
+                                                *ngIf="loginForm.get('lanId').value"
+                                                matSuffix
+                                                mat-icon-button
+                                                aria-label="Clear"
+                                                (click)="resetField('lanId')"
+                                            >
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                            <mat-error
+                                                >{{ locale('global.lanId') }} {{ locale('loginComponent.isRequired') }}
+                                            </mat-error>
+                                        </mat-form-field>
+
+                                        @if (agentIdEnabled) {
+                                            <mat-form-field appearance="outline">
+                                                <input
+                                                    class="login-input"
+                                                    matInput
+                                                    required
+                                                    placeholder="Agent ID"
+                                                    formControlName="agentId"
+                                                    #agentId
+                                                />
+                                                <button
+                                                    mat-button
+                                                    color="primary"
+                                                    type="button"
+                                                    *ngIf="loginForm.get('agentId').value"
+                                                    matSuffix
+                                                    mat-icon-button
+                                                    aria-label="Clear"
+                                                    (click)="resetField('agentId')"
+                                                >
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                                <mat-error>{{ locale('loginComponent.agentIdRequired') }} </mat-error>
+                                            </mat-form-field>
+                                        }
+
+                                        @if (password.Agent) {
+                                            <mat-form-field appearance="outline">
+                                                <input
+                                                    title="Agent password"
+                                                    class="login-input"
+                                                    required
+                                                    matInput
+                                                    [type]="hidePassword.agent ? 'password' : 'text'"
+                                                    required
+                                                    [placeholder]="password.AgentPlaceholder || 'LDAP Password'"
+                                                    formControlName="agentPassword"
+                                                />
+                                                <button
+                                                    mat-icon-button
+                                                    type="button"
+                                                    color="primary"
+                                                    color="primary"
+                                                    matSuffix
+                                                    (click)="hidePassword.agent = !hidePassword.agent"
+                                                    [attr.aria-label]="'Hide password'"
+                                                    [attr.aria-pressed]="hidePassword.agent"
+                                                >
+                                                    <mat-icon>{{
+                                                        hidePassword.agent ? 'visibility_off' : 'visibility'
+                                                    }}</mat-icon>
+                                                </button>
+                                                <mat-error> {{ locale('loginComponent.passwordRequired') }} </mat-error>
+                                            </mat-form-field>
+                                        }
+
+                                        @if (password.Station) {
+                                            <mat-form-field appearance="outline">
+                                                <input
+                                                    title="Station password"
+                                                    class="login-input"
+                                                    required
+                                                    matInput
+                                                    [type]="hidePassword.station ? 'password' : 'text'"
+                                                    required
+                                                    [placeholder]="password.StationPlaceholder || 'PBX Password'"
+                                                    formControlName="stationPassword"
+                                                />
+                                                <button
+                                                    mat-icon-button
+                                                    type="button"
+                                                    color="primary"
+                                                    color="primary"
+                                                    matSuffix
+                                                    (click)="hidePassword.station = !hidePassword.station"
+                                                    [attr.aria-label]="'Hide password'"
+                                                    [attr.aria-pressed]="hidePassword.station"
+                                                >
+                                                    <mat-icon>{{
+                                                        hidePassword.station ? 'visibility_off' : 'visibility'
+                                                    }}</mat-icon>
+                                                </button>
+                                                <mat-error> {{ locale('loginComponent.passwordRequired') }} </mat-error>
+                                            </mat-form-field>
+                                        }
+
+                                        @if (stationEnabled) {
+                                            <mat-form-field appearance="outline">
+                                                <input
+                                                    class="login-input"
+                                                    color="primary"
+                                                    matInput
+                                                    required
+                                                    placeholder="Station ID"
+                                                    (keypress)="numberOnly($event)"
+                                                    formControlName="station"
+                                                    #stationId
+                                                />
+                                                <button
+                                                    *ngIf="loginForm.get('station').value"
+                                                    matSuffix
+                                                    type="button"
+                                                    mat-icon-button
+                                                    color="primary"
+                                                    aria-label="Clear"
+                                                    (click)="resetField('station')"
+                                                >
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                                <mat-error>
+                                                    {{ locale('loginComponent.stationIdRequired') }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                        }
+
+                                        @if (loginModeEnabled) {
+                                            <mat-list class="twd-text-left login-mode-options">
+                                                <mat-list-item class="twd-p-0">
+                                                    <mat-slide-toggle
+                                                        class="mat-primary"
+                                                        [checked]="pbxChecked"
+                                                        (change)="pbxChecked = $event.checked; toggleStation()"
+                                                        aria-label="Notifications"
+                                                    >
+                                                        <label>{{ locale('loginComponent.loginToPBX') }}?</label>
+                                                    </mat-slide-toggle>
+                                                </mat-list-item>
+
+                                                <mat-list-item class="twd-p-0">
+                                                    <mat-slide-toggle
+                                                        class="mat-primary"
+                                                        [checked]="msChecked"
+                                                        (change)="msChecked = $event.checked; toggleStation()"
+                                                        labelPosition="after"
+                                                    >
+                                                        <label>{{ locale('loginComponent.loginToWebPhone') }}?</label>
+                                                    </mat-slide-toggle>
+                                                </mat-list-item>
+                                            </mat-list>
+                                        }
+                                    }
+                                    @if (errorMessage) {
+                                        <p class="text-center text-danger text-bold">{{ errorMessage }}</p>
+                                    }
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
+                                    mat-button
+                                    color="primary"
+                                    class="twd-w-full action-button"
+                                    aria-label="LOGIN"
+                                    (click)="login(false)"
+                                    [disabled]="!loginForm.valid || loading"
+                                >
+                                    @if (loading) {
+                                        <span>{{ locale('loginComponent.loginLoading') }}</span>
+                                    } @else {
+                                        <span>{{ locale('loginComponent.login') }}</span>
+                                    }
+                                </button>
+                            </form>
+                        }
+                    </mat-card-content>
+                </mat-card>
+            }
+        </div>
+        <div fxFlex fxFlex="15" class="twd-flex twd-flex-col twd-items-center">
+            <img src="assets/images/logos/tetherfi.png" class="twd-max-w-32" />
+            <span class="twd-text-primary-500"> {{ locale('loginComponent.copyWriteTetherfi') }} {{ uiVersion }} </span>
+        </div>
+    </div>
+</section>
+
+@if (appLabelsError) {
+    <div>
+        <div class="overlay">
+            <mat-card class="p-28 border-radius-30 label-error-layout">
+                <mat-card-header>
+                    <mat-card-title fxLayout="row" class="twd-w-full" fxLayoutAlign="space-between center">
+                        <span><mat-icon color="warn" class="mr-4 twd-align-middle">error</mat-icon>Labels Error!!</span>
+                        <mat-icon
+                            class="twd-cursor-pointer"
+                            [title]="appLabelsError.error?.error?.message || appLabelsError.message"
+                            >info</mat-icon
+                        >
+                    </mat-card-title>
                 </mat-card-header>
                 <mat-divider></mat-divider>
                 <mat-card-content class="my-12 h-48">
-                    <p [innerHTML]="locale('loginComponent.connectivityErrorInfo')"></p>
+                    <p>
+                        Oops!! application labels are not loaded correctly, Agent Desktop version
+                        <strong>5.2.3.30</strong> and above requires language files, Please contact admin.
+                    </p>
                 </mat-card-content>
-                <mat-card-actions fxLayout fxLayoutAlign="end ">
-                    <button
-                        mat-raised-button
-                        class="border-radius-30"
-                        color="primary"
-                        (click)="getTMACVersion(true)"
-                        [disabled]="connectionError.retrying"
-                    >
-                        {{ locale('loginComponent.retryNow') }}
-                    </button>
-                </mat-card-actions>
             </mat-card>
         </div>
-
-        <div class="overlay" *ngIf="configError.errored">
-            <mat-card class="p-28 border-radius-30">
-                <mat-card-header>
-                    <mat-card-title fxLayout="row" fxLayoutAlign=" center">
-                        <mat-icon color="warn" class="mr-4">error</mat-icon> {{ locale('loginComponent.configError') }}
-                    </mat-card-title>
-                    <mat-card-subtitle class="mt-8" *ngIf="configError.retrying; else countdownRef">
-                        {{ locale('loginComponent.retrying') }}
-                    </mat-card-subtitle>
-                </mat-card-header>
-                <mat-divider></mat-divider>
-                <mat-card-content class="my-12 h-48">
-                    <p
-                        [innerHTML]="
-                            configError.section === 'main' ? locale('loginComponent.mainConfigErrorInfo') : locale('loginComponent.configErrorInfo')
-                        "
-                    ></p>
-                </mat-card-content>
-                <mat-card-actions fxLayout fxLayoutAlign="end ">
-                    <button mat-raised-button class="border-radius-30" color="primary" (click)="retryLoadConfig()" [disabled]="configError.retrying">
-                        {{ locale('loginComponent.retryNow') }}
-                    </button>
-                </mat-card-actions>
-            </mat-card>
-        </div>
-
-        <div id="login-form" class="{{ loading || connectionError.errored || configError.errored ? 'blur' : null }}">
-            <div [hidden]="!isConfigLoaded" class="logo" [@animate]="{ value: '*', params: { delay: '400ms', y: '-25px' } }">
-                <img
-                    title="Customer logo"
-                    [src]="appCustomerLogo?.Large.Src || 'assets/images/logos/tetherfi.png'"
-                    [alt]="appCustomerLogo?.Alt || 'Tetherfi'"
-                    [width]="appCustomerLogo?.Large.Width || 180"
-                    [height]="appCustomerLogo?.Large.Height || 90"
-                />
-            </div>
-
-            <div *ngIf="faceAuthEnabled && selfVideo" class="self-view animate__animated animate__zoomIn animate__faster">
-                <video #video autoplay playsinline="true" [muted]="true" [srcObject]="selfVideo"></video>
-                <span class="face-shape"></span>
-            </div>
-
-            <form
-                *ngIf="!ssoType"
-                name="loginForm"
-                [formGroup]="loginForm"
-                [@animate]="{ value: '*', params: { delay: '300ms', x: '-25px' } }"
-                novalidate
-            >
-                <ng-container *ngIf="showOtp">
-                    <mat-form-field class="form-field custom" appearance="outline">
-                        <input class="login-input" matInput required placeholder="OTP" formControlName="otp" #otp />
-                        <mat-error> {{ locale('loginComponent.otpRequired') }} </mat-error>
-                    </mat-form-field>
-                </ng-container>
-
-                <ng-container *ngIf="!showOtp">
-                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="domainListEnabled">
-                        <mat-select placeholder="Domain List" formControlName="domain">
-                            <mat-option>{{ locale('loginComponent.domainNameNone') }}</mat-option>
-                            <mat-option *ngFor="let item of domainList" [value]="item">{{ item }}</mat-option>
-                        </mat-select>
-                        <mat-error> {{ locale('loginComponent.domainNameRequired') }} </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field class="form-field custom" appearance="outline">
-                        <input class="login-input" matInput required [placeholder]="locale('global.lanId')" formControlName="lanId" #lanId />
-                        <button
-                            mat-button
-                            type="button"
-                            color="primary"
-                            *ngIf="loginForm.get('lanId').value"
-                            matSuffix
-                            mat-icon-button
-                            aria-label="Clear"
-                            (click)="resetField('lanId')"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-                        <mat-error>{{ locale('global.lanId') }} {{ locale('loginComponent.isRequired') }} </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="agentIdEnabled">
-                        <input class="login-input" matInput required placeholder="Agent ID" formControlName="agentId" #agentId />
-                        <button
-                            mat-button
-                            color="primary"
-                            type="button"
-                            *ngIf="loginForm.get('agentId').value"
-                            matSuffix
-                            mat-icon-button
-                            aria-label="Clear"
-                            (click)="resetField('agentId')"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-                        <mat-error>{{ locale('loginComponent.agentIdRequired') }} </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Agent">
-                        <input
-                            title="Agent password"
-                            class="login-input"
-                            required
-                            matInput
-                            [type]="hidePassword.agent ? 'password' : 'text'"
-                            required
-                            [placeholder]="password.AgentPlaceholder || 'LDAP Password'"
-                            formControlName="agentPassword"
-                        />
-                        <button
-                            mat-icon-button
-                            type="button"
-                            color="primary"
-                            color="primary"
-                            matSuffix
-                            (click)="hidePassword.agent = !hidePassword.agent"
-                            [attr.aria-label]="'Hide password'"
-                            [attr.aria-pressed]="hidePassword.agent"
-                        >
-                            <mat-icon>{{ hidePassword.agent ? 'visibility_off' : 'visibility' }}</mat-icon>
-                        </button>
-                        <mat-error> {{ locale('loginComponent.passwordRequired') }} </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field class="form-field custom" appearance="outline" *ngIf="password.Station">
-                        <input
-                            title="Station password"
-                            class="login-input"
-                            required
-                            matInput
-                            [type]="hidePassword.station ? 'password' : 'text'"
-                            required
-                            [placeholder]="password.StationPlaceholder || 'PBX Password'"
-                            formControlName="stationPassword"
-                        />
-                        <button
-                            mat-icon-button
-                            type="button"
-                            color="primary"
-                            color="primary"
-                            matSuffix
-                            (click)="hidePassword.station = !hidePassword.station"
-                            [attr.aria-label]="'Hide password'"
-                            [attr.aria-pressed]="hidePassword.station"
-                        >
-                            <mat-icon>{{ hidePassword.station ? 'visibility_off' : 'visibility' }}</mat-icon>
-                        </button>
-                        <mat-error> {{ locale('loginComponent.passwordRequired') }} </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field
-                        class="form-field custom animate__animated animate__flipInX animate__fast"
-                        appearance="outline"
-                        *ngIf="stationEnabled"
-                    >
-                        <input
-                            class="login-input"
-                            color="primary"
-                            matInput
-                            required
-                            placeholder="Station ID"
-                            (keypress)="numberOnly($event)"
-                            formControlName="station"
-                            #stationId
-                        />
-                        <button
-                            *ngIf="loginForm.get('station').value"
-                            matSuffix
-                            type="button"
-                            mat-icon-button
-                            color="primary"
-                            aria-label="Clear"
-                            (click)="resetField('station')"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-                        <mat-error> {{ locale('loginComponent.stationIdRequired') }} </mat-error>
-                    </mat-form-field>
-
-                    <mat-list *ngIf="loginModeEnabled">
-                        <mat-list-item>
-                            <mat-slide-toggle
-                                fxFlex
-                                class="mat-primary"
-                                [checked]="pbxChecked"
-                                (change)="pbxChecked = $event.checked; toggleStation()"
-                                aria-label="Notifications"
-                                labelPosition="after"
-                            >
-                                <h3>{{ locale('loginComponent.loginToPBX') }}?</h3>
-                            </mat-slide-toggle>
-                        </mat-list-item>
-
-                        <mat-list-item>
-                            <mat-slide-toggle
-                                fxFlex
-                                class="mat-primary"
-                                [checked]="msChecked"
-                                (change)="msChecked = $event.checked; toggleStation()"
-                                labelPosition="after"
-                            >
-                                <h3>{{ locale('loginComponent.loginToWebPhone') }}?</h3>
-                            </mat-slide-toggle>
-                        </mat-list-item>
-                    </mat-list>
-                </ng-container>
-                <p class="text-center text-danger text-bold">{{ errorMessage || ' ' }}</p>
-                <button
-                    type="submit"
-                    [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
-                    mat-raised-button
-                    color="primary"
-                    class="twd-w-5/12 !twd-my-8 !twd-mx-auto !twd-block !twd-py-1 !twd-px-10 !twd-rounded-full"
-                    aria-label="LOGIN"
-                    (click)="login(false)"
-                    [disabled]="!loginForm.valid || loading"
-                >
-                    {{ locale('loginComponent.login') }}
-                </button>
-            </form>
-
-            <div *ngIf="ssoType">
-                <button
-                    [@animate]="{ value: '*', params: { delay: '300ms', y: '25px' } }"
-                    mat-raised-button
-                    color="primary"
-                    class="!twd-my-8 !twd-mx-auto !twd-block !twd-py-1 !twd-px-10 !twd-rounded-full"
-                    aria-label="SIGN IN"
-                    (click)="ssoLogin()"
-                    [disabled]="loading"
-                >
-                    {{ locale('loginComponent.signIn') }}
-                </button>
-            </div>
-
-            <div fxLayout="row" fxLayoutAlign="center center" class="font-size-12 secondary-text copyright-version">
-                <span class="element-status" [ngClass]="version !== 'NA' ? 'bg-alt-success' : 'bg-alt-danger'"></span>
-                {{ locale('loginComponent.copyWriteTetherfi') }} | {{ locale('loginComponent.ui') }}: {{ uiVersion }} -
-                {{ locale('loginComponent.server') }}: {{ version }}
-            </div>
-        </div>
     </div>
-
-    <img
-        title="Brand logo"
-        class="brand-logo animate__animated animate__pulse animate__infinite animate__slow"
-        [@animate]="{ value: '*', params: { delay: '600ms', y: '25px' } }"
-        [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
-        [alt]="brandLogo?.Alt || 'Tetherfi'"
-        [width]="brandLogo?.Small.Width || 50"
-        [height]="brandLogo?.Small.Height || 50"
-    />
-</div>
-
-<div *ngIf="appLabelsError">
-    <div class="overlay">
-        <mat-card class="p-28 border-radius-30 label-error-layout">
-            <mat-card-header>
-                <mat-card-title fxLayout="row" class="twd-w-full" fxLayoutAlign="space-between center">
-                    <span><mat-icon color="warn" class="mr-4 twd-align-middle">error</mat-icon>Labels Error!!</span>
-                    <mat-icon class="twd-cursor-pointer" [title]="appLabelsError.error?.error?.message || appLabelsError.message">info</mat-icon>
-                </mat-card-title>
-            </mat-card-header>
-            <mat-divider></mat-divider>
-            <mat-card-content class="my-12 h-48">
-                <p>
-                    Oops!! application labels are not loaded correctly, Agent Desktop version <strong>5.2.3.30</strong> and above requires language
-                    files, Please contact admin.
-                </p>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div>
+}

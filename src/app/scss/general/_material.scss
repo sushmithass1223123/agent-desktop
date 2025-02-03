@@ -1,5 +1,5 @@
 @import '@fuse/scss/fuse';
-
+@import './variables';
 // mat icon
 .mat-mdc-icon-button,
 .mat-mdc-custom-btn,
@@ -466,3 +466,25 @@ mat-dialog-container {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/** added during upgrade to Angular Material 18, can be removed on latest design enhancement + new layout **/
+mat-form-field {
+    width: 100%;
+    border-radius: $generic-border-radius;
+}
+
+mat-card {
+    border-radius: $generic-border-radius !important;
+}
+
+.mat-warn {
+    color: #E66767 !important;
+}
+
+mat-slide-toggle {
+    // this section of code is to replicate the slide toggle to the design
+    svg {
+        display: none;
+    }
+}
+

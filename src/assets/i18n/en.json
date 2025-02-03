@@ -2,12 +2,12 @@
     "loginComponent": {
         "lanId": "Lan ID",
         "lanIdRequiredText": "Lan-ID is required",
-        "welcome": "Welcome to Agent Desktop!",
+        "welcome": "Welcome to <br> Agent Desktop!",
         "connectivityError": "Trying to reach server",
         "retrying": "Retrying...",
         "retryingIn": "Retrying in",
         "seconds": "seconds...",
-        "connectivityErrorInfo": "Make sure you have an active internet connection.<br /> Please contact the administrator for more info.",
+        "connectivityErrorInfo": "Make sure you have an active internet connection.Please contact the administrator for more info.",
         "retryNow": "RETRY NOW",
         "configError": "Config Error",
         "configErrorInfo": "Unable to load the config for login.<br />Please contact the administrator.",
@@ -21,9 +21,9 @@
         "stationIdRequired": "Station ID is required",
         "loginToPBX": "Login to PBX",
         "loginToWebPhone": "Login to Webphone",
-        "login": "LOGIN",
+        "login": "Sign In",
         "signIn": "SIGN IN",
-        "copyWriteTetherfi": "Copyright Tetherfi",
+        "copyWriteTetherfi": "Copyright @Tetherfi",
         "ui": "UI",
         "server": "Server",
         "linkExpired": "Sorry, the link has expired, Please login again.",
@@ -39,7 +39,10 @@
         "lanIdError": "Login failed, Invalid LAN ID detected. Please contact administrator for TMAC access",
         "unknownError": "Login failed, Unknown response from server",
         "loginFailedGenericError": "Login failed, Please contact the administrator",
-        "ssoTypeInvalid": "SSO type #ssoType is not a valid, please contact the administrator!"
+        "ssoTypeInvalid": "SSO type #ssoType is not a valid, please contact the administrator!",
+        "welcomeCaption": "Unified multimedia agent desktop for a better <br> experience, productivity & performance",
+        "loginFormHeader": "Sign In to your account",
+        "loginLoading": "Signing in..."
     },
     "toolbarComponent": {
         "appInfo": "App Information",

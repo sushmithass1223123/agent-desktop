@@ -1,315 +1,76 @@
 @use '@angular/material'as mat;
 @import '@fuse/scss/fuse';
+@import 'app/scss/general/_variables';
+@import 'app/scss/general/_colors';
 
-login {
-    width: 100%;
-
-    .brand-logo {
-        position: fixed;
-        bottom: 2%;
-        left: 2%;
-        filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
-    }
+login{
+    @apply twd-h-full twd-w-full;
 
     #login {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-
-        #login-intro {
-            padding: 128px;
-            background: url('../../../../assets/images/vectors/login.svg') no-repeat;
-            background-size: 140%;
-            background-position: bottom left;
-
-            @include media-breakpoint('sm') {
-                padding: 128px 64px;
+            overflow: hidden;
+            .welcome-layout {
+                background-image: url('assets/images/backgrounds/login-left-bg.png');
+                background-position: bottom center; 
+                background-repeat: no-repeat;
+                background-size: 65%;
+                @apply twd-gap-8 twd-flex twd-flex-col twd-px-10;
+                .login-title {
+                    font-family: 'AdLamDisplay';
+                    @apply twd-text-5xl twd-text-primary-700 twd-font-normal twd-break-words;
+                    line-height: 60px; letter-spacing: 0.23px; 
+                }
+                .login-caption {
+                    @apply twd-text-xl twd-font-medium twd-text-accent-500 twd-break-words;
+                    font-family: Inter; 
+                    line-height: 26px; 
+                    letter-spacing: 0.10px;
+                }
             }
-
-            .logo {
-                width: 128px;
-                margin-bottom: 32px;
-            }
-
-            .title {
-                font-size: 42px;
-                font-weight: 300;
-                line-height: 1;
-            }
-
-            .description {
-                padding-top: 16px;
-                font-size: 14px;
-                max-width: 600px;
-            }
-        }
-
-        #login-form-wrapper {
-            width: 700px;
-            min-width: 700px;
-            max-width: 700px;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            border-top-left-radius: 3rem;
-            border-bottom-left-radius: 3rem;
-
-            @include mat.elevation(16);
-
-            @include media-breakpoint('sm') {
-                width: 400px;
-                min-width: 400px;
-                max-width: 400px;
-            }
-
-            @include media-breakpoint('xs') {
-                width: 100%;
-                min-width: 100%;
-                max-width: 100%;
-                border-radius: 0;
-            }
-
-            .overlay {
-                position: absolute;
-                z-index: 2;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-top-left-radius: 3rem;
-                border-bottom-left-radius: 3rem;
-                background: rgb(0 0 0 / 0.25);
-            }
-
-            #login-form {
-                height: 100%;
-                width: 100%;
-                padding: 0rem 12rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-
-                &.blur {
-                    -webkit-filter: blur(3px);
-                    -moz-filter: blur(3px);
-                    -o-filter: blur(3px);
-                    -ms-filter: blur(3px);
-                    filter: blur(3px);
-                    pointer-events: none;
-                }
-
-                @include media-breakpoint('sm') {
-                    padding: 0rem 4rem;
-                }
-
-                @include media-breakpoint('xs') {
-                    text-align: center;
-                    padding: 24px;
-                }
-
-                .logo {
-                    // width: 128px;
-                    // margin: 32px auto;
-                    text-align: center;
-                }
-
-                .title {
-                    font-size: 21px;
-                }
-
-                .description {
-                    padding-top: 8px;
-                }
-
-                .self-view {
-                    position: relative;
-                    border-radius: 30px;
-                    // border: 1px solid #732b90;
-                    border: 1px solid;
-                    @apply twd-border-primary-600;
-
-                    video {
-                        width: 100%;
-                        max-width: 100%;
-                        height: 100%;
-                        max-height: 100%;
-                        border-radius: 30px;
-                        object-fit: cover;
-                        -webkit-transform: scaleX(-1);
-                        transform: scaleX(-1);
-                    }
-
-                    .face-shape {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        margin: auto;
-                        width: 42%;
-                        height: 78%;
-                        box-shadow: 0 0 5px 1px rgba(220, 53, 69, 0.6), 0 0 4px 2px rgba(220, 53, 69, 0.6), 0 0 1px 2px rgba(220, 53, 69, 0.6);
-                        border-radius: 70% 70% 80% 80%/60% 60% 90% 90%;
-                    }
-                }
-
-                form {
-                    width: 100%;
-                    padding-top: 32px;
-
-                    mat-form-field {
-                        width: 100%;
-                        position: relative;
-                        line-height: 18px;
-                        // @include media-breakpoint('xs') {
-                        //     width: 80%;
-                        // }
-
-                        .mat-mdc-text-field-wrapper {
-
-                            .mat-mdc-select-arrow,
-                            .mat-mdc-form-field.mat-mdc.mat-mdc .mat-mdc-select-arrow,
-                            .mat-mdc-select-placeholder,
-                            .mat-mdc-select-value {
-                                // color: #732b90 !important;
-                                @apply twd-text-primary-700;
-                            }
-
-                            .mat-mdc-form-field-label {
-                                // color: #732b90 !important;
-                                @apply twd-text-primary-700;
-                            }
-
-                            .mat-mdc-form-field-outline, .mdc-notched-outline {
-                                // color: #f9f1ff !important;
-                                // background: #f9f1ff !important;
-
-                                @apply twd-text-primary-100;
-                                @apply twd-bg-primary-100;
-                                z-index: 0;
-                            }
-                        }
-
-                        input {
-                            &::-webkit-input-placeholder {
-                                /* Chrome/Opera/Safari */
-                                // color: #732b90 !important;
-                                @apply twd-text-primary-700;
-                            }
-
-                            &::-moz-placeholder {
-                                /* Firefox 19+ */
-                                // color: #732b90 !important;
-                                @apply twd-text-primary-700;
-                            }
-
-                            &:-ms-input-placeholder {
-                                /* IE 10+ */
-                                // color: #732b90 !important;
-                                @apply twd-text-primary-700;
-                            }
-
-                            &:-moz-placeholder {
-                                /* Firefox 18- */
-                                // color: #732b90 !important;
-                                @apply twd-text-primary-700;
-                            }
-                        }
-                    }
-
-                    mat-slide-toggle {
-                        .mat-mdc-toggle-content {
-                            flex: 1;
-                            color: #732b90 !important;
-                        }
-                    }
-                }
-
-                .separator {
-                    font-size: 15px;
-                    font-weight: 600;
-                    margin: 24px auto;
-                    position: relative;
-                    overflow: hidden;
-                    width: 100px;
-                    text-align: center;
-
-                    .text {
-                        display: inline-flex;
-                        position: relative;
-                        padding: 0 8px;
-                        z-index: 9999;
-
-                        &:before,
-                        &:after {
-                            content: '';
-                            display: block;
-                            width: 30px;
-                            position: absolute;
-                            top: 10px;
-                            border-top: 1px solid;
-                        }
-
-                        &:before {
-                            right: 100%;
-                        }
-
-                        &:after {
-                            left: 100%;
-                        }
-                    }
-                }
-
-                .copyright-version {
-                    position: absolute;
-                    bottom: 10px;
-                    right: 10px;
-
-                    .element-status {
-                        position: initial;
-                        margin-right: 4px;
+            .login-section {
+                border-radius: $generic-border-radius;
+                .select-language {
+                    @apply twd-bg-primary-700 max-[950px]:twd-w-1/4;
+                    padding: 10px 15px;
+                    border-radius: 5px;
+                    width: 35%;
+                    text-align: justify;
+                    span, svg {
+                        color: #fff;
+                        @apply twd-font-medium;
                     }
                 }
             }
-        }
+            .login-form-layout, .error-layout {
+                @apply twd-mx-auto twd-mt-10 twd-bg-white twd-text-center twd-w-4/5 md:twd-w-3/5 sm:twd-w-2/5;
+                gap: 30px; 
+                p {
+                    opacity: 0.5;
+                    text-align: left;
+                }
+                .login-form-body {
+                    @apply twd-flex twd-flex-col twd-justify-between twd-gap-4;
+                    min-height: 204px;
+                    label {
+                        @apply twd-text-base twd-pl-2; 
+                        font-family: Roboto; letter-spacing: 0.15px; 
+                    }
+
+                    .login-mode-options > *{
+                        padding: 0;
+                    }
+                    
+                }
+                .action-button {
+                    background: $tw-action;
+                    @apply twd-text-white;
+                }
+            }
     }
 
-    .lang-selection {
-        float: right;
-        padding: 5px 10px 0px 0px;
-        width: 10em;
-    }
-
-    /** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
-    .mat-mdc-button>.mat-icon {
-        font-size: 24px;
-    }
-    
-    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-        background-color: #fff;
-    }
-
-    .mat-mdc-icon-button {
-        height: 40px !important;
-        width: 40px !important;
-        min-width: 40px;
-        margin-top: 10px;
-        margin-right: 10px;
-        padding: 10px !important;
-    }
-
-    .mat-mdc-slide-toggle .mdc-switch:enabled+.mdc-label {
-        margin-top: 12px;
-        margin-left: 10px;
-    }
 }
+
 
 .label-error-layout {
     width: 60%;
     margin: 30% auto;
-
-    strong {
-        background: yellow;
-    }
 }
