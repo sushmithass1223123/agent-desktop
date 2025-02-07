@@ -1,0 +1,17 @@
+# Ignore the node_modules folder
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files or directories
+tmp/
+*.swp
+
+# Ignore Dockerfile and .dockerignore itself (not usually necessary)
+Dockerfile
+.dockerignore
+
+# Ignore any IDE-related files
+.vscode/
+.idea/
