@@ -1,5 +1,6 @@
 import { filter, take, takeUntil } from 'rxjs/operators';
 import {
+    AfterViewInit,
     Component,
     ElementRef,
     EventEmitter,
@@ -31,7 +32,7 @@ import { SharedWrapper } from '@modules/t-widgets/utils';
     styleUrls: ['./smp-template.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDestroy, OnChanges {
+export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDestroy, OnChanges, AfterViewInit {
     @Input() postData: SmpComponentInputs;
     @Input() mode: 'workbench' | 'interaction-min' | 'interaction-max';
     @ViewChild('fileInput') fileInput!: ElementRef;
@@ -41,7 +42,13 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     @ViewChild('replyInput') replyInputField: ElementRef<HTMLTextAreaElement>;
 
     @Input() engagementFromNotification: any;
-    @Input() draftData: any;
+    @Input() draftData = {
+        attachments: [],
+        rawAttachmentData: [],
+        attachmentMimes: [],
+        mimeConstraints: '',
+        body: ''
+    };
     @Input() previousCommentFromNotification: SmComment[];
     @Input() enhanceCommentContainer: boolean = false;
     @Input() isActiveCommentEdited: boolean = false;
@@ -49,6 +56,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     @Input() isParentCommentEdited: boolean = false;
     @Input() isParentCommentDeleted: boolean = false;
     @Input() isPostDeleted: boolean = false;
+    @Input() isPostEdited: boolean = false;
     @Input() sessionId: string;
     @Input() outSessionId: string;
     activeSessionId: string;
@@ -61,8 +69,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         widget$: this._fuseFacadeService.widgetBgClasses$,
         config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
     };
-
-    @Input() MaximumAllowedPostImageRendering: number = 5;
 
     lineClampCharacterCount: number = 100;
 
@@ -84,6 +90,10 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     @ViewChild('previewMediaDialog')
     previewMediaDialog: TemplateRef<any>;
+    @ViewChild('postPara')
+    postPara: ElementRef<HTMLParagraphElement>;
+    @ViewChild('readMore')
+    readMore: ElementRef<HTMLSpanElement>;
     /**
      * Preview media dialog ref
      */
@@ -103,6 +113,9 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     };
     hasNoFurtherComments: boolean = false;
     showPreviousComment: boolean = false;
+    isCommentHistoryLoading: boolean = false;
+    showPreviousCommentData: boolean = false;
+    currentTheme: string = 'theme-default-2';
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -113,6 +126,16 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
         public smpService: SocialMediaPostsService
     ) {
         super('SmpTemplateComponent');
+
+        this._fuseFacadeService.getConfig().pipe(
+            takeUntil(this.unsubscribeAll$)
+        ).subscribe((themeData) => {
+            this.currentTheme = themeData.colorTheme
+        });
+    }
+
+    ngAfterViewInit(): void {
+        this.checkTextOverflow();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -161,11 +184,13 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 ) {
                     this.draftData.attachments = this.postData.Files;
                     if (this.postData.Files.length) {
-                        this.draftData.rawAttachmentData = this.postData.Files[0].URL;
-                        this.draftData.mimeConstraints = this.getFileType(
-                            this.draftData.rawAttachmentData,
-                            this.draftData.attachments[0].Ext
-                        );
+                        this.draftData.rawAttachmentData = this.postData.Files.map((furl) => furl.URL);
+                        this.draftData.attachmentMimes = this.draftData.rawAttachmentData.map((ratd, i) => {
+                            return this.getFileType(
+                                ratd,
+                                this.draftData.attachments[i].Ext
+                            );
+                        })
                     }
                 }
                 if (this.postData.SmParentComments) {
@@ -176,7 +201,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             if ((this.enhanceCommentContainer || this.mode === 'interaction-max') && loadCommentHistory)
                 this.loadCommentHistory();
             setTimeout(() => {
-                if (this.mode === 'interaction-min') this.scrollToBottom('smp-post-comment-container');
+                if (this.mode === 'interaction-min') this.scrollToBottom('comment-content-container');
             }, 500);
         } catch (e) {
             this.logger.error(
@@ -200,8 +225,10 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     scrollToBottom(className: string) {
         try {
-            const element = document.querySelector(`.${className}`);
-            element.scrollTop = element.scrollHeight;
+            setTimeout(() => {
+                const element = document.querySelector(`.${className}`);
+                element.scrollTop = element.scrollHeight;
+            }, 250);
         } catch (e) {
             this.logger.error(
                 '[SmpTemplateComponent.scrollToBottom] - Error occured while auto scrolling to bottom:',
@@ -221,8 +248,8 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     getFileType(fileName: string, mediaType?: string): string {
         try {
             const fileExtension = fileName.split('.').pop().toLowerCase();
-            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'gif'];
-            const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp'];
+            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'];
+            const imageExtensions = ['png', 'jpg', 'jpeg', 'bmp', 'gif'];
 
             if (videoExtensions.includes(fileExtension)) {
                 return 'video';
@@ -282,7 +309,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      * Method to preview the media in the post
      * @param {PostAttachment} previewData Post attachment data
      */
-    public previewMedia(previewData: PostAttachment): void {
+    public previewMedia(previewData: PostAttachment, content?: string): void {
         try {
             let otherData = null;
             if (previewData.MediaType.includes('image')) {
@@ -299,6 +326,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     type: previewData.MediaType,
                     src: previewData.MediaUrl
                 },
+                content,
                 otherData
             };
 
@@ -355,6 +383,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      * @param {any} evt File event
      */
     async onFileSelected(evt: any) {
+        let ref;
         try {
             const input = evt.target as HTMLInputElement;
             let resVal: Partial<PostFile>;
@@ -370,7 +399,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     );
                     return;
                 }
-                const ref = this._appUiService.showSnackbar(
+                ref = this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.uploadFileLoading'),
                     'loading'
                 );
@@ -382,7 +411,6 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                     return;
                 }
                 const Base64 = await this.convertToBase64(f);
-                this.draftData.rawAttachmentData = Base64;
                 if (this.fileUploadUrl?.MediaUploader) {
                     const formData = new FormData();
                     formData.append('file', f);
@@ -462,24 +490,25 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
 
                 this.dataChanged.emit(this.interactionId);
 
-                this.draftData.attachments = [
-                    {
-                        Id: TUtils.Generic.uuid(),
-                        SessionID: this.sessionId,
-                        Direction: 'OUT',
-                        Icon: maticonByExtension(ext),
-                        Ext: f.type,
-                        Name: resVal.Name,
-                        Source: resVal.Source,
-                        URL: resVal.URL,
-                        IsUploaded: true
-                    }
-                ];
+                this.draftData.attachments.push({
+                    Id: TUtils.Generic.uuid(),
+                    SessionID: this.sessionId,
+                    Direction: 'OUT',
+                    Icon: maticonByExtension(ext),
+                    Ext: f.type,
+                    Name: resVal.Name,
+                    Source: resVal.Source,
+                    URL: resVal.URL,
+                    IsUploaded: true
+                });
+                this.draftData.rawAttachmentData.push(Base64);
+                this.draftData.attachmentMimes.push(f.type);
                 setTimeout(() => {
-                    ref.dismiss();
+                    ref?.dismiss();
                 }, 3000);
             }
         } catch (e) {
+            ref?.dismiss();
             this.logger.error(
                 '[SmpTemplateComponent.onFileSelected] - Error occured while uploading attachment:',
                 JSON.stringify(e),
@@ -530,7 +559,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
     /**
      * Method to clear attachments
      */
-    async onClearAttachment() {
+    async onClearAttachment(index: number) {
         try {
             const confirmDialogRef = this._appUiService.showAppConfirmDialog(
                 'generic',
@@ -545,8 +574,9 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 .toPromise();
             if (dialogResult) {
                 this.draftData.mimeConstraints = '';
-                this.draftData.rawAttachmentData = '';
-                this.draftData.attachments = [];
+                this.draftData.rawAttachmentData.splice(index, 1);
+                this.draftData.attachmentMimes.splice(index, 1);
+                this.draftData.attachments.splice(index, 1);
                 this.dataChanged.emit(this.interactionId);
             }
         } catch (e) {
@@ -587,12 +617,14 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     async loadCommentHistory() {
         try {
+            this.isCommentHistoryLoading = true;
             const { response } = await SDKClient.loadComments({
                 postId: this.postData.PostId,
                 commentId: '',
                 startIndex: this.indexHolder[0][0],
                 endIndex: this.indexHolder[0][1]
             });
+            this.isCommentHistoryLoading = false;
             if (!response || (Array.isArray(response) && !response?.length)) {
                 this._appUiService.showSnackbar(
                     this.translocoService.translate('sharedComponents.socialMediaPosts.noCommentsFoundMessage'),
@@ -613,7 +645,9 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 else this.validateVisibleComments(checkerId);
             }
             this.flattenedCommentHistory = [...this.flattenedCommentHistory];
+            this.scrollToBottom('comment-content-container');
         } catch (e) {
+            this.isCommentHistoryLoading = false;
             this.logger.error(
                 '[SmpTemplateComponent.loadCommentHistory] - Error occured while loading comment history:',
                 JSON.stringify(e),
@@ -715,7 +749,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 nestLevel = this.flattenedCommentHistory[foundCommentIndex].nestLevel;
                 foundCommentIndex--;
             }
-            this.flattenedCommentHistory = [...this.flattenedCommentHistory]
+            this.flattenedCommentHistory = [...this.flattenedCommentHistory];
         } catch (e) {
             this.logger.error(
                 '[SmpTemplateComponent.validateVisibleComments] - Error occured while validating comment visibility:',
@@ -723,6 +757,38 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                 true
             );
             console.error(e);
+        }
+    }
+
+    openGallery(): void {
+        try {
+            this._appUiService.showCustomDialog(
+                'alert',
+                {
+                    type: 'gallery',
+                    media: this.postData?.PostAttachments.map((attachment) => ({
+                        type: this.getFileType(attachment.MediaUrl, attachment.MediaType),
+                        url: attachment.MediaUrl
+                    }))
+                },
+                'Post images',
+                {
+                    messageClasses: 'twd-whitespace-pre-line twd-break-words'
+                }
+            );
+        } catch (e) {}
+    }
+
+    /**
+     * Method to check if the post content actually overflows and enable read more button
+     */
+    checkTextOverflow(): void {
+        try {
+            const isOverflowing = this.postPara.nativeElement.scrollHeight > this.postPara.nativeElement.clientHeight;
+            if (isOverflowing) this.readMore.nativeElement.style.display = 'inline';
+            else this.readMore.nativeElement.style.display = 'none';
+        } catch (ex) {
+            console.error(ex)
         }
     }
 }

@@ -7,7 +7,7 @@ import { FuseProgressBarService } from '@fuse/components/progress-bar/progress-b
 import { AppDataService } from '@services/app-data.service';
 import { AppUiService } from '@services/app-ui.service';
 import { isStringHtml } from '@tmac/operators';
-import { SDKClient, TUtils } from '@tmac/sdk';
+import { IAgentData, SDKClient, TUtils } from '@tmac/sdk';
 import {
     EmailComponentInputs,
     EmailComponentMode,
@@ -380,8 +380,13 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
     async restoreFromArchive(file: any): Promise<void> {
         try {
             if (file && file.FileId) {
+                const agent: IAgentData = SDKClient.getAgentData();
                 const { response } = await TUtils.HttpClient.sendRequest<MediaStreamerSingleResponse<any>>({
                     urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
+                    requestArgs: {
+                        agentId: agent.agentId,
+                        tmacServer: agent.tmacServer
+                    },
                     method: 'PUT',
                     responseType: 'json'
                 });
@@ -424,7 +429,8 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 const f = input.files[0];
                 const ref = this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.uploadFileLoading'), 'loading');
                 if (
-                    this.email.MaxPayloadSize < (this.currentAttachmentSize + this.currentBodySize + f.size)
+                    this.email?.MaxPayloadSize &&
+                    this.email.MaxPayloadSize < this.currentAttachmentSize + this.currentBodySize + f.size
                 ) {
                     this._appUiService.showSnackbar(
                         this.translocoService.translate('sharedComponents.email.uploadFileSizeWarning'),
@@ -432,13 +438,16 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     );
                     return;
                 }
+
+                // We do this because for quick reply, there will be no session id assiciated
+                const uuid = TUtils.Generic.uuid();
                 const Base64 = await this.convertToBase64(f);
                 if (this.fileUploadUrl?.MediaUploader) {
                     const formData = new FormData();
                     formData.append('file', f);
                     formData.append('interaction_id', TUtils.Generic.uuid());
                     formData.append('organization_id', 'prod');
-                    formData.append('conv_id', this.email.SessionID);
+                    formData.append('conv_id', this.email?.SessionID ?? uuid);
                     formData.append('uploaded_by', SDKClient.getAgentData().agentId);
                     formData.append('other', '');
 
@@ -481,9 +490,12 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                 const Id = TUtils.Generic.uuid();
                 this.attachmentFileSizeMap[Id] = f.size;
 
+                // We do this for quick reply as no Files is associated
+                if(!this._email?.Files) this._email.Files = []
+
                 this._email.Files.push({
                     Id,
-                    SessionID: this.email.SessionID,
+                    SessionID: this.email?.SessionID ?? uuid,
                     Direction: 'OUT',
                     Icon: maticonByExtension(ext),
                     Ext: f.type,
@@ -610,9 +622,7 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     const link = document.createElement('a');
                     link.href = blobUrl;
                     link.setAttribute('download', file.Name);
-                    document.body.appendChild(link);
                     link.click();
-                    link.parentNode.removeChild(link);
                     setTimeout(() => {
                         window.URL.revokeObjectURL(blobUrl);
                     }, 60000);
@@ -667,8 +677,14 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
 
     onSendEmail(email): void {
         try {
-            if((this.currentAttachmentSize + this.currentBodySize) > this.email.MaxPayloadSize) {
-                this._appUiService.showSnackbar(this.translocoService.translate('sharedComponents.email.payloadSizeExceeded'), 'failure');
+            if (
+                this.email?.MaxPayloadSize &&
+                this.currentAttachmentSize + this.currentBodySize > this.email.MaxPayloadSize
+            ) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.email.payloadSizeExceeded'),
+                    'failure'
+                );
                 return;
             }
             this.sendEmail.emit(email)

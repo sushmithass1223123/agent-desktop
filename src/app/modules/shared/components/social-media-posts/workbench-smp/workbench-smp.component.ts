@@ -1,6 +1,6 @@
 import { AgentSkillListComponent } from '@modules/shared/components';
 import { initSmpostsSearchState, SocialMediaPostsService } from './../social-media-posts.service';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse, ResData } from 'app/interfaces';
 import { TwSmpWorkbenchConfig, TwWorkbenchPanelChannel, TwWorkbenchPanelGeneral } from '@ad/types';
@@ -19,6 +19,8 @@ import { AppDataService } from '@services/app-data.service';
 import { SMP_OUTBOX_REASONS } from 'app/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { AgentSkillListDataModel } from 'app/models';
+
+declare var document: any;
 
 export class SMPost {
     Mailbox?: string;
@@ -61,7 +63,9 @@ interface PostData {
     RejectReason: string;
     PostId?: string;
     ActiveCommentId?: string;
+    ParentCommentId?: string;
     IsItemDeleted?: boolean;
+    IsItemEdited?: boolean;
 }
 
 const channelMapper: any = {
@@ -282,7 +286,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
     // UI modifyers
     segregatedPosts: any = [];
 
-    MaximumAllowedPostImageRendering: number = 5;
     ShowPostDetails: boolean = false;
 
     /**
@@ -302,6 +305,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * Object to hold post data
      */
     postBodies: any = {};
+    isFullscreen: boolean = false;
+    currentTheme: string = 'theme-default-2';
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -312,6 +317,25 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
         private _matDialog: MatDialog
     ) {
         super('WorkbenchSmpComponent');
+
+        this._fuseFacadeService
+            .getConfig()
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((themeData) => {
+                this.currentTheme = themeData.colorTheme;
+            });
+    }
+
+    @HostListener('document:fullscreenchange', ['$event'])
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:MSFullscreenChange', ['$event'])
+    onFullScreenChange(event: Event) {
+        if (document.fullscreenElement) {
+            this.isFullscreen = true;
+        } else {
+            this.isFullscreen = false;
+        }
     }
 
     async ngOnInit() {
@@ -351,10 +375,6 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     this.switchTab('sentitem', true);
                 }
             });
-
-            this.MaximumAllowedPostImageRendering = (
-                this.channelConf.Config as TwSmpWorkbenchConfig
-            ).MaximumAllowedPostImageRendering;
 
             this.ShowPostDetails = (this.channelConf.Config as TwSmpWorkbenchConfig).ShowPostDetails;
         } catch (e) {
@@ -658,6 +678,15 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             this.chosenPostData?.SocialMediaData?.Posts?.PostId
                         );
                         if (filteredPost.length) this.openPost(filteredPost[0], true);
+                    } else if (this.notificationAction === 'smco_e' || this.notificationAction === 'smco_d') {
+                        const filteredPost = this.rawResponse.find(
+                            (rres) =>
+                                rres?.PostData?.ActiveCommentId ===
+                                    this.chosenPostData?.SocialMediaData?.Comments?.CommentId ||
+                                rres?.PostData?.ParentCommentId ===
+                                    this.chosenPostData?.SocialMediaData?.Comments?.CommentId
+                        );
+                        if (filteredPost) this.openPost(filteredPost, true);
                     } else {
                         const filteredPost = this.rawResponse.find(
                             (rres) =>
@@ -1082,9 +1111,10 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         OutSessionId: '',
                         PostId: x?.SocialMediaData?.Posts?.PostId,
                         ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
+                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId,
                         RouteId: '',
                         From: x?.From,
-                        To: '',
+                        To: x?.Mailbox,
                         Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
@@ -1098,7 +1128,11 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         IsItemDeleted:
                             x?.SocialMediaData?.Comments?.IsDeleted ||
                             x?.SocialMediaData?.Posts?.IsDeleted ||
-                            x?.SocialMediaData?.ParentComments?.IsDeleted
+                            x?.SocialMediaData?.ParentComments?.IsDeleted,
+                        IsItemEdited:
+                            x?.SocialMediaData?.Comments?.IsEdited ||
+                            x?.SocialMediaData?.Posts?.IsEdited ||
+                            x?.SocialMediaData?.ParentComments?.IsEdited
                     }
                 };
             });
@@ -1149,7 +1183,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         PostId: x?.SocialMediaData?.Posts?.PostId,
                         RouteId: '',
                         From: x?.SocialMediaData?.Posts?.AccountName,
-                        To: '',
+                        To: x?.Mailbox,
                         Subject: x?.SocialMediaData?.Posts?.PostText?.Text,
                         EmailType: '',
                         Skill: '',
@@ -1208,8 +1242,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
                         RouteId: x?.RouteId ?? '',
-                        From: x?.From,
-                        To: '',
+                        From: x?.SocialMediaData?.Comments?.FromName,
+                        To: x?.Mailbox,
                         Subject: x?.Body,
                         EmailType: '',
                         Skill: '',
@@ -1270,8 +1304,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         SessionId: x?.InSessionID,
                         OutSessionId: x?.SessionID,
                         RouteId: x?.RouteId ?? '',
-                        From: x?.From,
-                        To: '',
+                        From: x?.SocialMediaData?.ParentComments?.FromName,
+                        To: x?.From,
                         Subject: x?.SocialMediaData?.Comments?.CommentText?.Text,
                         EmailType: '',
                         Skill: '',
@@ -1282,7 +1316,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         HasAttachment: x?.HasAttachments,
                         IsEmailProbableSpam: false,
                         RejectReason: '',
-                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId
+                        ActiveCommentId: x?.SocialMediaData?.Comments?.CommentId,
+                        ParentCommentId: x?.SocialMediaData?.ParentComments?.CommentId
                     }
                 };
             });
@@ -1500,6 +1535,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                             IsCommentDeleted: inboxRes.SocialMediaData.Comments?.IsDeleted,
                             IsCommentEdited: inboxRes.SocialMediaData.Comments?.IsEdited,
                             IsPostDeleted: inboxRes.SocialMediaData.Posts?.IsDeleted,
+                            IsPostEdited: inboxRes.SocialMediaData.Posts?.IsEdited,
                             RouteId: post.PostData.RouteId,
                             PostDetails: {
                                 To: post.PostData.To,
@@ -1525,14 +1561,14 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 }
                 let modifiedAttachmentData: any[] = [];
                 if (outboxRes?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                    modifiedAttachmentData = [
-                        {
+                    modifiedAttachmentData = outboxRes.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                        return {
                             IsCloud: true,
-                            Url: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                            Url: attdat?.MediaUrl,
                             IsUploaded: true,
-                            Ext: outboxRes?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
-                        }
-                    ];
+                            Ext: attdat?.MediaType
+                        };
+                    });
                 }
 
                 let tempAttachments = await this.requestAttachmentData(
@@ -1564,6 +1600,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                         IsCommentDeleted: outboxRes.SocialMediaData.Comments?.IsDeleted,
                         IsCommentEdited: outboxRes.SocialMediaData.Comments?.IsEdited,
                         IsPostDeleted: outboxRes.SocialMediaData.Posts?.IsDeleted,
+                        IsPostEdited: outboxRes.SocialMediaData.Posts?.IsEdited,
                         RouteId: post.PostData.RouteId,
                         PostDetails: {
                             To: post.PostData.To,
@@ -1984,9 +2021,8 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
      * @param {SMPost[]} posts post list
      */
     async closePosts(posts: SMPost[]): Promise<void> {
-
         // take user consent before closing the post in case of draft
-        if(this.currentTab === 'draft') {
+        if (this.currentTab === 'draft') {
             const confirmDialogRef = this._appUiService.showAppConfirmDialog(
                 'generic',
                 this.translocoService.translate('widgets.smpControls.closeDraftConfirmationHeader'),
@@ -1997,9 +2033,9 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
             const dialogResult = await confirmDialogRef.afterClosed().pipe(takeUntil(this.unsubscribeAll)).toPromise();
             if (!dialogResult) {
                 return;
-            } 
+            }
         }
-        
+
         const loader = this._appUiService.showSnackbar(
             this.translocoService.translate('sharedComponents.socialMediaPosts.closePostsLoading'),
             'loading'
@@ -2054,5 +2090,42 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                 'failure'
             );
         }
+    }
+
+    onToggleFullscreen(): void {
+        try {
+            const mainWbsmp: any = document.getElementById('mainContentWbsmp');
+
+            if (!this.isFullscreen) {
+                if (mainWbsmp.requestFullscreen) {
+                    mainWbsmp.requestFullscreen();
+                } else if (mainWbsmp.webkitRequestFullscreen) {
+                    mainWbsmp.webkitRequestFullscreen();
+                } else if (mainWbsmp.msRequestFullscreen) {
+                    mainWbsmp.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+            this.isFullscreen = !this.isFullscreen;
+        } catch (e) {}
+    }
+
+    trackByChannel(index: number, item: any): any {
+        return Object.keys(item)[0];
+    }
+
+    trackBySkill(index: number, item: any): any {
+        return Object.keys(item)[0];
+    }
+
+    trackByItem(index: number, item: SMPost): any {
+        return item.PostData.SessionId;
     }
 }

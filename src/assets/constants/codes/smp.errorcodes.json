@@ -1,0 +1,12 @@
+{
+    "1": "Success",
+    "0": "Success",
+    "-1": "Failed",
+    "-30": "AccountNotFound",
+    "-28": "NoAccountExists",
+    "-20": "MailboxNotEnabled",
+    "-21": "SendNotEnabledForMailbox",
+    "-22": "GenericExceptionOnSend",
+    "-326": "MediaMatrixLoading",
+    "-327": "SendExceptionWhileUsingIWFlow"
+}

@@ -29,7 +29,9 @@ import {
     TextChatMessageReceivedEvent,
     TextChatRemoteUserConnectedEvent,
     TUtils,
-    WrcCallTypes
+    WrcCallTypes,
+    TextChatAgentConnectedEvent,
+    TextChatAgentDisconnectedEvent
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { AGENT_FEATURES, AV_ERRORS, AV_FAIL_CODES, PERMISSION_ERRORS } from 'app/constants';
@@ -310,6 +312,15 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     endCallAfterScreenShareEnd: boolean = false;
 
     IsScreenShareDisabled: boolean;
+    // Property to hold conference agents list
+    conferenceAgentList: {
+        AgentId: string;
+        AgentName: string;
+        ConferenceType: string;
+        TmacServer: string;
+        IsBotAgent: boolean;
+        InteractionId: any;
+    }[] = [];
 
     /**
      * Constructor
@@ -414,6 +425,8 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     { event: 'TextChatMessageReceivedEvent' },
                     { event: 'ActionMessageReceivedEvent' },
                     { event: 'TextChatDisconnectedEvent' },
+                    { event: 'TextChatAgentConnectedEvent' },
+                    { event: 'TextChatAgentDisconnectedEvent' },
                     { event: 'CallHoldEvent', noRepeat: true },
                     { event: 'CallHoldReconnectEvent', noRepeat: true },
                     { event: 'CallConferenceCompletedEvent', noRepeat: true }
@@ -443,7 +456,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         });
 
         // listen to tmac interaction events
-        // SDKClient.events.on('AVControlMessageReceivedEvent', this.AVControlMessageReceivedEvent);
         // SDKClient.events.on('TextChatDisconnectedEvent', this.TextChatDisconnectedEvent);
         // SDKClient.events.on('TextChatMessageReceivedEvent', this.TextChatMessageReceivedEvent);
         // SDKClient.events.on('ActionMessageReceivedEvent', this.ActionMessageReceivedEvent);
@@ -569,7 +581,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
 
         // start call
         if (
-            (this.interactionDetails.ConferenceType === 'conf' || forceJoin) &&
+            (this.interactionDetails.ConferenceType.includes('conf') || forceJoin) &&
             (this.data.Data?.AvCallConstraints?.isAgentOnActiveCall || this.interactionDetails.Direction === 'in')
         ) {
             this.avConn.join(this.wrcCallType, { mode: 'conference' });
@@ -604,11 +616,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
         }
 
         this.muteAVOnHold = {
-            enabled:
-                widgetData.MuteAVOnHold?.AgentAudio ||
-                widgetData.MuteAVOnHold?.AgentVideo ||
-                widgetData.MuteAVOnHold?.CustomerAudio ||
-                widgetData.MuteAVOnHold?.CustomerVideo,
+            enabled: widgetData.MuteAVOnHold?.enabled,
             agentAudio: widgetData.MuteAVOnHold?.AgentAudio,
             agentVideo: widgetData.MuteAVOnHold?.AgentVideo,
             customerAudio: widgetData.MuteAVOnHold?.CustomerAudio,
@@ -690,7 +698,7 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                     }
                     // If its an incoming call fron an agent, skip here as we already handle that in
                     // request av controll message event
-                    const isIncomingCallFromConferenceAgent = this.data.Data?.ConferenceAgentList.length
+                    const isIncomingCallFromConferenceAgent = this.conferenceAgentList.length
                         ? this.data.Data.ConferenceAgentList.some(
                               (agent: any) =>
                                   evt.data.owner === `${agent.InteractionId}_${agent.AgentId}_${agent.AgentName}`
@@ -715,6 +723,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                             this.destroyWidget();
                             // notify agent rejected the call
                             this.notifyCallConfirmation(false);
+                            // Show a toaster notification to the agent
+                            this._appUIService.showSnackbar(
+                            this.translocoService.translate('widgets.audioVideoControls.callRejectedByAgent'),
+                            'info'
+                        );
                         }
                     };
                     const dynamicLabels = [
@@ -813,7 +826,7 @@ if (error === 'Screenshare Was Cancelled') {
                         });
                     } else {
                         // todo: this change to be handled at TMAC SDK side, look for on user left
-                        if(this.interactionDetails.ConferenceType === 'transfer') return;
+                        // if(this.interactionDetails.ConferenceType === 'transfer') return;
                         // other agent connected
                     }
                     // add the level
@@ -959,7 +972,7 @@ if (error === 'Screenshare Was Cancelled') {
                             };
                             // restricted source agent getting added to transferred call
                             // todo: this change should be handled at TMAC SDK side
-                            if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
+                            // if(this.interactionDetails.ConferenceType === 'transfer' && newStreamObj.streamInfo.user.toLowerCase() !== 'customer') return;
                             this.userList.push(newStreamObj);
                         })
                     }
@@ -1054,6 +1067,28 @@ if (error === 'Screenshare Was Cancelled') {
         }
     };
 
+    TextChatAgentConnectedEvent(evt: TextChatAgentConnectedEvent): void {
+        let tmacServer = '';
+        try {
+            const agentInfo = JSON.parse(evt.AgentInfoJson);
+            const extraParam = JSON.parse(agentInfo.extraparam);
+            tmacServer = extraParam.serverName;
+        } catch (error) { }
+
+        this.conferenceAgentList.push({
+            AgentId: evt.AgentId,
+            AgentName: evt.AgentName,
+            ConferenceType: evt.ConferenceType,
+            IsBotAgent: evt.IsBotAgent,
+            TmacServer: tmacServer,
+            InteractionId: JSON.parse(evt.AgentInfoJson)?.extraparam?.interactionId
+        });
+    }
+
+    TextChatAgentDisconnectedEvent(evt: TextChatAgentDisconnectedEvent): void {
+        this.conferenceAgentList = this.conferenceAgentList.filter((c) => c.AgentId !== evt.AgentId);
+    }
+
     /**
      * AVControlMessageReceivedEvent Handler
      * @method AVControlMessageReceivedEvent
@@ -1107,7 +1142,7 @@ if (error === 'Screenshare Was Cancelled') {
             // forward the av messages to av channel
             this.avConn?.onMessage(
                 evt.Type === 'addscreenshare'
-                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType === 'conf' })
+                    ? JSON.stringify({ ...JSON.parse(evt.Message), isConferenceAgent: this.interactionDetails.ConferenceType.includes('conf') })
                     : evt.Message
             );
         } catch (e) {
@@ -1159,14 +1194,19 @@ if (error === 'Screenshare Was Cancelled') {
                         this.showUI = true;
                         this.agentAvRequestConsented = true;
                         if (this.isCustomerAcknowledged) this.startAVCall();
-                    } else this.destroyWidget();
+                    } else {
+                         // close the call widget
+                         this.destroyWidget();
+                         // notify agent rejected the call
+                         this.notifyCallConfirmation(false);
+                    }
+                    
                 });
             }
         } catch (e) {
             this.logger.error('error occured in handleAvRequestFromAgent', e, false);
         }
     }
-
     /**
      *
      * @param type - type of mute [i.e 'audio' | 'video']
@@ -1176,6 +1216,8 @@ if (error === 'Screenshare Was Cancelled') {
         const parsedMessage = JSON.parse(data.Message);
         let userName = parsedMessage.owner;
         userName = userName.split('_').pop() !== '' ? userName.split('_').pop() : data.User;
+
+    // Update muted lists
         switch (type) {
             case 'audio':
                 if (data.Type === 'mute') {
@@ -1213,45 +1255,21 @@ if (error === 'Screenshare Was Cancelled') {
                 value: type
             }
         ];
-        if (this.displayToasters) {
-            if (type === 'audio'){
+        // if (this.displayToasters) {
+        //     if (type === 'audio'){
+        //     this._appUIService.showSnackbar(
+        //         this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+        //         'warning'
+        //     );
+        // }
+        // }
+if ( this.callType?.toLocaleLowerCase() === 'video' && type === 'video'  ||type === 'audio') {
             this._appUIService.showSnackbar(
-                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
-                'warning'
-            );
-        }
-        }
-        const isAudioMuted = this.mutedRemoteUsers.audio.includes(data.User.toLowerCase());
-        const isVideoMuted = this.mutedRemoteUsers.video.includes(data.User.toLowerCase());
-        const videocallonly = this.callType?.toLocaleLowerCase() === 'video';
-        const bothMutedLabels = [
-            {
-                key: '#userName',
-                value: userName
-            },
-            {
-                key: '#muteType',
-                value: data.Type
-            },
-            {
-                key: '#muteDisplayText',
-                value: muteDisplayTextTypes?.length ? (data.Type === 'mute' ? muteDisplayTextTypes[0] : muteDisplayTextTypes[1]) : data.Type
-            },
-            {
-                key: '#streamType',
-                value: 'both audio and video'
-            }
-        ];
-    
-        if (isAudioMuted && isVideoMuted && videocallonly) {
-            this._appUIService.showSnackbar(
-                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
-              'warning'
-            );
-        } else if (!isAudioMuted && !isVideoMuted && videocallonly) {
-            this._appUIService.showSnackbar(
-                this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), bothMutedLabels),
-               'warning'
+            this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.remoteMuteTypeMsg'), dynamicLabels),
+            'warning',
+            'top',
+            'center',
+            2000               
             );
         }
     
@@ -1410,9 +1428,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                 case 'request_screenshare':
                     {
                         if (msg.status === 'accepted') {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareAccepted'));
+                            this._appUIService.showSnackbar(this.translocoService
+                                .translate('widgets.audioVideoControls.requestScreenShareAccepted'));
                         } else if (msg.status === 'rejected') {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.audioVideoControls.requestScreenShareRejected'));
+                            this._appUIService.showSnackbar(this.translocoService
+                                .translate('widgets.audioVideoControls.requestScreenShareRejected'),
+                            'failure');
                         }
                     }
                     break;
@@ -1476,11 +1497,39 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                         }
                     }
                     break;
+                case 'hold':
+                case 'unhold':
+                    // this case is added to handle notifying hold/unhold to another agent when in conference.
+                    const dynamicLabels = [
+                        {
+                            key: '#owner',
+                            value: this.getUserName(evt.User) ?? 'Agent'
+                        },
+                        {
+                            key: '#type',
+                            value: type
+                        }
+                    ];
+                    this._appUIService.showSnackbar(
+                        this._appDataService.getUpdatedLabel(this.translocoService.translate('widgets.audioVideoControls.'+type+'Notification'), dynamicLabels),
+                        'warning'
+                    );
+                break;
             }
         } catch (error) {
             throwADError('Error in TwAudioVideoControlsComponent.ActionMessageReceivedEvent', error);
         }
     };
+
+    /**
+     * This method is used to get Name of the user present in the call by passing the id
+     * @param id = user
+     * @returns name of user
+     */
+    getUserName(id) {
+        return this.userList.find(u => u.streamInfo.id === id)?.streamInfo.user;
+    }
+
 
     /**
      * To handles CallHoldEvent
@@ -1490,6 +1539,11 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         // check the interaction
         if (evt.InteractionID !== this.interactionId || !this.connected) {
             return;
+        }
+
+        if(!this.manualHold && !this.hold) {
+            this.avConn.hold();
+            this.hold = true;
         }
 
         this.onCallHoldEvent = true;
@@ -1532,17 +1586,10 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'muteVideo';
-            } else {
-                return;
-            }
+            } else return;
 
             this.requestMuteUnmuteCustomerAV(type, 'mute', actionMessage);
-            return;
         }
-
-        // hold the call
-        this.avConn.hold();
-        this.hold = true;
     };
 
     /**
@@ -1553,6 +1600,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
         // check the interaction
         if ((evt.InteractionID !== this.interactionId) || this.manualHold || !this.connected) {
             return;
+        }
+
+        // un hold the call
+        if(!this.manualHold && this.hold) {
+            this.avConn.unHold();
+            this.hold = false;
         }
 
         this.onCallHoldEvent = false;
@@ -1601,21 +1654,22 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'unmuteVideo';
-            }
+            } else return;
 
             this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
-            return;
         }
-
-        // un hold the call
-        this.avConn.unHold();
-        this.hold = false;
     };
 
     CallConferenceCompletedEvent = (evt: CallConferenceCompletedEvent) => {
         // check the interaction
         if ((evt.InteractionID !== this.interactionId) || this.manualHold) {
             return;
+        }
+
+        // un hold the call
+        if(!this.manualHold && this.hold) {
+            this.avConn.unHold();
+            this.hold = false;
         }
 
         this.onCallHoldEvent = false;
@@ -1658,15 +1712,10 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
             } else if (this.muteAVOnHold.customerVideo) {
                 type = 'video';
                 actionMessage.type = 'unmuteVideo';
-            }
+            } else return;
 
             this.requestMuteUnmuteCustomerAV(type, 'unmute', actionMessage);
-            return;
         }
-
-        // un hold the call
-        this.avConn.unHold();
-        this.hold = false;
     };
 
     /**
@@ -1845,7 +1894,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                     );
                     confirmDialogRef.afterClosed().subscribe((resp) => {
                         if (resp) {
-                            this._appUIService.showSnackbar(
+                            const snackbarRef = this._appUIService.showSnackbar(
                                 this.translocoService.translate('widgets.audioVideoControls.saveSnapshotLoading'),
                                 'loading'
                             );
@@ -1863,6 +1912,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                 { base64 }
                             )
                                 .then((result: IResponse) => {
+                                    snackbarRef?.dismiss();
                                     if (result.response && result.response.ImageUrl) {
                                         // snapsot saved sucessfully
                                         this._appUIService.showSnackbar(
@@ -1904,6 +1954,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                     }
                                 })
                                 .catch(() => {
+                                    snackbarRef?.dismiss();
                                     this._appUIService.showSnackbar(
                                         this.translocoService.translate('widgets.audioVideoControls.snapshotSaveFailed'),
                                         'failure'
@@ -1941,7 +1992,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
 
                 // if the RemoteRequestTimeout is not configured, then do not wait for ack or request timeout
                 if (!this.data.Data.Snapshot?.RemoteRequestTimeout) {
-                    snackRef.dismiss();
+                    snackRef?.dismiss();
                     return;
                 }
 
@@ -1971,7 +2022,7 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
                                 })
                             });
                         } catch (error) {}
-
+                        snackRef?.dismiss();
                         this._appUIService.showSnackbar(
                             this.translocoService.translate('widgets.audioVideoControls.snapshotRequestTimeout'),
                             'failure'
@@ -1989,41 +2040,12 @@ if(evt.User !== this.user.agentId && evt.User !== 'customer') return;
      * @method holdCall
      */
     public holdUnholdCall(): void {
-        const actionMessage = {
-            source: 'customer',
-            options: {},
-            data: {
-                interactionId: this.interactionId
-            },
-            status: 'request',
-            type: this.hold ? 'unmuteAudioVideo' : 'muteAudioVideo',
-            eventName: 'ActionMessage',
-            id: TUtils.Generic.uuid()
-        };
-    
-        // Check if the call is already on hold 
-        if (this.hold || !this.muteAVOnHold.customerVideo || !this.muteAVOnHold.agentVideo) {
-            // Mute the AV connection
-            this.avConn.mute(false, false);
-            this.videoMuted = true;
-            this.audioMuted = true;
-            this.requestMuteUnmuteCustomerAV('AV', 'mute', actionMessage);
-        } else {
-            // Unmute the AV connection
-            this.avConn.unMute(true, true);
-            this.videoMuted = false;
-            this.audioMuted = false;
-            this.requestMuteUnmuteCustomerAV('AV', 'unmute', actionMessage);
-        }
-    
         this.manualHold = !this.manualHold;
 
         // check the hold flag and checks if agentaudio is true or false
-        if (this.hold || !this.muteAVOnHold.agentVideo ) {
+        if (this.hold) {
             // un hold the call
             this.avConn.unHold();
-           this.muteUnmuteVideoCall();
-           this.muteUnmuteAudioCall();
 
             if (this.data.Data.Source === 'TwChatControlsComponent') {
                 // if (typeof this.data.Data.Opener.unHoldInteraction === 'function') {

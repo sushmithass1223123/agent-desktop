@@ -12,10 +12,9 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { fuseAnimations } from '@fuse/animations';
-import { AgentSkillListComponent, SnackbarComponent } from '@modules/shared/components';
+import { AgentSkillListComponent } from '@modules/shared/components';
 import { TWidgetWrapper } from '@modules/t-widgets/utils';
 import { AgentFeaturesService } from '@services/agent-features.service';
 import { AOTWidgetService } from '@services/aot-widget.service';
@@ -164,7 +163,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     replyEditorModal: {
         sendEmail: (email: EmailComponentInputs) => void;
         templateRef: any;
-        sendingEmail: MatSnackBarRef<SnackbarComponent>;
+        sendingEmail: any;
     };
     /**
      * Fuse custom config
@@ -1069,7 +1068,14 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                                 this.translocoService.translate('sharedComponents.email.emailsAssigned'),
                                                 'failure'
                                             );
-                                        } else {
+                                        } 
+                                        if (res.failedList.items.some((f) => f.responseCode === -338)) {
+                                            this.appUiService.showSnackbar(
+                                              this.translocoService.translate('sharedComponents.email.emailPullErrorFailedToPullFromQueueWhenAgentIsInvalidState'),
+                                              'failure'
+                                            );
+                                          }
+                                      else {
                                             this.appUiService.showSnackbar(
                                                 this.translocoService.translate('sharedComponents.email.someEmailsAssigned'),
                                                 'failure'
@@ -1087,6 +1093,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                                         this.translocoService.translate('sharedComponents.email.CheckerEmailAutorization'),
                                         'failure'
                                     );
+
                                 } else if (res.failedList.items.length === 1 && EMAIL_SEND_STATUS[res.failedList.items[0]?.responseCode]) {
                                     let errorMsg = `${this.translocoService.translate(
                                         `sharedComponents.email.emailPullFailed`
@@ -1580,6 +1587,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
     setComponentState(action: ComponentActions, payload?: any): void {
         switch (action) {
             case 'emails/search/failure':
+                this.advancedSearch.snackbarRef?.dismiss();
                 this.advancedSearch.snackbarRef = this.appUiService.showSnackbar(payload?.msg, 'failure');
                 return;
 
@@ -1603,6 +1611,7 @@ export class WorkbenchEmailComponent extends TWidgetWrapper implements OnInit, A
                 break;
 
             case 'emails/failure':
+                this.advancedSearch.snackbarRef?.dismiss();
                 this.emailSearchRes.loading = false;
                 this.emailSearchRes.msg = this.translocoService.translate('sharedComponents.email.getEmailsFailed');
                 this.emailSearchRes.error = true;

@@ -208,6 +208,10 @@ export interface TwChatControls<T> extends InteractionWidget<TwChatControlsData,
  */
 export type TwChatControlsData = {
     /**
+     * Config to load AV related functionalities in the new external widget
+     */
+    ExternalAVWidget: ExternalAVWidget;
+    /**
      * Config to differentiate if the call is on hard phone
      */
     IsPhoneAudio?: boolean;
@@ -478,7 +482,24 @@ export type TwChatControlsData = {
      * Flag to decide whether to sanitiza agent inputs or not
      */
     EnableAgentMessageSanitization: boolean;
+
+    /**
+     * to maintain all SMM releated configurations
+     */
+    SMM: {
+        attachments: {
+            /**
+             * list of channels that are allowed to send attachments during the chat
+             */
+            allowedChannels: string;
+        }
+    }
 };
+
+export interface ExternalAVWidget {
+    Enabled: boolean,
+    Url: string
+}
 
 export interface XssSymbolEntityMap {
     [key: string]: string;

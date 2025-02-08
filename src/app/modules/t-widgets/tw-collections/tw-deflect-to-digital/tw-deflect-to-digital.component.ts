@@ -134,6 +134,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
      * @param {sendTemplate} template
      */
     async sendTemplate(template: string): Promise<void> {
+        let snackbarRef;
         try {
             // check if any interaction is present
             if (!this.interactionId) {
@@ -150,7 +151,7 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 return;
             }
 
-            this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectLoading'), 'loading');
+            snackbarRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectLoading'), 'loading');
             const res = await SDKClient.deflectToDigital({
                 interactionId: this.interactionId.toString(),
                 customerContact: this.getCustomerContact(),
@@ -169,13 +170,14 @@ export class TwDeflectToDigitalComponent extends TWidgetWrapper implements OnIni
                 statusLockTimeout: this.data.Data.StatusLockTimeout,
                 reservedStatusCode: this.data.Data.ReservedStatusCode
             });
-
+            snackbarRef?.dismiss();
             if (res.response.ResultCode < 0) {
                 throwADError('SDKClient.deflectToDigital failed', res.response.ResultMessage);
             }
             this.textTemplatesRef.clearAllData();
             this._appUIService.showSnackbar(res.response.ResultMessage);
         } catch (e) {
+            snackbarRef?.dismiss();
             console.error(e);
             if (e instanceof ADError) {
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.deflectToDigital.deflectError') + e.message, 'failure');

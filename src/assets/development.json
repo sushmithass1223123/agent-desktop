@@ -217,7 +217,7 @@
                         "Description": "",
                         "Type": "twn-supervisor",
                         "Config": { "Enabled": true, "Icon": "supervised_user_circle" },
-                        "Data": { "Path": "/supervisor", "Active": true }
+                        "Data": { "Path": "/supervisor", "Active": false }
                     },
                     {
                         "Name": "Voice",
@@ -294,9 +294,9 @@
                         "Widgets": {
                             "Static": [
                                 {
-                                    "Name": "Wallboard",
+                                    "Name": "Customer Journey",
                                     "Description": "",
-                                    "Type": "tw-wallboard",
+                                    "Type": "tw-customer-journey",
                                     "Config": {
                                         "Enabled": true,
                                         "Hidden": false,
@@ -304,18 +304,26 @@
                                         "Anchor": true,
                                         "AOT": false,
                                         "AutoOpen": false,
-                                        "Icon": "dvr",
+                                        "Icon": "storage",
                                         "Class": "",
-                                        "Position": { "X": 2, "Y": 3 },
-                                        "Actions": [],
+                                        "Position": { "X": 2, "Y": 1 },
+                                        "Actions": ["maximize", "collapse"],
                                         "ViewState": "restore",
                                         "Header": true,
                                         "Pinned": false
                                     },
                                     "Data": {
-                                        "Role": "agent",
-                                        "SLEnabled": true,
-                                        "HideSkillFilter": { "Type": "startswith", "Value": ["DAC"] }
+                                        "IframeBaseUrl": "",
+                                        "NoOfRecords": 10,
+                                        "SentimentDashboardUrl": "",
+                                        "Columns": [
+                                            "InteractionDate",
+                                            "Channel",
+                                            "Direction",
+                                            "AgentName",
+                                            "EmailID",
+                                            "Actions"
+                                        ]
                                     }
                                 },
                                 {
@@ -678,13 +686,6 @@
                                     "Data": {
                                         "TASUrl": "https://dicedev.tetherfi.cloud/TAS/Quiz/Index",
                                         "agentStatusChange": true,
-                                        "InteractionConstraints": {
-                                            "ValidateFor": ["textchat"],
-                                            "AllowSupervisorToBargeIn": true,
-                                            "AllowSupervisorToChatSilentMonitor": true,
-                                            "AllowSupervisorToChatWhisper": true,
-                                            "AllowSupervisorToChatConference": true
-                                        },
                                         "facCodes": [
                                             { "feature": "barge-in", "code": "*79" },
                                             { "feature": "silent", "code": "*78" }
@@ -1599,6 +1600,10 @@
                                                     "Pinned": false
                                                 },
                                                 "Data": {
+                                                    "ExternalAVWidget": {
+                                                        "Enabled": true,
+                                                        "Url": "https://dicedev.tetherfi.cloud/adavui?agentId=$agentId&stationId=$stationId"
+                                                    },
                                                     "IsPhoneAudio": false,
                                                     "Transfer": {
                                                         "Allowed": true,
@@ -1740,6 +1745,7 @@
                                                     "EndInteractionOnAVEnd": false,
                                                     "CloseInteractionOnEnd": false,
                                                     "MuteAVOnHold": {
+                                                        "enabled": true,
                                                         "AgentAudio": true,
                                                         "AgentVideo": true,
                                                         "CustomerAudio": true,
@@ -1757,6 +1763,11 @@
                                                         " ": "&nbsp;",
                                                         "\n": "&#10;",
                                                         "\r": "&#13;"
+                                                    },
+                                                    "SMM": {
+                                                        "attachments": {
+                                                            "allowedChannels": "line,whatsapp,we,fb,viber,telegram,twitter"
+                                                        }
                                                     }
                                                 }
                                             },
@@ -2556,31 +2567,26 @@
                                                         "Agent": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": true,
+                                                            "Blind": false,
                                                             "Comments": true,
                                                             "Source": {
                                                                 "Use": "agentId",
                                                                 "Display": "agentName",
                                                                 "FreeTextAllowed": false
                                                             },
-                                                            "AllowedStates": ["Available", "Ready"],
+                                                            "AllowedStates": [],
                                                             "TeamFilter": false,
-                                                            "Columns": [
-                                                                "FirstName",
-                                                                "LastName",
-                                                                "AgentID",
-                                                                "CurrentAgentStatus"
-                                                            ]
+                                                            "Columns": []
                                                         },
                                                         "Skill": {
                                                             "Allowed": true,
                                                             "Consult": true,
-                                                            "Blind": true,
-                                                            "Comments": true,
+                                                            "Blind": false,
+                                                            "Comments": false,
                                                             "Source": {
                                                                 "Use": "vdn",
                                                                 "Display": "skill",
-                                                                "FreeTextAllowed": true
+                                                                "FreeTextAllowed": false
                                                             },
                                                             "ChannelPrefix": ["EM"],
                                                             "Columns": [],
@@ -2593,8 +2599,7 @@
                                                         }
                                                     },
                                                     "MaxFileUploadSize": 20971520,
-                                                    "AsyncReplySendTimeout": 60000,
-                                                    "MaximumAllowedPostImageRendering": 1
+                                                    "AsyncReplySendTimeout": 60000
                                                 }
                                             },
                                             {
@@ -2611,7 +2616,7 @@
                                                     "Icon": "person",
                                                     "Class": "",
                                                     "Position": { "X": 4, "Y": 2 },
-                                                    "Actions": ["maximize", "float"],
+                                                    "Actions": ["maximize", "collapse"],
                                                     "ViewState": "restore",
                                                     "Header": true,
                                                     "Pinned": false
@@ -2812,6 +2817,39 @@
                                                             "required": false,
                                                             "validation_regex": ""
                                                         }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "Name": "Customer Journey",
+                                                "Description": "",
+                                                "Type": "tw-customer-journey",
+                                                "Config": {
+                                                    "Enabled": true,
+                                                    "Hidden": false,
+                                                    "Static": false,
+                                                    "Anchor": true,
+                                                    "AOT": false,
+                                                    "AutoOpen": false,
+                                                    "Icon": "storage",
+                                                    "Class": "",
+                                                    "Position": { "X": 2, "Y": 1 },
+                                                    "Actions": ["maximize", "collapse"],
+                                                    "ViewState": "collapse",
+                                                    "Header": true,
+                                                    "Pinned": false
+                                                },
+                                                "Data": {
+                                                    "IframeBaseUrl": "",
+                                                    "NoOfRecords": 10,
+                                                    "SentimentDashboardUrl": "",
+                                                    "Columns": [
+                                                        "InteractionDate",
+                                                        "Channel",
+                                                        "Direction",
+                                                        "AgentName",
+                                                        "EmailID",
+                                                        "Actions"
                                                     ]
                                                 }
                                             }
@@ -3155,7 +3193,7 @@
                                     },
                                     "Data": {
                                         "General": {
-                                            "WorkbenchUrl": "http://dicedev.tetherfi.cloud:55005/api/workbench"
+                                            "WorkbenchUrl": "https://dicedev.tetherfi.cloud:55005/api/workbench"
                                         },
                                         "Channels": [
                                             {
@@ -3267,7 +3305,6 @@
                                                     "SearchPollingInterval": 0,
                                                     "MaxSearchRange": 30,
                                                     "SearchDuration": 24,
-                                                    "MaximumAllowedPostImageRendering": 1,
                                                     "ShowPostDetails": false
                                                 }
                                             }
@@ -3525,7 +3562,7 @@
     },
     "AppConfigs": {
         "TitleName": "Agent Desktop",
-        "Theme": "theme-default-2",
+        "Theme": "theme-default",
         "Font": "wf-muli",
         "Logos": {
             "Favicon": "",
@@ -3617,5 +3654,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.8.0"
+    "Version": "5.10.0"
 }

@@ -335,7 +335,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
             this.filteredAgents = this.agentList;
         } else {
             this.filteredAgents = this.agentList.filter((agentItem) => {
-                return agentItem.AgentName.toLowerCase().includes(searchTerm);
+                return agentItem.AgentName.toLowerCase().includes(searchTerm) ||agentItem.AgentLoginID.toLowerCase().includes(searchTerm);
             });
         }
     }
@@ -456,7 +456,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
     public performAgentAction(agent: SuAgentModel, feature: AgentFeatures): void {
         switch (feature.Feature.toLowerCase()) {
             case AGENT_FEATURES.AllowSupervisorToCapturePicture:
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataloadingMsg'), 'loading');
+                const snackbarRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentDataloadingMsg'), 'loading');
                 SDKClient.getAgentActivity(
                     {
                         agentId: agent.AgentLoginID,
@@ -472,6 +472,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                     { agent }
                 )
                     .then((dt: IResponse) => {
+                        snackbarRef?.dismiss();
                         const response = dt.response;
                         const agentInfo = dt.userObject.agent;
                         if (response.Response < 0) {
@@ -504,6 +505,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                         });
                     })
                     .catch((error: string) => {
+                        snackbarRef?.dismiss();
                         this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentActivityFailed'), 'failure');
                         this.logger.error('Error in performAgentAction.AgentSnapShotEvent', error);
                     });
@@ -528,7 +530,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                 confirmDialogRef.afterClosed().subscribe((dialogResult) => {
                     if (dialogResult) {
                         // show the progress bar
-                        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutLoadingMessage'), 'loading');
+                        const snackbarRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutLoadingMessage'), 'loading');
                         SDKClient.logout(
                             {
                                 deviceId: agent.StationID,
@@ -537,6 +539,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                             },
                             null
                         ).then((dt: IResponse) => {
+                            snackbarRef?.dismiss();
                             // check if the logout is success
                             if (dt.response && dt.response.ResultCode === 0) {
                                 // filter the logout agent
@@ -548,6 +551,7 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
                                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFailed'), 'failure');
                             }
                         }).catch(() => {
+                            snackbarRef?.dismiss();
                             // Handle logout failure due to internet connection issues
                             this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.logoutFail'), 'failure');
                         });
@@ -604,8 +608,14 @@ export class TwSuActiveAgentsComponent extends TWidgetWrapper implements OnInit,
  * @param {IAUXCodes} item 
  */
 public changeAgentStatus(agent: SuAgentModel, item: IAUXCodes): void {
+    // Check if the agent is currently on a call
+    if (agent.CurrentAgentStatus.toLowerCase().includes('on call')) {
+        this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.agentOnCall'),'info');
+        }
+    else {
     // Show a snackbar indicating that the status change is in progress
     this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.loadingChangeStatus'));
+        }
     if (this.data.Data.agentStatusChange){
     // Constructing a request packet to change the agent's status
     const reqPacket = {
@@ -755,14 +765,16 @@ else if (!this.data.Data.agentStatusChange){
             let erroredSnackbarMessage = '';
             dialogRef.afterClosed().subscribe({
                 next: async (message) => {
+                    let snackbarRef;
                     try {
                         if (message) {
-                            this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCastSending'), 'loading');
+                            snackbarRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.activeAgents.broadCastSending'), 'loading');
                             const res = await SDKClient.setBroadcastMessageForTeam({
                                 message,
                                 supervisorId: agentId,
                                 teamIds: [teamId]
                             });
+                            snackbarRef?.dismiss();
                             res.response.forEach((teamRes) => {
                                 if (teamRes.ResultCode < 0) {
                                     if (!erroredSnackbarMessage) {
@@ -781,6 +793,7 @@ else if (!this.data.Data.agentStatusChange){
                             }
                         }
                     } catch (e) {
+                        snackbarRef?.dismiss();
                         if (!erroredSnackbarMessage) {
                             this._appUIService.showSnackbar(
                                 this.translocoService.translate('widgets.activeAgents.broadCaseMsgFailedGeneric'),

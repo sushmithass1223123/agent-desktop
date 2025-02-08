@@ -103,6 +103,10 @@ export type TwAudioVideoControlsData = {
      */
     MuteAVOnHold: {
         /**
+         * Flag to enable / disable following configs
+         */
+        enabled: boolean;
+        /**
          * Flag to mute agent audio
          */
         AgentAudio: boolean;

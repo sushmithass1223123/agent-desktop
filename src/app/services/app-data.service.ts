@@ -1,7 +1,7 @@
 import { AppRootConfig } from '@ad/types';
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Inject, Injectable, SecurityContext } from '@angular/core';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 import { NavigationExtras, Router } from '@angular/router';
 import { SharedWrapper } from '@modules/t-widgets/utils/widget-wrapper/shared-wrapper';
 import { IResponse, SDKClient, TEnums, TUtils } from '@tmac/sdk';
@@ -49,19 +49,60 @@ export class AppDataService extends SharedWrapper {
 
    appLabelError;
 
-
+   private externalAVWidgetOTP: string | number;
 
     constructor(
         @Inject(DOCUMENT) private document: any,
         private _titleService: Title,
         private _fuseFacadeService: FuseFacadeService, // private _tmacEventService: TMACEventService
-        private _router: Router
+        private _router: Router,
+        private _domSanitizer: DomSanitizer,
     ) {
         // Set the config from the default config
         super('AppDataService');
         this._configSubject = new BehaviorSubject(new Object());
         this._appConfigSubject = new BehaviorSubject(new Object()) as BehaviorSubject<AppRootConfig>;
         this._appVersion = packageInfo.version;
+    }
+
+    set setExternalAVWidgetOTP(otp: string | number) {
+        this.externalAVWidgetOTP = otp;
+    }
+
+    get getExternalAVWidgetOTP(): string | number {
+        return this.externalAVWidgetOTP;
+    }
+
+    /**
+     * Method to get specific widget data
+     * @param obj Full configuration
+     * @param targetType Target widget type
+     * @returns Requested widget data
+     */
+    public findWidgetDataByType(obj: any, targetType: any): any {
+        try {
+            if (!obj) return null;
+
+            if (Array.isArray(obj)) {
+                for (const item of obj) {
+                    const result = this.findWidgetDataByType(item, targetType);
+                    if (result) return result;
+                }
+            } else if (typeof obj === 'object') {
+                if (obj.Type === targetType) {
+                    return obj.Data;
+                }
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const result = this.findWidgetDataByType(obj[key], targetType);
+                        if (result) return result;
+                    }
+                }
+            }
+            return null;
+        } catch (ex) {
+            console.error(ex);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -211,8 +252,8 @@ export class AppDataService extends SharedWrapper {
             }
 
             // set the favicon
-            if (config.AppConfigs.Logos.Favicon) {
-                this.document.getElementById('appFavicon').setAttribute('href', config.AppConfigs.Logos.Favicon);
+            if (config.AppConfigs?.Logos?.Favicon) {
+                this.document.getElementById('appFavicon').setAttribute('href', this.transformResourceURL(config.AppConfigs.Logos.Favicon));
             }
 
             // check the casing of SDK properties if smaller case then append directly
@@ -272,6 +313,15 @@ export class AppDataService extends SharedWrapper {
         } catch (error) {
             this.logger.error('Error in setJsonConfig', error, false);
         }
+    }
+
+    /**
+     * method to sanitize URL
+     * @param url - external url / path to a file
+     * @returns sanitized url in string format
+     */
+    transformResourceURL(url: string): any {
+        return this._domSanitizer.sanitize(SecurityContext.RESOURCE_URL, this._domSanitizer.bypassSecurityTrustResourceUrl(url));
     }
 
     /**

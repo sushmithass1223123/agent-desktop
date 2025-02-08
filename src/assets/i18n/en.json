@@ -78,6 +78,7 @@
         "retry": "Retry",
         "agentName": "Agent Name",
         "search": "Search",
+        "searchWithAgentNameOrId":"Search with Agent Name or Agent ID",
         "submit": "Submit",
         "agent": "Agent",
         "reload": "Reload",
@@ -129,7 +130,8 @@
         "unHoldCallFailed": "Unhold call failed",
         "makeCallSuccess": "Make call to #callerID successful",
         "makeCallFailed": "Make call failed, ",
-        "makeCallError": "Make call error, please try again"
+        "makeCallError": "Make call error, please try again",
+        "viewEmailDetailsTitle": "Monitor Email"
     },
     "channels": {
         "voice": "Voice",
@@ -232,15 +234,26 @@
                 "closeInteraction": "Close interaction",
                 "draftInteraction": "Save as draft",
                 "transferInteraction": "Transfer interaction",
+                "interactionComments": "View / add interaction comments",
                 "clearData": "Clear data",
                 "attachVideo": "Add a video",
                 "attachImage": "Add an image",
                 "attachGif": "Add a GIF",
                 "addEmoji": "Add an emoji",
-                "sendReply": "Send reply"
+                "sendReply": "Send reply",
+                "clearAttachment": "Delete the attachment",
+                "viewPostGallery": "View all post media",
+                "viewOnlyMode": "This is view only mode. Please pull the item to work on it.",
+                "scrollToActiveComment": "Navigate to the action comment",
+                "editedComment": "Comment has been edited",
+                "deletedComment": "Comment has been deleted",
+                "viewPreviousComment": "View old comment (comment before edit)",
+                "deletedPost": "This post has been deleted",
+                "editedPost": "This post has been edited"
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited!",
+            "parentCommentEditedDialogMessage": "Parent comment has been edited!",
             "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
             "postEditedDialogMessage": "Post has been edited!",
             "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed.",
@@ -327,6 +340,7 @@
             "sendBroadcast": "Send Broadcast To Team",
             "supervisor": "SUPERVISOR",
             "webphone": "Webphone",
+            "agentOnCall" : "Agent is on call agent status will be changed after the call.",
             "noAgentsFound": "No active agents found!",
             "agentSortMsg": "Agent list is sorted by ",
             "agentGroupMsg": "Agent list is grouped by ",
@@ -472,6 +486,7 @@
             "comments": "Comments",
             "transcripts": "Transcripts",
             "emailPreview": "Email Preview",
+            "socialMediaPostComment": "SM Post Comment",
             "getSessionActionFailed": "Unable to fetch session actions",
             "dashboardURLNotFound": "Sentiment Dashboard Url is not configured!",
             "getEmailFailed": "Unable to fetch email"
@@ -497,6 +512,7 @@
             "playbackNotSupportedMessage": "Playback no supported for the selected file!"
         },
         "chatControls": {
+            "customerMessageDeleteNotification": "#customerName has deleted a message!",
             "rotate": "Rotate",
             "answerChat": "Answer Chat",
             "freezeAutoResponse": "Freeze Auto Response",
@@ -529,6 +545,7 @@
             "conferenceWithBotFailed": "Conference with bot failed!",
             "conferenceWithBotError": "Error in conferencing with bot",
             "chatConnectedMsg": "#agentName connected to the chat",
+            "selfChatConnectedMsg": "You have connected to the chat",
             "webrtcRequestAccepted": "Webrtc troubleshoot request is accepted by customer",
             "webrtcRequestReceived": "Webrtc troubleshoot request is received by customer",
             "webrtcRequestRejected": "Webrtc troubleshoot request is rejected by customer",
@@ -694,6 +711,7 @@
             "callRequestConfirmMsg": "#callType call requested by #customerName, Do you want to accept it?",
             "avConnectionError": "Error occured in AV connection",
             "callRejectedByRemote": "User has rejected your request",
+            "callRejectedByAgent":"You have rejected the call from customer",
             "callNotAnsweredByremote": "Call was not answered by the Customer",
             "remoteCallRequestTimedOut": "Call request timed out",
             "callFailed": "Call failed: ",
@@ -729,7 +747,11 @@
             "screenshareReqSent": "Screenshare request sent",
             "screenshareReqError": "Error sending screenshare request",
             "requestScreenShareAccepted": "Customer has accepted request to screen share",
-            "requestScreenShareRejected": "Customer has rejected request to screen share"
+            "requestScreenShareRejected": "Customer has rejected request to screen share",
+            "muteDisplayText":"off,on",
+            "holdNotification": "#owner has kept the call on hold",
+            "unholdNotification": "#owner unholded the call"
+
         },
         "amdocs": {
             "caseId": "Case ID",
@@ -860,6 +882,7 @@
             "getAgentCurrentStateError": "Error in getting agent #agentName's current state",
             "agentLoggedOut": "Agent #agentName has logged out",
             "agentStateInvalid": "Agent #agentName is not in valid state",
+            "agentOnCallError":"Agent is already on a call",
             "selectSkillMinStaffLimit": "Unabled to select the skill, Minimum Staffed Agents should be ",
             "selectSkillMaxStaffLimit": "Unabled to select the skill, Maximum Staffed Agents should be ",
             "selectSkillMinAvailableAgentLimit": "Unabled to select the skill, Minimum Available Agents should be ",
@@ -1038,6 +1061,7 @@
             "emailPullErrorDraftEmailHasBeenPulledByAgent": "Draft email has been pulled by agent",
             "emailPullErrorFailedToPullFromSentItems": "Failed to pull email from sent items",
             "emailPullErrorFailedToPullFromMakerQueue": "Failed to pull email from maker queue",
+            "emailPullErrorFailedToPullFromQueueWhenAgentIsInvalidState": "Agent not in valid state configured for assigning email",
             "emailPullErrorPullToFromMakerQueueSinceOutlookRoutingEnabled": "Failed to pull email from maker queue since outlook routing enabled",
             "emailPullErrorEmailMaxTabCountReached": "Maximum email tab count reached",
             "emailPullErrorEmailNotFoundInQueue": "Email not found in queue",
@@ -1069,9 +1093,21 @@
             "emailSendErrorSendEmailTimeoutError": "Timed out",
             "emailSendErrorS3UrlNotFoundInDatabase": "Aws s3 url not found in database",
             "emailSendErrorGenericExceptionAttachmentDownload": "Exception while downloading attachment",
-            "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!"
+            "emailSendErrorMediaInS3UrlNotAvailable": "Media in aws s3 url in not available!",
+            "reloadEmailPreview": "Reload to view latest changes"
         },
         "socialMediaPosts": {
+            "asyncCommentReplySendSuccess": "Comment reply sent to customer",
+            "asyncCommentReplySendFail": "Error sending comment reply to customer - reason :",
+            "commentReplySendErrorFailed": "Failed to send comment reply",
+            "commentReplySendErrorAccountNotFound": "Account not found",
+            "commentReplySendErrorNoAccountExists": "Account does not exist",
+            "commentReplySendErrorMailboxNotEnabled": "Mailbox not enabled",
+            "commentReplySendErrorSendNotEnabledForMailbox": "Send disabled for the mailbox",
+            "commentReplySendErrorGenericExceptionOnSend": "Generic exception on send",
+            "commentReplySendErrorMediaMatrixLoading": "Media matrix loading...",
+            "commentReplySendErrorSendExceptionWhileUsingIWFlow": "Exception while using IW flow",
+            "commentReplySendErrorUnknown": "Unknown exception occured!",
             "queueLabel": "Queue",
             "inboxLabel": "Inbox",
             "sentItemLabel": "Sent",
@@ -1123,7 +1159,12 @@
             "salutation": "Salutation can be at most 5 characters",
             "UpdatedCustomerDetails": "Updated details Successfully",
             "GetCustomerDetails": "Getting the customer details",
-            "fieldValidation": " cannot be empty"
+            "fieldValidation": " cannot be empty",
+            "closePostUI": "Hide the post from screen",
+            "editedItem": "This item has been edited",
+            "deletedItem": "This item has been deleted",
+            "postFullscreen": "Focus on this item",
+            "nonPullItemWarning": "Posts can only pulled in queue, inbox and draft sections. Deleted comments / posts cannot be pulled."
         },
         "emailTemplateSelector": {
             "groupsNotFound": "No groups for this department",
@@ -1162,6 +1203,10 @@
             "color": "Color",
             "cancel": "Cancel",
             "save": "Save"
+        },
+        "previewDialog": {
+            "agentReadingEmail": "Agent is viewing this email...",
+            "agentWorkingOnEmail": "#agent is working on this email..."
         }
     },
     "widgetPreview": {

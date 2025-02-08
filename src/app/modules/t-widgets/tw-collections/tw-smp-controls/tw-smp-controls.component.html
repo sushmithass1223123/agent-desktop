@@ -30,16 +30,15 @@
                 >
                     <img
                         class="twd-absolute social-tag"
-                        src="assets/images/vectors/{{ interaction.channel }}.svg"
-                        alt=""
-                    />
+                        src="assets/images/vectors/{{ 
+                        this.smpService.postBodies[interaction.sessionId]?.SubChannel ??
+                        this.smpService.postBodies[interaction.outSessionId]?.SubChannel }}.svg" />
                     <h5 class="font-weight-600">{{ getInitials(interaction.user) }}</h5>
                 </div>
             </div>
 
             <div
                 class="interaction-main sm-im-content twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
-                [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             >
                 <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
                     <div class="s-info twd-flex">
@@ -54,8 +53,20 @@
                         </h5>
                     </div>
                     <div class="s-actions twd-flex">
-                        <!-- <mat-icon [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
-                            role="button" (click)="transferPost()">forward</mat-icon> -->
+                        <mat-icon 
+                            [ngClass]="
+                                (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow active-interaction-comment' : '') +
+                                (savedComments.length ? 'active-interaction-comment': '')
+                            " 
+                            [matTooltip]="locale('widgets.smpControls.tooltips.interactionComments')"
+                            (click)="commentsAdded = false; saveInteractionComments()" role="button">comment</mat-icon>
+                        <mat-icon
+                            style="transform: scaleX(-1);"
+                            [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                            (click)="transferPost()"
+                            role="button"
+                            >reply</mat-icon
+                        >
                         <mat-icon
                             [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
                             (click)="savePostAsDraft(false, true)"
@@ -80,7 +91,6 @@
                     <smp-template
                         [isDraftMode]="isDraftMode"
                         [draftData]="postDraftData[interactionId]"
-                        [MaximumAllowedPostImageRendering]="maximumAllowedPostImageRendering"
                         [interactionId]="interactionId"
                         [sessionId]="sessionId"
                         (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"
@@ -123,11 +133,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog deleted"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_edited.svg" />
                         <h4>{{ locale('widgets.smpControls.commentEditedDialogMessage') }}</h4>
@@ -137,6 +145,38 @@
                             (click)="
                                 this.editedCommentData[
                                     this.smpService.postBodies[activeSessionId]?.SmActiveComment?.CommentId
+                                ].isConsented = true;
+                                setPostDetails(true)
+                            "
+                            type="button"
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Social media parent comment edit -->
+                <div
+                    class="banner-overlay twd-absolute twd-flex"
+                    *ngIf="
+                        editedParentCommentData[
+                            this.smpService.postBodies[activeSessionId]?.SmParentComments?.CommentId
+                        ] &&
+                        !editedParentCommentData[
+                            this.smpService.postBodies[activeSessionId]?.SmParentComments?.CommentId
+                        ]?.isConsented
+                    "
+                >
+                    <div class="bg-ol twd-absolute"></div>
+                    <div class="custom-dialog deleted">
+                        <img src="assets/images/vectors/pc_edited.svg" />
+                        <h4>{{ locale('widgets.smpControls.parentCommentEditedDialogMessage') }}</h4>
+                        <button
+                            mat-raised-button
+                            color="primary"
+                            (click)="
+                                this.editedParentCommentData[
+                                    this.smpService.postBodies[activeSessionId]?.SmParentComments?.CommentId
                                 ].isConsented = true;
                                 setPostDetails(true)
                             "
@@ -158,11 +198,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog edited"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_deleted.svg" />
                         <h4>{{ locale('widgets.smpControls.commentDeletedDialogMessage') }}</h4>
@@ -192,11 +230,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog edited"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_deleted.svg" />
                         <h4>{{ locale('widgets.smpControls.postDeletedDialogMessage') }}</h4>
@@ -226,11 +262,9 @@
                 >
                     <div
                         class="bg-ol twd-absolute"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></div>
                     <div
                         class="custom-dialog edited"
-                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                     >
                         <img src="assets/images/vectors/pc_edited.svg" />
                         <h4>{{ locale('widgets.smpControls.postEditedDialogMessage') }}</h4>
@@ -263,7 +297,6 @@
     >
         <div
             class="interaction-main twd-w-full twd-flex twd-flex-col twd-rounded-3xl twd-relative twd-p-3"
-            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
             *transloco="let locale"
         >
             <div class="social-info-action twd-w-full twd-flex twd-pb-3 bb">
@@ -275,6 +308,13 @@
                     <h5 class="font-weight-700">{{ smpService.postBodies[activeSessionId]?.PostAccountName }}</h5>
                 </div>
                 <div class="s-actions twd-flex">
+                    <mat-icon
+                        style="transform: scaleX(-1);"
+                        [matTooltip]="locale('widgets.smpControls.tooltips.transferInteraction')"
+                        (click)="transferPost()"
+                        role="button"
+                        >reply</mat-icon
+                    >
                     <mat-icon
                         [matTooltip]="locale('widgets.smpControls.tooltips.draftInteraction')"
                         (click)="savePostAsDraft(false, true)"
@@ -291,7 +331,6 @@
                 </div>
             </div>
             <smp-template
-                [MaximumAllowedPostImageRendering]="5"
                 [isDraftMode]="isDraftMode"
                 [draftData]="postDraftData[interactionId]"
                 (dataChanged)="this.postDraftData[$event].isReplyDrafted = false"

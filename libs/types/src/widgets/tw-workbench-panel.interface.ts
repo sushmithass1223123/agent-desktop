@@ -143,10 +143,6 @@ export type TwSmpWorkbenchConfig = {
      */
     SearchDuration: number;
     /**
-     * Number which holds maximum post image that could be rendered in UI
-     */
-    MaximumAllowedPostImageRendering: number;
-    /**
      * Flag to enable/disable post details button
      */
     ShowPostDetails: boolean;

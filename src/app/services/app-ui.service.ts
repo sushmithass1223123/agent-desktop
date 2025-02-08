@@ -25,6 +25,9 @@ import { map } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppDataService } from './app-data.service';
+import { TSnackbarService } from '../modules/shared/components/t-snackbar/t-snackbar.service';
+import { PreviewActionType, PreviewComponentTypes } from '@modules/shared/components/preview-dialog/preview.dialog';
+import { PreviewDialogComponent } from '@modules/shared/components/preview-dialog/preview-dialog.componet';
 
 type UiChanActions = 'hold/select-chat';
 
@@ -97,7 +100,7 @@ export class AppUiService extends SharedWrapper {
      */
     private onlineStatus: BehaviorSubject<boolean>;
 
-
+    
     /**
      * Constructor
      * @param {MatSnackBar} _matSnackBar
@@ -108,7 +111,8 @@ export class AppUiService extends SharedWrapper {
         private _matSnackBar: MatSnackBar,
         private _matDialog: MatDialog,
         private _appDataService: AppDataService,
-        private domSanitizer: DomSanitizer
+        private domSanitizer: DomSanitizer,
+        private _tSnackbarService: TSnackbarService
     ) {
         super('AppUiService');
         this.init();
@@ -151,8 +155,10 @@ export class AppUiService extends SharedWrapper {
         hPos: MatSnackBarHorizontalPosition = 'center',
         duration: number = this._appConfig?.AppConfigs?.Notifications?.AppAlertTimeout || 5000,
         onClick?: () => void
-    ): MatSnackBarRef<SnackbarComponent> {
+    ){
         if (message) {
+
+            // configuration for icons
             const icons = {
                 info: 'info',
                 success: 'done',
@@ -160,16 +166,34 @@ export class AppUiService extends SharedWrapper {
                 failure: 'error',
                 loading: 'loop'
             };
+
+            // data needed to show snackbar
+            const input = {
+                icon: icons[state],
+                loading: state === 'loading',
+                state,
+                message,
+                onClick,
+                duration: duration
+            };
+
+            // configuration to enable/disable custom snackbar
+            const customSnackbarConfig = {
+                enable: true,
+                enableSingle: false
+            };
+
+            // using custom snackbar
+            if(customSnackbarConfig.enable){ 
+                return this._tSnackbarService.loadSnackbar(input, customSnackbarConfig);
+            }
+
+
+            // using angular material snackbar    
             const durationField = state === 'loading' ? {} : { duration };
             this._matSnackBar.dismiss();
             return this._matSnackBar.openFromComponent(SnackbarComponent, {
-                data: {
-                    icon: icons[state],
-                    loading: state === 'loading',
-                    state,
-                    message,
-                    onClick
-                },
+                data: input,
                 verticalPosition: vPos,
                 horizontalPosition: hPos,
                 ...durationField
@@ -457,13 +481,21 @@ export class AppUiService extends SharedWrapper {
         // check whether to show an alert
         if (notification.showAlert) {
             let message = '';
-            if (!notification.icon.includes('sm')) {
+            if(notification.icon.includes('external_av_widget_creds')) {
+                message = `External AV Widget Credentials Saved!`
+            } else if (!notification.icon.includes('sm')) {
                 message = notification.message;
             } else {
                 if (notification.icon.includes('smrc')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Reaction to ${notification.message?.SocialMediaData?.Engagement?.smmType} on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smrp')) {
+                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Reaction to ${notification.message?.SocialMediaData?.Engagement?.smmType} on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smm_a')) {
+                    message = `${notification.message?.SocialMediaData?.Posts?.AccountName}: Got mentioned on ${notification.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post'} in ${notification.message?.SocialMediaData?.Posts?.Channel}`
                 } else if (notification.icon.includes('smc_e') || notification.icon.includes('smco_e')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
+                } else if (notification.icon.includes('smpc_e')) {
+                    message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Parent comment edited on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smc_d') || notification.icon.includes('smco_d')) {
                     message = `${notification.message?.SocialMediaData?.Comments?.ToName}: Comment deleted on ${notification.message?.SocialMediaData?.Posts?.Channel}`;
                 } else if (notification.icon.includes('smp_d')) {
@@ -720,5 +752,30 @@ export class AppUiService extends SharedWrapper {
     // Expose Observable for online/offline status
     getOnlineStatus(): Observable<boolean> {
         return this.onlineStatus.asObservable();
+    }
+
+    public previewComponentOnDialog(
+        message?: any,
+        title?: string,
+        component?: PreviewComponentTypes,
+        previewData?: any,
+        matConfig?: Partial<MatDialogConfig>,
+        actions?: PreviewActionType[]
+    ): MatDialogRef<PreviewDialogComponent> {
+        const dialogRef = this._matDialog.open(PreviewDialogComponent, {
+            data: {
+                component,
+                title,
+                message,
+                previewData,
+                actions,
+                done: (data?: any) => dialogRef.close(data || true),
+                cancel: () => dialogRef.close(false)
+            },
+            minWidth: '350px',
+            autoFocus: false,
+            ...(matConfig || {})
+        });
+        return dialogRef;
     }
 }

@@ -1,5 +1,6 @@
 // route reasons
-export const OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull', 'MakerQueue'];
+export const OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull'];
+export const REJECT_REASONS = ['MakerQueue'];
 export const SENT_REASONS = ['AgentSentPull'];
 export const DRAFT_REASONS = ['AgentDraftPull'];
 export const INBOX_REASONS = ['MakerQueue', 'AgentPull', 'TransferToAgent', 'TransferToSkill'];
@@ -100,6 +101,7 @@ export const EMAIL_SEND_STATUS = {
     '-335': 'PullToFromMakerQueueSinceOutlookRoutingEnabled',
     '-336': 'CannotFindRemoteAgentState',
     '-337': 'EmailNotFoundInInbox',
+    '-338': 'FailedToPullFromQueueWhenAgentIsInvalidState',
     '404': 'ServerNotReachable'
 };
 

@@ -576,7 +576,7 @@ export class TMACEventService extends SharedWrapper {
                 // route to supervisor page and select the agent if confirmed
                 confrimationDialogRef.afterClosed().subscribe((resp1) => {
                     if (resp1) {
-                        this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
+                        const snackbarRef = this._appUIService.showSnackbar('Please wait, connecting to the interaction...', 'loading');
                         // send request to server
                         SDKClient.transferTextChat({
                             agentId: AgentId,
@@ -592,6 +592,7 @@ export class TMACEventService extends SharedWrapper {
                             toTmacServer: SDKClient.getAgentData().tmacServer
                         })
                             .then((resp2: IResponse) => {
+                                snackbarRef?.dismiss();
                                 // check the response
                                 if (resp2.response && resp2.response.ResultCode >= 0) {
                                     this._appUIService.showSnackbar(`Chat silent barge-in successful`, 'success');
@@ -600,6 +601,7 @@ export class TMACEventService extends SharedWrapper {
                                 }
                             })
                             .catch(() => {
+                                snackbarRef?.dismiss();
                                 this._appUIService.showSnackbar('Error in chat silent barge-in', 'failure');
                             });
                     }
@@ -612,7 +614,7 @@ export class TMACEventService extends SharedWrapper {
                     message: `Negative sentiment has been detected from customer for ${AgentName}`,
                     state: 'info'
                 });
-            } if (type === 'parentagentstatus') {
+            } else if (type === 'parentagentstatus') {
                 const message = JSON.parse(evt.Message);
                 this.avCallConstraints[evt.FromAgentId] = {
                     isAgentOnActiveCall: message.isAgentOnActiveCall,
@@ -1835,12 +1837,22 @@ private TextChatTransferNotificationEvent = (evt: TextChatTransferNotificationEv
     }
 
     /**
+     * To remove interaction events from the array by interaction id
+     *
+     * @param interactionId
+     */
+    removeInteractionEventsById(interactionId: number): void {
+        // remove the events for the InteractionID
+        this._interactionEventArray = this._interactionEventArray.filter((f) => f.InteractionID !== interactionId);
+    }
+
+    /**
      * To remove non interaction events
      * @param eventName
      */
     removeNonInteractionEvents(eventName: CustomTMACEventTypes[]): void {
         // remove the events for the InteractionID
-        this._nonInteractionEventArray = this._interactionEventArray.filter((f) => !eventName.some((s) => s === f.EventName));
+        this._nonInteractionEventArray = this._nonInteractionEventArray.filter((f) => !eventName.some((s) => s === f.EventName));
     }
 
     /**

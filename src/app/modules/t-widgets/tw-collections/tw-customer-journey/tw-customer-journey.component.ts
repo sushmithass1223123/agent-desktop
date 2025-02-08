@@ -15,7 +15,8 @@ import {
     InteractionHistoryOnDemandEvent,
     InteractionHistoryReadyEvent,
     InteractionHistoryReLoadEvent,
-    SDKClient
+    SDKClient,
+    TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { maticonByExtension } from 'app/utils';
@@ -24,6 +25,7 @@ import { groupBy, sortBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
 
 type Mode = 'Interactions' | 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
@@ -48,6 +50,12 @@ type IHRecord = {
     InteractionText: string;
     Children: IHRecord[];
     expanded: boolean;
+};
+
+const channelMapper: any = {
+    fb: 'facebook',
+    instagram: 'instagram',
+    twitter: 'x'
 };
 
 /**
@@ -137,6 +145,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
     }
 
     selectedRow: Record<string, any>;
+    /**
+     * File upload url config
+     */
+    fileUploadUrl: any;
 
     /**
      *
@@ -188,6 +200,10 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             )
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+
+        this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
+            this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
+        });
     }
 
     /**
@@ -215,6 +231,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             audio: 'wifi_calling_3',
             video: 'duo',
             whatsapp: 'custom-whatsapp',
+            whatsapp_infomedia: 'custom-whatsapp_infomedia',
+            whatsapp_meta: 'custom-whatsapp_meta',
             instagram: 'custom-instagram',
             we: 'custom-we',
             line: 'custom-line',
@@ -222,11 +240,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             twitter: 'custom-twitter',
             fb: 'custom-fb',
             telegram: 'custom-telegram',
+            smfb: 'custom-smfb',
+            smtwitter: 'custom-smtwitter',
+            sminstagram: 'custom-sminstagram',
             store: 'store',
             in: 'south',
             out: 'north'
         };
-        const iconKey = ['textchat', 'audiochat', 'videochat', 'services'];
+        const iconKey = ['textchat', 'audiochat', 'videochat', 'services', 'sm'];
         const noOfRecords = this.data.Data.NoOfRecords;
 
         this.table.formatPayload = this.switchMaximizedViewMode;
@@ -239,7 +260,14 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     const channel = el.Channel?.toLowerCase();
                     const subChannel = el.SubType?.toLowerCase();
                     return {
-                        name: iconMap[iconKey.includes(channel) ? subChannel : channel] || 'feed',
+                        name:
+                            iconMap[
+                                iconKey.includes(channel)
+                                    ? channel === 'sm'
+                                        ? `sm${subChannel}`
+                                        : subChannel
+                                    : channel
+                            ] || 'feed',
                         only: true
                     };
                 }
@@ -310,7 +338,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     },
                     {
                         title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
-                        icon: 'history'
+                        icon: 'history',
+                        visible: (element: any) => (element.Channel || '').toLowerCase() !== 'sm'
                     },
                     {
                         title: this.translocoService.translate('interactionComponent.actions'),
@@ -324,13 +353,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                         title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                         icon: 'chat',
                         visible: (element: any) =>
-                            (element.Channel || '').toLowerCase().includes('chat') ||
-                            (element.Channel || '').toLowerCase() === 'sm'
+                            (element.Channel || '').toLowerCase().includes('chat') &&
+                            (element.Channel || '').toLowerCase() !== 'sm'
                     },
                     {
                         title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
                         icon: 'email',
                         visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
+                    },
+                    {
+                        title: this.translocoService.translate('widgets.customerJourney.socialMediaPostComment'),
+                        icon: 'video_label',
+                        visible: (element: any) => (element.Channel || '').toLowerCase() === 'sm'
                     }
                 ]
             }
@@ -353,7 +387,8 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                     value: [
                         {
                             title: this.translocoService.translate('widgets.customerJourney.sessionHistory'),
-                            icon: 'history'
+                            icon: 'history',
+                            visible: (element: any) => (element.Channel || '').toLowerCase() !== 'sm'
                         },
                         {
                             title: this.translocoService.translate('interactionComponent.actions'),
@@ -367,13 +402,18 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
                             title: this.translocoService.translate('widgets.customerJourney.transcripts'),
                             icon: 'chat',
                             visible: (element: any) =>
-                                (element.Channel || '').toLowerCase().includes('chat') ||
-                                (element.Channel || '').toLowerCase() === 'sm'
+                                (element.Channel || '').toLowerCase().includes('chat') &&
+                                (element.Channel || '').toLowerCase() !== 'sm'
                         },
                         {
                             title: this.translocoService.translate('widgets.customerJourney.emailPreview'),
                             icon: 'email',
                             visible: (element: any) => (element.Channel || '').toLowerCase().includes('email')
+                        },
+                        {
+                            title: this.translocoService.translate('widgets.customerJourney.socialMediaPostComment'),
+                            icon: 'video_label',
+                            visible: (element: any) => (element.Channel || '').toLowerCase() === 'sm'
                         }
                     ]
                 }
@@ -769,6 +809,162 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         return { state, retry: fetchEmail };
     }
 
+    async showPostThread(interaction?: IHRecord): Promise<any> {
+        try {
+            const state = new BehaviorSubject<any>({ loading: true, error: false, data: {} });
+            if (!interaction) {
+                interaction = this.table.source.data.find((x) => x.expanded);
+            }
+
+            const fetchFromOutbox = interaction.Direction === 'Out';
+
+            let res: any;
+            let inboxRes: any;
+            let outboxRes: any;
+
+            const getAttachments = (attachments: any[], sid: any): any[] => {
+                if (attachments && attachments.length) {
+                    return attachments.map((item: any) => {
+                        let uploadedName = item.Url.split('/').pop();
+                        if (!item.Name) {
+                            uploadedName = uploadedName.replace(sid, '');
+                            item.Name = uploadedName;
+                        }
+                        item.Icon = maticonByExtension(item.Ext);
+                        return item;
+                    });
+                }
+                return [];
+            };
+
+            const setPostBody = async (resData: any, sid: any) => {
+                let modifiedAttachmentData: any[] = [];
+                if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
+                    modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                        return {
+                            IsCloud: true,
+                            Url: attdat?.MediaUrl,
+                            IsUploaded: true,
+                            Ext: attdat?.MediaType
+                        };
+                    });
+                }
+                let tempAttachments = await this.requestAttachmentData(
+                    modifiedAttachmentData.length ? modifiedAttachmentData : resData.Attachments
+                );
+                let smData = resData?.SocialMediaData;
+                res = {
+                    Files: getAttachments(tempAttachments, sid),
+                    ConversationID: resData.ConversationID,
+                    SessionId: sid,
+                    SubChannel: (
+                        channelMapper[smData?.Posts?.Channel?.toLowerCase()] ?? resData.EmailType
+                    ).toLowerCase(),
+                    Subject: resData.Subject,
+                    PostAccountName: smData.Posts.AccountName ? smData.Posts.AccountName : smData.Posts.AccountId,
+                    PostCreatedTime: smData.Posts?.CreatedDateTime,
+                    PostUpdatedTime: smData.Posts?.UpdatedDateTime,
+                    PostId: smData.Posts.PostId,
+                    SmActiveComment: smData.Comments,
+                    SmParentComments: smData.ParentComments,
+                    PostText: smData.Posts.PostText,
+                    PostAttachments: smData.Posts.PostAttachments,
+                    PostEngagements: smData.Posts.PostEngagements,
+                    Engagement: smData.Engagement,
+                    IsOutbound: fetchFromOutbox,
+                    IsParentCommentEdited: smData.ParentComments?.IsEdited,
+                    IsParentCommentDeleted: smData.ParentComments?.IsDeleted,
+                    IsCommentEdited: smData.Comments?.IsEdited,
+                    IsCommentDeleted: smData.Comments?.IsDeleted,
+                    IsPostDeleted: smData.Posts?.IsDeleted,
+                    IsPostEdited: smData.Posts?.IsEdited,
+                    RouteId: resData?.RouteId
+                };
+
+                state.next({
+                    data: res
+                });
+            };
+
+            if (!fetchFromOutbox) {
+                inboxRes = (await SDKClient.getInboxItem(interaction.SessionID)).response;
+                setPostBody(inboxRes, interaction.SessionID);
+            }
+
+            if (fetchFromOutbox) {
+                outboxRes = (await SDKClient.getOutboxItem(interaction.SessionID)).response;
+                setPostBody(outboxRes, interaction.SessionID);
+            }
+
+            return { state };
+        } catch (ex) {}
+    }
+
+    /**
+     * Get attachment meta data from media streamer for archive status
+     */
+    async requestAttachmentData(attachments: any[]): Promise<any> {
+        try {
+            //extract file id's
+            let attachmentMap = attachments.reduce(
+                (acc, cur) => {
+                    if (cur.IsCloud) {
+                        let split = cur.Url.split('/');
+                        if (split.length > 0) {
+                            let fileId = split[split.length - 1];
+                            acc.ids.push(fileId);
+                            acc.att.push({ ...cur, FileId: fileId, URL: cur.Url });
+                        } else {
+                            acc.att.push({ ...cur, URL: cur.Url });
+                        }
+                    } else {
+                        acc.att.push({ ...cur, URL: cur.Url });
+                    }
+                    return acc;
+                },
+                { ids: [], att: [] }
+            );
+            if (attachmentMap.ids.length > 0) {
+                let ids = attachmentMap.ids.join(',');
+                try {
+                    const { response } = await TUtils.HttpClient.sendRequest<
+                        MediaStreamerMultiResponse<MediaStreamerMetaResponse>
+                    >({
+                        urls: [`${this.fileUploadUrl.MediaStreamer}/meta/mediaall?ids=${ids}`],
+                        method: 'GET',
+                        responseType: 'json'
+                    });
+
+                    if (response?.result?.length > 0) {
+                        attachmentMap.att.forEach((cur) => {
+                            if (cur.IsCloud) {
+                                let fileMeta = response?.result.find((i) => i.interaction_id === cur.FileId);
+                                if (fileMeta) {
+                                    cur.ArchiveStatus = fileMeta.archiveStatus;
+                                    cur.RestoreStatus = fileMeta.restoreStatus;
+                                    cur.FileError = fileMeta.fileError;
+                                }
+                            }
+                        }, []);
+                    }
+                } catch (ex) {
+                    this._appUIService.showSnackbar(
+                        this.translocoService.translate('sharedComponents.socialMediaPosts.fileMetaError'),
+                        'failure'
+                    );
+                    attachmentMap.att.forEach((cur) => {
+                        cur.ArchiveStatus = null;
+                        cur.RestoreStatus = null;
+                        cur.FileError = true;
+                    }, []);
+                }
+            }
+            return attachmentMap.att;
+        } catch (error) {
+            return attachments;
+        }
+    }
+
     /**
      * Switches Maximized View
      * @param {Mode} mode
@@ -798,6 +994,9 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             }
             case 'Email Preview': {
                 return { action, record: await this.showEmailThread(record) };
+            }
+            case 'SM Post Comment': {
+                return { action, record: await this.showPostThread(record) };
             }
         }
     };

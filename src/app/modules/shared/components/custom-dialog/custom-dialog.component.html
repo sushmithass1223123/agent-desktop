@@ -1,5 +1,124 @@
-<ng-container *transloco="let locale">
-    <div fxLayout="row" fxLayoutAlign="space-between center">
+<ng-container *transloco="let locale" [ngSwitch]="data?.message?.type">
+    <ng-container *ngSwitchDefault>
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <h1 matDialogTitle class="mb-8">
+                {{
+                    data.title ||
+                        (data.type === 'alert'
+                            ? locale('sharedComponents.customDialog.alert')
+                            : locale('sharedComponents.customDialog.confirm'))
+                }}
+            </h1>
+            <button
+                *ngIf="data.closeIcon"
+                mat-icon-button
+                color="accent"
+                (click)="data.confirmClose ? confirmClose() : data.cancel()"
+            >
+                <mat-icon class="twd-text-lg"> close </mat-icon>
+            </button>
+        </div>
+
+        <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
+            <p
+                class="font-size-16 font-weight-600 my-8"
+                [ngClass]="data.messageClasses || ''"
+                [innerHTML]="data.message"
+            ></p>
+
+            <mat-form-field
+                fxFlex
+                floatLabel="never"
+                appearance="standard"
+                class="custom-2 mb-8 border-radius-20 border-sm-info"
+                *ngIf="data.type === 'prompt'"
+            >
+                <textarea
+                    [(ngModel)]="promptData"
+                    matInput
+                    matTextareaAutosize
+                    [matAutosizeMinRows]="data.minRows || 2"
+                    [matAutosizeMaxRows]="(data.minRows || 5) + 3"
+                    [placeholder]="locale('sharedComponents.customDialog.promptPlaceholder')"
+                ></textarea>
+            </mat-form-field>
+        </div>
+
+        <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
+            <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
+                {{ data.noMessage ? data.noMessage : locale('sharedComponents.customDialog.cancel') }}
+            </button>
+            <button
+                mat-raised-button
+                [disabled]="data.type === 'prompt' && promptData.trim() === ''"
+                color="primary"
+                (click)="data.done(data.type === 'prompt' ? promptData : true)"
+                tabindex="-1"
+            >
+                {{
+                    data.yesMessage
+                        ? data.yesMessage
+                        : data.type === 'prompt' || data.type === 'alert'
+                        ? locale('sharedComponents.customDialog.ok')
+                        : data.type === 'confirm'
+                        ? locale('sharedComponents.customDialog.confirm')
+                        : locale('sharedComponents.customDialog.done')
+                }}
+            </button>
+        </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="'html'">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <h1 matDialogTitle class="mb-8">
+                {{
+                    data.title ||
+                        (data.type === 'alert'
+                            ? locale('sharedComponents.customDialog.alert')
+                            : locale('sharedComponents.customDialog.confirm'))
+                }}
+            </h1>
+            <button
+                *ngIf="data.closeIcon"
+                mat-icon-button
+                color="accent"
+                (click)="data.confirmClose ? confirmClose() : data.cancel()"
+            >
+                <mat-icon class="twd-text-lg"> close </mat-icon>
+            </button>
+        </div>
+
+        <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
+            <div
+                class="html-div"
+                [ngClass]="data.messageClasses || ''"
+                [innerHTML]="data.message.message"
+            ></div>
+        </div>
+
+        <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
+            <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
+                {{ data.noMessage ? data.noMessage : locale('sharedComponents.customDialog.cancel') }}
+            </button>
+            <button
+                mat-raised-button
+                [disabled]="data.type === 'prompt' && promptData.trim() === ''"
+                color="primary"
+                (click)="data.done(data.type === 'prompt' ? promptData : true)"
+                tabindex="-1"
+            >
+                {{
+                    data.yesMessage
+                        ? data.yesMessage
+                        : data.type === 'prompt' || data.type === 'alert'
+                        ? locale('sharedComponents.customDialog.ok')
+                        : data.type === 'confirm'
+                        ? locale('sharedComponents.customDialog.confirm')
+                        : locale('sharedComponents.customDialog.done')
+                }}
+            </button>
+        </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="'gallery'">
         <h1 matDialogTitle class="mb-8">
             {{
                 data.title ||
@@ -8,61 +127,11 @@
                         : locale('sharedComponents.customDialog.confirm'))
             }}
         </h1>
-        <button
-            *ngIf="data.closeIcon"
-            mat-icon-button
-            color="accent"
-            (click)="data.confirmClose ? confirmClose() : data.cancel()"
-        >
-            <mat-icon class="twd-text-lg"> close </mat-icon>
-        </button>
-    </div>
-
-    <div mat-dialog-content *ngIf="data.message" fxLayout="column" fxLayoutAlign=" none">
-        <p
-            class="font-size-16 font-weight-600 my-8"
-            [ngClass]="data.messageClasses || ''"
-            [innerHTML]="data.message"
-        ></p>
-
-        <mat-form-field
-            fxFlex
-            floatLabel="never"
-            appearance="standard"
-            class="custom-2 mb-8 border-radius-20 border-sm-info"
-            *ngIf="data.type === 'prompt'"
-        >
-            <textarea
-                [(ngModel)]="promptData"
-                matInput
-                matTextareaAutosize
-                [matAutosizeMinRows]="data.minRows || 2"
-                [matAutosizeMaxRows]="(data.minRows || 5) + 3"
-                [placeholder]="locale('sharedComponents.customDialog.promptPlaceholder')"
-            ></textarea>
-        </mat-form-field>
-    </div>
-
-    <div mat-dialog-actions xLayout="row" fxLayoutAlign="end none">
-        <button mat-button color="warn" (click)="data.cancel()" tabindex="-1" *ngIf="data.type !== 'alert'">
-            {{ data.noMessage ? data.noMessage : locale('sharedComponents.customDialog.cancel') }}
-        </button>
-        <button
-            mat-raised-button
-            [disabled]="data.type === 'prompt' && promptData.trim() === ''"
-            color="primary"
-            (click)="data.done(data.type === 'prompt' ? promptData : true)"
-            tabindex="-1"
-        >
-            {{
-                data.yesMessage
-                    ? data.yesMessage
-                    : data.type === 'prompt' || data.type === 'alert'
-                    ? locale('sharedComponents.customDialog.ok')
-                    : data.type === 'confirm'
-                    ? locale('sharedComponents.customDialog.confirm')
-                    : locale('sharedComponents.customDialog.done')
-            }}
-        </button>
-    </div>
+        <div class="gallery">
+            <div class="gallery-item" *ngFor="let media of data.message.media">
+                <img *ngIf="media.type === 'image'" [src]="media.url" />
+                <video *ngIf="media.type === 'video'" [src]="media.url" [autoplay]="false" controls></video>
+            </div>
+        </div>
+    </ng-container>
 </ng-container>

@@ -14,7 +14,7 @@ import { IWidget } from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
 import { formatJsonData } from 'app/utils';
 import { groupBy, sortBy } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Subscription, timer } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
@@ -334,7 +334,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
         const pullFunc = () => {
             const { tmacServer, agentId } = this.user;
             const { channel, itemID: itemid } = node;
-            this._appUiService.showSnackbar('Pulling Chat', 'loading');
+            const snackbarRef = this._appUiService.showSnackbar('Pulling Chat', 'loading');
             this.http
                 .post(this.data.Data.WorkbenchUrl + '/chat/queue/pull', {
                     tmacServer,
@@ -343,6 +343,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                     items: [{ itemid }]
                 })
                 .subscribe((res: any) => {
+                    snackbarRef?.dismiss();
                     if (res && res.status !== 'FAILED') {
                         this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pullChatSuccess'), 'success');
                         return;
@@ -431,7 +432,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                 Callback: ({ callbackData }) => {
                     const { TmacServer, LoginID } = callbackData.selectedRow;
                     const { channel, itemID: itemid } = node;
-                    this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatLoading'), 'loading');
+                    const snackbarRef = this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatLoading'), 'loading');
                     this.http
                         .post(this.data.Data.WorkbenchUrl + '/chat/queue/push', {
                             tmacServer: TmacServer,
@@ -440,6 +441,7 @@ export class WorkbenchChatComponent extends TWidgetWrapper implements OnInit, Af
                             items: [{ itemid }]
                         })
                         .subscribe((res: any) => {
+                            snackbarRef?.dismiss();
                             if (res && res.status !== 'FAILED') {
                                 this._appUiService.showSnackbar(this.translocoService.translate('widgets.workbench.pushChatSuccess'), 'success');
                                 return;

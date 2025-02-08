@@ -10,7 +10,7 @@ import { TMACEventService } from '@services/tmac-event.service';
 import { AgentReminder, AgentReminderEvent, SDKClient, UpdateAgentReminderEvent } from '@tmac/sdk';
 import { CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { addMinutes, format, isBefore, isSameDay, isSameMonth } from 'date-fns';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Subject } from 'rxjs';
 import { CustomCalendarEvent, CustomEventAction } from './calendar.interface';
 import { CalendarEventModel } from './calendar.model';
@@ -313,9 +313,10 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      * Set events
      */
     async setEvents(update?: boolean): Promise<void> {
+        let snackbarRef;
         try {
             if (update) {
-                this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventsReloading'), 'loading');
+                snackbarRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventsReloading'), 'loading');
             }
 
             // get all the reminders
@@ -340,6 +341,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
             this.refresh.next(null);
 
             if (update) {
+                snackbarRef?.dismiss();
                 this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.eventsReloadSuccess'));
             }
 
@@ -356,12 +358,13 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      * @param event
      */
     deleteEvent(event: CustomCalendarEvent): void {
+        let snackbarRef;
         //checks the alert type 
         const alertType = event.type === 'executetask' ? 'Task' : 'Event';
         this.confirmDialogRef = this._appUIService.showAppConfirmDialog('generic', this.translocoService.translate('widgets.calendar.confirmDeleteTitle'), this.translocoService.translate('widgets.calendar.confirmDeleteMsg'));
         this.confirmDialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.deleteEventLoading'), 'loading');
+               snackbarRef = this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.deleteEventLoading'), 'loading');
                 // delete the remider from server
                 SDKClient.updateAgentReminder({
                     id: event.id.toString(),
@@ -371,6 +374,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                     status: 'delete'
                 })
                     .then((x) => {
+                        snackbarRef?.dismiss();
                         if (x.response > 0) {
                             this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.deleteEventSuccess'));
                             const eventIndex = this.events.indexOf(event);
@@ -381,6 +385,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                         }
                     })
                     .catch(() => {
+                        snackbarRef?.dismiss();
                         this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.deleteEventError'), 'failure');
                     });
             }
@@ -434,7 +439,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                         return;
                     }
 
-                    this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.eventUpdateLoading'), 'loading');
+                    const snackbarRef = this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.eventUpdateLoading'), 'loading');
 
                     SDKClient.updateAgentReminder({
                         id: event.id.toString(),
@@ -444,6 +449,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                         status: 'New'
                     })
                         .then((x) => {
+                            snackbarRef?.dismiss();
                             if (x.response > 0) {
                                 this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.updateEventSuccess'));
                                 this.events[eventIndex] = Object.assign(this.events[eventIndex], formValue);
@@ -453,6 +459,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                             }
                         })
                         .catch(() => {
+                            snackbarRef?.dismiss();
                             this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.eventUpdateError'), 'failure');
                         });
                     break;
@@ -529,6 +536,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
      * Add Event
      */
     async addEvent(): Promise<void> {
+        let snackbarRef;
         try {
             // check if for today
             const dateToAdd = format(new Date(), 'yyyyMMdd') === format(this.selectedDay.date, 'yyyyMMdd') ? new Date() : this.selectedDay.date;
@@ -564,7 +572,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                 const alertType = newEvent.type === 'executetask' ? 'Task' : 'Event';
                 newEvent.color.primary = newEvent.type === 'executetask' ? this.taskColor : this.eventColor;
 
-                this._appUIService.showSnackbar(`Adding ${alertType.toLowerCase()}, please wait`, 'loading');
+                snackbarRef = this._appUIService.showSnackbar(`Adding ${alertType.toLowerCase()}, please wait`, 'loading');
 
                 const { response } = await SDKClient.createAgentReminderTask({
                     message: formatted.message,
@@ -572,7 +580,7 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
                     reminderTime: format(reminderDateTime, 'HHmmss'),
                     type: newEvent.type
                 });
-
+                snackbarRef?.dismiss();
                 if (response > 0) {
                     // get the event id by getting remider from DB
                     const get = await SDKClient.getAgentReminders({
@@ -591,14 +599,14 @@ export class TwCalendarComponent extends TWidgetWrapper implements OnInit, OnDes
 
                     // push event
                     this.events.push(newEvent);
-                    this.refresh.next(true);
-
+                    this.refresh.next(true); 
                     this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.addEventSuccess'));
                 } else {
                     this._appUIService.showSnackbar(alertType + this.translocoService.translate('widgets.calendar.addEventFailed'), 'failure');
                 }
             });
         } catch (error) {
+            snackbarRef?.dismiss();
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.calendar.addEventError'), 'failure');
         }
     }

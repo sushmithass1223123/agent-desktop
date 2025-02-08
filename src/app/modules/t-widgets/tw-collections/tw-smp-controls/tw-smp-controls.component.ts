@@ -27,14 +27,15 @@ import { AppUiService } from '@services/app-ui.service';
 import { ContentPageService } from '@services/content-page.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { InteractionManagerService } from '@services/interaction-manager.service';
-import { AgentNotificaitonEvent, IncomingEmailEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
+import { AgentNotificaitonEvent, IAgentData, IncomingEmailEvent, InteractionDataEvent, IResponse, SDKClient, TUtils } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { InteractionRef, IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
+import { InteractionComment, InteractionRef, IWidget, MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
 import { AgentSkillListDataModel } from 'app/models';
 import { ADError, maticonByExtension, throwADError } from 'app/utils';
-import { merge } from 'lodash';
+import { merge, sortBy } from 'lodash';
 import { filter, take, takeUntil } from 'rxjs/operators';
-import { MatButton } from '@angular/material/button';
+import { TMACEventService } from '@services/tmac-event.service';
+import { format } from 'date-fns';
 
 declare var document: any;
 
@@ -110,8 +111,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     prevAttachments: any[] = [];
     draftOutsessionId = {};
     isDraftMode: boolean = false;
-    maximumAllowedPostImageRendering: number = 5;
     editedCommentData: any = {};
+    editedParentCommentData: any = {};
     deletedPostData: any = {};
     deletedCommentData: any = {};
     editedPostData: any = {};
@@ -123,6 +124,18 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     fileUploadUrl: any;
     routeReason: string = '';
+    /**
+     * Saved interaction comments
+     */
+    savedComments: InteractionComment[] = [];
+    /**
+     * Flag to blink comments button when added from server
+     */
+    commentsAdded: boolean;
+    /**
+     * Agent ref
+     */
+    user: IAgentData;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -133,7 +146,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         private _appUiService: AppUiService,
         private _fuseProgressBarService: FuseProgressBarService,
         private cdr: ChangeDetectorRef,
-        private _appDataService: AppDataService
+        private _appDataService: AppDataService,
+        private _matDialog: MatDialog,
+        private _tmacEventService: TMACEventService
     ) {
         super('TwSmpControlsComponent');
     }
@@ -146,7 +161,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.routeReason = this.data.InteractionDetails.RouteReason;
         this.isDraftMode = this.routeReason === 'AgentDraftPull';
         await this.setPostDetails();
-        this.maximumAllowedPostImageRendering = this.data.Data.MaximumAllowedPostImageRendering;
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
@@ -154,6 +168,13 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
+
+        this._tmacEventService
+            .getInteractionEvents(['InteractionDataEvent'], this.interactionId)
+            .pipe(takeUntil(this.unsubscribeAll))
+            .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+
+        this.user = SDKClient.getAgentData() || null;
 
         this.smpService.getEmittedNotificationData
             .pipe(takeUntil(this.unsubscribeAll))
@@ -163,6 +184,15 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         if (!this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
                             this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                                 message: message?.SocialMediaData?.Comments,
+                                isConsented: false
+                            };
+                        } 
+                        break;
+                    }
+                    case 'smpc_e': {
+                        if (!this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId]) {
+                            this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId] = {
+                                message: message?.SocialMediaData?.ParentComments,
                                 isConsented: false
                             };
                         } 
@@ -203,7 +233,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             this.postDraftData[i.interactionId] = {
                                 body: '',
                                 mimeConstraints: '',
-                                rawAttachmentData: '',
+                                rawAttachmentData: [],
+                                attachmentMimes: [],
                                 attachments: [],
                                 isReplyDrafted: false
                             };
@@ -221,9 +252,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             isActive: i.isActive,
                             interactionId: i.interactionId,
                             sessionId: i.otherData?.SessionId,
-                            channel:
-                                this.smpService.postBodies[this.sessionId]?.SubChannel ??
-                                this.smpService.postBodies[this.outSessionId]?.SubChannel,
+                            outSessionId: i.otherData?.OutSessionID,
                             isPostReplySent: i.isPostReplySent
                         };
                     });
@@ -265,6 +294,123 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     }
 
     /**
+     * To handle InteractionDataEvent
+     */
+    async InteractionDataEvent(evt: InteractionDataEvent): Promise<void> {
+        let transferComments = [];
+        // check the channel
+        if (evt.Channel.toLowerCase() !== 'sm') {
+            return;
+        }
+
+        await SDKClient.getDataFromDataServer({
+            query: 'Type == "transfer-comment" AND SubType == "sm"',
+            instance: ''
+        })
+            .then((r) => {
+                if (r && r !== null) {
+                    r.response.forEach((msg) => {
+                        if (this.activeSessionId.toString() === msg.Key) {
+                            let m = JSON.parse(msg.Data);
+
+                            this.commentsAdded = true;
+                            transferComments.push({
+                                Message: m.comment,
+                                Time: m.date,
+                                User: msg.InsertedBy
+                            });
+                        }
+                    });
+                    this.logger.info('Getting transfer comment data');
+                }
+            })
+            .catch((e) => {
+                console.log('Error occured during Get data from data server', e);
+            });
+
+        // check if interaction comments available
+        if (evt.InteractionComments && evt.InteractionComments.length > 0) {
+            this.commentsAdded = true;
+            evt.InteractionComments.forEach((c) => {
+                const dt = JSON.parse(c);
+                this.savedComments.push({
+                    Message: dt.Comment,
+                    Time: dt.Time,
+                    User: dt.User
+                });
+            });
+        }
+        this.savedComments = sortBy([...transferComments, ...this.savedComments], 'Time');
+        console.log('Saved comments:', this.savedComments);
+    }
+
+    /**
+     * To save interaction comments to server
+     */
+    public saveInteractionComments(): void {
+        let message = '';
+        // check the saved comments
+        this.savedComments.forEach((item) => {
+            message += `
+                 <div class="text-primary mat-body-2">${item.Message.replace(/(?:\r\n|\r|\n)/g, '<br>')}</div>
+                 <span class="time muted-text mat-body-1">${item.User}</span>,
+                 <span class="time muted-text mat-body-1">${format(new Date(item.Time), 'dd/MM/yyyy hh:mm:ss a')}</span>
+                 <br />
+                 <br />
+                 `;
+        });
+        message += this.translocoService.translate('interactionComponent.addComment');
+
+        const dialogRef = this._appUiService.showCustomDialog(
+            'prompt',
+            message,
+            this.translocoService.translate('interactionComponent.interactionComment'),
+            { minRows: 4 },
+            {
+                minWidth: '30%',
+                maxWidth: '30%'
+            }
+        );
+        dialogRef.afterClosed().subscribe((resp1) => {
+            if (resp1) {
+                this._fuseProgressBarService.show();
+                SDKClient.saveInteractionComment({
+                    comment: resp1,
+                    interactionId: this.data.InteractionDetails.InteractionID.toString()
+                })
+                    .then((resp2) => {
+                        if (resp2.response > 0) {
+                            // add comments to the reference
+                            this.savedComments.push({
+                                Message: resp1,
+                                Time: new Date(),
+                                User: this.user.agentName
+                            });
+                            // alert user
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('interactionComponent.saveICSuccess')
+                            );
+                        } else {
+                            this._appUiService.showSnackbar(
+                                this.translocoService.translate('interactionComponent.saveICFailed'),
+                                'failure'
+                            );
+                        }
+
+                        this._fuseProgressBarService.hide();
+                    })
+                    .catch(() => {
+                        this._fuseProgressBarService.hide();
+                        this._appUiService.showSnackbar(
+                            this.translocoService.translate('interactionComponent.saveICError'),
+                            'failure'
+                        );
+                    });
+            }
+        });
+    }
+
+    /**
      * AgentNotificaitonEvent Handler
      * @method AgentNotificaitonEvent
      * @param {AgentNotificaitonEvent} evt
@@ -278,6 +424,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         if (type === 'socialmediacomment_edit') {
             this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                 message: message?.SocialMediaData?.Comments,
+                isConsented: false
+            };
+        } else if (type === 'socialmediaparentcomment_edit') {
+            this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId] = {
+                message: message?.SocialMediaData?.ParentComments,
                 isConsented: false
             };
         } else if (type === 'socialmediapost_edit') {
@@ -689,8 +840,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             this.postDraftData[this.interactionId] = {
                 body: '',
                 mimeConstraints: '',
-                rawAttachmentData: '',
+                rawAttachmentData: [],
                 attachments: [],
+                attachmentMimes: [],
                 isReplyDrafted: false
             };
         } catch (error) {
@@ -794,14 +946,14 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                 const setPostBody = async (resData: any, sid: any) => {
                     let modifiedAttachmentData: any[] = [];
                     if (resData?.SocialMediaData?.Comments?.CommentAttachments?.length) {
-                        modifiedAttachmentData = [
-                            {
+                        modifiedAttachmentData = resData.SocialMediaData.Comments.CommentAttachments.map((attdat) => {
+                            return {
                                 IsCloud: true,
-                                Url: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaUrl,
+                                Url: attdat?.MediaUrl,
                                 IsUploaded: true,
-                                Ext: resData?.SocialMediaData?.Comments?.CommentAttachments[0]?.MediaType
-                            }
-                        ];
+                                Ext: attdat?.MediaType
+                            };
+                        });
                     }
                     let tempAttachments = await this.requestAttachmentData(
                         (modifiedAttachmentData.length && this.isDraftMode) ? modifiedAttachmentData : resData.Attachments
@@ -819,6 +971,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             PostAccountName: smData.Posts.AccountName
                                 ? smData.Posts.AccountName
                                 : smData.Posts.AccountId,
+                            PostCreatedTime: smData.Posts?.CreatedDateTime,
+                            PostUpdatedTime: smData.Posts?.UpdatedDateTime,
                             PostId: smData.Posts.PostId,
                             SmActiveComment: smData.Comments,
                             SmParentComments: smData.ParentComments,
@@ -832,6 +986,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             IsCommentEdited: smData.Comments?.IsEdited,
                             IsCommentDeleted: smData.Comments?.IsDeleted,
                             IsPostDeleted: smData.Posts?.IsDeleted,
+                            IsPostEdited: smData.Posts?.IsEdited,
                             RouteId: resData?.RouteId
                         }
                     });
@@ -887,5 +1042,42 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
     restrictPostActionEvt(data: {interactionId: any, restrict: boolean}) {
         this.restrictPostActions[data.interactionId] = data.restrict;
+    }
+
+        /**
+     * Transfers post
+     */
+    transferPost(): void {
+        this.popupInteraction = false;
+        const transferConfig = this.data.Data.Transfer ?? {};
+        let data: AgentSkillListData = new AgentSkillListDataModel('transferPost', 'Transfer Post');
+        data = merge({}, data, transferConfig);
+        data = {
+            ...data,
+            InteractionId: this.interactionId,
+            OtherData: {
+                type: 'transfer',
+                posts: [this.smpService.postBodies[this.activeSessionId]].map((p) => ({
+                    ...p,
+                    SessionId: this.activeSessionId
+                }))
+            }
+        };
+
+        this._matDialog.open(AgentSkillListComponent, {
+            data,
+            panelClass: [
+                'agent-skill-dialog',
+                'twd-w-11/12',
+                'twd-h-10/12',
+                'lg:twd-w-7/12',
+                'lg:twd-h-8/12',
+                'xl:twd-w-6/12',
+                '2xl:twd-w-5/12'
+            ],
+            minWidth: '30%',
+            maxWidth: '100%',
+            disableClose: true
+        });
     }
 }

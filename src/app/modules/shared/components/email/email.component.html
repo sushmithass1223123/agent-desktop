@@ -153,7 +153,7 @@
         <div class="twd-flex twd-justify-between twd-px-2 twd-pb-2">
             <div>
                 <email-template-selector [disabled]="state !== 'loaded'" (selectTemplate)="selectTemplate($event)"></email-template-selector>
-                <button
+                <button *ngIf="mode != 'quick-reply'"
                     mat-raised-button
                     mat-icon-button
                     color="primary"
@@ -292,7 +292,7 @@
         </mat-menu> -->
 
         <mat-menu class="custom attachment-overlay" #attachList="matMenu">
-            <div class="attachment-menu twd-mx-2">
+            <div class="attachment-menu twd-mx-2" (click)="$event.stopPropagation()">
                 <mat-chip-list class="mat-chip-list-stacked">
                     <mat-chip
                         *ngFor="let file of attachments | slice: 2:attachments.length"

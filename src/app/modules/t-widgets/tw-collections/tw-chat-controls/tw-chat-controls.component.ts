@@ -1,4 +1,4 @@
-import { AgentSkillListData, AOTWidget, AttachmentConstraints, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
+import { AgentSkillListData, AOTWidget, InteractionWidgetBaseData, TwChatControls, TwChatControlsData, XssSymbolEntityMap } from '@ad/types';
 import {
     AfterViewInit,
     Component,
@@ -69,7 +69,7 @@ import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
 import { format } from 'date-fns';
 import { map, merge, sortBy } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Subject, timer } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
@@ -504,6 +504,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
          * Video call request
          */
         reqVideoCall: boolean;
+        /**
+        * Config to load AV related functionalities in the new external widget
+        */
+        externalAvWidget: boolean;
     };
     /**
      * Connected event ref
@@ -748,6 +752,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this._agentFeaturesService.features.pipe(takeUntil(this.unsubscribeAll)).subscribe((change: boolean) => {
             if (change) {
                 // check agent features
+                // Override agent level features
                 this.checkAgentFeatures();
             }
         });
@@ -763,35 +768,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             }
         });
 
-        this.agentFeatures = {
-            audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
-            videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
-            signature: this.widgetData.SignatureAllowed ?? false,
-            whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
-            cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
-            attachments: this.widgetData.AttachmentAllowed ?? false,
-            emoji: this.widgetData.EmojiAllowed ?? false,
-            chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
-            conference: this.widgetData.Conference?.Allowed ?? false,
-            transfer: this.widgetData.Transfer?.Allowed ?? false,
-            chatTemplate: this.widgetData.ChatTemplate?.Allowed ?? false,
-            reply: this.widgetData.ReplyAllowed ?? true,
-            comment: this.widgetData.InteractionCommentAllowed ?? false,
-            hold: this.widgetData.HoldInteractionAllowed ?? false,
-            snapshot: this.widgetData.Snapshot?.Allowed ?? false,
-            voicenote: this.widgetData.VoiceNoteAllowed ?? false,
-            screenshare: this.widgetData.ScreenShareAllowed ?? false,
-            webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
-            mediaDownload: false,
-            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false,
-            reqAudioCall: this.widgetData.RequestAudioCallAllowed ?? false,
-            reqVideoCall: this.widgetData.RequestVideoCallAllowed ?? false
-        };
-
         // set the user info
         this.user = SDKClient.getAgentData() || null;
 
         // check for agent features
+        // Override agent level features
         this.checkAgentFeatures();
 
         // set the status
@@ -964,10 +945,37 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     }
 
     /**
-     * To check agent features for One Way Video
+     * To check agent features
      */
     private checkAgentFeatures(): void {
-        // check the agent features to enable/disable
+        // Check the features at application level (it will be overriden if agent features are available from backend)
+        this.agentFeatures = {
+            externalAvWidget:
+                this.widgetData?.ExternalAVWidget?.Enabled && Boolean(this._appDataService.getExternalAVWidgetOTP),
+            audioEscalate: this.widgetData.AudioEscalateAllowed ?? false,
+            videoEscalate: this.widgetData.VideoEscalateAllowed ?? false,
+            signature: this.widgetData.SignatureAllowed ?? false,
+            whiteboard: this.widgetData.Whiteboard?.Allowed ?? false,
+            cobrowse: this.widgetData.Cobrowse?.Allowed ?? false,
+            attachments: this.canAddAttachment(this.widgetData.AttachmentAllowed) ?? false,
+            emoji: this.widgetData.EmojiAllowed ?? false,
+            chatReply: (this.widgetData.ReplyOnChatAllowed && this.canReplyToChat()) ?? false,
+            conference: this.widgetData.Conference?.Allowed ?? false,
+            transfer: this.widgetData.Transfer?.Allowed ?? false,
+            chatTemplate: this.widgetData.ChatTemplate?.Allowed ?? false,
+            reply: this.widgetData.ReplyAllowed ?? true,
+            comment: this.widgetData.InteractionCommentAllowed ?? false,
+            hold: this.widgetData.HoldInteractionAllowed ?? false,
+            snapshot: this.widgetData.Snapshot?.Allowed ?? false,
+            voicenote: this.widgetData.VoiceNoteAllowed ?? false,
+            screenshare: this.widgetData.ScreenShareAllowed ?? false,
+            webrtcTest: this.widgetData.WebRTCTest?.Allowed ?? false,
+            mediaDownload: false,
+            toggleUserView: this.widgetData.ToggleUserViewAllowed ?? false,
+            reqAudioCall: this.widgetData.RequestAudioCallAllowed ?? false,
+            reqVideoCall: this.widgetData.RequestVideoCallAllowed ?? false
+        };
+        // check the agent features to enable/disable from OCM
         SDKClient.getAgentData().featuresList.forEach((f) => {
             // get the featue
             const feature = f.Feature.toLowerCase();
@@ -987,7 +995,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     this.agentFeatures.whiteboard = f.IsEnabled;
                     break;
                 case AGENT_FEATURES.IsChatAttachmentsEnabled:
-                    this.agentFeatures.attachments = f.IsEnabled;
+                    this.agentFeatures.attachments = this.canAddAttachment(f.IsEnabled);
                     break;
                 case AGENT_FEATURES.IsChatEmojiEnabled:
                     this.agentFeatures.emoji = f.IsEnabled;
@@ -1028,6 +1036,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 case AGENT_FEATURES.IsToggleChatUserViewEnabled:
                     this.agentFeatures.toggleUserView = f.IsEnabled;
                     break;
+                case AGENT_FEATURES.IsExternalAVWidgetEnabled:
+                    this.agentFeatures.externalAvWidget =
+                        f.IsEnabled && Boolean(this._appDataService.getExternalAVWidgetOTP);
+                    break;
                 default:
             }
         });
@@ -1039,6 +1051,18 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
           return true;
         } catch (error) {
           return false;
+        }
+    }
+
+    onRemoteMessageDeleted(id: string): void {
+        try {
+            this.chatTranscripts = this.chatTranscripts?.filter((transcript) => transcript.messageId != id) ?? [];
+        } catch (ex) {
+            console.error(ex);
+            this.logger.error(
+                `[TwChatControls.onRemoteMessageDeleted] - Error occured while deleting a message from chat transcripts`,
+                ex
+            );
         }
     }
 
@@ -1059,6 +1083,19 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         if (evt.IsAppMessage) {
             const msg = JSON.parse(evt.Message);
             switch (msg.type?.toLowerCase()) {
+                case 'message_delete':
+                    {
+                        const dynamicLabels = [
+                            {
+                                key: '#customerName',
+                                value: this.customerName
+                            }
+                        ];
+                        const message = this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.customerMessageDeleteNotification'), dynamicLabels);
+                        this.onRemoteMessageDeleted(msg?.messageId ?? '')
+                        this._appUIService.showSnackbar(message, 'info');
+                    }
+                    break;
                 case 'clientreloaded':
                     // Check if the status is 'hold'
                     if (this.status === 'hold') {
@@ -1183,23 +1220,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             repliedMsg = getTranscript && { ...getTranscript, repliedToMessage: null };
         }
         if(data.systemMessage) {
-            if(data.message.includes('Agent')) {        
+            if(data.message.includes('Agent has')) {        
                 // Incase the agentname is not sent from VIVR
                 // message will be Ex: 'Agent has missed the call'
                 //so we replace Agent with AgentName here
                 //Ex: 'David has missed the call' 
                 //This happens when VIVR has missed the key in configuration
-                data.message = data.message.replace('Agent', 'You');
-                data.message = data.message.replace("has", "have")
+                data.message = data.message.replace('Agent has', 'You have');
+            } else if(data.message.includes(this.user.agentName.split(' ')[0] + '&#160;has')) {
+                //VIVR: Carol has have disconnected the call
+                //AD: You have disconnected the call
+                data.message = data.message.replace(this.user.agentName.split(' ')[0] + '&#160;has', 'You have')
             } else if(data.message.includes(this.user.agentName.split(' ')[0])) {
-                //Ex: 'David has missed the call' 
-                //incase of conference call: if its from the other agent we can show it as it is
-                // For normal call we can replace it with 'You have missed the call'
-                //If agentname is sent from VIVR compare with AD Agent FirstName 
-                //and if both are same replace with 'You'
+                //VIVR: customer accepts the call from Carol
+                //AD: customer accepts the call from You
                 data.message = data.message.replace(this.user.agentName.split(' ')[0], 'You')
-                data.message = data.message.replace("has", "have")
-            }
+            } 
         }
 
         
@@ -1212,7 +1248,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             messageId: data.messageId,
             message: data.message,
             type: data.attachment?.type || data.type,
-            time: new Date(),
+            time: evt.CreatedTime ? new Date(Date.parse(evt.CreatedTime.toString())) : new Date(),
             attachment: {
                 ...data.attachment,
                 angle: 0
@@ -1610,7 +1646,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         // this.isMobileDevice = this.customerDevice;
         widget.Data = { ...this.data.Data, ChatMode: this.chatMode,
             IsScreenShareDisabled: (this.customerDevice || this.socialMedia) 
-            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints, ConferenceAgentList: this.conferenceAgentList };
+            && this.DisableAvConstraints?.RequestScreenShare, AvCallConstraints };
         widget.Data.Source = 'TwChatControlsComponent';
         widget.Data.CallType = param;
         widget.Data.Direction = direction;
@@ -1875,7 +1911,6 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 transcript.message = urlify(transcript.message);
             }
         }
-
         this.chatTranscripts.push(transcript);
     }
 
@@ -1992,8 +2027,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.attachmentConstraints = this.widgetData.AttachmentConstraints?.[this.channel?.charAt(0)?.toUpperCase() + this.channel?.slice(1)] ?? [];
         // check social media
         this.isSMM = evt.IsSMM || false;
-
-        this.agentFeatures.chatReply = this.widgetData.ReplyOnChatAllowed && this.canReplyToChat();
+        // validate agent features again as some of the features depeneds on this event data parameters
+        this.checkAgentFeatures()
         // to check socialschannels
         if (this.DisableAvConstraints?.SocialChannels?.includes(this.channel)) {
             this.socialMedia = true;
@@ -2014,13 +2049,30 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         this.chatMode = evt.ChatMode as any;
         // Av call constraints from transfer notification event
         let avCallConstraints: any = {};
-        
+          // message to show for agent himself whe he is connected - "You have connected to chat"
+          this.pushToTranscript({
+            messageId: TUtils.Generic.uuid(),
+            message: this.translocoService.translate('widgets.chatControls.selfChatConnectedMsg'),
+            dividerMessage: true,
+            //if needed replace '-' with '/'
+            time: moment(new Date())
+        });
+
         if(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]) {
             avCallConstraints = JSON.parse(JSON.stringify(this._tmacEventService.avCallConstraints[evt.TextChatIncomingEvent.SourceAgentID]));
         }
 
         // to not open video dialog when interaction is over
-        if ((!evt.RecoveryEvent && this.mediaChannels.includes(this.chatMode)) || (this.conferenceType === 'transfer' && avCallConstraints?.isAgentOnActiveCall && avCallConstraints?.isAgentOnPhone) || (this.conferenceType === 'conf' && avCallConstraints?.isAgentOnActiveCall)) {
+        if (
+            (!this.agentFeatures.externalAvWidget &&
+                !evt.RecoveryEvent &&
+                this.mediaChannels.includes(this.chatMode)) ||
+            (this.conferenceType === 'transfer' &&
+                avCallConstraints?.isAgentOnActiveCall &&
+                avCallConstraints?.isAgentOnPhone) ||
+            ((this.conferenceType.includes('conf')) &&
+                avCallConstraints?.isAgentOnActiveCall)
+        ) {
             this.escalateToAV(this.chatMode as any, avCallConstraints);
         }
 
@@ -2106,13 +2158,22 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             // assign the tmac server
             tmacServer = extraParam.serverName;
             // show an alert on connect
-            if (extraParam.conferenceType === 'conf' || extraParam.conferenceType === 'whisper') {
+            if (extraParam.conferenceType.includes('conf') || extraParam.conferenceType === 'whisper') {
                 const dynamicLabels = [
                     {
                         key: "#agentName",
                         value: evt.AgentName
                     }
                 ]
+                  //to show "You have joined the chat" when an agent joins to conference chat
+                  this.pushToTranscript({
+                    messageId: TUtils.Generic.uuid(),
+                    message: this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels),
+                    dividerMessage: true,
+                    //if needed replace '-' with '/'
+                    time: moment(new Date())
+                });
+
                 this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.chatConnectedMsg'), dynamicLabels), 'info');
             }
         } catch (error) { }
@@ -2648,6 +2709,12 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._interactionManagerService.updateInteraction(evt.InteractionID, {
                 user: this.customerName
             });
+
+            // update the customer name in this.chatTranscripts and ui
+            this.chatTranscripts.filter((c) => c.isAgent === false).map((item, index) => {
+                item.who = this.customerName;
+            });
+
         }
     }
 
@@ -2767,7 +2834,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         }
 
         // show an alert for non silent agent
-        if (evt.ConferenceType === '' || evt.ConferenceType === 'conf' || evt.ConferenceType === 'whisper') {
+        if (evt.ConferenceType === '' || evt.ConferenceType.includes('conf') || evt.ConferenceType === 'whisper') {
             const dynamicLabels = [
                 {
                     key: '#agentName',
@@ -2980,6 +3047,14 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
 
     public canReplyToChat(): boolean {
         return !this.isSMM || (this.isSMM && this.widgetData.ReplyOnSMM?.channels?.toLowerCase()?.includes(this.channel?.toLowerCase()));
+    }
+
+    /**
+     * Method to validate attachment feature
+     */
+    public canAddAttachment(allowed: boolean): boolean {
+        return allowed && (!this.isSMM || (this.isSMM &&
+             this.widgetData.SMM?.attachments?.allowedChannels?.toLowerCase()?.includes(this.channel?.toLowerCase())));
     }
 
     /** 
@@ -3206,6 +3281,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      * To dispose call widget
      */
     public disposeCallWidget(): void {
+        this.isOnAVCall = null
         // update the interaction icon
         this._interactionManagerService.updateInteraction(this.data.InteractionDetails.InteractionID, {
             otherData: {
@@ -3242,7 +3318,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         value: confirmType
                     }
                 ];
-                this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.changeModeLoading'), dynamicLabels), 'loading');
+                const snackbarRef = this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.changeModeLoading'), dynamicLabels), 'loading');
                 // show the progress bar
                 this._fuseProgressBarService.show();
                 // disable the button
@@ -3258,6 +3334,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     }))
                 })
                     .then((resp) => {
+                        snackbarRef?.dismiss();
                         btn.disabled = false;
                         // hide the progress bar
                         this._fuseProgressBarService.hide();
@@ -3272,6 +3349,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                         this._appUIService.showSnackbar(this.getUpdatedLabel(this.translocoService.translate('widgets.chatControls.incomingChatTitle'), dynamicLabels));
                     })
                     .catch(() => {
+                        snackbarRef?.dismiss();
                         // enable if something goes wrong
                         btn.disabled = false;
                         this._fuseProgressBarService.hide();
@@ -3739,8 +3817,9 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardURLNotFound'), 'failure');
             return;
         }
+        let snackRef;
         try {
-            const snackRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoading'), 'loading');
+            snackRef = this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoading'), 'loading');
 
             // [Chirag July,31 22'] send whiteboard url to customer
             let customerWhiteboardUrl = new URL(this.widgetData.Whiteboard.CustomerUrl ?? this.widgetData.Whiteboard?.Url);
@@ -3762,7 +3841,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
             });
 
             
-
+            snackRef?.dismiss();
             if (res.response?.ResultMessage === 'Success') {
                  // Wait for the customer to accept the request
                 // No need to open the whiteboard here
@@ -3771,6 +3850,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 throw new Error('Error occurred while requesting to open whiteboard');
             }
         } catch (e) {
+            snackRef?.dismiss();
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         }
@@ -3808,7 +3888,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                     id: TUtils.Generic.uuid()
                 })
             });
-
+            snackRef?.dismiss();
             // [Chirag July,31 22'] send whiteboard url to customer
             let agentUrl = new URL(this.widgetData.Cobrowse.AgentUrl);
             agentUrl.searchParams.set('sessionid', this.sessionID);
@@ -3830,10 +3910,11 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 throw new Error('Error occured while opening whiteboard');
             }
         } catch (e) {
+            snackRef?.dismiss();
             console.error(e);
             this._appUIService.showSnackbar(this.translocoService.translate('widgets.chatControls.whiteboardLoadingError'), 'failure');
         } finally {
-            snackRef.dismiss();
+            snackRef?.dismiss();
         }
     }
 
@@ -3944,6 +4025,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     unHoldInteraction = async (): Promise<void> => {
         try {
+            if(this.status !== 'hold') return;
             this._fuseProgressBarService.show();
             if (this.interaction.InteractionID) {
                 this.interactionOnHold.loading = true;

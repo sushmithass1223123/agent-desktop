@@ -107,7 +107,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.id = TUtils.Generic.uuid();
+        this.id = TUtils.Generic.uuid().replace(/-/g, '_');
     }
 
     /**
@@ -148,7 +148,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
         setTimeout(() => {
             tinymce
                 .init({
-                    selector: `textarea#${this.id}`,
+                    selector: `textarea[id="${this.id}"]`,
                     min_height: 200,
                     relative_urls: false,
                     remove_script_host: false,
@@ -157,15 +157,15 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                     height: '100%',
                     menubar: false,
                     fontsize_formats: '8pt 9pt 10pt 11pt 12pt 26pt 36pt',
-                    forced_root_block: false,
+                    forced_root_block: 'div',
                     font_formats:
                         'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Oswald=oswald; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
                     // force_br_newlines: true,
                     // force_p_newlines: false,
                     branding: false,
-                    base_url: `${this.baseHref}assets/tinymce/`,
+                  base_url: `${this.baseHref}assets/tinymce/`,
                     content_css: `${this.baseHref}assets/tinymce/editor.css`,
-                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount', 'textcolor'],
+                    plugins: ['table', 'advlist', 'autolink', 'lists', 'searchreplace', 'wordcount'],
                     //     'advlist autolink lists link image charmap print preview anchor',
                     //     'searchreplace visualblocks code fullscreen',
                     //     'insertdatetime media table paste code wordcount'
@@ -175,7 +175,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                         bold italic backcolor | alignleft aligncenter 
                         alignright alignjustify | bullist numlist outdent indent |  
                         removeformat
-                        `,
+                    `,
                     toolbar_mode: 'sliding',
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     setup: (editor) => {
@@ -215,7 +215,7 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                 });
         });
     }
-}
+}    
 
 /**
  * EmailEditorModule

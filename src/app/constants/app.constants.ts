@@ -239,6 +239,7 @@ export const AppConfirmDialogConstants: Record<
  * Agent features
  */
 export const AGENT_FEATURES = {
+    IsExternalAVWidgetEnabled: 'isexternalavwidgetenabled',
     AllowSupervisorToBargeIn: 'allowsupervisortobargein',
     AllowSupervisorToCapturePicture: 'allowsupervisortocapturepicture',
     AllowSupervisorToChangeStatus: 'allowsupervisortochangestatus',

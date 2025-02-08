@@ -1,3 +1,5 @@
+import * as smpErrorCodes from '../../assets/constants/codes/smp.errorcodes.json';
+
 // route reasons
 export const SMP_OUTBOX_REASONS = ['CheckerQueue', 'CheckerPull'];
 export const SMP_SENT_REASONS = ['AgentSentPull'];
@@ -22,20 +24,7 @@ export const SMP_REASONCODE_VALUES = {
     100: 'success'
 };
 
-export const SMP_SEND_STATUS = {
-    '1': 'Success',
-    '0': 'Success',
-    '-1': 'Fail',
-    '-2': 'Fail',
-    '-3': 'FailedWithServerBusyException',
-    '-4': 'ExchangeAuthenticationError',
-    '-5': 'ExchangeServiceObjectNotCreated',
-    '-6': 'ExchangeMessageNotCreated',
-    '-8': 'MailboxInstanceCreationError',
-    '-9': 'EwsApiAdaptorDown',
-    '-10': 'PayloadTooLarge',
-    '-11': 'EmailManagerLoading'
-};
+export const SMP_SEND_STATUS = smpErrorCodes;
 
 export const SMP_CURRENTSTATUS_CODES = {
     SentToCustomer: 'sharedComponents.socialMediaPosts.replySendToCustomer',
