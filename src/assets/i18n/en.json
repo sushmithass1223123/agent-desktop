@@ -564,7 +564,7 @@
             "supervisorTakeover": "Interaction disconnected by supervisor - Supervisor Takeover",
             "interactionDisconnect": "Interaction disconnected",
             "agentDisconnectedMsg": "#agentName has disconnected from chat",
-            "agentRequestRejected": "#agentName has rejected your request with comment: #comment",
+            "agentRequestRejected": "#agentName has rejected your #type request with comment: #comment",
             "freezeAutoResponseFailed": "Freeze auto response failed!",
             "freezeAutoResponseError": "Error in freezing auto response failed!",
             "chatAnswerSuccess": "Answer chat success",
