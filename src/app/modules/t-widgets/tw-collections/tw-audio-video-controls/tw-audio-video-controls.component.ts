@@ -730,6 +730,9 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         );
                         }
                     };
+                    const replacedCustomerName = this.translocoService.translate(
+                        'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
+                    ) ?? '';
                     const dynamicLabels = [
                         {
                             key: '#callType',
@@ -738,11 +741,11 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
                         {
                             key: '#customerName',
                             value:
-                                evt.data?.owner && evt.data.owner
+                                 evt.data?.owner && evt.data.owner
                                     ? evt.data.owner.split('_').pop()
-                                    : this.translocoService.translate(
-                                          'dynamic_labels.audioVideoControls.customerName.' + this.interactionDetails.CustomerName
-                                      )
+                                    : !replacedCustomerName.includes('dynamic_labels.audioVideoControls.customerName')
+                                    ? replacedCustomerName
+                                    : this.interactionDetails.CustomerName ?? 'Customer'
                         }
                     ];
 
