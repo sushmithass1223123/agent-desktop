@@ -3028,6 +3028,10 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
                 value: evt.FromAgentName
             },
             {
+                key: '#type',
+                value: JSON.parse(evt.Data).type === 'conf' ? 'conference' : 'transfer'
+            },
+            {
                 key: '#comment',
                 value: evt.Comment
             }
