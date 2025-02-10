@@ -195,7 +195,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         bodyBackground: 'grey-800',
                         headerBackground: '',
-                        contentBackground: ''
+                        contentBackground: 'grey-800'
                     },
                     widget: {
                         customBackgroundColor: false,
