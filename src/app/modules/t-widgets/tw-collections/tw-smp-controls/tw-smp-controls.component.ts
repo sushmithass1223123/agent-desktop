@@ -708,15 +708,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     savePostAsDraft(closePost = false, isLoud: boolean): void {
         const postBody = (this.postDraftData[this.interactionId].body || '').toString();
+        let draftSnackbarRef: any;
         if(!postBody) {
             this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
                 'failure'
-            );
+        );
             return;
         }
         if (isLoud)
-            this._appUiService.showSnackbar(
+            draftSnackbarRef = this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
                 'loading'
             );
@@ -775,7 +776,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
                         'failure'
                     );
-            });
+            }).finally(draftSnackbarRef?.dismiss);
     }
 
     /**
