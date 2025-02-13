@@ -253,6 +253,7 @@
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited!",
+            "parentCommentEditedDialogMessage": "Parent comment has been edited!",
             "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
             "postEditedDialogMessage": "Post has been edited!",
             "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed.",

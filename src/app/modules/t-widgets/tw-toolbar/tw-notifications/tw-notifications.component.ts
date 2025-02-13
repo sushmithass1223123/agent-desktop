@@ -129,6 +129,14 @@ export class TwNotificationsComponent extends TWidgetWrapper implements OnInit, 
                 showAlert: true
             });
             return;
+        } else if (type === 'socialmediaparentcomment_edit') {
+            this._appUIService.addNotification({
+                icon: 'smpc_e',
+                message: JSON.parse(evt.Message),
+                status: 'new',
+                showAlert: true
+            });
+            return;
         } else if (type === 'socialmediapost_edit') {
             this._appUIService.addNotification({
                 icon: 'smp_e',
