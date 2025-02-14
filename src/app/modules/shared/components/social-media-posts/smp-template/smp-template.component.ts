@@ -108,6 +108,7 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
      */
     unsubscribeAll$: Subject<boolean> = new Subject<boolean>();
     flattenedCommentHistory: any[] = [];
+    tempFlattenedCommentHistory: any[] = [];
     indexHolder = {
         0: [0, 5]
     };
@@ -669,14 +670,21 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
 
     /**
      * Method to generate segregated comments according to UI logic
-     * @param {any[]} commentArray
-     * @param {number} nestLevel
+     * @param {any[]} commentArray - Load history response array
+     * @param {number} nestLevel - Level of nesting
+     * @param {number} finalCommentIndex - Last reply index
+     * @param {boolean} isTempFlattening - Is the segregation for temp history flattening
      */
-    generateSegregatedComment(commentArray: any[], nestLevel: number): void {
+    generateSegregatedComment(commentArray: any[], nestLevel: number, finalCommentIndex?: number, isTempFlattening?: boolean): void {
         try {
-            commentArray.forEach((commentData) => {
-                let modCommentData = { ...commentData, nestLevel: nestLevel + 1, renderMedia: false };
-                if (nestLevel === -1) modCommentData.isVisible = true;
+            commentArray.forEach((commentData, i) => {
+                let modCommentData = {
+                    ...commentData,
+                    nestLevel: nestLevel + 1,
+                    renderMedia: false,
+                    finalCommentIndex: i == finalCommentIndex ? finalCommentIndex : -1
+                };
+                if (nestLevel === -1 || isTempFlattening) modCommentData.isVisible = true;
                 else modCommentData.isVisible = false;
                 if (this.postData?.SubChannel == 'x') {
                     if (modCommentData?.CommentText?.Text) {
@@ -684,12 +692,23 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
                             modCommentData.CommentText.Text.replace(/^@\S+\s*/, '');
                     }
                 }
-                const isCommentAlreadyAvailable = this.flattenedCommentHistory.findIndex((ocd) => {
-                    return modCommentData.CommentId === ocd.CommentId;
-                });
-                if (isCommentAlreadyAvailable < 0) this.flattenedCommentHistory.push(modCommentData);
+                if(!isTempFlattening) {
+                    const isCommentAlreadyAvailable = this.flattenedCommentHistory.findIndex((ocd) => {
+                        return modCommentData.CommentId === ocd.CommentId;
+                    });
+                    if (isCommentAlreadyAvailable < 0) this.flattenedCommentHistory.push(modCommentData);
+                } else {
+                    const isCommentAlreadyAvailable = this.tempFlattenedCommentHistory.findIndex((ocd) => {
+                        return modCommentData.CommentId === ocd.CommentId;
+                    });
+                    if (isCommentAlreadyAvailable < 0) this.tempFlattenedCommentHistory.push(modCommentData);
+                }
                 if (commentData?.ReplyComments?.length) {
-                    this.generateSegregatedComment(commentData.ReplyComments, nestLevel + 1);
+                    this.generateSegregatedComment(
+                        commentData.ReplyComments,
+                        nestLevel + 1,
+                        commentData.ReplyComments.length - 1
+                    );
                 }
             });
         } catch (e) {
@@ -732,7 +751,55 @@ export class SmpTemplateComponent extends SharedWrapper implements OnInit, OnDes
             this.loadCommentHistory();
         } catch (e) {
             this.logger.error(
-                '[SmpTemplateComponent.onLoadNextHistory] - Error occured while loading next set of history:',
+                '[SmpTemplateComponent.onLoadNextHistory] - Error occured while loading next set of comment history:',
+                JSON.stringify(e),
+                true
+            );
+            console.error(e);
+        }
+    }
+
+    /**
+     * 
+     * @param flattenedCommentIndex 
+     * @returns 
+     */
+    async onLoadReplyHistory(flattenedCommentIndex: number) {
+        try {
+            this.isCommentHistoryLoading = true;
+            const { response } = await SDKClient.loadComments({
+                postId: this.flattenedCommentHistory[flattenedCommentIndex].ParentId,
+                commentId: '',
+                startIndex: Math.ceil((this.flattenedCommentHistory[flattenedCommentIndex].finalCommentIndex + 1) / 5) * 5,
+                endIndex: Math.ceil((this.flattenedCommentHistory[flattenedCommentIndex].finalCommentIndex + 6) / 5) * 5
+            });
+            this.isCommentHistoryLoading = false;
+            if (!response || (Array.isArray(response) && !response?.length)) {
+                this._appUiService.showSnackbar(
+                    this.translocoService.translate('sharedComponents.socialMediaPosts.noRepliesFoundMessage'),
+                    'failure'
+                );
+                this.flattenedCommentHistory[flattenedCommentIndex].finalCommentIndex = undefined;
+                return;
+            }
+            this.tempFlattenedCommentHistory = [];
+            this.generateSegregatedComment(
+                response,
+                this.flattenedCommentHistory[flattenedCommentIndex].nestLevel - 1,
+                response.length - 1,
+                true
+            );
+            this.tempFlattenedCommentHistory.forEach((tfch, i) => {
+                if (i == this.tempFlattenedCommentHistory.length - 1) {
+                    tfch.finalCommentIndex = response.length + this.flattenedCommentHistory[flattenedCommentIndex].finalCommentIndex;
+                } else tfch.finalCommentIndex = -1;
+            });
+            this.flattenedCommentHistory[flattenedCommentIndex].finalCommentIndex = undefined;
+            this.flattenedCommentHistory.splice(flattenedCommentIndex + 1, 0, ...this.tempFlattenedCommentHistory);
+            this.tempFlattenedCommentHistory = [];
+        } catch (e) {
+            this.logger.error(
+                '[SmpTemplateComponent.onLoadReplyHistory] - Error occured while loading next set of reply history:',
                 JSON.stringify(e),
                 true
             );
