@@ -268,7 +268,13 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     showPayloadSizeStats: boolean = false;
 
-    savedDataOnDataServer: boolean = false;
+    /**
+     * to track list of supervisors who request for monitoring draft
+     */
+    supervisorsList:{
+        supervisorId: string;
+        tmacServerName: string;
+    }[] = [];
 
     constructor(
         private _interactionManagerService: InteractionManagerService,
@@ -400,7 +406,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.uiActionEventService.addUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
         this.getTransferComments();
 
-    
+        SDKClient.events.on('MonitorRequestFromSupervisorEvent', this.addMonitoringSupervisors);
     }
 
     /**
@@ -508,6 +514,9 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
         this.destroyWrapper();
         this.uiActionEventService.removeUIEventListeners('EmailAction', this.uiActionEventService.onEmailAction);
         this.sendTimerId && clearTimeout(this.sendTimerId);
+        SDKClient.events.off('MonitorRequestFromSupervisorEvent', () => {
+            console.log('unsubscribe: MonitorRequestFromSupervisorEvent');
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -1245,8 +1254,7 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
      * Save email as Draft
      */
     saveEmailAsDraft(closeEmail = false, btn?: MatButton): void {
-        const callback = () => {
-            if(!this.savedDataOnDataServer && this.currentInteraction?.CurrOutSessionId) this.saveToDataServer('outSessionId', this.currentInteraction.CurrOutSessionId);
+        const callback = () => { 
             const { InSessionId, RouteId, CurrOutSessionId } = this.currentInteraction;
             const email = this.emailRef?.getEmail();
             // @TODO Files not sent as draft arg
@@ -1286,12 +1294,15 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     }
                     if (closeEmail) {
                         this.closeInteraction(btn, true);
+                        this.sendDataToSupervisor({
+                            DraftStatus: 'closed'
+                        });
                     }
                 })
                 .catch((err) => {
                     console.error(err);
                 });
-            this.sendDraftingDataToSupervisor({...emailData,...email});
+            this.generateDraftDataForSupervisor({...emailData,...email});
         };
         const poll = () => {
             if ((!this.draftPolling$ || this.draftPolling$.closed) && this.draftPollDuration) {
@@ -1338,8 +1349,14 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
                     this.deleteDraftEmail();
                     if (closeEmail) {
                         this.closeInteraction(null, true);
+                        this.sendDataToSupervisor({
+                            DraftStatus: 'closed'
+                        });
                         return;
                     }
+                    this.sendDataToSupervisor({
+                        DraftStatus: 'preview'
+                    });
                     // this.replyInfo = null;
                     this.emailComponentMode = 'preview';
                 }
@@ -1679,56 +1696,65 @@ export class TwEmailControlsComponent extends TWidgetWrapper implements OnInit, 
     }
 
     /**
-     * method to save data on data server
+     * generate email data to send to supervisor
      */
-    saveToDataServer(subType, data) {
-        
-        const input = {
-            type: 'email-response',
-            subType: subType,
-            key: this.interactionId.toString(),
-            insertedBy: SDKClient.getAgentData().agentName,
-            insertedSource: 'AD',
-            insertInteraction: this.interactionId.toString(),
-            data: JSON.stringify(data),
-            instance: '',
-            ttl: ''
-        }
-
-        SDKClient.saveDataToDataServer(input)
-        .then((response) => {
-            this.savedDataOnDataServer = true;
-            console.log("saveDataToDataServer Saved", response);
-        })
-        .catch((err) => {
-            console.error("error during saveDataToDataServer", err);
-        });
-    }
-
-    /**
-     * sending realtime drafting email data in an event to supervisor.
-     */
-    sendDraftingDataToSupervisor(emailData) {
+    generateDraftDataForSupervisor(emailData) {
         const details = {...emailData,
             InteractionId: this.interactionId,
             Intent: this.currentInteraction.Intent,
             Priority: this.emailBodies[emailData.inboxSessionId]?.Priority,
             CurrentStatus: this.emailBodies[emailData.inboxSessionId]?.CurrentStatus,
             AgentName: SDKClient.getAgentData().agentName,
-            RepliedStatus:this.emailBodies[emailData.inboxSessionId]?.RepliedStatus
+            RepliedStatus:this.emailBodies[emailData.inboxSessionId]?.RepliedStatus,
+            DraftStatus: 'draft'
         }
-        let data: IAddEvent = {
-            agentId: this.user.supervisorId,
-            eventString: JSON.stringify({
-                EventName: "GenericEvent",
-                SubEventName: "DraftEmailUpdatesEvent",
-                JsonData: JSON.stringify(details),
-            }),
-            isPriority: true,
-            toTmacServer:this.user.tmacServer
-        };
+
+        this.sendDataToSupervisor(details);
+    }
+
+    /**
+     * Method to send realtime draft updates to supervisors
+     * @param details
+     */
+    sendDataToSupervisor(details) {
+        this.supervisorsList.forEach(s => {
+            if(s) {
+                let data: IAddEvent = {
+                    agentId: s.supervisorId,
+                    eventString: JSON.stringify({
+                        EventName: "GenericEvent",
+                        SubEventName: "DraftEmailUpdatesEvent",
+                        JsonData: JSON.stringify(details),
+                    }),
+                    isPriority: true,
+                    toTmacServer: s.tmacServerName
+                };
+                
+                SDKClient.addEventToAgentSession(data);
+            }
+        });
+    }
+
+    /**
+     * Method to add supervisor who requests for monitoring
+     */
+    addMonitoringSupervisors = (evt) => {
+        const supervisorId = JSON.parse(evt.JsonData)?.supervisorId;  
         
-        SDKClient.addEventToAgentSession(data);
+        if(!this.supervisorsList?.find(s => s.supervisorId === supervisorId))  {
+            this.supervisorsList.push(JSON.parse(evt.JsonData));
+        }
+
+        if(this.emailComponentMode !== 'preview')this.saveEmailAsDraft();
+        
+        if(this.supervisorsList.length === 1) SDKClient.events.on('EmailSendingStatusEvent', (evt) => {
+            let JsonData = JSON.parse(evt.JsonData);
+            if(EMAIL_SEND_STATUS[JsonData?.StatusCode] === 'Success') {
+                this.sendDataToSupervisor({
+                    DraftStatus: 'sent'
+                });
+            }
+        });
     }
 
 }

@@ -1208,7 +1208,9 @@
         },
         "previewDialog": {
             "agentReadingEmail": "Agent is viewing this email...",
-            "agentWorkingOnEmail": "#agent is working on this email..."
+            "agentWorkingOnEmail": "#agent is working on this email...",
+            "closedDraft": "#agent has closed drafting interaction",
+            "sentMail": "#agent has sent email successfully"
         }
     },
     "widgetPreview": {
