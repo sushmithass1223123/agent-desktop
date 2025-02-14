@@ -728,7 +728,7 @@
         </div>
 
         <div class="comment-content-container" *ngIf="enhanceCommentContainer">
-            <ng-container *ngFor="let commentData of flattenedCommentHistory">
+            <ng-container *ngFor="let commentData of flattenedCommentHistory; let i = index;">
                 <div
                     *ngIf="commentData?.isVisible"
                     class="comment-container {{
@@ -885,6 +885,22 @@
                                 </ng-container>
                             </div>
                         </div>
+                    </div>
+                    <!-- Next set of comment loader -->
+                    <div
+                        class="load-next-flex twd-flex"
+                        (click)="onLoadReplyHistory(i)"
+                        [ngStyle]="{
+                            opacity: isCommentHistoryLoading ? '0.8' : '1.0',
+                            'pointer-events': isCommentHistoryLoading ? 'none' : 'all'
+                        }"
+                        *ngIf="commentData.finalCommentIndex >= 0"
+                    >
+                        <h5 class="twd-p-2 font-weight-600">
+                            {{ isCommentHistoryLoading ? 'Loading...' : 'Load more' }}
+                        </h5>
+                        <img src="assets/images/vectors/loading.svg" *ngIf="isCommentHistoryLoading" />
+                        <mat-icon *ngIf="!isCommentHistoryLoading">keyboard_arrow_down</mat-icon>
                     </div>
                 </div>
                 <!-- Reply container -->

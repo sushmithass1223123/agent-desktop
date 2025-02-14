@@ -1148,6 +1148,7 @@
             "uploadFileSizeWarning": "File size exceeded!",
             "fileTypeNotSupported": "Selected file type is not allowed to upload!",
             "noCommentsFoundMessage": "No comments found!",
+            "noRepliesFoundMessage": "No replies found!",
             "closePostsLoading": "Closing post..",
             "closePostsSuccess": "Successfully closed posts!",
             "closePostsFailed": "Error closing posts!",
