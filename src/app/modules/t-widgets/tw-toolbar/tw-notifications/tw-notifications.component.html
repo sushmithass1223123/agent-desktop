@@ -79,6 +79,20 @@
                         </div>
                     </div>
                 </ng-container>
+                <ng-container *ngIf="item.icon.includes('smpc_e')">
+                    <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                            <mat-icon mat-list-icon color="primary">edit</mat-icon>
+                        </div>
+                        <div fxLayout="column" class="message">
+                            <div class="font-weight-600 notcol">
+                                <h4>{{item.message?.SocialMediaData?.Comments?.ToName}}</h4>
+                                <p>Parent comment edited on {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                            </div>
+                            <small>{{ item.time | date: 'shortTime' }}</small>
+                        </div>
+                    </div>
+                </ng-container>
                 <ng-container *ngIf="item.icon.includes('smp_e')">
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
                         <div fxLayout fxLayoutAlign="center center" class="mr-12">

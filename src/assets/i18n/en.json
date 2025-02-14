@@ -253,6 +253,7 @@
             },
             "invalidSendRequestMessage": "Please enter some comment / attachment to reply!",
             "commentEditedDialogMessage": "Comment has been edited!",
+            "parentCommentEditedDialogMessage": "Parent comment has been edited!",
             "postDeletedDialogMessage": "Post has been deleted! This interaction will get closed.",
             "postEditedDialogMessage": "Post has been edited!",
             "commentDeletedDialogMessage": "Comment has been deleted! This interaction will get closed.",
@@ -1147,6 +1148,7 @@
             "uploadFileSizeWarning": "File size exceeded!",
             "fileTypeNotSupported": "Selected file type is not allowed to upload!",
             "noCommentsFoundMessage": "No comments found!",
+            "noRepliesFoundMessage": "No replies found!",
             "closePostsLoading": "Closing post..",
             "closePostsSuccess": "Successfully closed posts!",
             "closePostsFailed": "Error closing posts!",
@@ -1207,7 +1209,9 @@
         },
         "previewDialog": {
             "agentReadingEmail": "Agent is viewing this email...",
-            "agentWorkingOnEmail": "#agent is working on this email..."
+            "agentWorkingOnEmail": "#agent is working on this email...",
+            "closedDraft": "#agent has closed drafting interaction",
+            "sentMail": "#agent has sent email successfully"
         }
     },
     "widgetPreview": {
