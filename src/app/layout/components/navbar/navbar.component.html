@@ -1,77 +1,46 @@
-<div class="navbar-header" [ngClass]="(customFuse$ | async).background">
-    <div class="logo" *ngIf="customerLogo?.Small.Src">
-        <img
-            title="Customer small logo"
-            class="logo-icon"
-            [src]="customerLogo?.Small.Src"
-            [alt]="customerLogo?.Alt"
-            [width]="customerLogo?.Small.Width || 50"
-            [height]="customerLogo?.Small.Height || 50"
-        />
+<div class="navbar-layout" fxLayout="column" fxFlex fxLayoutGap="3" [ngClass]="(customFuse$ | async).background">
+    <div class="navbar-header twd-p-3">
+        <img src="assets/images/logos/tetherfi-logo-white.png" />
     </div>
-</div>
+    <div class="navbar-content twd-gap-3" fxLayout="column" fxFlex fxLayoutGap="2">
+        <mat-nav-list>
+            <ng-container *ngFor="let item of topWidgets">
+                <mat-list-item
+                    *ngIf="item.Config.Enabled"
+                    (click)="selectTab(item)"
+                    #sidebarListOption
+                    [activated]="item.Data.Active"
+                    [matTooltip]="item.Name"
+                    matTooltipPosition="after"
+                    matTooltipClass="tooltip"
+                    class="twd-mb-2 twd-opacity-50 hover:twd-opacity-100"
+                    [ngClass]="{ 'twd-opacity-100': selected === item.Data.Path }"
+                >
+                    <mat-icon class="icon custom-warn-badge" mat-list-icon [matBadge]="item.Data.Count || ''">{{
+                        item.Config.Icon || 'widgets'
+                    }}</mat-icon>
+                </mat-list-item>
+            </ng-container>
+            <mat-divider></mat-divider>
+            <ng-container *ngFor="let item of bottomWidgets">
+                <mat-list-item
+                    *ngIf="item.Config.Enabled"
+                    (click)="selectTab(item)"
+                    #sidebarListOption
+                    [activated]="item.Data.Active"
+                    [matTooltip]="item.Name"
+                    matTooltipPosition="after"
+                    matTooltipClass="tooltip"
+                    class="twd-mb-2 twd-opacity-50 hover:twd-opacity-100"
+                    [ngClass]="{ 'twd-opacity-100': selected === item.Data.Path }"
+                >
+                    <mat-icon class="icon" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
+                </mat-list-item>
+            </ng-container>
 
-<div class="navbar-content" [ngClass]="(customFuse$ | async).background">
-    <div class="twn-list">
-        <mat-selection-list #sidebarList [multiple]="false">
-            <div
-                class="top twd-flex twd-flex-col twd-justify-start twd-items-center"
-                [ngClass]="{
-                    'border-top border-bottom py-4': topWidgets.length > 0
-                }"
-            >
-                <ng-container *ngFor="let item of topWidgets">
-                    <mat-list-option
-                        *ngIf="item.Config.Enabled"
-                        [value]="item.Data.Path"
-                        (click)="selectTab(item)"
-                        #sidebarListOption
-                        [selected]="item.Data.Active"
-                        [matTooltip]="item.Name"
-                        matTooltipPosition="after"
-                        matTooltipClass="tooltip"
-                    >
-                        <mat-icon class="icon" mat-list-icon [matBadge]="item.Data.Count || ''">{{
-                            item.Config.Icon || 'widgets'
-                        }}</mat-icon>
-                    </mat-list-option>
-                </ng-container>
-            </div>
-
-            <div
-                class="bottom twd-flex twd-flex-col twd-justify-start twd-items-center twd-overflow-auto"
-                [ngClass]="{
-                    'border-top border-bottom py-4': bottomWidgets.length > 0
-                }"
-            >
-                <ng-container *ngFor="let item of bottomWidgets">
-                    <mat-list-option
-                        *ngIf="item.Config.Enabled"
-                        [value]="item.Data.Path"
-                        (click)="selectTab(item)"
-                        #sidebarListOption
-                        [selected]="item.Data.Active"
-                        [matTooltip]="item.Name"
-                        matTooltipPosition="after"
-                        matTooltipClass="tooltip"
-                    >
-                        <mat-icon class="icon" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
-                    </mat-list-option>
-                </ng-container>
-            </div>
-
-            <button mat-button class="button-settings" (click)="toggleSidebarOpen('themeOptionsPanel')">
+            <mat-list-item mat-button class="button-settings" (click)="toggleSidebarOpen('themeOptionsPanel')">
                 <mat-icon class="icon">settings</mat-icon>
-            </button>
-        </mat-selection-list>
-
-        <img
-            title="Brand small logo"
-            class="brand-logo"
-            [src]="brandLogo?.Small.Src || 'assets/images/logos/tetherfi-logo-round.png'"
-            [alt]="brandLogo?.Alt || 'Tetherfi'"
-            [width]="brandLogo?.Small.Width || 50"
-            [height]="brandLogo?.Small.Height || 50"
-        />
+            </mat-list-item>
+        </mat-nav-list>
     </div>
 </div>

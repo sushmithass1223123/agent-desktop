@@ -51,7 +51,7 @@ export type AppThemeType =
 /**
  * Available fonts
  */
-export type AppFontType = 'wf-muli' | 'wf-montserrat' | 'wf-source-sans-pro';
+export type AppFontType = 'wf-muli' | 'wf-montserrat' | 'wf-source-sans-pro' | 'wf-roboto';
 
 /**
  * App configs

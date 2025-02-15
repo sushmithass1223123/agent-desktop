@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { FuseSharedModule } from '@fuse/shared.module';
-import { ChartsModule } from '@progress/kendo-angular-charts';
+// import { ChartsModule } from '@progress/kendo-angular-charts';
 import {Chart} from 'chart.js';
 import 'hammerjs';
 import {
@@ -49,7 +49,7 @@ import { TranslocoRootModule } from '../../transloco-root.module';
 /**
  * Shared Modules
  */
-const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, PickerModule, EmailModule, ChartsModule, SocialMediaPostsModule];
+const sharedModules = [MaterialModule, FuseSharedModule, LeafletModule, PickerModule, EmailModule, SocialMediaPostsModule];
 
 /**
  * Shared components

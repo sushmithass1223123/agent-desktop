@@ -1,20 +1,6 @@
 .tw-navbar-menu {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    // .menu-item {
-    //     margin: 0px 4px;
-    // }
-
-    .wrap {
-        margin: 0px 6px;
-    }
-
-    .mat-icon {
-        font-size: 28px;
-        height: 28px;
-        width: 28px;
-        line-height: 28px;
+    @apply twd-flex twd-justify-end twd-items-center twd-gap-5;
+    & > * {
+        @apply twd-flex twd-justify-center;
     }
 }

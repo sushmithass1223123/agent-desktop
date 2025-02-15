@@ -1,88 +1,10 @@
-@import '@fuse/scss/fuse';
+@import 'app/scss/shared';
 
 toolbar {
-    position: relative;
-    display: flex;
-    flex: 0 0 auto;
-    z-index: 4;
-
-    &.navbar-left {
-        border-top-left-radius: 3rem;
-
-        .mat-mdc-toolbar {
-            border-top-left-radius: inherit;
-            @include media-breakpoint('xs') {
-                border-radius: 0px;
-            }
-        }
-        @include media-breakpoint('xs') {
-            border-radius: 0px;
-        }
-    }
-
-    &.navbar-right {
-        border-top-right-radius: 3rem;
-
-        .mat-mdc-toolbar {
-            border-top-right-radius: inherit;
-            @include media-breakpoint('xs') {
-                border-radius: 0px;
-            }
-        }
-        @include media-breakpoint('xs') {
-            border-radius: 0px;
-        }
-    }
-
-    &.below {
-        z-index: 2;
-    }
-
-    .mat-mdc-toolbar {
-        position: relative;
-        background: inherit !important;
-        color: inherit !important;
-    }
-
-    .logo {
-        display: flex;
-        align-items: center;
-
-        .logo-icon {
-            width: 38px;
-        }
-    }
-
-    .user-button,
-    fuse-search-bar,
-    .language-button,
-    .chat-panel-toggle-button,
-    .quick-panel-toggle-button {
-        min-width: 64px;
-        height: 64px;
-
-        @include media-breakpoint('xs') {
-            height: 56px;
-        }
-    }
-
-    .navbar-toggle-button {
-        min-width: 56px;
-        height: 56px;
-    }
-
-    .toolbar-separator {
-        height: 64px;
-        width: 1px;
-
-        @include media-breakpoint('xs') {
-            height: 56px;
-        }
-    }
-
-    .connectivityStatus {
-        position: absolute;
-        right: 8px;
-        cursor: pointer;
+    height: 66px;
+    .toolbar-layout {
+        @apply twd-relative twd-bg-inherit twd-text-inherit twd-px-5;
     }
 }
+
+

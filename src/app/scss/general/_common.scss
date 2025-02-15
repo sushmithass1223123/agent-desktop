@@ -46,8 +46,8 @@
     position: absolute;
     right: -8px;
     bottom: 4px;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: #bdbdbd;
 }
@@ -193,13 +193,6 @@
     }
 }
 
-.aux-menu {
-    overflow: hidden;
-    .mat-mdc-menu-content {
-        overflow: auto;
-        height: 100%;
-    }
-}
 
 @keyframes talking-pulse {
     0% {

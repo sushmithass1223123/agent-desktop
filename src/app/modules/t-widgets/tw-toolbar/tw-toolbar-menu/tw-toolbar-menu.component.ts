@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
-import { TWidgetWrapper } from '@twidgets/utils';
 import { IWidget } from 'app/interfaces';
 
 /**
@@ -11,7 +10,7 @@ import { IWidget } from 'app/interfaces';
     styleUrls: ['./tw-toolbar-menu.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, OnDestroy {
+export class TwToolbarMenuComponent implements OnInit {
     /**
      * App config json data
      */
@@ -23,23 +22,13 @@ export class TwToolbarMenuComponent extends TWidgetWrapper implements OnInit, On
     toolbarMenuWidget: IWidget[] = [];
 
     constructor() {
-        super('TwToolbarMenuComponent');
     }
 
     /**
      * Lifecycle hook
      */
     ngOnInit(): void {
-        this.initWrapper(this.data);
-
         // get the toolbar menu widgets
         this.toolbarMenuWidget = this.data.Data.Widgets || [];
-    }
-
-    /**
-     * Lifecyclle hook
-     */
-    ngOnDestroy(): void {
-        this.destroyWrapper();
     }
 }

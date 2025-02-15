@@ -269,3 +269,7 @@
 .mat-mdc-ripple {
     cursor: pointer;
 }
+
+.flex-center {
+    @apply twd-flex twd-justify-center twd-items-center;
+}

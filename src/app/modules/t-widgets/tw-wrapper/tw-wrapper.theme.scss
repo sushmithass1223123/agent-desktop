@@ -2,6 +2,7 @@
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
     $accent: map-get($theme, accent);
+    $primary: map-get($theme, primary);
     $is-dark: map-get($theme, is-dark);
 
     tw-wrapper {
@@ -15,6 +16,7 @@
                     background: #424242;
                 } @else {
                     background: #ffffff;
+                    border-color: #ced6e2b0;
                 }
 
                 .card-header {
@@ -25,7 +27,7 @@
                     @if ($is-dark) {
                         background: map-get($background, background);
                     } @else {
-                        background: #eeeeee;
+                        background: map-get($primary, 400);
                     }
                 }
 
@@ -41,17 +43,6 @@
                     }
                 }
             }
-        }
-    }
-
-    /** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
-    tw-wrapper .tw-card .mat-mdc-card
-    {
-        .card-header {
-            padding: 0px 1em 0px 0px;
-        }
-        .mat-mdc-card-avatar {
-            margin-bottom: 0px;
         }
     }
 }

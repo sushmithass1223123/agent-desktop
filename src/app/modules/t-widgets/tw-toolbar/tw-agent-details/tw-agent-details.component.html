@@ -1,141 +1,161 @@
 <ng-container *transloco="let locale">
-    <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center" *ngIf="agentData.agentName">
-        <button
-            mat-button
-            class="user-button"
-            [ngClass]="{ opened: opened }"
-            (menuOpened)="opened = true"
-            (menuClosed)="opened = false"
-            [matMenuTriggerFor]="userMenu"
-            fxLayout="column"
-            fxLayoutAlign="center center"
-        >
-            <div *ngIf="(agentData.agentStatus | lowercase) ?? 'NA' as status" fxLayout="row" fxLayoutAlign="center center" class="position-relative">
-                <img
-                    class="avatar mr-0 mat-elevation-z3"
-                    [style.backgroundImage]="
-                        'url(' + (agentData.profilePicture ? agentData.profilePicture : 'assets/images/avatars/profile.jpg') + ')'
-                    "
-                    *ngIf="data.Data.ProfilePicture"
-                    [ngClass]="
-                        status.includes('available')
-                            ? 'border-sm-alt-success'
-                            : status.includes('on call') || status.includes('logout')
-                            ? 'border-sm-alt-danger'
-                            : status.includes('acw')
-                            ? 'border-sm-alt-warning'
-                            : 'border-sm-alt-warning'
-                    "
-                />
-                <span
-                    class="element-status"
-                    [ngClass]="
-                        status.includes('available')
-                            ? 'bg-alt-success'
-                            : status.includes('on call') || status.includes('logout')
-                            ? 'bg-alt-danger'
-                            : status.includes('acw')
-                            ? 'bg-alt-warning'
-                            : 'bg-alt-warning'
-                    "
-                ></span>
-            </div>
-        </button>
-
-        <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu custom">
-            <button mat-menu-item fxLayout fxLayoutAlign=" center" [matTooltip]="locale('global.lanId')">
-                <mat-icon>view_agenda</mat-icon>
-                <span>{{ agentData.lanId }}</span>
-            </button>
-
-            <button mat-menu-item fxLayout fxLayoutAlign=" center" [matTooltip]="locale('global.agentId')">
-                <mat-icon>perm_identity</mat-icon>
-                <span>{{ agentData.agentId }}</span>
-            </button>
-
+    @if (agentData.agentName) {
+        <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
             <button
-                mat-menu-item
-                *ngIf="agentData.agentProfile"
-                fxLayout
-                fxLayoutAlign=" center"
-                [matTooltip]="locale('toolbarComponent.agentProfile')"
+                class="user-button"
+                [ngClass]="{ opened: opened }"
+                (menuOpened)="opened = true"
+                (menuClosed)="opened = false"
+                [matMenuTriggerFor]="userMenu"
+                fxLayout="column"
+                fxLayoutAlign="center center"
             >
-                <mat-icon>admin_panel_settings</mat-icon>
-                <span>{{ agentData.agentProfile === 'S' ? 'Supervisor' : 'Agent' }}</span>
-            </button>
-
-            <button
-                mat-menu-item
-                *ngIf="agentData.lanId !== agentData.deviceId"
-                fxLayout
-                fxLayoutAlign=" center"
-                [matTooltip]="locale('global.stationId')"
-            >
-                <mat-icon>phonelink_setup</mat-icon>
-                <span>{{ agentData.deviceId }}</span>
-            </button>
-
-            <button mat-menu-item *ngIf="agentData.teamName" fxLayout fxLayoutAlign=" center" [matTooltip]="locale('toolbarComponent.teamName')">
-                <mat-icon>people_alt</mat-icon>
-                <span> {{ agentData.teamName }} </span>
-            </button>
-
-            <button mat-menu-item *ngIf="agentData.isMSAgent" fxLayout fxLayoutAlign=" center">
-                <mat-icon>phonelink</mat-icon>
-                <span>Webphone</span>
-            </button>
-        </mat-menu>
-
-        <div
-            fxLayout="column"
-            fxLayoutAlign="center start"
-            class="p-4 agent-details"
-            matRipple
-            [matRippleDisabled]="!auxCodeConfig.Enabled"
-            [matMenuTriggerFor]="auxCodeConfig.Enabled && auxMenu"
-            [ngClass]="{
-                opened: auxOpened,
-                auxCode: auxCodeConfig.Enabled
-            }"
-            (menuOpened)="auxOpened = true"
-            (menuClosed)="auxOpened = false"
-        >
-            <span class="mat-body-2 m-0 w-90-p text-truncate mr-12 line-height-24">{{ agentData.agentName }}</span>
-            <span class="mat-caption w-90-p text-truncate" *ngIf="data.Data.Status">{{ agentData.agentStatus }}</span>
-            <mat-icon *ngIf="auxCodeConfig.Enabled" class="arrow-icon s-24" fxHide.xs>keyboard_arrow_down</mat-icon>
-        </div>
-
-        <mat-menu class="custom aux-menu" #auxMenu="matMenu" xPosition="before">
-            <ng-container *ngFor="let item of auxCodesList">
-                <button
-                    *ngIf="item.Display === 1"
-                    mat-menu-item
-                    (click)="changeStatus(item)"
-                    disabled="{{ item.Name === agentData.agentStatus || item.Code === 'nodata' }}"
+                <div
+                    *ngIf="(agentData.agentStatus | lowercase) ?? 'NA' as status"
+                    fxLayout="row"
+                    fxLayoutAlign="center center"
+                    class="position-relative"
                 >
-                    <mat-icon
-                        *ngIf="item.Code.toLowerCase() as status"
+                    @if (data?.Data?.ProfilePicture) {
+                        @if (agentData.profilePicture) {
+                            <img
+                                class="avatar mr-0"
+                                [style.backgroundImage]="'url(' + agentData.profilePicture + ')'"
+                                [ngClass]="
+                                    status.includes('available')
+                                        ? 'border-sm-alt-success'
+                                        : status.includes('on call') || status.includes('logout')
+                                          ? 'border-sm-alt-danger'
+                                          : status.includes('acw')
+                                            ? 'border-sm-alt-warning'
+                                            : 'border-sm-alt-warning'
+                                "
+                            />
+                        } @else {
+                            <button class="twd-bg-primary-400 twd-text-white twd-flex twd-p-2.5 twd-rounded-full">
+                                <mat-icon>person</mat-icon>
+                            </button>
+                        }
+                    }
+
+                    <span
+                        class="element-status"
                         [ngClass]="
                             status.includes('available')
-                                ? 'text-alt-success'
+                                ? 'twd-bg-green-700'
                                 : status.includes('on call') || status.includes('logout')
-                                ? 'text-alt-danger'
-                                : status.includes('acw')
-                                ? 'text-alt-warning'
-                                : 'text-alt-warning'
+                                  ? 'bg-alt-danger'
+                                  : status.includes('acw')
+                                    ? 'bg-alt-warning'
+                                    : 'bg-alt-warning'
                         "
-                    >
-                        {{
-                            (item.Code | lowercase) === 'available'
-                                ? 'check_circle'
-                                : (item.Code | lowercase) === 'logout'
-                                ? 'settings_power'
-                                : 'remove_circle'
-                        }}
-                    </mat-icon>
-                    <span>{{ item.Name }}</span>
+                    ></span>
+                </div>
+            </button>
+
+            <mat-menu #userMenu="matMenu" [overlapTrigger]="false" class="agent-info-menu twd-mt-2">
+                <button mat-menu-item fxLayout fxLayoutAlign=" center" [matTooltip]="locale('global.lanId')">
+                    <mat-icon color="primary">person</mat-icon>
+                    <span>{{ agentData.lanId }}</span>
                 </button>
-            </ng-container>
-        </mat-menu>
-    </div>
+
+                <button mat-menu-item fxLayout fxLayoutAlign=" center" [matTooltip]="locale('global.agentId')">
+                    <mat-icon color="primary">person_pin</mat-icon>
+                    <span>{{ agentData.agentId }}</span>
+                </button>
+
+                <button
+                    mat-menu-item
+                    *ngIf="agentData.agentProfile"
+                    fxLayout
+                    fxLayoutAlign=" center"
+                    [matTooltip]="locale('toolbarComponent.agentProfile')"
+                >
+                    <mat-icon color="primary">admin_panel_settings</mat-icon>
+                    <span>{{ agentData.agentProfile === 'S' ? 'Supervisor' : 'Agent' }}</span>
+                </button>
+
+                <button
+                    mat-menu-item
+                    *ngIf="agentData.lanId !== agentData.deviceId"
+                    fxLayout
+                    fxLayoutAlign=" center"
+                    [matTooltip]="locale('global.stationId')"
+                >
+                    <mat-icon color="primary">phonelink_setup</mat-icon>
+                    <span>{{ agentData.deviceId }}</span>
+                </button>
+
+                <button
+                    mat-menu-item
+                    *ngIf="agentData.teamName"
+                    fxLayout
+                    fxLayoutAlign=" center"
+                    [matTooltip]="locale('toolbarComponent.teamName')"
+                >
+                    <mat-icon color="primary">people_alt</mat-icon>
+                    <span> {{ agentData.teamName }} </span>
+                </button>
+
+                <button mat-menu-item *ngIf="agentData.isMSAgent" fxLayout fxLayoutAlign=" center">
+                    <mat-icon color="primary">phonelink</mat-icon>
+                    <span>Webphone</span>
+                </button>
+            </mat-menu>
+
+            <div
+                fxLayout="column"
+                fxLayoutAlign="center start"
+                class="p-4 agent-details"
+                matRipple
+                [matRippleDisabled]="!auxCodeConfig.Enabled"
+                [matMenuTriggerFor]="auxCodeConfig.Enabled && auxMenu"
+                [ngClass]="{
+                    opened: auxOpened,
+                    auxCode: auxCodeConfig.Enabled
+                }"
+                (menuOpened)="auxOpened = true"
+                (menuClosed)="auxOpened = false"
+            >
+                <span class="mat-body-2 m-0 w-90-p text-truncate mr-12 line-height-24">{{ agentData.agentName }}</span>
+                <span class="mat-caption w-90-p text-truncate twd-opacity-50" *ngIf="data.Data.Status">{{
+                    agentData.agentStatus
+                }}</span>
+                <mat-icon *ngIf="auxCodeConfig.Enabled" class="arrow-icon s-24" fxHide.xs>arrow_drop_down</mat-icon>
+            </div>
+
+            <mat-menu class="aux-menu" #auxMenu="matMenu" xPosition="before">
+                <ng-container *ngFor="let item of auxCodesList">
+                    <button
+                        *ngIf="item.Display === 1"
+                        mat-menu-item
+                        (click)="changeStatus(item)"
+                        disabled="{{ item.Name === agentData.agentStatus || item.Code === 'nodata' }}"
+                    >
+                        <mat-icon
+                            *ngIf="item.Code.toLowerCase() as status"
+                            [ngClass]="
+                                status.includes('available')
+                                    ? 'text-alt-success'
+                                    : status.includes('on call') || status.includes('logout')
+                                      ? 'text-alt-danger'
+                                      : status.includes('acw')
+                                        ? 'text-alt-warning'
+                                        : 'text-alt-warning'
+                            "
+                        >
+                            {{
+                                (item.Code | lowercase) === 'available'
+                                    ? 'check_circle'
+                                    : (item.Code | lowercase) === 'logout'
+                                      ? 'settings_power'
+                                      : 'remove_circle'
+                            }}
+                        </mat-icon>
+                        <span>{{ item.Name }}</span>
+                    </button>
+                </ng-container>
+            </mat-menu>
+        </div>
+    }
 </ng-container>

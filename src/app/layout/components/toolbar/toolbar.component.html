@@ -1,61 +1,75 @@
-<mat-toolbar class="pl-20 pr-32">
+<mat-toolbar class="toolbar-layout">
     <div *transloco="let locale" fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
         <div fxLayout="row" fxLayoutAlign="start center" class="twd-flex twd-flex-1 twd-max-w-5/12 twd-h-full">
-            <button
-                mat-icon-button
-                class="navbar-toggle-button"
-                *ngIf="!hiddenNavbar && !rightNavbar"
-                (click)="toggleSidebarOpen('navbar')"
-                fxHide.gt-xs
-            >
-                <mat-icon class="primary-text">menu</mat-icon>
-            </button>
-
-            <tw-active-interactions *ngIf="activeInteractionWidget" fxHide fxShow.gt-md [data]="activeInteractionWidget" class="twd-overflow-auto">
-            </tw-active-interactions>
+            @if (!hiddenNavbar && !rightNavbar) {
+                <mat-icon class="primary-text" (click)="toggleSidebarOpen('navbar')" fxHide.gt-xs>menu</mat-icon>
+            }
+            @if (activeInteractionWidget) {
+                <tw-active-interactions
+                    fxHide
+                    fxShow.gt-sm
+                    [data]="activeInteractionWidget"
+                    class="twd-overflow-auto twd-flex twd-gap-2"
+                >
+                </tw-active-interactions>
+            }
         </div>
+        <div fxLayout="row" fxLayoutAlign="end center" class="twd-flex twd-flex-1">
+            @if (toolbarMenuWidget) {
+                <tw-toolbar-menu [data]="toolbarMenuWidget"></tw-toolbar-menu>
+            }
 
-        <div fxLayout="row" fxLayoutAlign="start center" class="twd-flex twd-flex-1">
-            <tw-toolbar-menu [data]="toolbarMenuWidget" *ngIf="toolbarMenuWidget"></tw-toolbar-menu>
+            <div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
+                <button
+                    class="twd-text-primary-400 flex-center"
+                    (click)="toggleSidebarOpen('quickPanel')"
+                    aria-label="Toggle quick panel"
+                >
+                    <mat-icon>settings</mat-icon>
+                </button>
+            </div>
 
-            <button mat-icon-button class="mr-8" (click)="toggleSidebarOpen('quickPanel')" aria-label="Toggle quick panel">
-                <mat-icon class="primary-text">format_list_bulleted</mat-icon>
-            </button>
+            @if (!hiddenNavbar && rightNavbar) {
+                <div class="toolbar-separator" fxHide fxShow.gt-xs></div>
+            }
 
-            <div class="toolbar-separator" *ngIf="!hiddenNavbar && rightNavbar" fxHide fxShow.gt-xs></div>
+            <div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
+                @if (!hiddenNavbar && rightNavbar) {
+                    <button
+                        class="navbar-toggle-button twd-text-primary-400"
+                        (click)="toggleSidebarOpen('navbar')"
+                        fxHide.gt-md
+                    >
+                        <mat-icon class="primary-text">menu</mat-icon>
+                    </button>
+                }
+            </div>
 
-            <button
-                mat-icon-button
-                class="navbar-toggle-button"
-                *ngIf="!hiddenNavbar && rightNavbar"
-                (click)="toggleSidebarOpen('navbar')"
-                fxHide.gt-md
-            >
-                <mat-icon class="primary-text">menu</mat-icon>
-            </button>
-
-            <mat-icon
-                *ngIf="connectivityStatus?.Status > -1"
-                class="connectivityStatus"
-                [matTooltip]="locale('toolbarComponent.appInfo')"
-                (click)="showAppInfo()"
-                [ngClass]="{
-                    'text-warning': connectivityStatus?.Status === 0,
-                    'text-alt-success': connectivityStatus?.Status === 1,
-                    'text-danger': connectivityStatus?.Status === 2,
-                    spin: infoLoading
-                }"
-            >
-                {{
-                    infoLoading
-                        ? 'loop'
-                        : connectivityStatus?.EventMode === 'webSockets'
-                        ? 'wifi_tethering'
-                        : connectivityStatus?.EventMode === 'eventPolling'
-                        ? 'wifi'
-                        : 'network_check'
-                }}
-            </mat-icon>
+            <div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
+                @if (connectivityStatus?.Status > -1) {
+                    <mat-icon
+                        class="connectivityStatus twd-text-primary-400"
+                        [matTooltip]="locale('toolbarComponent.appInfo')"
+                        (click)="showAppInfo()"
+                        [ngClass]="{
+                            'text-warning': connectivityStatus?.Status === 0,
+                            'text-alt-success': connectivityStatus?.Status === 1,
+                            'text-danger': connectivityStatus?.Status === 2,
+                            spin: infoLoading
+                        }"
+                    >
+                        {{
+                            infoLoading
+                                ? 'loop'
+                                : connectivityStatus?.EventMode === 'webSockets'
+                                  ? 'wifi_tethering'
+                                  : connectivityStatus?.EventMode === 'eventPolling'
+                                    ? 'wifi'
+                                    : 'network_check'
+                        }}
+                    </mat-icon>
+                }
+            </div>
         </div>
     </div>
 </mat-toolbar>

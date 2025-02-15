@@ -1,6 +1,8 @@
-<div fxLayout="row wrap" *transloco="let locale" fxLayoutAlign="space-around center" class="px-4">
-    <button mat-icon-button (click)="showAvailableDevices()">
-        <mat-icon [matTooltip]="locale('toolbarComponent.availableDevices')"> headset </mat-icon>
+<div fxLayout="row wrap" *transloco="let locale" fxLayoutAlign="space-around center">
+    <button class="twd-flex" (click)="showAvailableDevices()">
+        <mat-icon class="twd-text-primary-400" [matTooltip]="locale('toolbarComponent.availableDevices')">
+            headset_mic
+        </mat-icon>
     </button>
 </div>
 
@@ -22,11 +24,6 @@
         [formGroup]="mediaSelectFormGroup"
     >
         <div fxFlex="33%" fxLayout *ngFor="let device of mediaDevices | keyvalue" class="p-4">
-            <!-- <div fxFlex="10%" class="mr-3" [ngSwitch]="device.key | lowercase">
-                <mat-icon *ngSwitchCase="'mic'"> mic </mat-icon>
-                <mat-icon *ngSwitchCase="'speaker'"> speaker </mat-icon>
-                <mat-icon *ngSwitchCase="'video'"> video_call </mat-icon>
-            </div> -->
             <mat-form-field fxFlex="100%" appearance="outline">
                 <mat-select [placeholder]="'Select ' + device.key" [formControlName]="device.key">
                     <mat-option *ngFor="let myDevice of device.value" [value]="myDevice.deviceId">
