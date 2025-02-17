@@ -193,13 +193,14 @@ export class EditorComponent implements OnInit, OnChanges, AfterViewInit, OnDest
                                 .pipe(
                                     takeUntil(this.unsubscribeAll$),
                                     map(() => {
-                                        this._editorContentChanged = !!this.body;
+                                        // this._editorContentChanged = !!this.body;
                                     }),
                                     debounceTime(this.debounce.duration)
                                 )
                                 .subscribe(setEmailbody);
                             // on every blur event user is notified
                             fromEvent(editor, 'blur').pipe(takeUntil(this.unsubscribeAll$)).subscribe(setEmailbody);
+                            fromEvent(editor, 'input').pipe(takeUntil(this.unsubscribeAll$)).subscribe(setEmailbody);
                         });
                     }
                 })

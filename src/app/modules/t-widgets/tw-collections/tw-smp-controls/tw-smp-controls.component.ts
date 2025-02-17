@@ -108,6 +108,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     draftOutsessionId = {};
     isDraftMode: boolean = false;
     editedCommentData: any = {};
+    editedParentCommentData: any = {};
     deletedPostData: any = {};
     deletedCommentData: any = {};
     editedPostData: any = {};
@@ -184,6 +185,15 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         if (!this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId]) {
                             this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                                 message: message?.SocialMediaData?.Comments,
+                                isConsented: false
+                            };
+                        } 
+                        break;
+                    }
+                    case 'smpc_e': {
+                        if (!this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId]) {
+                            this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId] = {
+                                message: message?.SocialMediaData?.ParentComments,
                                 isConsented: false
                             };
                         } 
@@ -415,6 +425,11 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         if (type === 'socialmediacomment_edit') {
             this.editedCommentData[message?.SocialMediaData?.Comments?.CommentId] = {
                 message: message?.SocialMediaData?.Comments,
+                isConsented: false
+            };
+        } else if (type === 'socialmediaparentcomment_edit') {
+            this.editedParentCommentData[message?.SocialMediaData?.ParentComments?.CommentId] = {
+                message: message?.SocialMediaData?.ParentComments,
                 isConsented: false
             };
         } else if (type === 'socialmediapost_edit') {
@@ -709,15 +724,16 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      */
     savePostAsDraft(closePost = false, isLoud: boolean): void {
         const postBody = (this.postDraftData[this.interactionId].body || '').toString();
+        let draftSnackbarRef: any;
         if(!postBody) {
             this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.invalidDraftTrigger'),
                 'failure'
-            );
+        );
             return;
         }
         if (isLoud)
-            this._appUiService.showSnackbar(
+            draftSnackbarRef = this._appUiService.showSnackbar(
                 this.translocoService.translate('widgets.smpControls.savingDraftLabel'),
                 'loading'
             );
@@ -776,7 +792,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         this.translocoService.translate('widgets.smpControls.savingDraftFailedLabel'),
                         'failure'
                     );
-            });
+            }).finally(draftSnackbarRef?.dismiss);
     }
 
     /**

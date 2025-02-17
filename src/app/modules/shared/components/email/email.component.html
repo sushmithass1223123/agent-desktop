@@ -210,6 +210,7 @@
                 [formControl]="_addressFG.get(key)"
                 [matAutocomplete]="suggestedUsersRef"
                 [matChipInputFor]="chipList"
+                (paste)="onPasteEmailIds($event, chipInput, key)"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="emailIdAdded(key, $event)"
             />
@@ -292,7 +293,7 @@
         </mat-menu> -->
 
         <mat-menu class="custom attachment-overlay" #attachList="matMenu">
-            <div class="attachment-menu twd-mx-2">
+            <div class="attachment-menu twd-mx-2" (click)="$event.stopPropagation()">
                 <mat-chip-list class="mat-chip-list-stacked">
                     <mat-chip
                         *ngFor="let file of attachments | slice: 2:attachments.length"

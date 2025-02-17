@@ -44,7 +44,7 @@
     "@ngneat/tailwind": "^7.0.3",
     "@progress/kendo-angular-charts": "^17.2.0",
     "@tmac/operators": "git+https://gitlab+deploy-token-40:adUz1ascDCfab1qtKLaz@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/operators",
-    "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.9.0-beta.1",
+    "@tmac/sdk": "git+https://gitlab+deploy-token-36:SV5ojCs_oe9roXxTEtzC@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/sdk/#5.9.0-beta.2",
     "@tmac/styles": "git+https://gitlab+deploy-token-37:43tSyhD5CpPuLUzed32Y@git.tetherfi.com/tetherfi_product/products/tmac/ui/packages/tmac/styles",
     "angular-calendar": "^0.31.1",
     "angular-eslint": "^18.4.3",

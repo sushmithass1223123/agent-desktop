@@ -1446,6 +1446,8 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {HoldTimerEvent} evt
      */
     HoldTimerEvent(evt: HoldTimerEvent): void {
+        const replacedCallerName =
+            this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.callerID) ?? '';
         const dynamicLabels = [
             {
                 key: '#interactionID',
@@ -1453,7 +1455,9 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
             },
             {
                 key: '#customerName',
-                value: this.translocoService.translate('dynamic_labels.audioVideoControls.customerName.' + this.callerID)
+                value: !replacedCallerName.includes('dynamic_labels.audioVideoControls.customerName')
+                    ? replacedCallerName
+                    : this.callerID
             },
             {
                 key: '#sessionID',
