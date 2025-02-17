@@ -151,6 +151,7 @@ tw-chat-controls {
 
                                 .message {
                                     // white-space: pre-wrap;
+                                    font-family: 'Montserrat', 'TwemojiMozilla', sans-serif;
 
                                     line-height: 1.4;
                                     font-size: 14px;
@@ -369,6 +370,7 @@ tw-chat-controls {
 
                         .message-text {
                             border-radius: 20px;
+                            font-family: 'Montserrat', 'TwemojiMozilla', sans-serif; 
                             .mat-form-field-wrapper {
                                 padding: 0 !important;
 
@@ -386,6 +388,7 @@ tw-chat-controls {
                                             width: calc(100% - 64px);
                                             padding: 0;
                                             min-height: 20px;
+                                            font-family: 'Montserrat', 'TwemojiMozilla', sans-serif; 
                                         }
                                     }
                                 }
