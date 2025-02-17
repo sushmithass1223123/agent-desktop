@@ -156,11 +156,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
 
         this._contentPageService.mode.pipe(takeUntil(this._unsubscribeAll)).subscribe((viewMode: string) => {
-            this.sidebarListOptions?.forEach((option: MatListOption) => {
-                if (option.value === viewMode && !option.selected) {
-                    option.selected = true;
-                }
-            });
+            this.selected = viewMode;
         });
 
         this._interactionManagerService.interactions.pipe(takeUntil(this._unsubscribeAll)).subscribe((interactions: InteractionRef[]) => {

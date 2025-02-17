@@ -72,21 +72,14 @@
                 }
               },
               {
-                "Name": "Agent Details",
+                "Name": "Available Media Devices",
                 "Description": "",
-                "Type": "tw-agent-details",
+                "Type": "tw-available-media-device",
                 "Config": {
                   "Enabled": true
                 },
                 "Data": {
-                  "ProfilePicture": true,
-                  "Status": true,
-                  "AuxCodes": {
-                    "Enabled": true,
-                    "ByTeam": true,
-                    "DefaultACW": false,
-                    "DefaultLogout": false
-                  }
+                  
                 }
               },
               {
@@ -102,21 +95,7 @@
                   "DefaultLogout": false
                 }
               },
-              {
-                "Name": "Logout Button",
-                "Description": "",
-                "Type": "tw-logout",
-                "Config": {
-                  "Enabled": true
-                },
-                "Data": {
-                  "LogoutAux": [
-                    "logout"
-                  ],
-                  "AllowLogoutOnOpenInteractions": true,
-                  "AllowLogoutOnAvailable": false
-                }
-              },
+              
               {
                 "Name": "Agent IM",
                 "Description": "",
@@ -142,17 +121,7 @@
                   
                 }
               },
-              {
-                "Name": "Available Media Devices",
-                "Description": "",
-                "Type": "tw-available-media-device",
-                "Config": {
-                  "Enabled": true
-                },
-                "Data": {
-                  
-                }
-              },
+              
               {
                 "Name": "Create Interaction",
                 "Description": "",
@@ -271,6 +240,39 @@
                       }
                     }
                   ]
+                }
+              },
+              {
+                "Name": "Agent Details",
+                "Description": "",
+                "Type": "tw-agent-details",
+                "Config": {
+                  "Enabled": true
+                },
+                "Data": {
+                  "ProfilePicture": true,
+                  "Status": true,
+                  "AuxCodes": {
+                    "Enabled": true,
+                    "ByTeam": true,
+                    "DefaultACW": false,
+                    "DefaultLogout": false
+                  }
+                }
+              },
+              {
+                "Name": "Logout Button",
+                "Description": "",
+                "Type": "tw-logout",
+                "Config": {
+                  "Enabled": true
+                },
+                "Data": {
+                  "LogoutAux": [
+                    "logout"
+                  ],
+                  "AllowLogoutOnOpenInteractions": true,
+                  "AllowLogoutOnAvailable": false
                 }
               }
             ]

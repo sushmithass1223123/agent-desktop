@@ -15,17 +15,10 @@
         }
     }
 
-    tw-notifications {
-        .notification-btn {
-            &::after {
-                border-bottom-color: map-get($primary, 200);
-            }
-        }
-    }
 
     .tw-notification-list {
         .notification-header {
-            background-color: map-get($primary, 200);
+            background: map-get($accent, 700);
         }
     }
 }

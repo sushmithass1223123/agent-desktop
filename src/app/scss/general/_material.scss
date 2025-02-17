@@ -13,17 +13,6 @@
     }
 }
 
-.custom-btn,
-.mat-mdc-custom-btn {
-    height: 36px;
-
-    &.mat-mdc-button-disabled {
-        background-color: rgba(0, 0, 0, 0.12) !important;
-        color: rgba(0, 0, 0, 0.26) !important;
-        cursor: default;
-        box-shadow: none !important;
-    }
-}
 
 .mat-icon {
     &.custom {
@@ -429,8 +418,6 @@ mat-dialog-container {
 
 .mat-mdc-menu-panel {
     &.custom {
-        border-radius: 2rem !important;
-        max-height: 350px;
 
         button:not(.mat-mdc-icon-button) {
             height: 3.2rem;
@@ -474,11 +461,8 @@ mat-form-field {
 }
 
 mat-card {
-    border-radius: $generic-border-radius !important;
-}
-
-.mat-warn {
-    color: #E66767 !important;
+    border-radius: $generic-border-radius-sm !important;
+    box-shadow: none !important;
 }
 
 mat-slide-toggle {
@@ -486,5 +470,21 @@ mat-slide-toggle {
     svg {
         display: none;
     }
+}
+
+.custom-warn-badge {
+    // to set mat-badge size lil smaller than default
+    &.mat-badge-medium .mat-badge-content {
+        height: 18px;
+        width: 18px;
+        line-height: 18px;
+        font-size: 10px;
+        @apply twd-bg-warn-500;
+    }
+}
+
+.mat-mdc-list-item .mdc-list-item__content {
+    // to display badge on navbar
+    overflow: unset;
 }
 

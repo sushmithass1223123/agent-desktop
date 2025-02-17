@@ -21,11 +21,11 @@ export class FuseFacadeService {
     public anchorBgClasses$(): Observable<FuseBgConf> {
         return this.fuseConfig.getConfig().pipe(
             map((conf: FuseConfig) => {
-                if (!conf.layout?.anchorWidget?.customBackgroundColor) {
+                //if (!conf.layout?.anchorWidget?.customBackgroundColor) { // commented to remove anchorWidget logic
                     return { content: '', header: '', body: '' };
-                }
-                const { contentBackground: content, headerBackground: header, bodyBackground: body } = conf.layout.anchorWidget;
-                return { content, header, body };
+                //}
+                // const { contentBackground: content, headerBackground: header, bodyBackground: body } = conf.layout.anchorWidget;
+                // return { content, header, body };
             }),
             shareReplay()
         );

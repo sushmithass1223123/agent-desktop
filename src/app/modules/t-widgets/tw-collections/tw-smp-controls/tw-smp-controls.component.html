@@ -155,6 +155,38 @@
                     </div>
                 </div>
 
+                <!-- Social media parent comment edit -->
+                <div
+                    class="banner-overlay twd-absolute twd-flex"
+                    *ngIf="
+                        editedParentCommentData[
+                            this.smpService.postBodies[activeSessionId]?.SmParentComments?.CommentId
+                        ] &&
+                        !editedParentCommentData[
+                            this.smpService.postBodies[activeSessionId]?.SmParentComments?.CommentId
+                        ]?.isConsented
+                    "
+                >
+                    <div class="bg-ol twd-absolute"></div>
+                    <div class="custom-dialog deleted">
+                        <img src="assets/images/vectors/pc_edited.svg" />
+                        <h4>{{ locale('widgets.smpControls.parentCommentEditedDialogMessage') }}</h4>
+                        <button
+                            mat-raised-button
+                            color="primary"
+                            (click)="
+                                this.editedParentCommentData[
+                                    this.smpService.postBodies[activeSessionId]?.SmParentComments?.CommentId
+                                ].isConsented = true;
+                                setPostDetails(true)
+                            "
+                            type="button"
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Social media comment delete -->
                 <div
                     class="banner-overlay twd-absolute twd-flex"

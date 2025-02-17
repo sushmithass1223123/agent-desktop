@@ -1,5 +1,5 @@
 <div *transloco="let locale" class="">
-    <button mat-icon-button (click)="toggleSidebarOpen()" [matTooltip]="locale('toolbarComponent.im')">
-        <mat-icon [matBadge]="unreadMessages || ''" class="primary-text">chat</mat-icon>
+    <button class="twd-flex" (click)="toggleSidebarOpen()" [matTooltip]="locale('toolbarComponent.im')">
+        <mat-icon class="twd-text-primary-400" [matBadge]="unreadMessages || ''">chat</mat-icon>
     </button>
 </div>

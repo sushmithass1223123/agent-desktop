@@ -385,7 +385,7 @@ export class AppDataService extends SharedWrapper {
     setTheme(): void {
         // apply the theme
         const themeName = this._configSubject.getValue().AppConfigs.Theme ?? '';
-        const webFont = this._configSubject.getValue().AppConfigs.Font ?? 'wf-muli';
+        const webFont = this._configSubject.getValue().AppConfigs.Font ?? 'wf-roboto';
         const flatTheme = this._configSubject.getValue().AppConfigs.FlatTheme ?? false;
         if (themeName) {
             const theme = getFuseConfigByTheme(themeName, false);

@@ -1,13 +1,15 @@
 <ng-container *transloco="let locale">
     <div *ngIf="channels.length" class="fab-container">
         <button
-            mat-icon-button
+            class="twd-flex"
             cdkOverlayOrigin
             #channelList="cdkOverlayOrigin"
             (click)="openList = !openList"
             [matTooltip]="locale('toolbarComponent.moreActions')"
         >
-            <mat-icon [@fabToggler]="{ value: openList ? 'active' : 'inactive' }">add </mat-icon>
+            <mat-icon class="twd-text-primary-400" [@fabToggler]="{ value: openList ? 'active' : 'inactive' }"
+                >add_circle
+            </mat-icon>
         </button>
 
         <!-- This template displays the overlay content and is connected to the button -->
@@ -19,7 +21,12 @@
             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
             (overlayOutsideClick)="openList = false"
         >
-            <div fxLayout="column" fxLayoutGap="10px" class="mt-12 create-interaction-buttons" [@widgetStagger]="channels.length">
+            <div
+                fxLayout="column"
+                fxLayoutGap="10px"
+                class="mt-12 create-interaction-buttons"
+                [@widgetStagger]="channels.length"
+            >
                 <ng-container *ngFor="let channel of channels">
                     <button
                         *ngIf="channel.Enabled"

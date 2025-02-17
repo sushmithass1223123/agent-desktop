@@ -21,7 +21,7 @@ login{
                 }
                 .login-caption {
                     @apply twd-text-xl twd-font-medium twd-text-accent-500 twd-break-words;
-                    font-family: Inter; 
+                    font-family: 'Inter'; 
                     line-height: 26px; 
                     letter-spacing: 0.10px;
                 }
@@ -31,7 +31,7 @@ login{
                 .select-language {
                     @apply twd-bg-primary-700 max-[950px]:twd-w-1/4;
                     padding: 10px 15px;
-                    border-radius: 5px;
+                    border-radius: $generic-border-radius-sm;
                     width: 35%;
                     text-align: justify;
                     span, svg {
@@ -52,7 +52,7 @@ login{
                     min-height: 204px;
                     label {
                         @apply twd-text-base twd-pl-2; 
-                        font-family: Roboto; letter-spacing: 0.15px; 
+                        font-family: 'Roboto'; letter-spacing: 0.15px; 
                     }
 
                     .login-mode-options > *{

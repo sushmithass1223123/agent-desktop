@@ -1,33 +1,39 @@
+@import 'app/scss/general/_variables';
 @import 'app/scss/shared';
 
-tw-active-interactions {
-    .voice {
-        .mat-mdc-card-avatar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #ffffff;
-            cursor: pointer;
-        }
+.flex-center {
+    @apply twd-flex twd-justify-center twd-items-center;
+}
 
-        .mat-mdc-icon-button {
-            .mat-icon {
-                width: 20px;
-                height: 20px;
-                font-size: 20px;
-            }
-        }
+.channel-avatar {
+    @apply twd-bg-primary-400 twd-text-white twd-cursor-pointer;
+    margin-bottom: 0 !important; 
+    border-radius: $generic-border-radius-sm !important;
+    @extend .flex-center;
+    &.hold {
+        background: $tw-warning-bg;
+        color: #000;
     }
-
-    avatar {
-        cursor: pointer;
-
-        .mat-mdc-badge-content {
-            background: $tw-warning !important;
-            color: $tw-dark !important;
-        }
+    &.disconnected {
+        background: $tw-danger-bg;
+        color: #000;
     }
-    .email-chip {
-        max-width: 180px;
+}
+.voice {
+    @apply twd-bg-primary-100 twd-h-10  twd-opacity-75;
+    border-radius: $generic-border-radius-sm;
+    @extend .channel-avatar;
+    
+    .user {
+        @apply twd-text-sm twd-font-medium;
+        font-family: 'Roboto';
+        color: #3D3D3D;
     }
+    .call-controls > button {
+        @apply twd-h-10 twd-w-10 twd-cursor-pointer;
+        @extend .flex-center;
+    }
+}
+.chat {
+    @extend .channel-avatar;
 }

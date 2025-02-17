@@ -1,65 +1,92 @@
 <ng-container *transloco="let locale">
     <div class="">
-        <button mat-icon-button class="notification-btn"
-            [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }" [matMenuTriggerFor]="menu"
-            aria-label="Notification dropdown" (menuOpened)="menuOpened(true)" (menuClosed)="menuOpened(false)"
-            [matTooltip]="locale('toolbarComponent.notifications')" #menuTrigger="matMenuTrigger">
-            <mat-icon class="primary-text" [matBadge]="unreadCount || ''" matBadgePosition="after">{{
-                notifications.length === 0 ? 'notifications' : 'notifications_active'
-                }}</mat-icon>
+        <button
+            class="notification-btn twd-flex"
+            [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }"
+            [matMenuTriggerFor]="menu"
+            aria-label="Notification dropdown"
+            (menuOpened)="menuOpened(true)"
+            (menuClosed)="menuOpened(false)"
+            [matTooltip]="locale('toolbarComponent.notifications')"
+            #menuTrigger="matMenuTrigger"
+        >
+            <mat-icon
+                class="twd-text-primary-400 custom-warn-badge"
+                [matBadge]="unreadCount || ''"
+                matBadgePosition="after"
+                >{{ notifications.length === 0 ? 'notifications' : 'notifications_active' }}</mat-icon
+            >
         </button>
     </div>
 
     <mat-menu class="tw-notification-list" #menu="matMenu" xPosition="before">
-        <div fxLayout="row" fxLayoutAlign="{{ notifications.length === 0 ? 'center' : 'space-between' }} center"
-            class="mat-title p-16 m-0 w-100-p text-center text-uppercase notification-header"
-            (click)="$event.stopPropagation()">
+        <div
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            (click)="$event.stopPropagation()"
+            class="notification-header"
+            [ngClass]="{ nill: !notifications || notifications?.length === 0 }"
+        >
             {{ locale('toolbarComponent.notifications') }}
-            <button mat-icon-button matTooltip="Clear All" (click)="clearAllNotifications()"
-                *ngIf="notifications.length > 0">
-                <mat-icon>clear_all</mat-icon>
+            <button
+                class="twd-flex twd-justify-center twd-items-center twd-gap-1 twd-opacity-50"
+                (click)="clearAllNotifications()"
+                *ngIf="notifications.length > 0"
+            >
+                <small>Clear All </small>
+                <mat-icon class="twd-text-sm/6">close</mat-icon>
             </button>
         </div>
 
-        <div class="notification-list p-8 pb-16 custom-scroll-adjust" (click)="$event.stopPropagation()">
-            <div fxLayout fxLayoutAlign="space-between none" *ngFor="let item of notifications"
-                class="item animate__animated animate__fadeIn animate__faster">
+        <div class="notification-list custom-scroll-adjust" (click)="$event.stopPropagation()">
+            <div
+                fxLayout
+                fxLayoutAlign="space-between none"
+                *ngFor="let item of notifications"
+                class="item animate__animated animate__fadeIn animate__faster"
+            >
                 <ng-container *ngIf="item.icon.includes('external_av_widget_creds')">
                     <div fxLayout fxFlex>
-                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12 notification-icon">
                             <mat-icon mat-list-icon color="primary">phone_in_talk</mat-icon>
                         </div>
                         <div fxLayout="column" class="message">
                             <div class="font-weight-600">
                                 External AV Widget - OTP: {{ item.message.otp }}, Link:
-                                <a href="{{item.message.url}}" target="_blank">{{ item.message.url }}</a>
+                                <a href="{{ item.message.url }}" target="_blank">{{ item.message.url }}</a>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="!item.icon.includes('sm') && !item.icon.includes('external_av_widget_creds')">
-                    <div fxLayout fxFlex>
-                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                    <div fxLayout fxFlex fxLayoutGap="12">
+                        <div fxLayout fxLayoutAlign="center center" class="notification-icon">
                             <mat-icon mat-list-icon color="primary">{{ item.icon || 'announcement' }}</mat-icon>
                         </div>
                         <div fxLayout="column" class="message">
-                            <div class="font-weight-600" [innerHTML]="item.message"></div>
-                            <small>{{ item.time | date: 'shortTime' }}</small>
+                            <div [innerHTML]="item.message"></div>
+                            <small class="notification-time">{{ item.time | date: 'shortTime' }}</small>
                         </div>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="item.icon.includes('smrc') || item.icon.includes('smrp')">
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
-                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
-                            <img class="nr-img"
-                                src="assets/images/vectors/{{item.message?.SocialMediaData?.Engagement?.reactionType?.replaceAll(' ', '')}}.svg">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12 notification-icon">
+                            <img
+                                class="nr-img"
+                                src="assets/images/vectors/{{
+                                    item.message?.SocialMediaData?.Engagement?.reactionType?.replaceAll(' ', '')
+                                }}.svg"
+                            />
                         </div>
                         <div fxLayout="column" class="message">
                             <div class="font-weight-600 notcol">
-                                <h4>{{item.message?.SocialMediaData?.Comments?.ToName}}</h4>
-                                <p>Reaction to {{item.message?.SocialMediaData?.Engagement?.smmType}} on
-                                    {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                                <h4>{{ item.message?.SocialMediaData?.Comments?.ToName }}</h4>
+                                <p>
+                                    Reaction to {{ item.message?.SocialMediaData?.Engagement?.smmType }} on
+                                    {{ item.message?.SocialMediaData?.Posts?.Channel }}
+                                </p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
@@ -67,13 +94,27 @@
                 </ng-container>
                 <ng-container *ngIf="item.icon.includes('smc_e') || item.icon.includes('smco_e')">
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12 notification-icon">
+                            <mat-icon mat-list-icon color="primary">edit</mat-icon>
+                        </div>
+                        <div fxLayout="column" class="message">
+                            <div class="font-weight-600 notcol">
+                                <h4>{{ item.message?.SocialMediaData?.Comments?.ToName }}</h4>
+                                <p>Comment edited on {{ item.message?.SocialMediaData?.Posts?.Channel }}</p>
+                            </div>
+                            <small>{{ item.time | date: 'shortTime' }}</small>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="item.icon.includes('smpc_e')">
+                    <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
                         <div fxLayout fxLayoutAlign="center center" class="mr-12">
                             <mat-icon mat-list-icon color="primary">edit</mat-icon>
                         </div>
                         <div fxLayout="column" class="message">
                             <div class="font-weight-600 notcol">
                                 <h4>{{item.message?.SocialMediaData?.Comments?.ToName}}</h4>
-                                <p>Comment edited on {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                                <p>Parent comment edited on {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
@@ -81,28 +122,38 @@
                 </ng-container>
                 <ng-container *ngIf="item.icon.includes('smp_e')">
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
-                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12 notification-icon">
                             <mat-icon mat-list-icon color="primary">edit</mat-icon>
                         </div>
                         <div fxLayout="column" class="message">
                             <div class="font-weight-600 notcol">
-                                <h4>{{item.message?.SocialMediaData?.Posts?.AccountName}}</h4>
-                                <p>Post edited on {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                                <h4>{{ item.message?.SocialMediaData?.Posts?.AccountName }}</h4>
+                                <p>Post edited on {{ item.message?.SocialMediaData?.Posts?.Channel }}</p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
                     </div>
                 </ng-container>
-                <ng-container *ngIf="item.icon.includes('smc_d') || item.icon.includes('smp_d') || item.icon.includes('smco_d')">
+                <ng-container
+                    *ngIf="item.icon.includes('smc_d') || item.icon.includes('smp_d') || item.icon.includes('smco_d')"
+                >
                     <div fxLayout fxFlex (click)="onChoosePost(item, item.icon)">
-                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12 notification-icon">
                             <mat-icon mat-list-icon color="primary">delete_forever</mat-icon>
                         </div>
                         <div fxLayout="column" class="message">
                             <div class="font-weight-600 notcol">
-                                <h4>{{item.icon.includes('smp_d') ? item.message?.SocialMediaData?.Posts?.AccountName : item.message?.SocialMediaData?.Comments?.ToName}}</h4>
-                                <p>{{item.icon === 'smp_d' ? 'Post' : 'Comment'}} deleted on
-                                    {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                                <h4>
+                                    {{
+                                        item.icon.includes('smp_d')
+                                            ? item.message?.SocialMediaData?.Posts?.AccountName
+                                            : item.message?.SocialMediaData?.Comments?.ToName
+                                    }}
+                                </h4>
+                                <p>
+                                    {{ item.icon === 'smp_d' ? 'Post' : 'Comment' }} deleted on
+                                    {{ item.message?.SocialMediaData?.Posts?.Channel }}
+                                </p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
@@ -110,32 +161,38 @@
                 </ng-container>
                 <ng-container *ngIf="item.icon.includes('smm_a')">
                     <div fxLayout fxFlex>
-                        <div fxLayout fxLayoutAlign="center center" class="mr-12">
+                        <div fxLayout fxLayoutAlign="center center" class="mr-12 notification-icon">
                             <mat-icon mat-list-icon color="primary">alternate_email</mat-icon>
                         </div>
-                        <div fxLayout="column" class="message">
+                        <div fxLayout="column" fxLayoutAlign="start start" class="message">
                             <div class="font-weight-600 notcol">
-                                <h4>{{item.message?.SocialMediaData?.Posts?.AccountName}}</h4>
-                                <p>Got mentioned on {{item.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post'}} in {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                                <h4>{{ item.message?.SocialMediaData?.Posts?.AccountName }}</h4>
+                                <p>
+                                    Got mentioned on
+                                    {{ item.message?.SocialMediaData?.Comments?.CommentId ? 'comment' : 'post' }} in
+                                    {{ item.message?.SocialMediaData?.Posts?.Channel }}
+                                </p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
                     </div>
                 </ng-container>
                 <div fxLayout fxLayoutAlign="center center">
-                    <button mat-icon-button matTooltip="Clear" (click)="clearNotification(item)">
-                        <mat-icon>close</mat-icon>
+                    <button class="twd-flex" matTooltip="Clear" (click)="clearNotification(item)">
+                        <mat-icon class="twd-text-sm/6">close</mat-icon>
                     </button>
                 </div>
             </div>
 
-            <div fxLayout *ngIf="notifications.length === 0"
-                class="item item animate__animated animate__fadeIn animate__faster" (click)="$event.stopPropagation()">
-                <div fxLayout fxLayoutAlign="center center" class="p-8 mr-8">
-                    <mat-icon mat-list-icon color="primary">announcement</mat-icon>
-                </div>
+            <div
+                fxLayout
+                *ngIf="notifications.length === 0"
+                class="item item animate__animated animate__fadeIn animate__faster"
+                (click)="$event.stopPropagation()"
+                fxLayoutGap="8px"
+            >
                 <div fxLayout="column" fxLayoutAlign="center none" class="message">
-                    <div class="mat-title m-0">{{ locale('toolbarComponent.noNotificationsMsg') }}</div>
+                    <div>{{ locale('toolbarComponent.noNotificationsMsg') }}</div>
                 </div>
             </div>
         </div>

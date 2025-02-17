@@ -15,7 +15,7 @@
   "AppConfigs": {
     "TitleName": "Agent Desktop",
     "Theme": "theme-default",
-    "Font": "wf-muli",
+    "Font": "wf-roboto",
     "Logos": {
       "Favicon": "",
       "Default": {

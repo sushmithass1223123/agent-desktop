@@ -16,7 +16,7 @@ export class AppConfigsModel {
     constructor() {
         this.TitleName = 'Agent Desktop';
         this.Theme = 'theme-default';
-        this.Font = 'wf-muli';
+        this.Font = 'wf-roboto';
         this.Logos = {
             Favicon: '',
             Default: {
