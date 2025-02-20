@@ -51,6 +51,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 import { TwComposeMessagingComponent } from '../tw-compose-messaging/tw-compose-messaging.component';
 import { TwVoiceControlsService } from './tw-voice-controls.service';
 import { TranslocoService } from '@jsverse/transloco';
+import { anchorWidgets } from 'app/constants';
 
 /**
  * Voice Controls Component
@@ -354,7 +355,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
         super('TwVoiceControlsComponent');
 
         this.customFuse = {
-            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => anchorWidgets.includes('tw-voice-controls'))),
             widget$: this._fuseFacadeService.widgetBgClasses$()
         };
     }

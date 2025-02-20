@@ -1366,7 +1366,6 @@
                           "Enabled": true,
                           "Hidden": false,
                           "Static": false,
-                          "Anchor": true,
                           "AOT": false,
                           "AutoOpen": false,
                           "Icon": "phone",

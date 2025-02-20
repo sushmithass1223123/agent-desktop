@@ -1,12 +1,11 @@
 @import 'app/scss/shared';
-
+@import 'app/scss/general/_variables';
 tw-voice-controls {
     .collapsed {
         flex: 0;
     }
 
     .mat-mdc-card-content {
-        background: inherit !important;
         box-shadow: none !important;
         padding: 0px 3px 3px 3px !important;
 
@@ -29,7 +28,7 @@ tw-voice-controls {
 
             .interaction-details {
                 line-height: 1.8;
-
+                @apply twd-flex twd-flex-full twd-flex-col twd-w-full twd-m-2 twd-overflow-auto;
                 .ivr-history {
                     border: 1px solid #d5d5d5;
                     margin-top: 20px;
@@ -102,25 +101,32 @@ tw-voice-controls {
             }
 
             .call-controls {
-                button:not(.mat-mdc-button-disabled, .mat-mdc-warn, .mat-mdc-primary, .mat-mdc-accent) {
-                    background: $tw-light;
-                    color: $tw-dark;
+                button:not(.mat-mdc-button-disabled, .mat-mdc-warn, .mat-mdc-primary, .mat-mdc-accent, :disabled) {
+                    @apply twd-bg-primary-600;
+                    color: $tw-light;
                 }
 
                 button {
-                    margin: 8px 4px 0px;
-
-                    &.success:not(.mat-mdc-button-disabled) {
+                    border-radius: $generic-border-radius-sm;
+                    margin-bottom: 0;
+                    &.success:not(:disabled) {
                         background: $tw-success;
                     }
 
-                    &.danger:not(.mat-mdc-button-disabled) {
+                    &.danger:not(:disabled) {
                         background: $tw-danger;
                     }
 
-                    &.warning:not(.mat-mdc-button-disabled) {
+                    &.warning:not(:disabled) {
                         background: $tw-warning;
                     }
+                    &:disabled{
+                        background: #dbd5d5de;
+                        color: #00000042;
+                        .ivr-transfer-button {
+                            filter: invert(.4) sepia(1) saturate(0.01);
+                        }
+                    } 
                 }
             }
         }

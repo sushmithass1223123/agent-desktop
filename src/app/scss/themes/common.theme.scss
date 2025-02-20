@@ -56,7 +56,7 @@
     .interactions {
         avatar {
             .avatar-content {
-                border: 2px solid map-get($primary, default);
+                // border: 2px solid map-get($primary, default);
                 @if ($is-dark == true) {
                     color: #fafafa !important;
                     // background-color: #303030 !important;
