@@ -3,6 +3,7 @@ import { AppUiService } from '@services/app-ui.service';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { CallHoldEvent, CallHoldReconnectEvent } from '@tmac/sdk';
+import { anchorWidgets } from 'app/constants/fuse-config';
 import { IWidget } from 'app/interfaces';
 import { TwWidgetModel } from 'app/models';
 import { Subject } from 'rxjs';
@@ -144,7 +145,7 @@ export class TwWrapperComponent implements OnInit, OnDestroy {
         this._unsubscribeAll = new Subject();
 
         this.customFuse = {
-            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => anchorWidgets.includes(this.data?.Type))),
             widget$: this._fuseFacadeService.widgetBgClasses$(),
             config$: this._fuseFacadeService.getConfig({ flatTheme: 'flatTheme' })
         };

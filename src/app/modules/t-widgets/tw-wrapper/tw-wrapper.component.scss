@@ -171,8 +171,6 @@ tw-wrapper {
             padding: 0;
             background: #fff;
             word-break: break-word;
-            border: 1px solid;
-            @apply twd-border-opacity-50;
 
             .card-wrapper {
                 height: 100%;
@@ -216,11 +214,14 @@ tw-wrapper {
 
             .mat-mdc-card-content {
                 flex: 1;
-                border-radius: 2rem;
-                margin-top: 5px;
+                border-radius: 0px 0px 5px 5px;
+                margin-top: -1px;
                 margin-bottom: 0;
                 overflow: hidden;
                 min-width: 100%;
+                border: 2px solid;
+                border-top: none;
+                border-color: #f5f5f5;
 
                 // TODO:: check this
                 width: 1px;
@@ -233,21 +234,8 @@ tw-wrapper {
         }
     }
 
-    .header-box-none {
-        .mat-mdc-card {
-            .card-header {
-                box-shadow: none;
-            }
-        }
-    }
+    
 
-    .body-box-none {
-        .mat-mdc-card {
-            .mat-mdc-card-content {
-                box-shadow: none;
-            }
-        }
-    }
 
     .tw-flat {
         .mat-mdc-card {
@@ -292,21 +280,7 @@ tw-wrapper {
         }
     }
 
-    .header-box {
-        .mat-mdc-card {
-            .card-header {
-                box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-            }
-        }
-    }
 
-    .body-box {
-        .mat-mdc-card {
-            .mat-mdc-card-content {
-                box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-            }
-        }
-    }
 
     .tw-static {
         .tw-static-card {

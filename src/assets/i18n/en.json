@@ -304,7 +304,13 @@
             "sendDTMFError": "Error in sending DTMF",
             "ivrTransferSuccess": "Transferred to IVR successfully",
             "ivrTransferError": "Error in transfer to IVR",
-            "customerDisconnected": "Customer has disconnected!"
+            "customerDisconnected": "Customer has disconnected!",
+            "startTime": "Start Time",
+            "callDuration": "Call Duration",
+            "mos": "MOS",
+            "direction": "Direction",
+            "subType": "Sub Type",
+            "intent": "Intent"
         },
         "userLocation": {
             "locationNotFound": "Location not found",
@@ -1313,7 +1319,8 @@
                 "Coins and Badges": "Coins and Badges",
                 "Call-backs": "Call-backs",
                 "Feedback": "Feedback",
-                "Score": "Score"
+                "Score": "Score",
+                "Voice Call": "Voice Call"
             }
         }
     },

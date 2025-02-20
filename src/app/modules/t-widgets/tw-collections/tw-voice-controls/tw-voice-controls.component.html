@@ -11,7 +11,7 @@
         (floatEvent)="floatEvent.emit($event)"
     >
         <div class="twd-w-full twd-h-full twd-flex twd-flex-col voice-controls">
-            <div *transloco="let locale" class="twd-flex twd-flex-full twd-flex-row twd-h-9/12">
+            <div *transloco="let locale" class="twd-flex twd-flex-full twd-flex-row">
                 <div
                     class="twd-flex twd-flex-col twd-items-center twd-w-[64px] twd-overscroll-y-auto twd-overflow-x-hidden twd-h-full twd-py-2 twd-mt-2 interactions"
                 >
@@ -31,99 +31,125 @@
                         [circleColor]="customFuse.anchor?.content || customFuse.widget?.content"
                     ></avatar>
                 </div>
-                <divD
-                    class="twd-flex twd-flex-full twd-flex-col twd-w-full twd-px-3 twd-py-2 border-radius-20 interaction-details twd-overflow-auto"
+                <div
+                    class="interaction-details twd-gap-2"
                     [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
                 >
-                    <div class="twd-flex twd-flex-full twd-flex-col twd-justify-start">
-                        <div class="twd-flex twd-flex-row twd-justify-between">
-                            <div class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}
+                    <div class="twd-flex twd-bg-white twd-p-3 twd-rounded-md twd-flex-col twd-justify-start twd-gap-2">
+                        <div class="twd-flex twd-flex-row twd-gap-1 twd-items-center">
+                            <label class="twd-font-extrabold">Session ID:</label>
+                            <span>{{ sessionID + '|' + (interaction?.InteractionID || 'NA') }}</span>
+                        </div>
+
+                        <div>
+                            @if (callLines.length) {
+                                <div class="twd-flex twd-flex-row twd-gap-1 twd-items-center">
+                                    <label [matMenuTriggerFor]="sessionsMenu" class="twd-cursor-pointer"
+                                        >{{ locale('widgets.voiceControls.startTime') }}:</label
+                                    >
+                                    <span>{{ startTime | date: 'hh:mm:ss a' }}</span>
+                                    <mat-menu
+                                        #sessionsMenu="matMenu"
+                                        [overlapTrigger]="false"
+                                        class="agent-info-menu custom"
+                                    >
+                                        <div
+                                            *ngFor="let item of callLines"
+                                            mat-menu-item
+                                            class="twd-flex twd-items-center"
+                                        >
+                                            <mat-icon>construction</mat-icon>
+                                            <span>{{ item }}</span>
+                                        </div>
+                                    </mat-menu>
+                                </div>
+                            }
+
+                            @if (isMSCall && mos) {
+                                <div class="twd-flex twd-flex-row twd-gap-1 twd-items-center">
+                                    <label>{{ locale('widgets.voiceControls.mos') }}:</label>
+                                    <span>{{ mos }}</span>
+                                </div>
+                            }
+
+                            <div class="twd-flex twd-flex-row twd-gap-1 twd-items-center">
+                                <label>{{ locale('widgets.voiceControls.direction') }}:</label>
+                                <span>{{ direction }}</span>
                             </div>
-                            <div class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon *ngIf="!callLines.length">construction</mat-icon>
-                                <mat-icon
-                                    *ngIf="callLines.length"
-                                    [matMenuTriggerFor]="sessionsMenu"
-                                    class="twd-cursor-pointer"
-                                    >construction</mat-icon
-                                >
-                                {{ sessionID + '|' + (interaction?.InteractionID || 'NA') }}
-                                <mat-menu
-                                    #sessionsMenu="matMenu"
-                                    [overlapTrigger]="false"
-                                    class="agent-info-menu custom"
-                                >
-                                    <div *ngFor="let item of callLines" mat-menu-item class="twd-flex twd-items-center">
-                                        <mat-icon>construction</mat-icon>
-                                        <span>{{ item }}</span>
-                                    </div>
-                                </mat-menu>
+
+                            @if (subType) {
+                                <div class="twd-flex twd-flex-row twd-gap-1 twd-items-center">
+                                    <label>{{ locale('widgets.voiceControls.subType') }}:</label>
+                                    <span>{{ subType === 'camp' ? 'Campaign' : '' }}</span>
+                                </div>
+                            }
+
+                            <div class="twd-flex twd-flex-row twd-gap-1 twd-items-center">
+                                <label>{{ locale('widgets.voiceControls.intent') }}:</label>
+                                <span>{{ intent }}</span>
                             </div>
                         </div>
 
-                        <div class="twd-flex twd-flex-row twd-justify-between twd-mt-1">
-                            <div class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon>timer</mat-icon>
-                                <div>
-                                    {{ (duration * 1000 | date: 'HH:mm:ss':'UTC') || '00:00:00' }}
-                                </div>
-                            </div>
-                            <div *ngIf="isMSCall && mos" class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon>wifi</mat-icon> {{ mos }}
-                            </div>
-                            <div class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon>directions</mat-icon> <span>{{ direction }}</span>
-                            </div>
-                            <div *ngIf="subType" class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon>{{ subType === 'camp' ? 'campaign' : '' }}</mat-icon>
-                            </div>
-                            <div class="twd-flex twd-flex-row twd-items-center">
-                                <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
-                            </div>
+                        <div>
+                            <label>
+                                {{
+                                    direction === 'Out'
+                                        ? locale('widgets.voiceControls.callFlow')
+                                        : locale('widgets.voiceControls.ivrHistory')
+                                }}
+                            </label>
+                            <div
+                                class="twd-w-full twd-h-12 twd-border twd-border-gray-300 twd-border-dashed twd-rounded-md"
+                            ></div>
+                        </div>
+                        <div class="twd-flex twd-flex-row twd-font-extrabold twd-gap-1 twd-justify-end">
+                            <label>{{ locale('widgets.voiceControls.callDuration') }}:</label>
+                            <span>{{ (duration * 1000 | date: 'HH:mm:ss' : 'UTC') || '00:00:00' }}</span>
                         </div>
 
                         <ng-container *ngIf="voiceControlsService.cannedAudioPlayer as audioPlayer">
-                            <div
-                                *ngIf="audioPlayer"
-                                class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center"
-                            >
-                                <button
-                                    *ngIf="audioPlayer._adpState === 'paused'"
-                                    mat-icon-button
-                                    class="!twd-mr-1 bg-success custom-btn"
-                                    [matTooltip]="locale('interactionComponent.play')"
-                                    (click)="voiceControlsService.playerAction(1)"
-                                >
-                                    <mat-icon>play_circle_outline</mat-icon>
-                                </button>
-                                <button
-                                    *ngIf="audioPlayer._adpState === 'playing'"
-                                    mat-icon-button
-                                    class="!twd-mr-1 bg-warning custom-btn"
-                                    [matTooltip]="locale('interactionComponent.pause')"
-                                    (click)="voiceControlsService.playerAction(2)"
-                                >
-                                    <mat-icon>pause_circle_outline</mat-icon>
-                                </button>
-                                <button
-                                    mat-icon-button
-                                    class="!twd-mr-1 bg-danger custom-btn"
-                                    [matTooltip]="locale('interactionComponent.stop')"
-                                    (click)="voiceControlsService.playerAction(3)"
-                                >
-                                    <mat-icon>stop</mat-icon>
-                                </button>
-                                <marquee direction="left"
-                                    >{{ locale('widgets.voiceControls.currentlyPlaying') }} '{{
-                                        audioPlayer.fileName
-                                    }}'</marquee
-                                >
-                            </div>
+                            @if (audioPlayer) {
+                                <div class="twd-w-full twd-flex twd-flex-full twd-flex-row twd-items-center">
+                                    @if (audioPlayer._adpState === 'paused') {
+                                        <button
+                                            mat-icon-button
+                                            class="!twd-mr-1 bg-success custom-btn"
+                                            [matTooltip]="locale('interactionComponent.play')"
+                                            (click)="voiceControlsService.playerAction(1)"
+                                        >
+                                            <mat-icon>play_circle_outline</mat-icon>
+                                        </button>
+                                    }
+                                    @if (audioPlayer._adpState === 'playing') {
+                                        <button
+                                            mat-icon-button
+                                            class="!twd-mr-1 bg-warning custom-btn"
+                                            [matTooltip]="locale('interactionComponent.pause')"
+                                            (click)="voiceControlsService.playerAction(2)"
+                                        >
+                                            <mat-icon>pause_circle_outline</mat-icon>
+                                        </button>
+                                    }
+
+                                    <button
+                                        mat-icon-button
+                                        class="!twd-mr-1 bg-danger custom-btn"
+                                        [matTooltip]="locale('interactionComponent.stop')"
+                                        (click)="voiceControlsService.playerAction(3)"
+                                    >
+                                        <mat-icon>stop</mat-icon>
+                                    </button>
+                                    <marquee direction="left">
+                                        {{ locale('widgets.voiceControls.currentlyPlaying') }} '{{
+                                            audioPlayer.fileName
+                                        }}'
+                                    </marquee>
+                                </div>
+                            }
                         </ng-container>
                     </div>
 
-                    <div
+                    <!--<div
                         *ngIf="!voiceControlsService.cannedAudioPlayer && widgetData.IVR?.MenuEnabled"
                         class="twd-flex twd-flex-row twd-flex-full px-12 border-radius-30 position-relative ivr-history"
                     >
@@ -134,7 +160,8 @@
                                     : locale('widgets.voiceControls.ivrHistory')
                             }}
                         </div>
-                        <!-- <ul class="breadcrumbs">
+
+                        <ul class="breadcrumbs">
                             <li>
                                 <span>{{ last4IVR[0] || 'NA' }}</span>
                             </li>
@@ -147,7 +174,7 @@
                             <li>
                                 <span>{{ last4IVR[3] || 'NA' }}</span>
                             </li>
-                        </ul> -->
+                        </ul> 
                         <div
                             class="twd-flex twd-flex-row twd-flex-wrap twd-justify-center twd-items-center twd-px-1 twd-py-2 twd-w-full"
                         >
@@ -171,259 +198,268 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <div class="call-controls twd-mt-1 twd-flex twd-flex-row twd-flex-wrap">
-                        <button
-                            *ngIf="status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="success mat-elevation-z2"
-                            [disabled]="status !== 'incoming'"
-                            #answerBtn
-                            [matTooltip]="locale('widgets.voiceControls.answer')"
-                            (click)="answerCall(answerBtn)"
-                        >
-                            <mat-icon *ngIf="!isAnswerLoading">call</mat-icon>
-                            <mat-spinner [diameter]="15" *ngIf="isAnswerLoading"></mat-spinner>
-                        </button>
-
-                        <button
-                            *ngIf="status !== 'disconnected'"
-                            mat-mini-fab
-                            color="warn"
-                            class="mat-elevation-z2"
-                            [disabled]="status !== 'connected' && status !== 'outgoing'"
-                            #disconnectBtn
-                            [matTooltip]="locale('interactionComponent.disconnect')"
-                            (click)="confirmDisconnectCall(disconnectBtn)"
-                        >
-                            <mat-icon>call_end</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="status !== 'hold' && status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="warning mat-elevation-z2"
-                            [disabled]="status !== 'connected' || callLines.length > 1"
-                            #holdBtn
-                            [matTooltip]="locale('interactionComponent.hold')"
-                            (click)="holdCall(holdBtn)"
-                        >
-                            <mat-icon>phone_paused</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="status === 'hold'"
-                            mat-mini-fab
-                            color="default"
-                            class="success mat-elevation-z2"
-                            #unHoldBtn
-                            [matTooltip]="locale('interactionComponent.unHold')"
-                            [disabled]="tempCallRef"
-                            (click)="unHoldCall(unHoldBtn)"
-                        >
-                            <mat-icon>phone_in_talk</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="isMSCall && status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            [disabled]="status !== 'connected'"
-                            [matTooltip]="
-                                muted ? locale('widgets.voiceControls.unmute') : locale('widgets.voiceControls.mute')
-                            "
-                            (click)="muteUnMuteCall()"
-                            [ngClass]="{ 'mat-warn': muted }"
-                        >
-                            <mat-icon> mic_off </mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="isMSCall && !disableResetCall"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            [matTooltip]="locale('widgets.voiceControls.reset')"
-                            (click)="resetCall()"
-                        >
-                            <mat-icon> refresh </mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="widgetData?.Transfer.Allowed && status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            [disabled]="status !== 'connected'"
-                            [matTooltip]="locale('interactionComponent.transfer')"
-                            (click)="openTransferConferenceDialog('transfer')"
-                        >
-                            <mat-icon>phone_forwarded</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="widgetData?.Conference.Allowed && status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            [disabled]="status !== 'connected'"
-                            [matTooltip]="locale('interactionComponent.conference')"
-                            (click)="openTransferConferenceDialog('conference')"
-                        >
-                            <mat-icon>group</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="ivrMenus.length && status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            [disabled]="status !== 'connected'"
-                            [matTooltip]="locale('widgets.voiceControls.ivrTransfer')"
-                            [matMenuTriggerFor]="ivrMenu"
-                        >
-                            <mat-icon>phonelink_ring</mat-icon>
-
-                            <mat-menu class="custom" #ivrMenu="matMenu" xPosition="before">
-                                <button mat-menu-item *ngFor="let item of ivrMenus" (click)="transferToIVR(item.Value)">
-                                    <mat-icon>{{ item.Icon }}</mat-icon>
-                                    <span>{{ item.Text }}</span>
-                                </button>
-                            </mat-menu>
-                        </button>
-
-                        <button
-                            *ngIf="widgetData?.DialpadAllowed && status !== 'disconnected'"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            [disabled]="
-                                status !== 'connected' ||
-                                (tempCallRef?.isConsult && tempCallRef?.status !== 'connected')
-                            "
-                            [matTooltip]="locale('widgets.voiceControls.dialpad')"
-                            (click)="openDialpad = !openDialpad"
-                            cdkOverlayOrigin
-                            #dialpadMenu="cdkOverlayOrigin"
-                        >
-                            <mat-icon>dialpad</mat-icon>
-
-                            <ng-template
-                                cdkConnectedOverlay
-                                [cdkConnectedOverlayOrigin]="dialpadMenu"
-                                [cdkConnectedOverlayOpen]="openDialpad"
-                                cdkConnectedOverlayHasBackdrop
-                                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                (overlayOutsideClick)="openDialpad = false"
+                    <div class="call-controls twd-gap-2 twd-flex twd-flex-row twd-flex-wrap twd-justify-end">
+                        @if (status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class="success"
+                                [disabled]="status !== 'incoming'"
+                                #answerBtn
+                                [matTooltip]="locale('widgets.voiceControls.answer')"
+                                (click)="answerCall(answerBtn)"
                             >
-                                <div
-                                    class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col"
+                                @if (isAnswerLoading) {
+                                    <mat-spinner [diameter]="15"></mat-spinner>
+                                } @else {
+                                    <mat-icon>call</mat-icon>
+                                }
+                            </button>
+                        }
+
+                        @if (status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                class="danger"
+                                [disabled]="status !== 'connected' && status !== 'outgoing'"
+                                #disconnectBtn
+                                [matTooltip]="locale('interactionComponent.disconnect')"
+                                (click)="confirmDisconnectCall(disconnectBtn)"
+                            >
+                                <mat-icon>call_end</mat-icon>
+                            </button>
+                        }
+
+                        @if (status !== 'hold' && status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class="warning"
+                                [disabled]="status !== 'connected' || callLines.length > 1"
+                                #holdBtn
+                                [matTooltip]="locale('interactionComponent.hold')"
+                                (click)="holdCall(holdBtn)"
+                            >
+                                <mat-icon>phone_paused</mat-icon>
+                            </button>
+                        }
+
+                        @if (status === 'hold') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class="success"
+                                #unHoldBtn
+                                [matTooltip]="locale('interactionComponent.unHold')"
+                                [disabled]="tempCallRef"
+                                (click)="unHoldCall(unHoldBtn)"
+                            >
+                                <mat-icon>phone_in_talk</mat-icon>
+                            </button>
+                        }
+
+                        @if (isMSCall && status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class=""
+                                [disabled]="status !== 'connected'"
+                                [matTooltip]="
+                                    muted
+                                        ? locale('widgets.voiceControls.unmute')
+                                        : locale('widgets.voiceControls.mute')
+                                "
+                                (click)="muteUnMuteCall()"
+                                [ngClass]="{ 'mat-warn': muted }"
+                            >
+                                <mat-icon> mic_off </mat-icon>
+                            </button>
+                        }
+
+                        @if (isMSCall && !disableResetCall) {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class=""
+                                [matTooltip]="locale('widgets.voiceControls.reset')"
+                                (click)="resetCall()"
+                            >
+                                <mat-icon> refresh </mat-icon>
+                            </button>
+                        }
+
+                        @if (widgetData?.Transfer.Allowed && status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class=""
+                                [disabled]="status !== 'connected'"
+                                [matTooltip]="locale('interactionComponent.transfer')"
+                                (click)="openTransferConferenceDialog('transfer')"
+                            >
+                                <mat-icon>phone_forwarded</mat-icon>
+                            </button>
+                        }
+
+                        @if (widgetData?.Conference.Allowed && status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class=""
+                                [disabled]="status !== 'connected'"
+                                [matTooltip]="locale('interactionComponent.conference')"
+                                (click)="openTransferConferenceDialog('conference')"
+                            >
+                                <mat-icon>group</mat-icon>
+                            </button>
+                        }
+
+                        @if (ivrMenus.length && status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                [disabled]="status !== 'connected'"
+                                [matTooltip]="locale('widgets.voiceControls.ivrTransfer')"
+                                [matMenuTriggerFor]="ivrMenu"
+                            >
+                                <!-- <mat-icon>phonelink_ring</mat-icon> -->
+                                <a class="ivr-transfer-button"
+                                    ><img src="/assets/images/vectors/ivr-transfer.svg" alt="IVR Transfer"
+                                /></a>
+
+                                <mat-menu class="custom" #ivrMenu="matMenu" xPosition="before">
+                                    <button
+                                        mat-menu-item
+                                        *ngFor="let item of ivrMenus"
+                                        (click)="transferToIVR(item.Value)"
+                                    >
+                                        <mat-icon>{{ item.Icon }}</mat-icon>
+                                        <span>{{ item.Text }}</span>
+                                    </button>
+                                </mat-menu>
+                            </button>
+                        }
+                        @if (widgetData?.DialpadAllowed && status !== 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class=""
+                                [disabled]="
+                                    status !== 'connected' ||
+                                    (tempCallRef?.isConsult && tempCallRef?.status !== 'connected')
+                                "
+                                [matTooltip]="locale('widgets.voiceControls.dialpad')"
+                                (click)="openDialpad = !openDialpad"
+                                cdkOverlayOrigin
+                                #dialpadMenu="cdkOverlayOrigin"
+                            >
+                                <mat-icon>dialpad</mat-icon>
+
+                                <ng-template
+                                    cdkConnectedOverlay
+                                    [cdkConnectedOverlayOrigin]="dialpadMenu"
+                                    [cdkConnectedOverlayOpen]="openDialpad"
+                                    cdkConnectedOverlayHasBackdrop
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    (overlayOutsideClick)="openDialpad = false"
                                 >
                                     <div
-                                        class="twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1 border border-radius-20 twd-flex twd-flex-row twd-justify-between twd-items-center"
+                                        class="dialpad-menu mat-elevation-z1 twd-mt-1 twd-p-2 border-radius-20 twd-flex twd-flex-col"
                                     >
-                                        <div>
-                                            {{ dialedNumbers }}
+                                        <div
+                                            class="twd-pl-2 twd-pr-1 twd-my-1 twd-mx-1 border border-radius-20 twd-flex twd-flex-row twd-justify-between twd-items-center"
+                                        >
+                                            <div>
+                                                {{ dialedNumbers }}
+                                            </div>
+                                            <button
+                                                mat-button
+                                                mat-icon-button
+                                                color="warn"
+                                                aria-label="Clear"
+                                                (click)="dialedNumbers = ''"
+                                            >
+                                                <mat-icon>close</mat-icon>
+                                            </button>
                                         </div>
-                                        <button
-                                            mat-button
-                                            mat-icon-button
-                                            color="warn"
-                                            aria-label="Clear"
-                                            (click)="dialedNumbers = ''"
-                                        >
-                                            <mat-icon>close</mat-icon>
-                                        </button>
+
+                                        <div class="dialpad twd-flex twd-flex-row twd-flex-wrap twd-justify-center">
+                                            <button
+                                                *ngFor="let item of dialpadNumbers"
+                                                mat-icon-button
+                                                mat-stroked-button
+                                                (click)="dialpadClick(item)"
+                                            >
+                                                {{ item.key }}
+                                            </button>
+                                        </div>
                                     </div>
+                                </ng-template>
+                            </button>
+                        }
 
-                                    <div class="dialpad twd-flex twd-flex-row twd-flex-wrap twd-justify-center">
-                                        <button
-                                            *ngFor="let item of dialpadNumbers"
-                                            mat-icon-button
-                                            mat-stroked-button
-                                            (click)="dialpadClick(item)"
-                                        >
-                                            {{ item.key }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </ng-template>
-                        </button>
+                        @if (widgetData?.MakeCallAllowed && status === 'disconnected') {
+                            <button
+                                mat-card-avatar
+                                class=""
+                                color="default"
+                                [matTooltip]="locale('interactionComponent.makeCall')"
+                                (click)="makeCall()"
+                            >
+                                <mat-icon>call</mat-icon>
+                            </button>
+                        }
 
-                        <button
-                            *ngIf="widgetData?.MakeCallAllowed && status === 'disconnected'"
-                            mat-mini-fab
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            color="default"
-                            [matTooltip]="locale('interactionComponent.makeCall')"
-                            (click)="makeCall()"
-                        >
-                            <mat-icon>call</mat-icon>
-                        </button>
+                        @if (widgetData?.SendSMSAllowed) {
+                            <button
+                                mat-card-avatar
+                                class=""
+                                color="default"
+                                [matTooltip]="locale('widgets.voiceControls.sendSMS')"
+                                (click)="sendSMS()"
+                            >
+                                <mat-icon>sms</mat-icon>
+                            </button>
+                        }
 
-                        <button
-                            *ngIf="widgetData?.SendSMSAllowed"
-                            mat-mini-fab
-                            class="mat-elevation-z2"
-                            [ngClass]="customFuse.anchor?.body"
-                            color="default"
-                            [matTooltip]="locale('widgets.voiceControls.sendSMS')"
-                            (click)="sendSMS()"
-                        >
-                            <mat-icon>sms</mat-icon>
-                        </button>
+                        @if (widgetData?.InteractionCommentAllowed) {
+                            <button
+                                mat-card-avatar
+                                color="default"
+                                class=""
+                                [matTooltip]="locale('interactionComponent.interactionComment')"
+                                (click)="commentsAdded = false; saveInteractionComments()"
+                            >
+                                <mat-icon>comment</mat-icon>
+                            </button>
+                        }
 
-                        <button
-                            *ngIf="widgetData?.InteractionCommentAllowed"
-                            mat-mini-fab
-                            color="default"
-                            class="mat-elevation-z2"
-                            [ngClass]="
-                                customFuse.anchor?.body +
-                                (commentsAdded
-                                    ? ' animate__animated animate__flash animate__infinite animate__slow'
-                                    : '')
-                            "
-                            [matTooltip]="locale('interactionComponent.interactionComment')"
-                            (click)="commentsAdded = false; saveInteractionComments()"
-                        >
-                            <mat-icon>comment</mat-icon>
-                        </button>
+                        @if (status === 'disconnected') {
+                            <button
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="warn"
+                                #closeBtn
+                                (click)="confirmCloseInteraction(closeBtn)"
+                                [matTooltip]="locale('interactionComponent.closeInteraction')"
+                            >
+                                {{
+                                    failedCounter >= 3
+                                        ? locale('widgets.voiceControls.forceClose')
+                                        : locale('interactionComponent.close')
+                                }}
+                            </button>
+                        }
 
-                        <button
-                            *ngIf="status === 'disconnected'"
-                            mat-raised-button
-                            class="border-radius-20"
-                            color="warn"
-                            #closeBtn
-                            (click)="confirmCloseInteraction(closeBtn)"
-                            [matTooltip]="locale('interactionComponent.closeInteraction')"
-                        >
-                            {{
-                                failedCounter >= 3
-                                    ? locale('widgets.voiceControls.forceClose')
-                                    : locale('interactionComponent.close')
-                            }}
-                        </button>
-
-                        <br />
+                        <!-- <br /> -->
 
                         <!-- <button
                         *ngIf="(isMSCall && tempCallRef?.status === 'connected') || tempCallRef?.status === 'hold'"
-                        mat-mini-fab
+                        mat-card-avatar
                         color="default"
-                        class="mat-elevation-z2"
+                        class=""
                         [ngClass]="(tempCallRef?.status === 'connected' ? 'warning' : 'success')"
                         #holdUnholdBtn
                         [matTooltip]="tempCallRef?.status === 'connected' ? 'Hold Call' : 'Unhold Call'"
@@ -432,33 +468,33 @@
                         <mat-icon>phone_paused</mat-icon>
                     </button> -->
 
-                        <button
-                            *ngIf="tempCallRef?.isConsult"
-                            [disabled]="tempCallRef.status !== 'connected' || tempCallRef.isCustomerDisconnected"
-                            mat-raised-button
-                            class="border-radius-20"
-                            color="primary"
-                            #confirmBtn
-                            (click)="confirmCallFn(true, confirmBtn)"
-                            [matTooltip]="locale('widgets.voiceControls.confirm')"
-                        >
-                            {{ locale('widgets.voiceControls.confirm') }}
-                        </button>
+                        @if (tempCallRef?.isConsult) {
+                            <button
+                                [disabled]="tempCallRef.status !== 'connected' || tempCallRef.isCustomerDisconnected"
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="primary"
+                                #confirmBtn
+                                (click)="confirmCallFn(true, confirmBtn)"
+                                [matTooltip]="locale('widgets.voiceControls.confirm')"
+                            >
+                                {{ locale('widgets.voiceControls.confirm') }}
+                            </button>
+                            <button
+                                mat-raised-button
+                                class="border-radius-20"
+                                color="warn"
+                                #cancelBtn
+                                (click)="confirmCallFn(false, cancelBtn)"
+                                [matTooltip]="locale('interactionComponent.cancel')"
+                            >
+                                {{ locale('interactionComponent.cancel') }}
+                            </button>
+                        }
 
                         <!-- [disabled]="tempCallRef.status !== 'connected'" -->
-                        <button
-                            *ngIf="tempCallRef?.isConsult"
-                            mat-raised-button
-                            class="border-radius-20"
-                            color="warn"
-                            #cancelBtn
-                            (click)="confirmCallFn(false, cancelBtn)"
-                            [matTooltip]="locale('interactionComponent.cancel')"
-                        >
-                            {{ locale('interactionComponent.cancel') }}
-                        </button>
                     </div>
-                </divD>
+                </div>
             </div>
         </div>
 
@@ -491,18 +527,19 @@
                             (keypress)="numberOnly($event)"
                             [(ngModel)]="callerID"
                         />
-                        <button
-                            mat-button
-                            color="primary"
-                            type="button"
-                            *ngIf="callerID"
-                            matSuffix
-                            mat-icon-button
-                            aria-label="Clear"
-                            (click)="callerID = ''"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
+                        @if (callerID) {
+                            <button
+                                mat-button
+                                color="primary"
+                                type="button"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="callerID = ''"
+                            >
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        }
                     </mat-form-field>
 
                     <button mat-raised-button color="primary" class="border-radius-20 twd-flex-1 twd-max-w-3/12">

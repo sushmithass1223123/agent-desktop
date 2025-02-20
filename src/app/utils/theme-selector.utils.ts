@@ -1,5 +1,13 @@
 export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
     let selectedTheme: ThemeType;
+    // anchor widget theme made uniform for all the themes, this needs to be kept static as per the latest design 6.0.0 
+    const anchorWidgetTheme = {
+        customBackgroundColor: true,
+        bodyBackground: 'grey-300',
+        headerBackground: 'yellow-800',
+        contentBackground: '#F5F5F5',
+        
+    };
     switch (themeName) {
         case 'theme-default-2': {
             selectedTheme = {
@@ -16,12 +24,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'purple-A100',
-                        headerBackground: 'grey-100',
-                        contentBackground: 'grey-100'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'grey-A100',
@@ -51,12 +54,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'red-200',
-                        headerBackground: 'purple-700',
-                        contentBackground: 'red-50'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'grey-A100',
@@ -86,12 +84,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'red-200',
-                        headerBackground: 'teal-900',
-                        contentBackground: 'red-50'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'teal-100',
@@ -121,12 +114,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'orange-400',
-                        headerBackground: 'cyan-600',
-                        contentBackground: 'orange-50'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'cyan-100',
@@ -156,12 +144,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'deep-orange-300',
-                        headerBackground: 'indigo-800',
-                        contentBackground: 'deep-orange-100'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'indigo-200',
@@ -191,12 +174,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'grey-800',
-                        headerBackground: '',
-                        contentBackground: 'grey-800'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: false,
                         bodyBackground: '',
@@ -226,12 +204,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'blue-grey-700',
-                        headerBackground: 'blue-grey-900',
-                        contentBackground: 'blue-grey-800'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'blue-grey-700',
@@ -261,12 +234,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'pink-800',
-                        headerBackground: '',
-                        contentBackground: 'grey-800'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: '',
@@ -296,12 +264,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                         customBackgroundColor: true,
                         background: 'grey-A100'
                     },
-                    anchorWidget: {
-                        customBackgroundColor: true,
-                        bodyBackground: 'grey-300',
-                        headerBackground: 'grey-100',
-                        contentBackground: 'grey-100'
-                    },
+                    anchorWidget: anchorWidgetTheme,
                     widget: {
                         customBackgroundColor: true,
                         bodyBackground: 'grey-A100',
