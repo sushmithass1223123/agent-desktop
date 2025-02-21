@@ -4,9 +4,11 @@ import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { CustomerInfo } from 'app/interfaces';
 import { processCustomerDetails, throwADError } from 'app/utils';
 import { uniq } from 'lodash';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { TwCustomerDetails } from '@ad/types';
 import { QueueColorCodesModel, SDKClient } from '@tmac/sdk';
+import { FuseFacadeService } from '@services/fuse-facade.service';
+import { anchorWidgets } from 'app/constants/fuse-config';
 
 /**
  * Custommer details widget
@@ -48,8 +50,20 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
      */
     queueTimeColorCodes: QueueColorCodesModel[] = [];
 
-    constructor(private _tmacEventService: TMACEventService) {
+    /**
+     * Fuse custom config
+     */
+    customFuse: any;
+
+
+    constructor(private _tmacEventService: TMACEventService,
+        private _fuseFacadeService: FuseFacadeService
+    ) {
         super('TwCustomerDetailsComponent');
+        this.customFuse = {
+                    anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => anchorWidgets.includes('tw-customer-details'))),
+                    widget$: this._fuseFacadeService.widgetBgClasses$()
+                };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -87,6 +101,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             throwADError('Error in TwCampaignContactComponent', error);
         }
         this.getQueueTimeColorCodes();
+        this.sortCustomerInfo();
     }
 
     /**
@@ -114,10 +129,7 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
     getCustomStyles(item) {
         if(item.Unit !== '') {
             return {
-                'background-color': this.getColorCode(item),
-                'text-align':'center',
-                'width': '75%',
-                'border-radius': '40px'
+                'color': this.getColorCode(item)
             };
         } else {
             return '';
@@ -145,5 +157,14 @@ export class TwCustomerDetailsComponent extends TWidgetWrapper implements OnInit
             this.logger.error('Error occured on displaying customer info bg color', e, false);
             return colorCode; 
         }
+    }
+
+    /**
+     * Method to sort customer info and place name on top
+     */
+    sortCustomerInfo() {
+       const nameDetail = this.customerInfo.find((c) => c.Title?.toLowerCase() === 'name');
+       const otherDetails = this.customerInfo.filter((c) => c.Title?.toLowerCase() !== 'name');
+       this.customerInfo = nameDetail ? [nameDetail, ...otherDetails] : this.customerInfo;
     }
 }

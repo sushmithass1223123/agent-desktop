@@ -1,19 +1,40 @@
-<tw-wrapper
-    [data]="data"
-    (maximizeEvent)="maximizeEvent.emit($event)"
-    (collapseEvent)="collapseEvent.emit($event)"
-    (floatEvent)="floatEvent.emit($event)"
-    #wrapper
+<ng-container
+    *ngIf="{
+        anchor: (customFuse.anchor$ | async),
+        widget: (customFuse.widget$ | async)
+    } as customFuse"
 >
-    <div class="h-100-p twd-overflow-auto">
-        <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
-            <div class="line-height-30 position-relative twd-p-1 twd-min-w-4/12 twd-max-w-4/12" *ngFor="let item of customerInfo">
-                <div class="title text-bold">{{ item.Title }}:</div>
-                <div [ngStyle]="item.Unit !== '' ? this.getCustomStyles(item) : ''">
-                    {{ item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue || '-' }}
-                    <mat-divider class="w-90-p"></mat-divider>
+    <tw-wrapper
+        [data]="data"
+        (maximizeEvent)="maximizeEvent.emit($event)"
+        (collapseEvent)="collapseEvent.emit($event)"
+        (floatEvent)="floatEvent.emit($event)"
+        #wrapper
+    >
+        <div [ngClass]="customFuse.anchor?.content">
+            <div class="cd-container">
+                <div
+                    class="cd-layout"
+                    [ngClass]="{ 'full-row': item.Title?.toLowerCase() === 'name' }"
+                    *ngFor="let item of customerInfo"
+                >
+                    <div class="title">{{ item.Title }}:</div>
+                    <div class="twd-font-bold" [ngStyle]="item.Unit !== '' ? this.getCustomStyles(item) : ''">
+                        {{ item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue || '-' }}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</tw-wrapper>
+        <!-- <div class="h-100-p twd-overflow-auto">
+            <div class="w-100-p twd-flex twd-flex-row twd-flex-wrap twd-px-3 twd-py-1 border-radius-20">
+                <div class="line-height-30 position-relative twd-p-1 twd-min-w-4/12 twd-max-w-4/12" *ngFor="let item of customerInfo">
+                    <div class="title text-bold">{{ item.Title }}:</div>
+                    <div [ngStyle]="item.Unit !== '' ? this.getCustomStyles(item) : ''">
+                        {{ item.Value ? item.Value + ' ' + item.Unit : item.DefaultValue || '-' }}
+                        <mat-divider class="w-90-p"></mat-divider>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </tw-wrapper>
+</ng-container>
