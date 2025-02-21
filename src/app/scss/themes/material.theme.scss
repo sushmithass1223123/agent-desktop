@@ -65,7 +65,8 @@
                 color: rgb(0 0 0 / 0.04);
                 background-color: map-get($background, hover);
             } @else {
-                color: map-get($background, hover);
+                //color: map-get($background, hover);
+                color: #3D3D3D;
                 background-color: rgb(0 0 0 / 0.02);
             }
         }

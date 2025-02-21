@@ -1,6 +1,6 @@
 tw-customer-journey {
     .mat-mdc-card-content {
-        background: inherit !important;
+        // background: inherit !important;
         padding: 0 !important;
     }
 
@@ -29,7 +29,7 @@ tw-customer-journey {
     .customer-journey {
         width: 100%;
         height: 100%;
-        background: inherit;
+        // background: inherit;
         mat-icon {
             font-size: 18px;
             line-height: 18px;
@@ -44,14 +44,17 @@ tw-customer-journey {
                 &::before {
                     content: '';
                     position: absolute;
-                    height: 50%;
-                    top: 85%;
+                    height: 95%;
+                    top: 58%;
                     z-index: 1;
-                    width: 2px;
-                    left: calc(16.6667% + 35px);
-                    background-color: var(--twd-primary-default);
+                    width: 3px;
+                    left: calc(16.6667% + 40px);
+                    background-color: var(--twd-primary-400);
                 }
             }
+        }
+        mat-table {
+            padding: 10px 0px;
         }
     }
 

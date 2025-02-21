@@ -1,19 +1,19 @@
 <div *ngIf="loaded" class="tw-widget-container" [ngStyle]="{ 'width.px': widgetWidth, 'height.px': widgetHeight }">
     <div
         *ngIf="staticWidgets.length || dynamicWidgets.length"
-        class="twd-flex twd-flex-col twd-justify-start twd-items-center xl:twd-flex-row xl:twd-justify-center xl:twd-items-stretch twd-flex-full twd-w-full twd-h-full twd-gap-1.5"
+        class="twd-flex twd-flex-col twd-justify-start twd-items-center xl:twd-flex-row xl:twd-justify-center xl:twd-items-stretch twd-flex-full twd-w-full twd-h-full twd-gap-2"
     >
         <tw-template
             *ngIf="staticWidgets.length > 0"
             [ngClass]="{ 'xl:twd-max-w-4/12': dynamicWidgets.length > 0 }"
-            class="static-widget-grid twd-flex-full twd-gap-1.5"
+            class="static-widget-grid twd-flex-full twd-gap-2"
             [widgets]="staticWidgets"
         ></tw-template>
 
         <tw-template
             *ngIf="dynamicWidgets.length > 0"
             [ngClass]="{ 'xl:twd-max-w-8/12': staticWidgets.length > 0, 'static-less': staticWidgets.length === 0 }"
-            class="dynamic-widget-grid twd-flex-full twd-gap-1.5"
+            class="dynamic-widget-grid twd-flex-full twd-gap-2"
             [widgets]="dynamicWidgets"
         ></tw-template>
 
@@ -40,7 +40,10 @@
             (cdkDragStarted)="dashboardDataSpanOverlayDrag = true"
             (click)="showDashboardDataOverlay()"
         >
-            <mat-icon *ngIf="!dataLoading" [@fabToggler180]="{ value: showDashboardDataSpanOverlay ? 'active' : 'inactive' }">
+            <mat-icon
+                *ngIf="!dataLoading"
+                [@fabToggler180]="{ value: showDashboardDataSpanOverlay ? 'active' : 'inactive' }"
+            >
                 {{ showDashboardDataSpanOverlay ? 'chevron_left' : 'access_time' }}
             </mat-icon>
             <mat-icon class="spin" *ngIf="dataLoading"> loop </mat-icon>
@@ -53,7 +56,9 @@
             cdkConnectedOverlayHasBackdrop
             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
             (backdropClick)="showDashboardDataSpanOverlay = false"
-            [cdkConnectedOverlayPositions]="[{ originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -10 }]"
+            [cdkConnectedOverlayPositions]="[
+                { originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -10 }
+            ]"
         >
             <ng-container
                 *ngIf="{
@@ -61,10 +66,23 @@
                     widget: customFuse.widget$ | async
                 } as customFuse"
             >
-                <div [class]="(customFuse.anchor?.body || customFuse.widget?.body) + ' border-radius-20 p-8 mat-elevation-z1'">
-                    <mat-form-field appearance="fill" [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' border-radius-20 p-12'">
+                <div
+                    [class]="
+                        (customFuse.anchor?.body || customFuse.widget?.body) + ' border-radius-20 p-8 mat-elevation-z1'
+                    "
+                >
+                    <mat-form-field
+                        appearance="fill"
+                        [class]="(customFuse.anchor?.content || customFuse.widget?.content) + ' border-radius-20 p-12'"
+                    >
                         <mat-label>Choose from date</mat-label>
-                        <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" [formControl]="dashboardDataFromDate.formControl" />
+                        <input
+                            matInput
+                            [min]="minDate"
+                            [max]="maxDate"
+                            [matDatepicker]="picker"
+                            [formControl]="dashboardDataFromDate.formControl"
+                        />
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>

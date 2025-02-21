@@ -3,7 +3,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
     // anchor widget theme made uniform for all the themes, this needs to be kept static as per the latest design 6.0.0 
     const anchorWidgetTheme = {
         customBackgroundColor: true,
-        bodyBackground: 'grey-300',
+        bodyBackground: 'anchor',
         headerBackground: 'yellow-800',
         contentBackground: '#F5F5F5',
         

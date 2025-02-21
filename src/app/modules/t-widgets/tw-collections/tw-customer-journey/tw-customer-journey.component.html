@@ -10,7 +10,10 @@
         (collapseEvent)="collapseEvent.emit($event)"
         (floatEvent)="floatEvent.emit($event)"
     >
-        <div [ngClass]="maximized && (customFuse.anchor?.content || customFuse.widget?.content) + ' maximized'" class="customer-journey">
+        <div
+            [ngClass]="maximized && (customFuse.anchor?.content || customFuse.widget?.content) + ' maximized'"
+            class="customer-journey"
+        >
             <ad-table
                 [footer]="maximized ? 'show' : 'hide'"
                 [pagination]="true"
@@ -37,40 +40,72 @@
             [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
         >
             <div class="twd-w-2/12">
-                <small class="twd-pl-5 text-right twd-flex twd-items-center twd-pr-2 twd-break-words">
-                    {{ s.InteractionDate | date: 'dd/MM/yyyy, hh:mm:ss a' }}
+                <small class="twd-flex twd-items-center twd-text-right twd-break-words">
+                    {{ s.InteractionDate | date: 'dd/MM/yyyy, hh:mm a' }}
                 </small>
             </div>
             <div class="twd-w-10/12 twd-pl-3 twd-flex twd-justify-between twd-items-center" *transloco="let locale">
-                <div class="twd-flex-1 twd-flex twd-items-center twd-px-1 twd-truncate">
-                    <div
+                <div class="twd-flex-1 twd-flex twd-items-center twd-gap-2 twd-px-1 twd-truncate">
+                    <!-- <div
                         mat-card-avatar
                         [ngSwitch]="s.Channel | lowercase"
                         class="w-32 h-32 border-sm-primary"
                         *ngIf="table.config.Channel.icon(record).name as iconName"
                     >
-                        <mat-icon color="primary" *ngIf="iconName.includes('custom-'); else normalIcon" [svgIcon]="iconName"> </mat-icon>
+                        <mat-icon
+                            color="primary"
+                            *ngIf="iconName.includes('custom-'); else normalIcon"
+                            [svgIcon]="iconName"
+                        >
+                        </mat-icon>
                         <ng-template #normalIcon>
                             <mat-icon color="primary"> {{ iconName }} </mat-icon>
                         </ng-template>
-                    </div>
-                    <span class="ml-8" [ngSwitch]="s.Channel | lowercase">
-                        <ng-container *ngSwitchCase="'voice'"> {{ locale('widgets.customerJourney.voiceWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'chat'"> {{ locale('widgets.customerJourney.chatWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'textchat'"> {{ locale('widgets.customerJourney.chatWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'audiochat'"> {{ locale('widgets.customerJourney.audioCallWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'videochat'"> {{ locale('widgets.customerJourney.videoCallWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'sms'"> {{ locale('widgets.customerJourney.smsChatWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'email'"> {{ locale('widgets.customerJourney.emailWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'fax'"> {{ locale('widgets.customerJourney.faxWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'line'"> {{ locale('widgets.customerJourney.lineChatWith') }} </ng-container>
-                        <ng-container *ngSwitchCase="'services'"> {{ locale('widgets.customerJourney.servicedBy') }} </ng-container>
-                        <ng-container *ngSwitchDefault> {{ s.Channel }} {{ locale('widgets.customerJourney.with') }} </ng-container>
+                    </div> -->
+                    <div
+                        class="twd-h-2 twd-w-2 twd-border twd-rounded-full twd-bg-white twd-border-primary-default"
+                    ></div>
+                    <span class="twd-truncate" [ngSwitch]="s.Channel | lowercase">
+                        <ng-container *ngSwitchCase="'voice'">
+                            {{ locale('widgets.customerJourney.voiceWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'chat'">
+                            {{ locale('widgets.customerJourney.chatWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'textchat'">
+                            {{ locale('widgets.customerJourney.chatWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'audiochat'">
+                            {{ locale('widgets.customerJourney.audioCallWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'videochat'">
+                            {{ locale('widgets.customerJourney.videoCallWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'sms'">
+                            {{ locale('widgets.customerJourney.smsChatWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'email'">
+                            {{ locale('widgets.customerJourney.emailWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'fax'">
+                            {{ locale('widgets.customerJourney.faxWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'line'">
+                            {{ locale('widgets.customerJourney.lineChatWith') }}
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'services'">
+                            {{ locale('widgets.customerJourney.servicedBy') }}
+                        </ng-container>
+                        <ng-container *ngSwitchDefault>
+                            {{ s.Channel }} {{ locale('widgets.customerJourney.with') }}
+                        </ng-container>
                         {{ s.LastServicedAgentName || s.AgentName }}
                     </span>
                 </div>
                 <ng-container *ngIf="s.Intent || 'Default' as intent">
-                    <small [matTooltip]="intent" class="twd-w-2/12 twd-truncate">{{ intent }}</small>
+                    <span [matTooltip]="intent" class="twd-w-2/12 twd-text-primary-default twd-truncate">{{
+                        intent
+                    }}</span>
                 </ng-container>
             </div>
         </div>
@@ -79,15 +114,20 @@
     <ng-template #expandedAction let-payload="payload">
         <div
             *ngIf="payload && payload.record as selected"
-            class="custom-row bg-inherit twd-w-full twd-pb-2 animate__slideInDown"
+            class="custom-row twd-w-full twd-pb-2 animate__slideInDown"
             [ngClass]="customFuse.anchor?.body || customFuse.widget?.body"
         >
             <div
-                class="twd-z-30 twd-text-xl twd-font-bold twd-top-0 twd-shadow-md bg-inherit twd-flex twd-justify-between twd-p-2 twd-items-center twd-sticky"
+                class="twd-z-30 twd-text-xl twd-font-bold twd-top-0 twd-shadow-md twd-flex twd-justify-between twd-p-2 twd-items-center twd-sticky"
             >
                 <span class="twd-flex-1 twd-text-left"> {{ payload.action }} </span>
                 <div class="twd-relative">
-                    <a *ngIf="payload.action === 'Session History'" mat-icon-button [href]="selected" target="_blank" color="primary"
+                    <a
+                        *ngIf="payload.action === 'Session History'"
+                        mat-icon-button
+                        [href]="selected"
+                        target="_blank"
+                        color="primary"
                         ><mat-icon>open_in_new</mat-icon>
                     </a>
                     <button mat-icon-button color="warn" class="twd-ml-2" (click)="closeExpanded(payload.action)">
@@ -99,7 +139,9 @@
                 <ng-container *ngIf="payload.action === 'Comments' && selected | async as iNotesReq">
                     <ng-container *ngIf="iNotesReq.data">
                         <div class="px-12 pb-12" *ngIf="!iNotesReq.error && !iNotesReq.loading">
-                            <p *ngIf="!iNotesReq.data?.length" class="text-center mat-headline mt-20">No Comments Available</p>
+                            <p *ngIf="!iNotesReq.data?.length" class="text-center mat-headline mt-20">
+                                No Comments Available
+                            </p>
                             <div
                                 class="step m-8 px-8 py-8 mat-elevation-z1 border-radius-20 font-size-16 font-weight-600 twd-text-left"
                                 *ngFor="let note of iNotesReq.data"
@@ -114,7 +156,9 @@
 
                 <ng-container *ngIf="payload.action === 'Actions' && selected | async as actionsReq">
                     <div class="actions px-12 pb-12" *ngIf="!actionsReq.error && !actionsReq.loading">
-                        <div *ngIf="!actionsReq.data?.length" class="text-center mt-40 mat-headline">No data available</div>
+                        <div *ngIf="!actionsReq.data?.length" class="text-center mt-40 mat-headline">
+                            No data available
+                        </div>
                         <div
                             *ngFor="let action of actionsReq.data"
                             class="action-item twd-mb-1 twd-pb-1 mat-elevation-z1 twd-text-base twd-font-semibold twd-rounded-3xl twd-flex twd-items-center"
@@ -143,12 +187,23 @@
                 </ng-container>
 
                 <ng-container *ngIf="payload.action === 'Session History'">
-                    <iframe *ngIf="!!selected" [src]="selected" class="twd-w-full h-screen/2" frameborder="0" seamless="seamless"></iframe>
+                    <iframe
+                        *ngIf="!!selected"
+                        [src]="selected"
+                        class="twd-w-full h-screen/2"
+                        frameborder="0"
+                        seamless="seamless"
+                    ></iframe>
                 </ng-container>
 
                 <ng-container *ngIf="payload.action === 'Transcripts'">
                     <ng-container *ngIf="selected as chatTranscripts">
-                        <div *ngIf="chatTranscripts.length" fxLayout="row" fxLayoutAlign=" none" class="w-100-p pb-16 chat-container">
+                        <div
+                            *ngIf="chatTranscripts.length"
+                            fxLayout="row"
+                            fxLayoutAlign=" none"
+                            class="w-100-p pb-16 chat-container"
+                        >
                             <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
                                 <!-- CHAT CONTENT -->
                                 <div class="chat-transcripts" fxFlex="1 1 auto">
@@ -200,7 +255,10 @@
                                                             <span [innerHTML]="item.message.message"></span>
                                                         </div>
 
-                                                        <span *ngIf="item.message.type === 'text'" [innerHTML]="item.message.message"></span>
+                                                        <span
+                                                            *ngIf="item.message.type === 'text'"
+                                                            [innerHTML]="item.message.message"
+                                                        ></span>
                                                     </div>
                                                     <div class="time">
                                                         {{ item.time | date: 'dd/MM/yy, hh:mm a' }}
@@ -219,7 +277,9 @@
                             <div class="w-25-p mx-auto mb-20">
                                 <img src="assets/images/vectors/no-data-1.svg" class="box-shadow-3d" />
                             </div>
-                            <p class="text-center mat-title m-0">{{ locale('contentComponent.transcriptsNotFound') }}</p>
+                            <p class="text-center mat-title m-0">
+                                {{ locale('contentComponent.transcriptsNotFound') }}
+                            </p>
                         </div>
                     </ng-container>
                 </ng-container>
@@ -239,13 +299,20 @@
                         >
                             <div fxFlex="80" *transloco="let locale" class="twd-flex">
                                 <div class="twd-flex-1">
-                                    <p class="text-bold my-4">{{ locale('widgets.customerJourney.to') }}: {{ emailInfo.ToList || 'NA' }}</p>
-                                    <p class="my-4 text-bold">{{ locale('widgets.customerJourney.from') }}: {{ emailInfo.From || 'NA' }}</p>
+                                    <p class="text-bold my-4">
+                                        {{ locale('widgets.customerJourney.to') }}: {{ emailInfo.ToList || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('widgets.customerJourney.from') }}: {{ emailInfo.From || 'NA' }}
+                                    </p>
                                     <p class="text-bold my-4" *ngIf="emailInfo.CCList">
                                         {{ locale('widgets.customerJourney.cc') }}: {{ emailInfo.CCList }}
                                     </p>
                                     <p *ngIf="emailInfo.Intent" [matTooltip]="locale('widgets.customerJourney.intent')">
-                                        <span class="text-bold"> {{ locale('widgets.customerJourney.intent') }}: {{ emailInfo.Intent || 'NA' }}</span>
+                                        <span class="text-bold">
+                                            {{ locale('widgets.customerJourney.intent') }}:
+                                            {{ emailInfo.Intent || 'NA' }}</span
+                                        >
                                     </p>
                                     <p class="my-4 text-bold">
                                         {{ locale('widgets.customerJourney.repliedStatus') }}:
@@ -258,9 +325,16 @@
                                 </div>
 
                                 <div class="twd-grid twd-grid-cols-1 twd-items-center twd-justify-end">
-                                    <p class="my-4 text-bold">{{ locale('interactionComponent.status') }}: {{ emailInfo.CurrentStatus || 'NA' }}</p>
-                                    <p class="my-4 text-bold">{{ locale('interactionComponent.priority') }}: {{ emailInfo.Priority || 'NA' }}</p>
-                                    <p class="my-4 text-bold">{{ locale('global.agent') }}: {{ emailInfo.AgentName || 'NA' }}</p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('interactionComponent.status') }}:
+                                        {{ emailInfo.CurrentStatus || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('interactionComponent.priority') }}: {{ emailInfo.Priority || 'NA' }}
+                                    </p>
+                                    <p class="my-4 text-bold">
+                                        {{ locale('global.agent') }}: {{ emailInfo.AgentName || 'NA' }}
+                                    </p>
                                     <p class="my-4 text-bold">
                                         {{ locale('widgets.customerJourney.closedStatus') }}:
                                         {{ emailInfo.ClosedBy ? 'Closed by' + emailInfo.ClosedBy : 'Open' }}
@@ -274,15 +348,15 @@
                 </ng-container>
 
                 <ng-container *ngIf="payload.action === 'SM Post Comment' && selected.state | async as postData">
-                    <smp-template
-                        [mode]="'cj'"
-                        [postData]="postData.data"
-                    ></smp-template>
+                    <smp-template [mode]="'cj'" [postData]="postData.data"></smp-template>
                 </ng-container>
 
                 <ng-container *ngIf="payload.action === 'Interactions'">
                     <div class="twd-w-full twd-p-1 border-radius-20 twd-overflow-hidden">
-                        <div class="twd-w-full twd-h-full" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
+                        <div
+                            class="twd-w-full twd-h-full"
+                            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                        >
                             <ad-table
                                 #expandedTable
                                 class="border-radius-20"

@@ -26,6 +26,7 @@ import { BehaviorSubject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@jsverse/transloco';
 import { MediaStreamerMetaResponse, MediaStreamerMultiResponse } from 'app/interfaces';
+import { anchorWidgets } from 'app/constants/fuse-config';
 
 type Mode = 'Interactions' | 'Session History' | 'Comments' | 'Actions' | 'Transcripts' | 'Email Preview' | 'Session Emails' | null;
 
@@ -164,7 +165,7 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
         super('TwCustomerJourneyComponent');
 
         this.customFuse = {
-            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => anchorWidgets.includes('tw-customer-journey'))),
             widget$: this._fuseFacadeService.widgetBgClasses$()
         };
 
