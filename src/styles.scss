@@ -80,7 +80,10 @@ input[type='time']::-webkit-calendar-picker-indicator {
     height: 20px;
     opacity: 0.8;
 }
-
+@font-face {
+    font-family: 'TwemojiMozilla';
+    src: local('TwemojiMozilla'), url('./assets/fonts/Twemoji.Mozilla.ttf') format('truetype');
+  }
 
 /** added during upgrade to Angular Material 18, can be removed on latest design enhancement**/
 
