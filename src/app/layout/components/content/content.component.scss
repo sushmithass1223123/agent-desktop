@@ -12,7 +12,7 @@ content {
             border-radius: 0px;
         }
         .tw-content {
-            border-bottom-left-radius: 3rem;
+            // border-bottom-left-radius: 3rem;
 
             @include media-breakpoint('xs') {
                 border-radius: 0px;
@@ -27,7 +27,7 @@ content {
             border-radius: 0px;
         }
         .tw-content {
-            border-bottom-right-radius: 3rem;
+            // border-bottom-right-radius: 3rem;
 
             @include media-breakpoint('xs') {
                 border-radius: 0px;
@@ -39,7 +39,7 @@ content {
         display: flex;
         flex: 1 0 auto;
         justify-content: center;
-        padding: 1rem;
+        padding: 1.5rem;
 
         @include media-breakpoint('xs') {
             border-radius: 0px;

@@ -40,21 +40,30 @@ The actual rendered columns are set as a property on the row definition" -->
                                 conf.value?.langCode
                                     ? locale(conf.value?.langCode) !== conf.value?.langCode
                                         ? locale(conf.value?.langCode)
-                                        : conf.value?.title ?? conf.key
-                                    : conf.value?.title ?? conf.key
+                                        : (conf.value?.title ?? conf.key)
+                                    : (conf.value?.title ?? conf.key)
                             }}
                         </mat-header-cell>
-                        <mat-cell *matCellDef="let element" [style.max-width]="conf.value?.width" [ngClass]="{ 'max-flex': conf.value?.width }">
+                        <mat-cell
+                            *matCellDef="let element"
+                            [style.max-width]="conf.value?.width"
+                            [ngClass]="{ 'max-flex': conf.value?.width }"
+                        >
                             <ng-container *ngIf="getColumnConfig(conf.key, conf.value, element) as cell">
                                 <ng-container *ngIf="cell.custom">
-                                    <ng-container *ngTemplateOutlet="cell.custom; context: { record: element }"></ng-container>
+                                    <ng-container
+                                        *ngTemplateOutlet="cell.custom; context: { record: element }"
+                                    ></ng-container>
                                 </ng-container>
                                 <div
                                     class="twd-px-2 twd-flex twd-items-center"
                                     *ngIf="!cell.custom"
                                     [matTooltip]="cell.value || 'NA'"
                                     [matTooltipDisabled]="!cell.tooltip"
-                                    [ngClass]="{ 'twd-truncate': cell.truncate, 'twd-flex twd-items-center': !cell.truncate }"
+                                    [ngClass]="{
+                                        'twd-truncate': cell.truncate,
+                                        'twd-flex twd-items-center': !cell.truncate
+                                    }"
                                     [ngSwitch]="cell.type"
                                 >
                                     <ng-container *ngSwitchCase="'date'">
@@ -80,7 +89,10 @@ The actual rendered columns are set as a property on the row definition" -->
                                                                             (click)="triggerAction(ctrl.title, element)"
                                                                         >
                                                                             <ng-container
-                                                                                *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"
+                                                                                *ngTemplateOutlet="
+                                                                                    iconRef;
+                                                                                    context: { icon: ctrl.icon }
+                                                                                "
                                                                             ></ng-container>
                                                                             <span> {{ ctrl.title }} </span>
                                                                         </button>
@@ -99,7 +111,10 @@ The actual rendered columns are set as a property on the row definition" -->
                                                                 (click)="triggerAction(ctrl.title, element)"
                                                             >
                                                                 <ng-container
-                                                                    *ngTemplateOutlet="iconRef; context: { icon: ctrl.icon }"
+                                                                    *ngTemplateOutlet="
+                                                                        iconRef;
+                                                                        context: { icon: ctrl.icon }
+                                                                    "
                                                                 ></ng-container>
                                                             </button>
                                                         </ng-container>
@@ -140,7 +155,9 @@ The actual rendered columns are set as a property on the row definition" -->
                                         <span *ngIf="!cell.icon?.only" [ngClass]="{ 'twd-uppercase': cell.uppercase }">
                                             {{ (cell.value?.toString()).length ? cell.value : 'NA' }}
                                         </span>
-                                        <ng-container *ngTemplateOutlet="iconRef; context: { icon: cell.icon }"></ng-container>
+                                        <ng-container
+                                            *ngTemplateOutlet="iconRef; context: { icon: cell.icon }"
+                                        ></ng-container>
                                     </ng-container>
                                 </div>
                             </ng-container>
@@ -151,18 +168,26 @@ The actual rendered columns are set as a property on the row definition" -->
                 <ng-container matColumnDef="ExpandedDetails">
                     <mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let selectedRow">
                         <ng-container *ngIf="selectedRow.expanded">
-                            <ng-container *ngTemplateOutlet="expandedRow; context: { record: selectedRow, payload: selected }"></ng-container>
+                            <ng-container
+                                *ngTemplateOutlet="expandedRow; context: { record: selectedRow, payload: selected }"
+                            ></ng-container>
                         </ng-container>
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="CustomRow">
-                    <mat-cell [attr.colspan]="displayedColumns.length" class="border-radius-20" *matCellDef="let selectedRow">
-                        <ng-container *ngTemplateOutlet="customRow; context: { record: selectedRow, mode: action }"></ng-container>
+                    <mat-cell [attr.colspan]="displayedColumns.length" *matCellDef="let selectedRow">
+                        <ng-container
+                            *ngTemplateOutlet="customRow; context: { record: selectedRow, mode: action }"
+                        ></ng-container>
                     </mat-cell>
                 </ng-container>
 
-                <mat-header-row *matHeaderRowDef="columns; sticky: true" class="bg-inherit" [ngClass]="{ 'twd-hidden': customRow }"></mat-header-row>
+                <mat-header-row
+                    *matHeaderRowDef="columns; sticky: true"
+                    class="bg-inherit"
+                    [ngClass]="{ 'twd-hidden': customRow }"
+                ></mat-header-row>
                 <mat-row
                     *matRowDef="let row; columns: displayedColumns"
                     (click)="selectRow(row)"
@@ -179,11 +204,15 @@ The actual rendered columns are set as a property on the row definition" -->
         </div>
 
         <div *ngIf="!avl.data" class="twd-max-width-1 twd-grid twd-items-center twd-flex-1">
-            <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">{{ locale('contentComponent.noDataAvailable') }}</p>
+            <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">
+                {{ locale('contentComponent.noDataAvailable') }}
+            </p>
         </div>
 
         <div *ngIf="avl.noFilteredData" class="twd-max-width-1 twd-grid twd-items-center twd-flex-1">
-            <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">{{ locale('sharedComponents.table.noDataWithFilters') }}</p>
+            <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">
+                {{ locale('sharedComponents.table.noDataWithFilters') }}
+            </p>
         </div>
 
         <div
@@ -192,14 +221,14 @@ The actual rendered columns are set as a property on the row definition" -->
             [ngClass]="{ 'twd-hidden': !avl.data || footer === 'hide' }"
         >
             <div *ngIf="advancedSearch" class="twd-max-width twd-flex twd-px-2 twd-gap-3 twd-items-center">
-                <button (click)="showAdvanceSearchModal()" mat-button class="border-radius-20" color="primary">
+                <button (click)="showAdvanceSearchModal()" mat-button color="primary">
                     <mat-icon>search</mat-icon>
                     {{ locale('sharedComponents.table.advanceSearch') }}
                 </button>
                 <button
                     mat-raised-button
                     type="button"
-                    class="twd-ml-2 border-radius-20"
+                    class="twd-ml-2"
                     [disabled]="!source.filter"
                     (click)="advancedSearchForm = {}; doAdvancedSearch()"
                 >
@@ -207,7 +236,12 @@ The actual rendered columns are set as a property on the row definition" -->
                 </button>
             </div>
             <div *ngIf="pagination" [ngClass]="{ 'twd-flex-1': !advancedSearch }">
-                <mat-paginator [hidePageSize]="hidePageSize" [pageSizeOptions]="pageSizeOptions" (page)="emitPageEvent($event)" showFirstLastButtons>
+                <mat-paginator
+                    [hidePageSize]="hidePageSize"
+                    [pageSizeOptions]="pageSizeOptions"
+                    (page)="emitPageEvent($event)"
+                    showFirstLastButtons
+                >
                 </mat-paginator>
             </div>
         </div>
@@ -215,9 +249,13 @@ The actual rendered columns are set as a property on the row definition" -->
 
     <ng-template #advanceSearchModal>
         <div *ngIf="fuseBg$ | async as fuseBg" class="mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.body">
-            <div class="border-radius-20 mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.content">
+            <div class="mat-elevation-z1 twd-p-4" [ngClass]="fuseBg?.content">
                 <p class="twd-text-xl twd-font-bold twd-mt-1 twd-mb-6">Advanced Search</p>
-                <form class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-3" (ngSubmit)="doAdvancedSearch($value)" novalidate>
+                <form
+                    class="twd-grid twd-grid-cols-1 xl:twd-grid-cols-2 twd-gap-3"
+                    (ngSubmit)="doAdvancedSearch($value)"
+                    novalidate
+                >
                     <ng-container *ngFor="let col of columns">
                         <ng-container *ngIf="config[col] as item">
                             <ng-container *ngIf="item.searchable">
@@ -262,7 +300,12 @@ The actual rendered columns are set as a property on the row definition" -->
                                             <mat-label>
                                                 {{ item.title || col }}
                                             </mat-label>
-                                            <input matInput type="text" [(ngModel)]="advancedSearchForm[col]" [name]="col" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                [(ngModel)]="advancedSearchForm[col]"
+                                                [name]="col"
+                                            />
                                         </mat-form-field>
                                     </ng-container>
                                 </ng-container>
@@ -273,15 +316,17 @@ The actual rendered columns are set as a property on the row definition" -->
                     <div class="xl:twd-col-span-2 twd-my-1 twd-max-width twd-gap-4 twd-justify-end twd-flex">
                         <button
                             mat-raised-button
-                            class="twd-w-2/12 border-radius-20"
+                            class="twd-w-2/12"
                             type="button"
                             [disabled]="!source.filter"
                             (click)="advancedSearchForm = {}; doAdvancedSearch()"
                         >
                             {{ locale('sharedComponents.table.reset') }}
                         </button>
-                        <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary" [disabled]="hasFutureDates()">{{ locale('global.search') }}</button>
-                        <button mat-raised-button class="twd-w-2/12 border-radius-20" color="primary" (click)="closeAdvancedSearch()">
+                        <button mat-raised-button class="twd-w-2/12" color="primary" [disabled]="hasFutureDates()">
+                            {{ locale('global.search') }}
+                        </button>
+                        <button mat-raised-button class="twd-w-2/12" color="primary" (click)="closeAdvancedSearch()">
                             {{ locale('global.close') }}
                         </button>
                         <mat-hint *ngIf="hasFutureDates()" class="twd-text-sm twd-text-red-600 twd-mt-2">
@@ -296,7 +341,12 @@ The actual rendered columns are set as a property on the row definition" -->
 
     <ng-template #iconRef let-icon="icon">
         <ng-container *ngIf="icon && (icon.name || icon) as iconName">
-            <mat-icon [color]="icon.color || 'primary'" *ngIf="iconName.includes('custom-'); else normalIcon" [svgIcon]="iconName"> </mat-icon>
+            <mat-icon
+                [color]="icon.color || 'primary'"
+                *ngIf="iconName.includes('custom-'); else normalIcon"
+                [svgIcon]="iconName"
+            >
+            </mat-icon>
             <ng-template #normalIcon>
                 <mat-icon [color]="icon.color || 'primary'"> {{ iconName }} </mat-icon>
             </ng-template>

@@ -221,7 +221,7 @@ tw-wrapper {
                 min-width: 100%;
                 border: 2px solid;
                 border-top: none;
-                border-color: #f5f5f5;
+                @apply twd-border-primary-100;
 
                 // TODO:: check this
                 width: 1px;
@@ -229,6 +229,12 @@ tw-wrapper {
                 &.no-header {
                     height: 100%;
                     margin-top: 0;
+                }
+            }
+
+            &.anchor {
+                .mat-mdc-card-content {
+                    border-color: #F5F5F5;
                 }
             }
         }
