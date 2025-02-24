@@ -1,86 +1,100 @@
 {
-  "Login": {
-    "Modes": { "Enabled": true, "Type": "nonpbx" },
-    "FaceAuth": { "Enabled": false, "AuthServerUrl": "" },
-    "DomainListEnabled": false,
-    "Password": { "Agent": false, "Station": false },
-    "StationEnabled": false,
-    "DisableLanId": false,
-    "PromptAgentIdOnInvalidLanId": true,
-    "MultiWindowMode": { "Enabled": false, "Width": 100, "Height": 100, "PixelDimension": false },
-    "SSOLinkExpiry": 10,
-    "LogoutUrl": ""
-  },
-  "Main": {},
-  "AppConfigs": {
-    "TitleName": "Agent Desktop",
-    "Theme": "theme-default",
-    "Font": "wf-roboto",
-    "Logos": {
-      "Favicon": "",
-      "Default": {
-        "Large": { "Src": "", "Width": 180, "Height": 90 },
-        "Small": { "Src": "", "Width": null, "Height": null },
-        "Alt": "Tetherfi"
-      },
-      "Customer": {
-        "Large": { "Src": "", "Width": 160, "Height": 88 },
-        "Small": { "Src": "", "Width": 50, "Height": 50 },
-        "Alt": "Tetherfi"
-      }
+    "Login": {
+        "Modes": { "Enabled": true, "Type": "nonpbx" },
+        "FaceAuth": { "Enabled": false, "AuthServerUrl": "" },
+        "DomainListEnabled": false,
+        "Password": { "Agent": false, "Station": false },
+        "StationEnabled": false,
+        "DisableLanId": false,
+        "PromptAgentIdOnInvalidLanId": true,
+        "MultiWindowMode": { "Enabled": false, "Width": 100, "Height": 100, "PixelDimension": false },
+        "SSOLinkExpiry": 10,
+        "LogoutUrl": ""
     },
-    "RefreshDisabled": false,
-    "DevToolsDisabled": false,
-    "Notifications": {
-      "Sounds": true,
-      "SoundLevel": 1,
-      "DesktopAlerts": true,
-      "DesktopAlertTimeout": 5000,
-      "AppAlertTimeout": 5000
+    "Main": {},
+    "AppConfigs": {
+        "TitleName": "Agent Desktop",
+        "Theme": "theme-default",
+        "Font": "wf-roboto",
+        "Logos": {
+            "Favicon": "",
+            "Default": {
+                "Large": { "Src": "", "Width": 180, "Height": 90 },
+                "Small": { "Src": "", "Width": null, "Height": null },
+                "Alt": "Tetherfi"
+            },
+            "Customer": {
+                "Large": { "Src": "", "Width": 160, "Height": 88 },
+                "Small": { "Src": "", "Width": 50, "Height": 50 },
+                "Alt": "Tetherfi"
+            }
+        },
+        "RefreshDisabled": false,
+        "DevToolsDisabled": false,
+        "Notifications": {
+            "Sounds": true,
+            "SoundLevel": 1,
+            "DesktopAlerts": true,
+            "DesktopAlertTimeout": 5000,
+            "AppAlertTimeout": 5000
+        },
+        "CheckForResolution": false,
+        "DisableCheckForDevicePermission": false,
+        "AV": {
+            "webRTCConfig": {
+                "iceServers": [
+                    { "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }
+                ],
+                "iceTransportPolicy": "all",
+                "sdpSemantics": "plan-b"
+            },
+            "mediaConstraints": { "type": "", "video": { "width": 640, "height": 480 } },
+            "offerOptions": { "offerToReceiveAudio": true, "offerToReceiveVideo": true, "iceRestart": true },
+            "answerOptions": { "iceRestart": false },
+            "recordingOptions": {
+                "enabled": false,
+                "codec": "vp9",
+                "recordLocal": false,
+                "audioKbps": 32,
+                "videoKbps": 512
+            },
+            "audioLevelCheck": { "enabled": true, "threshold": 0.3 },
+            "connectionBandwidthUpperLimit": 1024,
+            "audioTrackBandwidthUpperLimit": 16,
+            "videoTrackBandwidthUpperLimit": 128,
+            "audioMixerEnabled": true,
+            "audioVideoConnectionMode": 0,
+            "enableCdcAutoSelection": false,
+            "tryToMergeSingleTrackStreamsFromDifferentSources": false,
+            "sendACK": false
+        },
+        "SDK": {
+            "proxy": {
+                "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
+                "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
+                "type": "soap",
+                "timeout": 60
+            },
+            "signalRProxy": {
+                "enabled": true,
+                "logging": true,
+                "protocol": "webSockets",
+                "timeout": 10,
+                "fallback": true
+            },
+            "logging": {
+                "enabled": true,
+                "level": { "debug": true, "info": true, "warn": true, "error": true },
+                "remote": { "enabled": true, "timeout": 30, "count": 30 },
+                "sdkMethods": true,
+                "sdkEvents": true
+            },
+            "customScripts": [
+                "../agent-desktop/libs/adapter.js",
+                "../agent-desktop/libs/livechat_video.min.js",
+                "../agent-desktop/libs/collector.min.js"
+            ]
+        }
     },
-    "CheckForResolution": false,
-    "DisableCheckForDevicePermission": false,
-    "AV": {
-      "webRTCConfig": {
-        "iceServers": [{ "urls": "turn:mx.tetherfi.cloud:3585", "username": "tetherfi", "credential": "nuwan" }],
-        "iceTransportPolicy": "all",
-        "sdpSemantics": "plan-b"
-      },
-      "mediaConstraints": { "type": "", "video": { "width": 640, "height": 480 } },
-      "offerOptions": { "offerToReceiveAudio": true, "offerToReceiveVideo": true, "iceRestart": true },
-      "answerOptions": { "iceRestart": false },
-      "recordingOptions": { "enabled": false, "codec": "vp9", "recordLocal": false, "audioKbps": 32, "videoKbps": 512 },
-      "audioLevelCheck": { "enabled": true, "threshold": 0.3 },
-      "connectionBandwidthUpperLimit": 1024,
-      "audioTrackBandwidthUpperLimit": 16,
-      "videoTrackBandwidthUpperLimit": 128,
-      "audioMixerEnabled": true,
-      "audioVideoConnectionMode": 0,
-      "enableCdcAutoSelection": false,
-      "tryToMergeSingleTrackStreamsFromDifferentSources": false,
-      "sendACK": false
-    },
-    "SDK": {
-      "proxy": {
-        "urls": ["https://dicedev.tetherfi.cloud/tmacsdkproxy/tmacproxy.asmx"],
-        "mediaMatrixUrls": ["https://dicedev.tetherfi.cloud/TMACSDKProxy_MediaMatrix/TmacProxy.asmx"],
-        "type": "soap",
-        "timeout": 60
-      },
-      "signalRProxy": { "enabled": true, "logging": true, "protocol": "webSockets", "timeout": 10, "fallback": true },
-      "logging": {
-        "enabled": true,
-        "level": { "debug": true, "info": true, "warn": true, "error": true },
-        "remote": { "enabled": true, "timeout": 30, "count": 30 },
-        "sdkMethods": true,
-        "sdkEvents": true
-      },
-      "customScripts": [
-        "../agent-desktop/libs/adapter.js",
-        "../agent-desktop/libs/livechat_video.min.js",
-        "../agent-desktop/libs/collector.min.js"
-      ]
-    }
-  },
-  "Version": "6.0.0-beta.1"
+    "Version": "6.0.0-beta.1"
 }
