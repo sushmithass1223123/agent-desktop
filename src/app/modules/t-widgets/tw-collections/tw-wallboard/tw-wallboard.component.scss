@@ -1,8 +1,23 @@
 tw-wallboard {
+    mat-card-content {
+        padding: 0 !important;
+    }
     ad-table {
-        mat-cell.mat-mdc-column-SkillName {
+        // mat-cell.mat-mdc-column-SkillName {
+        //     justify-content: center;
+        // }
+        mat-cell,
+        mat-header-cell,
+        mat-footer-cell {
             justify-content: start;
         }
+        mat-header-row {
+            color: var(--twd-primary-default) !important;
+        }
+    }
+
+    mat-table {
+        padding: 0px;
     }
 
     .vector-image {

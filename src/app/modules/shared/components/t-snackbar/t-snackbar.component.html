@@ -11,10 +11,13 @@
                 @case ('failure') {
                     <img src="assets/images/vectors/error.svg" />
                 }
-                @case ('info' || 'loading') {
+                @case ('info') {
                     <mat-icon *ngIf="data.state !== 'close'" matRipple (click)="dismiss()" color="accent">
                         {{ data.icon }}
                     </mat-icon>
+                }
+                @case ('loading') {
+                    <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
                 }
             }
             <div [innerHTML]="data.message"></div>
