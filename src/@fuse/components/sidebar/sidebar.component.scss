@@ -20,7 +20,7 @@ fuse-sidebar {
     @include media-breakpoint('xs') {
         min-width: 0 !important;
         max-width: 80vw !important;
-        width: 80vw !important;
+        // width: 80vw !important;
     }
 
     &.left-positioned {
