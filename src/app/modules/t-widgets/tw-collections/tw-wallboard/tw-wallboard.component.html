@@ -1,13 +1,13 @@
 <tw-wrapper [data]="data">
     <div class="w-100-p bg-inherit mat-table-container custom-scroll-adjust h-100-p twd-relative">
         <ad-table></ad-table>
-        <img *ngIf="data.Data.Role === 'agent'" title="wallboard" class="vector-image" src="assets/images/vectors/home.svg" width="580" />
+        <!-- <img *ngIf="data.Data.Role === 'agent'" title="wallboard" class="vector-image" src="assets/images/vectors/home.svg" width="580" /> -->
     </div>
 </tw-wrapper>
 
 <ng-template #customServiceLevelCell let-row="record">
     <div
-        class="twd-w-full twd-rounded-20 twd-leading-normal"
+        class="twd-leading-normal twd-px-1"
         [ngStyle]="{
             'background-color': row.BCMSData && getDashboardBgColor(row.BCMSData.SLPercentage, 'SLPercentage'),
             color: row.BCMSData && getDashboardFontColor(row.BCMSData.SLPercentage, 'SLPercentage')
@@ -19,7 +19,7 @@
 
 <ng-template #customAgentStaffedCountCell let-row="record">
     <div
-        class="twd-w-full twd-rounded-20 twd-leading-normal"
+        class="twd-leading-normal twd-px-1"
         [ngStyle]="{
             'background-color': getDashboardBgColor(row.AgentsStaffed, 'AgentsStaffed'),
             color: getDashboardFontColor(row.AgentsStaffed, 'AgentsStaffed')
@@ -31,7 +31,7 @@
 
 <ng-template #customSAgentAvailableCountCell let-row="record">
     <div
-        class="twd-w-full twd-rounded-20 twd-leading-normal"
+        class="twd-leading-normal twd-px-1"
         [ngStyle]="{
             'background-color': getDashboardBgColor(row.AgentAvailable, 'AgentAvailable'),
             color: getDashboardFontColor(row.AgentAvailable, 'AgentAvailable')
@@ -43,7 +43,7 @@
 
 <ng-template #customCallsInQueueCountCell let-row="record">
     <div
-        class="twd-w-full twd-rounded-20 twd-leading-normal"
+        class="twd-leading-normal twd-px-1"
         [ngStyle]="{
             'background-color': getDashboardBgColor(row.CallsInQueue, 'CallsInQueue'),
             color: getDashboardFontColor(row.CallsInQueue, 'CallsInQueue')

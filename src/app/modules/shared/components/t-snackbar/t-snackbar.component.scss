@@ -16,7 +16,7 @@
         transform-origin: center;
         font-size: 12px;
 
-        &.warning, &.info {
+        &.warning {
             background: $tw-warning-bg;
             border-color: $tw-warning-bg;
         }
@@ -28,7 +28,7 @@
             background: $tw-danger-bg;
             border-color: $tw-danger-bg;
         }
-        &.info {
+        &.info, &.loading {
             @apply twd-bg-primary-50 twd-border-primary-100;
         }
     }

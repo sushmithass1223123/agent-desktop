@@ -214,15 +214,15 @@
             padding: 0 6px;
         }
 
-        mat-header-cell:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            width: 1px;
-            height: 40%;
-            top: 30%;
-            right: 0%;
-            background-color: #cccccc;
-        }
+        // mat-header-cell:not(:last-child)::after {
+        //     content: '';
+        //     position: absolute;
+        //     width: 1px;
+        //     height: 40%;
+        //     top: 30%;
+        //     right: 0%;
+        //     background-color: #cccccc;
+        // }
     }
 
     mat-cell,
