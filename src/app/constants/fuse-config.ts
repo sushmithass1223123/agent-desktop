@@ -63,5 +63,6 @@ export const fuseConfig: FuseConfig = {
 export const anchorWidgets: string[] = [
     'tw-voice-controls',
     'tw-customer-journey',
-    'tw-customer-details'
+    'tw-customer-details',
+    'tw-su-active-agents'
 ];

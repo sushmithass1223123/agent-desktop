@@ -1,42 +1,88 @@
 @import 'app/scss/shared';
+@import 'app/scss/general/_variables';
 
 tw-su-active-agents {
+    font-family: 'Inter';
     tw-wrapper.active-agent-wrapper {
         mat-card-content {
             &.mat-mdc-card-content {
                 position: relative;
-                background: inherit !important;
+                background: none !important;
+                border: none !important;
+                margin-top: 0 !important;
 
-                mat-form-field {
-                    &.custom {
-                        .mat-mdc-text-field-wrapper {
-                            margin: 0;
-                            padding-bottom: 0 !important;
-
-                            .mat-mdc-form-field-infix {
-                                border: none;
-                                // padding: 0.5em 0.5rem !important;
-                            }
-
-                            .mat-mdc-form-field-outline-start,
-                            .mat-mdc-form-field-outline-end {
-                                border-color: inherit;
-                            }
+                .active-agents-header-layout {
+                    @apply twd-flex twd-flex-row twd-justify-center twd-items-center twd-gap-2 twd-w-full twd-py-3;
+                    > button {
+                        @apply twd-mb-0 twd-bg-primary-400 twd-text-white;
+                        border-radius: $generic-border-radius;
+                    }
+                    
+                    .search-form-field {
+                        @apply twd-flex twd-flex-row twd-justify-between twd-items-center twd-w-full twd-p-1.5 twd-gap-2;
+                        
+                        line-height: 1;
+                        border: solid 1px #ccc;
+                        border-radius: $generic-border-radius;
+                        
+                        button {
+                            color: #828181;
                         }
                     }
                 }
 
+                
+
+                // mat-form-field {
+                //     &.custom {
+                //         .mat-mdc-text-field-wrapper {
+                //             margin: 0;
+                //             padding-bottom: 0 !important;
+
+                //             .mat-mdc-form-field-infix {
+                //                 border: none;
+                //                 // padding: 0.5em 0.5rem !important;
+                //             }
+
+                //             .mat-mdc-form-field-outline-start,
+                //             .mat-mdc-form-field-outline-end {
+                //                 border-color: inherit;
+                //             }
+                //         }
+                //     }
+                // }
+
                 .agent-list {
                     .agent-item {
-                        avatar {
-                            .avatar-content {
-                                width: 54px;
-                                height: 44px;
-                                border-radius: 16px;
+                        border-radius: 5px;
+                        background: #F6F6F6;
+                        // avatar {
+                        //     .avatar-content {
+                        //         width: 54px;
+                        //         height: 44px;
+                        //         border-radius: 16px;
+                        //     }
+                        // }
+
+                        .agent-name {
+                            @apply twd-text-base/6 twd-text-primary-default twd-font-semibold;
+                        }
+
+                        .profile-avatar{
+                            height: 64px;
+                            width: 64px;
+                            background: #BDBDBD;
+                            color: #ffff;
+                            img {
+                                border-radius: $generic-border-radius-sm;
                             }
                         }
 
                         .element-status {
+                            bottom: -2px;
+                            right: -4px;
+                            border-color: #fff;
+                            border: 2px solid;
                             &.success {
                                 background: $tw-alt-success;
                             }
@@ -82,15 +128,18 @@ tw-su-active-agents {
                     transition: opacity 0.3s;
                     opacity: 1;
 
-                    .mat-mdc-card-avatar {
-                        .mat-mdc-badge-content {
-                            top: -6px;
-                            height: 20px;
-                            width: 20px;
-                            background: $tw-success !important;
-                            color: $tw-dark !important;
+                    
+                        .mat-badge-content {
+                            top: -2px;
+                            height: 18px;
+                            width: 18px;
+                            line-height: 18px;
+                            font-size: 10px;
+                            background: $tw-action !important;
+                            color: $tw-light !important;
+                            left: 125%;
                         }
-                    }
+                    
                 }
 
                 .feature-actions {
@@ -103,9 +152,10 @@ tw-su-active-agents {
                 }
 
                 .indicators {
+                    @apply twd-flex twd-flex-row twd-justify-end twd-items-center twd-flex-full twd-max-w-2/12 twd-gap-3;
+                    color: #BDBDBD;
                     .mat-icon {
-                        cursor: default;
-                        margin-left: 4px;
+                        cursor: pointer;
                     }
                 }
             }
