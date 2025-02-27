@@ -567,10 +567,6 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
     /**
      * To start AV call
      */
-
-    /**
-     * To start AV call
-     */
     private startAVCall(forceJoin?: boolean): void {
         const widgetData = this.data.Data;
         
