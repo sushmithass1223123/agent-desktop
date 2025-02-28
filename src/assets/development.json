@@ -271,6 +271,13 @@
                         "Data": { "Path": "/tmeet", "Active": false }
                     },
                     {
+                        "Name": "USCM",
+                        "Description": "",
+                        "Type": "twn-custom",
+                        "Config": { "Enabled": true, "Icon": "style" },
+                        "Data": { "Path": "/uscm", "Active": false }
+                    },
+                    {
                         "Name": "Docker",
                         "Description": "",
                         "Type": "twn-docker",
@@ -3316,6 +3323,25 @@
                     }
                 },
                 {
+                    "Name": "USCM",
+                    "Description": "",
+                    "Type": "twc-custom",
+                    "Config": {
+                        "Enabled": true,
+                        "Class": "",
+                        "Position": { "X": 1, "Y": 1 },
+                        "Actions": [],
+                        "Header": false
+                    },
+                    "Data": {
+                        "Identifier": "USCM",
+                        "Path": "/uscm",
+                        "Url": "http://localhost:5173/uscm/main/create-post?mode=AD&agentId=${AgentData.agentId}",
+                        "Unload": false,
+                        "PreserveOnTabChange": true
+                    }
+                },
+                {
                     "Name": "TMeet",
                     "Description": "",
                     "Type": "twc-custom",
@@ -3654,5 +3680,5 @@
             "events": { "sendAck": true }
         }
     },
-    "Version": "5.11.0-beta.1"
+    "Version": "5.11.0-beta.2"
 }

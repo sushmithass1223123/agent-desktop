@@ -3,12 +3,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FuseFacadeService } from '@services/fuse-facade.service';
 import { TMACEventService } from '@services/tmac-event.service';
 import { getStringVars, setStringVars } from '@tmac/operators';
-import { SDKClient } from '@tmac/sdk';
+import { IUIEvent, SDKClient, TextChatIncomingEvent } from '@tmac/sdk';
 import { TWContentWrapper } from '@twidgets/utils/widget-wrapper/twc-wrapper';
 import { CustomTMACEventTypes, IPostMessage } from 'app/interfaces';
 import { ContentPageService } from 'app/services/content-page.service';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SharedService } from '../../../../services/shared.service';
 
 /**
  * Custom content component
@@ -64,7 +65,8 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
         public contentPageService: ContentPageService,
         private _sanitizer: DomSanitizer,
         private _tmacEventService: TMACEventService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private sharedService: SharedService
     ) {
         super('TwcCustomComponent', hostElement, contentPageService);
 
@@ -114,12 +116,41 @@ export class TwcCustomComponent extends TWContentWrapper implements OnInit, OnDe
                         this.sendEventsToWindow(events);
                     }
                     break;
+                case 'getagentdetails':
+                    const agentData = SDKClient.getAgentData();
+                    this.sendEventsToWindow(agentData);
+                    break;
                 default:
             }
         });
 
+
+        if (this.data?.Data?.Identifier === 'USCM') {
+            this._tmacEventService
+                .getAllSubscribedEvents<IUIEvent>(['TextChatIncomingEvent'])
+                .pipe(takeUntil(this.unsubscribeAll))
+                .subscribe((evts) =>
+                    evts.forEach((evt) => {
+                        this[evt.EventName](evt);
+                    })
+                );
+        }
+
         this.eventSubscriptions = null;
         this.unload = this.data.Data.Unload || false;
+    }
+
+    TextChatIncomingEvent(evt: any): void {
+        const isSMMPostChecker = JSON.parse(evt.UserJsonData)?.Type === 'SocialMediaPostChecker';
+        if(isSMMPostChecker) {
+            this.sharedService.triggerTabSelect(this.data.Data.Path);
+            setTimeout(() => {
+                this.sendEventsToWindow({
+                    eventName: "SocialMediaPostChecker",
+                    data: {...JSON.parse(evt.UserJsonData), interactionId: evt.InteractionID}
+                })
+            }, 2000);
+        }
     }
 
     /**

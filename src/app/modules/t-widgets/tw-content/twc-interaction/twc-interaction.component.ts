@@ -294,7 +294,8 @@ export class TwcInteractionComponent extends TWContentWrapper implements OnInit,
      * To process TextChatIncomingEvent
      */
     TextChatIncomingEvent(evt: TextChatIncomingEvent): void {
-        this.createWidgetList(evt, 'incoming', '', false, { unreadCount: 0 });
+        const isSMMPostChecker = JSON.parse(evt.UserJsonData)?.Type === 'SocialMediaPostChecker';
+        if(!isSMMPostChecker) this.createWidgetList(evt, 'incoming', '', false, { unreadCount: 0 });
     }
 
     /**

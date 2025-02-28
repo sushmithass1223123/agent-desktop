@@ -10,10 +10,19 @@ export class SharedService {
 
     private holdMethodSubject = new Subject<void>();
     private changeStatusSubject = new Subject<any>();
+    private tabSelect = new Subject<string>();
     private emailErrorNotifySubject = new Subject<number>();
     private appConfirmDialog = new Subject<void>();
     private whiteboardOpenSubject = new BehaviorSubject<boolean>(false);
     whiteboardOpen$ = this.whiteboardOpenSubject.asObservable();
+
+    triggerTabSelect(tabPath: string) {
+        this.tabSelect.next(tabPath);
+    }
+
+    getTabSelectTrigger(): Observable<string> {
+        return this.tabSelect.asObservable();
+    }
 
     triggerEmailFailure(interactionId: number) {
         this.emailErrorNotifySubject.next(interactionId);
