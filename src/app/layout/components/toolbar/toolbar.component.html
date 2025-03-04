@@ -48,14 +48,19 @@
             <div fxLayout="row wrap" fxLayoutAlign="space-around center" class="px-4">
                 @if (connectivityStatus?.Status > -1) {
                     <mat-icon
-                        class="connectivityStatus twd-text-primary-400"
+                        class="connectivity-status twd-text-primary-400"
                         [matTooltip]="locale('toolbarComponent.appInfo')"
                         (click)="showAppInfo()"
+                        (menuOpened)="opened = true"
+                        (menuClosed)="opened = false"
+                        #menuTrigger="matMenuTrigger"
+                        [matMenuTriggerFor]="appInfoMenu"
                         [ngClass]="{
                             'text-warning': connectivityStatus?.Status === 0,
                             'text-alt-success': connectivityStatus?.Status === 1,
                             'text-danger': connectivityStatus?.Status === 2,
-                            spin: infoLoading
+                            spin: infoLoading,
+                            opened: opened
                         }"
                     >
                         {{
@@ -68,6 +73,9 @@
                                     : 'network_check'
                         }}
                     </mat-icon>
+                    <mat-menu class="app-info-layout" #appInfoMenu="matMenu" xPosition="before">
+                        <div [innerHTML]="appInfoData ? appInfoData : 'loading'" class="app-info-content"></div>
+                    </mat-menu>
                 }
             </div>
         </div>

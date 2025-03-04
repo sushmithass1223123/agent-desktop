@@ -1,39 +1,62 @@
 <div fxLayout="row wrap" *transloco="let locale" fxLayoutAlign="space-around center">
-    <button class="twd-flex" (click)="showAvailableDevices()">
+    <button
+        (menuOpened)="opened = true"
+        (menuClosed)="opened = false"
+        #menuTrigger="matMenuTrigger"
+        [matMenuTriggerFor]="availableDevicesMenu"
+        class="twd-flex"
+        (click)="showAvailableDevices()"
+    >
         <mat-icon class="twd-text-primary-400" [matTooltip]="locale('toolbarComponent.availableDevices')">
             headset_mic
         </mat-icon>
     </button>
-</div>
+    <!-- <mat-menu class="avl-device-menu" #availableDevicesMenu="matMenu" xPosition="before"> -->
+    <ng-template *transloco="let locale" #availableDevicesMenu class="custom">
+        <section class="twd-flex twd-flex-col avl-device-menu">
+            <div class="twd-m-0 twd-w-full menu-header twd-flex twd-justify-between twd-items-center">
+                <span class="twd-text-xl">{{ locale('toolbarComponent.availableDevices') }}</span>
+                <button class="twd-flex" tabindex="-1" mat-dialog-close>
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
 
-<ng-template *transloco="let locale" #availableDevicesMenu class="custom">
-    <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
-        <p class="mat-title m-0">{{ locale('toolbarComponent.availableDevices') }}</p>
-        <button mat-icon-button tabindex="-1" mat-dialog-close>
-            <mat-icon>close</mat-icon>
-        </button>
-    </div>
-    <div *ngIf="stream" class="mb-8" fxLayout fxLayoutAlign="center center">
-        <video class="w-100-p h-100-p" autoplay [srcObject]="stream" #videoElm></video>
-    </div>
-    <div
-        *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"
-        fxLayout
-        fxLayoutAlign="space-between center"
-        class="w-100-p px-8"
-        [formGroup]="mediaSelectFormGroup"
-    >
-        <div fxFlex="33%" fxLayout *ngFor="let device of mediaDevices | keyvalue" class="p-4">
-            <mat-form-field fxFlex="100%" appearance="outline">
-                <mat-select [placeholder]="'Select ' + device.key" [formControlName]="device.key">
-                    <mat-option *ngFor="let myDevice of device.value" [value]="myDevice.deviceId">
-                        {{ myDevice.label }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-    </div>
-    <div class="text-center mt-20 mat-title" *ngIf="mediaDeviceInfo.error || mediaDeviceInfo.loading">
-        {{ mediaDeviceInfo.error || mediaDeviceInfo.loading }}
-    </div>
-</ng-template>
+            <div *ngIf="stream" fxLayout fxLayoutAlign="center center">
+                <video class="twd-h-full twd-w-full" autoplay [srcObject]="stream" #videoElm></video>
+            </div>
+            <div
+                *ngIf="!mediaDeviceInfo.error && !mediaDeviceInfo.loading && mediaDeviceInfo.devices as mediaDevices"
+                class="twd-flex twd-flex-col"
+                [formGroup]="mediaSelectFormGroup"
+            >
+                <div fxLayout *ngFor="let device of mediaDevices | keyvalue" class="twd-flex twd-gap-1">
+                    <mat-form-field fxFlex="100%">
+                        <div matPrefix fxLayout fxLayoutAlign="center center" class="device-icon">
+                            @switch (device.key) {
+                                @case ('Mic') {
+                                    <mat-icon color="primary">mic</mat-icon>
+                                }
+                                @case ('Speaker') {
+                                    <mat-icon color="primary">headset</mat-icon>
+                                }
+                                @case ('Video') {
+                                    <mat-icon color="primary">videocam</mat-icon>
+                                }
+                            }
+                        </div>
+
+                        <mat-select [placeholder]="'Select ' + device.key" [formControlName]="device.key">
+                            <mat-option *ngFor="let myDevice of device.value" [value]="myDevice.deviceId">
+                                {{ myDevice.label }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="text-center mt-20 mat-title" *ngIf="mediaDeviceInfo.error || mediaDeviceInfo.loading">
+                {{ mediaDeviceInfo.error || mediaDeviceInfo.loading }}
+            </div>
+        </section>
+    </ng-template>
+    <!-- </mat-menu> -->
+</div>

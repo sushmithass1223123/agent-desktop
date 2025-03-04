@@ -11,3 +11,20 @@
         padding: 0;
     }
 }
+
+.avl-device-menu {
+    .menu-header {
+        @apply twd-p-3 twd-font-semibold twd-text-white;
+    }
+    .device-icon {
+        @apply twd-bg-primary-200 twd-rounded-full twd-h-10 twd-min-w-10;
+    }
+
+    // to do: look for better way to do this
+    .mat-mdc-form-field-flex {
+        padding: 10px;
+    }
+    .mat-mdc-form-field-icon-prefix {
+        padding-right: 10px;
+    }
+}

@@ -21,7 +21,7 @@
         padding: 0 !important;
     }
 
-    .notification-header {
+    .menu-header {
         @apply twd-p-3 twd-font-semibold twd-text-white;
     }
 
@@ -62,4 +62,29 @@
 .nr-img {
     height: 30px;
     width: auto;
+}
+
+.notification-btn
+{
+    position: relative;
+    &::after{
+        
+            content: "";
+            position: absolute;
+            bottom: -10px; /* Adjust based on placement */
+    
+            width: 10px;
+            height: 20px;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid; /* Match menu background */
+            border-bottom-color: var(--twd-accent-700);
+            opacity: 0;
+    }
+    &.opened::after{
+        opacity: 1;
+    }
+    &.nill::after{
+        border-bottom-color: #B8B8B8;
+    }
 }

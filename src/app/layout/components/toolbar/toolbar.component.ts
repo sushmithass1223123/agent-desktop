@@ -87,6 +87,9 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
 
     public isStopRetry;
 
+    // html content to display application information
+    public appInfoData = '';
+
 
     /**
      * Constructor
@@ -377,30 +380,34 @@ export class ToolbarComponent extends SharedWrapper implements OnInit, OnDestroy
             const connectionData = SDKClient.getConnectionData();
             const resp = await SDKClient.getTMACVersion(SDKClient.getAgentData().tmacServer);
 
-            const message = `
-            <div><b>Agent Desktop:<b></div>
-            <span class="time secondary-text">${this._appDataService.getAppVersion()}</span>
-            <br /> <br />   
-
-            <div><b>TMAC Server:<b></div>
-            <span class="time secondary-text">${resp.response ?? 'NA'}</span>
-            <br /> <br />
-
-            <div><b>Event Mode:<b></div>
-            <span class="time secondary-text">${connectionData.eventMode ?? 'NA'}</span>
-            <br /> <br />
-
-            <div><b>Proxy URL:<b></div>
-            <span class="time secondary-text">${connectionData.connectedProxyUrl ?? 'NA'}</span>
-            <br /> <br />
-
-            <div><b>SignalR URL:<b></div>
-            <span class="time secondary-text">${connectionData.signalRUrl ?? 'NA'}</span>
-            <br /> <br />     
+            this.appInfoData = `
+                <div class="app-info-header">
+                ${this.translocoService.translate('toolbarComponent.appInfo') }
+                </div>
+                <div>
+                    <label> ${this.translocoService.translate('toolbarComponent.appInfoADLabel')}:</label>
+                    <span>${this._appDataService.getAppVersion()}</span>
+                </div>  
+                <div>
+                    <label> ${this.translocoService.translate('toolbarComponent.appInfoTMACLabel')}:</label>
+                    <span>${resp.response ?? 'NA'}</span>
+                </div> 
+                <div>
+                    <label> ${this.translocoService.translate('toolbarComponent.eventMode')}:</label>
+                    <span>${connectionData.eventMode ?? 'NA'}</span>
+                </div>
+                <div>
+                    <label> ${this.translocoService.translate('toolbarComponent.proxyURL')}:</label>
+                    <span>${connectionData.connectedProxyUrl ?? 'NA'}</span>
+                </div>
+                <div>
+                    <label> ${this.translocoService.translate('toolbarComponent.singRURL')}:</label>
+                    <span>${connectionData.signalRUrl ?? 'NA'}</span>
+                </div>
             `;
 
             // show the dialog
-            this._appUIService.showCustomDialog('alert', message, 'Application Information');
+            // this._appUIService.showCustomDialog('alert', message, 'Application Information');
         } catch (error) {
             this._appUIService.showSnackbar('Error in fetching application information', 'failure');
         }

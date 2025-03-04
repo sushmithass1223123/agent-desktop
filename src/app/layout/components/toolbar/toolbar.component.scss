@@ -1,10 +1,56 @@
 @import 'app/scss/shared';
+@import 'app/scss/general/_variables';
 
 toolbar {
     height: 66px;
     .toolbar-layout {
         @apply twd-relative twd-bg-inherit twd-text-inherit twd-px-5;
     }
+
+    .connectivity-status
+{
+    // position: relative;
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: 5px; /* Adjust based on placement */
+        right: 25px;
+        width: 10px;
+        height: 20px;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #B8B8B8; /* Match menu background */
+        opacity: 0;
+    }
+    &.opened::after{
+        opacity: 1;
+    }
 }
+}
+
+.app-info-layout {
+    width: 360px;
+    max-width: 400px;
+    margin-top: 15px;
+    border-radius: $generic-border-radius-sm;
+    .app-info-content {
+        @apply twd-break-all twd-flex twd-flex-col twd-gap-4 twd-text-sm;
+        padding: 4px 12px;
+        .app-info-header {
+            @apply twd-p-3 twd-font-semibold twd-text-white;
+            background: #B8B8B8;
+        }
+        & > div {
+            @apply twd-flex twd-flex-col;
+        }
+        label {
+            font-weight: 600;
+            line-height: 16px;
+        }
+    }
+    
+}
+
+
 
 

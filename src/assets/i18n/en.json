@@ -45,13 +45,13 @@
         "loginLoading": "Signing in..."
     },
     "toolbarComponent": {
-        "appInfo": "App Information",
+        "appInfo": "Application Information",
         "notifications": "Notifications",
         "noNotificationsMsg": "No notifications yet!",
         "logout": "Logout",
         "im": "IM",
         "moreActions": "More Actions",
-        "availableDevices": "Available Media devices",
+        "availableDevices": "Media devices",
         "loadingAvailableDevices": "Loading available devices...",
         "reloadingAvailableDevices": "Reloading available devices",
         "videoStartErrorMessage": "Error occured while starting the video",
@@ -71,7 +71,12 @@
         "msDisconnectedMsg": "Media Server disconnected !! Please wait...",
         "msReconnectedMsg": "Media Server re-connected successfully",
         "msStatusWarningMsg": "Something went wrong with Media server !! Please wait...",
-        "statusChangeDisabled": "Status change is not allowed !!"
+        "statusChangeDisabled": "Status change is not allowed !!",
+        "appInfoADLabel": "Agent Desktop",
+        "appInfoTMACLabel": "TMAC Server",
+        "eventMode": "Event Mode",
+        "proxyURL": "Proxy URL",
+        "singRURL": "SignalR URL"
     },
     "global": {
         "commonErrorMessage": "Something went wrong",
