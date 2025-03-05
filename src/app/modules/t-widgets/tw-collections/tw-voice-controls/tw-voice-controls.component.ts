@@ -1587,7 +1587,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {MatButton} btn
      */
     confirmDisconnectCall(btn: MatButton): void {
-        // config force login
+        
+        if(this.widgetData?.DisableConfirmationOnEnd) {
+            this.disconnectCall(btn);
+            return;
+        }
+
         this.dialogRef = this._appUIService.showAppConfirmDialog('endCall');
         this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
@@ -1699,7 +1704,12 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      * @param {MatButton} btn
      */
     confirmCloseInteraction(btn: MatButton): void {
-        // config force login
+        
+        if(this.widgetData?.DisableConfirmationOnEnd) {
+            this.closeInteraction(btn);
+            return;
+        }
+
         this.dialogRef = this._appUIService.showAppConfirmDialog('closeInteraction');
         this.dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {

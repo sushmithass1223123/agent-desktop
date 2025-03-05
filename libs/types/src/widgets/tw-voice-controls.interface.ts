@@ -222,6 +222,13 @@ export type TwVoiceControlsDataConfig = {
      disableResetCall: boolean;
 
      connectionTimeout: number;
+
+     /**
+      * Flag to disable confirmation on end call & close interaction
+      * @type {boolean} true/false
+      * @default false
+      */
+     DisableConfirmationOnEnd: boolean;
 };
 
 /**

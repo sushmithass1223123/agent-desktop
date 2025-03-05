@@ -1125,7 +1125,8 @@
                                                     "SendSMSAllowed": true,
                                                     "CloseInteractionOnEnd": false,
                                                     "disableResetCall": true,
-                                                    "connectionTimeout": 10
+                                                    "connectionTimeout": 10,
+                                                    "DisableConfirmationOnEnd": true
                                                 }
                                             },
                                             {
