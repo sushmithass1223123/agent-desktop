@@ -225,11 +225,15 @@ export type TwVoiceControlsDataConfig = {
 
      /**
       * Flag to disable confirmation on end call & close interaction
-      * @type {boolean} true/false
-      * @default false
+      * @type {ConfirmFeatureTypes}
       */
-     DisableConfirmationOnEnd: boolean;
+     DisableConfirmation: ConfirmFeatureTypes;
 };
+
+export type ConfirmFeatureTypes = {
+    "OnEndCall": boolean;
+    "OnCloseInteraction": boolean;
+}
 
 /**
  * Data config of voice interaction within component

@@ -1588,7 +1588,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     confirmDisconnectCall(btn: MatButton): void {
         
-        if(this.widgetData?.DisableConfirmationOnEnd) {
+        if(this.widgetData?.DisableConfirmation?.OnEndCall) {
             this.disconnectCall(btn);
             return;
         }
@@ -1705,7 +1705,7 @@ export class TwVoiceControlsComponent extends TWidgetWrapper implements OnInit, 
      */
     confirmCloseInteraction(btn: MatButton): void {
         
-        if(this.widgetData?.DisableConfirmationOnEnd) {
+        if(this.widgetData?.DisableConfirmation?.OnCloseInteraction) {
             this.closeInteraction(btn);
             return;
         }

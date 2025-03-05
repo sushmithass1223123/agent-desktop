@@ -1126,7 +1126,10 @@
                                                     "CloseInteractionOnEnd": false,
                                                     "disableResetCall": true,
                                                     "connectionTimeout": 10,
-                                                    "DisableConfirmationOnEnd": true
+                                                    "DisableConfirmation": {
+                                                        "OnEndCall": false,
+                                                        "OnCloseInteraction": true
+                                                    }
                                                 }
                                             },
                                             {
