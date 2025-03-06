@@ -188,6 +188,12 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      */
     blindLabel: string;
 
+    /**
+     * A static flag to allow direct edit if allowed to edit number / agent field
+     * TODO: Need to get it from the config
+     */
+    allowDirectEdit: boolean = true;
+
 
     /**
      * Constructor
