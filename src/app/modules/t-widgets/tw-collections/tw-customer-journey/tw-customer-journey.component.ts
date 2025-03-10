@@ -20,7 +20,7 @@ import {
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
 import { maticonByExtension } from 'app/utils';
-import { format, parse } from 'date-fns';
+import { format, isValid, parse } from 'date-fns';
 import { groupBy, sortBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
@@ -635,11 +635,19 @@ export class TwCustomerJourneyComponent extends TWidgetWrapper implements OnInit
             console.error(e);
         });
         if (res) {
-            state.next({
-                loading: false,
-                error: false,
-                data: res.response.map((x) => ({ ...x, ActionTime: new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10)) }))
-            });
+            try{
+                state.next({
+                    loading: false,
+                    error: false,
+                    data: res.response.map((x) => ({ ...x, ActionTime: (
+                        isValid(new Date(x.ActionTime)) ? 
+                        new Date(x.ActionTime) : 
+                        new Date(parseInt(x.ActionTime.toString().split('(')[1].split(')')[0], 10))) }))
+                });
+            } catch(e) {
+                console.log('Failed to Format Action time at Agent Desktop', res.response);
+                this.logger.error('Failed to Format Action time at Agent Desktop', JSON.stringify(res.response));
+            }
         } else {
             state.next({ loading: false, error: true, msg: this.translocoService.translate('widgets.customerJourney.getSessionActionFailed') });
         }

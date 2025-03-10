@@ -1592,16 +1592,19 @@ export class AgentSkillListComponent implements OnInit, AfterViewInit, OnDestroy
      * @returns
      */
     filterAgentList = (row: AgentModel, filters: any): boolean => {
-        if (filters.searchKey && !filters.Skill) {
+        if (filters.searchKey && !filters.skill) {
             const searchRe = new RegExp(filters.searchKey, 'i');
             return !!JSON.stringify(row).match(searchRe);
-        } else if (!filters.searchKey && filters.Skill) {
-            const skillRe = new RegExp(filters.Skill, 'i');
-            return !!row.AgentVoiceSkillsAsString.match(skillRe);
+        } else if (!filters.searchKey && filters.skill) {
+            const skillRe = new RegExp(filters.skill, 'i');
+            return !!(row?.AgentVoiceSkillsAsString ? row.AgentVoiceSkillsAsString : '').match(skillRe);
         } else {
             const searchRe = new RegExp(filters.searchKey, 'i');
-            const skillRe = new RegExp(filters.Skill, 'i');
-            return !!(JSON.stringify(row).match(searchRe) && row.AgentVoiceSkillsAsString.match(skillRe));
+            const skillRe = new RegExp(filters.skill, 'i');
+            return !!(
+                JSON.stringify(row).match(searchRe) &&
+                (row?.AgentVoiceSkillsAsString ? row.AgentVoiceSkillsAsString : '').match(skillRe)
+            );
         }
     };
 

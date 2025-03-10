@@ -107,7 +107,7 @@ tw-chat-controls {
                                     position: absolute;
                                     width: 156px;
                                     max-width: 90%;
-                                    z-index: 2;
+                                    z-index: 3;
                                     height: 40px;
                                     overflow: hidden;
                                     right: -160px;
@@ -215,6 +215,7 @@ tw-chat-controls {
                                                     line-height: 48px;
                                                     width: 48px;
                                                     height: 48px;
+                                                    color: #000;
                                                 }
                                             }
                                         }
