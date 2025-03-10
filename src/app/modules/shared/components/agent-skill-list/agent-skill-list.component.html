@@ -93,7 +93,10 @@
                                             "
                                             [(ngModel)]="tabConf.freeText.value"
                                             #skillVdnInput
-                                            (input)="onSkillVdnInputChange($event.target.value)"
+                                            (input)="
+                                                onSkillVdnInputChange($event.target.value);
+                                                tabConf.freeText.active = true
+                                            "
                                         />
                                         <button
                                             mat-button
