@@ -569,6 +569,15 @@ export class TwAudioVideoControlsComponent extends TWidgetWrapper implements OnI
      */
     private startAVCall(forceJoin?: boolean): void {
         const widgetData = this.data.Data;
+        
+    // set selfVideo type to 'video' and agentFeatures.oneWayVideo to false to disaply selfvideo
+    if (this.selfVideo) {
+        this.selfVideo.type = 'video';
+    }
+    if (this.agentFeatures) {
+        this.agentFeatures.oneWayVideo = false;
+    }
+
 
         this.muteAudioHidden = widgetData.MuteAudioHidden;
 
