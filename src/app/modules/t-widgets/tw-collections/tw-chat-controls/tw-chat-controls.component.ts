@@ -637,6 +637,8 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
      */
     enableAgentMessageSanitization: boolean = false;
 
+    remoteTypingTimer: any;
+
     /**
      * Constructor
      */
@@ -2379,25 +2381,45 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
     
             //if typing started we set a timer for 5 sec and auto stop
             if(status == START) {
-            // if its there clear existing timer, create new timer
-            if(this.remoteTypingUserList && Object.keys(this.remoteTypingUserList).includes(user)) {
-                clearTimeout(this.remoteTypingUserList[user]); 
-                this.remoteTypingUserList[user] = 0;  
-            }
-            this.remoteTypingTimer = setTimeout(() => {
-                this.remoteTyping = { name: user, typing: false };       
-            }, 5000);
-            this.remoteTypingUserList[user] = this.remoteTypingTimer;              
-            this.remoteTyping = { name: user, typing: true };      
-            } else if (status == STOP) { //typing is stopped
-                if (Object.keys(this.remoteTypingUserList).includes(user)) {
-                    clearTimeout(this.remoteTypingTimer[user]);    
-                    this.remoteTypingUserList[user] = 0;
-                    this.remoteTyping = { name: user, typing: false };        
+                /** ON TypingState == START (0)
+                 * If  remoteTyping == empty, it means its the very first time somebody is typing
+                 *  If  remoteTyping != empty, we have to 
+                 * 1. clear timer 
+                 * 2. update remoteTyping with new user
+                 * 3. start a new timer
+                **/
+                if(this.remoteTyping && this.remoteTyping.name) {
+                    if(this.remoteTypingTimer) {
+                        clearTimeout(this.remoteTypingTimer); 
+                    }
+                }
+                this.changeUserTypingStatus(user, true); 
+                this.remoteTypingTimer = setTimeout(() => {
+                    // after 5 sec. set typing status to false (stop) 
+                    this.changeUserTypingStatus(user, false);
+                }, 5000);
+            } else if (status == STOP) { 
+                /** ON TypingState == STOP (1)
+                 *  If  remoteTyping != empty, we have to 
+                 * 1. clear timer 
+                 * 2. update remoteTyping to STOP (0)
+                **/                
+               if(this.remoteTyping.name) {
+                    clearTimeout(this.remoteTypingTimer); 
+                    this.changeUserTypingStatus(user, false); 
                 }
             }
-    
         }
+
+/**
+ * To set typing status & name to be displayed in UI
+ * @param user Username of the person who is typing
+ * @param typingState can be true (typing started), false (typing stopped)
+ */
+    changeUserTypingStatus(user, typingState) {                    
+        console.log("changeUserTypingStatus: ", user, typingState)     
+        this.remoteTyping = { name: user, typing: typingState };  
+    }
 
     /**
      * To process TextChatMessageReceivedEvent
