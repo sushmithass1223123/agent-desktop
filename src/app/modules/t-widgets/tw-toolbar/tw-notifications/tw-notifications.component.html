@@ -2,7 +2,11 @@
     <div class="">
         <button
             class="notification-btn twd-flex"
-            [ngClass]="{ opened: opened, animate__headShake: unreadCount > 0 }"
+            [ngClass]="{
+                opened: opened,
+                animate__headShake: unreadCount > 0,
+                nill: !notifications || notifications?.length === 0
+            }"
             [matMenuTriggerFor]="menu"
             aria-label="Notification dropdown"
             (menuOpened)="menuOpened(true)"
@@ -24,7 +28,7 @@
             fxLayout="row"
             fxLayoutAlign="space-between center"
             (click)="$event.stopPropagation()"
-            class="notification-header"
+            class="menu-header"
             [ngClass]="{ nill: !notifications || notifications?.length === 0 }"
         >
             {{ locale('toolbarComponent.notifications') }}
@@ -113,8 +117,8 @@
                         </div>
                         <div fxLayout="column" class="message">
                             <div class="font-weight-600 notcol">
-                                <h4>{{item.message?.SocialMediaData?.Comments?.ToName}}</h4>
-                                <p>Parent comment edited on {{item.message?.SocialMediaData?.Posts?.Channel}}</p>
+                                <h4>{{ item.message?.SocialMediaData?.Comments?.ToName }}</h4>
+                                <p>Parent comment edited on {{ item.message?.SocialMediaData?.Posts?.Channel }}</p>
                             </div>
                             <small>{{ item.time | date: 'shortTime' }}</small>
                         </div>
