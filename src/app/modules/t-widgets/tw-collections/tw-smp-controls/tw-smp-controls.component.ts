@@ -511,7 +511,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
     /**
      * Closes current interaction
      */
-    async closeInteraction(force = false) {
+    async closeInteraction(force = false, inSessionId: string, outSessionId: string, activeSessionId: string) {
         if (!force) {
             if (
                 (this.postDraftData[this.interactionId]?.body ||
@@ -546,9 +546,9 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
 
             SDKClient.closeInteraction(this.interactionId.toString(), null, true)
                 .then((dt: IResponse) => {
-                    delete this.smpService.postBodies[this.sessionId];
-                    delete this.smpService.postBodies[this.outSessionId];
-                    delete this.draftOutsessionId[this.activeSessionId];
+                    delete this.smpService.postBodies[inSessionId];
+                    delete this.smpService.postBodies[outSessionId];
+                    delete this.draftOutsessionId[activeSessionId];
                     this._fuseProgressBarService.hide();
                     if (dt.response && dt.response.ResultCode === 0) {
                         this._appUiService.showSnackbar(
@@ -781,7 +781,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                         );
                 }
                 if (closePost) {
-                    this.closeInteraction(true);
+                    this.closeInteraction(true, this.sessionId, this.outSessionId, this.activeSessionId);
                 }
             })
             .catch((err) => {
@@ -1029,7 +1029,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             true
         )
             .then(() => {
-                this.closeInteraction(true);
+                this.closeInteraction(true, this.sessionId, this.outSessionId, this.activeSessionId);
             })
             .catch(() => {
                 this._appUiService.showSnackbar(

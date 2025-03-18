@@ -82,7 +82,7 @@
                         <mat-icon
                             [matTooltip]="locale('widgets.smpControls.tooltips.closeInteraction')"
                             role="button"
-                            (click)="closeInteraction()"
+                            (click)="closeInteraction(false, sessionId, outSessionId, activeSessionId)"
                             >close</mat-icon
                         >
                     </div>
@@ -211,7 +211,7 @@
                                 this.deletedCommentData[
                                     this.smpService.postBodies[activeSessionId]?.SmActiveComment?.CommentId
                                 ].isConsented = true;
-                                closeInteraction(true)
+                                closeInteraction(true, sessionId, outSessionId, activeSessionId)
                             "
                             type="button"
                         >
@@ -243,7 +243,7 @@
                                 this.deletedPostData[this.smpService.postBodies[activeSessionId]?.PostId][
                                     activeSessionId
                                 ] = true;
-                                closeInteraction(true)
+                                closeInteraction(true, sessionId, outSessionId, activeSessionId)
                             "
                             type="button"
                         >
