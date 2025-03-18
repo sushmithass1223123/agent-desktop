@@ -254,7 +254,7 @@ export const getFuseConfigByTheme = (themeName: string, selector: boolean) => {
                 layout: {
                     navbar: {
                         customBackgroundColor: true,
-                        background: 'accent-700'
+                        background: 'accent-600'
                     },
                     toolbar: {
                         customBackgroundColor: true,

@@ -1,11 +1,17 @@
 <ng-container *transloco="let locale">
     <div *ngIf="channels.length" class="fab-container">
         <button
-            class="twd-flex"
+            class="twd-flex cil-btn"
             cdkOverlayOrigin
             #channelList="cdkOverlayOrigin"
-            (click)="openList = !openList"
             [matTooltip]="locale('toolbarComponent.moreActions')"
+            (menuOpened)="opened = true"
+            (menuClosed)="opened = false"
+            #menuTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="createInteractionMenu"
+            [ngClass]="{
+                opened: opened
+            }"
         >
             <mat-icon class="twd-text-primary-400" [@fabToggler]="{ value: openList ? 'active' : 'inactive' }"
                 >add_circle
@@ -13,7 +19,28 @@
         </button>
 
         <!-- This template displays the overlay content and is connected to the button -->
-        <ng-template
+        <mat-menu #createInteractionMenu="matMenu" class="create-interaction-list" xPosition="before">
+            <div mat-menu-item *ngFor="let channel of channels">
+                <button
+                    *ngIf="channel.Enabled"
+                    color="primary"
+                    (click)="addInteraction(channel.Type, channel)"
+                    [disabled]="!checkAux(channel.EnableState)"
+                    class="twd-flex twd-items-center"
+                >
+                    <mat-icon class="!twd-text-accent-600" *ngIf="channel.Icon.indexOf('custom') < 0">{{
+                        channel.Icon
+                    }}</mat-icon>
+                    <mat-icon
+                        class="!twd-text-accent-600"
+                        [svgIcon]="channel.Icon"
+                        *ngIf="channel.Icon.indexOf('custom') >= 0"
+                    ></mat-icon>
+                    <span>{{ channel.Name }}</span>
+                </button>
+            </div>
+        </mat-menu>
+        <!-- <ng-template
             cdkConnectedOverlay
             [cdkConnectedOverlayOrigin]="channelList"
             [cdkConnectedOverlayOpen]="openList"
@@ -41,6 +68,6 @@
                     </button>
                 </ng-container>
             </div>
-        </ng-template>
+        </ng-template> -->
     </div>
 </ng-container>

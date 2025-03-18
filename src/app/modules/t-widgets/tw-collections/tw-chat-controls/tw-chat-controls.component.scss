@@ -4,9 +4,9 @@ tw-chat-controls {
     }
 
     .mat-mdc-card-content {
-        background: inherit !important;
-        box-shadow: none !important;
-        padding: 0px 3px 3px 3px !important;
+        // background: inherit !important;
+        // box-shadow: none !important;
+        padding: 10px !important;
 
         .chat-controls {
             .interaction-details {
@@ -14,6 +14,7 @@ tw-chat-controls {
             }
 
             .chat-container {
+                gap: 8px;
                 height: calc(100% - 60px);
             }
         }
@@ -33,6 +34,8 @@ tw-chat-controls {
                 justify-content: flex-start;
                 align-items: stretch;
                 flex: 1 1 0%;
+                border-radius: 5px;
+                overflow: auto;
 
                 .chat-actions {
                     display: flex;
@@ -47,7 +50,8 @@ tw-chat-controls {
                         margin: 6px 6px 6px 0;
 
                         &:not(.mat-mdc-primary, .mat-mdc-accent, .mat-mdc-warn) {
-                            background: #bdbdbd;
+                            background: var(--twd-primary-400);
+                            color:#ffffff
                         }
                     }
                 }
@@ -351,60 +355,63 @@ tw-chat-controls {
                     }
                 }
 
-                .chat-footer {
+                
+            }
+
+            .chat-footer {
+                position: relative;
+                flex: 0 0 auto;
+                display: flex;
+                flex-direction: column;
+                //padding: 8px;
+                border-bottom-left-radius: 20px;
+                border-bottom-right-radius: 20px;
+                background: #fff !important;
+                border-radius: 5px;
+                .reply-form {
                     position: relative;
-                    flex: 0 0 auto;
                     display: flex;
                     flex-direction: column;
-                    padding: 8px;
-                    border-bottom-left-radius: 20px;
-                    border-bottom-right-radius: 20px;
+                    justify-content: center;
+                    align-items: center;
 
-                    .reply-form {
-                        position: relative;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
+                    .message-text {
+                        border-radius: 20px;
+                        font-family: 'Montserrat', 'TwemojiMozilla', sans-serif; 
+                        .mat-form-field-wrapper {
+                            padding: 0 !important;
 
-                        .message-text {
-                            border-radius: 20px;
-                            font-family: 'Montserrat', 'TwemojiMozilla', sans-serif; 
-                            .mat-form-field-wrapper {
-                                padding: 0 !important;
+                            .mat-mdc-form-field-flex {
+                                padding: 0;
 
-                                .mat-mdc-form-field-flex {
-                                    padding: 0;
+                                .mat-mdc-form-field-infix {
+                                    padding: 0px !important;
+                                    border: none;
+                                    border-radius: 20px;
 
-                                    .mat-mdc-form-field-infix {
-                                        padding: 0px !important;
-                                        border: none;
-                                        border-radius: 20px;
-
-                                        textarea {
-                                            overflow-x: hidden;
-                                            margin: 16px 48px 16px 16px;
-                                            width: calc(100% - 64px);
-                                            padding: 0;
-                                            min-height: 20px;
-                                            font-family: 'Montserrat', 'TwemojiMozilla', sans-serif; 
-                                        }
+                                    textarea {
+                                        overflow-x: hidden;
+                                        margin: 16px 48px 16px 16px;
+                                        width: calc(100% - 64px);
+                                        padding: 0;
+                                        min-height: 20px;
+                                        font-family: 'Montserrat', 'TwemojiMozilla', sans-serif; 
                                     }
                                 }
+                            }
 
-                                .mat-mdc-form-field-underline {
-                                    display: none !important;
-                                }
+                            .mat-mdc-form-field-underline {
+                                display: none !important;
                             }
                         }
+                    }
 
-                        .send-message-button {
-                            position: absolute;
-                            right: 8px;
+                    .send-message-button {
+                        position: absolute;
+                        right: 8px;
 
-                            .mat-icon {
-                                line-height: 22px;
-                            }
+                        .mat-icon {
+                            line-height: 22px;
                         }
                     }
                 }

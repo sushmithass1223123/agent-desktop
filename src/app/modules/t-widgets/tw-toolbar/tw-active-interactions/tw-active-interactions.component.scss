@@ -12,11 +12,11 @@
     @extend .flex-center;
     &.hold {
         background: $tw-warning-bg;
-        color: #000;
+        color: #78654d;
     }
     &.disconnected {
         background: $tw-danger-bg;
-        color: #000;
+        color: #78654d;
     }
 }
 .voice {

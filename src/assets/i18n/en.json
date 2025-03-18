@@ -602,7 +602,11 @@
             "requestForVideoCallSent": "Video call request sent",
             "errorInCallRequest": "Call request failed",
             "attachmentWarnMessage": "Attaching #attachmentWarnType restricted",
-            "attachmentWarnType": "documents:documents,camera:photos,media:media"
+            "attachmentWarnType": "documents:documents,camera:photos,media:media",
+            "startTime":"Start Time",
+            "interactionDuration": "Interaction Duration",
+            "sessionId": "Session ID",
+            "intent":"Intent"
         },
         "cannedResponses": {
             "mode": "Mode",

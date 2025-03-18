@@ -63,7 +63,7 @@ import {
     TUtils
 } from '@tmac/sdk';
 import { TWidgetWrapper } from '@twidgets/utils/widget-wrapper/tw-wrapper';
-import { AGENT_FEATURES, INVALID_CHARS } from 'app/constants';
+import { AGENT_FEATURES, anchorWidgets, INVALID_CHARS } from 'app/constants';
 import { ChatTranscripts, CustomSDKEvent, InteractionComment, InteractionRef, SnackbarStateTypes } from 'app/interfaces';
 import { AgentSkillListDataModel, TwWidgetModel } from 'app/models';
 import { throwADError } from 'app/utils';
@@ -671,7 +671,7 @@ export class TwChatControlsComponent extends TWidgetWrapper implements OnInit, O
         };
 
         this.customFuse = {
-            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => this.data?.Config?.Anchor)),
+            anchor$: this._fuseFacadeService.anchorBgClasses$().pipe(filter(() => anchorWidgets.includes('tw-chat-controls'))),
             widget$: this._fuseFacadeService.widgetBgClasses$(),
             config$: this._fuseFacadeService.getConfig({ colorTheme: 'colorTheme' })
         };

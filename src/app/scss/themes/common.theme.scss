@@ -61,26 +61,30 @@
                     color: #fafafa !important;
                     // background-color: #303030 !important;
                 } @else {
-                    color: rgba(0, 0, 0, 0.87) !important;
+                    // color: rgba(0, 0, 0, 0.87) !important;
+                    color: #ADADAD !important;
+                    background-color: #E0E0E0 !important;
                     // background-color: #fafafa !important;
                 }
             }
 
             &.connected {
                 .avatar-content {
-                    border: 2px solid map-get($mat-green, 700);
+                    // border: 2px solid map-get($mat-green, 700);
+                    background-color: var(--twd-primary-400)!important;
+                    color: var(--twd-primary-900) !important;
                 }
             }
 
             &.disconnected {
                 .avatar-content {
-                    border: 2px solid map-get($mat-warn, default);
+                   // border: 2px solid map-get($mat-warn, default);
                 }
             }
 
             &.hold {
                 .avatar-content {
-                    background-color: $tw-warning !important;
+                    // background-color: $tw-warning !important;
                 }
             }
         }

@@ -27,7 +27,10 @@
             </div>
 
             <div class="message {{ mode }}" [ngClass]="{ 'm-0': replied }">
-                <div *ngIf="message.repliedToMessage" class="p-4 mt-4 mb-8 border-radius-8 border-left-lg-secondary replied">
+                <div
+                    *ngIf="message.repliedToMessage"
+                    class="p-4 mt-4 mb-8 border-radius-8 border-left-lg-secondary replied"
+                >
                     <ng-container
                         *ngTemplateOutlet="
                             messageRef;
@@ -57,11 +60,16 @@
                         </div>
                         <div>
                             <mat-icon
-                            *ngIf="replyAble && conferenceType !== 'silent' && message.status !== 'init' && message.status !== 'failed'"
+                                *ngIf="
+                                    replyAble &&
+                                    conferenceType !== 'silent' &&
+                                    message.status !== 'init' &&
+                                    message.status !== 'failed'
+                                "
                                 class="s-18 twd-cursor-pointer"
                                 (click)="setReplyingToMessage(message)"
                                 [matTooltip]="locale('interactionComponent.reply')"
-                                [ngClass]="{ 'disabled': status !== 'connected' }"
+                                [ngClass]="{ disabled: status !== 'connected' }"
                                 >reply</mat-icon
                             >
                         </div>
@@ -91,29 +99,26 @@
                                 <img
                                     title=""
                                     [ngClass]="{
-                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]': mode === 'reply' || replied,
+                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]':
+                                            mode === 'reply' || replied,
                                         '!twd-min-h-[64px]': replied
                                     }"
                                     [src]="message.customTemplate?.interactive?.components?.header?.image?.url"
                                 />
                             </div>
-
                         </div>
                     </ng-container>
-                    <br>
+                    <br />
                     <ng-container *ngIf="message.customTemplate?.interactive?.components?.body?.type === 'text'">
                         <span [innerHTML]="message.customTemplate?.interactive?.components?.body?.text"></span>
                     </ng-container>
-                    <br>
+                    <br />
                     <ng-container *ngIf="message.customTemplate?.interactive?.components?.buttons?.length > 0">
                         <ng-container *ngFor="let btn of message.customTemplate?.interactive?.components?.buttons">
-                            <span [innerHTML]="btn?.reply?.title">                         
-                            </span>
-                            <br>
+                            <span [innerHTML]="btn?.reply?.title"> </span>
+                            <br />
                         </ng-container>
-                        
                     </ng-container>
-
                 </p>
 
                 <p class="m-0" *ngIf="!message.customTemplate">
@@ -124,7 +129,11 @@
                     <ng-container *ngIf="message.attachment?.src">
                         <div class="attachments">
                             <!-- Images -->
-                            <div *ngIf="message.attachment.type === 'image'" class="image" (click)="previewMedia(message)">
+                            <div
+                                *ngIf="message.attachment.type === 'image'"
+                                class="image"
+                                (click)="previewMedia(message)"
+                            >
                                 <img
                                     title="Attachment"
                                     [ngClass]="{
@@ -132,7 +141,8 @@
                                         'rotate-90-inverse': message.attachment?.angle === 1,
                                         'rotate-180': message.attachment?.angle === 2,
                                         'rotate-90': message.attachment?.angle === 3,
-                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]': mode === 'reply' || replied,
+                                        '!twd-max-w-[64px] !twd-max-h-[64px] !twd-rounded-[5px]':
+                                            mode === 'reply' || replied,
                                         '!twd-min-h-[64px]': replied
                                     }"
                                     [src]="message.attachment.src"
@@ -142,21 +152,35 @@
                             <!-- Videos -->
                             <div *ngIf="message.attachment.type === 'video'">
                                 <div class="video-overlay">
-                                    <button mat-stroked-button mat-icon-button class="mat-elevation-z6" (click)="previewMedia(message)">
+                                    <button
+                                        mat-stroked-button
+                                        mat-icon-button
+                                        class="mat-elevation-z6"
+                                        (click)="previewMedia(message)"
+                                    >
                                         <mat-icon>play_arrow</mat-icon>
                                     </button>
                                 </div>
                                 <video
-                                    [ngClass]="{ 'twd-max-w-[64px] twd-max-h-[64px] twd-rounded-[5px]': mode === 'reply' }"
+                                    [ngClass]="{
+                                        'twd-max-w-[64px] twd-max-h-[64px] twd-rounded-[5px]': mode === 'reply'
+                                    }"
                                     [src]="message.attachment.src"
                                 ></video>
                             </div>
 
                             <!-- Audios -->
-                            <audio *ngIf="message.attachment.type === 'audio'" [src]="message.attachment.src" controls></audio>
+                            <audio
+                                *ngIf="message.attachment.type === 'audio'"
+                                [src]="message.attachment.src"
+                                controls
+                            ></audio>
 
                             <!-- Files -->
-                            <div *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'" class="file">
+                            <div
+                                *ngIf="message.attachment.type === 'file' || message.attachment.type === 'others'"
+                                class="file"
+                            >
                                 <div fxFlex="80" class="twd-flex twd-flex-row twd-items-center">
                                     <mat-icon class="file-icon">insert_drive_file</mat-icon>
                                     <span class="file-name">{{ message.attachment.name }}</span>
@@ -181,13 +205,18 @@
                             <!-- Spacer for better view -->
                             <span
                                 *ngIf="
-                                    message.attachment.type === 'file' || message.attachment.type === 'others' || message.attachment.type === 'audio'
+                                    message.attachment.type === 'file' ||
+                                    message.attachment.type === 'others' ||
+                                    message.attachment.type === 'audio'
                                 "
                                 class="spacer h-16"
                             >
                             </span>
                             <span
-                                *ngIf="!replied && (message.attachment.type === 'image' || message.attachment.type === 'video')"
+                                *ngIf="
+                                    !replied &&
+                                    (message.attachment.type === 'image' || message.attachment.type === 'video')
+                                "
                                 class="time-overlay"
                             ></span>
                         </div>
@@ -195,10 +224,18 @@
                 </p>
             </div>
 
-            <div *ngIf="!replied && message.time" [ngClass]="message?.type" class="time twd-flex twd-flex-row twd-items-center twd-justify-end">
+            <div
+                *ngIf="!replied && message.time"
+                [ngClass]="message?.type"
+                class="time twd-flex twd-flex-row twd-items-center twd-justify-end"
+            >
                 {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
-                <mat-icon *ngIf="message.position === 'right' && message.status === 'init'" class="s-12 ml-4 spin"> loop</mat-icon>
-                <mat-icon *ngIf="message.position === 'right' && message.status === 'sent'" class="s-12 ml-4">done </mat-icon>
+                <mat-icon *ngIf="message.position === 'right' && message.status === 'init'" class="s-12 ml-4 spin">
+                    loop</mat-icon
+                >
+                <mat-icon *ngIf="message.position === 'right' && message.status === 'sent'" class="s-12 ml-4"
+                    >done
+                </mat-icon>
                 <mat-icon
                     *ngIf="message.position === 'right' && message.status === 'failed'"
                     class="s-12 ml-4 twd-cursor-pointer"
@@ -206,7 +243,9 @@
                     (click)="resendMessage(message.messageId)"
                     >error_outline</mat-icon
                 >
-                <mat-icon *ngIf="message.position === 'right' && message.status === 'delivered'" class="s-12 ml-4"> done_all</mat-icon>
+                <mat-icon *ngIf="message.position === 'right' && message.status === 'delivered'" class="s-12 ml-4">
+                    done_all</mat-icon
+                >
             </div>
         </ng-container>
     </ng-template>
@@ -218,312 +257,414 @@
         (floatEvent)="onMaximized($event)"
         *transloco="let locale"
     >
-        <div class="w-100-p h-100-p chat-controls">
-            <div class="w-100-p px-12 py-4 border-radius-20 interaction-details tw-flex twd-flex-col">
-                <div class="twd-flex twd-justify-between">
-                    <div class="twd-flex twd-items-center"><mat-icon>alarm_on</mat-icon> {{ startTime | date: 'dd/MM/yyyy hh:mm:ss a' }}</div>
-                    <div class="twd-flex twd-items-center"><mat-icon>construction</mat-icon> {{ sessionID + '|' + interaction.InteractionID }}</div>
-                </div>
-                <div class="twd-flex twd-justify-between">
-                    <div class="twd-flex twd-items-center"><mat-icon>timer</mat-icon> {{ (duration | date: 'HH:mm:ss':'UTC') || '00:00:00' }}</div>
-                    <div *ngIf="isSMM" class="twd-flex twd-items-center">
-                        <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
-                        <span class="text-bold ml-4">{{ channel }}</span>
-                    </div>
-                    <div *ngIf="asyncChatRef.isAsync" class="twd-flex twd-items-center">
-                        <mat-icon>sync_alt</mat-icon>
-                        <span class="text-bold ml-4">{{ locale('widgets.chatControls.asyncChat') }}</span>
-                    </div>
-
-                    <div class="twd-flex twd-items-center">
-                        <mat-icon>grading</mat-icon> <span class="text-bold">{{ intent }}</span>
-                    </div>
+        <div class="w-100-p h-100-p chat-controls twd-flex">
+            <div class="twd-flex twd-flex-col twd-items-center">
+                <div
+                    class="interactions twd-mr-2.5 twd-gap-1 custom-scroll-adjust twd-flex twd-flex-col twd-items-start"
+                >
+                    <avatar
+                        *ngFor="let item of interactionList"
+                        name="{{ item.user }}"
+                        [ngClass]="
+                            item.status + ' ' + (item.interactionId === interaction.InteractionID ? 'active' : '')
+                        "
+                        [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
+                        matTooltipPosition="after"
+                        (click)="selectInteraction(item)"
+                        matBadge="{{
+                            item.interactionId !== interaction.InteractionID ? item.otherData.unreadCount || '' : ''
+                        }}"
+                        matBadgePosition="after"
+                        matBadgeColor="accent"
+                        [circleColor]="customFuse.anchor?.content || customFuse.widget?.content"
+                    ></avatar>
                 </div>
             </div>
-
-            <div class="mt-4 chat-container twd-flex twd-flex-row">
-                <div class="pt-4 twd-flex twd-flex-col twd-items-center">
-                    <div class="w-60 h-100-p mt-4 pt-8 interactions custom-scroll-adjust twd-flex twd-flex-col twd-items-start">
-                        <avatar
-                            *ngFor="let item of interactionList"
-                            name="{{ item.user }}"
-                            [ngClass]="item.status + ' ' + (item.interactionId === interaction.InteractionID ? 'active' : '')"
-                            [matTooltip]="locale('dynamic_labels.audioVideoControls.customerName.Customer')"
-                            matTooltipPosition="after"
-                            (click)="selectInteraction(item)"
-                            matBadge="{{ item.interactionId !== interaction.InteractionID ? item.otherData.unreadCount || '' : '' }}"
-                            matBadgePosition="after"
-                            matBadgeColor="accent"
-                            [circleColor]="customFuse.anchor?.content || customFuse.widget?.content"
-                        ></avatar>
+            <div class="twd-w-full">
+                <div class="w-100-p interaction-details tw-flex twd-flex-col">
+                    <div class="twd-flex twd-justify-between">
+                        <div class="twd-flex twd-items-center twd-gap-1">
+                            <span>{{ locale('widgets.chatControls.startTime') }}:</span>
+                            <span class="twd-font-bold">{{ startTime | date: 'hh:mm:ss a' }}</span>
+                        </div>
+                        <div class="twd-flex twd-items-center twd-gap-1">
+                            {{ locale('widgets.chatControls.intent') }}:
+                            <span class="twd-font-bold">{{ intent }}</span>
+                        </div>
+                    </div>
+                    <div class="twd-flex twd-text-right twd-items-center twd-gap-1">
+                        <span>{{ locale('widgets.chatControls.sessionId') }}:</span>
+                        <span class="twd-font-bold"> {{ sessionID + '|' + interaction.InteractionID }}</span>
+                    </div>
+                    <div class="twd-flex twd-justify-between">
+                        <div class="twd-flex twd-items-center twd-gap-1">
+                            {{ locale('widgets.chatControls.interactionDuration') }}:
+                            <span class="twd-font-bold"
+                                >{{ (duration | date: 'HH:mm:ss' : 'UTC') || '00:00:00' }}
+                            </span>
+                        </div>
+                        <div *ngIf="isSMM" class="twd-flex twd-items-center twd-gap-1">
+                            <mat-icon [svgIcon]="'custom-' + channel"></mat-icon>
+                            <span class="text-bold ml-4">{{ channel }}</span>
+                        </div>
+                        <div *ngIf="asyncChatRef.isAsync" class="twd-flex twd-items-center twd-gap-1">
+                            <mat-icon>sync_alt</mat-icon>
+                            <span class="text-bold ml-4">{{ locale('widgets.chatControls.asyncChat') }}</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="chat-content border-radius-20" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-                    <div class="chat-actions border-bottom">
-                        <button
-                            *ngIf="!asyncChatRef.isAsync && status === 'incoming'"
-                            class="mat-elevation-z2 custom-btn bg-success"
-                            mat-mini-fab
-                            #answerBtn
-                            (click)="answerChat(answerBtn)"
-                            [matTooltip]="locale('widgets.chatControls.answerChat')"
-                        >
-                            <mat-icon>done</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="showAutoFreeze"
-                            [disabled]="status !== 'connected'"
-                            mat-mini-fab
-                            color="warn"
-                            [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                            [matTooltip]="locale('widgets.chatControls.freezeAutoResponse')"
-                            (click)="freezeAutoResponse()"
-                        >
-                            <mat-icon>sync_disabled</mat-icon>
-                        </button>
-
-                        <ng-container
-                            *ngIf="
-                                !asyncChatRef.isAsync &&
-                                !callWidget &&
-                                agentFeatures.hold &&
-                                (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
-                            "
-                        >
+                <div class="mt-4 chat-container twd-flex twd-flex-col">
+                    <div
+                        class="chat-content twd-bg-white"
+                        [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+                    >
+                        <div class="chat-actions border-bottom">
                             <button
-                                mat-mini-fab
-                                color="default"
-                                [disabled]="interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper'"
-                                [ngClass]="
-                                    ((status === 'connected' || status === 'hold' || status === 'unhold') &&
-                                        (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
-                                    ' ' +
-                                    (status === 'connected' ? 'mat-elevation-z2' : '')
+                                *ngIf="!asyncChatRef.isAsync && status === 'incoming'"
+                                class="mat-elevation-z2 custom-btn bg-success"
+                                mat-card-avatar
+                                #answerBtn
+                                (click)="answerChat(answerBtn)"
+                                [matTooltip]="locale('widgets.chatControls.answerChat')"
+                            >
+                                <mat-icon>done</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="showAutoFreeze"
+                                [disabled]="status !== 'connected'"
+                                mat-card-avatar
+                                class="!twd-bg-warn-500"
+                                [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                                [matTooltip]="locale('widgets.chatControls.freezeAutoResponse')"
+                                (click)="freezeAutoResponse()"
+                            >
+                                <mat-icon>sync_disabled</mat-icon>
+                            </button>
+
+                            <ng-container
+                                *ngIf="
+                                    !asyncChatRef.isAsync &&
+                                    !callWidget &&
+                                    agentFeatures.hold &&
+                                    (interactionOnHold.onHold ? unHoldInteraction : holdInteraction) as holdUnhold
                                 "
-                                [ngStyle]="{ 'opacity' : ((status !== 'connected' && status !== 'hold') || interactionOnHold.loading || conferenceType === 'silent' || conferenceType === 'whisper') ? '0.5' : 1 }"
-                                [matTooltip]="interactionOnHold.buttonTooltip"
-                                (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                             >
-                                <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
-                            </button>
-                        </ng-container>
-
-                        <button
-                            *ngIf="agentFeatures.transfer"
-                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected"
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="locale('interactionComponent.transfer')"
-                            (click)="openTransferConferenceDialog('transfer')"
-                        >
-                            <mat-icon>forward</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="!asyncChatRef.isAsync && agentFeatures.conference"
-                            [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected"
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="locale('interactionComponent.conference')"
-                            (click)="openTransferConferenceDialog('conference')"
-                        >
-                            <mat-icon>group</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
-                            [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateAudioCall) || agentFeatures.externalAvWidget
-                            "
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="locale('widgets.chatControls.escalateToAudio')"
-                            (click)="escalateToAV('audio')"
-                        >
-                            <mat-icon>call</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
-                            [disabled]="
-                                status !== 'connected' || disableAV || conferenceType === 'silent' || conferenceType === 'whisper' || botConnected || ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateVideoCall) || agentFeatures.externalAvWidget
-                            "
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="locale('widgets.chatControls.escalateToVideo')"
-                            (click)="escalateToAV('video')"
-                        >
-                            <mat-icon>video_call</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="
-                                !asyncChatRef.isAsync &&
-                                supervisorInit &&
-                                (conferenceType === 'silent' ||
-                                    conferenceType === 'whisper' ||
-                                    conferenceType === 'conf' ||
-                                    conferenceType === 'conference')
-                            "
-                            [disabled]="status !== 'connected' || botConnected"
-                            mat-mini-fab
-                            color="default"
-                            [ngClass]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                            [matTooltip]="
-                                conferenceType === 'silent'
-                                    ? locale('widgets.chatControls.convertToWhisper')
-                                    : conferenceType === 'whisper'
-                                    ? locale('widgets.chatControls.convertToConference')
-                                    : locale('widgets.chatControls.takeOver')
-                            "
-                            #changeModeBtn
-                            (click)="changeConferenceType(changeModeBtn)"
-                        >
-                            <mat-icon>play_for_work</mat-icon>
-                        </button>
-
-                        <div class="fab-container" *ngIf="moreActions.length">
-                            <button
-                                mat-icon-button
-                                [disabled]="status !== 'connected' || conferenceType === 'silent' || conferenceType === 'whisper'"
-                                [class]="customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')"
-                                [ngClass]="{ 'twd-hidden': asyncChatRef.isAsync }"
-                                cdkOverlayOrigin
-                                #actionList="cdkOverlayOrigin"
-                                (click)="openMoreActions = !openMoreActions"
-                                [matTooltip]="locale('toolbarComponent.moreActions')"
-                            >
-                                <mat-icon [@fabToggler]="{ value: openMoreActions ? 'active' : 'inactive' }"> add </mat-icon>
-                            </button>
-
-                            <!-- This template displays the overlay content and is connected to the button -->
-                            <ng-template
-                                cdkConnectedOverlay
-                                [cdkConnectedOverlayOrigin]="actionList"
-                                [cdkConnectedOverlayOpen]="openMoreActions"
-                                cdkConnectedOverlayHasBackdrop
-                                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                (overlayOutsideClick)="openMoreActions = false"
-                            >
-                                <div class="mt-12 twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="moreActions.length">
-                                    <button
-                                        mat-mini-fab
-                                        color="default"
-                                        *ngFor="let action of moreActions"
-                                        [matTooltip]="action.label"
-                                        #actionBtn
-                                        (click)="executeAction(action, actionBtn)"
-                                        [disabled]="status !== 'connected' || action.type == 'whiteboard' && createIconButtonDisabled || 
-                                        (isOnAVCall && action.type === 'reqAudioCall' || ((customerDevice || socialMedia) && DisableAvConstraints?.RequestAudioCall)) || 
-                                        (isOnAVCall && action.type === 'reqVideoCall' || ((customerDevice || socialMedia) && DisableAvConstraints?.RequestVideoCall))">
-                                            <mat-icon >{{ action.icon }}</mat-icon>
-                                    </button>
-                                </div>
-                            </ng-template>
-                        </div>
-
-                        <button
-                            *ngIf="!asyncChatRef.isAsync"
-                            [disabled]="status !== 'connected'"
-                            [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
-                            mat-mini-fab
-                            color="warn"
-                            #endBtn
-                            (click)="confirmEndChat()"
-                            [matTooltip]="locale('widgets.chatControls.endChat')"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="agentFeatures.comment"
-                            mat-mini-fab
-                            [ngClass]="
-                                customFuse.anchor?.body +
-                                (status === 'connected' ? ' mat-elevation-z2' : '') +
-                                (commentsAdded ? ' animate__animated animate__flash animate__infinite animate__slow' : '')
-                            "
-                            [matTooltip]="locale('interactionComponent.interactionComment')"
-                            (click)="commentsAdded = false; saveInteractionComments()"
-                        >
-                            <mat-icon>comment</mat-icon>
-                        </button>
-
-                        <button
-                            *ngIf="status === 'disconnected' || asyncChatRef.isAsync"
-                            mat-raised-button
-                            class="border-radius-20"
-                            color="warn"
-                            #closeBtn
-                            (click)="confirmCloseInteraction()"
-                            [matTooltip]="locale('interactionComponent.closeInteraction')"
-                        >
-                            {{ locale('interactionComponent.close') }}
-                        </button>
-                    </div>
-
-                    <!-- CHAT CONTENT -->
-                    <div class="chat-transcripts custom-scroll-adjust" #messages>
-                        <!-- CHAT MESSAGES -->
-                        <div class="chat-messages" [ngClass]="{ 'no-reply': !agentFeatures.reply || conferenceType === 'silent' }">
-                            <!-- MESSAGE -->
-                            <div
-                                *ngFor="let message of chatTranscripts; let i = index"
-                                class="message-row"
-                                [ngClass]="{
-                                    me: message.isAgent,
-                                    contact: !message.isAgent,
-                                    'first-of-group': isFirstMessageOfGroup(message, i),
-                                    'last-of-group': isLastMessageOfGroup(message, i)
-                                }"
-                            >
-                                <div
-                                    *ngIf="message.dividerMessage"
-                                    class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1"
+                                <button
+                                    mat-card-avatar
+                                    color="default"
+                                    [disabled]="
+                                        interactionOnHold.loading ||
+                                        conferenceType === 'silent' ||
+                                        conferenceType === 'whisper'
+                                    "
+                                    [ngClass]="
+                                        ((status === 'connected' || status === 'hold' || status === 'unhold') &&
+                                            (interactionOnHold.onHold ? 'bg-success' : 'bg-warning')) +
+                                        ' ' +
+                                        (status === 'connected' ? 'mat-elevation-z2' : '')
+                                    "
+                                    [ngStyle]="{
+                                        opacity:
+                                            (status !== 'connected' && status !== 'hold') ||
+                                            interactionOnHold.loading ||
+                                            conferenceType === 'silent' ||
+                                            conferenceType === 'whisper'
+                                                ? '0.5'
+                                                : 1
+                                    }"
+                                    [matTooltip]="interactionOnHold.buttonTooltip"
+                                    (click)="this.isForceHold = !this.isForceHold; holdUnhold()"
                                 >
-                                <span [innerHTML]="message.message"></span>
-                                <br />
-                                {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
-                            </div>
-                          
+                                    <mat-icon> {{ interactionOnHold.icon }} </mat-icon>
+                                </button>
+                            </ng-container>
 
-                                <ng-container *ngIf="!message.dividerMessage">
-                                    <!-- animate__animated animate__slideInUp animate__faster -->
+                            <button
+                                *ngIf="agentFeatures.transfer"
+                                [disabled]="
+                                    status !== 'connected' ||
+                                    conferenceType === 'silent' ||
+                                    conferenceType === 'whisper' ||
+                                    botConnected
+                                "
+                                mat-card-avatar
+                                color="default"
+                                [ngClass]="
+                                    customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')
+                                "
+                                [matTooltip]="locale('interactionComponent.transfer')"
+                                (click)="openTransferConferenceDialog('transfer')"
+                            >
+                                <mat-icon>forward</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="!asyncChatRef.isAsync && agentFeatures.conference"
+                                [disabled]="
+                                    status !== 'connected' ||
+                                    conferenceType === 'silent' ||
+                                    conferenceType === 'whisper' ||
+                                    botConnected
+                                "
+                                mat-card-avatar
+                                color="default"
+                                [ngClass]="
+                                    customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')
+                                "
+                                [matTooltip]="locale('interactionComponent.conference')"
+                                (click)="openTransferConferenceDialog('conference')"
+                            >
+                                <mat-icon>group</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="!asyncChatRef.isAsync && agentFeatures.audioEscalate"
+                                [disabled]="
+                                    status !== 'connected' ||
+                                    disableAV ||
+                                    conferenceType === 'silent' ||
+                                    conferenceType === 'whisper' ||
+                                    botConnected ||
+                                    ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateAudioCall) ||
+                                    agentFeatures.externalAvWidget
+                                "
+                                mat-card-avatar
+                                color="default"
+                                [ngClass]="
+                                    customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')
+                                "
+                                [matTooltip]="locale('widgets.chatControls.escalateToAudio')"
+                                (click)="escalateToAV('audio')"
+                            >
+                                <mat-icon>call</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="!asyncChatRef.isAsync && agentFeatures.videoEscalate"
+                                [disabled]="
+                                    status !== 'connected' ||
+                                    disableAV ||
+                                    conferenceType === 'silent' ||
+                                    conferenceType === 'whisper' ||
+                                    botConnected ||
+                                    ((customerDevice || socialMedia) && DisableAvConstraints?.EscalateVideoCall) ||
+                                    agentFeatures.externalAvWidget
+                                "
+                                mat-card-avatar
+                                color="default"
+                                [ngClass]="
+                                    customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')
+                                "
+                                [matTooltip]="locale('widgets.chatControls.escalateToVideo')"
+                                (click)="escalateToAV('video')"
+                            >
+                                <mat-icon>video_call</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="
+                                    !asyncChatRef.isAsync &&
+                                    supervisorInit &&
+                                    (conferenceType === 'silent' ||
+                                        conferenceType === 'whisper' ||
+                                        conferenceType === 'conf' ||
+                                        conferenceType === 'conference')
+                                "
+                                [disabled]="status !== 'connected' || botConnected"
+                                mat-card-avatar
+                                color="default"
+                                [ngClass]="
+                                    customFuse.anchor?.body + ' ' + (status === 'connected' ? 'mat-elevation-z2' : '')
+                                "
+                                [matTooltip]="
+                                    conferenceType === 'silent'
+                                        ? locale('widgets.chatControls.convertToWhisper')
+                                        : conferenceType === 'whisper'
+                                          ? locale('widgets.chatControls.convertToConference')
+                                          : locale('widgets.chatControls.takeOver')
+                                "
+                                #changeModeBtn
+                                (click)="changeConferenceType(changeModeBtn)"
+                            >
+                                <mat-icon>play_for_work</mat-icon>
+                            </button>
+
+                            <div class="fab-container" *ngIf="moreActions.length">
+                                <button
+                                    mat-card-avatar
+                                    [disabled]="
+                                        status !== 'connected' ||
+                                        conferenceType === 'silent' ||
+                                        conferenceType === 'whisper'
+                                    "
+                                    [class]="
+                                        customFuse.anchor?.body +
+                                        ' ' +
+                                        (status === 'connected' ? 'mat-elevation-z2' : '')
+                                    "
+                                    [ngClass]="{ 'twd-hidden': asyncChatRef.isAsync }"
+                                    cdkOverlayOrigin
+                                    #actionList="cdkOverlayOrigin"
+                                    (click)="openMoreActions = !openMoreActions"
+                                    [matTooltip]="locale('toolbarComponent.moreActions')"
+                                >
+                                    <mat-icon [@fabToggler]="{ value: openMoreActions ? 'active' : 'inactive' }">
+                                        add
+                                    </mat-icon>
+                                </button>
+
+                                <!-- This template displays the overlay content and is connected to the button -->
+                                <ng-template
+                                    cdkConnectedOverlay
+                                    [cdkConnectedOverlayOrigin]="actionList"
+                                    [cdkConnectedOverlayOpen]="openMoreActions"
+                                    cdkConnectedOverlayHasBackdrop
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    (overlayOutsideClick)="openMoreActions = false"
+                                >
                                     <div
-                                        *ngIf="!message.divider"
-                                        [class]="message.position + ' bubble mat-elevation-z1'"
-                                        [ngClass]="{ maximized: maximized }"
+                                        class="mt-12 twd-flex twd-flex-col twd-gap-2"
+                                        [@widgetStagger]="moreActions.length"
                                     >
-                                        <ng-container
-                                            *ngTemplateOutlet="
-                                                messageRef;
-                                                context: {
-                                                    message: message,
-                                                    showName: isFirstMessageOfGroup(message, i),
-                                                    replyAble: agentFeatures.chatReply,
-                                                    messageAction: true,
-                                                    replied: false,
-                                                    mode: 'normal'
-                                                }
+                                        <button
+                                            mat-card-avatar
+                                            color="default"
+                                            *ngFor="let action of moreActions"
+                                            [matTooltip]="action.label"
+                                            #actionBtn
+                                            (click)="executeAction(action, actionBtn)"
+                                            [disabled]="
+                                                status !== 'connected' ||
+                                                (action.type == 'whiteboard' && createIconButtonDisabled) ||
+                                                (isOnAVCall && action.type === 'reqAudioCall') ||
+                                                ((customerDevice || socialMedia) &&
+                                                    DisableAvConstraints?.RequestAudioCall) ||
+                                                (isOnAVCall && action.type === 'reqVideoCall') ||
+                                                ((customerDevice || socialMedia) &&
+                                                    DisableAvConstraints?.RequestVideoCall)
                                             "
-                                        ></ng-container>
+                                        >
+                                            <mat-icon>{{ action.icon }}</mat-icon>
+                                        </button>
                                     </div>
-                                </ng-container>
-                                <!-- animate__animated animate__slideInUp animate__faster -->
-                                <div *ngIf="message.divider" class="divider twd-bg-primary-100"></div>
+                                </ng-template>
                             </div>
-                            <!-- / MESSAGE -->
-                        </div>
-                        <!-- CHAT MESSAGES -->
-                    </div>
-                    <!-- / CHAT CONTENT -->
 
+                            <button
+                                *ngIf="!asyncChatRef.isAsync"
+                                [disabled]="status !== 'connected'"
+                                [ngClass]="status === 'connected' ? 'mat-elevation-z2' : ''"
+                                mat-card-avatar
+                                color="warn"
+                                #endBtn
+                                (click)="confirmEndChat()"
+                                [matTooltip]="locale('widgets.chatControls.endChat')"
+                            >
+                                <mat-icon>close</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="agentFeatures.comment"
+                                mat-card-avatar
+                                [ngClass]="
+                                    customFuse.anchor?.body +
+                                    (status === 'connected' ? ' mat-elevation-z2' : '') +
+                                    (commentsAdded
+                                        ? ' animate__animated animate__flash animate__infinite animate__slow'
+                                        : '')
+                                "
+                                [matTooltip]="locale('interactionComponent.interactionComment')"
+                                (click)="commentsAdded = false; saveInteractionComments()"
+                            >
+                                <mat-icon>comment</mat-icon>
+                            </button>
+
+                            <button
+                                *ngIf="status === 'disconnected' || asyncChatRef.isAsync"
+                                mat-button
+                                class="!twd-bg-warn-400 !twd-h-10"
+                                #closeBtn
+                                (click)="confirmCloseInteraction()"
+                                [matTooltip]="locale('interactionComponent.closeInteraction')"
+                            >
+                                {{ locale('interactionComponent.close') }}
+                            </button>
+                        </div>
+
+                        <!-- CHAT CONTENT -->
+                        <div class="chat-transcripts custom-scroll-adjust" #messages>
+                            <!-- CHAT MESSAGES -->
+                            <div
+                                class="chat-messages"
+                                [ngClass]="{ 'no-reply': !agentFeatures.reply || conferenceType === 'silent' }"
+                            >
+                                <!-- MESSAGE -->
+                                <div
+                                    *ngFor="let message of chatTranscripts; let i = index"
+                                    class="message-row"
+                                    [ngClass]="{
+                                        me: message.isAgent,
+                                        contact: !message.isAgent,
+                                        'first-of-group': isFirstMessageOfGroup(message, i),
+                                        'last-of-group': isLastMessageOfGroup(message, i)
+                                    }"
+                                >
+                                    <div
+                                        *ngIf="message.dividerMessage"
+                                        class="twd-bg-primary-100 twd-text-primary-contrast-100 dark:twd-bg-primary-900 dark:twd-bg-contrast-900 my-8 border-radius-4 text-center py-4 px-8 mx-auto font-size-12 font-weight-600 mat-elevation-z1"
+                                    >
+                                        <span [innerHTML]="message.message"></span>
+                                        <br />
+                                        {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
+                                    </div>
+
+                                    <ng-container *ngIf="!message.dividerMessage">
+                                        <!-- animate__animated animate__slideInUp animate__faster -->
+                                        <div
+                                            *ngIf="!message.divider"
+                                            [class]="message.position + ' bubble mat-elevation-z1'"
+                                            [ngClass]="{ maximized: maximized }"
+                                        >
+                                            <ng-container
+                                                *ngTemplateOutlet="
+                                                    messageRef;
+                                                    context: {
+                                                        message: message,
+                                                        showName: isFirstMessageOfGroup(message, i),
+                                                        replyAble: agentFeatures.chatReply,
+                                                        messageAction: true,
+                                                        replied: false,
+                                                        mode: 'normal'
+                                                    }
+                                                "
+                                            ></ng-container>
+                                        </div>
+                                    </ng-container>
+                                    <!-- animate__animated animate__slideInUp animate__faster -->
+                                    <div *ngIf="message.divider" class="divider twd-bg-primary-100"></div>
+                                </div>
+                                <!-- / MESSAGE -->
+                            </div>
+                            <!-- CHAT MESSAGES -->
+                        </div>
+                        <!-- / CHAT CONTENT -->
+
+                        <!-- CHAT ATTACHMENTS -->
+                        <chat-attachments
+                            *ngIf="attachPreviewMode"
+                            [isSMM]="isSMM"
+                            [attachmentConstraints]="attachmentConstraints"
+                            [fileUploadUrl]="fileUploadUrl"
+                            [sessionID]="sessionID"
+                            [attachPreviewMode]="attachPreviewMode"
+                            (closeAttachments)="closeAttachments()"
+                            (sendAttachments)="sendAttachments($event)"
+                        >
+                        </chat-attachments>
+                        <!-- CHAT ATTACHMENTS -->
+                    </div>
                     <!-- CHAT FOOTER -->
                     <div class="chat-footer" *ngIf="conferenceType !== 'silent' && agentFeatures.reply">
                         <!-- REPLY FORM -->
@@ -531,14 +672,20 @@
                             <!-- CHAT TYPING -->
                             <div
                                 *ngIf="remoteTyping && remoteTyping.typing"
-                                class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-semibold twd-italic"
+                                class="twd-absolute twd--top-3 twd-text-center twd-w-full twd-text-primary-700 twd-font-bold twd-italic"
                             >
                                 {{ remoteTyping.name }} {{ locale('widgets.chatControls.typing') }}
                             </div>
                             <!-- CHAT TYPING -->
-                            <div (click)="replyingToMessage = null" class="w-100-p p-4">
-                                <div *ngIf="replyingToMessage" class="w-100-p p-4 border-radius-8 position-relative twd-flex">
-                                    <div class="p-8 border-radius-16 border-left twd-flex-1" [ngClass]="customFuse.anchor?.body">
+                            <div (click)="replyingToMessage = null" class="w-100-p twd-min-h-0 p-4">
+                                <div
+                                    *ngIf="replyingToMessage"
+                                    class="w-100-p p-4 border-radius-8 position-relative twd-flex"
+                                >
+                                    <div
+                                        class="p-8 border-radius-16 border-left twd-flex-1"
+                                        [ngClass]="customFuse.anchor?.body"
+                                    >
                                         <ng-container
                                             *ngTemplateOutlet="
                                                 messageRef;
@@ -561,7 +708,11 @@
                             </div>
 
                             <mat-chip-list *ngIf="textTemplates.filtered.length" class="w-100-p mx-16 mb-8">
-                                <mat-chip class="twd-cursor-pointer" *ngFor="let item of textTemplates.filtered" (click)="selectTemplate(item)">
+                                <mat-chip
+                                    class="twd-cursor-pointer"
+                                    *ngFor="let item of textTemplates.filtered"
+                                    (click)="selectTemplate(item)"
+                                >
                                     {{ item.Name }}
                                 </mat-chip>
                             </mat-chip-list>
@@ -584,7 +735,7 @@
                                     aria-label="Select Emoji"
                                     [matTooltip]="locale('widgets.chatControls.emoji')"
                                 >
-                                    <mat-icon>sentiment_satisfied_alt</mat-icon>
+                                    <img src="assets/images/vectors/emoji.svg" />
                                     <ng-template
                                         cdkConnectedOverlay
                                         [cdkConnectedOverlayOrigin]="emojiOverlay"
@@ -597,7 +748,6 @@
                                             (emojiClick)="addEmoji($event)"
                                             [darkMode]="customFuse.config.colorTheme.includes('dark')"
                                             [showPreview]="false"
-                                           
                                         ></emoji-mart>
                                     </ng-template>
                                 </button>
@@ -610,7 +760,7 @@
                                     (click)="showAttachOverlay = !showAttachOverlay"
                                     type="button"
                                     mat-icon-button
-                                    class="rotate-45"
+                                    class="rotate-45 !twd-text-gray-300"
                                     aria-label="Select Attachment"
                                     [matTooltip]="locale('widgets.chatControls.attach')"
                                 >
@@ -634,14 +784,22 @@
                                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                         (overlayOutsideClick)="showAttachOverlay = false"
                                         [cdkConnectedOverlayPositions]="[
-                                            { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }
+                                            {
+                                                originX: 'center',
+                                                originY: 'top',
+                                                overlayX: 'center',
+                                                overlayY: 'bottom'
+                                            }
                                         ]"
                                     >
-                                        <div class="twd-flex twd-flex-col twd-gap-2" [@widgetStagger]="attachActions.length">
+                                        <div
+                                            class="twd-flex twd-flex-col twd-gap-2"
+                                            [@widgetStagger]="attachActions.length"
+                                        >
                                             <button
                                                 *ngFor="let item of attachActions"
                                                 type="button"
-                                                mat-mini-fab
+                                                mat-card-avatar
                                                 color="default"
                                                 [matTooltip]="item.label"
                                                 (click)="addAttachment(item.action, item.enable)"
@@ -652,25 +810,29 @@
                                     </ng-template>
                                 </button>
 
-                                <mat-form-field class="custom message-text twd-flex-1" floatLabel="never" appearance="standard">
-                                    <textarea
-                                        [disabled]="status !== 'connected'"
-                                        matInput
-                                        #replyInput
-                                        [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
-                                        ngModel
-                                        name="message"
-                                        cdkTextareaAutosize
-                                        #autosize="cdkTextareaAutosize"
-                                        cdkAutosizeMinRows="1"
-                                        cdkAutosizeMaxRows="5"
-                                        (keyup)="onKeyUp($event)"
-                                    ></textarea>
-                                </mat-form-field>
+                                <!-- <mat-form-field
+                                    class="custom message-text twd-flex-1"
+                                    floatLabel="never"
+                                    appearance="standard"
+                                > -->
+                                <textarea
+                                    [disabled]="status !== 'connected'"
+                                    matInput
+                                    #replyInput
+                                    [placeholder]="locale('widgets.chatControls.messagePlaceholder')"
+                                    ngModel
+                                    name="message"
+                                    cdkTextareaAutosize
+                                    #autosize="cdkTextareaAutosize"
+                                    cdkAutosizeMinRows="1"
+                                    cdkAutosizeMaxRows="5"
+                                    (keyup)="onKeyUp($event)"
+                                ></textarea>
+                                <!-- </mat-form-field> -->
 
                                 <button
                                     [disabled]="status !== 'connected'"
-                                    class="send-message-button"
+                                    class="send-message-button !twd-text-gray-300"
                                     mat-icon-button
                                     type="submit"
                                     aria-label="Send message"
@@ -683,20 +845,6 @@
                         <!-- / REPLY FORM -->
                     </div>
                     <!-- / CHAT FOOTER-->
-
-                    <!-- CHAT ATTACHMENTS -->
-                    <chat-attachments
-                        *ngIf="attachPreviewMode"
-                        [isSMM]="isSMM"
-                        [attachmentConstraints]="attachmentConstraints"
-                        [fileUploadUrl]="fileUploadUrl"
-                        [sessionID]="sessionID"
-                        [attachPreviewMode]="attachPreviewMode"
-                        (closeAttachments)="closeAttachments()"
-                        (sendAttachments)="sendAttachments($event)"
-                    >
-                    </chat-attachments>
-                    <!-- CHAT ATTACHMENTS -->
                 </div>
             </div>
         </div>
