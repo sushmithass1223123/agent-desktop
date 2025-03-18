@@ -30,4 +30,8 @@ tw-wallboard {
         opacity: 0.4;
         filter: drop-shadow(0px 10px 6px rgba(0, 0, 0, 0.2));
     }
+    .custom-column {
+        @apply twd-leading-normal twd-px-4;
+        border-radius: 3px;
+    }
 }

@@ -64,5 +64,6 @@ export const anchorWidgets: string[] = [
     'tw-voice-controls',
     'tw-customer-journey',
     'tw-customer-details',
-    'tw-su-active-agents'
+    'tw-su-active-agents',
+    'tw-chat-controls'
 ];

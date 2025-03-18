@@ -1,9 +1,9 @@
 <div class="navbar-layout" fxLayout="column" fxFlex fxLayoutGap="3" [ngClass]="(customFuse$ | async).background">
     <div class="navbar-header twd-p-3">
-        <img src="assets/images/logos/tetherfi-logo-white.png" />
+        <!-- <img src="assets/images/logos/tetherfi-logo-white.png" /> -->
     </div>
     <div class="navbar-content twd-gap-3" fxLayout="column" fxFlex fxLayoutGap="2">
-        <mat-nav-list>
+        <mat-nav-list class="nav-list">
             <ng-container *ngFor="let item of topWidgets">
                 <mat-list-item
                     *ngIf="item.Config.Enabled"
@@ -13,8 +13,8 @@
                     [matTooltip]="item.Name"
                     matTooltipPosition="after"
                     matTooltipClass="tooltip"
-                    class="twd-mb-2 twd-opacity-50 hover:twd-opacity-100"
-                    [ngClass]="{ 'twd-opacity-100': selected === item.Data.Path }"
+                    class="twd-mb-2 twd-opacity-50 hover:twd-opacity-100 hover:twd-bg-accent-700 nav-item"
+                    [ngClass]="{ '!twd-opacity-100 selected': selected === item.Data.Path }"
                 >
                     <mat-icon class="icon custom-warn-badge" mat-list-icon [matBadge]="item.Data.Count || ''">{{
                         item.Config.Icon || 'widgets'
@@ -42,5 +42,8 @@
                 <mat-icon class="icon">settings</mat-icon>
             </mat-list-item>
         </mat-nav-list>
+    </div>
+    <div class="twd-p-2.5">
+        <img src="assets/images/logos/tetherfi-logo-white.png" class="twd-h-10" />
     </div>
 </div>

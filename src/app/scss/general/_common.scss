@@ -181,11 +181,13 @@
                     // position: absolute;
                     // left: 7px;
                     cursor: pointer;
-                    background-color: var(--twd-primary-400) !important;
-                    color: rgb(255 255 255 / var(--tw-text-opacity, 1)) !important;
+                    // background-color: var(--twd-primary-400) !important;
+                    // color: rgb(255 255 255 / var(--tw-text-opacity, 1)) !important;
                     margin-bottom: 0 !important;
                     border-radius: 5px !important;
                     opacity: 0.75;
+                    background-color: #E0E0E0;
+                    color: #ADADAD;
                 
                 }
             }
@@ -194,7 +196,7 @@
         .avatar-content {
             width: inherit;
             height: inherit;
-            border-radius: 16px;
+            border-radius: 5px;
             cursor: pointer;
         }
     }

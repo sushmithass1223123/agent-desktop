@@ -6,6 +6,7 @@ avatar {
         justify-content: center;
         align-items: center;
         color: #ffffff;
+        
         &.circle {
             border-radius: 50%;
             overflow: hidden;
@@ -17,9 +18,10 @@ avatar {
         }
 
         .initials {
-            font-size: 20px;
+            font-size: 16px;
             line-height: 19px;
             letter-spacing: 0.2625px;
+            font-weight: 700;
         }
     }
 

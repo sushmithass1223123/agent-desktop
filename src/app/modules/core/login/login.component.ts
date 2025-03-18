@@ -1028,10 +1028,10 @@ export class LoginComponent extends SharedWrapper implements OnInit, OnDestroy {
                             // we will route to main page
                             this._appDataService.routeToPath([`main/${agentId}`], {
                                 queryParams,
-                                state: {
-                                    routeFrom: 'login',
-                                    agentId
-                                },
+                                // state: {
+                                //     routeFrom: 'login',
+                                //     agentId
+                                // },
                                 queryParamsHandling: 'preserve'
                             });
                         }
