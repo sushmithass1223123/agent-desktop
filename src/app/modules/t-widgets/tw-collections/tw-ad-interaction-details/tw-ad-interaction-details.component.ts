@@ -120,6 +120,8 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
 
         this.minDisplayedColumns = this.data?.Data?.MinView?.Columns && this.data?.Data?.MinView?.Columns.length > 0 ? this.data?.Data?.MinView?.Columns : this.minDisplayedColumns;
         this.maxDisplayedColumns = this.data?.Data?.MaxView?.Columns && this.data?.Data?.MaxView?.Columns.length > 0 ? this.data?.Data?.MaxView?.Columns : this.maxDisplayedColumns;
+    
+        this.minDisplayedColumns = this.minDisplayedColumns.slice(0,4);
     }
 
     /**
