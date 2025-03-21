@@ -29,19 +29,43 @@
                         fxLayoutGap="5px"
                         fxLayoutAlign="start center"
                         class="twd-bg-amber-100 twd-w-full twd-p-2"
-                        [ngClass]="{ 'twd-bg-green-100': data?.isDraft }"
+                        [ngClass]="{
+                            'twd-bg-green-100': data?.isDraft,
+                            'twd-bg-red-200': data.DraftStatus === 'closed',
+                            'twd-bg-green-500': data.DraftStatus === 'sent'
+                        }"
                     >
                         <mat-icon *ngIf="!data.isDraft">visibility</mat-icon>
                         <div *ngIf="data" class="twd-text-sm">
                             <span *ngIf="!data.isDraft; else agent_working">{{
                                 locale('sharedComponents.previewDialog.agentReadingEmail')
                             }}</span>
-                            <ng-template #agent_working>{{
-                                locale('sharedComponents.previewDialog.agentWorkingOnEmail').replace(
-                                    '#agent',
-                                    data.AgentName
-                                )
-                            }}</ng-template>
+                            <ng-template #agent_working>
+                                <span *ngIf="data.DraftStatus === 'closed'">
+                                    {{
+                                        locale('sharedComponents.previewDialog.closedDraft').replace(
+                                            '#agent',
+                                            data.AgentName
+                                        )
+                                    }}
+                                </span>
+                                <span *ngIf="data.DraftStatus === 'sent'">
+                                    {{
+                                        locale('sharedComponents.previewDialog.sentMail').replace(
+                                            '#agent',
+                                            data.AgentName
+                                        )
+                                    }}
+                                </span>
+                                <span *ngIf="data.DraftStatus === 'draft'">
+                                    {{
+                                        locale('sharedComponents.previewDialog.agentWorkingOnEmail').replace(
+                                            '#agent',
+                                            data.AgentName
+                                        )
+                                    }}
+                                </span>
+                            </ng-template>
                         </div>
                     </div>
                     <email class="twd-h-full" mode="preview" [email]="data">

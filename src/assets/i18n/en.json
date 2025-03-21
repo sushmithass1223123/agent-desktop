@@ -565,7 +565,7 @@
             "supervisorTakeover": "Interaction disconnected by supervisor - Supervisor Takeover",
             "interactionDisconnect": "Interaction disconnected",
             "agentDisconnectedMsg": "#agentName has disconnected from chat",
-            "agentRequestRejected": "#agentName has rejected your request with comment: #comment",
+            "agentRequestRejected": "#agentName has rejected your #type request with comment: #comment",
             "freezeAutoResponseFailed": "Freeze auto response failed!",
             "freezeAutoResponseError": "Error in freezing auto response failed!",
             "chatAnswerSuccess": "Answer chat success",
@@ -697,7 +697,7 @@
             "muteAudio": "Mute Audio",
             "unmuteVideo": "Unmute Video",
             "muteVideo": "Mute Video",
-            "switchToVideo": "Change to Video",
+            "switchToVideo": "Turn on video",
             "stopScreenShare": "Stop Screen Share",
             "screenShare": "Screen Share",
             "requestScreenShare": "Request Screen Share",
@@ -933,6 +933,8 @@
             "snooze": "Snooze"
         },
         "email": {
+            "noClipboardEmail": "No valid email ID(s) found from the clipboard!",
+            "emailAlreadyIncluded": "One or more email ID(s) already included!",
             "getFrequentlyUsedEmailFailed": "Unable to fetch frequently used email addresses",
             "uploadFileLoading": "Uploading File",
             "uploadFileSizeWarning": "Attachment size exceeds maximum payload limit for this mailbox!",
@@ -1151,6 +1153,7 @@
             "uploadFileSizeWarning": "File size exceeded!",
             "fileTypeNotSupported": "Selected file type is not allowed to upload!",
             "noCommentsFoundMessage": "No comments found!",
+            "noRepliesFoundMessage": "No replies found!",
             "closePostsLoading": "Closing post..",
             "closePostsSuccess": "Successfully closed posts!",
             "closePostsFailed": "Error closing posts!",
@@ -1211,7 +1214,9 @@
         },
         "previewDialog": {
             "agentReadingEmail": "Agent is viewing this email...",
-            "agentWorkingOnEmail": "#agent is working on this email..."
+            "agentWorkingOnEmail": "#agent is working on this email...",
+            "closedDraft": "#agent has closed drafting interaction",
+            "sentMail": "#agent has sent email successfully"
         }
     },
     "widgetPreview": {

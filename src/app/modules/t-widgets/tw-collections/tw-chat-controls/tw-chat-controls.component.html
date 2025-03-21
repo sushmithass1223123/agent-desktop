@@ -597,7 +597,7 @@
                                             (emojiClick)="addEmoji($event)"
                                             [darkMode]="customFuse.config.colorTheme.includes('dark')"
                                             [showPreview]="false"
-                                            isNative="true"
+                                           
                                         ></emoji-mart>
                                     </ng-template>
                                 </button>
@@ -686,7 +686,7 @@
 
                     <!-- CHAT ATTACHMENTS -->
                     <chat-attachments
-                        *ngIf="attachPreviewMode"
+                        *ngIf="dragDropView || attachPreviewMode"                        
                         [isSMM]="isSMM"
                         [attachmentConstraints]="attachmentConstraints"
                         [fileUploadUrl]="fileUploadUrl"
