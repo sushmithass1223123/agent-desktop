@@ -1,14 +1,11 @@
 import { Type } from '@angular/core';
-import { TwAccountInformationComponent } from '@modules/t-widgets/tw-collections/tw-account-information/tw-account-information.component';
 import { TwAdCallbacksComponent } from '@modules/t-widgets/tw-collections/tw-ad-callbacks/tw-ad-callbacks.component';
-import { TwAdFeedbackComponent } from '@modules/t-widgets/tw-collections/tw-ad-feedback/tw-ad-feedback.component';
 import { TwAdGamificationComponent } from '@modules/t-widgets/tw-collections/tw-ad-gamification/tw-ad-gamification.component';
 import { TwAdInteractionDetailsComponent } from '@modules/t-widgets/tw-collections/tw-ad-interaction-details/tw-ad-interaction-details.component';
 import { TwAdPerformanceComponent } from '@modules/t-widgets/tw-collections/tw-ad-performance/tw-ad-performance.component';
 import { TwAdScoreComponent } from '@modules/t-widgets/tw-collections/tw-ad-score/tw-ad-score.component';
 import { TwAgentAssistComponent } from '@modules/t-widgets/tw-collections/tw-agent-assist/tw-agent-assist.component';
 import { TwAhtTcComponent } from '@modules/t-widgets/tw-collections/tw-aht-tc/tw-aht-tc.component';
-import { TwAmdocsBccComponent } from '@modules/t-widgets/tw-collections/tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioVideoControlsComponent } from '@modules/t-widgets/tw-collections/tw-audio-video-controls/tw-audio-video-controls.component';
 import { TwBookmarksComponent } from '@modules/t-widgets/tw-collections/tw-bookmarks/tw-bookmarks.component';
 import { TwCalendarComponent } from '@modules/t-widgets/tw-collections/tw-calendar/tw-calendar.component';
@@ -106,13 +103,10 @@ export class TWLibrary {
         'tw-su-active-agents': TwSuActiveAgentsComponent,
         'tw-work-codes': TwWorkCodesComponent,
         'tw-su-agent-activity': TwSuAgentActivityComponent,
-        'tw-ad-feedback': TwAdFeedbackComponent,
         'tw-ad-score': TwAdScoreComponent,
         'tw-ad-performance': TwAdPerformanceComponent,
         'tw-ad-gamification': TwAdGamificationComponent,
         'tw-su-gamification': TwSuGamificationComponent,
-        'tw-amdocs-bcc': TwAmdocsBccComponent,
-        'tw-account-information': TwAccountInformationComponent,
         'tw-canned-responses': TwCannedResponsesComponent,
         'tw-agent-assist': TwAgentAssistComponent,
         'tw-customer-sentiment': TwCustomerSentimentComponent,
