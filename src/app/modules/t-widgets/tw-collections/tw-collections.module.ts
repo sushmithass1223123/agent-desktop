@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@modules/shared/shared.module';
 import { TwWrapperModule } from '../tw-wrapper/tw-wrapper.module';
-import { TwAccountInformationComponent } from './tw-account-information/tw-account-information.component';
 import { TwAdCallbacksComponent } from './tw-ad-callbacks/tw-ad-callbacks.component';
-import { TwAdFeedbackComponent } from './tw-ad-feedback/tw-ad-feedback.component';
 import { TwAdGamificationComponent } from './tw-ad-gamification/tw-ad-gamification.component';
 import { TwAdInteractionDetailsComponent } from './tw-ad-interaction-details/tw-ad-interaction-details.component';
 import { TwAdPerformanceComponent } from './tw-ad-performance/tw-ad-performance.component';
 import { TwAdScoreComponent } from './tw-ad-score/tw-ad-score.component';
 import { TwAgentAssistComponent } from './tw-agent-assist/tw-agent-assist.component';
 import { TwAhtTcComponent } from './tw-aht-tc/tw-aht-tc.component';
-import { TwAmdocsBccComponent } from './tw-amdocs-bcc/tw-amdocs-bcc.component';
 import { TwAudioVideoControlsComponent } from './tw-audio-video-controls/tw-audio-video-controls.component';
 import { TwBookmarksComponent } from './tw-bookmarks/tw-bookmarks.component';
 import { TwCalendarModule } from './tw-calendar/tw-calendar.module';
@@ -74,7 +71,6 @@ const collectionComponents = [
     TwChatPanelComponent,
     TwAdInteractionDetailsComponent,
     TwAdCallbacksComponent,
-    TwAdFeedbackComponent,
     TwAdGamificationComponent,
     TwAdPerformanceComponent,
     TwAdScoreComponent,
@@ -84,8 +80,6 @@ const collectionComponents = [
     TwSuAgentActivityComponent,
     TwPanelComponent,
     TwSuAgentActivityDetailsComponent,
-    TwAmdocsBccComponent,
-    TwAccountInformationComponent,
     TwCannedResponsesComponent,
     TwAgentAssistComponent,
     TwCustomerSentimentComponent,
