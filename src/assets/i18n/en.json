@@ -806,7 +806,12 @@
             "User": "User",
             "Dnis": "DNIS",
             "Intent": "Intent",
-            "ActiveTime": "ActiveTime"
+            "ActiveTime": "ActiveTime",
+            "callback": "Callback",
+            "editBeforeCall": "Edit & Call",
+            "enterNumber": "Enter Number",
+            "call": "Call",
+            "cancel": "Cancel"
         },
         "adFeedback": {
             "customerFeedback": "Customer Feedback",

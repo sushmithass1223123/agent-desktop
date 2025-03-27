@@ -144,6 +144,8 @@ export class PreviewDialogComponent implements OnInit, OnDestroy {
                     this.loading = false;
                     this.data = resp.response;
                     this.data['isDraft'] = false;
+                } else {
+                    this.getOutboxEmailData();
                 }
             })
             .catch((e) => {
@@ -151,8 +153,23 @@ export class PreviewDialogComponent implements OnInit, OnDestroy {
                 this.data = {
                     error: true
                 };
-                this._appUIService.showSnackbar('Error in getting outbox email data', 'failure');
+                this._appUIService.showSnackbar('Error in getting inbox email data', 'failure');
                 console.log('e',e);
+            });
+    }
+
+    /**
+     * If failed to get inbox email data then look for outboxemail data with current sessionId
+     */
+    getOutboxEmailData() {
+        SDKClient.getOutboxEmail(this.sessionId)
+            .then((resp: IResponse) => {
+                if(resp.response !== null) {
+                    this.sessionId = resp.response?.InSessionID;
+                    this.loading = false;
+                    this.data = resp.response;
+                    this.data['isDraft'] = false;
+                }
             });
     }
 

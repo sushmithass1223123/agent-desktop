@@ -10,6 +10,10 @@ import { CustomSDKEvent } from 'app/interfaces';
 import { format } from 'date-fns';
 import { filter, takeUntil } from 'rxjs/operators';
 import { TranslocoService } from '@jsverse/transloco';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { SDKClient } from '@tmac/sdk';
+import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Agent Interactions details Table widget
@@ -45,7 +49,9 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
         'CreatedDateTime',
         'ClosedDateTime',
         'ActiveTime',
-        'AgentComment'
+        'AgentComment',
+        'VoiceCallback',
+        'VoiceEditCallback'
     ];
 
     /**
@@ -64,11 +70,35 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     @ViewChild('agentCommentRef')
     agentCommentRef: TemplateRef<any>;
 
+    /**
+     * Agent action reference to edit number and call
+     */
+    @ViewChild('voiceEditCallbackRef')
+    voiceEditCallbackRef: TemplateRef<any>;
+
+     /**
+     * Agent action reference to voice callback
+     */
+     @ViewChild('voiceCallbackRef')
+     voiceCallbackRef: TemplateRef<any>;
+
+     /**
+     * edit number template
+     */
+    @ViewChild('editNumberModalRef')
+    editNumberModalRef: TemplateRef<any>;
+
+    /**
+     * phone number control
+     */
+    phoneNumber: FormControl = new FormControl();
+
     constructor(
         private _tmacEventService: TMACEventService,
         private translocoService: TranslocoService,
         private _appUIService: AppUiService,
-        private _fuseFacadeService: FuseFacadeService
+        private _fuseFacadeService: FuseFacadeService,
+        private matDialog: MatDialog,
     ) {
         super('TwAdInteractionDetailsComponent');
         this.customFuse = {
@@ -88,6 +118,11 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             .getNonInteractionEvents(['AgentInteractionDetailsEvent'])
             .pipe(takeUntil(this.unsubscribeAll))
             .subscribe((evts) => evts.forEach((evt) => this[evt.EventName](evt)));
+
+        this.minDisplayedColumns = this.data?.Data?.MinView?.Columns && this.data?.Data?.MinView?.Columns.length > 0 ? this.data?.Data?.MinView?.Columns : this.minDisplayedColumns;
+        this.maxDisplayedColumns = this.data?.Data?.MaxView?.Columns && this.data?.Data?.MaxView?.Columns.length > 0 ? this.data?.Data?.MaxView?.Columns : this.maxDisplayedColumns;
+    
+        this.minDisplayedColumns = this.minDisplayedColumns.slice(0,4);
     }
 
     /**
@@ -185,6 +220,14 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
             ActiveTime: {
                 langCode: 'tableFields_common.InteractionDetails.ActiveTime',
                 value: (el: any) => el.ActiveTime
+            },
+            VoiceCallback: {  
+                custom: this.voiceCallbackRef,
+                title: 'Callback'
+            },
+            VoiceEditCallback: {  
+                custom: this.voiceEditCallbackRef,
+                title: this.translocoService.translate('widgets.adInteractionDetails.editBeforeCall')
             }
         };
         this.table.sort = true;
@@ -272,4 +315,43 @@ export class TwAdInteractionDetailsComponent extends TWidgetWrapper implements O
     tableEvents(evt: any): void {
         this.showNotes(evt.record.AgentComment);
     }
+
+    makeCall(data) {
+        try{
+            SDKClient.makeCall({
+                interactionId: data?.InteractionId?.toString(),
+                number: data?.User,
+                source: 'InteractionDetails',
+                sourceId: data?.SessionId
+            })
+                .then((dt) => {
+                    console.log('makeCall success', dt);
+                    if(dt?.response?.ResultCode === -1){
+                        this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallError'), 'success');
+                    }
+                })
+                .catch(() => {
+                    // make call error
+                    this._appUIService.showSnackbar(this.translocoService.translate('interactionComponent.makeCallError'), 'failure');
+                });
+        } catch (error) {
+            console.log('error', error);
+        }
+        
+    }
+
+    showEditCallback(data) {    
+        this.phoneNumber.setValue(data?.User);
+        this.matDialog.open(this.editNumberModalRef, {
+            width: '30%'
+        }).afterClosed().subscribe((result) => {
+            if (result) {
+                if(this.phoneNumber.value?.trim() !== ''){
+                    this.makeCall(data);
+                }   else {
+                    this._appUIService.showSnackbar('Please enter the number', 'failure');
+                } 
+            }
+    });  
+}     
 }
