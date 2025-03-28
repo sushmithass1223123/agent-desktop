@@ -17,10 +17,9 @@
         <ng-container *ngIf="message">
             <div
                 *ngIf="showName"
-                class="user-label font-size-14 text-bold"
+                class="user-label"
                 [ngClass]="{
-                    agent: !message.isAgent && message.who !== customerName,
-                    'mb-4': !message.repliedToMessage
+                    agent: !message.isAgent && message.who !== customerName
                 }"
             >
                 {{ message.who }}
@@ -230,20 +229,20 @@
                 class="time twd-flex twd-flex-row twd-items-center twd-justify-end"
             >
                 {{ (message.time | customDate: 'shortTime') ?? message.time }} &nbsp;
-                <mat-icon *ngIf="message.position === 'right' && message.status === 'init'" class="s-12 ml-4 spin">
+                <mat-icon *ngIf="message.position === 'right' && message.status === 'init'" class="s-12 spin">
                     loop</mat-icon
                 >
-                <mat-icon *ngIf="message.position === 'right' && message.status === 'sent'" class="s-12 ml-4"
+                <mat-icon *ngIf="message.position === 'right' && message.status === 'sent'" class="s-12"
                     >done
                 </mat-icon>
                 <mat-icon
                     *ngIf="message.position === 'right' && message.status === 'failed'"
-                    class="s-12 ml-4 twd-cursor-pointer"
+                    class="s-12 twd-cursor-pointer"
                     color="warn"
                     (click)="resendMessage(message.messageId)"
                     >error_outline</mat-icon
                 >
-                <mat-icon *ngIf="message.position === 'right' && message.status === 'delivered'" class="s-12 ml-4">
+                <mat-icon *ngIf="message.position === 'right' && message.status === 'delivered'" class="s-12">
                     done_all</mat-icon
                 >
             </div>
@@ -624,7 +623,7 @@
                                         <!-- animate__animated animate__slideInUp animate__faster -->
                                         <div
                                             *ngIf="!message.divider"
-                                            [class]="message.position + ' bubble mat-elevation-z1'"
+                                            [class]="message.position + ' bubble'"
                                             [ngClass]="{ maximized: maximized }"
                                         >
                                             <ng-container

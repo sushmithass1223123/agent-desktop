@@ -89,6 +89,7 @@ tw-chat-controls {
                             align-items: flex-start;
                             justify-content: flex-end;
                             padding: 0 16px 4px 16px;
+                            overflow: hidden;
 
                             .avatar {
                                 position: absolute;
@@ -98,7 +99,7 @@ tw-chat-controls {
 
                             .bubble {
                                 position: relative;
-                                overflow: hidden;
+                                // overflow: hidden;
                                 display: flex;
                                 flex-direction: column;
                                 align-items: flex-start;
@@ -113,16 +114,10 @@ tw-chat-controls {
                                     max-width: 90%;
                                     z-index: 2;
                                     height: 40px;
-                                    overflow: hidden;
+                                    visibility: hidden;
                                     right: -160px;
                                     top: 0;
-                                    background: linear-gradient(
-                                        15deg,
-                                        rgba(9.3, 13.74, 16.7, 0),
-                                        rgba(9.3, 13.74, 16.7, 0) 45%,
-                                        rgba(9.3, 13.74, 16.7, 0.15) 70%,
-                                        rgba(9.3, 13.74, 16.7, 0.35)
-                                    );
+                                    
                                     transition: right 0.1s;
                                     display: flex;
                                     align-items: center;
@@ -132,6 +127,7 @@ tw-chat-controls {
 
                                 &:hover {
                                     .actions {
+                                        visibility: visible;
                                         right: 0;
                                     }
                                 }
@@ -155,12 +151,11 @@ tw-chat-controls {
 
                                 .message {
                                     // white-space: pre-wrap;
-                                    font-family: 'Montserrat', 'TwemojiMozilla', sans-serif;
+                                    font-family: 'Roboto', 'TwemojiMozilla', sans-serif;
 
                                     line-height: 1.4;
                                     font-size: 14px;
                                     margin-bottom: 12px;
-                                    font-weight: 600;
                                     white-space: pre-wrap;
                                     word-wrap: normal;
 
@@ -296,22 +291,33 @@ tw-chat-controls {
                                     border-radius: 5px;
 
                                     .user-label {
-                                        color: #6bcbef !important;
-                                        &.agent {
-                                            color: #35cd96 !important;
-                                        }
+                                        // color: #6bcbef !important;
+                                        color: #707070 !important;
+                                        font-size: 10px !important;
+                                        // &.agent {
+                                        //     color: #35cd96 !important;
+                                        // }
                                     }
                                 }
 
                                 &.first-of-group {
-                                    .bubble {
-                                        border-top-left-radius: 0px;
+                                    .bubble::before {
+                                        // border-top-left-radius: 0px;
+                                        content: '';
+    position: absolute;
+    left: -10px;
+    top: 0px;
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-right: 13px solid #e5e5ea;
+    border-bottom: 13px solid transparent;
                                     }
                                 }
 
                                 &.last-of-group {
                                     .bubble {
-                                        border-bottom-left-radius: 10px;
+                                        // border-bottom-left-radius: 10px;
                                     }
                                 }
                             }
@@ -329,19 +335,30 @@ tw-chat-controls {
                                     border-radius: 5px;
 
                                     .user-label {
-                                        color: #91ab01 !important;
+                                        // color: #91ab01 !important;
+                                        color: #707070 !important;
+                                        font-size: 10px !important;
                                     }
                                 }
 
                                 &.first-of-group {
-                                    .bubble {
-                                        border-top-right-radius: 0px;
+                                    .bubble::after {
+                                        // border-top-right-radius: 0px;
+                                        content: '';
+    position: absolute;
+    right: -10px;
+    top: 0px;
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-left: 13px solid #EBEBEB;
+    border-bottom: 13px solid transparent;
                                     }
                                 }
 
                                 &.last-of-group {
                                     .bubble {
-                                        border-bottom-right-radius: 10px;
+                                        // border-bottom-right-radius: 10px;
                                     }
                                 }
                             }
