@@ -286,6 +286,9 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit {
             // we will route to login page
             this.routeToLogin();
         }
+
+        // added during upgrade to Angular Material 18 since history.state contained login redirected [routedFrom] data even when reloaded.
+        history.replaceState({}, '');
     }
 
     /**

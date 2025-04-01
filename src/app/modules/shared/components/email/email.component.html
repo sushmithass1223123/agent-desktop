@@ -31,7 +31,8 @@
                 <ng-container>
                     <ng-content *ngIf="state === 'loaded'; else emailInfoRef" select="#emailInfo"></ng-content>
                     <ng-template #emailInfoRef>
-                        <skeleton *ngIf="state !== 'error'" class="twd-opacity-70 twd-mx-3 twd-w-3/12" [rows]="2"> </skeleton>
+                        <skeleton *ngIf="state !== 'error'" class="twd-opacity-70 twd-mx-3 twd-w-3/12" [rows]="2">
+                        </skeleton>
                     </ng-template>
                 </ng-container>
                 <ng-content *ngIf="state !== 'loading'" select="#emailNotification"></ng-content>
@@ -40,7 +41,10 @@
                     class="twd-text-left twd-my-1 twd-rounded-2xl twd-overflow-hidden twd-text-xs attachment-list twd-pb-1.5"
                     *ngIf="state !== 'loading' && email?.Files && email.Files.length && email.Files as attachments"
                 >
-                    <ng-template *ngTemplateOutlet="attachmentsRef; context: { attachments: attachments, removable: false }"> </ng-template>
+                    <ng-template
+                        *ngTemplateOutlet="attachmentsRef; context: { attachments: attachments, removable: false }"
+                    >
+                    </ng-template>
                 </div>
                 <ng-content *ngIf="state !== 'loading'" select="#emailControlButtons"></ng-content>
             </div>
@@ -62,8 +66,12 @@
 
             <div *ngIf="state === 'error'" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
                 <div class="twd-text-center">
-                    <p class="twd-font-bold twd-mb-3 twd-text-lg">{{ locale('sharedComponents.email.loadEmailFailed') }}</p>
-                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry.emit()">{{ locale('global.retry') }}</button>
+                    <p class="twd-font-bold twd-mb-3 twd-text-lg">
+                        {{ locale('sharedComponents.email.loadEmailFailed') }}
+                    </p>
+                    <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry.emit()">
+                        {{ locale('global.retry') }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -75,7 +83,10 @@
             <p class="mat-title">Loading ...</p>
         </div> -->
             <form class="twd-mb-2" novalidate>
-                <div class="border-primary border-radius-20 w-100-p p-12" [ngClass]="{ 'twd-hidden': mode === 'quick-reply' }">
+                <div
+                    class="border-primary border-radius-20 w-100-p p-12"
+                    [ngClass]="{ 'twd-hidden': mode === 'quick-reply' }"
+                >
                     <div [formGroup]="_addressFG">
                         <div *ngIf="_email.From" class="twd-flex twd-justify-between">
                             <label class="twd-font-bold twd-mr-1 twd-flex twd-justify-between">
@@ -90,7 +101,9 @@
                                 <span>:</span>
                             </label>
                             <div class="twd-flex-1 twd-flex twd-items-center">
-                                <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"></ng-container>
+                                <ng-container
+                                    *ngTemplateOutlet="recipientInputField; context: { key: 'To' }"
+                                ></ng-container>
                                 <span
                                     mat-ripple
                                     class="twd-cursor-pointer twd-text-xs twd-font-bold twd-px-1 twd-py-[3px] twd-rounded-20 secondary-text"
@@ -100,7 +113,9 @@
                                 </span>
                             </div>
                         </div>
-                        <small *ngIf="_addressFG.controls.To.errors" class="twd-text-red-600"> To Email Address required </small>
+                        <small *ngIf="_addressFG.controls.To.errors" class="twd-text-red-600">
+                            To Email Address required
+                        </small>
 
                         <ng-container *ngIf="showCcBcc">
                             <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
@@ -108,7 +123,9 @@
                                     <span>{{ locale('sharedComponents.email.emailCc') }}</span>
                                     <span>:</span>
                                 </label>
-                                <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'CC' }"></ng-container>
+                                <ng-container
+                                    *ngTemplateOutlet="recipientInputField; context: { key: 'CC' }"
+                                ></ng-container>
                             </div>
 
                             <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
@@ -116,14 +133,18 @@
                                     <span>{{ locale('sharedComponents.email.emailBcc') }} </span>
                                     <span> : </span>
                                 </label>
-                                <ng-container *ngTemplateOutlet="recipientInputField; context: { key: 'BCC' }"></ng-container>
+                                <ng-container
+                                    *ngTemplateOutlet="recipientInputField; context: { key: 'BCC' }"
+                                ></ng-container>
                             </div>
                         </ng-container>
                     </div>
 
                     <div class="twd-my-2 twd-flex twd-justify-between twd-gap-2">
                         <label for="subjectField" class="twd-flex twd-justify-between">
-                            <span class="font-weight-700 twd-pr-2">{{ locale('sharedComponents.email.emailSubject') }} </span>
+                            <span class="font-weight-700 twd-pr-2"
+                                >{{ locale('sharedComponents.email.emailSubject') }}
+                            </span>
                             <span>
                                 :
                                 <!-- <span class="twd-border-b twd-border-primary-default twd-pb-1">
@@ -131,29 +152,51 @@
                         </span> -->
                             </span>
                         </label>
-                        <input id="subjectField" class="twd-flex-1 twd-my-0.5" matInput *ngIf="_email" [(ngModel)]="_email.Subject" name="Subject" />
+                        <input
+                            id="subjectField"
+                            class="twd-flex-1 twd-my-0.5"
+                            matInput
+                            *ngIf="_email"
+                            [(ngModel)]="_email.Subject"
+                            name="Subject"
+                        />
                     </div>
                 </div>
             </form>
 
-            <div *ngIf="_email.Files?.length" class="twd-w-full twd-mb-2 twd-rounded-2xl twd-text-xs attachment-list twd-pb-1.5">
-                <ng-template *ngTemplateOutlet="attachmentsRef; context: { attachments: _email.Files, removable: true }"></ng-template>
+            <div
+                *ngIf="_email.Files?.length"
+                class="twd-w-full twd-mb-2 twd-rounded-2xl twd-text-xs attachment-list twd-pb-1.5"
+            >
+                <ng-template
+                    *ngTemplateOutlet="attachmentsRef; context: { attachments: _email.Files, removable: true }"
+                ></ng-template>
             </div>
 
-            <email-editor class="border-primary twd-flex-1 border-radius-20 twd-mb-2 twd-overflow-hidden" [(body)]="_email.Body" (bodyChange)="onBodyChange($event)"></email-editor>
+            <email-editor
+                class="border-primary twd-flex-1 border-radius-20 twd-mb-2 twd-overflow-hidden"
+                [(body)]="_email.Body"
+                (bodyChange)="onBodyChange($event)"
+            ></email-editor>
         </ng-container>
 
         <div *ngIf="state === 'error'" class="twd-h-3/4 twd-w-full twd-flex twd-items-center twd-justify-center">
             <div class="twd-text-center">
                 <p class="twd-font-bold twd-mb-3 twd-text-lg">{{ locale('sharedComponents.email.loadEmailFailed') }}</p>
-                <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry.emit()">{{ locale('global.retry') }}</button>
+                <button mat-raised-button class="twd-mx-auto" color="primary" (click)="retry.emit()">
+                    {{ locale('global.retry') }}
+                </button>
             </div>
         </div>
 
         <div class="twd-flex twd-justify-between twd-px-2 twd-pb-2">
             <div>
-                <email-template-selector [disabled]="state !== 'loaded'" (selectTemplate)="selectTemplate($event)"></email-template-selector>
-                <button *ngIf="mode != quick-reply"
+                <email-template-selector
+                    [disabled]="state !== 'loaded'"
+                    (selectTemplate)="selectTemplate($event)"
+                ></email-template-selector>
+                <button
+                    *ngIf="mode != quick - reply"
                     mat-raised-button
                     mat-icon-button
                     color="primary"
@@ -163,15 +206,26 @@
                     (click)="attachFileRef.click()"
                 >
                     <mat-icon>attach_file</mat-icon>
-                    <input #attachFileRef type="file" [multiple]="false" (click)="$event.target.value = null" (change)="onFileInput($event)" style="display: none" />
+                    <input
+                        #attachFileRef
+                        type="file"
+                        [multiple]="false"
+                        (click)="$event.target.value = null"
+                        (change)="onFileInput($event)"
+                        style="display: none"
+                    />
                 </button>
             </div>
             <div class="twd-flex">
                 <div *ngIf="showPayloadSizeStats" class="payload-stat twd-flex">
-                    <mat-icon *ngIf="(this.currentAttachmentSize +
-                    this.currentBodySize) > this.email.MaxPayloadSize">info</mat-icon>
-                    <p>{{ bytesToMB(this.currentAttachmentSize +
-                        this.currentBodySize) }}/{{ bytesToMB(this.email.MaxPayloadSize) }}</p>
+                    <mat-icon *ngIf="this.currentAttachmentSize + this.currentBodySize > this.email.MaxPayloadSize"
+                        >info</mat-icon
+                    >
+                    <p>
+                        {{ bytesToMB(this.currentAttachmentSize + this.currentBodySize) }}/{{
+                            bytesToMB(this.email.MaxPayloadSize)
+                        }}
+                    </p>
                 </div>
                 <button
                     mat-raised-button
@@ -179,8 +233,9 @@
                     class="mx-4 border-radius-20"
                     [disabled]="state !== 'loaded'"
                     [matTooltip]="locale('sharedComponents.email.sendEmail')"
-                    (click)="onSendEmail(_email)">
-                        {{ locale('sharedComponents.email.send') }}
+                    (click)="onSendEmail(_email)"
+                >
+                    {{ locale('sharedComponents.email.send') }}
                 </button>
             </div>
         </div>
@@ -196,9 +251,6 @@
                 removable
                 (removed)="removeEmail(key, emailId)"
             >
-                <!-- <mat-chip-avatar>
-                <img src="assets/images/avatars/profile.jpg" [alt]="emailId" />
-            </mat-chip-avatar> -->
                 <span class="twd-truncate">
                     {{ emailId }}
                 </span>
@@ -229,7 +281,7 @@
     <ng-template #attachmentsRef let-attachments="attachments" let-removable="removable">
         <mat-chip-list class="attachments-summary">
             <mat-chip
-                *ngFor="let file of attachments | slice: 0:2"
+                *ngFor="let file of attachments | slice: 0 : 2"
                 [ngClass]="{
                     'email-attachment-available': !file.ArchiveStatus,
                     'email-attachment-archived': file.ArchiveStatus === 'ARCHIVE_ACCESS',
@@ -252,7 +304,9 @@
                 </div>
                 <div
                     *ngIf="file.ArchiveStatus || file.FileError"
-                    [matMenuTriggerFor]="(file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptList : null"
+                    [matMenuTriggerFor]="
+                        (file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptList : null
+                    "
                     class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
                 >
                     <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
@@ -296,7 +350,7 @@
             <div class="attachment-menu twd-mx-2" (click)="$event.stopPropagation()">
                 <mat-chip-list class="mat-chip-list-stacked">
                     <mat-chip
-                        *ngFor="let file of attachments | slice: 2:attachments.length"
+                        *ngFor="let file of attachments | slice: 2 : attachments.length"
                         [ngClass]="{
                             'email-attachment-available': !file.ArchiveStatus,
                             'email-attachment-archived': file.ArchiveStatus === 'ARCHIVE_ACCESS',
@@ -319,7 +373,11 @@
                         </div>
                         <div
                             *ngIf="file.ArchiveStatus || file.FileError"
-                            [matMenuTriggerFor]="(file.ArchiveStatus && !file.RestoreStatus) || file.FileError ? attachOptListSecondary : null"
+                            [matMenuTriggerFor]="
+                                (file.ArchiveStatus && !file.RestoreStatus) || file.FileError
+                                    ? attachOptListSecondary
+                                    : null
+                            "
                             class="twd-flex-1 twd-truncate twd-flex twd-items-center twd-mx-1.5"
                         >
                             <mat-icon class="custom" color="primary" [svgIcon]="file.Icon"></mat-icon>
