@@ -1,6 +1,6 @@
-<tw-wrapper *transloco="let locale" twChart [data]="data" (maximizeEvent)="maximized = $event">
+<tw-wrapper *transloco="let locale" twChart [data]="data" (maximizeEvent)="maximized = $event" class="table-widget">
     <div *ngIf="data.Data?.Type === 'grid'" class="twd-w-full twd-h-full">
-        <ad-table></ad-table>
+        <ad-table class="!twd-bg-white"></ad-table>
     </div>
 
     <div *ngIf="data.Data?.Type === 'chart'" class="twd-w-full twd-h-full">
@@ -14,7 +14,10 @@
                 categoryField="category"
             >
                 <kendo-chart-area background="transparent"></kendo-chart-area>
-                <kendo-chart-legend [visible]="maximized" [background]="'rgba(255, 255, 255, 0.7)'"></kendo-chart-legend>
+                <kendo-chart-legend
+                    [visible]="maximized"
+                    [background]="'rgba(255, 255, 255, 0.7)'"
+                ></kendo-chart-legend>
                 <kendo-chart-series>
                     <kendo-chart-series-item
                         *ngFor="let series of stats; let outermost = last"
@@ -39,12 +42,12 @@
                             </ng-template>
                         </kendo-chart-series-item-tooltip>
                         <kendo-chart-series-item-labels
-  *ngIf="(data.Data.Label || maximized) && outermost"
-  position="outsideEnd"
-  align="column"
-  [content]="labelContent"
->
-</kendo-chart-series-item-labels>
+                            *ngIf="(data.Data.Label || maximized) && outermost"
+                            position="outsideEnd"
+                            align="column"
+                            [content]="labelContent"
+                        >
+                        </kendo-chart-series-item-labels>
                     </kendo-chart-series-item>
                 </kendo-chart-series>
             </kendo-chart>
@@ -59,9 +62,13 @@
         </div>
 
         <ng-template #noData>
-            <div class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center">
+            <div
+                class="twd-flex twd-flex-col twd-justify-center twd-items-center twd-w-full twd-h-full twd-text-center"
+            >
                 <img src="assets/images/vectors/no-data-1.svg" class="twd-w-10/12 twd-h-10/12 box-shadow-3d" />
-                <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized }">{{ locale('contentComponent.noDataAvailable') }}</p>
+                <p class="text-center m-0" [ngClass]="{ 'mat-display-2': maximized }">
+                    {{ locale('contentComponent.noDataAvailable') }}
+                </p>
             </div>
         </ng-template>
     </div>

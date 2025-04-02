@@ -308,4 +308,10 @@ tw-wrapper {
             }
         }
     }
+
+    &.table-widget { 
+        mat-card-content{
+            padding: 0;
+        }
+    }
 }
