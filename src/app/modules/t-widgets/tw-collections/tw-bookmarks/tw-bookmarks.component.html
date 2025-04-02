@@ -1,7 +1,9 @@
 <tw-wrapper [data]="data" *transloco="let locale">
     <mat-progress-bar *ngIf="progressLoading" mode="query"></mat-progress-bar>
     <div class="twd-h-full twd-w-full twd-absolute twd-left-0 twd-top-0">
-        <div class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-4 twd-py-2 border-bottom twd-h-[56px]">
+        <div
+            class="twd-flex twd-flex-row twd-justify-center twd-items-center twd-w-full twd-px-4 twd-py-2 border-bottom twd-h-[56px]"
+        >
             <div
                 *ngIf="searchable"
                 class="twd-flex twd-flex-row twd-justify-end twd-items-center twd-w-full"
@@ -18,7 +20,13 @@
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <mat-form-field class="custom search form-field twd-w-full" appearance="outline">
-                    <input matInput [placeholder]="locale('global.search')" [(ngModel)]="searchTerm" #searchField (input)="filterBookmarks()" />
+                    <input
+                        matInput
+                        [placeholder]="locale('global.search')"
+                        [(ngModel)]="searchTerm"
+                        #searchField
+                        (input)="filterBookmarks()"
+                    />
                     <button
                         *ngIf="!searchTerm; else clearBtn"
                         mat-icon-button
@@ -135,7 +143,9 @@
 
                         <div
                             class="twd-w-full twd-flex twd-items-center twd-pr-2 twd-cursor-pointer"
-                            [matTooltip]="node.team && editable ? 'You cannot edit the record created for the team' : ''"
+                            [matTooltip]="
+                                node.team && editable ? 'You cannot edit the record created for the team' : ''
+                            "
                             [ngClass]="{
                                 'twd-opacity-70': editable && node.team
                             }"
@@ -162,17 +172,25 @@
                                             mat-list-icon
                                             class="text-warning"
                                             [matTooltip]="
-                                                node.team ? locale('widgets.bookmarks.teamBookmark') : locale('widgets.bookmarks.agentBookmark')
+                                                node.team
+                                                    ? locale('widgets.bookmarks.teamBookmark')
+                                                    : locale('widgets.bookmarks.agentBookmark')
                                             "
                                         >
                                             {{ node.team ? 'stars' : 'star' }}
                                         </mat-icon>
-                                        <span class="twd-pl-3" [matTooltip]="node.data" [matTooltipDisabled]="editable"> {{ node.name }} </span>
+                                        <span class="twd-pl-3" [matTooltip]="node.data" [matTooltipDisabled]="editable">
+                                            {{ node.name }}
+                                        </span>
                                     </span>
                                 </span>
                             </div>
 
-                            <div class="twd-flex twd-flex-1 twd-h-9" [matTooltip]="node.data" [matTooltipDisabled]="editable"></div>
+                            <div
+                                class="twd-flex twd-flex-1 twd-h-9"
+                                [matTooltip]="node.data"
+                                [matTooltipDisabled]="editable"
+                            ></div>
 
                             <div>
                                 <button
@@ -204,7 +222,12 @@
                     <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
                         <button *ngIf="!node.expandable" mat-icon-button disabled></button>
 
-                        <button *ngIf="node.expandable" mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+                        <button
+                            *ngIf="node.expandable"
+                            mat-icon-button
+                            matTreeNodeToggle
+                            [attr.aria-label]="'Toggle ' + node.name"
+                        >
                             <mat-icon
                                 class="mat-icon-rtl-mirror s-32"
                                 [@fabToggler90]="{ value: treeControl.isExpanded(node) ? 'active' : 'inactive' }"
@@ -218,7 +241,9 @@
                             [ngClass]="{
                                 'twd-opacity-70': editable && node.team
                             }"
-                            [matTooltip]="editable && node.team ? locale('widgets.bookmarks.warningOnEditTeamBookmark') : ''"
+                            [matTooltip]="
+                                editable && node.team ? locale('widgets.bookmarks.warningOnEditTeamBookmark') : ''
+                            "
                         >
                             <!-- <mat-checkbox
                                 [disabled]="!editable"
@@ -245,12 +270,22 @@
                                             mat-list-icon
                                             class="text-alt-warning"
                                             [matTooltip]="
-                                                node.team ? locale('widgets.bookmarks.teamFolder') : locale('widgets.bookmarks.agentFolder')
+                                                node.team
+                                                    ? locale('widgets.bookmarks.teamFolder')
+                                                    : locale('widgets.bookmarks.agentFolder')
                                             "
                                         >
-                                            {{ treeControl.isExpanded(node) ? 'folder_open' : node.team ? 'folder_shared' : 'folder' }}</mat-icon
+                                            {{
+                                                treeControl.isExpanded(node)
+                                                    ? 'folder_open'
+                                                    : node.team
+                                                      ? 'folder_shared'
+                                                      : 'folder'
+                                            }}</mat-icon
                                         >
-                                        <span class="twd-pl-3" [matTooltip]="node.name" [matTooltipDisabled]="editable"> {{ node.name }} </span>
+                                        <span class="twd-pl-3" [matTooltip]="node.name" [matTooltipDisabled]="editable">
+                                            {{ node.name }}
+                                        </span>
                                     </span>
                                 </span>
                             </div>
@@ -351,7 +386,9 @@
                 *ngIf="!skeltonLoading && (!dataSource.data.length || (searchTerm && !serachData.length))"
                 class="twd-w-full twd-h-full twd-grid twd-place-items-center"
             >
-                <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">{{ locale('contentComponent.noDataAvailable') }}</p>
+                <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">
+                    {{ locale('contentComponent.noDataAvailable') }}
+                </p>
             </div>
         </div>
     </div>
@@ -359,16 +396,22 @@
 
 <ng-template #addBookmarkDataDialog *transloco="let locale" class="custom">
     <div *ngIf="addBookmarkData" class="twd-w-full twd-h-full">
-        <div fxLayout="row" fxLayoutAlign="space-between center" class="px-12 py-4">
-            <p class="mat-title m-0">{{ addBookmarkData.title }}</p>
+        <div fxLayout="row" fxLayoutAlign="space-between center" class="twd-px-4 twd-py-2">
+            <h2 class="m-0">{{ addBookmarkData.title }}</h2>
             <button mat-icon-button tabindex="-1" mat-dialog-close>
                 <mat-icon>close</mat-icon>
             </button>
         </div>
 
-        <div class="twd-flex twd-flex-col twd-px-4 twd-pb-4">
-            <ul *ngIf="addBookmarkData.folderList" class="twd-m-0 twd-p-0 twd-list-none twd-overflow-hidden twd-whitespace-nowrap">
-                <li *ngFor="let item of addBookmarkData.folderList; index as i" class="twd-m-0 twd-p-0 twd-list-none twd-inline-block">
+        <div class="twd-flex twd-flex-col twd-gap-4 twd-px-4 twd-pb-4">
+            <ul
+                *ngIf="addBookmarkData.folderList"
+                class="twd-m-0 twd-p-0 twd-list-none twd-overflow-hidden twd-whitespace-nowrap"
+            >
+                <li
+                    *ngFor="let item of addBookmarkData.folderList; index as i"
+                    class="twd-m-0 twd-p-0 twd-list-none twd-inline-block"
+                >
                     <span
                         class="twd-relative twd-block twd-text-[12px] twd-leading-6"
                         [ngClass]="{
@@ -380,7 +423,12 @@
                 </li>
             </ul>
             <mat-form-field class="form-field custom" appearance="outline">
-                <input matInput required [placeholder]="locale('generalFormFields.name')" [(ngModel)]="addBookmarkData.name" />
+                <input
+                    matInput
+                    required
+                    [placeholder]="locale('generalFormFields.name')"
+                    [(ngModel)]="addBookmarkData.name"
+                />
                 <button
                     *ngIf="addBookmarkData.name"
                     mat-button
@@ -397,7 +445,12 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="addBookmarkData.type === 'url'" class="form-field custom" appearance="outline">
-                <input matInput required [placeholder]="locale('generalFormFields.url')" [(ngModel)]="addBookmarkData.data" />
+                <input
+                    matInput
+                    required
+                    [placeholder]="locale('generalFormFields.url')"
+                    [(ngModel)]="addBookmarkData.data"
+                />
                 <button
                     *ngIf="addBookmarkData.data"
                     mat-button
@@ -413,9 +466,9 @@
                 <mat-error>{{ locale('generalFormFields.urlRequired') }}</mat-error>
             </mat-form-field>
 
-            <div class="twd-flex twd-flex-row twd-gap-4 twd-pt-2">
+            <div class="twd-flex twd-flex-row twd-gap-4">
                 <button
-                    class="twd-flex-1 !twd-rounded-full"
+                    class="twd-flex-1"
                     mat-raised-button
                     color="primary"
                     [matTooltip]="locale('global.save')"
@@ -426,7 +479,7 @@
                     {{ locale('global.save') }}
                 </button>
                 <button
-                    class="twd-flex-1 !twd-rounded-full"
+                    class="twd-flex-1"
                     mat-raised-button
                     color="warn"
                     [matTooltip]="locale('interactionComponent.cancel')"

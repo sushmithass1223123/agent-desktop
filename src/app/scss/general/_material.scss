@@ -497,4 +497,12 @@ mat-slide-toggle {
     min-height: 18px;
     min-width: 18px;                    
 }
+// to resolve the issue of mat-form-field css conflict with tailwind
+.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+    border-right-style: hidden;
+  }
+  .mat-mdc-input-element {
+    box-shadow: none !important;
+  }
+
 
