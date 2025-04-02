@@ -1,7 +1,7 @@
 <!-- widget wrapper, [data] attribute is must to send the widget data for the wrapper -->
 <!-- implement following events in your component to access widget wrapper action events -->
 <!-- (maximizeEvent)="maximizeEvent.emit($event)" (collapseEvent)="collapseEvent.emit($event)" (floatEvent)="floatEvent.emit($event)" -->
-<tw-wrapper [data]="data">
+<tw-wrapper [data]="data" class="no-padding">
     <!-- your code goes here -->
     <div
         *ngIf="!loadWorkCodesReq.loading && !loadWorkCodesReq.error"
@@ -12,23 +12,25 @@
         class="p-4 position-relative"
     >
         <div *ngIf="widgetData.Role === 'interaction'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
-            <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
-                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
-                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.Name }}
-                    <mat-icon matChipRemove>cancel</mat-icon>
+            <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes" class="twd-flex twd-flex-wrap twd-gap-2">
+                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)">
+                    <!-- <mat-icon class="mat-icon-sm mr-4">local_offer</mat-icon> -->
+                    <span class="twd-align-text-bottom mr-4">{{ workCode.Name }}</span>
+                    <mat-icon class="!twd-text-white twd-opacity-100" matChipRemove>close</mat-icon>
                 </mat-chip>
             </mat-chip-list>
-            <button class="add-workcode" mat-button mat-raised-button color="accent" mat-icon-button (click)="openAddWorkCodeModal()">
-                <mat-icon>add</mat-icon>
+            <button class="add-workcode" mat-raised-button color="accent" (click)="openAddWorkCodeModal()">
+                <mat-icon class="!twd-text-2xl !twd-m-0">add</mat-icon>
             </button>
             <ng-template *transloco="let locale">
-                <p *ngIf="!selectedWorkCodes.length" class="text-center mat-title mt-40">{{ locale('widgets.workcodes.noWorkCodeSelected') }}</p>
+                <p *ngIf="!selectedWorkCodes.length" class="text-center mat-title mt-40">
+                    {{ locale('widgets.workcodes.noWorkCodeSelected') }}
+                </p>
             </ng-template>
         </div>
 
         <div *ngIf="widgetData.Role === 'supervisor'" class="w-100-p h-100-p p-12 custom-scroll-adjust">
-            <mat-chip-list aria-label="WorkCodes">
+            <mat-chip-list aria-label="WorkCodes" class="twd-flex twd-flex-wrap twd-gap-2">
                 <mat-chip
                     *ngFor="let workCode of selectedWorkCodes; trackBy: trackByID"
                     [ngClass]="{
@@ -39,8 +41,8 @@
                         'bg-danger': workCode.Count >= 50
                     }"
                 >
-                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.WorkCodeName + ' [' + workCode.Count + ']' }}
+                    <mat-icon class="mat-icon-sm mr-4">local_offer</mat-icon>
+                    <span class="twd-align-text-bottom">{{ workCode.WorkCodeName + ' [' + workCode.Count + ']' }}</span>
                 </mat-chip>
             </mat-chip-list>
 
@@ -57,7 +59,12 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="loadWorkCodesReq.error" class="w-100-p h-100-p text-center p-8" fxLayout="column" fxLayoutAlign="center center">
+    <div
+        *ngIf="loadWorkCodesReq.error"
+        class="w-100-p h-100-p text-center p-8"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+    >
         <p>{{ loadWorkCodesReq.msg }}</p>
         <button mat-button mat-raised-button color="primary" class="ml-8" *transloco="let locale" (click)="setup()">
             {{ locale('global.retry') }}
@@ -70,33 +77,44 @@
 <ng-template #addWorkcodeModalRef *transloco="let locale">
     <div *transloco="let locale" class="twd-sticky twd-top-0 twd-left-0">
         <p class="mat-title">{{ locale('widgets.workcodes.selectWorkcodes') }}</p>
+
         <mat-form-field class="w-100-p" appearance="outline">
-            <mat-chip-list #selectedWorkCodesRef aria-label="WorkCodes">
-                <mat-chip *ngFor="let workCode of selectedWorkCodes" removable (removed)="removeWorkCode(workCode)" class="bg-secondary">
-                    <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
-                    {{ workCode.Name }}
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip>
+            <mat-chip-grid #selectedWorkCodesRef aria-label="WorkCodes">
+                @for (workCode of selectedWorkCodes; track workCode) {
+                    <mat-chip-row (removed)="removeWorkCode(workCode)">
+                        {{ workCode.Name }}
+                        <button matChipRemove>
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                }
+
                 <input
                     #workCodeInput
                     [placeholder]="locale('widgets.workcodes.searchWorkcodes')"
                     [formControl]="workCodeCtrl"
                     [matChipInputFor]="selectedWorkCodesRef"
                 />
-            </mat-chip-list>
+            </mat-chip-grid>
         </mat-form-field>
     </div>
 
     <!-- Display a message if no work code available for the search criteria -->
     <ng-container *ngIf="!workCodesAvailable" class="twd-w-full twd-h-full twd-grid twd-place-items-center">
-        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">{{ locale('widgets.workcodes.noWorkCodeToDisplay') }}</p>
+        <p class="text-center twd-text-2xl twd-font-semibold twd-mb-32">
+            {{ locale('widgets.workcodes.noWorkCodeToDisplay') }}
+        </p>
     </ng-container>
 
     <ng-container *ngFor="let group of filteredOptions | async | keyvalue">
         <p class="mat-title" *ngIf="group.value && group.value.length">{{ group.key }}</p>
         <mat-chip-list aria-label="WorkCodes">
             <ng-container *ngFor="let workCode of group.value">
-                <mat-chip *ngIf="workCode.ParentID !== '0'" class="bg-secondary" (click)="setWorkCode(workCode, group.key)">
+                <mat-chip
+                    *ngIf="workCode.ParentID !== '0'"
+                    class="bg-secondary"
+                    (click)="setWorkCode(workCode, group.key)"
+                >
                     <mat-icon class="mat-icon-mirror mr-4">local_offer</mat-icon>
                     {{ workCode.Name }}
                 </mat-chip>

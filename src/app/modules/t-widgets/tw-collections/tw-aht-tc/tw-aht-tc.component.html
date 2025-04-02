@@ -1,4 +1,4 @@
-<tw-wrapper *transloco="let locale" twChart [data]="data" (maximizeEvent)="maximized = $event" class="table-widget">
+<tw-wrapper *transloco="let locale" twChart [data]="data" (maximizeEvent)="maximized = $event" class="no-padding">
     <div *ngIf="data.Data?.Type === 'grid'" class="twd-w-full twd-h-full">
         <ad-table class="!twd-bg-white"></ad-table>
     </div>

@@ -17,9 +17,12 @@
                     class="twd-mb-2 twd-opacity-50 hover:twd-opacity-100 hover:twd-bg-accent-700 nav-item"
                     [ngClass]="{ '!twd-opacity-100 selected': selected === item.Data.Path }"
                 >
-                    <mat-icon class="icon custom-warn-badge" mat-list-icon [matBadge]="item.Data.Count || ''">{{
-                        item.Config.Icon || 'widgets'
-                    }}</mat-icon>
+                    <mat-icon
+                        class="icon custom-warn-badge !twd-text-white"
+                        mat-list-icon
+                        [matBadge]="item.Data.Count || ''"
+                        >{{ item.Config.Icon || 'widgets' }}</mat-icon
+                    >
                 </mat-list-item>
             </ng-container>
             <mat-divider></mat-divider>
@@ -35,12 +38,12 @@
                     class="twd-mb-2 twd-opacity-50 hover:twd-opacity-100"
                     [ngClass]="{ 'twd-opacity-100': selected === item.Data.Path }"
                 >
-                    <mat-icon class="icon" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
+                    <mat-icon class="icon !twd-text-white" mat-list-icon>{{ item.Config.Icon || 'widgets' }}</mat-icon>
                 </mat-list-item>
             </ng-container>
 
             <mat-list-item mat-button class="button-settings" (click)="toggleSidebarOpen('themeOptionsPanel')">
-                <mat-icon class="icon">settings</mat-icon>
+                <mat-icon class="icon !twd-text-white">settings</mat-icon>
             </mat-list-item>
         </mat-nav-list>
     </div>
