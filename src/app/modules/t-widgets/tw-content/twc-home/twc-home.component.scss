@@ -1,5 +1,10 @@
 .time-filter {
-    position: fixed;
+    position: fixed !important;
     right: 0;
     top: 30%;
+
+    mat-icon {
+        font-size: 24px !important;
+        margin: auto !important;
+    }
 }
