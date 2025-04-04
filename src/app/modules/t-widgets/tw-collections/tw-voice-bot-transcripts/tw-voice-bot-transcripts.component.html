@@ -11,8 +11,17 @@
             widget: (customFuse.widget$ | async)
         } as customFuse"
     >
-        <div class="w-100-p h-100-p chat-controls" *transloco="let locale" [ngClass]="customFuse.anchor?.content || customFuse.widget?.content">
-            <div *ngIf="chatTranscripts.length" fxLayout="row" fxLayoutAlign=" none" class="mt-4 w-100-p h-100-p chat-container">
+        <div
+            class="w-100-p h-100-p chat-controls"
+            *transloco="let locale"
+            [ngClass]="customFuse.anchor?.content || customFuse.widget?.content"
+        >
+            <div
+                *ngIf="chatTranscripts.length"
+                fxLayout="row"
+                fxLayoutAlign=" none"
+                class="mt-4 w-100-p h-100-p chat-container"
+            >
                 <div fxLayout="column" fxLayoutAlign=" none" class="border-radius-20 chat-content">
                     <!-- CHAT CONTENT -->
                     <div class="chat-transcripts w-100-p custom-scroll-adjust" fxFlex="1 1 auto">
@@ -27,13 +36,19 @@
                                     contact: message?.who !== user.agentName
                                 }"
                             >
+                                <div class="user-avatar contact" *ngIf="message?.who !== user.agentName">
+                                    <mat-icon>person</mat-icon>
+                                </div>
                                 <div
                                     fxLayout="column"
                                     fxLayoutAlign="start start"
                                     class="bubble"
                                     [ngClass]="(message.who !== user.agentName ? customFuse.anchor?.content : '') + ' '"
                                 >
-                                    <div *ngIf="chatTranscripts[i - 1]?.who !== message.who" class="user-label font-size-16 text-bold mb-4">
+                                    <div
+                                        *ngIf="chatTranscripts[i - 1]?.who !== message.who"
+                                        class="user-label twd-text-xs mb-4"
+                                    >
                                         {{ message.who }}
                                     </div>
 
@@ -41,6 +56,9 @@
                                         <span [innerHTML]="message.message"></span>
                                         <!-- <span class="spacer"></span> -->
                                     </div>
+                                </div>
+                                <div class="user-avatar me" *ngIf="message?.who === user.agentName">
+                                    <img src="assets/images/vectors/bot.svg" />
                                 </div>
                             </div>
                             <!-- / MESSAGE -->

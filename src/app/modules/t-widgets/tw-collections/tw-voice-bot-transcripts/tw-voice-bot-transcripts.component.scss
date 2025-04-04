@@ -49,10 +49,24 @@ tw-voice-bot-transcripts {
                         .message-row {
                             position: relative;
                             display: flex;
-                            flex-direction: column;
                             align-items: flex-start;
-                            justify-content: flex-end;
                             padding: 0 16px 4px 16px;
+                            gap: 12px;
+
+                            .user-avatar {
+                                width: 44px;
+                                height: 44px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                &.me {
+                                    background: #EBEBEB;
+                                }
+                                &.contact {
+                                    background: #E1E5EB;
+                                }
+                            }
 
                             .avatar {
                                 position: absolute;
@@ -66,8 +80,11 @@ tw-voice-bot-transcripts {
                                 align-items: center;
                                 justify-content: center;
                                 padding: 6px 7px 8px 9px;
-                                max-width: 95%;
-                                background-color: #e0e0e0;
+                                max-width: 85%;
+                                .user-label {
+                                    font-size: 12px;
+                                    color: #707070;
+                                }
 
                                 &.maximized {
                                     max-width: 60%;
@@ -92,8 +109,7 @@ tw-voice-bot-transcripts {
                                     word-wrap: normal;
                                     line-height: 1.4;
                                     font-size: 14px;
-                                    font-weight: 600;
-
+                                    color: #3D3D3D;
                                     .spacer {
                                         width: 60px;
                                         display: inline-block;
@@ -214,25 +230,23 @@ tw-voice-bot-transcripts {
 
                             &.contact {
                                 .bubble {
-                                    // border-top-left-radius: 5px;
-                                    // border-bottom-left-radius: 5px;
-
-                                    // border-top-right-radius: 20px;
-                                    // border-bottom-right-radius: 20px;
 
                                     border-radius: 5px;
-
-                                    .time {
-                                        // margin-left: 12px;
-                                    }
+                                    background: #E1E5EB;
                                 }
 
-                                &.first-of-group {
-                                    .bubble {
-                                        border-top-left-radius: 0px;
+                                
+                                    .bubble::before {
+                                        content: '';
+    position: absolute;
+    left: -10px;
+    top: 0px;
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-right: 13px solid #e5e5ea;
+    border-bottom: 13px solid transparent;
                                     }
-                                }
-
                                 &.last-of-group {
                                     .bubble {
                                         border-bottom-left-radius: 10px;
@@ -250,27 +264,25 @@ tw-voice-bot-transcripts {
 
                                 .bubble {
                                     margin-left: auto;
-
-                                    // border-top-left-radius: 20px;
-                                    // border-bottom-left-radius: 20px;
-
-                                    // border-top-right-radius: 5px;
-                                    // border-bottom-right-radius: 5px;
-
+                                    background: #EBEBEB;
                                     border-radius: 5px;
 
-                                    .time {
-                                        // justify-content: flex-end;
-                                        // right: 0;
-                                        // margin-right: 12px;
-                                    }
+                                   
                                 }
 
-                                &.first-of-group {
-                                    .bubble {
-                                        border-top-right-radius: 0px;
+                                
+                                    .bubble::after {
+                                        content: '';
+    position: absolute;
+    right: -10px;
+    top: 0px;
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-left: 13px solid #EBEBEB;
+    border-bottom: 13px solid transparent;
                                     }
-                                }
+                                
 
                                 &.last-of-group {
                                     .bubble {
