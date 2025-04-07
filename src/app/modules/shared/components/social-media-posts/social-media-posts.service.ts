@@ -1,7 +1,9 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 const today = new Date();
 const yesterday = new Date();
@@ -51,6 +53,13 @@ const searchParams = new FormGroup({
     providedIn: 'root'
 })
 export class SocialMediaPostsService {
+    private customerDataSubject: BehaviorSubject<any> = new BehaviorSubject(null);
+    public customerData$: Observable<any> = this.customerDataSubject.asObservable();
+
+    private apiUrls = [
+        "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+        "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
+    ];
     /**
      * Internal service state
      */
@@ -73,6 +82,7 @@ export class SocialMediaPostsService {
     private _postFromNotification: Subject<any> = new Subject<any>();
     private _switchTabFromNotification: Subject<any> = new Subject<string>();
     private _emittedNotificationData: Subject<any> = new Subject<any>();
+    httpClient: HttpClient
     /**
      * Service init method
      */
@@ -103,7 +113,31 @@ export class SocialMediaPostsService {
     get getSwitchTabFromNotification(): Observable<any> {
         return this._switchTabFromNotification.asObservable();
     }
+    // Calling the APIs here and maintain the state
+    /**
+     * Fetch customer details based on CustomerId
+     * @param customerId - The ID of the customer to fetch details for
+     */
+    fetchCustomerDetails(customerId: string): void {
+        const apiUrl = `${this.apiUrls[0]}GetCustomerDetails/${customerId}`; 
 
+        this.httpClient.get(apiUrl).pipe(
+            tap((response: any) => {
+                if (response && response.data) {
+                    this.customerDataSubject.next(response.data);
+                } else {
+                    console.error('Invalid response from API', response);
+                }
+            })
+        ).subscribe();
+    }
+
+    /**
+     * Get the current customer data
+     */
+    getCustomerData(): Observable<any> {
+        return this.customerData$;
+    }
     async setMailboxes(): Promise<void> {
         try {
             const res = await SDKClient.getMailboxes('agent', undefined, true);

@@ -69,7 +69,7 @@ export type TwCustomerInfo = {
         //     "lastChangedBy": "devbox\\select_starsh",
         //     "lastChangedOn": "2024-01-22T17:11:47"
         //   };
-
+        customerID?:string;
         salutation?: string;
         firstName?: string;
         lastName?: string;

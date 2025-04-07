@@ -36,6 +36,7 @@ import { merge, sortBy } from 'lodash';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { TMACEventService } from '@services/tmac-event.service';
 import { format } from 'date-fns';
+import { Subject } from 'rxjs';
 
 declare var document: any;
 
@@ -136,6 +137,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      * Agent ref
      */
     user: IAgentData;
+ 
+    customerInitials: string = ''; 
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -168,7 +171,22 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this._appDataService.config.pipe(takeUntil(this.unsubscribeAll)).subscribe((config: any) => {
             this.fileUploadUrl = config.Main.Urls?.FileServerUrl || null;
         });
+        this._interactionManagerService.interactions
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((interactions: InteractionRef[]) => {
+            interactions.forEach((interaction) => {
+                if (interaction.isActive) {
+                    this.fetchCustomerDetails(interaction);
+                }
+            });
+        });
 
+    // Subscribe to customer data updates
+    this.smpService.customerData$.pipe(takeUntil(this.unsubscribeAll)).subscribe((customerData) => {
+        if (customerData) {
+            this.customerInitials = this.getInitials(customerData.CustomerName); 
+        }
+    });
         this._tmacEventService
             .getInteractionEvents(['InteractionDataEvent'], this.interactionId)
             .pipe(takeUntil(this.unsubscribeAll))
@@ -705,7 +723,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
             console.error(error);
         }
     }
+ 
+    private fetchCustomerDetails(interaction: InteractionRef): void {
+        const customerId = JSON.parse(interaction.otherData?.JsonData)?.CustomerId; // Adjust based on your data structure
+        if (customerId) {
+            this.smpService.fetchCustomerDetails(customerId);
+        } else {
+            console.warn('No CustomerId found in interaction:', interaction);
+        }
+    }
 
+   
     /**
      * Checks if post reply is sent or not
      */

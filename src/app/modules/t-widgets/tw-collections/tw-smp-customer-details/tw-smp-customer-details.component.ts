@@ -5,12 +5,14 @@ import { TwControlInfo, TwCustomerInfo, TwSmmCustomerDetails } from '@ad/types';
 import { IUIEvent, SDKClient } from '@tmac/sdk';
 import { HttpClient } from '@angular/common/http';
 import { AppUiService } from '@services/app-ui.service';
+import { SocialMediaPostsService } from '@modules/shared/components/social-media-posts/social-media-posts.service';
 import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
 import { InteractionManagerService } from '@services/interaction-manager.service';
 import { InteractionRef } from 'app/interfaces';
 import { TranslocoService } from '@ngneat/transloco';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 /**
  * Customer details widget
@@ -268,6 +270,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         private _appUIService: AppUiService, 
         private _interactionManagerService: InteractionManagerService ,
         private translocoService: TranslocoService,
+        public smpService: SocialMediaPostsService
+      
     ) {
         super('TwSmmCustomerDetailsComponent');
     }
@@ -282,6 +286,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
      */
     ngOnInit() {              
         try {
+          this.initForm();
+          this.subscribeToCustomerData();
         // call the wrapper init method
         this.initWrapper(this.data);
         console.log("this.data", this.data);
@@ -359,6 +365,21 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             console.error('Error in TwSmmCustomerDetails', error);
         }
     }
+    /**
+     * Initialize the form
+     */
+    private initForm(): void {
+      this.customerForm = new FormGroup({
+          customerID: new FormControl({ value: '', disabled: true }),
+          salutation: new FormControl(''),
+          firstName: new FormControl(''),
+          lastName: new FormControl(''),
+          email: new FormControl('', [Validators.email]),
+          phone: new FormControl(''),
+          // Add other form controls as needed
+      });
+  }
+
     
     //set customerId & interactionId
     IncomingEmailEvent(evt) {
@@ -454,6 +475,31 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
             }
         });
     }
+ /**
+     * Subscribe to customer data from the service
+     */
+ private subscribeToCustomerData(): void {
+  this.smpService.customerData$.pipe(takeUntil(this.unsubscribeAll)).subscribe((customerData) => {
+      if (customerData) {
+          this.updateFormWithCustomerData(customerData);
+      }
+  });
+}
+ /**
+     * Update the form with customer data
+     * @param customerData - The customer data to populate the form
+     */
+ private updateFormWithCustomerData(customerData: TwCustomerInfo): void {
+  this.customerForm.patchValue({
+      customerID: customerData.customerID,
+      salutation: customerData.salutation,
+      firstName: customerData.firstName,
+      lastName: customerData.lastName,
+      email: customerData.email,
+      phone: customerData.phone,
+
+  });
+}
 
     ngOnDestroy(): void {
         this.destroyWrapper();
