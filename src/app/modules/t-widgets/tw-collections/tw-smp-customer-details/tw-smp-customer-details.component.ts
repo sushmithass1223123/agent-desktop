@@ -11,6 +11,7 @@ import { InteractionManagerService } from '@services/interaction-manager.service
 import { InteractionRef } from 'app/interfaces';
 import { TranslocoService } from '@ngneat/transloco';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { SocialMediaPostsService } from '../../../shared/components/social-media-posts/social-media-posts.service';
 
 /**
  * Customer details widget
@@ -263,9 +264,11 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
           validation_regex: '',
         },
       ];
+
  
     constructor(private _tmacEventService: TMACEventService, private httpClient: HttpClient,
         private _appUIService: AppUiService, 
+        private   smpService: SocialMediaPostsService,
         private _interactionManagerService: InteractionManagerService ,
         private translocoService: TranslocoService,
     ) {
@@ -416,7 +419,12 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        if(!this.customerForm || !this.customerId) {
         return;
        }
-
+  
+        const customerId = this.data?.InteractionDetails?.CustomerId;
+        this.smpService.getCustomerData(customerId).then(customerData => {
+            this.customerForm.patchValue(customerData);
+        });
+    
         this.customerForm?.reset;
         let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
           + this.customerId; 

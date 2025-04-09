@@ -136,6 +136,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
      * Agent ref
      */
     user: IAgentData;
+    customerInitials: string | null = null;
 
     constructor(
         private _fuseFacadeService: FuseFacadeService,
@@ -161,6 +162,17 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.routeReason = this.data.InteractionDetails.RouteReason;
         this.isDraftMode = this.routeReason === 'AgentDraftPull';
         await this.setPostDetails();
+    // Fetch customer data and set initials
+    try {
+        const customerData = await this.smpService.getCustomerData(this.interactionId.toString()); // Convert to string
+        if (customerData && customerData.CustomerName) {
+            this.customerInitials = this.getInitials(customerData.CustomerName);
+            console.log('Interaction ID:', this.interactionId);
+        }
+    } catch (error) {
+        console.error('Error fetching customer data:', error);
+    }
+
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
