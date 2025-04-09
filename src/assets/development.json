@@ -2566,6 +2566,9 @@
                                                         "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
                                                         "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
                                                     ],
+                                                    "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
+                                                    "UpdateMethodName": "UpdateCustomerDetails",
+                                                    "EditAllowed": false,
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {
@@ -2627,9 +2630,8 @@
                                                 },
                                                 "Data": {
                                                   
-                                                    "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
-                                                    "UpdateMethodName": "UpdateCustomerDetails",
-                                                    "EditAllowed": false,
+                                                    
+                                                    
                                                     "ControlFields": [
                                                         {
                                                             "id": "customerID",

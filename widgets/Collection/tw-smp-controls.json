@@ -21,10 +21,13 @@
         "Pinned": false
     },
     "Data": {
-        "SocialMediaAPIs": [
-            "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
-            "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
-        ],
+      "SocialMediaAPIs": [
+                                                        "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
+                                                        "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
+                                                    ],
+                                                    "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
+                                                    "UpdateMethodName": "UpdateCustomerDetails",
+                                                    "EditAllowed": false,
         "Transfer": {
             "Allowed": true,
             "Agent": {

@@ -1,9 +1,10 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import moment from 'moment'; // Ensure this is imported
 import { HttpClient } from '@angular/common/http';
+import { TwCustomerInfo,TwSmmCustomerDetails  } from '@ad/types';
 
 
 
@@ -60,6 +61,7 @@ const searchParams = new FormGroup({
     providedIn: 'root'
 })
 export class SocialMediaPostsService {
+     @Input() data: TwSmmCustomerDetails<any>;
     /**
      * Internal service state
      */
@@ -83,7 +85,30 @@ export class SocialMediaPostsService {
     private _postFromNotification: Subject<any> = new Subject<any>();
     private _switchTabFromNotification: Subject<any> = new Subject<string>();
     private _emittedNotificationData: Subject<any> = new Subject<any>();
-    customerData: any = {};
+      /**
+       * User preferences API Urls
+       */
+      apiUrls: string[] = [];
+  
+      customerId: string;
+      /**
+      * editAllowed: to perform customer details update
+      */
+      editAllowed: boolean = false;
+      formData: TwCustomerInfo;
+      
+      /**
+      * test: test webhook urls are used if set to true
+      */
+      test: boolean = false;
+       /**
+        * Current intreaction id
+        */
+       interactionId: number;
+       formChanged = false;
+       customerForm: FormGroup;
+
+   customerData: any = {};
     constructor(private httpClient: HttpClient) {}
     /**
      * Service init method
@@ -119,15 +144,104 @@ export class SocialMediaPostsService {
 
 
 
- async fetchCustomerDetails(customerId: string): Promise<any> {
+//  async fetchCustomerDetails(customerId: string): Promise<any> {
+//     if (!customerId || !this.globalSmpWorkbenchState$?.searchParams) {
+//         console.warn("Missing customerId or searchParams");
+//         return null;
+//     }
+
+//     try {
+//         let apiUrl = this.globalSmpWorkbenchState$.searchParams.get('SocialMediaAPIs')?.value?.[0] +
+//             'ViewMethodName/' + customerId;
+
+//         // Optional testing URL override
+//         const isTest = false; // Replace this with a dynamic flag if needed
+//         if (isTest) {
+//             apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
+//         }
+
+//         const res: any = await this.httpClient.post(apiUrl, {}).toPromise();
+//         console.log("fetchCustomerDetails API Response:", res);
+
+//         if (res?.errCode === 0 && res?.errMsg === "Success") {
+//             if (!res.data?.customerID) {
+//                 return null;
+//             }
+
+//             // Convert time to local time zone
+//             res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
+//                 .format('DD-MM-YYYY hh:mm a');
+
+//             // Fill blank values for display
+//             Object.keys(res.data).forEach((key) => {
+//                 if (!res.data[key]) {
+//                     res.data[key] = '   ';
+//                 }
+//             });
+
+//             return res.data;
+//         } else {
+//             console.warn("Invalid response:", res);
+//         }
+//     } catch (error) {
+//         console.error("Error in fetchCustomerDetails:", error);
+//         return null;
+//     }
+// }
+// async fetchCustomerDetails(customerId: string): Promise<any> {
+//     if (!customerId || !this.globalSmpWorkbenchState$?.searchParams) {
+//         console.warn("Missing customerId or searchParams");
+//         return null;
+//     }
+
+//     try {
+ 
+      
+//         let apiUrl = `${this.globalSmpWorkbenchState$.searchParams.value.SocialMediaAPIs[0]}${this.globalSmpWorkbenchState$.searchParams.value.ViewMethodName}${customerId}`;
+
+//         const isTest = false; 
+//         if (isTest) {
+//             apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
+//         }
+
+//         const res: any = await this.httpClient.post(apiUrl, {}).toPromise();
+//         console.log("fetchCustomerDetails API Response:", res);
+
+//         if (res?.errCode === 0 && res?.errMsg === "Success") {
+//             if (!res.data?.customerID) {
+//                 return null;
+//             }
+
+//             // Convert time to local time zone
+//             res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
+//                 .format('DD-MM-YYYY hh:mm a');
+
+//             // Fill blank values for display
+//             Object.keys(res.data).forEach((key) => {
+//                 if (!res.data[key]) {
+//                     res.data[key] = '   ';
+//                 }
+//             });
+
+//             return res.data;
+//         } else {
+//             console.warn("Invalid response:", res);
+//         }
+//     } catch (error) {
+//         console.error("Error in fetchCustomerDetails:", error);
+//         return null;
+//     }
+// }
+
+async fetchCustomerDetails(customerId: string): Promise<any> {
     if (!customerId || !this.globalSmpWorkbenchState$?.searchParams) {
         console.warn("Missing customerId or searchParams");
         return null;
     }
 
     try {
-        let apiUrl = this.globalSmpWorkbenchState$.searchParams.get('SocialMediaAPIs')?.value?.[0] +
-            'ViewMethodName/' + customerId;
+        let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
+        + this.customerId; 
 
         // Optional testing URL override
         const isTest = false; // Replace this with a dynamic flag if needed
