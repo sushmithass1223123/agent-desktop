@@ -240,32 +240,42 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                                 isReplyDrafted: false
                             };
         
-                        // New customer initials logic
-                        const customerId = i.user;
-                        let customerInitials = '--';
-                        if (customerId) {
-                            this.smpService.getCustomerData(customerId).then((customerData) => {
-                                if (customerData) {
-                                    if (customerData.firstName || customerData.lastName) {
-                                        const firstName = (customerData.firstName || '').trim();
-                                        const lastName = (customerData.lastName || '').trim();
-                                        if (firstName || lastName) {
-                                            customerInitials = this.getInitials(`${firstName} ${lastName}`.trim());
-                                        }
-                                    } else if (customerData.CustomerName) {
-                                        customerInitials = this.getInitials(customerData.CustomerName);
-                                    }
-                                }
-                                // Find the interaction in the list and update initials after data arrives
-                                const idx = this.interactionList.findIndex(x => x.interactionId === i.interactionId);
-                                if (idx !== -1) {
-                                    this.interactionList[idx].customerInitials = customerInitials;
-                                    this.cdr.detectChanges();
-                                }
-                            }).catch((error) => {
-                                console.error('Error fetching customer data:', error);
-                            });
-                        }
+            // Loop through each interaction (assuming 'i' is an interaction object)
+            const customerId = i.user;
+            let customerInitials = '--'; // Default initials if no customer data found
+
+            if (customerId) {
+               // Fetch customer data using the customer ID
+               this.smpService.getCustomerData(customerId).then((customerData) => {
+            if (customerData) {
+               // Check if first name or last name exists
+            if (customerData.firstName || customerData.lastName) {
+                const firstName = (customerData.firstName || '').trim();
+                const lastName = (customerData.lastName || '').trim();
+
+                // Generate initials from first and/or last name
+            if (firstName || lastName) {
+                    customerInitials = this.getInitials(`${firstName} ${lastName}`.trim());
+                }
+            }
+            // If no first/last name, use full customer name
+            else if (customerData.CustomerName) {
+                customerInitials = this.getInitials(customerData.CustomerName);
+            }
+        }
+
+            // Update the interaction's customer initials in the list
+            const idx = this.interactionList.findIndex(x => x.interactionId === i.interactionId);
+            if (idx !== -1) {
+            this.interactionList[idx].customerInitials = customerInitials;
+            this.cdr.detectChanges(); // Trigger change detection
+        }
+        }).catch((error) => {
+        // Log any errors during data fetching
+        console.error('Error fetching customer data:', error);
+        });
+    }
+
         
                         if (i.isActive) {
                             this.sessionId = i.otherData?.SessionId;
