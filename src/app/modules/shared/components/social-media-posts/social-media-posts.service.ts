@@ -1,5 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { Injectable, Input } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import moment from 'moment'; // Ensure this is imported
@@ -73,8 +73,7 @@ export class SocialMediaPostsService {
             searchParams,
             globalSearchKey: new FormControl(''),
             defaultEmail: new FormControl(''),
-            availableMailboxes: new FormControl([]),
-
+            availableMailboxes: new FormControl([])
         }
     };
     /**
@@ -88,30 +87,50 @@ export class SocialMediaPostsService {
     private _postFromNotification: Subject<any> = new Subject<any>();
     private _switchTabFromNotification: Subject<any> = new Subject<string>();
     private _emittedNotificationData: Subject<any> = new Subject<any>();
-      /**
-       * User preferences API Urls
-       */
-      apiUrls: string[] = [];
-  
-      customerId: string;
-      /**
-      * editAllowed: to perform customer details update
-      */
-      editAllowed: boolean = false;
-      formData: TwCustomerInfo;
-      
-      /**
-      * test: test webhook urls are used if set to true
-      */
-      test: boolean = false;
-       /**
-        * Current intreaction id
-        */
-       interactionId: number;
-       formChanged = false;
-       customerForm: FormGroup;
+    /**
+     * Array of API endpoint URLs
+     */
+    apiUrls: string[] = [];
 
-   customerData: any = {};
+    /**
+     * Unique identifier for the customer
+     */
+    customerId: string;
+
+    /**
+     * Flag to determine if editing the form is allowed
+     */
+    editAllowed: boolean = false;
+
+    /**
+     * Holds the customer form data
+     */
+    formData: TwCustomerInfo;
+
+    /**
+     * Flag used for testing purposes
+     */
+    test: boolean = false;
+
+    /**
+     * Identifier for the current interaction
+     */
+    interactionId: number;
+
+    /**
+     * Indicates whether the form has been changed
+     */
+    formChanged = false;
+
+    /**
+     * Reactive form group for managing the customer form
+     */
+    customerForm: FormGroup;
+
+    /**
+     * Object to store additional customer-related data
+     */
+    customerData: any = {};
     constructor(private httpClient: HttpClient) {}
     /**
      * Service init method
