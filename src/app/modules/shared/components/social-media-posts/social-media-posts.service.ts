@@ -4,7 +4,8 @@ import { SDKClient } from '@tmac/sdk';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import moment from 'moment'; // Ensure this is imported
 import { HttpClient } from '@angular/common/http';
-import { TwCustomerInfo,TwSmmCustomerDetails  } from '@ad/types';
+import { TwCustomerInfo,TwSmmCustomerDetails } from '@ad/types';
+import { IWidget } from 'app/interfaces';
 
 
 
@@ -61,7 +62,9 @@ const searchParams = new FormGroup({
     providedIn: 'root'
 })
 export class SocialMediaPostsService {
-     @Input() data: TwSmmCustomerDetails<any>;
+    private _configData: any;
+    private _customerInitials: { [key: string]: string } = {};
+    
     /**
      * Internal service state
      */
@@ -140,155 +143,142 @@ export class SocialMediaPostsService {
     get getSwitchTabFromNotification(): Observable<any> {
         return this._switchTabFromNotification.asObservable();
     }
- // method to fetch customer details based on CustomerID.
 
-
-
-//  async fetchCustomerDetails(customerId: string): Promise<any> {
-//     if (!customerId || !this.globalSmpWorkbenchState$?.searchParams) {
-//         console.warn("Missing customerId or searchParams");
-//         return null;
-//     }
-
-//     try {
-//         let apiUrl = this.globalSmpWorkbenchState$.searchParams.get('SocialMediaAPIs')?.value?.[0] +
-//             'ViewMethodName/' + customerId;
-
-//         // Optional testing URL override
-//         const isTest = false; // Replace this with a dynamic flag if needed
-//         if (isTest) {
-//             apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
-//         }
-
-//         const res: any = await this.httpClient.post(apiUrl, {}).toPromise();
-//         console.log("fetchCustomerDetails API Response:", res);
-
-//         if (res?.errCode === 0 && res?.errMsg === "Success") {
-//             if (!res.data?.customerID) {
-//                 return null;
-//             }
-
-//             // Convert time to local time zone
-//             res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
-//                 .format('DD-MM-YYYY hh:mm a');
-
-//             // Fill blank values for display
-//             Object.keys(res.data).forEach((key) => {
-//                 if (!res.data[key]) {
-//                     res.data[key] = '   ';
-//                 }
-//             });
-
-//             return res.data;
-//         } else {
-//             console.warn("Invalid response:", res);
-//         }
-//     } catch (error) {
-//         console.error("Error in fetchCustomerDetails:", error);
-//         return null;
-//     }
-// }
-// async fetchCustomerDetails(customerId: string): Promise<any> {
-//     if (!customerId || !this.globalSmpWorkbenchState$?.searchParams) {
-//         console.warn("Missing customerId or searchParams");
-//         return null;
-//     }
-
-//     try {
- 
-      
-//         let apiUrl = `${this.globalSmpWorkbenchState$.searchParams.value.SocialMediaAPIs[0]}${this.globalSmpWorkbenchState$.searchParams.value.ViewMethodName}${customerId}`;
-
-//         const isTest = false; 
-//         if (isTest) {
-//             apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
-//         }
-
-//         const res: any = await this.httpClient.post(apiUrl, {}).toPromise();
-//         console.log("fetchCustomerDetails API Response:", res);
-
-//         if (res?.errCode === 0 && res?.errMsg === "Success") {
-//             if (!res.data?.customerID) {
-//                 return null;
-//             }
-
-//             // Convert time to local time zone
-//             res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
-//                 .format('DD-MM-YYYY hh:mm a');
-
-//             // Fill blank values for display
-//             Object.keys(res.data).forEach((key) => {
-//                 if (!res.data[key]) {
-//                     res.data[key] = '   ';
-//                 }
-//             });
-
-//             return res.data;
-//         } else {
-//             console.warn("Invalid response:", res);
-//         }
-//     } catch (error) {
-//         console.error("Error in fetchCustomerDetails:", error);
-//         return null;
-//     }
-// }
-
-async fetchCustomerDetails(customerId: string): Promise<any> {
-    if (!customerId || !this.globalSmpWorkbenchState$?.searchParams) {
-        console.warn("Missing customerId or searchParams");
-        return null;
+    /**
+     * Set the configuration data for the service
+     */
+    setConfigData(config: TwSmmCustomerDetails<any> | IWidget<any, any>) {
+        this._configData = config;
+        // Handle both widget types
+        if ('Data' in config && 'EditAllowed' in config.Data) {
+            this.editAllowed = config.Data.EditAllowed;
+        } else {
+            this.editAllowed = false;
+        }
     }
 
-    try {
-        let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
-        + this.customerId; 
+    /**
+     * Get the current configuration data
+     */
+    getConfigData(): any {
+        return this._configData;
+    }
 
-        // Optional testing URL override
-        const isTest = false; // Replace this with a dynamic flag if needed
-        if (isTest) {
-            apiUrl = "https://webhook.site/efc14eee-2fb5-468c-8a90-6e0edf9ff441";
+    /**
+     * Get customer initials for a given customer ID
+     */
+    getCustomerInitials(customerId: string): string {
+        return this._customerInitials[customerId] || '';
+    }
+
+    /**
+     * Get initials from customer name
+     */
+    private getInitials(name: string): string {
+        if (!name) return '';
+        return name
+            .split(' ')
+            .map(word => word.charAt(0))
+            .join('')
+            .toUpperCase();
+    }
+
+    async getCustomerData(customerId: string) {
+        console.log('getCustomerData called with ID:', customerId);
+        
+        if (!customerId) {
+            console.warn('getCustomerData: Missing customerId');
+            return null;
         }
 
-        const res: any = await this.httpClient.post(apiUrl, {}).toPromise();
-        console.log("fetchCustomerDetails API Response:", res);
+        if (!this.customerData[customerId]) {
+            console.log('Fetching fresh customer data for ID:', customerId);
+            const data = await this.fetchCustomerDetails(customerId);
+            if (data) {
+                this.customerData[customerId] = data;
+                console.log('Cached customer data:', this.customerData[customerId]);
+            } else {
+                console.warn('No data returned from fetchCustomerDetails');
+            }
+        } else {
+            console.log('Using cached customer data for ID:', customerId);
+        }
 
-        if (res?.errCode === 0 && res?.errMsg === "Success") {
-            if (!res.data?.customerID) {
+        return this.customerData[customerId];
+    }
+
+    async fetchCustomerDetails(customerId: string): Promise<any> {
+        console.log('fetchCustomerDetails called with ID:', customerId);
+        
+        if (!customerId) {
+            console.warn("Missing customerId");
+            return null;
+        }
+    
+        try {
+            const apiUrl = this.getApiUrl();
+            if (!apiUrl) {
+                console.warn("No API URL available");
                 return null;
             }
-
-            // Convert time to local time zone
-            res.data.lastChangedOn = moment(res.data.lastChangedOn + 'Z')
-                .format('DD-MM-YYYY hh:mm a');
-
-            // Fill blank values for display
-            Object.keys(res.data).forEach((key) => {
-                if (!res.data[key]) {
-                    res.data[key] = '   ';
-                }
-            });
-
-            return res.data;
-        } else {
+    
+            const res: any = await this.httpClient.post(`${apiUrl}${this.getViewMethodName()}${customerId}`, {}).toPromise();
+            console.log("API Response:", res);
+    
+            if (this.isValidResponse(res)) {
+                return this.processCustomerData(res.data, customerId);
+            }
+            
             console.warn("Invalid response:", res);
-        }
-    } catch (error) {
-        console.error("Error in fetchCustomerDetails:", error);
-        return null;
-    }
-}
-
-
-async getCustomerData(customerId: string) {
-    if (!this.customerData[customerId]) {
-        const data = await this.fetchCustomerDetails(customerId);
-        if (data) {
-            this.customerData[customerId] = data;
+            return null;
+        } catch (error) {
+            console.error("Error in fetchCustomerDetails:", error);
+            return null;
         }
     }
-    return this.customerData[customerId];
-}
-
+    
+    private getApiUrl(): string {
+        return this.globalSmpWorkbenchState$?.searchParams?.value?.SocialMediaAPIs?.[0] || 
+               this._configData?.Data?.SocialMediaAPIs?.[0] || '';
+    }
+    
+    private getViewMethodName(): string {
+        return this._configData?.Data?.ViewMethodName || 'GetCustomerDetailsByCustomerId?customerId=';
+    }
+    
+    private isValidResponse(res: any): boolean {
+        return res?.errCode === 0 && res?.errMsg === "Success";
+    }
+    
+    private processCustomerData(data: any, customerId: string): any {
+        data = data || {};
+        data.customerID = data.customerID || customerId;
+    
+        const requiredFields = [
+            'firstName', 'lastName', 'salutation', 'cif', 'email', 
+            'phone', 'address', 'city', 'state', 'country', 
+            'postalCode', 'secondaryPhone', 'secondaryEmail', 
+            'secondaryCIF', 'lastChangedBy'
+        ];
+    
+        requiredFields.forEach(field => {
+            data[field] = data[field] || '';
+        });
+    
+        data.lastChangedOn = data.lastChangedOn ? moment(data.lastChangedOn + 'Z').format('DD-MM-YYYY hh:mm:ss a') : '';
+        data.CustomerName = [data.firstName.trim(), data.lastName.trim()].filter(Boolean).join(' ');
+        this._customerInitials[customerId] = this.getInitials(data.CustomerName);
+    
+        console.log('Processed customer data:', { customerId, name: data.CustomerName, initials: this._customerInitials[customerId], data });
+        
+        Object.keys(data).forEach(key => {
+            if (!data[key]) {
+                data[key] = '   ';
+            }
+        });
+    
+        return data;
+    }
     async setMailboxes(): Promise<void> {
         try {
             const res = await SDKClient.getMailboxes('agent', undefined, true);

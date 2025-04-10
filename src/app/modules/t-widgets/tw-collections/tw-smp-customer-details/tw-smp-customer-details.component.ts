@@ -265,7 +265,11 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         },
       ];
 
- 
+    /**
+     * Customer initials for display
+     */
+    customerInitials: string = '';
+
     constructor(private _tmacEventService: TMACEventService, private httpClient: HttpClient,
         private _appUIService: AppUiService, 
         private   smpService: SocialMediaPostsService,
@@ -288,7 +292,8 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
         // call the wrapper init method
         this.initWrapper(this.data);
         console.log("this.data", this.data);
-        
+        // Set configuration data in service
+        this.smpService.setConfigData(this.data);      
         this.editAllowed = this.data?.Data?.EditAllowed;      
         if(this.data?.InteractionDetails?.InteractionID) {
             this.interactionId = this.data?.InteractionDetails?.InteractionID;
@@ -366,15 +371,34 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
     //set customerId & interactionId
     IncomingEmailEvent(evt) {
         if(evt.EmailType === 'NewSocialMediaItemFromMakerQueue') {
-        console.log("Event: ", evt);  
-        if(JSON.parse(evt.JsonData)?.CustomerId) {
-            this.customerId = JSON.parse(evt.JsonData).CustomerId;
-            this.interactionId = this.data?.InteractionDetails?.interactionId;
-            this.getCustomerDetails(); 
-        } else {
-            return;
+        console.log("Event: ", evt);
+            try {
+                const jsonData = evt.JsonData ? JSON.parse(evt.JsonData) : null;
+                if (jsonData?.CustomerId || jsonData?.customerId) {
+                    this.customerId = jsonData.CustomerId || jsonData.customerId;
+                    this.interactionId = evt.InteractionID || this.data?.InteractionDetails?.interactionId;
+                    
+                    // Initialize form if not already done
+                    if (!this.customerForm) {
+                        this.customerForm = new FormGroup({});
+                        // Add form controls based on the expected fields
+                        const fields = ['salutation', 'firstName', 'lastName', 'cif', 'secondaryCIF', 
+                                      'email', 'phone', 'address', 'city', 'state', 'country', 
+                                      'postalCode', 'secondaryPhone', 'secondaryEmail', 
+                                      'lastChangedBy', 'lastChangedOn'];
+                        fields.forEach(field => {
+                            this.customerForm.addControl(field, new FormControl(''));
+                        });
+                    }
+                    
+                    this.getCustomerDetails();
+                } else {
+                    console.warn("No CustomerId found in JsonData:", evt.JsonData);
+                }
+            } catch (error) {
+                console.error("Error parsing JsonData:", error);
+            }
         }
-    }
     }
 
     updateCustomerDetails() {
@@ -419,13 +443,41 @@ export class TwSmmCustomerDetailsComponent extends TWidgetWrapper implements OnI
        if(!this.customerForm || !this.customerId) {
         return;
        }
-  
-        const customerId = this.data?.InteractionDetails?.CustomerId;
+    
+        // Try to get customerId from different sources
+        const customerId = this.customerId || 
+                           this.data?.InteractionDetails?.CustomerId ||
+                           JSON.parse(this.data?.InteractionDetails?.JsonData || '{}')?.CustomerId;
+    
+        if (!customerId) {
+            console.warn("No valid customerId found");
+            return;
+        }
+    
+        // First try using the service
         this.smpService.getCustomerData(customerId).then(customerData => {
+            if (customerData) {
+                console.log('Received customer data:', customerData);
             this.customerForm.patchValue(customerData);
+                this.formChanged = false;
+    
+                // Get customer initials from service
+                this.customerInitials = this.smpService.getCustomerInitials(customerId);
+                console.log('Set customer initials:', {
+                    customerId,
+                    initials: this.customerInitials,
+                    interactionId: this.interactionId
+                });
+                return; // Exit if data is successfully retrieved from the service
+            }
+        }).catch(error => {
+            console.error('Error fetching customer data:', error);
         });
     
-        this.customerForm?.reset;
+        // Reset the form (if needed)
+        this.customerForm?.reset();
+    
+        // Fallback to direct API call if service call doesn't return data
         let apiUrl = this.data.Data.SocialMediaAPIs[0] + this.data.Data.ViewMethodName 
           + this.customerId; 
        if(this.test) {

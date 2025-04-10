@@ -162,17 +162,6 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
         this.routeReason = this.data.InteractionDetails.RouteReason;
         this.isDraftMode = this.routeReason === 'AgentDraftPull';
         await this.setPostDetails();
-    // Fetch customer data and set initials
-    try {
-        const customerData = await this.smpService.getCustomerData(this.interactionId.toString()); // Convert to string
-        if (customerData && customerData.CustomerName) {
-            this.customerInitials = this.getInitials(customerData.CustomerName);
-            console.log('Interaction ID:', this.interactionId);
-        }
-    } catch (error) {
-        console.error('Error fetching customer data:', error);
-    }
-
 
         this.maxFileUploadSize = this.data.Data.MaxFileUploadSize;
         this.asyncReplySendTimeout = this.data.Data.AsyncReplySendTimeout;
@@ -250,6 +239,34 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                                 attachments: [],
                                 isReplyDrafted: false
                             };
+        
+                        // New customer initials logic
+                        const customerId = i.user;
+                        let customerInitials = '--';
+                        if (customerId) {
+                            this.smpService.getCustomerData(customerId).then((customerData) => {
+                                if (customerData) {
+                                    if (customerData.firstName || customerData.lastName) {
+                                        const firstName = (customerData.firstName || '').trim();
+                                        const lastName = (customerData.lastName || '').trim();
+                                        if (firstName || lastName) {
+                                            customerInitials = this.getInitials(`${firstName} ${lastName}`.trim());
+                                        }
+                                    } else if (customerData.CustomerName) {
+                                        customerInitials = this.getInitials(customerData.CustomerName);
+                                    }
+                                }
+                                // Find the interaction in the list and update initials after data arrives
+                                const idx = this.interactionList.findIndex(x => x.interactionId === i.interactionId);
+                                if (idx !== -1) {
+                                    this.interactionList[idx].customerInitials = customerInitials;
+                                    this.cdr.detectChanges();
+                                }
+                            }).catch((error) => {
+                                console.error('Error fetching customer data:', error);
+                            });
+                        }
+        
                         if (i.isActive) {
                             this.sessionId = i.otherData?.SessionId;
                             this.outSessionId = i.otherData?.OutSessionID;
@@ -265,7 +282,8 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             interactionId: i.interactionId,
                             sessionId: i.otherData?.SessionId,
                             outSessionId: i.otherData?.OutSessionID,
-                            isPostReplySent: i.isPostReplySent
+                            isPostReplySent: i.isPostReplySent,
+                            customerInitials  // <-- Added to interaction object
                         };
                     });
             });

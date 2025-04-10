@@ -23,6 +23,10 @@ export interface InteractionRef extends ActiveInteraction {
      */
     isPostReplySent: boolean | null | undefined;
     /**
+     * customeintials display
+     */
+    customerInitials?: string;
+    /**
      * Interaction status
      */
     status: string;
