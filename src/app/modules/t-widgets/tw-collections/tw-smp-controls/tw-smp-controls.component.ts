@@ -293,7 +293,7 @@ export class TwSmpControlsComponent extends TWidgetWrapper implements OnInit, Af
                             sessionId: i.otherData?.SessionId,
                             outSessionId: i.otherData?.OutSessionID,
                             isPostReplySent: i.isPostReplySent,
-                            customerInitials  // <-- Added to interaction object
+                            customerInitials
                         };
                     });
             });
