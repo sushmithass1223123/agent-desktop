@@ -747,6 +747,8 @@
                                             (emojiClick)="addEmoji($event)"
                                             [darkMode]="customFuse.config.colorTheme.includes('dark')"
                                             [showPreview]="false"
+                                            [perLine]="9"
+                                            class="!twd-overflow-y-auto custom-emoji-mart"
                                         ></emoji-mart>
                                     </ng-template>
                                 </button>
