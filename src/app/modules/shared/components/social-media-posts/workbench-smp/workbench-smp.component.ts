@@ -595,7 +595,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     startDate: searchFields.startDate,
                     endDate: searchFields.endDate,
                     skills: [],
-                    channel: 'socialmediachannel'
+                    channel: 'SM'
                 };
             }
             if (!globalKey || (globalKey && this.advancedSearch.data[this.currentTab].changed)) {
@@ -609,7 +609,7 @@ export class WorkbenchSmpComponent extends TWidgetWrapper implements OnInit, Aft
                     subject: searchFields.subject,
                     content: searchFields.content,
                     listOfMailboxes: searchFields.listOfMailboxes.join(','),
-                    channel: 'socialmediachannel'
+                    channel: 'SM'
                 };
             }
             if (this.currentTab === 'inbox' || this.currentTab === 'posts') {
