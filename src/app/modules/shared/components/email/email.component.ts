@@ -385,7 +385,9 @@ export class EmailComponent implements OnInit, OnChanges, OnDestroy {
                     urls: [`${this.fileUploadUrl.MediaStreamer}/meta/restore/${file.FileId}`],
                     requestArgs: {
                         agentId: agent.agentId,
-                        tmacServer: agent.tmacServer
+                        tmacServer: agent.tmacServer,
+                        sessionId: this.email?.SessionID ?? '',
+                        sessionType: 'email'
                     },
                     method: 'PUT',
                     responseType: 'json'
