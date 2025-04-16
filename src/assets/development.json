@@ -2559,16 +2559,16 @@
                                                     "Actions": ["maximize", "collapse", "float"],
                                                     "ViewState": "restore",
                                                     "Header": true,
-                                                    "Pinned": false
-                                                },
-                                                "Data": {
+                                                    "Pinned": false,
                                                     "SocialMediaAPIs": [
                                                         "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
                                                         "https://totally-picked-bengal.ngrok-free.app/api/v1/SocialMedia/"
                                                     ],
                                                     "ViewMethodName": "GetCustomerDetailsByCustomerId?customerId=",
                                                     "UpdateMethodName": "UpdateCustomerDetails",
-                                                    "EditAllowed": false,
+                                                    "EditAllowed": false
+                                                },
+                                                "Data": {
                                                     "Transfer": {
                                                         "Allowed": true,
                                                         "Agent": {

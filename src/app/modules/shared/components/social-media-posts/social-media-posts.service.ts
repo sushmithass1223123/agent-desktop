@@ -30,6 +30,10 @@ export const initSmpostsSearchState = {
     replied: 2,
     closed: 2,
     assigned: 2,
+  
+};
+
+export const initialsConfig = {
     listOfMailboxes: [],
     SocialMediaAPIs: [
         "https://dicedev.tetherfi.cloud:45201/api/v1/SocialMedia/",
@@ -54,7 +58,7 @@ const searchParams = new FormGroup({
     replied: new FormControl(initSmpostsSearchState.replied),
     closed: new FormControl(initSmpostsSearchState.closed),
     assigned: new FormControl(initSmpostsSearchState.assigned),
-    SocialMediaAPIs: new FormControl(initSmpostsSearchState.SocialMediaAPIs),
+    SocialMediaAPIs: new FormControl(initialsConfig.SocialMediaAPIs),
     listOfMailboxes: new FormControl([])
 });
 
