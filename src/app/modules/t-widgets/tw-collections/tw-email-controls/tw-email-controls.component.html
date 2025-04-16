@@ -67,8 +67,7 @@
                         <button
                             *ngIf="data.Data?.InteractionCommentAllowed && emailComponentMode !== 'preview'"
                             mat-raised-button
-                            color="primary"
-                            class="border-radius-5"
+                            class="border-radius-20"
                             [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="saveInteractionComments()"
                             [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
@@ -117,8 +116,7 @@
                             [disabled]="isEmailSent(currentInteraction.InteractionID) === false"
                             *ngIf="data.Data?.InteractionCommentAllowed && emailComponentMode !== 'preview'"
                             mat-raised-button
-                            color="primary"
-                            class="border-radius-5"
+                            class="border-radius-20"
                             [matTooltip]="locale('interactionComponent.interactionComment')"
                             (click)="saveInteractionComments()"
                         >
@@ -164,8 +162,7 @@
                             <button
                                 *ngIf="emailComponentMode !== 'preview'"
                                 mat-raised-button
-                                color="primary"
-                                class="border-radius-5"
+                                class="border-radius-20"
                                 [disabled]="
                                     (draftPollDuration && !currentInteraction.CurrOutSessionId) ||
                                     sendingEmailAsMake ||
